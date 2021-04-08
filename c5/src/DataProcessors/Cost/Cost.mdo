@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="ede608ef-fd44-4850-a4de-1ed3b8b31d2a">
+  <producedTypes>
+    <objectType typeId="95a6cd19-925f-49b2-82ea-bbd826b915bd" valueTypeId="c3ca74e9-dbe6-41f0-b72e-b9169cb787d6"/>
+    <managerType typeId="f6e0ffb9-a16c-47d4-bc33-8d09680d5a54" valueTypeId="95b6b994-004d-41ab-8ebb-9ec5bfc3e6fe"/>
+  </producedTypes>
+  <name>Cost</name>
+  <synonym>
+    <key>en</key>
+    <value>Calc Cost</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Расчет себестоимости</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Calcularea costului</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <defaultForm>DataProcessor.Cost.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>Processing of the boundary recovery sequence responsible for the cost of items</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Обработка восстановления границы последовательности, отвечающей за себестоимость складских запасов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Procesul de recuperare a frontierei de secvență, responsabile pentru costul stocului</value>
+  </explanation>
+  <attributes uuid="fe653af8-431a-4d9f-bed8-faebc3fb76ca">
+    <name>Bound</name>
+    <synonym>
+      <key>en</key>
+      <value>Recovery up to date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Восстановить по дату</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Restabilirea până la data de</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The boundary of the sequence will be recovered up to and including this date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата (включительно) по которую будет восстанавливаться граница последовательности</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data (inclusiv) pe care va fi restabilită limita secvenței</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <attributes uuid="86dabd43-b32e-49e2-a899-e313ee830872">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company for which the border sequences will be recovered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, для которой будет производиться восстановление границы последовательности</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea pentru care se va face recuperarea limitei secvenței</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <forms uuid="e2d939f4-eee1-433a-8a92-bf926d86a00d">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

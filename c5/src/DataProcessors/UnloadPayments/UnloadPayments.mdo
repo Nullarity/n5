@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="b92c9af7-ef49-444c-8972-5773bc1f545a">
+  <producedTypes>
+    <objectType typeId="580754e2-3918-42ef-9273-d51266e1b6bc" valueTypeId="f27cfca3-1bfc-463b-975f-9df4ddc65e7c"/>
+    <managerType typeId="d610f622-782c-4c63-b7d6-7eb6abd41bc5" valueTypeId="6b6e2256-cfdf-4e67-914f-fb4d6e690732"/>
+  </producedTypes>
+  <name>UnloadPayments</name>
+  <synonym>
+    <key>en</key>
+    <value>Banking, Unload</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Выгрузка в банк</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Client Bank, descărcare</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <defaultForm>DataProcessor.UnloadPayments.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>Unloading payment orders for bank client system</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Выгрузка платежных поручений для системы клиент банк</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Descărcarea ordinilor de plată pentru sistemul client banca</value>
+  </explanation>
+  <attributes uuid="03ffe72a-9e70-4d6b-9dc2-c7f2ea0c41d8">
+    <name>Account</name>
+    <synonym>
+      <key>en</key>
+      <value>Bank Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Банковский счет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>!!!Cont bancar</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.BankAccounts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Company bank account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет компании</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>!!!Cont bancar</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>DataProcessor.UnloadPayments.Attribute.Company</field>
+    </choiceParameterLinks>
+  </attributes>
+  <attributes uuid="a3083844-1600-4176-ad3f-967dfe67b753">
+    <name>Application</name>
+    <synonym>
+      <key>en</key>
+      <value>Banking App</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Клиент-банка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Client Bank</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Banks</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Used banking application for uploading/downloading payments</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Используемое приложение Клиент-Банка для выгрузки/загрузки платежей</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>!!!Aplicație bancară utilizată pentru încărcare / descărcare de plăți</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="fe57b13f-91b0-4a68-b390-3e60ce4d8fcd">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Company</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Companie</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="d0030b86-11a3-48d0-a25b-a6d3753eb7b2">
+    <name>Path</name>
+    <synonym>
+      <key>en</key>
+      <value>File</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Файл</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Fişier</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Full path of file to upload</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Полный путь к файлу для выгрузки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Calea completă a fișierului pentru încărcare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <tabularSections uuid="ff000f39-9ab7-44dd-b1da-08e66c4c3abb">
+    <producedTypes>
+      <objectType typeId="d806fabe-c4f2-4979-892e-81cc9bc5de84" valueTypeId="6eb3d313-3faf-4444-b82f-44b8055605f2"/>
+      <rowType typeId="2d8bfd70-c5bc-4170-bb3f-ef9891de9037" valueTypeId="d9a6f6db-d04d-4975-9da4-8c7bb0bfa029"/>
+    </producedTypes>
+    <name>PaymentOrders</name>
+    <synonym>
+      <key>en</key>
+      <value>Payment Orders</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Платежные поручения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ordine de plată</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Payment orders to upload</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Платежные поручения для выгрузки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Ordine de plată pentru descărcare</value>
+    </toolTip>
+    <fillChecking>ShowError</fillChecking>
+    <attributes uuid="73f33c34-e6f6-44b0-b36a-0fd4def42e76">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма платежа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma de plată</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="0548d9e0-0e32-4ad1-8718-260ef36c6943">
+      <name>PaymentOrder</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Order</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Платежное поручение</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Ordin de plată</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.PaymentOrder</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment order to upload</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Платежное поручение для выгрузки</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Ordine de plată pentru descărcare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>DataProcessor.UnloadPayments.Attribute.Company</field>
+      </choiceParameterLinks>
+      <choiceParameterLinks>
+        <name>Filter.BankAccount</name>
+        <field>DataProcessor.UnloadPayments.Attribute.Account</field>
+      </choiceParameterLinks>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="cb705c0c-c94e-42d4-be67-5ed8e02fd36c">
+      <name>Unload</name>
+      <synonym>
+        <key>en</key>
+        <value>Unload</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Выгрузить</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Export</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Upload</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Выгрузить</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Export</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:BooleanValue">
+        <value>true</value>
+      </fillValue>
+    </attributes>
+  </tabularSections>
+  <forms uuid="2fcdb1bd-b873-4937-90ee-33d8e1bffbf3">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="67896671-9016-40f5-8b4c-0a05ac2f623b">
+    <name>Success</name>
+    <synonym>
+      <key>en</key>
+      <value>Unload Completed</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Выгрузка завершена</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Descărcarea finalizată</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

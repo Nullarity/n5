@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="79c67efa-0f6d-4f26-a52f-cd3b37640013">
+  <producedTypes>
+    <objectType typeId="85e76b04-8eb9-4224-87a8-b5476acaa856" valueTypeId="6a73dad8-78b8-440e-9b36-1a2bdc67acab"/>
+    <managerType typeId="a13ca782-13e4-4d0b-92a5-d62418b04e2c" valueTypeId="fe2a5341-37e9-4ce6-90bc-85d9a37e06e9"/>
+  </producedTypes>
+  <name>EmailClient</name>
+  <synonym>
+    <key>en</key>
+    <value>Mail</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Почта</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Mail</value>
+  </synonym>
+  <defaultForm>DataProcessor.EmailClient.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>Emailing</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Работа с электронной почтой</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Lucrul cu e-mail</value>
+  </explanation>
+  <forms uuid="55ee05ae-aa42-4055-b0a2-98d415d7a434">
+    <name>Checking</name>
+    <synonym>
+      <key>en</key>
+      <value>Mail checking</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получение почты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primirea e-mail</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="a40e5373-332b-4977-a815-afc2d5f521cd">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <commands uuid="230b8fe7-6955-453b-8d9c-56fcfdf36a0b">
+    <name>Delete</name>
+    <synonym>
+      <key>en</key>
+      <value>Delete</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Удалить</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Șterge</value>
+    </synonym>
+    <group>FormCommandBarImportant</group>
+    <commandParameterType>
+      <types>DocumentRef.IncomingEmail</types>
+      <types>DocumentRef.OutgoingEmail</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Remove message</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Удалить письмо</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Ștergeți mesajul</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>StdPicture.Delete</picture>
+    </picture>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="f8e4d95d-35d7-4f72-83a4-694ec6050c6e">
+    <name>Mail</name>
+    <synonym>
+      <key>en</key>
+      <value>Mail</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Почта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Mail</value>
+    </synonym>
+    <group>NavigationPanelImportant</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Emailing</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Работа с электронной почтой</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Lucrul cu e-mail</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+</mdclass:DataProcessor>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="168d9bd8-5198-4a23-b9df-ef25c39c147c">
+  <producedTypes>
+    <selectionType typeId="68011c46-7f45-4654-a526-0c6c727031a7" valueTypeId="e32c08ef-549b-4cd3-bc83-86c940ffc527"/>
+    <listType typeId="e996a039-2cda-4a49-a1b6-c23fdc7f637f" valueTypeId="7883acbc-214c-4437-8f7e-cf5688c41779"/>
+    <managerType typeId="78c08958-6650-4609-a15d-6008a4ff074e" valueTypeId="7ded4cb7-87fa-4a7b-a8a5-6a9f0a203221"/>
+    <recordSetType typeId="d704a61e-81dd-4d76-bc84-591fb8b20606" valueTypeId="250ce7e9-86ac-49ba-a492-f7147fe550ad"/>
+    <recordKeyType typeId="b3e736b5-29db-470b-82a2-2916a991cf81" valueTypeId="7ba5c639-dfcd-4324-9a22-1fdd283d5203"/>
+    <recordType typeId="a7ae006c-67ca-4c8b-81df-c4d008894f7f" valueTypeId="2df0afd7-ad58-4ea4-a6e9-60d9c307404d"/>
+    <recordManagerType typeId="980a1b02-79df-4bda-bdf9-2cd8a9c614eb" valueTypeId="c92102c9-50e8-484f-a0ff-c8bb7d37e7e8"/>
+  </producedTypes>
+  <name>Insurance</name>
+  <synonym>
+    <key>en</key>
+    <value>Insurance</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Категории застрахованных лиц</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Categorii de persoane asigurate</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <editType>InDialog</editType>
+  <informationRegisterPeriodicity>Day</informationRegisterPeriodicity>
+  <mainFilterOnPeriod>true</mainFilterOnPeriod>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Used to record the insurance category during periods of work of employees</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Используется для учета категории страхования в периоды работы сотрудников</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Utilizat pentru înregistrarea categoriei de asigurare în perioadele de lucru ale angajaților</value>
+  </explanation>
+  <resources uuid="9439bf37-a4d8-4a8b-8fe8-5b9ed21fa52f">
+    <name>Category</name>
+    <synonym>
+      <key>en</key>
+      <value>Category</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Категория</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Categorie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Insurance</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Category of insured person</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Категория застрахованного лица</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Categoria persoanei asigurate</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <dimensions uuid="6eb09168-cd42-431d-b9b7-5f5e6cedb263">
+    <name>Employee</name>
+    <synonym>
+      <key>en</key>
+      <value>Employee</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сотрудник</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Angajat</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Employees</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Employee</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сотрудник</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Angajat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

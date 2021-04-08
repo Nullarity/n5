@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="e55d3d1c-67cc-442e-bb42-e69cc5ad7623">
+  <producedTypes>
+    <objectType typeId="e3558ee5-785a-4d67-97ba-c9bfa8853ede" valueTypeId="aa9b8ba8-7416-4803-986d-2fb92a3a3753"/>
+    <refType typeId="ea09c627-0838-43ed-bb78-ffa5be702a42" valueTypeId="37b87159-c735-495c-bd7e-b81c81f13a80"/>
+    <selectionType typeId="0158f435-0bc8-406e-9a1d-03f1bac877a8" valueTypeId="2259537d-aaa6-4d9b-b4a8-d4c6c86d7e2a"/>
+    <listType typeId="d61f89af-5d86-42cf-885f-7fe0465c4a32" valueTypeId="b6aca9d3-064f-42d5-8433-8128210c45bd"/>
+    <managerType typeId="cae47134-9527-4595-9c0b-c058d1ae425f" valueTypeId="676e29cc-0848-4ac6-a408-57bc10e43ccb"/>
+  </producedTypes>
+  <name>Logins</name>
+  <synonym>
+    <key>en</key>
+    <value>Logins</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Логины</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>!!!</value>
+  </synonym>
+  <inputByString>Catalog.Logins.StandardAttribute.Code</inputByString>
+  <inputByString>Catalog.Logins.StandardAttribute.Description</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <explanation>
+    <key>en</key>
+    <value>System logins</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Логины пользователей</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>!!!</value>
+  </explanation>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <descriptionLength>150</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <attributes uuid="8d60a58a-009c-478a-a451-b72846b528aa">
+    <name>MustChangePassword</name>
+    <synonym>
+      <key>en</key>
+      <value>This User Must Change Their Password at Next Login</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пользователь должен сменить пароль при следующем входе в систему</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Utilizatorul trebuie să schimbe parola la următoarea conectare la sistem</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>If attribute is set then user must change password on next login</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Если флаг установлен, при следующем входе в систему, пользователю потребуется сменить пароль</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Dacă bifa este setată, data viitoare când vă conectați, utilizatorul va trebui să schimbe parola</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c8563f20-7dc1-49cf-8e4b-2561d587f26a">
+    <name>TenantAccess</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenants</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>!!!</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Access</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Allow or deny access to values specified in the directory</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Запрещать или разрешать доступ к значениям, указанным в списке</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Permite sau refuza accesul la valorile specificate în listă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <tabularSections uuid="74fe2682-063b-456d-b650-0d5a9f463354">
+    <producedTypes>
+      <objectType typeId="5c634b9b-9e47-4d6b-bfc7-c683a64194bb" valueTypeId="8cbed98a-5896-4028-9f15-847be48e0acf"/>
+      <rowType typeId="d09cd2fb-037d-4e59-a0e3-6bc89f8c7f98" valueTypeId="1b96f789-cd02-41d4-a365-e67bf2c6a412"/>
+    </producedTypes>
+    <name>Tenants</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenants</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>!!!</value>
+    </synonym>
+    <attributes uuid="a8aefdf4-fb4e-44b3-9b02-c82469504b3c">
+      <name>Tenant</name>
+      <synonym>
+        <key>en</key>
+        <value>Tenant</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Организация</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Chiriaş</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Tenants</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Tenant</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Организация</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Chiriaş</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+</mdclass:Catalog>

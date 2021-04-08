@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://v8.1c.ru/8.2/roles" xsi:type="Rights">
+	<setForNewObjects>false</setForNewObjects>
+	<setForAttributesByDefault>true</setForAttributesByDefault>
+	<independentRightsOfChildObjects>false</independentRightsOfChildObjects>
+	<object>
+		<name>InformationRegister.DepartmentItems.StandardAttribute.Active</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.DepartmentItems.StandardAttribute.LineNumber</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.DepartmentItems.StandardAttribute.Recorder</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.DepartmentItems.StandardAttribute.Period</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>Catalog.Departments</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Owner in ( #Companies ( "Owner" ) )
+</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.DepartmentItems.Dimension.Item</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.DepartmentItems.Dimension.Department</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<restrictionTemplate>
+		<name>Companies</name>
+		<condition>// #Parameter(1) - Reference Field
+
+select value ( Catalog.Companies.EmptyRef )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Undefined )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Allow )
+and #Parameter(1) in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Forbid )
+and #Parameter(1) not in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+</condition>
+	</restrictionTemplate>
+</Rights>

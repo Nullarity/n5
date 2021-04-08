@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="a73d3ec6-77be-4ab1-b31e-2ddf63e68fbe">
+  <producedTypes>
+    <objectType typeId="adc5aea5-5f24-4095-9f0d-765605ecb18a" valueTypeId="221eaa8c-8658-4b2c-b371-8c4a844a6d2e"/>
+    <refType typeId="cb095f27-bb3f-41db-b50b-2bb5792c6d33" valueTypeId="48ac5ac3-5077-4421-a775-549e4b35f828"/>
+    <selectionType typeId="95d8882b-9c0c-4234-ae14-e271e5976002" valueTypeId="b807ef6b-0d18-48cf-b7d1-02dbed089285"/>
+    <listType typeId="a72940d3-31ec-4478-9b01-35f21d3c399a" valueTypeId="86fca6c3-55aa-4006-b42e-1554ac9c4ee7"/>
+    <managerType typeId="189a92e4-2351-44e1-8830-03a377c444c9" valueTypeId="30f01e19-8d7b-4276-a528-04c5e375790a"/>
+  </producedTypes>
+  <name>PromoCodes</name>
+  <synonym>
+    <key>en</key>
+    <value>Promo codes</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Промо-коды</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Coduri promoționale</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.PromoCodes.StandardAttribute.Code</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Contains discount promo codes for clients and agents</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Содержит коды скидок для клиентов и агентов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Conține coduri de discount pentru clienți și agenți</value>
+  </explanation>
+  <hierarchical>true</hierarchical>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <attributes uuid="d21a1e3e-08b5-4db8-92a1-1ecd608fd5ce">
+    <name>Agent</name>
+    <synonym>
+      <key>en</key>
+      <value>Agent</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Агент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Agent</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Agents</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Commercial agent, promo-code dealer</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Торговый агент, распространитель промо-кода</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Agent de vânzări, distribuitor promoter</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="1bc1419f-d224-4b75-afd4-0ef02f6014f6">
+    <name>AgentTenant</name>
+    <synonym>
+      <key>en</key>
+      <value>Agent-Tenant</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Агент-арендатор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Agent-Chirias</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Tenants</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>It uses RLS</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Используется для RLS</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Folosit pentru RLS</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="57b6d878-eca6-4e0d-a3c1-3b08ae26093c">
+    <name>Bonus</name>
+    <synonym>
+      <key>en</key>
+      <value>Bonus</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Бонус</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Bonus</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>% Discount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>% Бонуса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>% Bonus</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="fcebc651-b71c-4ef6-813e-9eefb41ca045">
+    <name>Discount</name>
+    <synonym>
+      <key>en</key>
+      <value>Discount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Скидка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Reducere</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>% Discount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>% Скидки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>% Reduceri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="7b211a8e-9b5f-4a78-afbe-e14764153bbd">
+    <name>DiscountPeriod</name>
+    <synonym>
+      <key>en</key>
+      <value>Discount Period</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Период скидки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Perioadă de reducere</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>2</precision>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Discount period. Applicable in months</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество месяцев, в течение которых скидка по промо-коду будет применяться</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul de luni în care se va aplica reducerea la codul promoțional</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5a8c39b9-7665-4213-9dfb-eef516746e3a">
+    <name>ExpirationDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Expiration Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Срок годности</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Perioada de valabilitate</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Promo code activation deadline</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата, до которой промо-код может быть активирован</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data până la care codul promoțional poate fi activat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b5fb1a08-b93d-4d15-b66c-cbba70a08635">
+    <name>Finish</name>
+    <synonym>
+      <key>en</key>
+      <value>Finish</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Конец</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sfârșitul</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>End of discount period</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Конец действия скидки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sfârșitul acțiunii de reducere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="97257f3f-060e-4630-a95b-fa7d4ae188de">
+    <name>IssueDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Issue Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата выпуска</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data emiterii</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Promo code issue date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата выпуска промо-кода</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data lansării codului promoțional</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d6c879de-9038-4e78-8e7e-1228239ff2d2">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Random text record or note</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольная текстовая запись, заметка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+</mdclass:Catalog>

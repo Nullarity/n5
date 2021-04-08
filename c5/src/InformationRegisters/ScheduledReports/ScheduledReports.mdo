@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="20955630-65ec-4fa6-bc18-d5e78dbfefb2">
+  <producedTypes>
+    <selectionType typeId="081f4f76-6484-4dd6-bd51-5a0db85a1580" valueTypeId="31dbd5c4-e92d-4f39-af64-4d13dcf492b5"/>
+    <listType typeId="ad4c695b-7804-4427-8b93-d1b533ac3fbd" valueTypeId="e93a27ac-a199-47a6-a462-e186936b9ba3"/>
+    <managerType typeId="6779019a-2292-4e8f-ba61-f55b7e8fb7a1" valueTypeId="a3413b3f-e8be-4b63-83de-5aae828f15a5"/>
+    <recordSetType typeId="a4c4f183-eefb-4bad-adc9-c2e7f7bf6509" valueTypeId="f1b0305c-8e59-4f8e-ba8b-d5b2be5697dd"/>
+    <recordKeyType typeId="063afd6e-8a00-4be0-ae0a-30caba386422" valueTypeId="9258f178-ffd8-4435-b41d-b794f7e4a621"/>
+    <recordType typeId="fd8f6289-cfae-406b-beb8-7431b90ab165" valueTypeId="0cdc3c1c-eb44-4d97-b0d9-b12f19fabb28"/>
+    <recordManagerType typeId="97a26fcd-1045-4d6f-847a-11fd05dde5f4" valueTypeId="16af8508-9552-4571-a3bb-f5b2b68fe299"/>
+  </producedTypes>
+  <name>ScheduledReports</name>
+  <synonym>
+    <key>en</key>
+    <value>Scheduled Reports</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Отчеты по расписанию</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Rapoarte programate</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <editType>InDialog</editType>
+  <defaultRecordForm>InformationRegister.ScheduledReports.Form.Form</defaultRecordForm>
+  <defaultListForm>InformationRegister.ScheduledReports.Form.List</defaultListForm>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Used to configure the report forwarding schedule via e-mail</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Используется для настройки расписания отправки отчетов по электронной почте</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Utilizat pentru a seta orarul de expediere a rapoartelor prin e-mail</value>
+  </explanation>
+  <resources uuid="a18efbe5-9e8b-4d7b-ae1f-db035d83c7a2">
+    <name>AttachmentType</name>
+    <synonym>
+      <key>en</key>
+      <value>Attachment Type</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Тип вложения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Tip atașament</value>
+    </synonym>
+    <type>
+      <types>EnumRef.TableTypes</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Attachment extension</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Расширение отправляемого файла</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Extensia fișierului care trebuie trimis</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.TableTypes.EnumValue.PDF</value>
+    </fillValue>
+  </resources>
+  <resources uuid="3fbd776a-de26-4040-a00c-6cc5b466bdaa">
+    <name>Copy</name>
+    <synonym>
+      <key>en</key>
+      <value>Copy</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Копия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Copia</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>CC-ed e-mail addresses</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Адреса получателей копии письма</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Adresele destinatarilor unei copii a scrisorii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <resources uuid="c7071844-e91f-4a1a-befb-77467b854dcf">
+    <name>Date</name>
+    <synonym>
+      <key>en</key>
+      <value>Starting From</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Начиная с</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Începând de la</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Planned date &amp; time of dispatch</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Запланированная дата и время отправки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data și ora planificată pentru expediere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="4d4ec812-ad87-4c61-b124-d235d91d1886">
+    <name>DaysCount</name>
+    <synonym>
+      <key>en</key>
+      <value>Every</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Каждые</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Fiecare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>3</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The number of days on which a random forwarding frequency will be used</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество дней, задается для произвольной периодичности отправки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul de zile este stabilit pentru o periodicitate arbitrară de trimitere</value>
+    </toolTip>
+    <minValue xsi:type="core:StringValue">
+      <value>1</value>
+    </minValue>
+    <maxValue xsi:type="core:StringValue">
+      <value>365</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:NumberValue">
+      <value>15</value>
+    </fillValue>
+  </resources>
+  <resources uuid="d4312ede-105a-4165-845f-b6bed1f55ef0">
+    <name>Friday</name>
+    <synonym>
+      <key>en</key>
+      <value>Fri</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пт</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Vineri</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Friday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пятница</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Vineri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+  </resources>
+  <resources uuid="c2f1b2af-feb1-4883-bb55-ef0b0f6adf64">
+    <name>Monday</name>
+    <synonym>
+      <key>en</key>
+      <value>Mon</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пн</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ln</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Monday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Понедельник</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Luni</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+  </resources>
+  <resources uuid="86c010cc-6e42-4301-88dd-3bd89288d47b">
+    <name>Periodicity</name>
+    <synonym>
+      <key>en</key>
+      <value>Sending Frequency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Периодичность отправки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Frecvența expedierii</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Periodicity</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Sending Frequency </value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Периодичность отправки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Frecvența expedierii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.Periodicity.EnumValue.EveryDay</value>
+    </fillValue>
+  </resources>
+  <resources uuid="2c961a60-fecb-4c74-9d53-8c9b2dcb39cd">
+    <name>Receiver</name>
+    <synonym>
+      <key>en</key>
+      <value>Receiver</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получатель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Beneficiar</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Receiver(s) address</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Адрес получателя (получателей)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Adresa beneficiarului (beneficiarilor)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <resources uuid="65a973a6-13ac-4ba5-b7bf-5f8c7f617bee">
+    <name>RecordKey</name>
+    <synonym>
+      <key>en</key>
+      <value>Scheduled Job UUID</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Уникальный идентификатор записи</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Id de înregistrare unic</value>
+    </synonym>
+    <type>
+      <types>UUID</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Unique record identifier of the scheduled report</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный идентификатор записи, созданной для формирования отчета по расписанию</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Identificator unic de înregistrare pentru a genera un raport programat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+  </resources>
+  <resources uuid="d08c50af-c8f4-423c-bb96-9d8db13a873d">
+    <name>Saturday</name>
+    <synonym>
+      <key>en</key>
+      <value>Sat</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сб</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Smb</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Saturday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Суббота</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sâmbătă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue"/>
+  </resources>
+  <resources uuid="e8f2b71b-6186-4d2d-9f05-d0c013b23e44">
+    <name>SendEmpty</name>
+    <synonym>
+      <key>en</key>
+      <value>Send Empty</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Отсылать пустой</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Trimiteți gol</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Send report even if it contains no data</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Отсылать письмо даже если отчет не содержит данных</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Trimiteți un mesaj chiar dacă raportul nu conține date</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="0dac4132-e920-4425-834c-baa778739308">
+    <name>Settings</name>
+    <synonym>
+      <key>en</key>
+      <value>Settings Storage</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Хранилище настроек</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Stocarea setărilor</value>
+    </synonym>
+    <type>
+      <types>ValueStorage</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Report settings vault</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Хранилище настроек отчета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozit a setărilor de raportare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="3f1ec864-9128-46fd-a9ac-23d19a210600">
+    <name>Sunday</name>
+    <synonym>
+      <key>en</key>
+      <value>Sun</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вс</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dum</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Sunday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Воскресенье</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Duminica</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue"/>
+  </resources>
+  <resources uuid="e4c41b4d-e93a-4c5e-95f9-796cf80bac34">
+    <name>Thursday</name>
+    <synonym>
+      <key>en</key>
+      <value>Thu</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Чт</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Joi</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Thursday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Четверг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Joi</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+  </resources>
+  <resources uuid="ea58bc49-6cda-4297-a5e1-b2e86c8310fd">
+    <name>Tuesday</name>
+    <synonym>
+      <key>en</key>
+      <value>Tue</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вт</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marți</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Tuesday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вторник</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marți</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+  </resources>
+  <resources uuid="215c63ca-0145-4b94-b71a-2841a601cb13">
+    <name>Variant</name>
+    <synonym>
+      <key>en</key>
+      <value>Report Version</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вариант отчета</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Opţiuni raport</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.ReportSettings</types>
+      <types>String</types>
+      <stringQualifiers>
+        <length>100</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Report version</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вариант отчета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Opţiuni raport</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="d542060f-8b1c-49ba-a3b1-0ff71a06a38c">
+    <name>Wednesday</name>
+    <synonym>
+      <key>en</key>
+      <value>Wed</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ср</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Mi</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Wednesday</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Среда</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Miercuri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+  </resources>
+  <dimensions uuid="e8c70e41-bb52-4352-9fe3-2510fddbebb6">
+    <name>User</name>
+    <synonym>
+      <key>en</key>
+      <value>User</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пользователь</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Utilizator</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User who created the forwarding schedule</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший расписание отправки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat programul de expediere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="a35db810-3592-47c6-9273-e2a50c4c562d">
+    <name>Report</name>
+    <synonym>
+      <key>en</key>
+      <value>Report</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Отчет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Raport</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Metadata</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Report</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Отчет</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Raport</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <forms uuid="2bbd0c4e-0ca7-4925-a109-b3efe58835a4">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="e8f94995-c272-4d05-8f02-4a6cd676d8f5">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:InformationRegister>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="80dd2a08-a478-464a-9dfa-13d3c05da312">
+  <producedTypes>
+    <selectionType typeId="cb045cab-b7d3-4140-ab79-0e83030d22ee" valueTypeId="590aed4b-3c6c-4239-a949-f33d3f9427e7"/>
+    <listType typeId="2b2c7eea-d053-4f2f-a722-de1cf04beb52" valueTypeId="44fb895b-93f9-48a0-ae0c-015f8c6866d0"/>
+    <managerType typeId="e7b0a35f-5832-4442-9083-8a52a6017e25" valueTypeId="b71b1abb-cb1a-49af-b542-b69dadd56791"/>
+    <recordSetType typeId="08138323-069e-40f5-9462-2166c715a4fe" valueTypeId="f6bec606-c75a-49b2-8311-903511f51a3d"/>
+    <recordKeyType typeId="5ea04149-0d0c-4f1a-9b8f-fe748a9cb354" valueTypeId="b5d667d1-70f3-41a1-902c-f01e72f4f9a4"/>
+    <recordType typeId="9ed25f66-89d3-4a9c-a3fc-f96c55aa916b" valueTypeId="1b77a6a4-07d2-4044-b804-1906acccaad2"/>
+    <recordManagerType typeId="bd230cd0-8ea8-4fc8-9834-8285da62ef84" valueTypeId="57c769f1-e42b-45f3-9ec1-2e2eb47f14d7"/>
+  </producedTypes>
+  <name>Forms</name>
+  <synonym>
+    <key>en</key>
+    <value>Forms</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Бланки</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Formulare</value>
+  </synonym>
+  <editType>InDialog</editType>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>The latest forms entered into the system by documents</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Связанные бланки строгой отчетности</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Formulare de strictă evidență asociate</value>
+  </explanation>
+  <resources uuid="008bd626-b8d6-4dd5-b852-8dd89da87f5e">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Бланк</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Formular</value>
+    </synonym>
+    <type>
+      <types>DefinedType.FormType</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Linked form</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Связанный бланк</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Formular asociat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <attributes uuid="2f6c9865-c204-4b75-91ba-1451638da6f0">
+    <name>Status</name>
+    <synonym>
+      <key>en</key>
+      <value>Status</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Статус</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Starea</value>
+    </synonym>
+    <type>
+      <types>EnumRef.FormStatuses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Form status</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Статус формы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Starea formularului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.FormStatuses.EnumValue.Saved</value>
+    </fillValue>
+  </attributes>
+  <dimensions uuid="5d97da58-ab0b-4c08-945c-564cc3da9ba2">
+    <name>Document</name>
+    <synonym>
+      <key>en</key>
+      <value>Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Documentul</value>
+    </synonym>
+    <type>
+      <types>DefinedType.FormDocument</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Source document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Исходный документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Documentul inițial</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

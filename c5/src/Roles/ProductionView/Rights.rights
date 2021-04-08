@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://v8.1c.ru/8.2/roles" xsi:type="Rights">
+	<setForNewObjects>false</setForNewObjects>
+	<setForAttributesByDefault>true</setForAttributesByDefault>
+	<independentRightsOfChildObjects>false</independentRightsOfChildObjects>
+	<object>
+		<name>Document.Production</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Warehouse in ( #Warehouses ( "Warehouse" ) )
+and T.Workshop in ( #Warehouses ( "Workshop" ) )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<restrictionTemplate>
+		<name>Companies</name>
+		<condition>// #Parameter(1) - Reference Field
+
+select value ( Catalog.Companies.EmptyRef )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Undefined )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Allow )
+and #Parameter(1) in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Forbid )
+and #Parameter(1) not in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+</condition>
+	</restrictionTemplate>
+	<restrictionTemplate>
+		<name>Warehouses</name>
+		<condition>// #Parameter(1) - Reference Field
+
+select null where false
+union all
+select #Parameter(1)
+where &amp;WarehouseAccess = value ( Enum.Access.Undefined )
+union all
+select #Parameter(1)
+where &amp;WarehouseAccess = value ( Enum.Access.Allow )
+and #Parameter(1) in ( select Warehouse from Catalog.Users.Warehouses where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;WarehouseAccess = value ( Enum.Access.Forbid )
+and #Parameter(1) not in ( select Warehouse from Catalog.Users.Warehouses where Ref = &amp;User ) 
+union all
+select #Parameter(1)
+where
+#if "#Parameter(1)" = "Ref" #then
+	Responsible
+#elseif "#Parameter(1)" = "Owner" #then
+	cast ( #Parameter(1) as Catalog.Warehouses ).Responsible
+#else
+	#Parameter(1).Responsible
+#endif
+	= &amp;User
+union all
+select #Parameter(1)
+where &amp;WarehouseAccess = value ( Enum.Access.States )
+#if "#Parameter(1)" = "Ref" #then
+	and Address.State
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Warehouses ).Address.State
+#else
+	and #Parameter(1).Address.State
+#endif
+	in ( select State from Catalog.Users.WarehousesStates where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;WarehouseAccess = value ( Enum.Access.States )
+#if "#Parameter(1)" = "Ref" #then
+	and Address
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Warehouses ).Address
+#else
+	and #Parameter(1).Address
+#endif
+	= value ( Catalog.Addresses.EmptyRef )</condition>
+	</restrictionTemplate>
+</Rights>

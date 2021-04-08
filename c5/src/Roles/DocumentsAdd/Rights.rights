@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://v8.1c.ru/8.2/roles" xsi:type="Rights">
+	<setForNewObjects>false</setForNewObjects>
+	<setForAttributesByDefault>false</setForAttributesByDefault>
+	<independentRightsOfChildObjects>true</independentRightsOfChildObjects>
+	<object>
+		<name>Document.Document.Command.Add</name>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.Document</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Documents ( "Ref" )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>Insert</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Documents ( "Ref" )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Documents ( "Ref" )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveInsert</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>true</value>
+		</right>
+	</object>
+	<restrictionTemplate>
+		<name>Documents</name>
+		<condition>T
+#if #ИмяТекущегоПраваДоступа &lt;&gt; "Insert" #then
+	where T.#Parameter(1) in (
+		select GroupsAccess.Document
+		from InformationRegister.GroupsAccess as GroupsAccess
+			//
+			// Groups
+			//
+			join InformationRegister.UsersAndGroupsDocuments as Groups
+			on Groups.UserGroup = GroupsAccess.UserGroup
+			and Groups.User = &amp;User
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			and GroupsAccess.Write
+		#endif
+		union all
+		select UsersAccess.Document
+		from InformationRegister.UsersAccess as UsersAccess
+		where UsersAccess.User = &amp;User
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			and UsersAccess.Write
+		#endif
+		union
+		select GroupsAccess.Document
+		from InformationRegister.GroupsAccess as GroupsAccess
+		where GroupsAccess.UserGroup = value ( Catalog.UserGroupsDocuments.Everybody )
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			and GroupsAccess.Write
+		#endif
+		union all
+		select #Parameter(1)
+#endif
+where
+#if "#Parameter(1)" = "Ref" #then
+	not T.SpecialAccess
+	and T.Book
+#else
+	not T.#Parameter(1).SpecialAccess
+	and T.#Parameter(1).Book
+#endif
+in (
+select EffectiveRights.Book
+from InformationRegister.EffectiveRights as EffectiveRights
+	//
+	// GroupsAccess
+	//
+	join InformationRegister.GroupsAccessBooks as GroupsAccess
+	on GroupsAccess.Book = EffectiveRights.AccessBook
+	#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+		and GroupsAccess.Write
+	#endif
+	//
+	// Groups
+	//
+	join InformationRegister.UsersAndGroupsDocuments as Groups
+	on Groups.UserGroup = GroupsAccess.UserGroup
+	and Groups.User = &amp;User
+union all
+select EffectiveRights.Book
+from InformationRegister.EffectiveRights as EffectiveRights
+	//
+	// UsersAccess
+	//
+	join InformationRegister.UsersAccessBooks as UsersAccess
+	on UsersAccess.Book = EffectiveRights.AccessBook
+	and UsersAccess.User = &amp;User
+	#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+		and UsersAccess.Write
+	#endif
+union all
+select EffectiveRights.Book
+from InformationRegister.EffectiveRights as EffectiveRights
+	//
+	// GroupsAccess
+	//
+	join InformationRegister.GroupsAccessBooks as GroupsAccess
+	on GroupsAccess.UserGroup = value ( Catalog.UserGroupsDocuments.Everybody )
+	and GroupsAccess.Book = EffectiveRights.AccessBook
+	#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+		and GroupsAccess.Write
+	#endif
+)
+#if #ИмяТекущегоПраваДоступа &lt;&gt; "Insert" #then
+)
+#endif
+#if #ИмяТекущегоПраваДоступа = "Update" #then
+and T.#Parameter(1) in (
+	select Document
+	from InformationRegister.DocumentStatuses as Statuses
+	where Statuses.Document = T.#Parameter(1)
+	and Statuses.Status = value ( Enum.DocumentStatuses.Published )
+	union all
+	select Document
+	from InformationRegister.DocumentStatuses as Statuses
+	where Statuses.Document = T.#Parameter(1)
+	and Statuses.User = &amp;User
+	and Statuses.Status in ( value ( Enum.DocumentStatuses.New ), value ( Enum.DocumentStatuses.Editing ) )
+	)
+#endif</condition>
+	</restrictionTemplate>
+</Rights>

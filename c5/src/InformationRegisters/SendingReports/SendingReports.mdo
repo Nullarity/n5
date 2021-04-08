@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="48b25d92-10bb-45d0-b31e-f17da131a0b2">
+  <producedTypes>
+    <selectionType typeId="77286b5e-9e38-44d7-bd40-2f9663c6c0c3" valueTypeId="41562f88-acc7-4ca7-9450-03fc688db8e5"/>
+    <listType typeId="e201b465-fa72-433b-bfbf-84930b53f6e4" valueTypeId="58801c49-d9ca-44d4-9746-0404b9ab37e0"/>
+    <managerType typeId="805a9dcc-e5e5-4138-b914-bb14a76af9f0" valueTypeId="8ee524e5-3bf3-4511-9412-b2d2c199160d"/>
+    <recordSetType typeId="62aadc5b-b4c8-4dc8-9dff-f44b931d10c3" valueTypeId="15f03496-d366-4e35-a005-5fe0581af665"/>
+    <recordKeyType typeId="cb8f255b-6db3-433e-ba44-999b4d86595b" valueTypeId="f6a86ed2-a295-426f-a910-57fccf092ab4"/>
+    <recordType typeId="72add884-7297-463b-9651-480af506e08d" valueTypeId="82130ce4-3064-4420-bade-94636c4fd85d"/>
+    <recordManagerType typeId="f1e25bc2-8640-462a-935d-266de436e76f" valueTypeId="3d9a4de6-49f8-490f-8aa0-c07854e588ec"/>
+  </producedTypes>
+  <name>SendingReports</name>
+  <synonym>
+    <key>en</key>
+    <value>Reports to Send</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Отчеты для отправки</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Rapoarte pentru trimitere</value>
+  </synonym>
+  <editType>InDialog</editType>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Service background task which schedules forwarding reports</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Служебный регистр, используется фоновым заданием по отправки отчетов по расписанию</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul de servicii care a fost utilizat de rapoartele programate pentru transmiterea unei sarcini de fundal</value>
+  </explanation>
+  <resources uuid="36134003-e3fb-4eab-900f-c2ab57a20d6d">
+    <name>AttachmentType</name>
+    <synonym>
+      <key>en</key>
+      <value>Attachment Type</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Тип вложения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Tip atașament</value>
+    </synonym>
+    <type>
+      <types>EnumRef.TableTypes</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Attachment extension</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Расширение отправляемого файла</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Extensia fișierului care trebuie trimis</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.TableTypes.EnumValue.PDF</value>
+    </fillValue>
+  </resources>
+  <resources uuid="b4423870-e247-48b3-bfa5-df86705038af">
+    <name>Copy</name>
+    <synonym>
+      <key>en</key>
+      <value>Copy</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Копия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Copia</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>CC-ed e-mail addresses</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Адреса получателей копии письма</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Adresele destinatarilor unei copii a scrisorii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <resources uuid="08510444-cda0-48e7-a6fa-c09218837406">
+    <name>Data</name>
+    <synonym>
+      <key>en</key>
+      <value>Report Data</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Данные отчета</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Date raport</value>
+    </synonym>
+    <type>
+      <types>ValueStorage</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Report data</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Данные отчета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Date raport</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="83884f00-3e22-4d79-82dc-0a7c29a63647">
+    <name>Receiver</name>
+    <synonym>
+      <key>en</key>
+      <value>Receiver</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получатель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Beneficiar</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Receiver(s) address</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Адрес получателя (получателей)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Adresa beneficiarului (beneficiarilor)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <dimensions uuid="b203a63e-10d6-463c-9602-380acb788c3d">
+    <name>Tenant</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenant</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организация</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Chiriaş</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Tenants</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Application tenant</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Организация</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Chiriaș al aplicației</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="79e392dc-1aab-442b-8c97-dfa4f38fc581">
+    <name>User</name>
+    <synonym>
+      <key>en</key>
+      <value>User</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пользователь</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Utilizator</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User who created the forwarding schedule</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший расписание отправки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat programul de expediere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="aadf8eef-4ca6-402f-aa95-9f8615a8c6b2">
+    <name>Report</name>
+    <synonym>
+      <key>en</key>
+      <value>Report</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Отчет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Raport</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Metadata</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Report</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Отчет</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Raport</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Task xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="79dbf201-c5fa-4e4c-9356-76f7bf38c277">
+  <producedTypes>
+    <objectType typeId="c6fa5451-5b51-41ee-a8da-65b3c965d3ed" valueTypeId="e3617a5b-84ad-487b-be84-b30f9aa9e87d"/>
+    <refType typeId="1c960c6b-6a92-4740-87f6-a5776c8dc018" valueTypeId="73b92812-5c41-4416-bc56-1801f2f954d5"/>
+    <selectionType typeId="066fb0a7-754d-4c1b-b072-fc3401e1c98c" valueTypeId="35ed9157-2bbc-4d2c-945a-afe7e90db9b0"/>
+    <listType typeId="d3f2d889-f944-4af2-8566-2be43bc2afb6" valueTypeId="8acc3a54-f24f-41a0-8bfd-7ad25c3381f5"/>
+    <managerType typeId="04a508d9-12f3-4b42-8aac-1e55ca111dd8" valueTypeId="807a8c14-b6dc-463f-9bad-33ca36c2555e"/>
+  </producedTypes>
+  <name>Task</name>
+  <synonym>
+    <key>en</key>
+    <value>Task</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Задача</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Sarcină</value>
+  </synonym>
+  <inputByString>Task.Task.StandardAttribute.Description</inputByString>
+  <inputByString>Task.Task.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>DontUse</createOnInput>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <explanation>
+    <key>en</key>
+    <value>Tasks</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Задачи</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Sarcine</value>
+  </explanation>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <taskNumberAutoPrefix>DontUse</taskNumberAutoPrefix>
+  <descriptionLength>50</descriptionLength>
+  <addressing>InformationRegister.BPRouter</addressing>
+  <mainAddressingAttribute>Task.Task.AddressingAttribute.User</mainAddressingAttribute>
+  <currentPerformer>SessionParameter.User</currentPerformer>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <attributes uuid="c9f81121-2329-4e91-891a-ef60e9be9236">
+    <name>CompleteDate</name>
+    <synonym>
+      <key>ro</key>
+      <value>Data executării</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата выполнения</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="996b607c-e2cd-4185-9bf0-1d71a72e33a8">
+    <name>UserPerformed</name>
+    <synonym>
+      <key>ro</key>
+      <value>Sarcina este finalizată</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Задачу выполнил</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <addressingAttributes uuid="9b2cd5f8-dbc1-4d1e-9ee5-fa8aa760425d">
+    <name>User</name>
+    <synonym>
+      <key>en</key>
+      <value>Performer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Исполнитель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Executant</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User assigned to this task</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, для которого предназначается данная задача</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul pentru care este destinată sarcina</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <addressingDimension>InformationRegister.BPRouter.Dimension.User</addressingDimension>
+    <fullTextSearch>Use</fullTextSearch>
+  </addressingAttributes>
+  <addressingAttributes uuid="777cb86f-da61-4d67-82e7-ab9f22c4e851">
+    <name>Role</name>
+    <synonym>
+      <key>en</key>
+      <value>Role</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Роль</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Rol</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Roles</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Role</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Роль</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Rol</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <addressingDimension>InformationRegister.BPRouter.Dimension.Role</addressingDimension>
+    <fullTextSearch>Use</fullTextSearch>
+  </addressingAttributes>
+  <addressingAttributes uuid="7b5ecd75-32fd-4561-955f-c5f2bdd1b902">
+    <name>Department</name>
+    <synonym>
+      <key>en</key>
+      <value>Department</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Departments</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Department</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <addressingDimension>InformationRegister.BPRouter.Dimension.Department</addressingDimension>
+    <fullTextSearch>Use</fullTextSearch>
+  </addressingAttributes>
+  <addressingAttributes uuid="9ba2a263-4eae-41a1-80f6-52c757ff8bdd">
+    <name>Activity</name>
+    <synonym>
+      <key>en</key>
+      <value>Activity</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Задача активна</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sarcina este activă</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Task is active</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Задача активна</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sarcina este activă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+    <addressingDimension>InformationRegister.BPRouter.Dimension.Activity</addressingDimension>
+    <fullTextSearch>Use</fullTextSearch>
+  </addressingAttributes>
+</mdclass:Task>

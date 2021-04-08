@@ -1,0 +1,1885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="a97c6f98-ab98-4fe4-af57-96e2b966ccdf">
+  <producedTypes>
+    <objectType typeId="c8b36d2b-ec67-4ad7-8a5c-0b98f9c79f20" valueTypeId="61f36920-fe58-4c9b-bacb-dfb5094d029c"/>
+    <refType typeId="eb6d43af-d4af-47b6-9196-9f51a3e4856a" valueTypeId="ab938d2b-2b7f-4bc3-af83-2f0a29ca681a"/>
+    <selectionType typeId="7c67306b-f1af-4de3-8236-9a8dfc10f36f" valueTypeId="5dc283c4-9c09-4eea-980d-58aa57a8c680"/>
+    <listType typeId="e52c54ca-b4b6-4e84-826b-3ef940d3b655" valueTypeId="e8fbf467-64ce-4bc8-a006-e7db3e2dab1a"/>
+    <managerType typeId="f9a38490-968b-42d1-8d54-5bf989b10cdf" valueTypeId="a6f2c5e0-7a3f-40b7-9d0d-e02308853776"/>
+  </producedTypes>
+  <name>TimeEntry</name>
+  <synonym>
+    <key>en</key>
+    <value>Time Entry</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Запись времени</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Înregistrarea de timp</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Document.TimeEntry.StandardAttribute.Number</inputByString>
+  <searchStringModeOnInputByString>AnyPart</searchStringModeOnInputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Posted</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Date</name>
+    <synonym>
+      <key>en</key>
+      <value>Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data</value>
+    </synonym>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </format>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Number</name>
+    <synonym>
+      <key>ru</key>
+      <value>Номер</value>
+    </synonym>
+    <synonym>
+      <key>en</key>
+      <value>Number</value>
+    </synonym>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <basedOn>Catalog.Projects</basedOn>
+  <basedOn>Task.UserTask</basedOn>
+  <basedOn>Document.InternalOrder</basedOn>
+  <basedOn>Document.SalesOrder</basedOn>
+  <basedOn>Document.Event</basedOn>
+  <createOnInput>Use</createOnInput>
+  <includeHelpInContents>true</includeHelpInContents>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Time Entries</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Записи времени</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Înregistrări de timp</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>Required for detailed accouting of hours worked</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Используется для детального учета рабочего времени</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Folosit pentru contabilizarea detaliată a timpului de lucru</value>
+  </explanation>
+  <dataHistory>Use</dataHistory>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.TimeEntry.Form.Form</defaultObjectForm>
+  <defaultListForm>Document.TimeEntry.Form.List</defaultListForm>
+  <defaultChoiceForm>Document.TimeEntry.Form.Choice</defaultChoiceForm>
+  <realTimePosting>Deny</realTimePosting>
+  <registerRecords>AccumulationRegister.ProjectsCost</registerRecords>
+  <registerRecords>AccumulationRegister.Work</registerRecords>
+  <registerRecords>InformationRegister.TimeEntryRates</registerRecords>
+  <postInPrivilegedMode>true</postInPrivilegedMode>
+  <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
+  <attributes uuid="615ef218-bd63-4333-8fdc-e5569d38b016">
+    <name>Action</name>
+    <synonym>
+      <key>en</key>
+      <value>Action</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Команда</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Acțiune</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Actions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User action</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользовательская команда</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Acțiune utilizator</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3e14cad7-af1e-4cef-9123-095066b2a315">
+    <name>Appearance</name>
+    <synonym>
+      <key>en</key>
+      <value>Color</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Цвет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Culoare</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.CalendarAppearance</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The color scheme used for placing records in the calendar </value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Цветовое оформление используется при выводе записи в календарь</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Înregistrarea culorilor este utilizată când se afișează o înregistrare în calendar</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Catalog.CalendarAppearance.EmptyRef</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="21142c8a-d967-4908-80c1-c80327ef0450">
+    <name>BillableMinutes</name>
+    <synonym>
+      <key>en</key>
+      <value>Billable Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Оплачиваемые минуты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Minute plătite</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Billable time in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Оплачиваемое время в минутах</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Timp facturat în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="64a17018-9db1-4242-9894-945ff3eec8be">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e1baded3-7934-4193-b065-8bad20c459ce">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User who created the document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="618e6414-8854-4b16-ad4d-4cc9ca09ad6e">
+    <name>Customer</name>
+    <synonym>
+      <key>en</key>
+      <value>Customer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Клиент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Client</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Organizations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Customer (possibly our own company) who commissioned the service</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Клиент, для которого выполнялась работа (может быть и наша компания)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Clientul pentru care a fost efectuată lucrarea (poate fi și întreprinderea noastră)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Customer</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="89d0f2f2-669e-4ddb-ab92-597116766048">
+    <name>DocumentOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Document Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.InternalOrder</types>
+      <types>DocumentRef.SalesOrder</types>
+      <types>DocumentRef.ProductionOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Заказ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>!!!</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5bce3b8d-4756-4990-b0c9-68c380343f6a">
+    <name>Duration</name>
+    <synonym>
+      <key>en</key>
+      <value>Duration</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Продолжительность</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Durata</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>7</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Total duration</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Общая продолжительность</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata totală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="701ec260-8ed3-41ea-a583-38723dbb3968">
+    <name>Employee</name>
+    <synonym>
+      <key>en</key>
+      <value>Employee</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сотрудник</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Angajat</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Employees</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Employee</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сотрудник</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Angajat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3368e602-0a6a-4bec-b625-1678ad1a8e7e">
+    <name>Event</name>
+    <synonym>
+      <key>en</key>
+      <value>Event</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Событие</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>!!!</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.Event</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Event</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Событие</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>!!!</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="83eceb85-5737-4589-87ca-3837204592e5">
+    <name>Individual</name>
+    <synonym>
+      <key>en</key>
+      <value>Individual</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Физлицо</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Persoana fizică</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Individuals</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Individual</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Физическое лицо</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Persoana fizică</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="9057f91b-c3b1-4593-bc36-c55432bbd79c">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="6b23a550-d1f2-4573-89d5-5ed2959ecaab">
+    <name>Minutes</name>
+    <synonym>
+      <key>en</key>
+      <value>Duration In Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Продолжительность в минутах</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Durata în minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Duration in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Продолжительность пересчитанная в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata convertită în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="bdca76fc-6dba-424f-8c7a-14e41f7bbe1f">
+    <name>Performer</name>
+    <synonym>
+      <key>en</key>
+      <value>Performer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Исполнитель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Executant</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Performer</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Исполнитель</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Executant</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="1310c70d-bedc-410c-b6b9-bcaffcc9d359">
+    <name>Project</name>
+    <synonym>
+      <key>en</key>
+      <value>Project</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проект</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiect</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Projects</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Проект</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Proiect</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.TimeEntry.Attribute.Customer</field>
+    </choiceParameterLinks>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="4ed80b7e-80ee-4379-931e-54e35695417a">
+    <name>Reminder</name>
+    <synonym>
+      <key>en</key>
+      <value>Remind Before</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Напомнить за</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Amintește înainte</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Reminder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Reminder</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Напоминание</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Memento</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.Reminder.EnumValue._30m</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="a251c966-420a-4cff-8516-d7b058d0b93b">
+    <name>ReminderDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Reminder Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата напоминания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data reamintirii</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Time and date of the time entry reminder</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата и время, когда система напомнит о записи времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data și ora în care sistemul vă va reaminti înregistrarea timpului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="ccc33415-d246-4c71-af83-8a1bc9e8b678">
+    <name>Signature</name>
+    <synonym>
+      <key>en</key>
+      <value>Signature</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подпись</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Semnătură</value>
+    </synonym>
+    <type>
+      <types>ValueStorage</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Client’s signature</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подпись клиента</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Semnătura clientului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="fd838d3d-6812-48f8-81d7-37a1bc6def00">
+    <name>Signer</name>
+    <synonym>
+      <key>en</key>
+      <value>Signer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подписавшийся</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Semnatar</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Contacts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Client name</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Имя клиента</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numele clientului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.TimeEntry.Attribute.Customer</field>
+    </choiceParameterLinks>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="826c8b4a-2ddd-402a-a0c6-5b865d54dff3">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>A Warehouse which expects to ship Orders. </value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, на котором ожидается исполнение Заказа. Другими словами – это место, откуда будет произведена отгрузка заказа клиенту</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.TimeEntry.Attribute.Company</field>
+    </choiceParameterLinks>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="5da97349-73ea-46aa-a7fd-f7ff47f3332f">
+    <name>Choice</name>
+    <synonym>
+      <key>en</key>
+      <value>Choice form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Choice form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Forma de alegere</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="04b2939f-db6b-486f-82ba-783f21789ca8">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="46aef511-3e84-4f79-a8f9-21ed9b8df3c5">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <tabularSections uuid="55061e2a-584b-4826-a408-90c439bcf692">
+    <producedTypes>
+      <objectType typeId="9eb42dee-0d64-4b23-8c68-c721feae33cd" valueTypeId="38f7c014-2ed5-483b-9a94-b814fc02f560"/>
+      <rowType typeId="7fdca629-6725-4304-bb78-b7938ecc3ea9" valueTypeId="e6a64a98-c411-4474-9165-3f62d6b04e18"/>
+    </producedTypes>
+    <name>Items</name>
+    <synonym>
+      <key>en</key>
+      <value>Items</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товары</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Items table</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Таблица товаров</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="8387f25f-ae6e-479e-8951-440b9b2dfe34">
+      <name>Capacity</name>
+      <synonym>
+        <key>en</key>
+        <value>Capacity</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вместимость</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity of units in package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество единиц товара в упаковке</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c7cca161-07ff-4a60-b184-2fb4fd71a0fa">
+      <name>Feature</name>
+      <synonym>
+        <key>en</key>
+        <value>Feature</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Характеристика</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Features</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item feature</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Характеристика товара</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Item</name>
+        <field>Document.TimeEntry.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="be040495-0baf-4cca-bbce-b9da6f5baee3">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Item</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Товар</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Товар</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="37019866-48f5-402a-9b10-b31ac88f2705">
+      <name>Package</name>
+      <synonym>
+        <key>en</key>
+        <value>Pkg</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Уп.</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Packages</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Упаковка</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.TimeEntry.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="77e00a68-754f-4a75-aaf9-eab6b2615d23">
+      <name>Quantity</name>
+      <synonym>
+        <key>en</key>
+        <value>Units</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Единиц</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6d291c12-33da-4585-a795-62844fab30ef">
+      <name>QuantityPkg</name>
+      <synonym>
+        <key>en</key>
+        <value>Qty</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ef89b4a8-7535-4656-bf14-ff04beeb8bc2">
+      <name>RowKey</name>
+      <synonym>
+        <key>en</key>
+        <value>Row Key</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ключ строки</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.RowKeys</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique line key of linked order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный ключ строки заказа</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5e9bb81f-348d-4088-9c1a-0f5f9e338b02">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Series</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item's series</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия товара</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.TimeEntry.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="4030a78e-fa2f-4f94-a49c-8758a2268214">
+      <name>Warehouse</name>
+      <synonym>
+        <key>en</key>
+        <value>Warehouse</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Склад</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Depozit</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Warehouses</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Warehouse from which a shipment will be made </value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Склад, с которого производится отгрузка товаров</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.TimeEntry.Attribute.Company</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="e33bde27-c923-4b43-b865-4fd4da84ef27">
+    <producedTypes>
+      <objectType typeId="e7f9b6fe-a047-48ca-b160-d8b37ed4cdbe" valueTypeId="f42d2578-c3c9-4b5f-9e89-3a78912181d4"/>
+      <rowType typeId="b02aa912-959a-442f-b6c9-686d263fd7c5" valueTypeId="df16491c-f890-493f-b42e-06d5de4134fb"/>
+    </producedTypes>
+    <name>Tasks</name>
+    <synonym>
+      <key>en</key>
+      <value>Tasks</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Задачи</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sarcine</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Table of tasks performed</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Таблица произведенных работ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tabel de lucrări efectuate</value>
+    </toolTip>
+    <fillChecking>ShowError</fillChecking>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="c76a5327-6940-4828-873a-28451555e915">
+      <name>Description</name>
+      <synonym>
+        <key>en</key>
+        <value>Description</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Описание</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descriere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>600</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Additional description</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дополнительное описание</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Descrierea suplimentară</value>
+      </toolTip>
+      <multiLine>true</multiLine>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ffcdaecf-3304-4602-af71-da67a8f5d0e9">
+      <name>DocumentOrder</name>
+      <synonym>
+        <key>en</key>
+        <value>Order</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Заказ</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.InternalOrder</types>
+        <types>DocumentRef.SalesOrder</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Sales Order, Internal Order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Заказ покупателя; Внутренняя заявка</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>Document.TimeEntry.Attribute.Company</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="7137417f-c5a1-45dd-824f-0fc0281205f1">
+      <name>DocumentOrderRowKey</name>
+      <synonym>
+        <key>en</key>
+        <value>Row Key for Linked Order</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ключ строки связанного заказа</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.RowKeys</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique line key of linked order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный ключ строки связанного заказа</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="82ff1189-ae47-470f-9d15-f14e6e417c50">
+      <name>Duration</name>
+      <synonym>
+        <key>en</key>
+        <value>Duration</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Итого</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Total</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Duration of work</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Продолжительность работы</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Durata de muncă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:StringValue">
+        <value>24</value>
+      </maxValue>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="07fd6626-ace9-40e3-a461-bd1d0af8a499">
+      <name>Minutes</name>
+      <synonym>
+        <key>en</key>
+        <value>Duration In Minutes</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Продолжительность в минутах</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Durata în minute</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>10</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Duration in minutes</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Продолжительность пересчитанная в минуты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Durata convertită în minute</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="2c30e3f7-1a60-484c-8a28-ec51bc4a4709">
+      <name>RowKey</name>
+      <synonym>
+        <key>en</key>
+        <value>Row Key</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ключ строки</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.RowKeys</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique line key of linked order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный ключ строки заказа</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="8eecca00-0241-4497-b3b1-19cde78d351b">
+      <name>Task</name>
+      <synonym>
+        <key>en</key>
+        <value>Task</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Задача</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sarcină</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Tasks</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Completed task</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Выполненная задача</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Sarcina finalizată</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ba35b511-a60d-4efb-a5e7-88adaa692d00">
+      <name>TimeEnd</name>
+      <synonym>
+        <key>en</key>
+        <value>Finish</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Конец</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sfârșitul</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Time</dateFractions>
+        </dateQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Record end</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Время окончания работы</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Timpul de finalizare de lucru</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a2feb328-06c2-41ed-8936-417e0d4fa986">
+      <name>TimeStart</name>
+      <synonym>
+        <key>en</key>
+        <value>Start</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Начало</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Început</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Time</dateFractions>
+        </dateQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>DF=HH:mm</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>DF=HH:mm</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Record start</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Время начала работы</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Ora de începere</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="82c2ec20-c4fe-4d91-8b50-642bc4319212">
+      <name>TimeType</name>
+      <synonym>
+        <key>en</key>
+        <value>Time Type</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Тип времени</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Tip de timp</value>
+      </synonym>
+      <type>
+        <types>EnumRef.Time</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Type of time</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Тип времени</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Tip de timp</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <templates uuid="340c328b-d68d-4bc6-960a-e26e0d3e973f">
+    <name>TimeEntry</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Record</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Запись времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrarea de timp</value>
+    </synonym>
+    <templateType>DataCompositionSchema</templateType>
+  </templates>
+  <commands uuid="a2dde121-fa1c-4487-9cd9-65467b45be3a">
+    <name>Add</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Entry</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Запись времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrarea de timp</value>
+    </synonym>
+    <group>ActionsPanelCreate</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>New Time Entry</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Создать запись времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Creați o foaie de pontaj</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="1b2ad35f-ae84-4f65-9d95-027adfbb6bd6">
+    <name>List</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Entries</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Записи времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrări de timp</value>
+    </synonym>
+    <group>NavigationPanelImportant</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Time Entries</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Записи времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Înregistrări de timp</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.TimeEntries</picture>
+    </picture>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="e0e22cab-f741-4fdf-a414-f4feeca7d3d0">
+    <name>Show</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Entries</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Записи времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrări de timp</value>
+    </synonym>
+    <group>FormNavigationPanelGoTo</group>
+    <commandParameterType>
+      <types>CatalogRef.Organizations</types>
+      <types>CatalogRef.Employees</types>
+      <types>CatalogRef.Projects</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Open time records list</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Открыть список записей времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Deschideți lista de înregistrări de timp</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="eb2ccf10-6912-4006-a1c4-a9909480898f">
+    <name>ShowByIndividual</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Entries</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Записи времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrări de timp</value>
+    </synonym>
+    <group>FormNavigationPanelGoTo</group>
+    <commandParameterType>
+      <types>CatalogRef.Individuals</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Open time records list</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Открыть список записей времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Deschideți lista de înregistrări de timp</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="2d502ae0-c2bf-489c-8c34-8df5968d4002">
+    <name>TimeRecord</name>
+    <synonym>
+      <key>en</key>
+      <value>Time Record</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Запись времени</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Înregistrarea de timp</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.TimeEntry</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>PictureAndText</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Printed document form</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печатная форма документа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Formă tipărită a documentului</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>StdPicture.Print</picture>
+    </picture>
+    <shortcut></shortcut>
+  </commands>
+</mdclass:Document>

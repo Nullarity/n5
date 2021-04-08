@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="a9083d81-90b6-4535-a567-10106831ac39">
+  <producedTypes>
+    <selectionType typeId="36caf8e5-c93d-4cb0-a448-8a9b8eb5017b" valueTypeId="2cb33f57-9121-471f-a46a-ee5127d02b4f"/>
+    <listType typeId="e2bf980b-a323-4d2a-a763-74a17f26c117" valueTypeId="23bc55fc-ac6a-4abd-82f4-2c0c2b4219bf"/>
+    <managerType typeId="7615946d-41ee-4bc4-a1d8-855381859353" valueTypeId="077e7fc0-c234-479e-85e7-8973ba6623ad"/>
+    <recordSetType typeId="431e11db-cf98-4204-8083-d13a129df408" valueTypeId="5c1c8040-2510-43cd-925a-b36068bbbf14"/>
+    <recordKeyType typeId="0f43a1e2-1ba4-4e82-987a-c8a90ee886ac" valueTypeId="77bc7c22-6715-41d1-8b6c-de377b1b288d"/>
+    <recordType typeId="b477bf33-b063-4207-92dd-e1db50fcd74c" valueTypeId="ad65daeb-e624-4d2c-9af4-28a87862c171"/>
+  </producedTypes>
+  <name>SalesOrders</name>
+  <synonym>
+    <key>en</key>
+    <value>Sales Orders</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Заказы покупателей</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Comenzile clienților</value>
+  </synonym>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>RecordType</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Accumulated record of Sales Orders.
+ The balance determines the volume of items ordered, not items shipped to the Buyer</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Регистр накопления для учета заказов покупателей. Остаток по данному регистру определяет объем заказанных, но еще не поставленных покупателям товаров</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul acumulării a comenzilor cumpărătorilor. Soldul din acest registru determină volumul de bunuri comandate, dar care nu au fost încă livrate cumpărătorilor</value>
+  </explanation>
+  <resources uuid="f2f6487d-cec7-46a5-9e20-da2e5046ce80">
+    <name>Quantity</name>
+    <synonym>
+      <key>en</key>
+      <value>Quantity</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Количество</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cantitate</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Quantity</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Quantity</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cantitate</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="2ebe8c12-c2c9-479f-8246-ee13e11aceed">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The ordered amount. It was ordered in an indefinite quantity, but in this case, the final amount must be limited to the available stock</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма заказа. Необходимость данного ресурса обусловлена возможностью заказа услуг без количества. В этом случае, контроль исполнения заказа происходит по неотрицательному остатку данного ресурса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valoarea comenzii. Nevoia pentru această resursă este condiționată de capacitatea de a comanda servicii fără cantitate. În acest caz, controlul executării ordinelor se efectuează utilizând soldul negativ al acestei resurse</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="838fac31-5170-4465-868f-7c07de242687">
+    <name>SalesOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Sales Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ покупателя</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda cumpărătorului</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.SalesOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Sales Order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Заказ покупателя</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Comanda cumpărătorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="e9560061-3ff1-49ed-8cf7-398a8920a17e">
+    <name>RowKey</name>
+    <synonym>
+      <key>en</key>
+      <value>Row Key</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ключ строки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cheia rândului</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.RowKeys</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Unique line key of linked order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный ключ строки заказа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cheia unică a liniei din comandă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

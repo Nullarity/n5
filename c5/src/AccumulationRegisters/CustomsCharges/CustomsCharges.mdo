@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="12a4b866-b8aa-406c-b093-6db15af7394c">
+  <producedTypes>
+    <selectionType typeId="6cee0c6b-4fb6-4a9e-988f-35d14911ddb5" valueTypeId="aedfb61c-cd09-464d-8f7f-089e6ce9503a"/>
+    <listType typeId="58595b5f-d153-4be1-8ca0-c1c32f92f0c3" valueTypeId="35441b38-2206-4489-86cd-82298047a97f"/>
+    <managerType typeId="cbf55db1-5d00-4fdd-8c61-acfe8432f00e" valueTypeId="267fd7e2-b14b-40e2-b535-a2a04758f79c"/>
+    <recordSetType typeId="da9245ac-1200-4fd7-bf4b-9b4ed8205ad1" valueTypeId="d6319b41-e981-4c59-abb5-420d1580678e"/>
+    <recordKeyType typeId="41128250-d846-40a5-9382-2d00550ba04b" valueTypeId="3207d85e-1cc0-4abf-914f-ae570ca44e50"/>
+    <recordType typeId="d49dd4ae-8429-4445-ab1c-e074459246ea" valueTypeId="6d4063d0-5c42-4fd6-bbbd-bdc2638af5d4"/>
+  </producedTypes>
+  <name>CustomsCharges</name>
+  <synonym>
+    <key>en</key>
+    <value>Customs Charges</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Таможенные выплаты</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Plăți vamale</value>
+  </synonym>
+  <registerType>Turnovers</registerType>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Register is used for accounting customs payments</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Регистр используется для учета распределенных таможенных платежей</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul este utilizat pentru contabilizarea plăților vamale distribuite</value>
+  </explanation>
+  <resources uuid="b5413933-e6be-45c0-bed0-157344a21b1f">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="c99bd938-edba-498b-a0ee-55b8db28c178">
+    <name>Charge</name>
+    <synonym>
+      <key>en</key>
+      <value>Charge</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Платеж</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Plată</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.CustomsCharges</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Charge</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Платеж</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="2667b398-870c-472a-9325-e62bd7ddb632">
+    <name>Document</name>
+    <synonym>
+      <key>en</key>
+      <value>Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Document</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.VendorInvoice</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Lot</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Партия</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Lot</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="6c7e8afc-80e1-4bd8-9e28-cb8b35bdadc5">
+    <name>Item</name>
+    <synonym>
+      <key>en</key>
+      <value>Item</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товар</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Items</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Item</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товар</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>
