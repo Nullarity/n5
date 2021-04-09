@@ -1,4 +1,6 @@
-﻿Call ( "Common.Init" );
+﻿// Test project copying!!
+
+Call ( "Common.Init" );
 types = Call ( "Catalogs.Projects.TestCreation.GetTypes" );
 p = Call ( "Common.Find.Params" );
 for each type in types do
