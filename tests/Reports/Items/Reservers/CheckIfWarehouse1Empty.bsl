@@ -1,0 +1,10 @@
+﻿p = Call("Common.Report.Params");
+p.Path = "e1cib/app/Report.Items";
+filters = new Array ();
+p.Filters = filters;
+filter = Call ( "Common.Report.Filter" );
+filter.Name = "Warehouse";
+filter.Value = _.Warehouse1;
+filters.Add(filter);
+With(Call("Common.Report", p));
+CheckTemplate("#Result");

@@ -1,0 +1,291 @@
+site_name: Contabilizare 5.0
+google_analytics: ["UA-158340881-3", "cont.help"]
+theme:
+  name: readthedocs
+  custom_dir: custom_theme
+markdown_extensions:
+  - footnotes
+  - pyembed.markdown
+  - markdown_checklist.extension
+  - admonition
+  - toc:
+      permalink: true
+  - mdx_include:
+      base_path: "./docs"
+  - markdown_blockdiag:
+      format: svg
+      fontpath: "C:/Windows/Fonts/arial.ttf"
+plugins:
+  - search:
+      lang: ["en", "ru"]
+extra_css: [style.css]
+extra_javascript: [menu.js]
+nav:
+  - О программе: index.md
+  - Установка: start.md
+  - Пользователи и информационные базы: users.md
+  - Частые вопросы: faq.md
+  - Резервирование и размещение: warehousing.md
+  - БСО: forms.md
+  - Календарь: calendar.md
+  - Дополнительные реквизиты: properties.md
+  - Кастомизация: customization.md
+  - Документы:
+      - Авансовый отчет: d/ExpenseReport.md
+      - Акт закупки товаров: d/ItemsPurchase.md
+      - Акт закупки услуг: d/ServicesPurchase.md
+      - Амортизация ОС и НМА: d/AssetsCalculation.md
+      - АО, Мобильный: d/MobileReport.md
+      - Больничный: d/SickLeave.md
+      - Ввод в эксплуатацию ОС: d/Commissioning.md
+      - Ввод МБП в эксплуатацию: d/Startup.md
+      - Ввод остатков: d/Balances.md
+      - Внутренняя заявка: d/InternalOrder.md
+      - Возврат денег от поставщика: d/VendorRefund.md
+      - Возврат денег покупателю: d/Refund.md
+      - Возврат от покупателя: d/Return.md
+      - Возврат поставщику: d/VendorReturn.md
+      - Встреча: d/Meeting.md
+      - Входящее: d/IncomingEmail.md
+      - Выплата ЗП: d/PayEmployees.md
+      - Выпуск продукции: d/Production.md
+      - Документ: d/Document.md
+      - Задолженность покупателей: d/Debts.md
+      - Задолженность поставщикам: d/VendorDebts.md
+      - Заказ на производство: d/ProductionOrder.md
+      - Заказ покупателя: d/SalesOrder.md
+      - Заказ поставщику: d/PurchaseOrder.md
+      - Заказ-инвентаризация: d/IOSheet.md
+      - Закрытие авансовых отчетов: d/ClosingEmployees.md
+      - Закрытие выданных авансов: d/ClosingAdvancesGiven.md
+      - Закрытие полученных авансов: d/ClosingAdvances.md
+      - Запись времени: d/TimeEntry.md
+      - Запись НДС с покупок: d/VATPurchases.md
+      - Запись НДС с продаж: d/VATSales.md
+      - Инвентаризация: d/Inventory.md
+      - Инвентаризация МБП: d/LVIInventory.md
+      - Инвентаризация НМА: d/IntangibleAssetsInventory.md
+      - Инвентаризация ОС: d/AssetsInventory.md
+      - Исходящее: d/OutgoingEmail.md
+      - Кадровые изменения: d/EmployeesTransfer.md
+      - Кассовое перемещение: d/CashTransfer.md
+      - Коммерческое предложение: d/Quote.md
+      - Комплектация: d/Assembling.md
+      - Корректировка долга покупателя: d/AdjustDebts.md
+      - Корректировка долга поставщика: d/AdjustVendorDebts.md
+      - Настройка амортизации НМА: d/AmortizationSetup.md
+      - Настройка амортизации ОС: d/DepreciationSetup.md
+      - Начисление ЗП: d/Payroll.md
+      - НН: d/InvoiceRecord.md
+      - Операция: d/Entry.md
+      - Оплата покупателя: d/Payment.md
+      - Оплата поставщику: d/VendorPayment.md
+      - Остатки ЗП: d/PayrollBalances.md
+      - Остатки НМА: d/IntangibleAssetsBalances.md
+      - Остатки ОС: d/AssetsBalances.md
+      - Остатки ТМЦ: d/ItemBalances.md
+      - Отгрузка: d/Shipment.md
+      - Отклонение: d/Deviation.md
+      - Отпуск: d/Vacation.md
+      - Отсутствие на работе: d/Absence.md
+      - Перемещение: d/Transfer.md
+      - Перемещение диапазона: d/TransferRange.md
+      - Перемещение МБП: d/LVITransfer.md
+      - Перемещение НМА: d/IntangibleAssetsTransfer.md
+      - Перемещение ОС: d/AssetsTransfer.md
+      - ПКО: d/CashReceipt.md
+      - Платежное поручение: d/PaymentOrder.md
+      - Подготовка к отгрузке: d/PickupOrder.md
+      - Поступление товаров: d/VendorInvoice.md
+      - Прием на работу: d/Hiring.md
+      - Принятие к учету НМА: d/IntangibleAssetsCommissioning.md
+      - Прочее поступление: d/ReceiveItems.md
+      - Путевой лист: d/Waybill.md
+      - Разделение диапазона: d/SplitRange.md
+      - Разукомплектация: d/Disassembling.md
+      - Расчет курсовой разницы: d/CalculationRatesDifferences.md
+      - Реализация: d/Invoice.md
+      - Регистрация диапазона: d/EnrollRange.md
+      - РКО: d/CashVoucher.md
+      - Роли: d/Roles.md
+      - Событие: d/Event.md
+      - Списание: d/WriteOff.md
+      - Списание бланка: d/WriteOffForm.md
+      - Списание МБП: d/LVIWriteOff.md
+      - Списание НМА: d/IntangibleAssetsWriteOff.md
+      - Списание ОС: d/AssetsWriteOff.md
+      - Счет покупателя: d/Bill.md
+      - Счет поставщика: d/VendorBill.md
+      - Табель: d/Timesheet.md
+      - Таможенная декларация: d/CustomsDeclaration.md
+      - Увольнение: d/Termination.md
+      - Установка цен: d/SetupPrices.md
+  - Справочники:
+      - Автомобили: c/Cars.md
+      - Адреса: c/Addresses.md
+      - Адресная книга: c/AddressBook.md
+      - Банки: c/Banks.md
+      - Банковские счета: c/BankAccounts.md
+      - Валюты: c/Currencies.md
+      - Варианты оплаты: c/PaymentOptions.md
+      - Виды кампаний: c/CampaignTypes.md
+      - Виды контактов: c/ContactTypes.md
+      - Виды образования: c/EducationTypes.md
+      - Виды субконто: c/Dimensions.md
+      - Виды товаров: c/ItemTypes.md
+      - Города: c/Cities.md
+      - Графики: c/Schedules.md
+      - Графики амортизации: c/DepreciationSchedules.md
+      - Группы долгосрочных активов: c/AssetTypes.md
+      - Группы налогов с продаж: c/TaxGroups.md
+      - Группы пользователей: c/UserGroups.md
+      - Группы пользователей (документы): c/UserGroupsDocuments.md
+      - Группы цен: c/PriceGroups.md
+      - Диапазоны БСО: c/Ranges.md
+      - Договора: c/Contracts.md
+      - Документы об образовании: c/EducationDocuments.md
+      - Должности: c/Positions.md
+      - Единицы: c/Units.md
+      - Задачи: c/Tasks.md
+      - Значения свойств: c/PropertyValues.md
+      - Источники лидов: c/LeadSources.md
+      - Календарь: c/Calendar.md
+      - Категории застрахованных лиц: c/Insurance.md
+      - Классификатор банков: c/BanksClassifier.md
+      - Классификатор должностей: c/PositionsClassifier.md
+      - Книги: c/Books.md
+      - Компании: c/Companies.md
+      - Контакты: c/Contacts.md
+      - Контрагенты: c/Organizations.md
+      - Лиды: c/Leads.md
+      - Маркетинговые кампании: c/Campaigns.md
+      - Марки и виды автомобилей: c/CarTypes.md
+      - Места оплаты: c/PaymentLocations.md
+      - Налоги и отчисления: c/Taxes.md
+      - Настройки обмена: c/Exchange.md
+      - Настройки пользователей: c/UserSettings.md
+      - НДС: c/VAT.md
+      - Нематериальные активы: c/IntangibleAssets.md
+      - Номенклатура: c/Items.md
+      - Нумератор: c/Numeration.md
+      - Образование: c/Education.md
+      - Обращения: c/Salutations.md
+      - Операции: c/Operations.md
+      - Организации: c/Tenants.md
+      - Освобождения: c/DeductionsClassifier.md
+      - Основные средства: c/FixedAssets.md
+      - Отражение затрат: c/ExpenseMethods.md
+      - Отрасли: c/Industries.md
+      - Отчетность: c/Reports.md
+      - Оформление календаря: c/CalendarAppearance.md
+      - Подразделения: c/Departments.md
+      - Подразделения покупателей: c/CustomerDivisions.md
+      - Пользователи: c/Users.md
+      - Помещения: c/Rooms.md
+      - Почтовые метки: c/MailLabels.md
+      - Почтовые ящики: c/Mailboxes.md
+      - Праздники: c/Holidays.md
+      - Причины отказов: c/QuoteRejects.md
+      - Проекты: c/Projects.md
+      - Профессии: c/Professions.md
+      - Разделы задач: c/Sections.md
+      - Районы: c/States.md
+      - Распоряжения: c/Commands.md
+      - Серии: c/Series.md
+      - Склады: c/Warehouses.md
+      - Сотрудники: c/Employees.md
+      - Спецификации: c/BOM.md
+      - Способы доставки: c/DeliveryMethods.md
+      - Статусы задач: c/Statuses.md
+      - Статусы лидов: c/LeadStatuses.md
+      - Статьи ДДС: c/CashFlows.md
+      - Статьи затрат: c/Expenses.md
+      - Статьи увольнения: c/Terminations.md
+      - Страны: c/Countries.md
+      - Таможенные группы: c/CustomsGroups.md
+      - Таможенные платежи: c/CustomsCharges.md
+      - Теги: c/Tags.md
+      - Телефонные номера: c/Phones.md
+      - Территориальные подразделения: c/Divisions.md
+      - Удостоверяющие документы: c/IDTypes.md
+      - Упаковки: c/Packages.md
+      - Условия: c/Terms.md
+      - Учебные заведения: c/Institutions.md
+      - Физлица: c/Individuals.md
+      - Характеристики: c/Features.md
+      - Цены: c/Prices.md
+      - Шаблоны содержаний: c/ContentTemplates.md
+  - Отчеты:
+      - Акт сверки взаиморасчетов: r/Reconciliation.md
+      - Анализ лидов: r/Leads.md
+      - Анализ проектов: r/Projects.md
+      - Анализ рабочего времени: r/TimeWorked.md
+      - Анализ счета: r/AccountAnalysis.md
+      - Банк времени: r/BankedHours.md
+      - Взаиморасчеты с покупателями: r/DebtDetails.md
+      - Взаиморасчеты с поставщиками: r/VendorDebtDetails.md
+      - Внутренние заказы: r/InternalOrders.md
+      - Движения документа: r/Records.md
+      - Дебиторы: r/Debts.md
+      - Диапазоны БСО: r/Ranges.md
+      - Доходы и расходы: r/IncomeStatement.md
+      - Журнал рабочего времени: r/WorkLog.md
+      - Журнал-ордер: r/SubsidiaryLedger.md
+      - Задолженность по проектам: r/ProjectPayments.md
+      - Заказы на производство продукции: r/ProductionOrderItems.md
+      - Заказы покупателей: r/SalesOrders.md
+      - Заказы поставщикам: r/PurchaseOrders.md
+      - Заказы товаров покупателей: r/SalesOrderItems.md
+      - Заказы товаров поставщикам: r/PurchaseOrderItems.md
+      - Закрытие выданных авансов: r/ClosingAdvancesGiven.md
+      - Карточка субконто: r/AnalyticTransactions.md
+      - Карточка счета: r/Transactions.md
+      - Кассовая книга: r/CashBook.md
+      - Книга покупок: r/PurchasesRegister.md
+      - Книга продаж: r/SalesRegister.md
+      - Кредиторы: r/VendorDebts.md
+      - Личная карточка: r/PersonalCard.md
+      - Обеспечение заказов: r/Provision.md
+      - Оборотно-сальдовая ведомость: r/BalanceSheet.md
+      - Обороты счета: r/AccountTurnovers.md
+      - ОСВ по счету: r/AccountBalance.md
+      - Остатки на складах: r/Stock.md
+      - Отчет по проводкам: r/Entries.md
+      - Прайс-лист: r/PriceList.md
+      - Проблемные БСО: r/RangeProblems.md
+      - Продажи: r/Sales.md
+      - Продажи проектов: r/ProjectSales.md
+      - Размещение: r/Allocation.md
+      - Размещение: r/AllocationProduction.md
+      - Расчетная ведомость: r/Payroll.md
+      - Расчетные листки: r/Payslips.md
+      - Себестоимость: r/Cost.md
+      - Состояние коммерческих предложений: r/QuoteStatuses.md
+      - Табель: r/Timesheet.md
+      - Табеля по проектам: r/TimesheetProjects.md
+      - Товары: r/Items.md
+      - Часы работ к выставлению: r/TimeEntriesInvoicing.md
+      - Утверждение табелей: r/TimesheetApprovals.md
+  - Обработки:
+      - Выгрузка в банк: p/UnloadPayments.md
+      - Выгрузка накладных: p/UnloadInvoices.md
+      - Загрузка из банка: d/LoadPayments.md
+      - Загрузка накладных: p/LoadInvoices.md
+      - Календарь: p/Calendar.md
+      - Подбор товаров: p/Items.md
+      - Подготовка к отгрузке: p/PickupOrder.md
+      - Почта: p/EmailClient.md
+      - Расчет себестоимости: p/Cost.md
+      - Удаление объектов: p/DeleteObjects.md
+  - Сообщения: messages.md
+  - Обновления: releases.md
+  - Разработчикам:
+      - Подготовка релизов: code/releases.md
+      - Правила кода: code/codestyle.md
+      - Условное оформление: code/ca.md
+      - Проверка конфигурации: code/checking.md
+      - Запуск фоновых процессов: code/jobs.md
+      - СКД: code/dc.md
+      - Дата сессии: code/sessiondate.md
+      - Подсказки: code/hints.md
+      - Тестирование: code/testing.md

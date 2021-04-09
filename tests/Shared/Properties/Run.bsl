@@ -1,0 +1,13 @@
+﻿StandardProcessing = false;
+Call ( "Shared.Properties.DependentCommonProperty", _ );
+Call ( "Shared.Properties.CreateCommonProperty", _ );
+Call ( "Shared.Properties.CheckEmptyPropertyName", _ );
+Call ( "Shared.Properties.CreatePropertiesForFolder", _ );
+Call ( "Shared.Properties.CheckPositionInPropertiesListAfterSaving", _ );
+Call ( "Shared.Properties.CreatePropertiesForItem", _ );
+Call ( "Shared.Properties.InheritPropertiesFromFolder", _ );
+Call ( "Shared.Properties.TestGroupInName", _ );
+Call ( "Shared.Properties.TestCopy", _ );
+Call ( "Shared.Properties.TestDefaultValuesOnCreate", _ );
+Call ( "Shared.Properties.CheckMinMaxValues", _ );
+Call ( "Shared.Properties.CheckConditionalAppearance", _ );

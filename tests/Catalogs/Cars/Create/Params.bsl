@@ -1,0 +1,12 @@
+﻿p = new Structure ();
+p.Insert ( "Description", "Car: " + CurrentDate () );
+p.Insert ( "Parent" );
+p.Insert ( "Driver" );
+p.Insert ( "FixedAsset" );
+p.Insert ( "Warehouse" );
+p.Insert ( "CarType" );
+p.Insert ( "CarNumber", "" );
+p.Insert ( "GarageNumber", "" );
+p.Insert ( "ChassisNumber", "" );
+p.Insert ( "MotorNumber", "" );
+return p;

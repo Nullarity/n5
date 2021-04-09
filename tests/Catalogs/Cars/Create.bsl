@@ -1,0 +1,13 @@
+﻿Commando ( "e1cib/data/Catalog.Cars" );
+With ( "Cars (create)" );
+Set ( "#Description", _.Description );
+Set ( "#Parent", _.Parent );
+Set ( "#Driver", _.Driver );
+Set ( "#FixedAsset", _.FixedAsset );
+Set ( "#Warehouse", _.Warehouse );
+Set ( "#CarType", _.CarType );
+Set ( "#CarNumber", _.CarNumber );
+Set ( "#GarageNumber", _.GarageNumber );
+Set ( "#ChassisNumber", _.ChassisNumber );
+Set ( "#MotorNumber", _.MotorNumber );
+Click ( "#FormWriteAndClose" );

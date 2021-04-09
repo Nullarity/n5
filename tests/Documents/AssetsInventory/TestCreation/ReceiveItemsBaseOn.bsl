@@ -1,0 +1,22 @@
+﻿Close ( "Records*");
+Close ( "Assets Write*");
+With ( "Assets Inventory *" );
+Click ( "#ItemsTableAdd" );
+Put ( "#ItemsItem", _.Item3 );
+Click ( "#ItemsAvailability" );
+Put ( "#ItemsAmount", 200 );
+Click ( "#FormDocumentReceiveItemsCreateBasedOn" );
+
+form = With ( "Receive Items *" );
+Put ( "#Account", _.Account );
+Put ( "#Warehouse", _.Warehouse );
+Activate ( "#FixedAssets" );
+Click ( "#FixedAssetsEdit" );
+With ( "Fixed Asset" );
+Put ( "#Employee", _.Employee );
+Click ( "#FormOK" );
+With ( form );
+Click ( "#FormPost" );
+Click ( "#FormReportRecordsShow" );
+With ( "Records: Receive Items *" );
+Call ( "Common.CheckLogic", "#TabDoc" );

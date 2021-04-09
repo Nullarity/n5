@@ -1,0 +1,20 @@
+﻿form = With ( "Receive *" );
+Set( "#Account", "7141" );
+form.GotoNextItem ();
+Put ( "#Warehouse", "Main" );
+Put ( "#Dim1", _.Expense );
+form.GotoNextItem ();
+table = Activate ( "#Items" );
+p = Call ( "Common.Row.Params" );
+p.Table = table;
+p.Column = "#ItemsAccount";
+p.Row = 1;
+Call ( "Common.Row", p );
+table.ChangeRow ();
+Set ( "#ItemsAccount", "2171", table );
+table.EndEditRow ();
+Click ( "#FormPost" );
+Click ( "#FormReportRecordsShow" );
+With ( "Records: Receive *" );
+Call ( "Common.CheckLogic", "#TabDoc" );
+

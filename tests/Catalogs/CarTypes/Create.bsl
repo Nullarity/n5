@@ -1,0 +1,11 @@
+﻿Commando ( "e1cib/data/Catalog.CarTypes" );
+Set ( "#Description", _.Description );
+Put ( "#Type", _.Type );
+Activate ( "#PageNorms" );
+Put ( "#FuelMain", _.FuelMain );
+Set ( "#TankCapacity", _.TankCapacity );
+Set ( "#OdometerSummer", _.OdometerSummer );
+Set ( "#OdometerWinter", _.OdometerWinter );
+Set ( "#OdometerSummerCity", _.OdometerSummerCity );
+Set ( "#OdometerWinterCity", _.OdometerWinterCity );
+Click ( "#FormWriteAndClose" );

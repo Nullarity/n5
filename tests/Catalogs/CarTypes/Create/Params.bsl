@@ -1,0 +1,10 @@
+﻿p = new Structure ();
+p.Insert ( "Description", "CarType: " + CurrentDate () );
+p.Insert ( "Type", "Cars" );
+p.Insert ( "FuelMain" );
+p.Insert ( "TankCapacity" );
+p.Insert ( "OdometerSummer" );
+p.Insert ( "OdometerWinter" );
+p.Insert ( "OdometerSummerCity" );
+p.Insert ( "OdometerWinterCity" );
+return p;

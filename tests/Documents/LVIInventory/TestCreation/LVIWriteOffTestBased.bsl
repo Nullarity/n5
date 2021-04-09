@@ -1,0 +1,21 @@
+﻿form = With ( "LVI Write *" );
+Put ( "#ExpenseAccount", "7141" );
+Put ( "#Dim1", _.Expense );
+Put ( "#AmortizationAccount", "2141" );
+table = Activate ( "#Items" );
+p = Call ( "Common.Row.Params");
+p.Table = table;
+p.Column = "#ItemsEmployee";
+p.Row = 1;
+Call ( "Common.Row", p );
+table.ChangeRow ();
+Set ( "#ItemsEmployee", _.Employee, table );
+table.EndEditRow ();
+Click ( "#FormPost" );
+Click ( "#FormReportRecordsShow" );
+With ( "Records: LVI Write Off *" );
+Call ( "Common.CheckLogic", "#TabDoc" );
+With ( form );
+Click ( "#FormUndoPosting" );
+Close ( form );
+
