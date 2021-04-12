@@ -13,7 +13,7 @@ MainWindow.ExecuteCommand ( "e1cib/data/Catalog.FixedAssets" );
 With ( "Fixed Assets (cr*" );
 Set ( "#Description", name );
 
-if ( AppName = "Cont5" ) then
+if ( AppName = "c5" ) then
 	value = _.VAT;
 	if ( value <> undefined ) then
 		Put ( "#VAT", value );

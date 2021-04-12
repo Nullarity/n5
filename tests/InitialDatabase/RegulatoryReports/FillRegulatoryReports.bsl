@@ -89,7 +89,7 @@ Function getData ()
 	|	Scenarios.Description
 	|";
 	q = new Query ( s );
-	q.SetParameter ( "Application", "Cont5" );
+	q.SetParameter ( "Application", "c5" );
 	table = q.Execute ().Unload ();
 	array = new Array ();
 	arrayExport = new Array ();

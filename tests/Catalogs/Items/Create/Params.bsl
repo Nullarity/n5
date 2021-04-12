@@ -10,7 +10,7 @@ p.Insert ( "CostMethod" );
 p.Insert ( "Feature" );
 p.Insert ( "UseCustomsGroup", false );
 p.Insert ( "CustomsGroup" );
-if ( AppName = "Cont5" ) then
+if ( AppName = "c5" ) then
 	p.Insert ( "VAT", "20%" );
 	p.Insert ( "Social", false );
 	p.Insert ( "OfficialCode" );

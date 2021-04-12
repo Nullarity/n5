@@ -38,18 +38,26 @@ Procedure DisassembleProgramCode ( Object, ProgramCode, Building = false ) expor
 	if ( Building ) then
 		Object.Procedures = new Map ();
 		Object.ExecutedProcedures = new Map ();
-	endif; 
-	pattern = "\s*?procedure\s+(\w+).+\n([\s\S]*?)endprocedure"; 
-	matches = Regexp.Select ( ProgramCode, pattern );
-	if ( Building ) then
-		for each match in matches do
-			addProcedure ( match.Groups [ 1 ], Object, match.Groups [ 0 ] );
-		enddo;
-	else
-		for each match in matches do
-			addDependency ( match.Groups [ 1 ], Object, match.Groups [ 0 ] );
-		enddo;
 	endif;
+	// Lunux bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86164 workaround
+	procedures = Regexp.Split ( ProgramCode, "EndProcedure" );
+	for each chunk in procedures do
+		if ( IsBlankString ( chunk ) ) then
+			continue;
+		endif;
+		i = StrFind ( chunk, "Procedure" );
+		if ( i > 0 ) then
+			j = StrFind ( chunk, "(", , i );
+			name = TrimAll ( Mid ( chunk, i + 9, j - i - 9 ) );
+			j = StrFind ( chunk, Chars.LF, , j );
+			body = Mid ( chunk, j );
+		endif;
+		if ( Building ) then
+			addProcedure ( body, Object, name );
+		else
+			addDependency ( body, Object, name );
+		endif;
+	enddo; 
 
 EndProcedure 
 

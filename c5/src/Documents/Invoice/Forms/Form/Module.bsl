@@ -346,6 +346,7 @@ Procedure loadSalesOrders ( Table, Clean )
 			docRow.Income = accounts.Income;
 			docRow.VATAccount = accounts.VAT;
 		endif;
+		Computations.Discount ( docRow );
 		Computations.Amount ( docRow );
 		Computations.Total ( docRow, vatUse );
 		if ( oneOrder
@@ -1059,6 +1060,7 @@ Procedure applyItem ()
 	ItemsRow.ProducerPrice = data.ProducerPrice;
 	ItemsRow.Social = data.Social;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow )
@@ -1093,6 +1095,7 @@ EndFunction
 Procedure ItemsFeatureOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	setProducerPrice ();
 	Computations.ExtraCharge ( ItemsRow );
@@ -1159,6 +1162,7 @@ Procedure applyPackage ()
 	ItemsRow.Price = data.Price;
 	ItemsRow.ProducerPrice = data.ProducerPrice;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
@@ -1184,6 +1188,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
@@ -1194,6 +1199,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
@@ -1224,6 +1230,7 @@ EndProcedure
 Procedure ItemsPricesOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
@@ -1318,6 +1325,7 @@ Procedure applyService ()
 	ServicesRow.VATRate = data.Rate;
 	ServicesRow.VATAccount = data.VATAccount;
 	ServicesRow.Income = data.Income;
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1342,6 +1350,7 @@ EndFunction
 Procedure ServicesFeatureOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1358,6 +1367,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1385,6 +1395,7 @@ EndProcedure
 Procedure ServicesPricesOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	

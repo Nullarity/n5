@@ -5,7 +5,7 @@ p.Insert ( "Item" );
 p.Insert ( "Quantity" );
 p.Insert ( "Price" );
 p.Insert ( "Account" ); // can be empty
-if ( AppName = "Cont5" ) then
+if ( AppName = "c5" ) then
 	p.Insert ( "Social", false );
 	p.Insert ( "ProducerPrice", 0 );
 endif;

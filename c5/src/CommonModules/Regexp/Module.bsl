@@ -22,3 +22,11 @@ Function Replace ( What, How, Replacement ) export
 	return exp.Replace ( What, How, Replacement );
 
 EndFunction
+
+Function Split ( What, How ) export
+	
+	//@skip-warning
+	exp = CoreExtension.GetLibrary ( "Regex" );
+	return Conversion.FromJSON ( exp.Split ( What, How ) );
+
+EndFunction

@@ -3,7 +3,7 @@
 MainWindow.ExecuteCommand ( "e1cib/data/Document.VendorInvoice" );
 form = With ( "Vendor Invoice (create)" );
 
-if ( AppName <> "Cont5" ) then
+if ( AppName <> "c5" ) then
 	Put ( "#TaxGroup", _.TaxGroup );
 endif;	
 Put ( "#Date", _.Date );

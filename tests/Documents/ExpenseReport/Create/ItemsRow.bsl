@@ -7,7 +7,7 @@ p.Insert ( "Price" );
 p.Insert ( "Account" ); // can be empty
 p.Insert ( "Date" );
 p.Insert ( "Number" );
-if ( AppName = "Cont5" ) then
+if ( AppName = "c5" ) then
 	p.Insert ( "Social", false );
 	p.Insert ( "ProducerPrice", 0 );
 endif;

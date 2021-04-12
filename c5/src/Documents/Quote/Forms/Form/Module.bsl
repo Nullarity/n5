@@ -260,6 +260,7 @@ Procedure addItem ( Fields )
 		row.Quantity = row.Quantity + Fields.Quantity;
 		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif; 
+	Computations.Discount ( row );
 	Computations.Amount ( row );
 	Computations.Total ( row, Object.VATUse );
 	InvoiceForm.CalcTotals ( Object );
@@ -447,6 +448,7 @@ Procedure applyItem ()
 	ItemsRow.VATCode = data.VAT;
 	ItemsRow.VATRate = data.Rate;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -470,6 +472,7 @@ EndFunction
 Procedure ItemsFeatureOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -508,6 +511,7 @@ Procedure applyPackage ()
 	ItemsRow.Capacity = data.Capacity;
 	ItemsRow.Price = data.Price;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -530,6 +534,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -539,6 +544,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -566,6 +572,7 @@ EndProcedure
 Procedure ItemsPricesOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	
@@ -636,6 +643,7 @@ Procedure applyService ()
 	ServicesRow.Description = data.FullDescription;
 	ServicesRow.VATCode = data.VAT;
 	ServicesRow.VATRate = data.Rate;
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	Computations.Total ( ServicesRow, Object.VATUse );
 	
@@ -656,6 +664,7 @@ EndFunction
 Procedure ServicesFeatureOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	Computations.Total ( ServicesRow, Object.VATUse );
 	
@@ -672,6 +681,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	Computations.Total ( ServicesRow, Object.VATUse );
 	
@@ -699,6 +709,7 @@ EndProcedure
 Procedure ServicesPricesOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	Computations.Total ( ServicesRow, Object.VATUse );
 	

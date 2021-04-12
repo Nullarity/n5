@@ -20,7 +20,7 @@ else
 	shipments = _.Shipments;
 	production = _.Production;
 	products = _.Products;
-	if ( AppName = "Cont5" ) then
+	if ( AppName = "c5" ) then
 		division = _.Division;
 	endif;	
 endif;

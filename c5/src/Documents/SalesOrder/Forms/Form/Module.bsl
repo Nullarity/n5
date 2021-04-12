@@ -1043,6 +1043,7 @@ Procedure applyItem ()
 	ItemsRow.VATCode = data.VAT;
 	ItemsRow.VATRate = data.Rate;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1066,6 +1067,7 @@ EndFunction
 Procedure ItemsFeatureOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1104,6 +1106,7 @@ Procedure applyPackage ()
 	ItemsRow.Capacity = data.Capacity;
 	ItemsRow.Price = data.Price;
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1126,6 +1129,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1135,6 +1139,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1177,6 +1182,7 @@ EndProcedure
 Procedure ItemsPricesOnChange ( Item )
 	
 	priceItem ();
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1256,6 +1262,7 @@ Procedure applyService ()
 	ServicesRow.Description = data.FullDescription;
 	ServicesRow.VATCode = data.VAT;
 	ServicesRow.VATRate = data.Rate;
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1276,6 +1283,7 @@ EndFunction
 Procedure ServicesFeatureOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1292,6 +1300,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
@@ -1319,6 +1328,7 @@ EndProcedure
 Procedure ServicesPricesOnChange ( Item )
 	
 	priceService ();
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	
