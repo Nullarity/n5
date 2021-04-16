@@ -35,4 +35,34 @@ exceptions.Add("Documents.Document.PublishChangedFiles");
 exceptions.Add("Documents.Document.RenameFile");
 exceptions.Add("Documents.Document.TheSameSubject");
 p.Exceptions = exceptions;
-Call("Tester.Execute", p);
+
+// Restore & update database 
+if ( not p.TestingOnly ) then
+	Call ( "Tester.Infobase.Deploy", p );
+endif;
+if ( p.UpdateOnly ) then
+	return;
+endif;
+
+params = new Structure ();
+params.Insert ( "Name", String ( p.Application ) );
+params.Insert ( "Folder", p.Folder );
+params.Insert ( "Exceptions", p.Exceptions );
+list = Call ( "Tester.Scenarios", params );
+batch = 5;
+currentBatch = 0;
+tests = list.Count ();
+chunk = new Array ();
+for each scenario in list do
+	record = ParametersSpace ().JobRecord ();
+	record.Scenario = scenario;
+	record.PinApplication = p.Application;
+	record.Disconnect = false;
+	chunk.Add ( record );
+	currentBatch = currentBatch + 1;
+	if ( currentBatch = batch ) then
+		NewJob ( "Tester", chunk );
+		currentBatch = 0;
+		chunk = new Array ();
+	endif;
+enddo;
