@@ -19,7 +19,7 @@ Set("#VATUse", "Included in Price");
 Click("#FormWrite");
 code = Fetch("#Code");
 
-Run("CreateContractVendor", ?(useParams, _, undefined));
+Run("CreateVendor.CreateContractVendor", ?(useParams, _, undefined));
 With("*(Organizations)");
 Close();
 

@@ -207,7 +207,8 @@ Function presentation ( Value )
 	
 	type = TypeOf ( Value );
 	if ( type = Type ( "CatalogRef.Organizations" ) ) then
-		return DF.Pick ( Value, "FullDescription" );
+		data = DF.Values ( Value, "Individual, Description, FullDescription" );
+		return ? ( data.Individual, data.Description, data.FullDescription );
 	else
 		return String ( Value );
 	endif; 

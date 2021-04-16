@@ -22,8 +22,8 @@ EndProcedure
 
 Procedure checkDiscountAccount ( CheckedAttributes )
 	
-	discount = Discounts.Total ( "Discount" );
-	if ( discount > 0 ) then
+	value = Discounts.Total ( "Discount" );
+	if ( value > 0 ) then
 		CheckedAttributes.Add ( "DiscountAccount" );
 	endif; 
 	

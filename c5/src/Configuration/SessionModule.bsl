@@ -98,7 +98,7 @@ EndProcedure
 
 Procedure setSession ()
 	
-	StartingSrv.NewSession ( ComputerName (), false, false, false, false );
+	StartingSrv.NewSession ( ComputerName (), false, false, false, false, false );
 	
 EndProcedure 
 

@@ -40,13 +40,13 @@ Function CurrentCompany () export
 	
 EndFunction 
 
-Function NewSession ( val Computer, val WebClient, val MobileClient, val ThinClient, val ThickClient ) export
+Function NewSession ( val Computer, val WebClient, val MobileClient, val ThinClient, val ThickClient, val Linux ) export
 	
 	SetPrivilegedMode ( true );
 	host = getComputer ( Computer );
-	session = findSession ( host, WebClient, MobileClient, ThinClient, ThickClient );
+	session = findSession ( host, WebClient, MobileClient, ThinClient, ThickClient, Linux );
 	if ( session = undefined ) then
-		session = createSession ( host, WebClient, MobileClient, ThinClient, ThickClient );
+		session = createSession ( host, WebClient, MobileClient, ThinClient, ThickClient, Linux );
 	endif; 
 	SessionParameters.Session = session;
 	SetPrivilegedMode ( false );
@@ -67,7 +67,7 @@ Function getComputer ( Name )
 	
 EndFunction 
 
-Function findSession ( Host, WebClient, MobileClient, ThinClient, ThickClient )
+Function findSession ( Host, WebClient, MobileClient, ThinClient, ThickClient, Linux )
 	
 	s = "
 	|select top 1 Sessions.Ref as Ref
@@ -79,6 +79,7 @@ Function findSession ( Host, WebClient, MobileClient, ThinClient, ThickClient )
 	|and Sessions.MobileClient = &MobileClient
 	|and Sessions.ThinClient = &ThinClient
 	|and Sessions.ThickClient = &ThickClient
+	|and Sessions.Linux = &Linux
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Computer", Host );
@@ -87,12 +88,13 @@ Function findSession ( Host, WebClient, MobileClient, ThinClient, ThickClient )
 	q.SetParameter ( "MobileClient", MobileClient );
 	q.SetParameter ( "ThinClient", ThinClient );
 	q.SetParameter ( "ThickClient", ThickClient );
+	q.SetParameter ( "Linux", Linux );
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, undefined, table [ 0 ].Ref );
 	
 EndFunction 
 
-Function createSession ( Host, WebClient, MobileClient, ThinClient, ThickClient )
+Function createSession ( Host, WebClient, MobileClient, ThinClient, ThickClient, Linux )
 	
 	obj = Catalogs.Sessions.CreateItem ();
 	obj.Computer = Host;
@@ -102,6 +104,7 @@ Function createSession ( Host, WebClient, MobileClient, ThinClient, ThickClient 
 	obj.MobileClient = MobileClient;
 	obj.ThinClient = ThinClient;
 	obj.ThickClient = ThickClient;
+	obj.Linux = Linux;
 	obj.Write ();
 	return obj.Ref;
 	

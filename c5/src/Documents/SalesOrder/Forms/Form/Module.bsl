@@ -307,7 +307,7 @@ Procedure sqlQuote ()
 	|// #Items
 	|select Items.Feature as Feature, Items.DeliveryDate as DeliveryDate, Items.DiscountRate as DiscountRate, Items.Item as Item,
 	|	Items.Package as Package, Items.Price as Price, Items.Prices as Prices, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
-	|	Items.DiscountRate as Discount, Items.Capacity as Capacity, Items.Total as Total, Items.VAT as VAT, 
+	|	Items.Discount as Discount, Items.Capacity as Capacity, Items.Total as Total, Items.VAT as VAT, 
 	|	Items.VATRate as VATRate, Items.VATCode as VATCode,
 	|	Items.Amount as Amount, value ( Enum.Reservation.None ) as Reservation
 	|from Document.Quote.Items as Items

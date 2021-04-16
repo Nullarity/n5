@@ -259,7 +259,10 @@ Procedure sqlItems ( Env )
 	|	Items.RowKey as RowKey, Items.TimeEntryRow as TimeEntryRow,
 	|" + amount + " as Amount";
 	if ( usual ) then
-		s = s + ", " + contractAmount + " as ContractAmount, " + amountGeneral + " as AmountGeneral, " + contractVAT + " as ContractVAT";
+		s = s + ", Items.Amount as DocumentAmount, "
+		+ contractAmount + " as ContractAmount, "
+		+ amountGeneral + " as AmountGeneral, "
+		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "
 	|into Items
@@ -274,7 +277,10 @@ Procedure sqlItems ( Env )
 	|	case when Services.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Services.Ref.TimeEntry else Services.TimeEntry end as TimeEntry,
 	|" + amount + " as Amount";
 	if ( usual ) then
-		s = s + ", " + contractAmount + " as ContractAmount, " + amountGeneral + " as AmountGeneral, " + contractVAT + " as ContractVAT";
+		s = s + ", Services.Amount as DocumentAmount, "
+		+ contractAmount + " as ContractAmount, "
+		+ amountGeneral + " as AmountGeneral, "
+		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "
 	|into Services
@@ -400,7 +406,7 @@ Procedure sqlSalesOrders ( Env )
 	s = "
 	|// ^SalesOrders
 	|select Items.Item as Item, Items.LineNumber as LineNumber, Items.Table as Table, Items.Feature as Feature,
-	|	Items.Quantity as Quantity, Items.Amount as Amount, Items.SalesOrder as SalesOrder,
+	|	Items.Quantity as Quantity, Items.DocumentAmount as Amount, Items.SalesOrder as SalesOrder,
 	|	Items.RowKey as RowKey, case when ( SalesOrders.Item is null ) then true else false end as InvalidRow
 	|from Items as Items
 	|	//
@@ -416,7 +422,7 @@ Procedure sqlSalesOrders ( Env )
 	|where Items.SalesOrder <> value ( Document.SalesOrder.EmptyRef )
 	|union all
 	|select Services.Item, Services.LineNumber, Services.Table, Services.Feature, Services.Quantity,
-	|	Services.Amount, Services.SalesOrder, Services.RowKey,
+	|	Services.DocumentAmount, Services.SalesOrder, Services.RowKey,
 	|	case when ( SalesOrders.Item is null ) then true else false end
 	|from Services as Services
 	|	//

@@ -9,6 +9,7 @@ Procedure OnStart ()
 	mobileClient = false;
 	thinClient = false;
 	thickClient = true;
-	StartingSrv.NewSession ( computer, webClient, mobileClient, thinClient, thickClient );
+	linux = Framework.IsLinux ();
+	StartingSrv.NewSession ( computer, webClient, mobileClient, thinClient, thickClient, linux );
 	
 EndProcedure

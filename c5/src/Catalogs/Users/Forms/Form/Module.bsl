@@ -209,6 +209,7 @@ EndFunction
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( limitReached () ) then
 		Cancel = true;
 		return;

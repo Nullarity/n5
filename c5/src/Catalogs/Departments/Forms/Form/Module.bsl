@@ -19,6 +19,7 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		CopyingObject = Parameters.CopyingValue;
 		fillNew ();

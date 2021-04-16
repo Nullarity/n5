@@ -67,6 +67,7 @@ EndFunction
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		Options.Organization ( ThisObject, Object.Ref );
 		OptionalProperties.Load ( ThisObject );

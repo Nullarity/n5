@@ -7,10 +7,10 @@ search = new Map ();
 search.Insert ( "Description", "General" );
 list.GotoRow ( search, RowGotoDirection.Down );
 Click ( "Edit", formContracts.GetCommandBar () );
-itemContractForm = With ( "*(Contracts)" );
+itemContractForm = With ( "General (Contracts)", true );
 useParams = ( _ <> undefined );
 mainCurrency = ? ( useParams, _.Currency, Call ( "Select.MainCurrencyName" ) );
-Set ( "Currency", mainCurrency );
+Set ( "!Currency", mainCurrency );
 if ( useParams ) then
 	if ( AppName <> "MobileVTree" ) then
 		Choose ( "#VendorBank" );

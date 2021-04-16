@@ -75,7 +75,7 @@ Procedure sqlSalesOrder ()
 	|// #Items
 	|select Items.Feature as Feature, Items.DeliveryDate as DeliveryDate, Items.DiscountRate as DiscountRate, Items.Item as Item,
 	|	Items.Package as PackagePlan, Items.Price as Price, Items.Prices as Prices, Items.Quantity as QuantityPlan,
-	|	Items.QuantityPkg as QuantityPkgPlan, Items.DiscountRate as Discount,
+	|	Items.QuantityPkg as QuantityPkgPlan, Items.Discount as Discount,
 	|	Items.Capacity as CapacityPlan, Items.VAT as VAT, Items.VATCode as VATCode, Items.Total as Total,
 	|	Items.VATRate as VATRate, Items.Amount as Amount, Items.Reservation as Reservation, Items.Stock as Stock,
 	|	Items.RowKey as RowKey, Items.DocumentOrder as DocumentOrder, Items.DocumentOrderRowKey as DocumentOrderRowKey

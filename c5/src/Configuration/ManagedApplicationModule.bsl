@@ -69,7 +69,8 @@ Procedure initOptions ()
 	#else
 		thickClient = false;
 	#endif
-	set.Insert ( "Session", StartingSrv.NewSession ( computer, webClient, mobileClient, thinClient, thickClient ) );
+	linux = Framework.IsLinux ();
+	set.Insert ( "Session", StartingSrv.NewSession ( computer, webClient, mobileClient, thinClient, thickClient, linux ) );
 	SetInterfaceFunctionalOptionParameters ( set );
 	
 EndProcedure 

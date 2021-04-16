@@ -20,10 +20,10 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		initPhones ();
 		fillNew ();
-		
 		base = Parameters.Basis;
 		if ( base <> undefined
 			and TypeOf ( base ) = Type ( "CatalogRef.Leads" ) ) then

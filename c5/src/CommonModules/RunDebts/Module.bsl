@@ -324,11 +324,11 @@ Procedure commitOverpayment ( Env, Payments )
 	endif;
 	for each row in Payments do
 		payment = row.Payment;
-		paymentFields = DF.Values ( payment, paymentFields );
+		data = DF.Values ( payment, paymentFields );
 		if ( debtor ) then
-			p.AccountDr = paymentFields.AdvanceAccount;
+			p.AccountDr = data.AdvanceAccount;
 		else
-			p.AccountCr = paymentFields.AdvanceAccount;
+			p.AccountCr = data.AdvanceAccount;
 		endif;
 		overpayment = row.Amount;
 		p.CurrencyAmountDr = overpayment;
@@ -336,15 +336,15 @@ Procedure commitOverpayment ( Env, Payments )
 		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, rate, factor );
 		p.Operation = Enums.Operations.AdvanceApplied;
 		p.Content = operationAdvance + payment;
-		reverse = reverseVAT and paymentFields.VAT <> 0;
+		reverse = reverseVAT and data.VAT <> 0;
 		if ( reverse ) then
 			p.Dependency = payment;
 		endif;
 		GeneralRecords.Add ( p );
 		if ( reverse ) then
-			p.AccountDr = paymentFields.ReceivablesVATAccount;
-			p.AccountCr = paymentFields.VATAccount;
-			vatAmount = - overpayment + overpayment * ( 100 / ( 100 + paymentFields.VAT ) );
+			p.AccountDr = data.ReceivablesVATAccount;
+			p.AccountCr = data.VATAccount;
+			vatAmount = - overpayment + overpayment * ( 100 / ( 100 + data.VAT ) );
 			p.Amount = Currencies.Convert ( vatAmount, currency, localCurrency, fields.Date, rate, factor );
 			p.Operation = Enums.Operations.VATAdvancesReverse;
 			p.Content = operationVAT + payment; 

@@ -276,6 +276,7 @@ Procedure headerBySalesOrder ()
 	currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
+	InvoiceForm.SetContractCurrency ( ThisObject );
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure 

@@ -49,3 +49,13 @@ Function getCompatibility ()
 	return version;
 	
 EndFunction
+
+&AtClient
+Function IsLinux () export
+	
+	info = new SystemInfo ();
+	type = info.PlatformType;
+	return type = PlatformType.Linux_x86
+	or type = PlatformType.Linux_x86_64;
+	
+EndFunction

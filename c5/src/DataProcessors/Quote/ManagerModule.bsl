@@ -130,8 +130,8 @@ Procedure sqlTables ( Env )
 	s = "
 	|// #Items
 	|select Items.Item.Description as Item, Items.Feature.Description as Feature, 
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
-	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as Quantity,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	Items.QuantityPkg as Quantity,
 	|	" + total + " as Total, " + vat + " as VAT, " + price + " as Price, " + amount + " as Amount, " + discount + " as Discount
 	|from Document." + table + ".Items as Items
 	|where Items.Ref = &Ref

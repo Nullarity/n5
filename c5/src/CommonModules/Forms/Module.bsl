@@ -387,3 +387,15 @@ Function EvalAppearance ( Expression ) export
 	return Eval ( Expression );
 	
 EndFunction
+
+// This procedure is bug workaround for linux system.
+// Get rid this procedure and related code after bug fix
+&AtServer
+Procedure RedefineOpeningModeForLinux ( Form ) export
+	
+	if ( Form.WindowOpeningMode = FormWindowOpeningMode.Independent
+		and Environment.LinuxClient () ) then
+		Form.WindowOpeningMode = FormWindowOpeningMode.LockOwnerWindow;
+	endif;
+	
+EndProcedure

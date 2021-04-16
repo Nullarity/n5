@@ -15,3 +15,9 @@ Function WebClient () export
 	return isClient ( "WebClient" );
 	
 EndFunction
+
+Function LinuxClient () export
+	
+	return DF.Pick ( SessionParameters.Session, "Linux" );
+	
+EndFunction
