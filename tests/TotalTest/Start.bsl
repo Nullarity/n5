@@ -21,7 +21,7 @@ p.Project = AppName;
 p.Workspace = "/home/dmitry/" + AppName;
 p.GitFolder = "/home/dmitry/git/" + AppName;
 p.GitUser = "nullarity";
-p.GitPassword = "d0st0primechatelnost";
+p.GitPassword = Call ("TotalTest.GitPassword");
 p.GitRepo = "github.com/contabilizare/c5";
 p.TestingOnly = _ <> undefined and _ = "TestingOnly";
 exceptions = new Array();
@@ -36,8 +36,15 @@ exceptions.Add("Documents.Document.RenameFile");
 exceptions.Add("Documents.Document.TheSameSubject");
 exceptions.Add("DataProcessors.Update.RegularUpdate");
 exceptions.Add("DataProcessors.Update.SkipUpdate");
-
+exceptions.Add("CommonForms.Settings.TestClosingAfterChangingLicense");
 p.Exceptions = exceptions;
+
+StoreScenarios ();
+agents = 15;
+for i = 1 to agents do
+	NewJob ( "tc" + i, "TotalTest.DisconnectClients" );
+enddo;
+Pause (60);
 
 // Restore & update database 
 if ( not p.TestingOnly ) then
@@ -46,8 +53,6 @@ endif;
 if ( p.UpdateOnly ) then
 	return;
 endif;
-
-StoreScenarios ();
 
 params = new Structure ();
 params.Insert ( "Name", String ( p.Application ) );
