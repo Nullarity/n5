@@ -1,4 +1,4 @@
-﻿// Creates SO and approves it.
+// Creates SO and approves it.
 // Returns SO document number
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document.SalesOrder" );

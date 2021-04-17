@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Opens print form from the Form of documents
 //
 // Conditions:

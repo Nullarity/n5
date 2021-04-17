@@ -1,4 +1,4 @@
-﻿// - Create a new Customer
+// - Create a new Customer
 // - Save it
 // - Open Customer Operations
 // - Create Invoice and check Customer field

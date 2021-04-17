@@ -1,4 +1,4 @@
-﻿// Create Customer
+// Create Customer
 // Set Delivery Days = 10 days
 // Create Sales Order
 // Check if Delivery Date becomes 10 days after current date

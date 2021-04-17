@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 With ( "Download Currencies" );
 Activate ( "#List" );

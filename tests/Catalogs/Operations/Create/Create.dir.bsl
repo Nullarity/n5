@@ -1,4 +1,4 @@
-﻿// Creates a new Operation
+// Creates a new Operation
 //
 // Parameters:
 // Catalogs.Schedules.WorkHours.Params

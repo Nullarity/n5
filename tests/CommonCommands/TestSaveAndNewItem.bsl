@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Catalog.Items" );
+Commando ( "e1cib/list/Catalog.Items" );
 With ( "Items" );
 Clear ( "#WarehouseFilter" );
 p = Call ( "Common.Find.Params" );

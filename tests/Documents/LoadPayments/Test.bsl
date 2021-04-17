@@ -1,4 +1,4 @@
-﻿// *** for each bank
+// *** for each bank
 //1. Test reading file
 //2. test downloading data
 //3. check documents movements

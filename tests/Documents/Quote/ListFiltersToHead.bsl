@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Quotes list form and create a new Quote.
 // Checks the automatic header filling process
 //

@@ -1,4 +1,4 @@
-﻿// - Hiring 2 employees
+// - Hiring 2 employees
 //  - Standard schedule with 3 holidays.
 //  - First holiday is on Sunday
 //  - Second holiday is on workday

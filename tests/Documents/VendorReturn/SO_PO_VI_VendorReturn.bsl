@@ -1,4 +1,4 @@
-﻿// Create Sales Order
+// Create Sales Order
 // Create Purchase Order based on Sales Order
 // Create Vendor Invoice based on Purchase Order
 // Create Vendor Return based on Vendor Invoice

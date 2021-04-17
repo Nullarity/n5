@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Cash Transfers list form and create a new Cashe Transfer.
 // Checks the automatic header filling process
 //

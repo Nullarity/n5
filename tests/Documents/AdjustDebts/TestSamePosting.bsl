@@ -1,4 +1,4 @@
-﻿// 1. Create Sales Order
+// 1. Create Sales Order
 // 2. Create Payment
 // 3. Create Adjust debt
 // 4. Check movemnts

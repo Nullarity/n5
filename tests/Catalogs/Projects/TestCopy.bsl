@@ -1,4 +1,4 @@
-﻿// Test project copying
+// Test project copying
 
 Call ( "Common.Init" );
 types = Call ( "Catalogs.Projects.TestCreation.GetTypes" );

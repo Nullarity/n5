@@ -1,4 +1,4 @@
-﻿// - Create general currencies list
+// - Create general currencies list
 
 Call ( "Common.Init" );
 

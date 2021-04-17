@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Creates a new Bank Account
 //
 // Returns:

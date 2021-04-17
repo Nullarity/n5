@@ -1,4 +1,4 @@
-﻿// Create a new Service
+// Create a new Service
 // Goto Accounts
 // Create a new record
 // Check form appearance

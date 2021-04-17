@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 Commando ( "e1cib/Data/Document.MobileReport" );

@@ -1,4 +1,4 @@
-﻿// Create a new Vendor Payment
+// Create a new Vendor Payment
 // Check if Reference and ReferenceDate are visible
 // Set Method = Cash
 // Check if Reference and ReferenceDate are not visible

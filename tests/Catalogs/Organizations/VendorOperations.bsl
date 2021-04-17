@@ -1,4 +1,4 @@
-﻿// - Create a new Vendor
+// - Create a new Vendor
 // - Save it
 // - Open Vendor Operations
 // - Create Vendor Invoice and check Vendor field

@@ -1,4 +1,4 @@
-﻿// Create Item Balances
+// Create Item Balances
 // Create Range
 // Post Item Balances
 // Post again because it has non-standard date for its records

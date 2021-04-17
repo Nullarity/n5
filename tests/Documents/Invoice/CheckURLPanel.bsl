@@ -1,4 +1,4 @@
-﻿// Create Invoice
+// Create Invoice
 // Create & Close Payment
 // Check if Invoice shows link to the Payment
 

@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Open list of entries
 // - Set filter by operation (operation with Simple flag = false)
 // - Create a new Entry

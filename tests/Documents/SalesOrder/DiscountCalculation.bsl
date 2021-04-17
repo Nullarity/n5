@@ -1,4 +1,4 @@
-﻿// Test discount recalculation in tabular sections of SO, Quote, Invoice and others
+// Test discount recalculation in tabular sections of SO, Quote, Invoice and others
 
 Call ( "Common.Init" );
 CloseAll ();

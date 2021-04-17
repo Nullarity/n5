@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Catalog.Warehouses" );
+Commando ( "e1cib/list/Catalog.Warehouses" );
 With ( "Warehouses" );
 p = Call ( "Common.Find.Params" );
 p.Where = "Description";

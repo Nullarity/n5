@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/command/Catalog.Users.Create" );
+Commando ( "e1cib/command/Catalog.Users.Create" );
 
 // Fill profile
 Set ( "#Description", _.Name );

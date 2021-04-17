@@ -1,4 +1,4 @@
-﻿// Updates c5, develop configuration
+// Updates c5, develop configuration
 
 PinApplication ( "c5" );
 SetVersion ( "Develop" );

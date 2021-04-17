@@ -1,4 +1,4 @@
-﻿// Create two Entries: one for Today and the second for Tomorrow
+// Create two Entries: one for Today and the second for Tomorrow
 // Generate Report today, tomorrow and check results
 
 Call ( "Common.Init" );

@@ -1,4 +1,4 @@
-﻿MainWindow.ExecuteCommand ( "e1cib/data/Document.IntangibleAssetsWriteOff" );
+MainWindow.ExecuteCommand ( "e1cib/data/Document.IntangibleAssetsWriteOff" );
 form = With ( "Intangible Assets Write Off (create)" );
 Put ( "#ExpenseAccount", "8111" );
 Put ( "#Date", Format ( _.Date, "DLF=DT" ) );

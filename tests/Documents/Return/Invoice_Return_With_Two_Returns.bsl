@@ -1,4 +1,4 @@
-﻿// Check the scenario in which two Returns are entered on the basis of one Invoice:
+// Check the scenario in which two Returns are entered on the basis of one Invoice:
 // - Create VendorInvoice
 // - Create Invoice
 // - Generate Return #1

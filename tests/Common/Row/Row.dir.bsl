@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Activates table Row & Column
 
 StandardProcessing = false;

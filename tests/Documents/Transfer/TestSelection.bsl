@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 itemName = "Item Selection, Transfer, np#";

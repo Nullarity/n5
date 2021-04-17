@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in LVI Inventory list form and create a new LVI Inventory.
 // Checks the automatic header filling process
 //

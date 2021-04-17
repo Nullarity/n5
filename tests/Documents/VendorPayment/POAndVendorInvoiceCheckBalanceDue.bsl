@@ -1,4 +1,4 @@
-﻿// Create PO
+// Create PO
 // Create VendorInvoice and check if Balance Due is calculated
 
 Call("Common.Init");

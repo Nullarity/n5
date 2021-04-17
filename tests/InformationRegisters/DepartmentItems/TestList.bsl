@@ -1,4 +1,4 @@
-﻿// Open DepartmentItems list
+// Open DepartmentItems list
 // Set filter by product
 // Clear department filter
 

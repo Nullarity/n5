@@ -1,4 +1,4 @@
-﻿// Create Vendor Payment
+// Create Vendor Payment
 // Create Vendor Invoice
 // Create Vendor Return based on Vendor Invoice
 // Create Vendor Refund based on Vendor Return

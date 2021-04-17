@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 Call ( "Common.Init" );
 

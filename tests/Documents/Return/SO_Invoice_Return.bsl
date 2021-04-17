@@ -1,4 +1,4 @@
-﻿// Create Vendor Invoice
+// Create Vendor Invoice
 // Create Sales Order with Reservation "None"
 // Create Invoice based on Sales Order
 // Create Return based on Invoice

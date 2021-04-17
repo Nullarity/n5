@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Create a new Individual
 // - Add birth certificate & set is as Main
 // - Add passport & set is as Main

@@ -1,4 +1,4 @@
-﻿With ( "*(Organizations)" );
+With ( "*(Organizations)" );
 Click ( "#VendorPage" );
 Choose ( "#VendorContract" );
 formContracts = With ( "Contracts" );

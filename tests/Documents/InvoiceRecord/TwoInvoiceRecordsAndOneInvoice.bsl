@@ -1,4 +1,4 @@
-﻿// Create an Invoice
+// Create an Invoice
 // Create an Invoice Record
 // Open Invoice and check if New Invoice button is not available
 // Open Invoice Record and cancel it

@@ -1,4 +1,4 @@
-﻿// - Open a new Invoice
+// - Open a new Invoice
 // - Choose customer account
 // - Click twice on Show Offline button
 

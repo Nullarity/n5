@@ -1,4 +1,4 @@
-﻿// Create IO with allocation
+// Create IO with allocation
 // Create VI based on IO
 // Check if IO has been closed
 

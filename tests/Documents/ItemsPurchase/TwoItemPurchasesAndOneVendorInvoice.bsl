@@ -1,4 +1,4 @@
-﻿// Create a VendorInvoice
+// Create a VendorInvoice
 // Create an Items Purchase
 // Open VendorInvoice and check if New Items Purchase button is not available
 // Open Items Purchase and cancel it

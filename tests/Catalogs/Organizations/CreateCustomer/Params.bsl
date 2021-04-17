@@ -1,4 +1,4 @@
-﻿p = new Structure ();
+p = new Structure ();
 p.Insert ( "Description", "_Customer: " + CurrentDate () );
 p.Insert ( "Currency", __.LocalCurrency );
 p.Insert ( "Delivery", 0 );

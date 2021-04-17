@@ -1,4 +1,4 @@
-﻿// Open access rights
+// Open access rights
 // Add record
 // Select Document
 

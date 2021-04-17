@@ -1,2 +1,2 @@
-﻿With ( "Account Turnovers*" );
+With ( "Account Turnovers*" );
 CheckTemplate ( "#Result" );

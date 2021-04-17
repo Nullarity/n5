@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Catalog.Salutations" );
+Commando ( "e1cib/list/Catalog.Salutations" );
 list = With ();
 
 setGender ( "Г-жа", "Female", list );

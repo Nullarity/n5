@@ -1,4 +1,4 @@
-﻿// Create 1 Item & 1 Service
+// Create 1 Item & 1 Service
 // Create Production Order
 // Pick Item
 // Pick Service

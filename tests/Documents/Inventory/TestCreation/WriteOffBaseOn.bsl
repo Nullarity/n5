@@ -1,4 +1,4 @@
-﻿form = With ( "Write *" );
+form = With ( "Write *" );
 Set( "#ExpenseAccount", "8111" );
 form.GotoNextItem ();
 Set ( "Expenses", "_Inventory" );

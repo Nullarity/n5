@@ -1,4 +1,4 @@
-﻿// Create a new Opening Balance
+// Create a new Opening Balance
 // Set account = Accounts Receivable
 // Check dimensions work
 // Post the document

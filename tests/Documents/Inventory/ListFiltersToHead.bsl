@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Inventories list form and create a new Inventory.
 // Checks the automatic header filling process
 //

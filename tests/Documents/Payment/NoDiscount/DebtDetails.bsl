@@ -1,4 +1,4 @@
-﻿p = Call ( "Common.Report.Params" );
+p = Call ( "Common.Report.Params" );
 p.Path = "Sales / Customer debt details";
 p.Title = "Customer debt details";
 filters = new Array ();

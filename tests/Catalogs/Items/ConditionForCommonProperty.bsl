@@ -1,4 +1,4 @@
-﻿// Create a common property and a private property.
+// Create a common property and a private property.
 // Create a condition: if common property = x then private property becomes visible
 
 Call ( "Common.Init" );

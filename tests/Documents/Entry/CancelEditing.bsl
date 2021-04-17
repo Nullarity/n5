@@ -1,4 +1,4 @@
-﻿// Create Entry, Add Record, Cancel Record
+// Create Entry, Add Record, Cancel Record
 // Check rows count = 0
 // Add & Commin another record
 // Edit & Cancel

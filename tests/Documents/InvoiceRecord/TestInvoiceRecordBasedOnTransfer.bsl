@@ -1,4 +1,4 @@
-﻿// Creates InvoiceRecord from Transfer and check form InvoiceRecord
+// Creates InvoiceRecord from Transfer and check form InvoiceRecord
 // 1. Create Transfer
 // 2. Generate Invoice Record from Tranfer
 // 3. Check Print form

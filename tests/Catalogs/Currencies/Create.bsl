@@ -1,4 +1,4 @@
-﻿if ( _ = undefined ) then
+if ( _ = undefined ) then
 	currency = "BOB";
 else
 	currency = _;

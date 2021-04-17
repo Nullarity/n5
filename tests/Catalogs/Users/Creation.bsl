@@ -1,4 +1,4 @@
-﻿// Create User
+// Create User
 
 Call ( "Common.Init" );
 CloseAll ();

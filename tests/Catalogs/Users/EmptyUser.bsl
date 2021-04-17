@@ -1,4 +1,4 @@
-﻿// Create User Group and try to assign rights for empty user
+// Create User Group and try to assign rights for empty user
 
 Call("Common.Init");
 CloseAll();

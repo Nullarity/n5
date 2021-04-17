@@ -1,4 +1,4 @@
-﻿// Create Barcode and pick it in Invoice
+// Create Barcode and pick it in Invoice
 
 Call ( "Common.Init" );
 CloseAll ();

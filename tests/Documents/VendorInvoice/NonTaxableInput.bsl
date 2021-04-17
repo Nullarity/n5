@@ -1,4 +1,4 @@
-﻿// Create Non-taxable Vendor Invoice and check if the process
+// Create Non-taxable Vendor Invoice and check if the process
 // of entering data takes into account the Non-taxable setting
 
 Call("Common.Init");

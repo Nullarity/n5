@@ -1,4 +1,4 @@
-﻿// Hire Employee
+// Hire Employee
 // Terminate in the middle of the month
 // Calculate his salary
 

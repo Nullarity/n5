@@ -1,4 +1,4 @@
-﻿// Create employee and then user. Check if employee automatically pops up
+// Create employee and then user. Check if employee automatically pops up
 
 Call ( "Common.Init" );
 CloseAll ();

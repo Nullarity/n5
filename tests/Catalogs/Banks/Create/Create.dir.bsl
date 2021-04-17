@@ -1,4 +1,4 @@
-﻿if ( Call ( "Common.AppIsCont" ) ) then
+if ( Call ( "Common.AppIsCont" ) ) then
 	p = Call ( "Catalogs.BanksClassifier.Create.Params" );
 	p.Code = _.Code;
 	p.Description = _.Description;

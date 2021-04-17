@@ -1,4 +1,4 @@
-﻿// Create a new virtual range
+// Create a new virtual range
 // Check autoregistration process
 
 Call ( "Common.Init" );

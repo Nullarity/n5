@@ -1,4 +1,4 @@
-﻿Connect ();
+Connect ();
 CloseAll ();
 
 MainWindow.ExecuteCommand ( "e1cib/list/Catalog.DeductionsClassifier" );

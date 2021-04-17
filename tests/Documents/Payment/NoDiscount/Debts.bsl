@@ -1,4 +1,4 @@
-﻿p = Call ( "Common.Report.Params" );
+p = Call ( "Common.Report.Params" );
 p.Path = "Sales / Accounts Receivable";
 p.Title = "Accounts Receivable";
 filters = new Array ();

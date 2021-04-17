@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 subject = Call ( "Documents.Document.CreateAndPublish" );

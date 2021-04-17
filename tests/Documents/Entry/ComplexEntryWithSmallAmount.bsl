@@ -1,4 +1,4 @@
-﻿// Create Entry
+// Create Entry
 // Create two Dr records
 // Create two Cr records
 // Post and check records

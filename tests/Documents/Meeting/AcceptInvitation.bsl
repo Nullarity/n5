@@ -1,4 +1,4 @@
-﻿// Create a Meeting
+// Create a Meeting
 // Add Accountant
 // Form Meeting
 // Run Accountant session

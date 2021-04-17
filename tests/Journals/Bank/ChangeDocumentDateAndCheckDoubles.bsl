@@ -1,4 +1,4 @@
-﻿// Open journal Bank
+// Open journal Bank
 // Count journal rows
 // Create & Save a new Customer Payment
 // Change date and save again

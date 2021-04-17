@@ -1,4 +1,4 @@
-﻿// Create Quote with discounts and check if is correctly migrages to SO
+// Create Quote with discounts and check if is correctly migrages to SO
 
 Call ( "Common.Init" );
 CloseAll ();

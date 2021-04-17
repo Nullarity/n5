@@ -1,4 +1,4 @@
-﻿// Check advance returning
+// Check advance returning
 // Pay to Vendor
 // Vendor Refurn
 

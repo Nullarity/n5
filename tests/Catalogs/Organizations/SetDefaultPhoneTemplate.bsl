@@ -1,4 +1,4 @@
-﻿// Open phones list
+// Open phones list
 // Add new template and set it as default
 // Close template and open again
 // Check if Default checkbox is enabled

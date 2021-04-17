@@ -1,4 +1,4 @@
-﻿// Test Waybill creation with economy:
+// Test Waybill creation with economy:
 // - Create Waybill without Inventory
 // - Create Waybill with Inventory
 // - Post & CheckLogic

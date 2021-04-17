@@ -1,4 +1,4 @@
-﻿// - Open list
+// - Open list
 // - Remove all records
 // - Create a new record
 // - Save and Close

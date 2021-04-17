@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 vendorName = "_Vendor create PO from list#";

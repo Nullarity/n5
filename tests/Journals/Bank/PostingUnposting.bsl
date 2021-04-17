@@ -1,4 +1,4 @@
-﻿// - Create bank entry
+// - Create bank entry
 // - Open Bank journal
 // - Post and Unpost that entry
 

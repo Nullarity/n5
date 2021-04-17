@@ -1,4 +1,4 @@
-﻿// Create Item with two properties: Model and Size
+// Create Item with two properties: Model and Size
 // Add condition: if Model = Wheel then Size should appear
 
 Call ( "Common.Init" );

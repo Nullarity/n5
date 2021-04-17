@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Just creates an Item
 //
 // Parameters:

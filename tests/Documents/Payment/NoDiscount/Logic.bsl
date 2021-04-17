@@ -1,3 +1,3 @@
-﻿Click ( "#FormReportRecordsShow" );
+Click ( "#FormReportRecordsShow" );
 With ( "Records: Customer Payment*" );
 Call ( "Common.CheckLogic", "#TabDoc" );

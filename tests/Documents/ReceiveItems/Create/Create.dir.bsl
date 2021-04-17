@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document.ReceiveItems" );
 form = With ( "Receive Items (create)" );

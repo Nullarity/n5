@@ -1,4 +1,4 @@
-﻿// Open Calendar
+// Open Calendar
 // Generate two reports: Worklog, Project Analysis
 
 Call ( "Common.Init" );

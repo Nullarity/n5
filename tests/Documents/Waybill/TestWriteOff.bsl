@@ -1,4 +1,4 @@
-﻿// Test Write Off creation from Waybill without excess or economy:
+// Test Write Off creation from Waybill without excess or economy:
 // - Create Waybill without Inventory
 // - Create Waybill with Inventory
 // - Create Write Off

@@ -1,4 +1,4 @@
-﻿// Create a new Company
+// Create a new Company
 // Upload log and save
 
 Call("Common.Init");

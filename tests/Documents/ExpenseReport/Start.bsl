@@ -1,4 +1,4 @@
-﻿
+
 // CAD Rate = 0.8
 Call ( "Common.Init" );
 CloseAll ();

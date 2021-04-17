@@ -1,4 +1,4 @@
-﻿// Create a new Lead
+// Create a new Lead
 
 Call ( "Common.Init" );
 CloseAll ();

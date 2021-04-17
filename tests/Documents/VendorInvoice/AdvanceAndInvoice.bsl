@@ -1,4 +1,4 @@
-﻿// Give Payment $100
+// Give Payment $100
 // Create VendorInvoice $150
 // Check Advance & Debt
 

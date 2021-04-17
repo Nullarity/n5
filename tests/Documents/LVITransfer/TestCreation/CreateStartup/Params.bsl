@@ -1,4 +1,4 @@
-﻿p = new Structure ();
+p = new Structure ();
 p.Insert ( "ID" );
 p.Insert ( "Date", BegOfDay ( CurrentDate () ) );
 p.Insert ( "EmployeeSender" );

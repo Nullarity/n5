@@ -1,4 +1,4 @@
-﻿// Open settings
+// Open settings
 // Set Country
 // Create a Payment Address and check if country and zip code are filled correctly
 

@@ -1,4 +1,4 @@
-﻿// 1. Create Entry with different currency rate
+// 1. Create Entry with different currency rate
 // 2. Change currency rate
 // 3. Create CalculationRatesDifferences and test movements + and -
 

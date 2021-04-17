@@ -1,4 +1,4 @@
-﻿// Create an Invoice
+// Create an Invoice
 // Pay it 70%
 // Check Payment % in the Invoices list
 

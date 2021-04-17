@@ -1,4 +1,4 @@
-﻿// Create VendorPayment
+// Create VendorPayment
 // Create VendorInvoice base on payment
 // Check if vendor invoice has been applied prepayment
 

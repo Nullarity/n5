@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/data/Catalog.CarTypes" );
+Commando ( "e1cib/data/Catalog.CarTypes" );
 Set ( "#Description", _.Description );
 Put ( "#Type", _.Type );
 Activate ( "#PageNorms" );

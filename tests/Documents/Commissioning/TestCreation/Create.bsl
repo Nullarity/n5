@@ -1,4 +1,4 @@
-﻿env = getEnv ( _ );
+env = getEnv ( _ );
 createEnv ( env );
 
 // ***********************************

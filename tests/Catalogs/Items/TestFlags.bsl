@@ -1,4 +1,4 @@
-﻿// Create Item and test flags: Service, Product, Form
+// Create Item and test flags: Service, Product, Form
 
 Call ( "Common.Init" );
 CloseAll ();

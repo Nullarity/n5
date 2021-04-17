@@ -1,4 +1,4 @@
-﻿// Check how Customer Payment returns Refund to Customer
+// Check how Customer Payment returns Refund to Customer
 // Customer Refund: 100 lei
 // Pay to Customer (return): 100 lei
 

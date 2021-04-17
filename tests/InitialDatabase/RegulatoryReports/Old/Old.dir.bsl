@@ -1,1 +1,1 @@
-﻿// Canceled or replaced reports
+// Canceled or replaced reports

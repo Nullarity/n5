@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Creates & Post document Receive Items
 //
 // Conditions:

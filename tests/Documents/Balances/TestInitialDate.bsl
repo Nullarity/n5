@@ -1,4 +1,4 @@
-﻿// Open balances list
+// Open balances list
 // Set Balances Date
 // Create a new Opening Balances document
 // Fill, Post & Close that document

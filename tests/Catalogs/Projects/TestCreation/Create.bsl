@@ -1,4 +1,4 @@
-﻿CloseAll ();
+CloseAll ();
 
 Call ( "Catalogs.Projects.TestList.Open" );
 form = With ( "Projects" );

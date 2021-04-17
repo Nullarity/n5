@@ -1,4 +1,4 @@
-﻿MainWindow.ExecuteCommand ( "e1cib/data/Document.Invoice" );
+MainWindow.ExecuteCommand ( "e1cib/data/Document.Invoice" );
 
 form = With ( "Invoice (create)" );
 Set ( "Date", _.Date ); // It is important to be first

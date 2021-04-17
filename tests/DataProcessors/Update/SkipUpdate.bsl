@@ -1,4 +1,4 @@
-﻿// "Downgrade" application to version 1.0.0.0
+// "Downgrade" application to version 1.0.0.0
 // Restart app with "-mode skipupdate" key and check if update has been skipped
 
 Call ( "Common.Init" );

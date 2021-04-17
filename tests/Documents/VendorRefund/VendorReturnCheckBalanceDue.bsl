@@ -1,4 +1,4 @@
-﻿// Create VendorInvoice & Payment
+// Create VendorInvoice & Payment
 // Create VendorReturn & VendorRefund and check Balance Due
 
 Call("Common.Init");

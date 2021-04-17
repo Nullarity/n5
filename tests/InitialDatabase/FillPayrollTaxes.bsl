@@ -1,4 +1,4 @@
-﻿// Fill payroll taxes
+// Fill payroll taxes
 
 date = BegOfYear ( CurrentDate () );
 

@@ -1,4 +1,4 @@
-﻿// Create Warehouse
+// Create Warehouse
 // Click Production flag and check appearance
 
 Call ( "Common.Init" );

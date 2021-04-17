@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Catalog.FixedAssets" );
+Commando ( "e1cib/list/Catalog.FixedAssets" );
 With ( "Fixed Assets" );
 p = Call ( "Common.Find.Params" );
 p.Where = "Description";

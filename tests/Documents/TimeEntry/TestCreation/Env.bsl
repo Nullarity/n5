@@ -1,4 +1,4 @@
-﻿//
+//
 // Metadata
 //
 __.Insert ( "Projects", Call ( "Catalogs.Projects.TestCreation.GetTypes" ) );

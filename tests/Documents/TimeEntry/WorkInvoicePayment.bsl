@@ -1,4 +1,4 @@
-﻿// Create time entry (services only)
+// Create time entry (services only)
 // Generate Invoice
 // Generate Payment
 // Print Invoice

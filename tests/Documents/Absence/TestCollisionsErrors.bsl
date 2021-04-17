@@ -1,4 +1,4 @@
-﻿// 1. Create document Absence
+// 1. Create document Absence
 // 2. Try to add error rows
 // 3. If Error messages are shown then test is complete
 

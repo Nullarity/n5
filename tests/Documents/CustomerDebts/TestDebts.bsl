@@ -1,4 +1,4 @@
-﻿// Create test doc
+// Create test doc
 // checking records
 
 Call ( "Common.Init" );

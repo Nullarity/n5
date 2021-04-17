@@ -1,4 +1,4 @@
-﻿// - Create offline account A
+// - Create offline account A
 // - Create subaccount B
 // - Check if account B becomes offline too
 

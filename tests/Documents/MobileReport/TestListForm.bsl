@@ -1,4 +1,4 @@
-﻿// Test is not completed
+// Test is not completed
 Call ( "Common.Init" );
 CloseAll ();
 

@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 
 date = CurrentDate ();
 file = "5 files";

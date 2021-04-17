@@ -1,4 +1,4 @@
-﻿// Create Item
+// Create Item
 // Click BOM link and check list
 
 Call ( "Common.Init" );

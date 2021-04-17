@@ -1,4 +1,4 @@
-﻿start ();
+start ();
 
 // ***********************************
 // Create item with properties

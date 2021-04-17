@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 env = Run ( "Create", Call ( "Common.GetID" ) + "#" );

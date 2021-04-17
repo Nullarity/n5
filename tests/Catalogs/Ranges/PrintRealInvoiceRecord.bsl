@@ -1,4 +1,4 @@
-﻿// Purchase forms an register range
+// Purchase forms an register range
 // Sell services
 // Create an Invoice Record and print it
 // Check automatic Write Off

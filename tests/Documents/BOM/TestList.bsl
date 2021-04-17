@@ -1,4 +1,4 @@
-﻿// Create Item
+// Create Item
 // Open BOM list
 // Set filter
 // Create BOM

@@ -1,4 +1,4 @@
-﻿// Create Command: 1 Performer 2 Stages
+// Create Command: 1 Performer 2 Stages
 // Run a new 1C session with Performer
 // Open & complete all tasks
 // Connect to the Creator's session

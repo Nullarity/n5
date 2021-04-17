@@ -1,4 +1,4 @@
-﻿// Create Payment
+// Create Payment
 // Create Invoice base on payment
 // Check if invoice has been applied prepayment
 

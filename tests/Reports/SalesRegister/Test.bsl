@@ -1,4 +1,4 @@
-﻿// Create all kind of documents which have influence on the Report
+// Create all kind of documents which have influence on the Report
 
 Call ( "Common.Init" );
 CloseAll ();

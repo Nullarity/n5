@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Write Offs list form and create a new Write Off.
 // Checks the automatic header filling process
 //

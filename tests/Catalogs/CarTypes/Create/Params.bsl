@@ -1,4 +1,4 @@
-﻿p = new Structure ();
+p = new Structure ();
 p.Insert ( "Description", "CarType: " + CurrentDate () );
 p.Insert ( "Type", "Cars" );
 p.Insert ( "FuelMain" );

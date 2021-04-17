@@ -1,4 +1,4 @@
-﻿// Open Bank journal
+// Open Bank journal
 // Change period
 // Close journal
 // Open journal again and check if period is the same

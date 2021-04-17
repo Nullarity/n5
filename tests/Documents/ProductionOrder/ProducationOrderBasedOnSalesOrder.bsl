@@ -1,4 +1,4 @@
-﻿// Create & fill SalesOrder
+// Create & fill SalesOrder
 // Create ProductionOrder based on SalesOrder
 // Post & check records
 

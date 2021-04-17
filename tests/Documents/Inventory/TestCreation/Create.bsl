@@ -1,4 +1,4 @@
-﻿id = _;
+id = _;
 date = CurrentDate ();
 warehouse = "_Inventory Warehouse: " + date;
 

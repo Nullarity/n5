@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 Call ( "Shared.Gallery", Meta.Documents.InternalOrder );

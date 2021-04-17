@@ -1,4 +1,4 @@
-﻿// - Open list of entries
+// - Open list of entries
 // - Create entry from that list
 // - Check amount in the list
 

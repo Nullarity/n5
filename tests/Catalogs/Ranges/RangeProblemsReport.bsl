@@ -1,4 +1,4 @@
-﻿// Open Range Range Problems
+// Open Range Range Problems
 
 Call ( "Common.Init" );
 CloseAll ();

@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 p = new Structure ( "Name, Code, Language, Rights, Department, Warehouse, Organizations" );
 p.Code = Mid ( Call ( "Common.GetID" ), 5, 3 );
 p.Language = "English";

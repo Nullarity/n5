@@ -1,4 +1,4 @@
-﻿MainWindow.ExecuteCommand ( "e1cib/list/Document.Entry" );
+MainWindow.ExecuteCommand ( "e1cib/list/Document.Entry" );
 With ( "Accounting Entries" );
 Put ( "#OperationFilter", _.OperationReceipt );
 Click ( "#FormChange" );

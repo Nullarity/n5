@@ -1,4 +1,4 @@
-﻿//	Create Internal Order and test print form
+//	Create Internal Order and test print form
 //	1. Internal Order
 //	2. Test print form
 

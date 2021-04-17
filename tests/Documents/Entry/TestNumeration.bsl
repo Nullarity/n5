@@ -1,4 +1,4 @@
-﻿// 1. Test Entry without numerator
+// 1. Test Entry without numerator
 // 1.1 Create entry1
 // 1.2 Create entry2 and check verify numbers
 

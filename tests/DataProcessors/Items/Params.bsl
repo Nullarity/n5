@@ -1,4 +1,4 @@
-﻿p = new Structure ();
+p = new Structure ();
 p.Insert ( "Item" );
 p.Insert ( "ShowPrices", true );
 p.Insert ( "AskDetails", true );

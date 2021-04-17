@@ -1,4 +1,4 @@
-﻿// Create a new Item
+// Create a new Item
 // Goto Accounts
 // Create a new record
 // Check form appearance

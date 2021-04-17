@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Transfers list form and create a new Transfer.
 // Checks the automatic header filling process
 //

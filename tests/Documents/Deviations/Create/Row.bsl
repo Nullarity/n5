@@ -1,4 +1,4 @@
-﻿p = new Structure ();
+p = new Structure ();
 p.Insert ( "Employee" );
 p.Insert ( "Day" );
 p.Insert ( "Duration" );

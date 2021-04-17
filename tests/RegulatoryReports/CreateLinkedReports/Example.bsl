@@ -1,4 +1,4 @@
-﻿// This is not real test.
+// This is not real test.
 // The scenario is used like a resource for filling testing data
 
 Procedure Make ()

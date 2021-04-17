@@ -1,4 +1,4 @@
-﻿// Create two folders and a common property attached to them
+// Create two folders and a common property attached to them
 // Delete property from the second folder and check if that property
 // is not being marked for deletion (common properties should never be
 // marked for deletion automatically)

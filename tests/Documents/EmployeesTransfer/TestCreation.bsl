@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // 1. Hire employee with 2 bonuses
 // 2. Create Employee Transfer which:
 // - change rate of main compensation

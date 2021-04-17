@@ -1,4 +1,4 @@
-﻿// Create Customer
+// Create Customer
 // Create Command1
 // Create Command2 and check if list with previous task appears
 // Open Command1 from that list

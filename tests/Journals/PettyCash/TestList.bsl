@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Create Customer Payment
 // - Open Journal
 // - Filter by Currency & Location

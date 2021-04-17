@@ -1,4 +1,4 @@
-﻿Procedure Make ()
+Procedure Make ()
 
 	if ( Calculated ) then
 		goto ~draw;

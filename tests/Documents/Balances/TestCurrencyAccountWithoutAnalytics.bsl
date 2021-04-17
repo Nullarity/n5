@@ -1,4 +1,4 @@
-﻿// Create a new Opening Balance
+// Create a new Opening Balance
 // Set currency account
 // Check calculations
 // Post the document

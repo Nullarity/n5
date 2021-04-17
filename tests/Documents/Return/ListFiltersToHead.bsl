@@ -1,4 +1,4 @@
-﻿// Test filling Return from filters in list form:
+// Test filling Return from filters in list form:
 // - Open List Form
 // - Set Filters
 // - Create Return

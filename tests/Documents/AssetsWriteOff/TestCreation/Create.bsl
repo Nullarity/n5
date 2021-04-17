@@ -1,4 +1,4 @@
-﻿date = CurrentDate ();
+date = CurrentDate ();
 yearStart = BegOfYear ( date );
 id = _;
 warehouse = "_Warehouse: " + id;

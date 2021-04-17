@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 OpenMenu ( "Accounting / Intangible Assets Commissionings" );
 With ( "Intangible Assets Commissionings" );

@@ -1,4 +1,4 @@
-﻿OpenMenu ( "Settings / Application" );
+OpenMenu ( "Settings / Application" );
 form = With ( "Application Settings" );
 Activate ( "!AccountingPage" );
 date = _.Date;

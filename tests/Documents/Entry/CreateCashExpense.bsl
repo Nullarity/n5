@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Create a new Entry
 // - Select Operation with Cash Expense type, simple variant
 // - Select Individual

@@ -1,3 +1,3 @@
-﻿form = With ( "Payroll*" );
+form = With ( "Payroll*" );
 Call ( "Common.CheckLogic", "#Result" );
 //Close ( form );

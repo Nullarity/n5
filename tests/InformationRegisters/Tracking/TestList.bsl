@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 list = Call ( "Common.OpenList", Meta.InformationRegisters.Tracking );

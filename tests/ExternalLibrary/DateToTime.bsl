@@ -1,4 +1,4 @@
-﻿// Test Method: DateToTime ()
+// Test Method: DateToTime ()
 
 Run ( "Attach" );
 lib = new ( "AddIn.Core.Conversion" );

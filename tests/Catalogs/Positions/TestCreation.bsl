@@ -1,4 +1,4 @@
-﻿// creates an item of Catalog "Positions" from Catalog "PositionsClassifier"
+// creates an item of Catalog "Positions" from Catalog "PositionsClassifier"
 //
 // Open list form of catalog Positions
 // pressing "Create" button

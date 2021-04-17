@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 date = CurrentDate ();
 p = new Structure ();

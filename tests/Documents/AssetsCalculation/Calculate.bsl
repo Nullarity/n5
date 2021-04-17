@@ -1,4 +1,4 @@
-﻿env = _;
+env = _;
 date = Env.Date;
 writeOffAssets ( env );
 

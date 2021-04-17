@@ -1,4 +1,4 @@
-﻿// Create an Transfer
+// Create an Transfer
 // Create an Invoice Record
 // Open Transfer and check if New Invoice button is not available
 // Open Invoice Record and cancel it

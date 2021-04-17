@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Open list of entries
 // - Set filter by operation (operation with Simple flag = true)
 // - Create a new Entry and check prefilled accounts

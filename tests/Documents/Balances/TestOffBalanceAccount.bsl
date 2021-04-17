@@ -1,4 +1,4 @@
-﻿// Create a Offbalance Account
+// Create a Offbalance Account
 // Post the document
 
 Call ( "Common.Init" );

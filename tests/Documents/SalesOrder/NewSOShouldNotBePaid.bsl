@@ -1,4 +1,4 @@
-﻿// Create a new SO and chech if Paid Amount is 0
+// Create a new SO and chech if Paid Amount is 0
 
 Call ( "Common.Init" );
 CloseAll ();

@@ -1,4 +1,4 @@
-﻿// different customers
+// different customers
 // 1. Create Invoice ( debt )
 // 2. Create Adjust debt
 // 3. Check movemnts

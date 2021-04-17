@@ -1,4 +1,4 @@
-﻿Commando("e1cib/command/Catalog.Organizations.Create");
+Commando("e1cib/command/Catalog.Organizations.Create");
 Set("Name", _.Name);
 if ( AppName = "c5" ) then
 	Set("#CodeFiscal", "1234567890123");

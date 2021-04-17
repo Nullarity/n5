@@ -1,4 +1,4 @@
-﻿// Create & register a new virtual range
+// Create & register a new virtual range
 // Transfer range to another warehouse
 
 Call ( "Common.Init" );

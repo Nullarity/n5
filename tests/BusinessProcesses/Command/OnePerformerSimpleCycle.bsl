@@ -1,4 +1,4 @@
-﻿// Create Command: 1 Performer
+// Create Command: 1 Performer
 // Run a new 1C session with Performer
 // Open & complete his task
 // Close 1C

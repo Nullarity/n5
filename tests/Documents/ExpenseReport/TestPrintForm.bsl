@@ -1,4 +1,4 @@
-﻿// CAD Rate = 10
+// CAD Rate = 10
 Call ( "Common.Init" );
 CloseAll ();
 

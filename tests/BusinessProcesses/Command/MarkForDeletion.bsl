@@ -1,4 +1,4 @@
-﻿// Create Command
+// Create Command
 // Open list and mark for deletion
 
 Call ( "Common.Init" );

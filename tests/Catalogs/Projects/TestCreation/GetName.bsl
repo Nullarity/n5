@@ -1,2 +1,2 @@
-﻿projectType = _;
+projectType = _;
 return "_TestCreation_" + projectType;

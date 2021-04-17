@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Document.IntangibleAssetsWriteOff" );
+Commando ( "e1cib/list/Document.IntangibleAssetsWriteOff" );
 With ( "Intangible Assets Write Offs" );
 p = Call ( "Common.Find.Params" );
 p.Where = "Memo";

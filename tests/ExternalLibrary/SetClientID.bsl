@@ -1,4 +1,4 @@
-﻿// Test Method: SetClientID ()
+// Test Method: SetClientID ()
 
 Run ( "Attach" );
 lib = new ( "AddIn.Core.Root" );

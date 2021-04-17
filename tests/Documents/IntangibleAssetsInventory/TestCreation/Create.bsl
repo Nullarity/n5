@@ -1,4 +1,4 @@
-﻿//
+//
 env = Call ( "Documents.IntangibleAssetsWriteOff.GetEnv", _ );
 
 Commando ( "e1cib/data/Document.IntangibleAssetsInventory" );

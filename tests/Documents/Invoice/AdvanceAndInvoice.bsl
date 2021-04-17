@@ -1,4 +1,4 @@
-﻿// Take Payment $100
+// Take Payment $100
 // Create Invoice $150
 // Check Advance & Debt
 

@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 env = getEnv ( _ );
 createEnv ( env );

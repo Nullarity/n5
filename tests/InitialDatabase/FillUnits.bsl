@@ -1,4 +1,4 @@
-﻿// - Create general units list
+// - Create general units list
 
 CloseAll ();
 

@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Payments list form and create a new Payment.
 // Checks the automatic header filling process
 //

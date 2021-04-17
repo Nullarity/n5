@@ -1,4 +1,4 @@
-﻿// - Create a new PayEmployees
+// - Create a new PayEmployees
 // - Set Method = Cash
 // - Write document
 // - Try to print Cash Voucher

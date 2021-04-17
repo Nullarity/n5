@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Customs Declaration list form and create a new Customs Declaration.
 // Checks the automatic header filling process
 //

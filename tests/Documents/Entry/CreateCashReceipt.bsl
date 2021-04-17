@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Create a new Entry
 // - Select Operation with Cash Receipt type, simple variant
 // - Select Individual

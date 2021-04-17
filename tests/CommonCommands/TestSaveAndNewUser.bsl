@@ -1,4 +1,4 @@
-﻿Commando ( "e1cib/list/Catalog.Users" );
+Commando ( "e1cib/list/Catalog.Users" );
 With ( "Users" );
 Click ( "#FormChange" );
 With ( "*(Users)" );

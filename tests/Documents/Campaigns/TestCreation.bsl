@@ -1,4 +1,4 @@
-﻿// Create a new Campaign
+// Create a new Campaign
 
 Call ( "Common.Init" );
 CloseAll ();

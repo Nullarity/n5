@@ -1,4 +1,4 @@
-﻿// Create a Meeting
+// Create a Meeting
 // Check if first row is me
 // Add Accountant
 // Form Meeting

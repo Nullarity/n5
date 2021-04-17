@@ -1,4 +1,4 @@
-﻿// - Open Accounts list
+// - Open Accounts list
 // - Calc total rows in the list (A)
 // - Click Show Offile
 // - Create offline account

@@ -1,4 +1,4 @@
-﻿// Before running this test make sure 1c-enterprise server had been
+// Before running this test make sure 1c-enterprise server had been
 // restarted after the latest edt update. Otherwise, ring utility will not
 // be found
 

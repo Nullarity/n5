@@ -1,4 +1,4 @@
-﻿// Open Production Orders list
+// Open Production Orders list
 // Set Filter by Workshop
 // Create a new Document and check Workshop
 // Close Document

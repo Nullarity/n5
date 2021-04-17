@@ -1,4 +1,4 @@
-﻿// Open balances list
+// Open balances list
 // Create, Save & Close a new Opening Balance
 // Copy that document
 // Check copied account

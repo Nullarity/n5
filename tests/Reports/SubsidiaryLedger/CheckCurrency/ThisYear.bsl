@@ -1,2 +1,2 @@
-﻿With ( "Subsidiary *" );
+With ( "Subsidiary *" );
 CheckTemplate ( "#Result" );

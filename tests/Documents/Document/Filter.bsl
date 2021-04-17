@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Opens list of documents and filters that list by Parameter value
 //
 // Parameters:

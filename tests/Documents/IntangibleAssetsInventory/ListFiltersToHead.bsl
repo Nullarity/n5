@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Set filters in Intangible Assets Inventories list form and create a new Assets Inventory.
 // Checks the automatic header filling process
 //

@@ -1,4 +1,4 @@
-﻿Click ( "#FormReportRecordsShow" );
+Click ( "#FormReportRecordsShow" );
 With ();
 Call ( "Common.CheckLogic", "#TabDoc" );
 Close ();

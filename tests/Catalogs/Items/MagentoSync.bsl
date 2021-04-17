@@ -1,4 +1,4 @@
-﻿// - Create a new Item
+// - Create a new Item
 // - Fill magento parameters and save
 
 Call ( "Common.Init" );

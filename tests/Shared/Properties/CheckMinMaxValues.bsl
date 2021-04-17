@@ -1,4 +1,4 @@
-﻿// Create Item
+// Create Item
 // Add Property: range
 // Try to use new property
 // Open properties again and check if they still are there

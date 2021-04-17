@@ -1,4 +1,4 @@
-﻿form = With ( "Receive *" );
+form = With ( "Receive *" );
 Set( "#Account", "7141" );
 form.GotoNextItem ();
 Put ( "#Warehouse", "Main" );

@@ -1,4 +1,4 @@
-﻿// Create Entry
+// Create Entry
 // Create record with Dr and Cr
 // Create record with Dr
 // Create record 1 with Cr

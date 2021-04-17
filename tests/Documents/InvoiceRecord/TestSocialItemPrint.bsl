@@ -1,4 +1,4 @@
-﻿//1. Create Socially significant item
+//1. Create Socially significant item
 //2. Create Invoice
 //2.1 add in tab. section socially significant item 
 //3. test print form

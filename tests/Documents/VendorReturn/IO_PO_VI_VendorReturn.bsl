@@ -1,4 +1,4 @@
-﻿// Check creation Return to Vendor based on Vendor Invoice with
+// Check creation Return to Vendor based on Vendor Invoice with
 // restore Internal Orders and Purchase Orders needs. 
 // - Create InternalOrder
 // - Create PurchaseOrder based on InternalOrder

@@ -1,4 +1,4 @@
-﻿// Create Phone Template
+// Create Phone Template
 // Create Vendor
 // Set phone template and put the value of phone
 // Save & Close

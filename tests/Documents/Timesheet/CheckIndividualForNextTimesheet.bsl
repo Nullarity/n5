@@ -1,4 +1,4 @@
-﻿// Create & save a new Timesheet
+// Create & save a new Timesheet
 // In the Timesheet window, click Next button and create another new Timesheet
 // Save the new Timesheet
 // Open records and check if Individual field is populated

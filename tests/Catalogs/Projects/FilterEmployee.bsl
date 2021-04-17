@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 id = Call ( "Common.ScenarioID", "2811C425" );
 env = getEnv ( id );

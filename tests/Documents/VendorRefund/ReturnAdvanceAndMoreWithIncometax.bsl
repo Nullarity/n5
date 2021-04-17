@@ -1,4 +1,4 @@
-﻿// Check advance returning with Income Tax and payment more than advance
+// Check advance returning with Income Tax and payment more than advance
 // Pay to Vendor 100 lei and withdraw income tax
 // Vendor Refund 120 lei
 

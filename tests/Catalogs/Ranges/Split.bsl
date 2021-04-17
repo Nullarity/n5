@@ -1,4 +1,4 @@
-﻿// Receive Range
+// Receive Range
 // Split range
 
 Call("Common.Init");

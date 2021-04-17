@@ -1,4 +1,4 @@
-﻿formDoc = With ( "Entry*" );
+formDoc = With ( "Entry*" );
 Click ( "#FormReportRecordsShow" );
 form = With ( "Records: Entry*" );
 Call ( "Common.CheckLogic", "#TabDoc" );

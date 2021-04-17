@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Create & post a new Entry document
 //
 // Parameters:

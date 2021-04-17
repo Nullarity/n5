@@ -1,4 +1,4 @@
-﻿// Check advance returning and advance taking
+// Check advance returning and advance taking
 // Get payment from customer 100 lei
 // Create refund 120 lei (20 lei is advance given)
 

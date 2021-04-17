@@ -1,4 +1,4 @@
-﻿// Create Entry
+// Create Entry
 // Press Save and New
 
 Call ( "Common.Init" );

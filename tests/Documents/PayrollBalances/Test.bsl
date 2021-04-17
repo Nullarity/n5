@@ -1,4 +1,4 @@
-﻿// Hire Employees
+// Hire Employees
 // Create Payroll Balances
 // Post document
 // Check records

@@ -1,4 +1,4 @@
-﻿// Test filling Refund from filters in list form:
+// Test filling Refund from filters in list form:
 // - Open List Form
 // - Set Filters
 // - Create Refund

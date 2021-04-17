@@ -1,4 +1,4 @@
-﻿// Create a new Customer
+// Create a new Customer
 // Generate a new Task
 // Change progress
 // Check if task has 10%

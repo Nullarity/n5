@@ -1,4 +1,4 @@
-﻿// Test writing record to info register "Producer price"
+// Test writing record to info register "Producer price"
 //
 // 1. Creating env
 // 2. Creating and Posting doc

@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 
 Commando ( "e1cib/data/Document.ExpenseReport" );
 form = With ( "Expense Report (create)" );

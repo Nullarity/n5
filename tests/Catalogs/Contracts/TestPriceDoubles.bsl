@@ -1,4 +1,4 @@
-﻿// Create: Item, Service, Organization, Contract
+// Create: Item, Service, Organization, Contract
 // Twice add Item and Service to contract
 // Save contract and check errors
 

@@ -1,4 +1,4 @@
-﻿env = Call ( "Documents.Commissioning.TestCreation.Create", _ );
+env = Call ( "Documents.Commissioning.TestCreation.Create", _ );
 
 id = env.ID;
 

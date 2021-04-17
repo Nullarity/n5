@@ -1,4 +1,4 @@
-﻿// Fill Initial Database.
+// Fill Initial Database.
 // Before start the scenario make sure that:
 // - Your database was created in empty folder and attached to repo. Therefore, data is completely clean
 // - Running session user's language should be English

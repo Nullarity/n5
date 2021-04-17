@@ -1,4 +1,4 @@
-﻿	
+	
 Call ( "Common.Init" );
 CloseAll ();
 

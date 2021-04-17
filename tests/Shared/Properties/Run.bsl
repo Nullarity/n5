@@ -1,4 +1,4 @@
-﻿StandardProcessing = false;
+StandardProcessing = false;
 Call ( "Shared.Properties.DependentCommonProperty", _ );
 Call ( "Shared.Properties.CreateCommonProperty", _ );
 Call ( "Shared.Properties.CheckEmptyPropertyName", _ );

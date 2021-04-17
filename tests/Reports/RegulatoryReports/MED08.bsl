@@ -1,4 +1,4 @@
-﻿Call ( "Common.Init" );
+Call ( "Common.Init" );
 CloseAll ();
 
 id = Call ( "Common.ScenarioID", "2A5F75B5" );

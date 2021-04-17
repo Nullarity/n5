@@ -1,4 +1,4 @@
-﻿// Create BOM
+// Create BOM
 // Change fields one by one and check calculations
 
 Call ( "Common.Init" );

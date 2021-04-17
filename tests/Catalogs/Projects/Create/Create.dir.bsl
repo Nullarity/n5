@@ -1,4 +1,4 @@
-﻿
+
 MainWindow.ExecuteCommand ( "e1cib/data/Catalog.Projects" );
 With ( "Projects (create)" );
 Set ( "#Owner", _.Customer );

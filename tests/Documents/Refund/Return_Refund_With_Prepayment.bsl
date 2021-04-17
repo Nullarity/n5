@@ -1,4 +1,4 @@
-﻿// Create Vendor Invoice
+// Create Vendor Invoice
 // Create Invoice
 // Generate Return
 // Generate Refund

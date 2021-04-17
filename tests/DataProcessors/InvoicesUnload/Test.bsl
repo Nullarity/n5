@@ -1,4 +1,4 @@
-﻿// Create Invoice and Unload it
+// Create Invoice and Unload it
 
 Call ( "Common.Init" );
 CloseAll ();

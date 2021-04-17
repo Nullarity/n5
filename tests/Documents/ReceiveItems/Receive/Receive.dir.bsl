@@ -1,4 +1,4 @@
-﻿MainWindow.ExecuteCommand ( "e1cib/data/Document.ReceiveItems" );
+MainWindow.ExecuteCommand ( "e1cib/data/Document.ReceiveItems" );
 
 form = With ( "Receive Items (create)" );
 

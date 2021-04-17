@@ -1,4 +1,4 @@
-﻿Close ( "Records*");
+Close ( "Records*");
 Close ( "Assets Write*");
 With ( "Assets Inventory *" );
 Click ( "#ItemsTableAdd" );

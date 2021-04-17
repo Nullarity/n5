@@ -1,4 +1,4 @@
-﻿//
+//
 // Metadata
 //
 __.Insert ( "MainCompany", Call ( "Select.MainCompanyName" ) );

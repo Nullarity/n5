@@ -1,4 +1,4 @@
-﻿// Opens report Allocation by passed SO number
+// Opens report Allocation by passed SO number
 
 p = Call ( "Common.Report.Params" );
 p.Path = "Purchases / Allocation";

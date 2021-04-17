@@ -1,4 +1,4 @@
-﻿p = Call ( "Common.Report.Params" );
+p = Call ( "Common.Report.Params" );
 p.Path = "e1cib/app/Report.Debts";
 p.Title = "Accounts Receivable";
 filters = new Array ();

@@ -1,4 +1,4 @@
-﻿// 1. create payment order
+// 1. create payment order
 // 2. open Bank client, uploading and press fill, test created payment order
 
 Call("Common.Init");

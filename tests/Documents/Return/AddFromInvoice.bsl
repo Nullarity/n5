@@ -1,4 +1,4 @@
-﻿// Check the correct working of the AddFromInvoice button:
+// Check the correct working of the AddFromInvoice button:
 // - Create VendorInvoice
 // - Create Invoice
 // - Create Return

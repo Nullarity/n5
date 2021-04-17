@@ -1,1 +1,1 @@
-﻿CheckTemplate ( "#Result" );
+CheckTemplate ( "#Result" );

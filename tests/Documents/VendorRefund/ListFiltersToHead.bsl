@@ -1,4 +1,4 @@
-﻿// Test filling VendorRefund from filters in list form:
+// Test filling VendorRefund from filters in list form:
 // - Open List Form
 // - Set Filters
 // - Create VendorRefund

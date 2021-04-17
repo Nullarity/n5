@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // 1. Does standard selection process.
 // 2. Opens Details form and chane Qty, Pkg, Units
 // 3. Use Prices parameter if you want to check amount calculation

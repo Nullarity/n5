@@ -1,4 +1,4 @@
-﻿// - Open list of settings elements
+// - Open list of settings elements
 // - Change system's presentation to russian
 
 CloseAll ();

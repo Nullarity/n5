@@ -1,4 +1,4 @@
-﻿// Create two folders and a common property attached to them
+// Create two folders and a common property attached to them
 // Try to make that property private and check if error occurs.
 // The reason for error is that we can't make common property uncommon (private)
 // until it is used as a common property in other objects

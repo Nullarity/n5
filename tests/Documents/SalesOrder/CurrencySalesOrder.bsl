@@ -1,4 +1,4 @@
-﻿// Check SO in currency
+// Check SO in currency
 
 Call ( "Common.Init" );
 CloseAll ();

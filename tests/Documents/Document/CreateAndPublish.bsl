@@ -1,4 +1,4 @@
-﻿// Description:
+// Description:
 // Creates & publishes a new Document
 //
 // Returns:

@@ -1,4 +1,4 @@
-﻿// Scenario:
+// Scenario:
 // - Open Journal
 // - Add new Customer Payment
 // - Save document
