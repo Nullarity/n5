@@ -29,7 +29,7 @@ name = expense;
 params = Call ( "Common.Select.Params" );
 params.Object = Meta.Catalogs.Expenses;
 params.Search = name;
-//params.App = "Core";
+params.Infobase = AppName;
 Call ( "Common.Select", params );
 With ( form );
 Click ( "#FormWrite" );

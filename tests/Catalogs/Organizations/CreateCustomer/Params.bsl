@@ -7,7 +7,7 @@ p.Insert ( "ClearTerms", false );
 p.Insert ( "TaxGroup" );
 p.Insert ( "TaxGroupCreationParams" );
 p.Insert ( "CloseAdvances", true );
-p.Insert ( "Items", new Array () ); // Array of Core.Catalogs.Organizations.CreateCustomer.ContractItem
-p.Insert ( "Services", new Array () ); // Array of Core.Catalogs.Organizations.CreateCustomer.ContractService
+p.Insert ( "Items", new Array () ); // Array of Catalogs.Organizations.CreateCustomer.ContractItem
+p.Insert ( "Services", new Array () ); // Array of Catalogs.Organizations.CreateCustomer.ContractService
 p.Insert ( "SkipAddress", false );
 return p;

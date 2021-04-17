@@ -34,6 +34,9 @@ exceptions.Add("Documents.Document.PrintFromList");
 exceptions.Add("Documents.Document.PublishChangedFiles");
 exceptions.Add("Documents.Document.RenameFile");
 exceptions.Add("Documents.Document.TheSameSubject");
+exceptions.Add("DataProcessors.Update.RegularUpdate");
+exceptions.Add("DataProcessors.Update.SkipUpdate");
+
 p.Exceptions = exceptions;
 
 // Restore & update database 

@@ -88,11 +88,7 @@ Function getEnv ( ID )
 	p.Insert ( "CommandDescription", "Change contract date" );
 	p.Insert ( "Port", AppData.Port + 1 );
 	p.Insert ( "Infobase" );
-	if ( __.TestServer ) then
-		p.Infobase = "Core, develop";
-	else
-		p.Infobase = "Core, sources";
-	endif;
+	p.Infobase = AppName;
 	return p;
 	
 EndFunction

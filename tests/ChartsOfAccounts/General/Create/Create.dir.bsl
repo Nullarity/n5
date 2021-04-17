@@ -1,7 +1,7 @@
 ﻿// Create a new Account
 //
 // Parameters:
-// Core.ChartsOfAccounts.General.Create.Params
+// ChartsOfAccounts.General.Create.Params
 
 Commando ( "e1cib/data/ChartOfAccounts.General" );
 With ( "Chart of Accounts (cr*" );

@@ -31,14 +31,14 @@ form = With ( "Individuals (cr*" );
 fill ( Env );
 
 Click ( "#FormWrite" );
-With ( "Core" );
+With ( );
 Click ( "Yes" );
 
 With ( form );
 
 // Check the same message for saving existed object
 Click ( "#FormWrite" );
-With ( "Core" );
+With ( );
 Click ( "Yes" );
 
 // *************************

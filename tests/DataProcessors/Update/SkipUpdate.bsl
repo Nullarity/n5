@@ -14,11 +14,7 @@ Disconnect(true);
 // Restart app and check if system skips update
 p = Call ("Tester.Run.Params");
 p.User = "admin";
-if ( __.TestServer ) then
-	p.IBase = "Core, develop";
-else
-	p.IBase = "Core, sources";
-endif;
+p.Infobase = AppName;
 p.Port = AppData.Port;
 p.Parameters = "/Z FFD0B42561 /C ""-mode skipupdate""";
 Call("Tester.Run", p);

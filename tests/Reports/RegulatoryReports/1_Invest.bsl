@@ -81,7 +81,6 @@ EndFunction
 
 Procedure createEnv ( Env )
 	
-	core = "Core";
 	id = Env.ID;
 	if ( Call ( "Common.DataCreated", id ) ) then
 		return;

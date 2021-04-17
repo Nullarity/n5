@@ -35,7 +35,7 @@ userSettings = Call ( "Catalogs.UserSettings.Get" );
 company = userSettings.Company;
 creation.Company = company;
 params.CreationParams = creation;
-params.App = "Core";
+params.App = AppName;
 Call ( "Common.Select", params );
 	
 With ( form );

@@ -34,11 +34,7 @@ Function getEnv ( ID )
 	p.Insert ( "CreatorPort", port );
 	p.Insert ( "PerformerPort", port + 1 );
 	p.Insert ( "Infobase" );
-	if ( __.TestServer ) then
-		p.Infobase = "Core, develop";
-	else
-		p.Infobase = "Core, sources";
-	endif;
+	p.Infobase = AppName;
 	return p;
 	
 EndFunction
