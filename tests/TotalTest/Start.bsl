@@ -44,6 +44,8 @@ if ( p.UpdateOnly ) then
 	return;
 endif;
 
+StoreScenarios ();
+
 params = new Structure ();
 params.Insert ( "Name", String ( p.Application ) );
 params.Insert ( "Folder", p.Folder );

@@ -6746,3 +6746,12 @@ Function InteractiveCreationForbidden () export
 	return text;
 
 EndFunction
+
+&AtServer
+Function AccessKeysNotAvailable ( Params ) export
+
+	text = NStr ( "en = 'Failed to access the access key in %Number attempts. Session will be terminated'; ro = '!!!'; ru = 'Не удалось обратиться к ключу доступа за %Number попыток. Сессия будет завершена'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
