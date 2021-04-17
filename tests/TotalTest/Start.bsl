@@ -42,7 +42,7 @@ p.Exceptions = exceptions;
 StoreScenarios ();
 agents = 15;
 for i = 1 to agents do
-	NewJob ( "tester, "TotalTest.DisconnectClients", , , ""tc" + i );
+	NewJob ( "tester", "TotalTest.DisconnectClients", , , "tc" + i );
 enddo;
 Pause (60);
 
