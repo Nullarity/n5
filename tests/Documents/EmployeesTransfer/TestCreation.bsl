@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // 1. Hire employee with 2 bonuses
 // 2. Create Employee Transfer which:
 // - change rate of main compensation
@@ -9,7 +9,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2871EAED" );
+id = Call ( "Common.ScenarioID", "2CFA92FB" );
 env = getEnv ( id );
 createEnv ( env );
 

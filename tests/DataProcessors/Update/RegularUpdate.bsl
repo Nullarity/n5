@@ -17,7 +17,7 @@ p = Call ("Tester.Run.Params");
 p.User = "admin";
 p.Infobase = AppName;
 p.Port = AppData.Port;
-p.Parameters = "/Z FFD0B42561";
+p.Parameters = "/Z 0C931F556B";
 Call("Tester.Run", p);
 
 // Connect and check message

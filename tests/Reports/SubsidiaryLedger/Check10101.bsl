@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 OpenMenu ( "Accounting / Subsidiary Ledger" );
@@ -12,5 +12,5 @@ endif;
 
 // Set 10101
 GotoRow ( "#UserSettings", "Setting", "Account" );
-Put ( "#UserSettingsValue", "10101", settings );
+Put ( "#UserSettingsValue", "5211", settings );
 Click ( "#GenerateReport" );

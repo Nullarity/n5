@@ -94,7 +94,7 @@ Procedure run1c (Env)
 	p.User = Env.Performer;
 	p.IBase = Env.Infobase;
 	p.Port = performerPort;
-	p.Parameters = "/Z FFD0B42561";
+	p.Parameters = "/Z 0C931F556B";
 	Call("Tester.Run", p);
 	
 EndProcedure

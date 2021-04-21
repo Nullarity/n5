@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 OpenMenu ( "Accounting / Account Analysis" );
@@ -11,7 +11,7 @@ if ( not settings.CurrentVisible () ) then
 endif;
 
 GotoRow ( "#UserSettings", "Setting", "Account" );
-Set ( "#UserSettingsValue", "10101", settings );
+Set ( "#UserSettingsValue", "2431", settings );
 
 // ********************************
 // Disable Dimensions & Currencies

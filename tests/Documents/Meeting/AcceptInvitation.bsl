@@ -46,7 +46,7 @@ p = Call ("Tester.Run.Params");
 p.User = "Accountant";
 p.IBase = env.Infobase;
 p.Port = memberPort;
-p.Parameters = "/len /Z""FFD0B42561""";
+p.Parameters = "/len /Z""0C931F556B""";
 Call("Tester.Run", p);
 
 // Open & complete his task

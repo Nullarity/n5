@@ -137,7 +137,7 @@ Procedure createEnv(Env)
 	Click("#ListContextMenuChange");
 	With("ABC Distributions (Companies)");
 	Put("#CodeFiscal", "10013003155");
-	Put("#PayrollPeriod", "Other");
+	Put("#PayrollPeriod", "Month");
 	Click("#FormWrite");
 	CheckErrors();
 	

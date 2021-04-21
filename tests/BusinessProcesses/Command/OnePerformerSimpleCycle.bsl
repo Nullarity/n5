@@ -43,7 +43,7 @@ endif;
 p = Call ("Tester.Run.Params");
 p.User = env.Performer;
 p.IBase = env.Infobase;
-p.Parameters = "/Z FFD0B42561";
+p.Parameters = "/Z 0C931F556B";
 p.Port = port;
 Call("Tester.Run", p);
 

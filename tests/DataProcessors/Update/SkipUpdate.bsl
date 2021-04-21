@@ -16,7 +16,7 @@ p = Call ("Tester.Run.Params");
 p.User = "admin";
 p.Infobase = AppName;
 p.Port = AppData.Port;
-p.Parameters = "/Z FFD0B42561 /C ""-mode skipupdate""";
+p.Parameters = "/Z 0C931F556B /C ""-mode skipupdate""";
 Call("Tester.Run", p);
 
 // if settings form is opened then update has been skipped
