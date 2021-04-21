@@ -1,4 +1,4 @@
-// Check the correct working of the AddFromInvoice button:
+﻿// Check the correct working of the AddFromInvoice button:
 // - Create VendorInvoice
 // - Create Invoice
 // - Create Return
@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2BDCD536" );
+id = Call ( "Common.ScenarioID", "2CF98F33" );
 env = getEnv ( id );
 createEnv ( env );
 
