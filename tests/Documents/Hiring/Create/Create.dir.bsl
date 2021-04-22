@@ -15,7 +15,6 @@ form = With ( "Hiring (cr*" );
 // ***********************************
 
 date = _.Date;
-DebugStart ();
 Set ( "#Date", date );
 Set ( "#Memo", _.Memo );
 
