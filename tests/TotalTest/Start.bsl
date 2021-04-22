@@ -40,10 +40,11 @@ exceptions.Add("CommonForms.Settings.TestClosingAfterChangingLicense");
 p.Exceptions = exceptions;
 
 StoreScenarios ();
-agents = 15;
+agents = 25;
 for i = 1 to agents do
 	NewJob ( "tester", "TotalTest.DisconnectClients", , , "tc" + i );
 enddo;
+
 Pause (60);
 
 // Restore & update database 
@@ -59,7 +60,7 @@ params.Insert ( "Name", String ( p.Application ) );
 params.Insert ( "Folder", p.Folder );
 params.Insert ( "Exceptions", p.Exceptions );
 list = Call ( "Tester.Scenarios", params );
-batch = 5;
+batch = 3;
 currentBatch = 0;
 tests = list.Count ();
 chunk = new Array ();
