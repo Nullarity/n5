@@ -99,6 +99,7 @@ Procedure setCurrentTimeZone ()
 	
 	currentTimeZone = GetInfoBaseTimeZone ();
 	TimeZone = ? ( currentTimeZone = undefined, TimeZone (), currentTimeZone );
+	OldTimeZone = TimeZone;
 	
 EndProcedure 
 
@@ -196,6 +197,9 @@ EndProcedure
 &AtServer
 Procedure setTenantTimeZone ()
 	
+	if ( TimeZone = OldTimeZone ) then
+		return;
+	endif;
 	SetPrivilegedMode ( true );
 	SetExclusiveMode ( true );
 	SetInfoBaseTimeZone ( TimeZone );
