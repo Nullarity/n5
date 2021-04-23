@@ -51,7 +51,7 @@ Function getUserRoles ( UserName )
 	|where not Rights.Ref.DeletionMark
 	|";
 	q = new Query ( s );
-	user = Catalogs.Users.FindByDescription ( UserName );
+	user = Catalogs.Users.FindByDescription ( UserName, true );
 	q.SetParameter ( "User", user );
 	return q.Execute ().Unload ().UnloadColumn ( "RoleName" );
 	

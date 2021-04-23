@@ -758,7 +758,7 @@ Procedure syncUsers ( CurrentObject )
 	args = new Array ();
 	args.Add ( "SyncUsers" );
 	args.Add ( p );
-	Jobs.Run ( "Jobs.ExecProcessor", args, UUID );
+	Jobs.Run ( "Jobs.ExecProcessor", args, UUID, , TesterCache.Testing () );
 	
 EndProcedure
 

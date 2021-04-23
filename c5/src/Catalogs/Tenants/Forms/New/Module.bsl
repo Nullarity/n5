@@ -47,7 +47,7 @@ Procedure start ()
 	args = new Array ();
 	args.Add ( "CreateTenant" );
 	args.Add ( p );
-	Jobs.Run ( "Jobs.ExecProcessor", args, UUID );
+	Jobs.Run ( "Jobs.ExecProcessor", args, UUID, , TesterCache.Testing () );
 	
 EndProcedure
 

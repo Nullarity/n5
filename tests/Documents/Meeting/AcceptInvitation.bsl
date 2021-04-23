@@ -1,4 +1,4 @@
-// Create a Meeting
+﻿// Create a Meeting
 // Add Accountant
 // Form Meeting
 // Run Accountant session
@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28ADE892" );
+id = Call ( "Common.ScenarioID", "2CFD2677" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -46,7 +46,7 @@ p = Call ("Tester.Run.Params");
 p.User = "Accountant";
 p.IBase = env.Infobase;
 p.Port = memberPort;
-p.Parameters = "/len /Z""0C931F556B""";
+p.Parameters = "/len /Z""" + __.Tenant + """";
 Call("Tester.Run", p);
 
 // Open & complete his task

@@ -35,7 +35,7 @@ EndProcedure
 Procedure setUser ()
 	
 	name = UserName ();
-	currentUser = Catalogs.Users.FindByDescription ( name );
+	currentUser = Catalogs.Users.FindByDescription ( name, true );
 	if ( currentUser.IsEmpty () ) then
 		if ( Logins.Sysadmin () ) then
 			currentUser = Constants.MainUser.Get ();

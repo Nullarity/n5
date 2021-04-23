@@ -56,7 +56,7 @@ EndFunction
 
 Function getComputer ( Name )
 	
-	host = Catalogs.Computers.FindByDescription ( Name );
+	host = Catalogs.Computers.FindByDescription ( Name, true );
 	if ( host.IsEmpty () ) then
 		obj = Catalogs.Computers.CreateItem ();
 		obj.Description = Name;

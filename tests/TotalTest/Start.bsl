@@ -39,8 +39,10 @@ exceptions.Add("DataProcessors.Update.SkipUpdate");
 exceptions.Add("CommonForms.Settings.TestClosingAfterChangingLicense");
 p.Exceptions = exceptions;
 
-StoreScenarios ();
 agents = 25;
+batch = 5;
+
+StoreScenarios ();
 for i = 1 to agents do
 	NewJob ( "tester", "TotalTest.DisconnectClients", , , "tc" + i );
 enddo;
@@ -60,20 +62,26 @@ params.Insert ( "Name", String ( p.Application ) );
 params.Insert ( "Folder", p.Folder );
 params.Insert ( "Exceptions", p.Exceptions );
 list = Call ( "Tester.Scenarios", params );
-batch = 3;
-currentBatch = 0;
-tests = list.Count ();
+listSize = list.Count () - 1;
 chunk = new Array ();
-for each scenario in list do
-	record = ParametersSpace ().JobRecord ();
-	record.Scenario = scenario;
-	record.PinApplication = p.Application;
-	record.Disconnect = false;
-	chunk.Add ( record );
-	currentBatch = currentBatch + 1;
-	if ( currentBatch = batch ) then
-		NewJob ( "Tester", chunk );
-		currentBatch = 0;
-		chunk = new Array ();
-	endif;
+for i = 0 to batch - 1 do
+	k = 0;
+	j = i;
+	while ( j <= listSize ) do
+		if ( k = 0 ) then
+			if ( chunk.Count () > 0 ) then
+				NewJob ( "Tester", chunk );
+			endif;
+			chunk.Clear ();
+		endif;
+		record = ParametersSpace ().JobRecord ();
+		record.Scenario = list [ j ];
+		record.PinApplication = p.Application;
+		record.Disconnect = false;
+		chunk.Add ( record );
+		k = ? ( k = batch, 0, k + 1 );
+		j = j + batch;
+	enddo;
+	NewJob ( "Tester", chunk );
+	chunk.Clear ();
 enddo;

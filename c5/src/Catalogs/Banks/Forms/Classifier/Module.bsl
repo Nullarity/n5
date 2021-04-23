@@ -19,7 +19,7 @@ Procedure activateRow ()
 	if ( description = undefined ) then
 		return;
 	endif;
-	Items.List.CurrentRow = Catalogs.BanksClassifier.FindByDescription ( description );
+	Items.List.CurrentRow = Catalogs.BanksClassifier.FindByDescription ( description, true );
 	
 EndProcedure 
 
