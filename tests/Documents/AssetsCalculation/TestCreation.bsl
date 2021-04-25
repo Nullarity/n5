@@ -38,7 +38,7 @@ EndProcedure
 
 Function getEnv ()
 
-	id = " " + Call ( "Common.ScenarioID", "2A4CAAC4" ) + "#";
+	id = " " + Call ( "Common.ScenarioID", "2CFFC7E7" ) + "#";
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Department", "_Department" + id );
@@ -191,7 +191,7 @@ Procedure createEnv ( Env )
 	With ( "Assets Calculations" );
 	Click ( "#FormCreate" );
 	With ( "Assets Calculation (create)" );
-	Click ( "#FormWrite" );
+	Click ( "#JustSave" );
 	Click ( "#FormCopy" );
 	copy = "Assets Calculation (create)";
 	if ( not Waiting ( copy ) ) then

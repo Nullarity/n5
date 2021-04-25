@@ -1,4 +1,4 @@
-env = _;
+﻿env = _;
 date = Env.Date;
 writeOffAssets ( env );
 
@@ -25,14 +25,12 @@ form = With ( "List Options" );
 table = Get ( "#SettingsComposerUserSettingsItem0Filter" );
 
 Click ( "#SettingsComposerUserSettingsItem0FilterAddFilterItem" );
-
-Put ( "Field", "Posted", table );
-Put ( "Value", "Yes", table );
+Set ( "#SettingsComposerUserSettingsItem0FilterLeftValue", "Posted", table );
+Put ( "#SettingsComposerUserSettingsItem0FilterRightValue", "Yes", table );
 
 Click ( "#SettingsComposerUserSettingsItem0FilterAddFilterItem" );
-Put ( "Field", "Date", table );
-Put ( "Date", Format ( EndOfMonth ( date ), "DLF=DT" ), table );
-
+Put ( "#SettingsComposerUserSettingsItem0FilterLeftValue", "Date", table );
+Put ( "#SettingsComposerUserSettingsItem0FilterDate", Format ( EndOfMonth ( date ), "DLF=DT" ), table );
 Click ( "#FormEndEdit" );
 
 With ( list );
