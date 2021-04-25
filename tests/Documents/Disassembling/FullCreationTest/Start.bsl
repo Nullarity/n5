@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -79,7 +79,6 @@ enddo;
 Call ( "Table.CopyEscapeDelete", table );
 
 Click ( "#FormPost" );
-Call ( "Common.CheckCopying", Meta.Documents.Disassembling );
 
 // ******************************************
 // Test Shortage for CostOnline & CostOffline
@@ -89,7 +88,7 @@ Call ( "Common.CheckCopying", Meta.Documents.Disassembling );
 Call ( "Catalogs.UserSettings.CostOnline", false );
 Set ( "#Quantity", env.Overlimit );
 Click ( "#FormPost" );
-error = "Not enough " + ( env.overlimit - env.assembling ) + " * listed " + env.assembling;
+error = "*insufficient*";
 Call ( "Common.CheckPostingError", error );
 
 // CostOnline
@@ -121,7 +120,7 @@ Run ( "PrintForm" );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "#2719D815" );
+	id = Call ( "Common.ScenarioID", "#2CFF22E7" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Date", CurrentDate () );

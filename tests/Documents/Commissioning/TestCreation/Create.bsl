@@ -1,5 +1,54 @@
 env = getEnv ( _ );
-createEnv ( env );
+id = Env.ID;
+if ( EnvironmentExists(id) ) then
+	return env;
+endif;
+
+// ***********************************
+// Create Compensation
+// ***********************************
+
+p = Call ( "CalculationTypes.Compensations.Create.Params" );
+p.Description = Env.Compensation;
+Call ( "CalculationTypes.Compensations.Create", p );
+
+// ***********************************
+// Create ReceiveItems
+// ***********************************
+
+p = Call ( "Documents.ReceiveItems.Receive.Params" );
+p.Date = Call ( "Common.USFormat", env.date - 86400 );
+p.Warehouse = Env.Warehouse;
+
+if ( Call ( "Common.AppIsCont" ) ) then
+	p.Account = "7141";
+else
+	p.Account = "8111";
+endif;
+p.Expenses = Env.expense;
+message ( AppName );
+p.Items = Env.Items;
+Call ( "Documents.ReceiveItems.Receive", p );
+
+// Employees
+
+// create
+p = Call ( "Catalogs.Employees.Create.Params" );
+for each row in Env.Employees do
+	p.Description = row.Employee;
+	Call ( "Catalogs.Employees.Create", p );
+enddo;
+
+Call ( "Common.OpenList", Meta.Documents.Commissioning );
+Click ( "#FormCreate" );
+form = With ( "Commissioning (create)" );
+Activate ( "Stakeholders" );
+p = Call ( "Documents.Hiring.Create.Params" );
+p.Employees = Env.Employees;
+p.Insert ( "App" );
+Call ( "Documents.Hiring.Create", p );
+
+CloseAll ();
 
 // ***********************************
 // Create Commissioning
@@ -63,8 +112,6 @@ for each row in env.Items do
 	formAssets = With ( "Fixed Assets (create)" );
 	Set ( "#Account", fixedAssetAccount );
 	Set ( "#AmortizationAccount", fixedAssetAccount );
-	rng = new RandomNumberGenerator ();
-	Set ( "#InventoryNo", rng.RandomNumber ( 100, 100000 ) );
 	Set ( "#CertificateNo", "444444" );
 	Choose ( "#AssetType" );
 	params = Call ( "Common.Select.Params" );
@@ -121,6 +168,7 @@ Click ( "#FormPost" );
 fillStakeholders ( form, env.Employees );
 With ( form );
 Click ( "#FormPost" );
+RegisterEnvironment(id);
 return env;
 
 // ***********************************
@@ -202,62 +250,6 @@ Function newEmployee ( Employee, DateStart, Department, Position, Compensation )
 
 EndFunction
 
-Procedure createEnv ( Env )
-
-	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
-		return;
-	endif;
-	
-	// ***********************************
-	// Create Compensation
-	// ***********************************
-	p = Call ( "CalculationTypes.Compensations.Create.Params" );
-	p.Description = Env.Compensation;
-	Call ( "CalculationTypes.Compensations.Create", p );
-	
-	// ***********************************
-	// Create ReceiveItems
-	// ***********************************
-
-	p = Call ( "Documents.ReceiveItems.Receive.Params" );
-	p.Date = Call ( "Common.USFormat", env.date - 86400 );
-	p.Warehouse = Env.Warehouse;
-	
-	if ( Call ( "Common.AppIsCont" ) ) then
-		p.Account = "7141";
-	else
-		p.Account = "8111";
-	endif;
-	p.Expenses = Env.expense;
-	message ( AppName );
-	p.Items = Env.Items;
-	Call ( "Documents.ReceiveItems.Receive", p );
-	
-	// Employees
-	
-	// create
-	p = Call ( "Catalogs.Employees.Create.Params" );
-	for each row in Env.Employees do
-		p.Description = row.Employee;
-		Call ( "Catalogs.Employees.Create", p );
-	enddo;
-	
-	Call ( "Common.OpenList", Meta.Documents.Commissioning );
-	Click ( "#FormCreate" );
-	form = With ( "Commissioning (create)" );
-	Activate ( "Stakeholders" );
-	p = Call ( "Documents.Hiring.Create.Params" );
-	p.Employees = Env.Employees;
-	p.Insert ( "App" );
-	Call ( "Documents.Hiring.Create", p );
-	
-	CloseAll ();
-	
-	Call ( "Common.StampData", id );
-
-EndProcedure
-
 Procedure fillStakeholders ( Form, Employees )
 	
 	Activate ( "Stakeholders" );
@@ -304,5 +296,3 @@ Procedure setValue ( Field, Value )
 	CurrentSource = form;
 	
 EndProcedure
-
-

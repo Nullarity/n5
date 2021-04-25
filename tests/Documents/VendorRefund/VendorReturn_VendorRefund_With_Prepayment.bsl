@@ -1,4 +1,4 @@
-// Create Vendor Payment
+﻿// Create Vendor Payment
 // Create Vendor Invoice
 // Create Vendor Return based on Vendor Invoice
 // Create Vendor Refund based on Vendor Return
@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B6705B4" );
+id = Call ( "Common.ScenarioID", "2CFE6E6C" );
 env = getEnv ( id );
 createEnv ( env );
 

@@ -1,9 +1,9 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2BE5AB30" );
+id = Call ( "Common.ScenarioID", "2CFF24AE" );
 env = getEnv ( id );
 createEnv ( env );
 
