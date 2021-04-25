@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 // *********************
@@ -8,7 +8,7 @@ Commando ( "e1cib/list/Document.VendorInvoice" );
 invoicesList = With ( "Vendor Invoices" );
 Click ( "#FormCreate" );
 With ( "Vendor Invoice (cr*" );
-Click ( "#FormWrite" );
+Click ( "#JustSave" );
 number = Fetch ( "#Number" );
 Close ();
 
@@ -44,7 +44,8 @@ Click ( "Yes", "1?:*" );
 With ( lotsList );
 Click ( "#FormRefresh" );
 Click ( "#FormSetDeletionMark" );
-Get ( "Clear * deletion mark", "1?:*" ); // If title is found then deletion mark is correct
+
+Get ( "Clear * deletion mark?", "1?:*" ); // If title is found then deletion mark is correct
 Click ( "No", "1?:*" );
 
 // *********************
@@ -60,5 +61,5 @@ Click ( "Yes", "1?:*" );
 With ( lotsList );
 Click ( "#FormRefresh" );
 Click ( "#FormSetDeletionMark" );
-Get ( "Mark * for deletion", "1?:*" ); // If title is found then deletion mark is correct
+Get ( "Mark * for deletion?", "1?:*" ); // If title is found then deletion mark is correct
 Click ( "No", "1?:*" );

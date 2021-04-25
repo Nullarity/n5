@@ -8,7 +8,7 @@ CloseAll ();
 Commando("e1cib/command/Document.IOSheet.Create");
 With();
 
-Click("#FormWrite");
+Click("#JustSave");
 Click("#FormDocumentSalesOrderCreateBasedOn");
 With();
 department = Fetch("#Department");

@@ -32,7 +32,7 @@ Click ( "#MembersAdd" );
 setValue ( "#MembersMember", member2 );
 setValue ( "#MembersPosition", member2Position );
 
-Click ( "#FormWrite" );
+Click ( "#JustSave" );
 Close ();
 
 // ************************************

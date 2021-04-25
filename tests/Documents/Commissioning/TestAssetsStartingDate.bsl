@@ -30,7 +30,7 @@ IgnoreErrors = true;
 Click ( "#FormPost" );
 Call ( "Common.FillCheckError", "Calculation *" );
 Call ( "Table.Clear", table );
-Click ( "#FormWrite" );
+Click ( "#JustSave" );
 IgnoreErrors = false;
 
 // *************************
