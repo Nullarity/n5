@@ -71,7 +71,7 @@ for i = 0 to batch - 1 do
 	while ( j <= listSize ) do
 		if ( k = 0 ) then
 			if ( chunk.Count () > 0 ) then
-				NewJob ( "Tester", chunk );
+				NewJob ( "Tester", chunk, , , , , , job );
 			endif;
 			chunk.Clear ();
 		endif;
