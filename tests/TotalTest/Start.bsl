@@ -64,6 +64,7 @@ params.Insert ( "Exceptions", p.Exceptions );
 list = Call ( "Tester.Scenarios", params );
 listSize = list.Count () - 1;
 chunk = new Array ();
+job = CurrentDelegatedJob.Job;
 for i = 0 to batch - 1 do
 	k = 0;
 	j = i;
@@ -82,6 +83,6 @@ for i = 0 to batch - 1 do
 		k = ? ( k = batch, 0, k + 1 );
 		j = j + batch;
 	enddo;
-	NewJob ( "Tester", chunk );
+	NewJob ( "Tester", chunk, , , , , , job );
 	chunk.Clear ();
 enddo;
