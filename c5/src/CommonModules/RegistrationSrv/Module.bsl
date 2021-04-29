@@ -19,9 +19,10 @@ Function getEnv ( User )
 	userData = DF.Values ( User, "Description, Email, Login.MustChangePassword as MustChangePassword" );
 	env = new Structure ();
 	env.Insert ( "Company", String ( Constants.Company.Get () ) );
-	env.Insert ( "PasswordIsSet", InfoBaseUsers.FindByName ( User ).PasswordIsSet );
+	login = userData.Description;
+	env.Insert ( "PasswordIsSet", InfoBaseUsers.FindByName ( login ).PasswordIsSet );
 	env.Insert ( "MustChangePassword", userData.MustChangePassword );
-	env.Insert ( "User", userData.Description );
+	env.Insert ( "User", login );
 	env.Insert ( "Email", userData.Email );
 	env.Insert ( "TenantCode", DF.Pick ( SessionParameters.Tenant, "Code" ) );
 	env.Insert ( "AdminEmail", DF.Pick ( Constants.MainUser.Get (), "Email" ) );
