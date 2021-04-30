@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -11,7 +11,7 @@ openReport ( env );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "286E490D#" );
+	id = Call ( "Common.ScenarioID", "2D050FB4#" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "ReportAccount", "10100" );
