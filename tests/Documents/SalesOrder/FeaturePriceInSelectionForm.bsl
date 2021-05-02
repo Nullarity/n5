@@ -1,9 +1,10 @@
-
+﻿
 Call ( "Common.Init" );
 CloseAll ();
 
-itemName = "_Item test feature price#";
-featureName = "_white#";
+id = Call ( "Common.ScenarioID", "2D085D79" );
+itemName = "Item " + id;
+featureName = "feature " + id;
 prices = "Cost";
 price = "7";
 
@@ -14,12 +15,7 @@ price = "7";
 itemParams = Call ( "Catalogs.Items.Create.Params" );
 itemParams.Description = itemName;
 itemParams.Feature = featureName;
-
-p = Call ( "Common.CreateIfNew.Params" );
-p.Object = Meta.Catalogs.Items;
-p.Description = itemName;
-p.CreationParams = itemParams;
-Call ( "Common.CreateIfNew", p );
+Call ( "Catalogs.Items.Create", itemParams );
 
 // ***********************************
 // Setup Price
@@ -36,12 +32,12 @@ Call ( "Documents.SetupPrices.Simple.Create", p );
 // Create Sales Order and Open Selection
 // *************************************
 
+CloseAll ();
 MainWindow.ExecuteCommand ( "e1cib/data/Document.SalesOrder" );
 form = With ( "Sales Order (create)" );
-Set ( "#Prices", prices );
-
-With ( "1C:*" );
-Click ( "Yes" );
+Set ( "#Prices", "" );
+Click ( "Yes", "1?:*" );
+Pick ( "#Prices", "Cost" );
 
 With ( form );
 form.GotoNextItem ();
