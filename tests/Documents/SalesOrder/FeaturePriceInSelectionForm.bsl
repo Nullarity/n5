@@ -2,7 +2,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D085D79" );
+id = Call ( "Common.ScenarioID", "2D090785" );
 itemName = "Item " + id;
 featureName = "feature " + id;
 prices = "Cost";
@@ -67,8 +67,10 @@ Call ( "Common.Find", p );
 table = Get ( "#ItemsList" );
 table.Choose ();
 
-table = Get ( "#FeaturesList" );
-table.GotoFirstRow ();
+p.Button = "#FeaturesListContextMenuFind";
+p.Where = "Feature";
+p.What = featureName;
+Call ( "Common.Find", p );
 
 // *************************************
 // Search & Check Price

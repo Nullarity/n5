@@ -73,8 +73,24 @@ EndProcedure
 Procedure initOptions ()
 	
 	Features = Options.Features ();
+	CommonFeatures = commonFeaturesExist ();
 	
-EndProcedure 
+EndProcedure
+
+&AtServer
+Function commonFeaturesExist ()
+	
+	s = "
+	|select top 1 1
+	|from Catalog.Features as Features
+	|where not Features.DeletionMark
+	|and not Features.IsFolder
+	|and Features.Parent = value ( Catalog.Features.EmptyRef )
+	|";
+	q = new Query ( s );
+	return not q.Execute ().IsEmpty ();
+	
+EndFunction
 
 &AtServer
 Procedure initLists ()
@@ -693,7 +709,7 @@ EndProcedure
 &AtClient
 Function featureExists ()
 	
-	return Features and not SelectedRow.Features.IsEmpty ();
+	return Features and ( CommonFeatures or not SelectedRow.Features.IsEmpty () );
 	
 EndFunction
 
