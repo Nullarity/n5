@@ -63,7 +63,7 @@ form = With ( "Receive Items *" );
 if ( Call ( "Common.AppIsCont" ) ) then
 	Put ( "#Account", "2111" );
 else
-	Put ( "#Account", "12100" );
+	Put ( "#Account", "2171" );
 endif;
 Put ( "#Warehouse", env.Warehouse );
 Click ( "#FormPost" );

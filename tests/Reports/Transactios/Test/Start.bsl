@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 date = CurrentDate ();
@@ -6,8 +6,8 @@ tomorrow = date + 86400;
 
 warehouseName = "_Transactions Report: " + date;
 itemName = "_Test Transactions Report#";
-accountDr = "12100";
-accountCr = "00000";
+accountDr = "2171";
+accountCr = "0";
 amount = "-700";
 quantityDr = "-5";
 
@@ -54,7 +54,7 @@ row = Call ( "Documents.Entry.Create", p );
 // ***********************************
 
 p = Call ( "Common.Report.Params" );
-p.Path = "Accounting / Transactions";
+p.Path = "Accounting / Reports / Transactions";
 p.Title = "Transactions*";
 filters = new Array ();
 
@@ -86,7 +86,7 @@ CheckTemplate ( "#Result" );
 Close ();
 
 p = Call ( "Common.Report.Params" );
-p.Path = "Accounting / Transactions";
+p.Path = "Accounting / Reports / Transactions";
 p.Title = "Transactions*";
 filters = new Array ();
 

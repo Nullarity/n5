@@ -19,6 +19,7 @@ Procedure Exec () export
 	enddo;
 	if ( Errors.Count () = 0 ) then
 		revoke ();
+		activate ( OriginalTenant );
 	else
 		activate ( OriginalTenant );
 		Progress.Put ( StrConcat ( Errors, Chars.LF ), JobKey, true );

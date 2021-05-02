@@ -14,7 +14,7 @@ Function getEnv ()
 	id = Call ( "Common.ScenarioID", "286FB90B#" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
-	p.Insert ( "Account", "12100" );
+	p.Insert ( "Account", "2171" );
 	p.Insert ( "BalancedAccount", "8111" );
 	p.Insert ( "Date", Date ( 2018, 1, 1 ) );
 	p.Insert ( "Warehouse", "Main" );

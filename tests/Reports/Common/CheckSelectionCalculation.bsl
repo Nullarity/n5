@@ -84,14 +84,14 @@ Procedure createEnv ( Env )
 	p = Call ( "Documents.Entry.Create.Params" );
 	records = p.Records;
 	row = Call ( "Documents.Entry.Create.Row" );
-	row.AccountDr = "00000";
+	row.AccountDr = "0";
 	row.AccountCr = account;
 	row.Amount = 1500.33;
 	records.Add ( row );
 	
 	row = Call ( "Documents.Entry.Create.Row" );
 	row.AccountDr = account;
-	row.AccountCr = "00000";
+	row.AccountCr = "0";
 	row.Amount = -500.76;
 	records.Add ( row );
 	Call ( "Documents.Entry.Create", p );

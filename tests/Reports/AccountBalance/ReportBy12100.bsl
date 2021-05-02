@@ -7,7 +7,7 @@ p.Title = "Account Balance*";
 filters = p.Filters;
 filter = Call ( "Common.Report.Filter" );
 filter.Name = "Account";
-filter.Value = "12100";
+filter.Value = "2171";
 filters.Add ( filter );
 
 Call ( "Common.Report", p );

@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28D3A6FC" );
+id = Call ( "Common.ScenarioID", "2D0974D8" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -122,8 +122,10 @@ Procedure createEnv ( Env )
 	Call ( "Common.Find", p );
 	Click ( "#FormChange" );
 	With ();
+	Click ( "#Settings / More" );
 	Put ( "#Employee", Env.Employee );
 	Click ( "#FormWriteAndClose" );
+	Pause(5);
 	
 	// *************************
 	// Create Project

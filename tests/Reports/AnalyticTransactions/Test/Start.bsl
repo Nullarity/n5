@@ -28,8 +28,8 @@ Function getEnv ( ID )
 	p.Insert ( "Tomorrow", date + 86400 );
 	p.Insert ( "Warehouse", "Warehouse " + ID );
 	p.Insert ( "Item", "Item " + ID );
-	p.Insert ( "AccountDr", "12100" );
-	p.Insert ( "AccountCr", "00000" );
+	p.Insert ( "AccountDr", "2171" );
+	p.Insert ( "AccountCr", "0" );
 	p.Insert ( "Amount", -700 );
 	p.Insert ( "QuantityDr", -5 );
 	return p;

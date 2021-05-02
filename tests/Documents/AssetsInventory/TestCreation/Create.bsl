@@ -54,7 +54,7 @@ Function getEnv ( ID )
 	else
 		expenseAccount = "8111";
 		assetAccount = "15000";
-		account = "12100";
+		account = "2171";
 	endif;
 	env.Insert ( "FixedAssetAccount", assetAccount );
 	env.Insert ( "Shedule", "_Shedule" );

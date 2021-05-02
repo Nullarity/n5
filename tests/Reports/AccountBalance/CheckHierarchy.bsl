@@ -35,7 +35,7 @@ Procedure createEnv ( Env )
 	records = p.Records;
 	row = Call ( "Documents.Entry.Create.Row" );
 	row.AccountDr = Env.SubordinatedAccount;
-	row.AccountCr = "00000";
+	row.AccountCr = "0";
 	row.Amount = "6759";
 	records.Add ( row );
 	Call ( "Documents.Entry.Create", p );

@@ -18,7 +18,7 @@ endif;
 Click ( "#FormCreateByParameterItemBalances" );
 With ();
 
-Put ( "#Account", "12100" );
+Put ( "#Account", "2171" );
 Put ( "#Warehouse", "Main" );
 table = Get ( "#Items" );
 Click ( "#ItemsAdd" );

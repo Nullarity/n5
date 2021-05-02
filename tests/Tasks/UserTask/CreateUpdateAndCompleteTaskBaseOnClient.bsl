@@ -1,4 +1,4 @@
-// Create a new Customer
+﻿// Create a new Customer
 // Generate a new Task
 // Change progress
 // Check if task has 10%
@@ -27,6 +27,7 @@ With();
 Set("#Memo", id);
 Put("#Progress", "10%");
 Click("#FormOK");
+CloseAll ();
 
 // Change progress
 Commando("e1cib/command/Catalog.Organizations.Command.Customers");

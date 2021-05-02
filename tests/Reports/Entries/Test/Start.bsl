@@ -46,8 +46,8 @@ Function getEnv ()
 	env.Insert ( "Tomorrow", date + 86400 );
 	env.Insert ( "WarehouseName", "_Entries Report: " + id );
 	env.Insert ( "ItemName", "_Test Entries Report#" + id );
-	env.Insert ( "AccountDr", "12100" );
-	env.Insert ( "AccountCr", "00000" );
+	env.Insert ( "AccountDr", "2171" );
+	env.Insert ( "AccountCr", "0" );
 	env.Insert ( "Amount", "-700" );
 	env.Insert ( "QuantityDr", "-5" );
 	return env;

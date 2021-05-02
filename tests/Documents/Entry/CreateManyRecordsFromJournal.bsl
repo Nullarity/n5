@@ -66,8 +66,8 @@ Function getEnv ( ID )
 	p = new Structure ();
 	p.Insert ( "ID", ID );
 	p.Insert ( "Operation", "Operation " + ID );
-	p.Insert ( "AccountDr", "12100" );
-	p.Insert ( "AccountCr", "00000" );
+	p.Insert ( "AccountDr", "2171" );
+	p.Insert ( "AccountCr", "0" );
 	return p;
 
 EndFunction
