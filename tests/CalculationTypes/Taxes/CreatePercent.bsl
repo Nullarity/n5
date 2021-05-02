@@ -8,7 +8,7 @@ id = CurrentDate ();
 
 CheckState ( "#PayrollTaxes", "Enable", false );
 Set ( "#Description", id );
-Set ( "#Account", "24010" );
+Set ( "#Account", "5333" );
 Click ( "#FormWrite" );
 CheckState ( "#PayrollTaxes", "Enable" );
 Click ( "#PayrollTaxesCreate" );

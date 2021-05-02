@@ -1,4 +1,4 @@
-// Create Command: 1 Performer
+﻿// Create Command: 1 Performer
 // Run a new 1C session with Performer
 // Open & give his task back
 // Connect to the Creator's session
@@ -13,7 +13,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28714F07" );
+id = Call ( "Common.ScenarioID", "2D09197A" );
 env = getEnv ( id );
 
 // Create Command
@@ -57,7 +57,7 @@ Commando("e1cib/list/Task.UserTask");
 With("User Tasks");
 Click("#FormChange");
 Click("#FormGiveBack", "Change cont*");
-With("Return Reason");
+With("Reason for Return");
 Set("#Reason", "No much info");
 Click("#FormOK");
 

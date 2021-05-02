@@ -10,7 +10,7 @@ Clear ( "#HourlyRate" );
 IgnoreErrors = true;
 
 Click ( "#FormWrite" );
-Call ( "Common.CheckFillingError", "*Hourly Rate*" );
+Call ( "Common.FillCheckError", "*Hourly Rate*" );
 CloseAll ();
 
 IgnoreErrors = false;

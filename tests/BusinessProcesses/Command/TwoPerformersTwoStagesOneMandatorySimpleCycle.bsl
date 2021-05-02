@@ -1,4 +1,4 @@
-// Create Command: 2 Performers 2 Stages 1 Mandatory performer on each stage
+﻿// Create Command: 2 Performers 2 Stages 1 Mandatory performer on each stage
 // Run a new 1C session with Performer
 // Open & complete all tasks
 // Connect to the Creator's session
@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27B64889" );
+id = Call ( "Common.ScenarioID", "2D091CF1" );
 env = getEnv ( id );
 
 createCommand(env);
@@ -68,6 +68,7 @@ Procedure createCommand(Env)
 		Close ( "Users" );
 		With(form);
 		Put ( "#PerformersPerformer", env.Performer2 );
+		Next ();
 		Click("#PerformersMandatory");
 		Next();
 		Set("#PerformersStage", stage, table);
@@ -129,7 +130,7 @@ Procedure openTask ()
 		table.GotoFirstRow();
 	except
 	endtry;
-	Click("#UserTasksContextMenuChange");
+	table.Choose();
 	
 EndProcedure
 

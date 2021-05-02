@@ -18,7 +18,6 @@ Function Post ( Env ) export
 	
 	getData ( Env );
 	commitTaxes ( Env );
-	commitCompensations ( Env );
 	commitNet ( Env );
 	flagRegisters ( Env );
 	return true;
@@ -195,49 +194,40 @@ Function distributeTaxes ( Env )
 	
 EndFunction 
 
-Procedure commitCompensations ( Env )
-	
-	p = GeneralRecords.GetParams ();
-	fields = Env.Fields;
-	p.Date = fields.Date;
-	p.Company = fields.Company;
-	p.Recordset = Env.Buffer;
-	p.AccountCr = fields.DepositLiabilities;
-	p.Content = Output.PayrollNetAmount ();
-	for each row in Env.Compensations do
-		p.AccountDr = row.AccountDr;
-		p.Amount = row.Amount;
-		p.DimDr1 = row.Employee;
-		p.DimDr2 = row.Compensation;
-		p.DimCr1 = row.Employee;
-		GeneralRecords.Add ( p );
-	enddo; 
-	
-EndProcedure 
-
 Procedure commitNet ( Env )
 	
 	fields = Env.Fields;
 	method = fields.Method;
-	if ( method.IsEmpty () ) then
-		return;
-	endif; 
 	p = GeneralRecords.GetParams ();
 	p.Date = fields.Date;
 	p.Company = fields.Company;
 	p.Recordset = Env.Buffer;
-	p.AccountDr = fields.DepositLiabilities;
-	p.AccountCr = fields.Account;;
-	p.Content = Output.PayrollPayment ();
-	p.CurrencyCr = Application.Currency ();
-	cash = ( method = Enums.PaymentMethods.Cash );
-	p.DimCr1 = ? ( cash, fields.Location, fields.BankAccount );
-	p.DimCr2 = fields.cashFlow;
-	for each row in Env.Totals do
-		p.Amount = row.Amount;
-		p.DimDr1 = row.Employee;
-		GeneralRecords.Add ( p );
-	enddo; 
+	if ( method.IsEmpty () ) then
+		p.Content = Output.PayrollNetAmount ();
+		p.AccountCr = fields.DepositLiabilities;
+		for each row in Env.Compensations do
+			p.AccountDr = row.AccountDr;
+			p.Amount = row.Amount;
+			p.DimDr1 = row.Employee;
+			p.DimDr2 = row.Compensation;
+			p.DimCr1 = row.Employee;
+			GeneralRecords.Add ( p );
+		enddo; 
+	else
+		p.Content = Output.PayrollPayment ();
+		p.AccountCr = fields.Account;
+		p.CurrencyCr = Application.Currency ();
+		cash = ( method = Enums.PaymentMethods.Cash );
+		p.DimCr1 = ? ( cash, fields.Location, fields.BankAccount );
+		p.DimCr2 = fields.cashFlow;
+		for each row in Env.Compensations do
+			p.AccountDr = row.AccountDr;
+			p.Amount = row.Amount;
+			p.DimDr1 = row.Employee;
+			p.DimDr2 = row.Compensation;
+			GeneralRecords.Add ( p );
+		enddo; 
+	endif;
 	
 EndProcedure 
 

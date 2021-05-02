@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", Call ( "Common.GetID" ) );
+id = Call ( "Common.ScenarioID", "2D094A14" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -23,9 +23,7 @@ Pause ( __.Performance * 7 );
 
 With ( form );
 Put ( "#Method", "Bank Transfer" );
-Set ( "#BankAccount", "USD Checking Account" );
 Set ( "#CashFlow", env.CashFlow );
-Put ( "#DepositLiabilities", "21010" );
 
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
@@ -120,7 +118,7 @@ Procedure createEnv ( Env )
 	p.Method = "Social Insurance";
 	p.RateDate = date;
 	p.Rate = 23;
-	p.Account = "24010";
+	p.Account = "5333";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -134,7 +132,7 @@ Procedure createEnv ( Env )
 	p.Method = "Medical Insurance";
 	p.RateDate = date;
 	p.Rate = 4.5;
-	p.Account = "24020";
+	p.Account = "5332";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -148,7 +146,7 @@ Procedure createEnv ( Env )
 	p.Method = "Social Insurance (Employees)";
 	p.RateDate = date;
 	p.Rate = 6;
-	p.Account = "24010";
+	p.Account = "5333";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -162,7 +160,7 @@ Procedure createEnv ( Env )
 	p.Method = "Medical Insurance (Employees)";
 	p.RateDate = date;
 	p.Rate = 4.5;
-	p.Account = "24020";
+	p.Account = "5332";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -175,7 +173,7 @@ Procedure createEnv ( Env )
 	p.Description = "_Inc: " + id;
 	p.Method = "Income Tax (scale)";
 	p.RateDate = date;
-	p.Account = "24030";
+	p.Account = "5342";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	scale = p.Scale;
@@ -262,7 +260,7 @@ Procedure createEnv ( Env )
 	With ( form );
 	Set ( "#Date", date );
 	Click ( "#FormPostAndClose" );
-	
+
 	RegisterEnvironment ( id );
 
 EndProcedure

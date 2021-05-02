@@ -7,7 +7,7 @@ form = With ( "Taxes (cr*" );
 income = "Income Tax (scale)";
 Set ( "#Method", income );
 Put ( "#Description", income + Call ( "Common.GetID" ) );
-Set ( "#Account", "24010" );
+Set ( "#Account", "5333" );
 Set ( "#Code", Call ( "Common.GetID" ) );
 
 Click ( "#Write" );

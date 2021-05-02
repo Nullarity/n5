@@ -4,10 +4,10 @@ CloseAll ();
 Commando ( "e1cib/data/ChartOfCalculationTypes.Taxes" );
 form = With ( "Taxes (cr*" );
 
-id = Call ( "Common.GetID" );//Call ( "Common.ScenarioID", "27387713#" );
+id = Call ( "Common.ScenarioID", "2D0920C1" );
 
 Set ( "#Method", "Income Tax (scale)" );
-Set ( "#Account", "24010" );
+Set ( "#Account", "5333" );
 Set ( "#Code", id );
 
 CheckState ( "#Warning", "Visible" );

@@ -1,4 +1,4 @@
-// Create Command: 1 Performer 2 Stages
+﻿// Create Command: 1 Performer 2 Stages
 // Run a new 1C session with Performer
 // Open & complete all tasks
 // Connect to the Creator's session
@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27B64914" );
+id = Call ( "Common.ScenarioID", "2D091DAE" );
 env = getEnv ( id );
 
 createCommand(env);
@@ -127,7 +127,7 @@ Procedure openTask ()
 		table.GotoFirstRow();
 	except
 	endtry;
-	Click("#UserTasksContextMenuChange");
+	table.Choose();
 	
 EndProcedure
 

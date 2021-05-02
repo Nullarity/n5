@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -54,7 +54,7 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "CalculationTypes.Taxes.Create.Params" );
 	p.Description = Env.Tax1;
-	p.Account = "24010";
+	p.Account = "5333";
 	Call ( "CalculationTypes.Taxes.Create", p );
 	p.Description = Env.Tax2;
 	Call ( "CalculationTypes.Taxes.Create", p );

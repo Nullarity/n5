@@ -1,4 +1,4 @@
-// Create Command: 1 Performer
+﻿// Create Command: 1 Performer
 // Run a new 1C session with Performer
 // Open & complete his task
 // Close 1C
@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27B62AC3" );
+id = Call ( "Common.ScenarioID", "2D091A2D" );
 env = getEnv ( id );
 
 // Create Command

@@ -115,7 +115,7 @@ Procedure createEnv ( Env )
 	p.Method = "Percent";
 	p.RateDate = date;
 	p.Rate = 3;
-	p.Account = "24010";
+	p.Account = "5331";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -129,7 +129,7 @@ Procedure createEnv ( Env )
 	p.Method = "Social Insurance (Employees)";
 	p.RateDate = date;
 	p.Rate = 4.5;
-	p.Account = "24010";
+	p.Account = "5331";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
@@ -143,7 +143,7 @@ Procedure createEnv ( Env )
 	p.Method = "Medical Insurance";
 	p.RateDate = date;
 	p.Rate = 4.5;
-	p.Account = "24010";
+	p.Account = "5331";
 	base = p.Base;
 	base.Add ( mainCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
