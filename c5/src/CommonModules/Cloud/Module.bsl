@@ -102,14 +102,6 @@ Function Domain () export
 	
 EndFunction 
 
-Function GetProjectsFolder () export
-	
-	folder = Constants.ProjectFiles.Get ();
-	tenant = Cloud.GetTenantCode ();
-	return folder + "\" + tenant;
-	
-EndFunction 
-
 Function Website () export
 	
 	return Constants.Website.Get ();

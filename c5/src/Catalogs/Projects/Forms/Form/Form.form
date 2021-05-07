@@ -2623,23 +2623,111 @@ Multiple users can be given equal priority, in which case they will be able to a
     <items xsi:type="form:FormGroup">
       <name>EditorPage</name>
       <id>133</id>
-      <items xsi:type="form:FormField">
-        <name>TextEditor</name>
-        <id>196</id>
+      <items xsi:type="form:FormGroup">
+        <name>Group3</name>
+        <id>359</id>
+        <items xsi:type="form:FormGroup">
+          <name>Group2</name>
+          <id>357</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <extendedTooltip>
+            <name>Group2ExtendedTooltip</name>
+            <id>358</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <type>CommandBar</type>
+          <extInfo xsi:type="form:CommandBarExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+            <commandSource>Item.TextEditor</commandSource>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>TextEditor</name>
+          <id>196</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:MultiLanguageDataPath">
+            <paths xsi:type="form:DataPath">
+              <segments>TextEditor</segments>
+            </paths>
+          </dataPath>
+          <titleLocation>None</titleLocation>
+          <extendedTooltip>
+            <name>TextEditorExtendedTooltip</name>
+            <id>198</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>TextEditorContextMenu</name>
+            <id>197</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>FormattedDocumentField</type>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:FormattedDocFieldExtInfo">
+            <handlers>
+              <event>DocumentComplete</event>
+              <name>TextEditorDocumentComplete</name>
+            </handlers>
+            <handlers>
+              <event>OnClick</event>
+              <name>TextEditorOnClick</name>
+            </handlers>
+            <width>50</width>
+            <autoMaxWidth>true</autoMaxWidth>
+            <height>10</height>
+            <autoMaxHeight>true</autoMaxHeight>
+            <horizontalStretch>true</horizontalStretch>
+            <verticalStretch>true</verticalStretch>
+            <borderColor xsi:type="core:ColorRef">
+              <color>Style.FormBackColor</color>
+            </borderColor>
+          </extInfo>
+        </items>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
           <common>true</common>
         </userVisible>
-        <dataPath xsi:type="form:MultiLanguageDataPath">
-          <paths xsi:type="form:DataPath">
-            <segments>TextEditor</segments>
-          </paths>
-        </dataPath>
-        <titleLocation>None</titleLocation>
+        <enableContentChange>true</enableContentChange>
         <extendedTooltip>
-          <name>TextEditorExtendedTooltip</name>
-          <id>198</id>
+          <name>Group3ExtendedTooltip</name>
+          <id>360</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
@@ -2652,39 +2740,13 @@ Multiple users can be given equal priority, in which case they will be able to a
             <horizontalAlign>Left</horizontalAlign>
           </extInfo>
         </extendedTooltip>
-        <contextMenu>
-          <name>TextEditorContextMenu</name>
-          <id>197</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <autoFill>true</autoFill>
-        </contextMenu>
-        <type>HTMLDocumentField</type>
-        <editMode>Enter</editMode>
-        <showInHeader>true</showInHeader>
-        <headerHorizontalAlign>Left</headerHorizontalAlign>
-        <showInFooter>true</showInFooter>
-        <extInfo xsi:type="form:HtmlFieldExtInfo">
-          <handlers>
-            <event>DocumentComplete</event>
-            <name>TextEditorDocumentComplete</name>
-          </handlers>
-          <handlers>
-            <event>OnClick</event>
-            <name>TextEditorOnClick</name>
-          </handlers>
-          <width>50</width>
-          <autoMaxWidth>true</autoMaxWidth>
-          <height>10</height>
-          <autoMaxHeight>true</autoMaxHeight>
-          <horizontalStretch>true</horizontalStretch>
-          <verticalStretch>true</verticalStretch>
-          <borderColor xsi:type="core:ColorRef">
-            <color>Style.FormBackColor</color>
-          </borderColor>
+        <type>UsualGroup</type>
+        <extInfo xsi:type="form:UsualGroupExtInfo">
+          <group>Vertical</group>
+          <showLeftMargin>true</showLeftMargin>
+          <united>true</united>
+          <throughAlign>Auto</throughAlign>
+          <currentRowUse>Auto</currentRowUse>
         </extInfo>
       </items>
       <items xsi:type="form:Table">
@@ -2979,7 +3041,6 @@ Multiple users can be given equal priority, in which case they will be able to a
             <common>true</common>
           </userVisible>
           <horizontalAlign>Left</horizontalAlign>
-          <autoFill>true</autoFill>
         </autoCommandBar>
         <handlers>
           <event>Selection</event>
@@ -3637,10 +3698,6 @@ Multiple users can be given equal priority, in which case they will be able to a
     <name>OnOpen</name>
   </handlers>
   <handlers>
-    <event>BeforeClose</event>
-    <name>BeforeClose</name>
-  </handlers>
-  <handlers>
     <event>OnCreateAtServer</event>
     <name>OnCreateAtServer</name>
   </handlers>
@@ -3887,8 +3944,7 @@ Multiple users can be given equal priority, in which case they will be able to a
     <name>TextEditor</name>
     <id>17</id>
     <valueType>
-      <types>String</types>
-      <stringQualifiers/>
+      <types>FormattedDocument</types>
     </valueType>
     <view>
       <common>true</common>
@@ -3896,6 +3952,7 @@ Multiple users can be given equal priority, in which case they will be able to a
     <edit>
       <common>true</common>
     </edit>
+    <savedData>true</savedData>
   </attributes>
   <attributes>
     <name>RemoveScript</name>
@@ -4125,10 +4182,6 @@ Multiple users can be given equal priority, in which case they will be able to a
     <handlers>
       <event>OnReadAtServer</event>
       <name>OnReadAtServer</name>
-    </handlers>
-    <handlers>
-      <event>BeforeWrite</event>
-      <name>BeforeWrite</name>
     </handlers>
     <handlers>
       <event>BeforeWriteAtServer</event>

@@ -12,7 +12,7 @@ EndProcedure
 &AtServer
 Procedure setHTML ()
 	
-	HTML = AttachmentsSrv.PreviewScript ( Parameters.File, Parameters.URL );
+	HTML = AttachmentsSrv.PreviewScript ( Parameters.File, Parameters.Address );
 
 EndProcedure 
 

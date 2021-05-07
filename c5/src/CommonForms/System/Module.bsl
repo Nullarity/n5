@@ -62,7 +62,6 @@ Function checkCloudSaaS ()
 		fields.Add ( "EmailAttachmentsURL" );
 		fields.Add ( "EmailAttachments" );
 		fields.Add ( "EmailStyle" );
-		fields.Add ( "ProjectFiles" );
 		fields.Add ( "Folders" );
 		fields.Add ( "FoldersURL" );
 		fields.Add ( "CKEditorURL" );

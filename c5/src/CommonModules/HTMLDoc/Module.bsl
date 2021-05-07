@@ -24,3 +24,14 @@ Procedure ClearNode ( Node ) export
 	enddo; 
 	
 EndProcedure 
+
+Function GetText ( HTML ) export
+	
+	result = Regexp.Select ( HTML, "<body\b[^>]*>([\u0000-\uFFFF]*?)</body>" );
+	if ( result.Count () = 0 ) then
+		return HTML;
+	endif;
+	body = Regexp.Replace ( result [ 0 ].Groups [ 0 ], "<.*?\b[^>]*>", "" );
+	return body;
+	
+EndFunction

@@ -621,7 +621,7 @@ Procedure saveFile ( val Location, val File, val Document, val FolderID )
 	folder = CKEditorSrv.GetFolder ( FolderID );
 	data = GetFromTempStorage ( Location );
 	data.Write ( folder + "\" + File );
-	AttachmentsSrv.AddFile ( Document, File, data.Size (), , FolderID, true );
+	AttachmentsSrv.AddFile ( Document, File, data.Size (), FolderID, true );
 	
 EndProcedure 
 

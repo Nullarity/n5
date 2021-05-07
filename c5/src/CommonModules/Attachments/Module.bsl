@@ -10,6 +10,7 @@ Function GetParams () export
 	p.Insert ( "Ref" );
 	p.Insert ( "Mailbox" );
 	p.Insert ( "Files" );
+	p.Insert ( "Form" );
 	return p;
 	
 EndFunction 
@@ -131,12 +132,12 @@ EndProcedure
 Procedure proceedCommand ( Params )
 	
 	command = Params.Command;
-	printFromDocument = ( command = Enum.AttachmentsCommandsPrint () )
-	and ( Params.Control <> undefined );
-	if ( printFromDocument ) then
+	if ( command = Enum.AttachmentsCommandsPrint ()
+		and Params.Control <> undefined ) then
 		removeNonprint ( Params.Table );
 	endif;
-	if ( attachmentExists ( Params ) ) then
+	if ( command = Enum.AttachmentsCommandsUpload ()
+		or attachmentExists ( Params ) ) then
 		LocalFiles.Prepare ( new NotifyDescription ( "StartCommand", ThisObject, Params ) );
 	else
 		if ( command = Enum.AttachmentsCommandsPrint () ) then
@@ -174,19 +175,26 @@ EndProcedure
 &AtClient
 Procedure StartCommand ( Result, Params ) export
 	
-	if ( Params.Command = Enum.AttachmentsCommandsShow () ) then
+	command = Params.Command;
+	if ( command = Enum.AttachmentsCommandsShow () ) then
 		preview = previewData ( Params );
 		if ( preview <> undefined ) then
 			OpenForm ( "CommonForm.Preview", preview, , preview.File );
 			return;
 		endif;
 	endif; 
-	if ( Params.Folder = undefined ) then
-		dialog = new FileDialog ( FileDialogMode.ChooseDirectory );
-		dialog.Show ( new NotifyDescription ( "SelectFolder", ThisObject, Params ) );
+	if ( command = Enum.AttachmentsCommandsUpload () ) then
+		dialog = new FileDialog ( FileDialogMode.Open );
+		dialog.Multiselect = true;
+		dialog.Show ( new NotifyDescription ( "SelectUploadingFiles", ThisObject, Params ) );
 	else
-		performCommand ( Params );
-	endif; 
+		if ( Params.Folder = undefined ) then
+			dialog = new FileDialog ( FileDialogMode.ChooseDirectory );
+			dialog.Show ( new NotifyDescription ( "SelectFolder", ThisObject, Params ) );
+		else
+			performCommand ( Params );
+		endif; 
+	endif;
 	
 EndProcedure 
 
@@ -198,10 +206,8 @@ Function previewData ( Params )
 		or FileSystem.GoogleDoc ( file )
 		or FileSystem.PlainText ( file )
 		or FileSystem.HyperText ( file ) ) then
-		result = new Structure ( "URL, Path, File" );
-		data = AttachmentsSrv.BuildURL ( Params.FolderID, file, Params.Mailbox );
-		result.URL = data.URL;
-		result.Path = data.Path;
+		result = new Structure ( "Address, URL, Path, File" );
+		result.Address = AttachmentsSrv.GetFile ( Params.FolderID, file, Params.Mailbox, Params.Form.UUID );
 		result.File = file;
 		return result;
 	else
@@ -227,6 +233,55 @@ Function previewFile ( Params )
 EndFunction 
 
 &AtClient
+async Procedure SelectUploadingFiles ( Files, Params ) export
+	
+	if ( Files = undefined ) then
+		return;
+	endif; 
+	links = new Array ();
+	for each file in Files do
+		links.Add ( new TransferableFileDescription ( file ) );
+	enddo;
+	stored = await PutFilesToServerAsync ( , , links );
+	if ( stored = undefined ) then
+		return;
+	endif;
+	list = getGetFiles ( stored );
+	data = AttachmentsSrv.UploadFiles ( list, Params.Ref, Params.FolderID );
+	table = Params.Table;
+	control = Params.Control;
+	ditry = Params.Ref.IsEmpty ();
+	for each file in data do
+		fileName = file.File;
+		search = table.FindRows ( new Structure ( "File", fileName ) );
+		if ( search.Count () = 0 ) then
+			row = table.Add ();
+			FillPropertyValues ( row, file );
+			row.Dirty = ditry;
+			control.CurrentRow = row.GetID ();
+		else
+			control.CurrentRow = search [ 0 ].GetID ();
+		endif; 
+	enddo;
+	
+EndProcedure
+
+&AtClient
+Function getGetFiles ( StoredFiles )
+	
+	files = new Array ();
+	for each record in StoredFiles do
+		if ( record.PutFileCanceled ) then
+			continue;
+		endif;
+		fileRef = record.FileRef;
+		files.Add ( new Structure ( "Name, Size, Address", fileRef.Name, fileRef.Size (), record.Address ) );
+	enddo;
+	return files;
+	
+EndFunction
+
+&AtClient
 Procedure SelectFolder ( Result, Params ) export
 	
 	if ( Result = undefined ) then
@@ -241,7 +296,7 @@ EndProcedure
 Procedure performCommand ( Params )
 	
 	files = getSelectedFiles ( Params );
-	folder = Params.Folder + "\";
+	folder = Params.Folder + GetPathSeparator ();
 	counter = new Structure ( "Current, Last", 0, files.Count () );
 	storage = new UUID ();
 	for each file in files do
@@ -344,26 +399,17 @@ Procedure ReplaceQuestion ( Answer, Params ) export
 EndProcedure 
 
 &AtClient
-Procedure downloadFile ( Params )
+async Procedure downloadFile ( Params )
 	
 	caller = Params.Source;
-	url = AttachmentsSrv.URL ( Params.File, caller.FolderID, caller.Mailbox, Params.Storage );
-	links = new Array ();
-	links.Add ( new TransferableFileDescription ( url.Name, url.Address ) );
-	BeginGettingFiles ( new NotifyDescription ( "GettingFiles", ThisObject, Params ), links, caller.Folder, false );
-		
-EndProcedure 
-
-&AtClient
-Procedure GettingFiles ( Files, Params ) export
-	
-	if ( Files = undefined ) then
-		return;
-	endif; 
-	DeleteFromTempStorage ( Files [ 0 ].Location );
-	AttachmentsSrv.CommitDownloading ( Params.Source.Ref, Params.File );
+	file = Params.File;
+	url = AttachmentsSrv.URL ( file, caller.FolderID, caller.Mailbox, Params.Storage );
+	address = url.Address;
+	await GetFileFromServerAsync ( address, Params.Path );
+	DeleteFromTempStorage ( address );
+	AttachmentsSrv.CommitDownloading ( Params.Source.Ref, file );
 	runCommand ( Params );
-	
+		
 EndProcedure 
 
 &AtClient
@@ -441,8 +487,15 @@ Procedure OpenDownloadsFolder ( Answer, Folder ) export
 	
 	if ( Answer = DialogReturnCode.No ) then
 		return;
-	endif; 
-	RunAppAsync ( Folder );
+	endif;
+	if ( Framework.IsLinux () ) then
+		try
+			RunAppAsync ( "xdg-open " + Folder );
+		except
+		endtry;
+	else
+		RunAppAsync ( Folder );
+	endif;
 	
 EndProcedure 
 
@@ -483,7 +536,7 @@ EndProcedure
 &AtClient
 Procedure Add ( Reference, Table, Control, Name, Size, FolderID, GeneratePreview ) export
 	
-	data = AttachmentsSrv.AddFile ( Reference, Name, Size, Table.Count (), FolderID, GeneratePreview );
+	data = AttachmentsSrv.AddFile ( Reference, Name, Size, FolderID, GeneratePreview );
 	fileName = FileSystem.GetFileName ( Name );
 	search = Table.FindRows ( new Structure ( "File", fileName ) );
 	if ( search.Count () = 0 ) then
@@ -575,3 +628,9 @@ Procedure copyFiles ( Source, Receiver )
 	recordset2.Write ( false );
 	
 EndProcedure 
+
+Function GetLink ( Address ) export
+	
+	return GetInfoBaseURL () + "/" + Address;
+	
+EndFunction

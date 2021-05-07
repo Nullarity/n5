@@ -371,7 +371,8 @@ EndFunction
 
 Function GetFolder ( FolderID ) export
 	
-	return Cloud.GetFolders () + "\" + Cloud.GetTenantCode () + "\" + FolderID;
+	separator = GetPathSeparator ();
+	return Cloud.GetFolders () + separator + Cloud.GetTenantCode () + separator + FolderID;
 
 EndFunction 
 

@@ -53,7 +53,7 @@ Procedure loadAttachment ( Document, Address, File )
 	data = GetFromTempStorage ( Address );
 	data.Write ( folder + "\" + File );
 	size = data.Size ();
-	AttachmentsSrv.AddFile ( Document.Ref, File, size, 1, Document.FolderID, true );
+	AttachmentsSrv.AddFile ( Document.Ref, File, size, Document.FolderID, true );
 		
 EndProcedure 
 

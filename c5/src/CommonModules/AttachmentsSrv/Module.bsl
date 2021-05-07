@@ -1,7 +1,28 @@
-Function AddFile ( val Reference, val Name, val Size, val Count = undefined, val FolderID, val GeneratePreview ) export
+Function UploadFiles ( val Files, val Reference, val FolderID, val Mailbox = undefined,
+	val GeneratePreview = false ) export
+	
+	separator = GetPathSeparator ();
+	if ( Mailbox = undefined ) then
+		folder = CKEditorSrv.GetFolder ( FolderID ) + separator;
+	else
+		folder = EmailsSrv.GetAttachmentsFolder ( FolderID, Mailbox ) + separator;
+	endif; 
+	result = new Array ();
+	for each file in Files do
+		data = GetFromTempStorage ( file.Address );
+		fileName = file.Name;
+		data.Write ( folder + fileName );
+		record = AttachmentsSrv.AddFile ( Reference, fileName, file.Size, FolderID, GeneratePreview );
+		result.Add ( record );
+	enddo;
+	return result;
+	
+EndFunction
+
+Function AddFile ( val Reference, val Name, val Size, val FolderID, val GeneratePreview ) export
 	
 	data = new Structure ();
-	data.Insert ( "File", FileSystem.GetFileName ( Name ) );
+	data.Insert ( "File", Name );
 	data.Insert ( "Size", ? ( Size = -1, getSize ( data.File, FolderID ), Size ) );
 	data.Insert ( "FileSize", Conversion.BytesToSize ( data.Size ) );
 	data.Insert ( "Date", CurrentSessionDate () );
@@ -45,7 +66,7 @@ Function getInfo ( Reference, File )
 		|where Files.Project = &Reference
 		|and Files.File = &File
 		|;
-		|select count ( * ) as Count
+		|select count ( Files.ID ) as Count
 		|from InformationRegister.ProjectFiles as Files
 		|where Files.Project = &Reference
 		|and Files.File <> &File
@@ -57,7 +78,7 @@ Function getInfo ( Reference, File )
 		|where Files.Document = &Reference
 		|and Files.File = &File
 		|;
-		|select count ( * ) as Count
+		|select count ( Files.ID ) as Count
 		|from InformationRegister.Files as Files
 		|where Files.Document = &Reference
 		|and Files.File <> &File
@@ -249,22 +270,13 @@ Function getFirstExtension ( Reference )
 	
 EndFunction 
 
-Function PreviewScript ( File, URL ) export
+Function PreviewScript ( File, Address ) export
 	
 	if ( FileSystem.Picture ( File ) ) then
-		webServer = Cloud.Website ();
 		s = "
 		|<html>
-		|<head>
-		|<script src='" + webServer + "/jquery-1.8.3.min.js'></script>
-		|<link href='" + webServer + "/viewer/viewer.min.css' rel='stylesheet'> 
-		|<script type='text/javascript' src='" + webServer + "/viewer/viewer.min.js'></script>
-		|</head>
 		|<body>
-		|<img class='image' style='visibility:hidden;width:100%' src='" + URL + "'>
-		|<script>
-		|$('.image').viewer({inline:true,title:false,transition:false});
-		|</script>
+		|<img src='" + Attachments.GetLink ( Address ) + "'>
 		|</body>
 		|</html>
 		|";
@@ -281,7 +293,8 @@ Function PreviewScript ( File, URL ) export
 		|</script>
 		|</head>
 		|<body style=""padding: 0px; margin: 0px;overflow-x: hidden;overflow-y: hidden"" onload=""resize ()"" onresize=""resize ()"">
-		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://docs.google.com/gview?url=" + URL + "&embedded=true&output=embed""></iframe>
+		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://docs.google.com/gview?url="
+		+ Attachments.GetLink ( Address ) + "&embedded=true&output=embed""></iframe>
 		|</body>
 		|</html>
 		|";
@@ -298,13 +311,22 @@ Function PreviewScript ( File, URL ) export
 		|</script>
 		|</head>
 		|<body style=""padding: 0px; margin: 0px;overflow-x: hidden;overflow-y: hidden"" onload=""resize ()"" onresize=""resize ()"">
-		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://view.officeapps.live.com/op/view.aspx?src=" + URL + """></iframe>
+		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://view.officeapps.live.com/op/view.aspx?src="
+		+ Attachments.GetLink ( Address ) + """></iframe>
 		|</body>
 		|</html>
 		|";
 	elsif ( FileSystem.HyperText ( File )
 		or FileSystem.PlainText ( File ) ) then
-		s = url;
+		data = GetFromTempStorage ( Address );
+		reader = new TextReader ( data.OpenStreamForRead () );
+		s = "
+		|<html>
+		|<body>
+		|<pre>" + reader.Read () + "</pre>
+		|</body>
+		|</html>
+		|";
 	else
 		s = AttachmentsSrv.PreviewNotSupported ();
 	endif; 
@@ -501,19 +523,16 @@ Function UserFolder () export
 	
 EndFunction
 
-Function BuildURL ( val FolderID, val File, val Mailbox ) export
+Function GetFile ( val FolderID, val File, val Mailbox, val FormUUID ) export
 	
-	encodedFile = EncodeString ( File, StringEncodingMethod.URLEncoding );
 	if ( Mailbox = undefined ) then
 		folder = CKEditorSrv.GetFolder ( FolderID );
-		url = CKEditorSrv.GetFolderURL ( FolderID );
 	else
 		folder = EmailsSrv.GetAttachmentsFolder ( FolderID, Mailbox );
-		url = EmailsSrv.GetAttachmentsFolderURL ( FolderID, Mailbox );
 	endif; 
-	path = folder + "\" + File;
-	url = url + "/" + encodedFile;
-	return new Structure ( "URL, Path", url, path );
+	path = folder + GetPathSeparator () + File;
+	data = new BinaryData ( path );
+	return PutToTempStorage ( data, FormUUID );
 	
 EndFunction 
 

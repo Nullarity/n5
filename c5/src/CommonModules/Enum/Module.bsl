@@ -366,37 +366,44 @@ Function AttachmentsCommandsShow () export
 EndFunction 
 
 &AtClient
-Function AttachmentsCommandsDownload () export
+Function AttachmentsCommandsUpload () export
 	
 	return 2;
 	
 EndFunction 
 
 &AtClient
-Function AttachmentsCommandsDownloadAll () export
+Function AttachmentsCommandsDownload () export
 	
 	return 3;
 	
 EndFunction 
 
 &AtClient
-Function AttachmentsCommandsRemove () export
+Function AttachmentsCommandsDownloadAll () export
 	
 	return 4;
 	
 EndFunction 
 
 &AtClient
-Function AttachmentsCommandsRun () export
+Function AttachmentsCommandsRemove () export
 	
 	return 5;
 	
 EndFunction 
 
 &AtClient
-Function AttachmentsCommandsPrint () export
+Function AttachmentsCommandsRun () export
 	
 	return 6;
+	
+EndFunction 
+
+&AtClient
+Function AttachmentsCommandsPrint () export
+	
+	return 7;
 	
 EndFunction 
 

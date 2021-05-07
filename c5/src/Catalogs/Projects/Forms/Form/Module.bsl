@@ -1,5 +1,3 @@
-&AtServer
-var TextDocument;
 &AtClient
 var TagRow;
 &AtClient
@@ -21,7 +19,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setAccessRightsFlags ();
 	setCanChangeApprovalList ();
 	if ( Clouds ) then
-		initEditor ();
+		initEditor ( CurrentObject );
 	endif;
 	Appearance.Apply ( ThisObject );
 		
@@ -103,18 +101,9 @@ Function existActiveTimesheetApproval ()
 EndFunction 
 
 &AtServer
-Procedure initEditor ()
-	
-	if ( TextDocument = undefined ) then
-		html = undefined;
-	else
-		html = Conversion.DocumentToHTML ( TextDocument );
-	endif; 
-	if ( RemoveScript ) then
-		CKEditorSrv.RemoveScript ( Object.FolderID );
-	endif; 
-	CKEditorSrv.Init ( TextEditor, Object.FolderID, html, , true );
-	RemoveScript = true;
+Procedure initEditor ( CurrentObject )
+
+	TextEditor.SetHTML ( CurrentObject.Data.Get (), new Structure () );
 	
 EndProcedure 
 
@@ -135,9 +124,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		setCanChangeApprovalList ();
 		if ( Parameters.Email <> undefined ) then
 			fillByEmail ();
-		endif;
-		if ( Clouds ) then
-			initEditor ();
 		endif;
 	endif; 
 	setCanChange ();
@@ -388,50 +374,11 @@ Procedure savePeriod ()
 	
 EndProcedure 
 
-&AtClient
-Procedure BeforeClose ( Cancel, Exit, MessageText, StandardProcessing )
-	
-	if ( Exit ) then
-		Cancel = true;
-		return;
-	endif; 
-	if ( EditorBegun ) then
-		CKEditor.CheckModified ( ThisObject, Items.TextEditor );
-	endif;
-	
-EndProcedure
-
-&AtClient
-Procedure OnClose ( Exit )
-	
-	if ( Exit ) then
-		return;
-	endif; 
-	if ( Clouds ) then
-		if ( Object.Ref.IsEmpty () ) then
-			CKEditorSrv.Clean ( Object.FolderID );
-		endif; 
-		if ( RemoveScript ) then
-			CKEditorSrv.RemoveScript ( Object.FolderID );
-		endif; 
-	endif;
-	
-EndProcedure
-
-&AtClient
-Procedure BeforeWrite ( Cancel, WriteParameters )
-	
-	if ( EditorBegun ) then
-		CKEditor.SaveHTML ( WriteParameters, Items.TextEditor );
-	endif;
-	
-EndProcedure
-
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
 	calcProjectTotals ( CurrentObject );
-	storeContent ( CurrentObject, WriteParameters );
+	storeContent ( CurrentObject );
 	
 EndProcedure
 
@@ -459,11 +406,10 @@ Procedure calcProjectTotals ( CurrentObject )
 EndProcedure 
 
 &AtServer
-Procedure storeContent ( CurrentObject, WriteParameters )
+Procedure storeContent ( CurrentObject )
 	
-	if ( EditorBegun ) then
-		CurrentObject.Content = CKEditorSrv.GetText ( WriteParameters.TextEditor );
-	endif;
+	CurrentObject.Content = new ValueStorage ( TextEditor.GetText () );
+	CurrentObject.Data = new ValueStorage ( FD.GetHTML ( TextEditor ) );
 	
 EndProcedure 
 
@@ -474,9 +420,6 @@ Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 		Cancel = true;
 		return;
 	endif; 
-	if ( EditorBegun ) then
-		CKEditorSrv.Store ( Object.FolderID, WriteParameters.TextEditor );
-	endif;
 	if ( Object.Ref.IsEmpty () ) then
 		Catalogs.Projects.SaveJunctions ( CurrentObject.Ref, Tables );
 	endif; 
@@ -543,9 +486,6 @@ EndProcedure
 &AtClient
 Procedure AfterWrite ( WriteParameters )
 	
-	if ( EditorBegun ) then
-		CKEditor.ResetDirty ( Items.TextEditor );
-	endif;
 	notifySystem ();
 	
 EndProcedure
@@ -561,6 +501,18 @@ Procedure notifySystem ()
 	endif; 
 	
 EndProcedure 
+
+&AtClient
+Procedure OnClose ( Exit )
+	
+	if ( Exit ) then
+		return;
+	endif; 
+	if ( Object.Ref.IsEmpty () ) then
+		CKEditorSrv.Clean ( Object.FolderID );
+	endif; 
+	
+EndProcedure
 
 // *****************************************
 // *********** Group Form
@@ -847,61 +799,6 @@ Procedure TextEditorDocumentComplete ( Item )
 	
 EndProcedure
 
-&AtClient
-Procedure TextEditorOnClick ( Item, EventData, StandardProcessing )
-	
-	href = EventData.Href;
-	if ( href = undefined ) then
-		return;
-	endif; 
-	StandardProcessing = false;
-	if ( CKEditor.Action ( href, Enum.EditorActionSave () ) )then
-		saveProject ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionSaveAndClose () ) )then
-		saveAndCloseProject ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionCancel () ) )then
-		cancelEditing ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionFiles () ) )then
-		finishedUpload ();
-	else
-		StandardProcessing = true;
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Procedure saveProject ()
-	
-	Write ();
-	
-EndProcedure 
-
-&AtClient
-Procedure saveAndCloseProject ()
-	
-	Write ();
-	Close ();
-	
-EndProcedure 
-
-&AtClient
-Procedure cancelEditing ()
-	
-	Close ();
-	
-EndProcedure 
-
-&AtClient
-Procedure finishedUpload ()
-
-	webWindow = CKEditor.GetWindow ( Items.TextEditor );
-	if ( CKEditor.IsReady ( webWindow ) ) then
-		webWindow.GetFile ();
-		Attachments.Add ( Object.Ref, Tables.Attachments, Items.Attachments, webWindow.FileName, webWindow.FileSize, Object.FolderID, false );
-	endif; 
-
-EndProcedure 
-
 // *****************************************
 // *********** Group Tasks
 
@@ -1085,6 +982,7 @@ Function attachmentParams ( Command )
 	p.Table = Tables.Attachments;
 	p.FolderID = Object.FolderID;
 	p.Ref = Object.Ref;
+	p.Form = ThisObject;
 	return p;
 	
 EndFunction 
@@ -1092,10 +990,7 @@ EndFunction
 &AtClient
 Procedure Upload ( Command )
 	
-	webWindow = CKEditor.GetWindow ( Items.TextEditor );
-	if ( CKEditor.IsReady ( webWindow ) ) then
-		webWindow.AddFiles ();
-	endif; 
+	Attachments.Command ( attachmentParams ( Enum.AttachmentsCommandsUpload () ) );
 	
 EndProcedure
 
@@ -1276,4 +1171,4 @@ Procedure applyCompany ()
 	setOurCompany ();
 	Appearance.Apply ( ThisObject, "OurCompany" );
 	
-EndProcedure 
+EndProcedure
