@@ -7,13 +7,11 @@ var DocumentsCurrentRow export;
 var DocumentsFindBook export;
 var TemporaryFolder export;
 var TimeShift;
-var CloudMode export;
 var SessionInfo export;
 var FrameworkVersion export;
 
 Procedure BeforeStart ( Cancel )
 	
-	return;
 	init ();
 	loadParameters ();
 	if ( LaunchParameters [ Enum.LaunchParametersMode () ] = Enum.LaunchParametersUpdateApplied () ) then
@@ -78,7 +76,6 @@ EndProcedure
 
 Procedure OnStart ()
 
-	return;
 	if ( LaunchParameters [ "InitialFillingNode" ] <> undefined ) then
 		StartingSrv.InitNode ();
 		Exit ( false );

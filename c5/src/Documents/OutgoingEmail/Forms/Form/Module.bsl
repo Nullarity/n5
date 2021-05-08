@@ -1106,6 +1106,7 @@ Function attachmentParams ( Command )
 	p.FolderID = Object.MessageID;
 	p.Ref = Object.Ref;
 	p.Mailbox = Object.Mailbox;
+	p.Form = ThisObject;
 	return p;
 	
 EndFunction 

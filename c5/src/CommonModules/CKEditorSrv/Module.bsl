@@ -424,21 +424,10 @@ Procedure Copy ( CopyingValue, FolderID ) export
 
 EndProcedure 
 
-Function CopyDocument ( FolderFrom, FolderTo ) export
+Procedure CopyDocument ( FolderFrom, FolderTo ) export
 	
 	folder = CKEditorSrv.GetFolder ( FolderFrom );
-	folderURL = CKEditorSrv.GetFolderURL ( FolderFrom );
 	folder2 = CKEditorSrv.GetFolder ( FolderTo );
-	folderURL2 = CKEditorSrv.GetFolderURL ( FolderTo );
 	FileSystem.CopyFolder ( folder, folder2, true );
-	if ( FileSystem.Exists ( folder2 + "\" + FolderFrom ) ) then
-		html = CKEditorSrv.GetHTML ( FolderFrom );
-		html = StrReplace ( html, folderURL, folderURL2 );
-		CKEditorSrv.Store ( FolderTo, html );
-		DeleteFiles ( folder2 + "\" + FolderFrom );
-	else
-		html = "";
-	endif; 
-	return html;
 
-EndFunction
+EndProcedure

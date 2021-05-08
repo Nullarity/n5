@@ -142,10 +142,9 @@ Procedure CopyFolder ( Folder, Folder2, Subfolders = false ) export
 		CreateDirectory ( Folder2 );
 	endif; 
 	files = FindFiles ( Folder, "*", Subfolders );
-	slash = GetPathSeparator ();
 	for each file in files do
 		path = file.FullName;
-		path2 = Folder2 + slash + fileAndFolder ( Path, Folder );
+		path2 = Folder2 + cutFolder ( path, Folder );
 		if ( file.IsDirectory () ) then
 			if ( Subfolders and not FileSystem.Exists ( path2 ) ) then
 				CreateDirectory ( path2 );
@@ -159,9 +158,9 @@ Procedure CopyFolder ( Folder, Folder2, Subfolders = false ) export
 EndProcedure 
 
 &AtServer
-Function fileAndFolder ( Path, Folder )
+Function cutFolder ( Path, Folder )
 	
-	return StrReplace ( Lower ( path ), Lower ( Folder ),  "" );
+	return Mid ( Path, StrLen ( Folder ) + 1 );
 	
 EndFunction 
 

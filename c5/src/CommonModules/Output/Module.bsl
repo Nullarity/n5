@@ -6755,3 +6755,11 @@ Function AccessKeysNotAvailable ( Params ) export
 
 EndFunction
 
+&AtClient
+Procedure SelectFile ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SelectFile" ) export
+
+	text = NStr ( "en = 'Please select a file'; ro = '!!!'; ru = 'Выберите пожалуйста файл'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure

@@ -40,34 +40,29 @@ EndProcedure
 &AtServer
 Procedure loadHTML ( val File, val ID )
 	
-	Preview = getHTML ( File, ID );
+	Preview = getHTML ( File );
 	PreviewMode = 2;
 	Appearance.Apply ( ThisObject, "PreviewMode" );
 	
 EndProcedure 
 
 &AtServer
-Function getHTML ( val File, val ID )
+Function getHTML ( File )
 	
-	folderURL = CKEditorSrv.GetFolderURL ( Object.FolderID ) + "/";
-	index = CKEditorSrv.GetFolder ( Object.FolderID ) + "\" + ID + "\index.html";
-	if ( FileSystem.Exists ( index ) ) then
-		return folderURL + ID + "/index.html";
-	else
-		url = folderURL + EncodeString ( File, StringEncodingMethod.URLEncoding );
-		return AttachmentsSrv.PreviewScript ( File, url );
-	endif; 
+	address = AttachmentsSrv.GetFile ( Object.FolderID, File, undefined, UUID );
+	return AttachmentsSrv.PreviewScript ( File, address );
 	
 EndFunction 
 
 &AtServer
 Procedure loadDocument ()
 	
-	Preview = CKEditorSrv.GetHTML ( Object.FolderID, true );
-	DocumentPresenter.Compile ( Preview, Object.CurrentVersion );
+	ref = Object.CurrentVersion;
+	Preview = DF.Pick ( ref, "Data" ).Get ();
+	DocumentPresenter.Compile ( Preview, ref );
 	PreviewMode = 1;
 	Appearance.Apply ( ThisObject, "PreviewMode" );
-	
+
 EndProcedure 
 
 &AtServer
@@ -98,8 +93,6 @@ Procedure readAppearance ()
 	|not Object.IsEmpty
 	|and AttachmentsCount > 0
 	|and PreviewMode = 1;
-	|ShowHTML AttachmentsContextMenuShowHTML show AttachmentsCount > 0 and PreviewMode = 3;
-	|ShowPDF AttachmentsContextMenuShowPDF Open show AttachmentsCount > 0 and PreviewMode = 2;
 	|OpenFile show AttachmentsCount > 0 and PreviewMode > 1
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -128,51 +121,6 @@ Procedure ShowDocument ( Command )
 EndProcedure
 
 &AtClient
-Procedure ShowPDF ( Command )
-	
-	if ( AttachmentRow = undefined ) then
-		return;
-	endif; 
-	loadPDF ( AttachmentRow.File, AttachmentRow.ID );
-	
-EndProcedure
-
-&AtServer
-Procedure loadPDF ( val File, val ID )
-	
-	Preview = getPDF ( File, ID );
-	PreviewMode = 3;
-	Appearance.Apply ( ThisObject, "PreviewMode" );
-	
-EndProcedure 
-
-&AtServer
-Function getPDF ( val File, val ID )
-	
-	folderURL = CKEditorSrv.GetFolderURL ( Object.FolderID ) + "/";
-	if ( FileSystem.GetExtension ( File ) = "pdf" ) then
-		return folderURL + "/" + File;
-	else
-		pdf = CKEditorSrv.GetFolder ( Object.FolderID ) + "\" + ID + "\" + ID + ".pdf";
-		if ( FileSystem.Exists ( pdf ) ) then
-			return folderURL + ID + "/" + ID + ".pdf";
-		endif; 
-	endif;
-	return AttachmentsSrv.PreviewNotSupported ();
-
-EndFunction 
-
-&AtClient
-Procedure ShowHTML ( Command )
-	
-	if ( AttachmentRow = undefined ) then
-		return;
-	endif; 
-	loadHTML ( AttachmentRow.File, AttachmentRow.ID );
-	
-EndProcedure
-
-&AtClient
 Procedure OpenFile ( Command )
 	
 	openSelectedFile ();
@@ -196,6 +144,7 @@ Function attachmentParams ( Command )
 	p.Table = Tables.Attachments;
 	p.FolderID = Object.FolderID;
 	p.Ref = Object.Ref;
+	p.Form = ThisObject;
 	return p;
 	
 EndFunction 

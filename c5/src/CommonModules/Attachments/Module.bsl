@@ -61,6 +61,15 @@ EndProcedure
 &AtClient
 Procedure Command ( Params ) export
 	
+	command = Params.Command;
+	if ( command = Enum.AttachmentsCommandsPrint ()
+		or command = Enum.AttachmentsCommandsShow ()
+		or command = Enum.AttachmentsCommandsDownload ()
+		or command = Enum.AttachmentsCommandsRun () ) then
+		if ( not fileSelected ( Params ) ) then
+			return;
+		endif;
+	endif;
 	#if ( WebClient ) then
 		if ( Params.Command = Enum.AttachmentsCommandsPrint () ) then
 			Output.WebclientIsNotSupported ();
@@ -74,6 +83,18 @@ Procedure Command ( Params ) export
 	endif; 
 	
 EndProcedure 
+
+&AtClient
+Function fileSelected ( Params )
+	
+	if ( Params.Control.CurrentData = undefined ) then
+		Output.SelectFile ();
+		return false;
+	else
+		return true;
+	endif;
+	
+EndFunction
 
 &AtClient
 Procedure fetch ( Params )
@@ -202,10 +223,7 @@ EndProcedure
 Function previewData ( Params )
 	
 	file = previewFile ( Params );
-	if ( FileSystem.Picture ( file )
-		or FileSystem.GoogleDoc ( file )
-		or FileSystem.PlainText ( file )
-		or FileSystem.HyperText ( file ) ) then
+	if ( PreviewSupported ( file ) ) then
 		result = new Structure ( "Address, URL, Path, File" );
 		result.Address = AttachmentsSrv.GetFile ( Params.FolderID, file, Params.Mailbox, Params.Form.UUID );
 		result.File = file;
@@ -215,6 +233,36 @@ Function previewData ( Params )
 	endif;
 
 EndFunction 
+
+Function PreviewSupported ( File ) export
+	
+	#if ( Server ) then
+		web = Environment.WebClient ();
+	#elsif ( WebClient ) then
+		web = true;
+	#else
+		web = false;
+	#endif
+	#if ( Server ) then
+		inCloud = Cloud.Cloud ();
+	#else
+		inCloud = SessionInfo.Cloud;
+	#endif
+	if ( web ) then
+		yes = FileSystem.Picture ( File )
+		or FileSystem.PlainText ( File )
+		or FileSystem.HyperText ( File )
+		or FileSystem.GoogleDoc ( File )
+		or ( FileSystem.OfficeDoc ( File )
+			and inCloud );
+	else
+		yes = FileSystem.Picture ( File )
+		or FileSystem.PlainText ( File )
+		or FileSystem.HyperText ( File );
+	endif;
+	return yes;	
+	
+EndFunction
 
 &AtClient
 Function previewFile ( Params )
@@ -246,7 +294,7 @@ async Procedure SelectUploadingFiles ( Files, Params ) export
 	if ( stored = undefined ) then
 		return;
 	endif;
-	list = getGetFiles ( stored );
+	list = getStoredFiles ( stored );
 	data = AttachmentsSrv.UploadFiles ( list, Params.Ref, Params.FolderID );
 	table = Params.Table;
 	control = Params.Control;
@@ -263,23 +311,12 @@ async Procedure SelectUploadingFiles ( Files, Params ) export
 			control.CurrentRow = search [ 0 ].GetID ();
 		endif; 
 	enddo;
+	#if ( WebClient ) then
+		// https://github.com/Contabilizare/c5/issues/25
+		control.Refresh ();
+	#endif
 	
 EndProcedure
-
-&AtClient
-Function getGetFiles ( StoredFiles )
-	
-	files = new Array ();
-	for each record in StoredFiles do
-		if ( record.PutFileCanceled ) then
-			continue;
-		endif;
-		fileRef = record.FileRef;
-		files.Add ( new Structure ( "Name, Size, Address", fileRef.Name, fileRef.Size (), record.Address ) );
-	enddo;
-	return files;
-	
-EndFunction
 
 &AtClient
 Procedure SelectFolder ( Result, Params ) export
@@ -428,6 +465,11 @@ Procedure runCommand ( Params, UsedLocalFile = false )
 		print ( Params );
 	else
 		if ( lastFile ) then
+			#if ( WebClient ) then
+				if ( Framework.IsLinux () ) then
+					return;
+				endif;
+			#endif
 			Output.OpenDownloadsFolder ( ThisObject, Params.Folder );
 		endif; 
 	endif; 
@@ -502,7 +544,8 @@ EndProcedure
 &AtClient
 Procedure Remove ( Params ) export
 	
-	if ( attachmentExists ( Params ) ) then
+	if ( fileSelected ( Params )
+		and attachmentExists ( Params ) ) then
 		Output.RemoveAttachmentConfirmation ( ThisObject, Params );
 	endif; 
 	
@@ -632,5 +675,26 @@ EndProcedure
 Function GetLink ( Address ) export
 	
 	return GetInfoBaseURL () + "/" + Address;
+	
+EndFunction
+
+&AtClient
+Function getStoredFiles ( StoredFiles )
+	
+	files = new Array ();
+	for each record in StoredFiles do
+		#if ( WebClient ) then
+			if ( record.FilePuttingCanceled ) then
+				continue;
+			endif;
+		#else
+			if ( record.PutFileCanceled ) then
+				continue;
+			endif;
+		#endif
+		fileRef = record.FileRef;
+		files.Add ( new Structure ( "Name, Size, Address", fileRef.Name, fileRef.Size (), record.Address ) );
+	enddo;
+	return files;
 	
 EndFunction

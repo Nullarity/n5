@@ -12,14 +12,14 @@ Function UploadFiles ( val Files, val Reference, val FolderID, val Mailbox = und
 		data = GetFromTempStorage ( file.Address );
 		fileName = file.Name;
 		data.Write ( folder + fileName );
-		record = AttachmentsSrv.AddFile ( Reference, fileName, file.Size, FolderID, GeneratePreview );
+		record = AttachmentsSrv.AddFile ( Reference, fileName, file.Size, FolderID );
 		result.Add ( record );
 	enddo;
 	return result;
 	
 EndFunction
 
-Function AddFile ( val Reference, val Name, val Size, val FolderID, val GeneratePreview ) export
+Function AddFile ( val Reference, val Name, val Size, val FolderID ) export
 	
 	data = new Structure ();
 	data.Insert ( "File", Name );
@@ -41,9 +41,6 @@ Function AddFile ( val Reference, val Name, val Size, val FolderID, val Generate
 		AttachmentsSrv.CommitDownloading ( Reference, data.File );
 		Count = info.Count;
 		saveCount ( Reference, Count + 1 );
-	endif; 
-	if ( GeneratePreview ) then
-		BuildPreview ( data.File, data.ID, FolderID );
 	endif; 
 	return data;
 	
@@ -137,99 +134,6 @@ Procedure CommitDownloading ( val Reference, val File ) export
 	
 EndProcedure 
 
-Procedure BuildPreview ( File, FileID, FolderID ) export
-	
-	source = CKEditorSrv.GetFolder ( FolderID ) + "\";
-	sourceURL = CKEditorSrv.GetFolderURL ( FolderID ) + "/";
-	ext = FileSystem.GetExtension ( File );
-	env = new Structure ();
-	env.Insert ( "Destination", source + FileID );
-	FileSystem.ClearFolder ( env.Destination, true );
-	CreateDirectory ( env.Destination );
-	env.Insert ( "LogFile", env.Destination + ".log" );
-	env.Insert ( "SourceFile", source + File );
-	env.Insert ( "SourceURL", sourceURL + File );
-	env.Insert ( "HTMLFile", env.Destination + "\index.html" );
-	env.Insert ( "PDFFile", env.Destination + "\" + FileID + ".pdf" );
-	env.Insert ( "Extension", ext );
-	s = "." + ext + ";";
-	if ( Find ( ".doc;.docx;", s ) > 0 ) then
-		convertDoc ( env );
-	elsif ( Find ( ".xls;.xlsx;", s ) > 0 ) then
-		convertXLS ( env );
-	elsif ( Find ( ".pdf;", s ) > 0 ) then
-		convertPDF ( env );
-	elsif ( FileSystem.PlainText ( File ) ) then
-		convertText ( env );
-	endif; 
-	
-EndProcedure 
-
-Procedure convertDoc ( Env )
-	
-	app = Cloud.ConvertDocExe ();
-	if ( app = "" ) then
-		return;
-	endif;
-	if ( Env.Extension = "doc" ) then
-		p = "/F9";
-	elsif ( Env.Extension = "docx" ) then
-		p = "/F13";
-	endif; 
-	command = """" + app + """ /M2 /S """ + Env.SourceFile + """ /L""" + Env.LogFile + """";
-	htmlCmd = command + """ /T """ + Env.HTMLFile + """ /C4 " + p;
-	pdfCmd = command + """ /T """ + Env.PDFFile + """ /C12 " + p;
-	RunApp ( htmlCmd );
-	RunApp ( pdfCmd );
-	
-EndProcedure 
-
-Procedure convertXLS ( Env )
-	
-	app = Cloud.ConvertXLSExe ();
-	if ( app = "" ) then
-		return;
-	endif;
-	htmlCmd = """" + app + """ /C44 /M1 /N1-100 /F-4143 /S""" + Env.SourceFile + """ /T""" + Env.HTMLFile + """ /L""" + Env.LogFile + """";
-	pdfCmd = """" + app + """ /C-1 /M1 /S""" + Env.SourceFile + """ /T""" + Env.PDFFile + """ /L""" + Env.LogFile + """";
-	RunApp ( htmlCmd );
-	RunApp ( pdfCmd );
-
-EndProcedure 
-
-Procedure convertPDF ( Env )
-	
-	app = Cloud.HTMLExe ();
-	if ( app = "" ) then
-		return;
-	endif;
-	command = """" + app + """ --single --src=""" + Env.SourceFile + """ --dest=""" + Env.Destination + """ --pages=""1-5""";
-	RunApp ( command );
-	
-EndProcedure 
-
-Procedure convertText ( Env )
-	
-	reader = new TextReader ( Env.SourceFile, TextEncoding.System );
-	writer = new TextWriter ( Env.HTMLFile, TextEncoding.System );
-	writer.WriteLine ( "<html>
-	|<head>
-	|<meta content=""text/html; charset=utf-8"" http-equiv=Content-Type>
-	|</head>
-	|<body style=""overflow-y:hidden"">
-	|<textarea readonly style=""border:0px;padding:0px;margin:0px;width:100%;height:100%"">" );
-	while ( true ) do
-		s = reader.Read ( 1024 );
-		if ( s = undefined ) then
-			break;
-		endif; 
-		writer.Write ( s );
-	enddo; 
-	writer.WriteLine ( "</textarea></body></html>" );
-	writer.Close ();
-	
-EndProcedure 
-
 Procedure saveCount ( Reference, Count )
 	
 	SetPrivilegedMode ( true );
@@ -280,24 +184,19 @@ Function PreviewScript ( File, Address ) export
 		|</body>
 		|</html>
 		|";
-	elsif ( FileSystem.GoogleDoc ( File ) ) then
+	elsif ( FileSystem.HyperText ( File )
+		or FileSystem.PlainText ( File ) ) then
+		data = GetFromTempStorage ( Address );
+		reader = new TextReader ( data.OpenStreamForRead () );
 		s = "
 		|<html>
-		|<head>
-		|<meta http-equiv=""x-ua-compatible"" content=""IE=11"">
-		|<script type=""text/javascript"">
-		|    function resize () {
-		|        var frame = document.getElementById(""preview"");
-		|        frame.style.height = ( window.innerHeight + ""px"" );
-		|    }
-		|</script>
-		|</head>
-		|<body style=""padding: 0px; margin: 0px;overflow-x: hidden;overflow-y: hidden"" onload=""resize ()"" onresize=""resize ()"">
-		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://docs.google.com/gview?url="
-		+ Attachments.GetLink ( Address ) + "&embedded=true&output=embed""></iframe>
+		|<body>
+		|<pre>" + reader.Read () + "</pre>
 		|</body>
 		|</html>
 		|";
+	elsif ( FileSystem.GoogleDoc ( File ) ) then
+		s = Attachments.GetLink ( Address );
 	elsif ( FileSystem.OfficeDoc ( File ) ) then
 		s = "
 		|<html>
@@ -313,17 +212,6 @@ Function PreviewScript ( File, Address ) export
 		|<body style=""padding: 0px; margin: 0px;overflow-x: hidden;overflow-y: hidden"" onload=""resize ()"" onresize=""resize ()"">
 		|<iframe id=""preview"" name=""preview"" style=""height:100%;width:100%"" src=""https://view.officeapps.live.com/op/view.aspx?src="
 		+ Attachments.GetLink ( Address ) + """></iframe>
-		|</body>
-		|</html>
-		|";
-	elsif ( FileSystem.HyperText ( File )
-		or FileSystem.PlainText ( File ) ) then
-		data = GetFromTempStorage ( Address );
-		reader = new TextReader ( data.OpenStreamForRead () );
-		s = "
-		|<html>
-		|<body>
-		|<pre>" + reader.Read () + "</pre>
 		|</body>
 		|</html>
 		|";

@@ -42,7 +42,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	if ( Status = Enums.DocumentStatuses.Published ) then
 		initPreview ();
 	else
-		initEditor ();
+		initEditor ( CurrentObject );
 	endif; 
 	setAttachmentsCount ();
 	Appearance.Apply ( ThisObject );
@@ -146,7 +146,10 @@ Procedure initPreview ()
 	if ( Object.IsEmpty ) then
 		if ( Tables.Attachments.Count () > 0 ) then
 			row = Tables.Attachments [ 0 ];
-			loadHTML ( row.File, row.ID );
+			file = row.File;
+			if ( Attachments.PreviewSupported ( file ) ) then
+				loadHTML ( file );
+			endif;
 		endif; 
 	else
 		loadDocument ();
@@ -155,51 +158,41 @@ Procedure initPreview ()
 EndProcedure 
 
 &AtServer
-Procedure loadHTML ( val File, val ID )
+Procedure loadHTML ( val File )
 	
-	Preview = getHTML ( File, ID );
+	Preview = getHTMl ( File );
 	PreviewMode = 2;
 	Appearance.Apply ( ThisObject, "PreviewMode" );
 	
 EndProcedure 
 
-&AtServer
-Function getHTML ( val File, val ID )
+Function getHTML ( val File )
 	
-	folderURL = CKEditorSrv.GetFolderURL ( Object.FolderID ) + "/";
-	index = CKEditorSrv.GetFolder ( Object.FolderID ) + "\" + ID + "\index.html";
-	if ( FileSystem.Exists ( index ) ) then
-		return folderURL + ID + "/index.html";
-	else
-		url = folderURL + EncodeString ( File, StringEncodingMethod.URLEncoding );
-		return AttachmentsSrv.PreviewScript ( File, url );
-	endif; 
+	address = AttachmentsSrv.GetFile ( Object.FolderID, File, undefined, UUID );
+	return AttachmentsSrv.PreviewScript ( File, address );
 	
 EndFunction 
 
 &AtServer
 Procedure loadDocument ()
 	
-	Preview = CKEditorSrv.GetHTML ( Object.FolderID, true );
-	DocumentPresenter.Compile ( Preview, Object.Ref );
+	ref = Object.Ref;
+	Preview = DF.Pick ( ref, "Data" ).Get ();
+	DocumentPresenter.Compile ( Preview, ref );
 	PreviewMode = 1;
 	Appearance.Apply ( ThisObject, "PreviewMode" );
 	
 EndProcedure 
 
 &AtServer
-Procedure initEditor ()
+Procedure initEditor ( CurrentObject )
 	
-	if ( TextDocument = undefined ) then
-		html = undefined;
+	if ( TypeOf ( CurrentObject ) = Type ( "DocumentObject.Document" ) ) then
+		data = CurrentObject.Data.Get ();
 	else
-		html = Conversion.DocumentToHTML ( TextDocument );
-	endif; 
-	if ( RemoveScript ) then
-		CKEditorSrv.RemoveScript ( Object.FolderID );
-	endif; 
-	CKEditorSrv.Init ( TextEditor, Object.FolderID, html, not CanChange, true );
-	RemoveScript = true;
+		data = DF.Pick ( CurrentObject.Ref, "Data" ).Get ();
+	endif;
+	TextEditor.SetHTML ( data, new Structure () );
 	
 EndProcedure 
 
@@ -236,7 +229,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif; 
 		setCanChange ();
 		setCanChangeAccess ();
-		initEditor ();
 	else
 		saveHistory ();
 	endif;
@@ -257,7 +249,7 @@ Procedure readAppearance ()
 	|FormPublish FormWrite AttachmentsUpload AttachmentsRemove AttachmentsContextMenuUpload AttachmentsContextMenuRemove AttachmentsContextMenuRenameFile FormShowPreview show Status <> Enum.DocumentStatuses.Published and CanChange;
 	|FormWrite show CanChange;
 	|FormEdit show CanChange and Status = Enum.DocumentStatuses.Published;
-	|TextEditor show Status <> Enum.DocumentStatuses.Published;
+	|TextEditorGroup show Status <> Enum.DocumentStatuses.Published;
 	|GroupPreview show Status = Enum.DocumentStatuses.Published;
 	|FormOpenInList AttachmentsDocumentDocumentPrint AttachmentsContextMenuDocumentDocumentPrint show filled ( Object.Ref );
 	|ShowDocument AttachmentsContextMenuShowDocument show
@@ -265,12 +257,6 @@ Procedure readAppearance ()
 	|and not Object.IsEmpty
 	|and AttachmentsCount > 0
 	|and PreviewMode <> 1;
-	|ShowHTMLToottip show
-	|not Object.IsEmpty
-	|and AttachmentsCount > 0
-	|and PreviewMode = 1;
-	|ShowHTML AttachmentsContextMenuShowHTML show AttachmentsCount > 0 and PreviewMode = 3;
-	|ShowPDF AttachmentsContextMenuShowPDF AttachmentsContextMenuOpenAttachment show AttachmentsCount > 0 and PreviewMode = 2;
 	|Users Groups enable CanChangeAccess;
 	|Book Link Object SpecialAccess Versioning lock not CanChange;
 	|SpecialAccess lock ( not CanChange or not CanChangeAccess );
@@ -620,8 +606,8 @@ Procedure saveFile ( val Location, val File, val Document, val FolderID )
 	
 	folder = CKEditorSrv.GetFolder ( FolderID );
 	data = GetFromTempStorage ( Location );
-	data.Write ( folder + "\" + File );
-	AttachmentsSrv.AddFile ( Document, File, data.Size (), FolderID, true );
+	data.Write ( folder + GetPathSeparator () + File );
+	AttachmentsSrv.AddFile ( Document, File, data.Size (), FolderID );
 	
 EndProcedure 
 
@@ -631,20 +617,6 @@ Procedure stopCommand ()
 	Parameters.Command = 0;
 
 EndProcedure 
-
-&AtClient
-Procedure BeforeClose ( Cancel, Exit, MessageText, StandardProcessing )
-	
-	if ( Exit or Processing ) then
-		Cancel = true;
-		return;
-	endif; 
-	if ( Status = PredefinedValue ( "Enum.DocumentStatuses.Published" ) ) then
-		return;
-	endif; 
-	CKEditor.CheckModified ( ThisObject, Items.TextEditor );
-	
-EndProcedure
 
 &AtClient
 Procedure OnClose ( Exit )
@@ -659,16 +631,6 @@ Procedure OnClose ( Exit )
 			NotifyChanged ( Object.Ref );
 		endif; 
 	endif; 
-	if ( RemoveScript ) then
-		CKEditorSrv.RemoveScript ( Object.FolderID );
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Procedure BeforeWrite ( Cancel, WriteParameters )
-	
-	CKEditor.SaveHTML ( WriteParameters, Items.TextEditor );
 	
 EndProcedure
 
@@ -680,7 +642,7 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	setCreationDate ( CurrentObject );
 	addDefaultAccess ();
 	storeTable ( CurrentObject );
-	storeContent ( CurrentObject, WriteParameters );
+	storeContent ( CurrentObject );
 	Tags.Save  ( Reference, Tables.Tags );
 	AttachmentsSrv.Save ( Reference, Tables.Attachments );
 	if ( AttachmentsCount > 0 ) then
@@ -740,17 +702,14 @@ Function storeTabDoc ()
 EndFunction 
 
 &AtServer
-Procedure storeContent ( CurrentObject, WriteParameters )
+Procedure storeContent ( CurrentObject )
 	
-	html = WriteParameters.TextEditor;
-	if ( html <> undefined ) then
-		CKEditorSrv.Store ( Object.FolderID, html );
-		CurrentObject.Content = CKEditorSrv.GetText ( html );
-		CurrentObject.IsEmpty = IsBlankString ( CurrentObject.Content )
-		and ( Conversion.HTMLToDocument ( html ).Images.Count () = 0 );
-	endif; 
-	CurrentObject.AttachmentsContent = ? ( AttachmentsCount = 0, "", Documents.Document.ExtractContent ( Reference ) );
-
+	content = TextEditor.GetText ();
+	CurrentObject.Content = new ValueStorage ( content );
+	data = FD.GetHTML ( TextEditor );
+	CurrentObject.Data = new ValueStorage ( data.HTML );
+	CurrentObject.IsEmpty = IsBlankString ( content ) and ( data.PicturesCount = 0 );
+	
 EndProcedure 
 
 &AtServer
@@ -847,13 +806,6 @@ Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	endif; 
 	setAttachmentsCount ();
 	Appearance.Apply ( ThisObject );
-	
-EndProcedure
-
-&AtClient
-Procedure AfterWrite ( WriteParameters )
-	
-	CKEditor.ResetDirty ( Items.TextEditor );
 	
 EndProcedure
 
@@ -1024,7 +976,7 @@ Procedure unpublish ()
 	
 	Status = Enums.DocumentStatuses.Editing;
 	Documents.Document.WriteStatus ( Object.Ref, Status );
-	initEditor ();
+	initEditor ( Object );
 	Appearance.Apply ( ThisObject, "Status" );
 	
 EndProcedure 
@@ -1141,7 +1093,7 @@ Procedure ShowDocument ( Command )
 		// 8.3.8.1675 Bug Workaround. Preview updating should go from the client side
 		PreviewMode = 1;
 		Appearance.Apply ( ThisObject, "PreviewMode" );
-		Preview = loadWebDocument ( Object.FolderID, Object.Ref );
+		Preview = loadWebDocument ( Object.Ref );
 	#else
 		loadDocument ();
 	#endif
@@ -1149,65 +1101,13 @@ Procedure ShowDocument ( Command )
 EndProcedure
 
 &AtServerNoContext
-Function loadWebDocument ( FolderID, Reference )
+Function loadWebDocument ( Reference )
 	
-	html = CKEditorSrv.GetHTML ( FolderID, true );
+	html = DF.Pick ( Reference, "Data" ).Get ();
 	DocumentPresenter.Compile ( html, Reference );
 	return html;
 	
 EndFunction 
-
-&AtClient
-Procedure ShowPDF ( Command )
-	
-	if ( AttachmentRow = undefined ) then
-		return;
-	endif; 
-	loadPDF ( AttachmentRow.File, AttachmentRow.ID );
-	
-EndProcedure
-
-&AtServer
-Procedure loadPDF ( val File, val ID )
-	
-	Preview = getPDF ( File, ID );
-	PreviewMode = 3;
-	Appearance.Apply ( ThisObject, "PreviewMode" );
-	
-EndProcedure 
-
-&AtServer
-Function getPDF ( val File, val ID )
-	
-	folderURL = CKEditorSrv.GetFolderURL ( Object.FolderID ) + "/";
-	if ( FileSystem.GetExtension ( File ) = "pdf" ) then
-		return folderURL + "/" + File;
-	else
-		pdf = CKEditorSrv.GetFolder ( Object.FolderID ) + "\" + ID + "\" + ID + ".pdf";
-		if ( FileSystem.Exists ( pdf ) ) then
-			return folderURL + ID + "/" + ID + ".pdf";
-		endif; 
-	endif;
-	return AttachmentsSrv.PreviewNotSupported ();
-
-EndFunction 
-
-&AtClient
-Procedure ShowHTML ( Command )
-	
-	if ( AttachmentRow = undefined ) then
-		return;
-	endif;
-	#if ( WebClient ) then
-		// 8.3.8.1675 Bug Workaround. Preview updating should go from the client side
-		Preview = getHTML ( AttachmentRow.File, AttachmentRow.ID );
-		PreviewMode = 2;
-		Appearance.Apply ( ThisObject, "PreviewMode" );
-	#else
-		loadHTML ( AttachmentRow.File, AttachmentRow.ID );
-	#endif
-	
-EndProcedure
 
 &AtClient
 Procedure OpenFile ( Command )
@@ -1233,6 +1133,7 @@ Procedure perform ( Command )
 	p.Table = Tables.Attachments;
 	p.FolderID = Object.FolderID;
 	p.Ref = Object.Ref;
+	p.Form = ThisObject;
 	callback = new NotifyDescription ( "Perform2", ThisObject, p );
 	Attachments.UserFolder ( Object.FolderID, callback );
 	
@@ -1271,46 +1172,21 @@ EndProcedure
 Procedure AttachmentsSelection ( Item, SelectedRow, Field, StandardProcessing )
 	
 	if ( Status = PredefinedValue ( "Enum.DocumentStatuses.Published" ) ) then
-		SelectedFile = SelectedRow;
-		loadHTML ( AttachmentRow.File, AttachmentRow.ID );
-	else
-		perform ( Enum.AttachmentsCommandsRun () );
-	endif; 
+		file = AttachmentRow.File;
+		if ( Attachments.PreviewSupported ( file ) ) then
+			SelectedFile = SelectedRow;
+			loadHTML ( file );
+			return;
+		endif;
+	endif;
+	perform ( Enum.AttachmentsCommandsRun () );
 	
 EndProcedure
 
 &AtClient
-Procedure publishAndCloseDocument ()
-	
-	Output.PublishDocument ( ThisObject );
-	
-EndProcedure 
-
-&AtClient
-Procedure cancelEditing ()
-	
-	Close ();
-	
-EndProcedure 
-
-&AtClient
-Procedure finishedUpload ()
-
-	webWindow = CKEditor.GetWindow ( Items.TextEditor );
-	if ( CKEditor.IsReady ( webWindow ) ) then
-		webWindow.GetFile ();
-		Attachments.Add ( Object.Ref, Tables.Attachments, Items.Attachments, webWindow.FileName, webWindow.FileSize, Object.FolderID, true );
-	endif; 
-
-EndProcedure 
-
-&AtClient
 Procedure Upload ( Command )
 	
-	webWindow = CKEditor.GetWindow ( Items.TextEditor );
-	if ( CKEditor.IsReady ( webWindow ) ) then
-		webWindow.AddFiles ();
-	endif; 
+	perform ( Enum.AttachmentsCommandsUpload () );
 	
 EndProcedure
 
@@ -1602,35 +1478,6 @@ Procedure TagsBeforeDeleteRow ( Item, Cancel )
 	Tags.Delete ( Object.Ref, Items.Tags, Tables.Tags  );
 	
 EndProcedure
-
-&AtClient
-Procedure TextEditorOnClick ( Item, EventData, StandardProcessing )
-		
-	href = EventData.Href;
-	if ( href = undefined ) then
-		return;
-	endif; 
-	StandardProcessing = false;
-	if ( CKEditor.Action ( href, Enum.EditorActionSave () ) )then
-		saveDocument ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionSaveAndClose () ) )then
-		publishAndCloseDocument ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionCancel () ) )then
-		cancelEditing ();
-	elsif ( CKEditor.Action ( href, Enum.EditorActionFiles () ) )then
-		finishedUpload ();
-	else
-		StandardProcessing = true;
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Procedure saveDocument ()
-	
-	Write ();
-	
-EndProcedure 
 
 // *****************************************
 // *********** Page Table

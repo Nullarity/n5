@@ -18,6 +18,7 @@ doc.Write(file);
 App.SetFileDialogResult ( true, file );
 Activate("#Attachments");
 Click("#AttachmentsUpload");
+Pause(2);
 DeleteFiles(file);
 #endregion
 

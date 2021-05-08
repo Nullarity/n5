@@ -9,7 +9,7 @@ Function GetHTML ( Document ) export
 		image = Base64String ( picture.GetBinaryData () );
 		html = Regexp.Replace ( html, "(<img (.+)?src=)((.+)?" + id + ")", "$1""data:image/png;base64," + image );
 	enddo;
-	return html;
+	return new Structure ( "HTML, PicturesCount", html, pictures.Count () );
 	
 EndFunction
 

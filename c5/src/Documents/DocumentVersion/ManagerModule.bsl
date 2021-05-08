@@ -37,6 +37,8 @@ Function createVersion ( Document, Reference, WeakRef )
 	endif; 
 	version.SetNewNumber ();
 	version.CurrentVersion = Reference;
+	version.Content = new ValueStorage ( Document.Content.Get () );
+	version.Data = new ValueStorage ( Document.Data.Get () );
 	table = Document.Table;
 	if ( table <> undefined ) then
 		tabDoc = table.Get ();

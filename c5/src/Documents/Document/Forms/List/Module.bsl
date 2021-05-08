@@ -876,6 +876,7 @@ Procedure perform ( Command )
 	p = Attachments.GetParams ();
 	p.Command = Command;
 	p.Ref = DocumentsRow.Ref;
+	p.Form = ThisObject;
 	Attachments.Command ( p );
 	
 EndProcedure 

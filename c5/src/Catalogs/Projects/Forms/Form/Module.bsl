@@ -409,7 +409,7 @@ EndProcedure
 Procedure storeContent ( CurrentObject )
 	
 	CurrentObject.Content = new ValueStorage ( TextEditor.GetText () );
-	CurrentObject.Data = new ValueStorage ( FD.GetHTML ( TextEditor ) );
+	CurrentObject.Data = new ValueStorage ( FD.GetHTML ( TextEditor ).HTML );
 	
 EndProcedure 
 
