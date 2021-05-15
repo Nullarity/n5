@@ -1,44 +1,44 @@
-﻿Call ( "Common.Init" );
+﻿// Create and print regular Quote
+
+Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D190F12" );
+id = Call ( "Common.ScenarioID", "2D193AF9" );
 env = getEnv ( id );
 createEnv ( env );
 
-//Commando ( "e1cib/list/Document.Quote" );
-//With ( "Quotes" );
-//p = Call ( "Common.Find.Params" );
-//p.Where = "Memo";
-//p.What = id;
-//Call ( "Common.Find", p );
+Commando ( "e1cib/data/Document.Quote" );
+With ( "Quote (create)" );
+Put ( "#Customer", Env.Customer );
+Put ( "#DeliveryDate", "01/01/2018" );
+Put ( "#DueDate", "02/01/2018" );
+Put ( "#Warehouse", Env.Warehouse );
+PUt ( "#Memo", id );
 
-	// *************************
-	// Create Quote
-	// *************************
+Click ( "#ItemsAdd" );
+Put ( "#ItemsItem", Env.Item1 );
+Activate ( "#ItemsFeature" ).Create ();
+With ();
+Set ( "#Description", Call ( "Common.GetID" ) );
+Click ( "#FormWriteAndClose" );
 
-	Commando ( "e1cib/data/Document.Quote" );
-	With ( "Quote (create)" );
-	Put ( "#Customer", Env.Customer );
-	Put ( "#DeliveryDate", "01/01/2018" );
-	Put ( "#DueDate", "02/01/2018" );
-	Put ( "#Warehouse", Env.Warehouse );
-	PUt ( "#Memo", id );
+With ();
+Items = Get ( "#Items" );
 
-	Click ( "#ItemsAdd" );
-	Put ( "#ItemsItem", Env.Item1 );
-	Put ( "#ItemsPrice", "100" );
-	Put ( "#ItemsQuantity", "5" );
+Put ( "#ItemsPrice", "100" );
+Put ( "#ItemsQuantity", "5" );
 
-	Click ( "#ItemsAdd" );
-	Put ( "#ItemsItem", Env.Item2 );
-	Put ( "#ItemsPrice", "200" );
-	Put ( "#ItemsQuantity", "10" );
-	Next ();
+Click ( "#ItemsAdd" );
+Put ( "#ItemsItem", Env.Item2 );
+Put ( "#ItemsPrice", "200" );
+Put ( "#ItemsDiscountRate", 10 );
+Put ( "#ItemsQuantity", "10" );
+Next ();
 
-	Click ( "#JustSave" );
-	Click ( "#FormDataProcessorQuoteQuote" );
-	With ();
-	CheckTemplate ( "#TabDoc" );
+Click ( "#JustSave" );
+Click ( "#FormDataProcessorQuoteQuote" );
+With ();
+CheckTemplate ( "#TabDoc" );
 	
 
 // *************************

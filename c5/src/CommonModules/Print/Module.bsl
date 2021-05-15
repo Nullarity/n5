@@ -1,13 +1,47 @@
 &AtClient
 Procedure Print ( Params ) export
 	
-	if ( not PrintSrv.Print ( Params ) ) then
-		return;
-	endif; 
-	form = GetForm ( "CommonForm.Print", Params, , true );
-	form.Open ();
+	supportedLanguages = Params.Languages;
+	if ( supportedLanguages = undefined ) then
+		printForm ( Params );
+	else
+		language = PrintSrv.Language ( Params.Name );
+		if ( language = undefined
+			or unsupportedLanguage ( supportedLanguages, language ) ) then
+			p = new Structure ( "Languages, Form", supportedLanguages, Params.Name );
+			callback = new NotifyDescription ( "LanguageSelected", ThisObject, Params );
+			OpenForm ( "CommonForm.PrintLanguage", p, , , , , callback );
+		else
+			printForm ( Params, language );
+		endif;
+	endif;
 	
 EndProcedure
+
+&AtClient
+Procedure printForm ( Params, Language = undefined )
+	
+	p = new Structure ( "Params, Language", Params, Language );
+	OpenForm ( "CommonForm.Print", p, , true );
+	
+EndProcedure
+
+&AtClient
+Procedure LanguageSelected ( Language, Params ) export
+	
+	if ( Language = undefined ) then
+		return;
+	endif;
+	printForm ( Params, Language );
+	
+EndProcedure
+
+&AtClient
+Function unsupportedLanguage ( Supported, Language )
+	
+	return Conversion.StringToArray ( Supported ).Find ( Language ) = -1;
+	
+EndFunction
 
 Function GetParams () export
 	
@@ -17,8 +51,9 @@ Function GetParams () export
 	p.Insert ( "Key" );
 	p.Insert ( "Objects" );
 	p.Insert ( "Manager" );
-	p.Insert ( "TabDoc" );
 	p.Insert ( "Reference" );
+	p.Insert ( "TabDoc" );
+	p.Insert ( "Languages" );
 	return p;
 	
 EndFunction 

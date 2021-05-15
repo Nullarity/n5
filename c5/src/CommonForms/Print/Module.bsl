@@ -9,24 +9,25 @@ var TotalsEnv;
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	applyParams ();
-	setTitle ();
+	result = PrintSrv.Print ( Parameters.Params, Parameters.Language );
+	if ( result = undefined ) then
+		Cancel = true;
+		return;
+	endif; 
+	applyResult ( result );
 	setEditModeButton ( Items );
 	
 EndProcedure
 
 &AtServer
-Procedure applyParams ()
+Procedure applyResult ( Result )
 	
-	TabDoc = Parameters.TabDoc;
-	Reference = Parameters.Reference;
-	
-EndProcedure
-
-&AtServer
-Procedure setTitle ()
-	
-	if ( Parameters.Caption <> undefined ) then
+	TabDoc = Result.TabDoc;
+	Reference = result.Reference;
+	params = Parameters.Params;
+	if ( params.Caption = undefined ) then
+		Title = PrintSrv.GetFormCaption ( params.Name + Parameters.Language, params.Manager, params.Objects [ 0 ] );
+	else
 		Title = Parameters.Caption;
 	endif; 
 	

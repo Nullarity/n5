@@ -394,6 +394,7 @@ EndFunction
 Procedure RedefineOpeningModeForLinux ( Form ) export
 	
 	if ( Form.WindowOpeningMode = FormWindowOpeningMode.Independent
+		and not Environment.WebClient ()
 		and Environment.LinuxClient () ) then
 		Form.WindowOpeningMode = FormWindowOpeningMode.LockOwnerWindow;
 	endif;

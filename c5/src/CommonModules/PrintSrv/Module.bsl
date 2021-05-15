@@ -1,24 +1,24 @@
-Function Print ( Params ) export
+Function Print ( val Params, val Language ) export
 	
 	nextObject = false;
 	objects = getObjects ( Params.Objects );
-	prepareParams ( Params );
-	setFormCaption ( Params, objects );
+	createTabDoc ( Params );
+	tabDoc = Params.TabDoc;
 	for each object in objects do
 		if ( nextObject ) then
-			Params.TabDoc.PutHorizontalPageBreak ();
+			tabDoc.PutHorizontalPageBreak ();
 		else
 			nextObject = true;
 		endif; 
-		error = not printObject ( Params, object );
+		error = not printObject ( Params, object, Language );
 		if ( error ) then
-			return false;
+			return undefined;
 		endif; 
 	enddo; 
 	if ( objects.Count () > 1 ) then
-		resetTabDocFixing ( Params.TabDoc );
+		resetTabDocFixing ( tabDoc );
 	endif; 
-	return true;
+	return new Structure ( "TabDoc, Reference", tabDoc, Params.Reference );
 	
 EndFunction
 
@@ -34,30 +34,27 @@ Function getObjects ( Objects )
 	
 EndFunction 
 
-Procedure prepareParams ( Params )
+Procedure createTabDoc ( Params )
 	
-	if ( Params.TabDoc = undefined ) then
-		Params.TabDoc = new SpreadsheetDocument ();
-	endif; 
-	Params.TabDoc.PrintParametersKey = Params.Key;
+	tabDoc = new SpreadsheetDocument ();
+	tabDoc.PrintParametersKey = Params.Key;
+	Params.TabDoc = tabDoc;
 	
 EndProcedure
 
-Procedure setFormCaption ( Params, PrintingObjects )
+Function GetFormCaption ( val Name, val Manager, val PrintingObject ) export
 	
-	if ( Params.Name = undefined
-		or Params.Caption <> undefined ) then
-		return;
-	endif;
-	if ( Params.Manager = undefined ) then
-		template = PrintingObjects [ 0 ].Metadata ().Templates.Find ( Params.Name );
+	if ( Name = undefined ) then
+		return undefined;
+	elsif ( Manager = undefined ) then
+		template = PrintingObject.Metadata ().Templates.Find ( Name );
 	else
-		classAndName = getClassAndName ( Params.Manager );
-		template = Metadata [ classAndName.Class ] [ classAndName.Name ].Templates.Find ( Params.Name );
+		classAndName = getClassAndName ( Manager );
+		template = Metadata [ classAndName.Class ] [ classAndName.Name ].Templates.Find ( Name );
 	endif; 
-	Params.Caption = template.Presentation ();
+	return template.Presentation ();
 	
-EndProcedure 
+EndFunction
 
 Function getClassAndName ( FullName )
 	
@@ -69,14 +66,14 @@ Function getClassAndName ( FullName )
 	
 EndFunction
 
-Function printObject ( Params, Object )
+Function printObject ( Params, Object, Language )
 	
 	Params.Reference = Object;
 	env = new Structure ();
 	SQL.Init ( env );
 	manager = getManager ( Params, Object );
 	if ( Params.Name <> undefined ) then
-		env.Insert ( "T", Manager.GetTemplate ( Params.Name ) );
+		env.Insert ( "T", Manager.GetTemplate ( Params.Name + Language ) );
 	endif; 
 	return manager.Print ( Params, env );
 	
@@ -176,3 +173,28 @@ Procedure resetTabDocFixing ( TabDoc )
 	TabDoc.FixedLeft = 0;
 	
 EndProcedure 
+
+Function Language ( val Form ) export
+	
+	s = "
+	|select Settings.Language as Language
+	|from Catalog.UserSettings.Print as Settings
+	|where Settings.Ref = &User
+	|and Settings.Form = &Form";
+	q = new Query ( s );
+	q.SetParameter ( "User", SessionParameters.User );
+	q.SetParameter ( "Form", Enums.PrintForms [ Form ] );
+	table = q.Execute ().Unload ();
+	if ( table.Count () = 0 ) then
+		return undefined;
+	endif;
+	value = table [ 0 ].Language;
+	if ( value = Enums.PrintLanguages.Default ) then
+		return CurrentLanguage ().LanguageCode;
+	elsif ( ValueIsFilled ( value ) ) then
+		return Lower ( Conversion.EnumItemToName ( value ) );
+	else
+		return undefined;
+	endif;
+	
+EndFunction
