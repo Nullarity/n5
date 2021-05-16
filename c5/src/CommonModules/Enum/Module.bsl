@@ -632,6 +632,13 @@ Function SettingsPinnedDate () export
 	
 EndFunction 
 
+&AtServer
+Function SettingsPrintFormLanguage () export
+	
+	return "PringFormLanguage";
+	
+EndFunction 
+
 #endregion
 
 #region PhonesActions

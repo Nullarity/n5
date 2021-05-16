@@ -179,7 +179,7 @@ Function Language ( val Form ) export
 	s = "
 	|select Settings.Language as Language
 	|from Catalog.UserSettings.Print as Settings
-	|where Settings.Ref = &User
+	|where Settings.Ref.Owner = &User
 	|and Settings.Form = &Form";
 	q = new Query ( s );
 	q.SetParameter ( "User", SessionParameters.User );

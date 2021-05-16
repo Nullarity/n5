@@ -5,6 +5,7 @@
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	setLanguages ();
+	restoreChoice ();
 	
 EndProcedure
 
@@ -25,9 +26,28 @@ Procedure setLanguages ()
 	if ( myLanguageInList ) then
 		list.Insert ( 0, Enums.PrintLanguages.Default );
 		Language = Enums.PrintLanguages.Default;
+	else
+		Language = list [ 0 ].Value;
 	endif;
 	
 EndProcedure
+
+&AtServer
+Procedure restoreChoice ()
+	
+	value = CommonSettingsStorage.Load ( settingID () );
+	if ( Items.Language.ChoiceList.FindByValue ( value ) <> undefined ) then
+		Language = value;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Function settingID ()
+	
+	return Enum.SettingsPrintFormLanguage () + "_" + Parameters.Form;
+	
+EndFunction
 
 // *****************************************
 // *********** Form
@@ -53,6 +73,7 @@ Function applyChoice ()
 	if ( MakeDefault ) then
 		saveLanguage ();
 	endif;
+	saveChoice ();
 	return languageCode ();
 	
 EndFunction
@@ -70,6 +91,13 @@ Procedure saveLanguage ()
 	endif;
 	row.Language = Language;
 	obj.Write ();
+	
+EndProcedure
+
+&AtServer
+Procedure saveChoice ()
+	
+	LoginsSrv.SaveSettings ( settingID (), , Language );
 	
 EndProcedure
 

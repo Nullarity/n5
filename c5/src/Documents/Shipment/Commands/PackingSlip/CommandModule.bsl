@@ -8,9 +8,10 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	else
 		p.Objects = List;
 	endif;
-	name = "PackingSlip" + CurrentLanguage ();
+	name = "PackingSlip";
 	p.Key = name;
 	p.Name = name;
+	p.Languages = "en, ru, ro";
 	Print.Print ( p );
 	
 EndProcedure
