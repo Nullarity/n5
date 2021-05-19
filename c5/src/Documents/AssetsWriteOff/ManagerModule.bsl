@@ -152,7 +152,7 @@ Procedure putHead ( Params, Env )
 	area = Env.T.GetArea ( "Head" );
 	p = area.Parameters;
 	p.Fill ( Env.Fields );
-	p.AmountInWords = NumberInWords ( Env.AmountTotal, ? ( Params.Key = "WriteOffen", "L = en_EN", "L = ru_RU" ) );
+	p.AmountInWords = NumberInWords ( Env.AmountTotal, ? ( Params.SelectedLanguage = "en", "L = en_EN", "L = ru_RU" ) );
 	Params.TabDoc.Put ( area );        
 	
 EndProcedure 

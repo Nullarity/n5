@@ -787,22 +787,21 @@ Procedure sqlPrintData ( Env )
 	|where Document.Ref = &Ref
 	|;
 	|select Items.Item Item, Items.Feature as Feature, Items.Account as Account, Items.Series as Series,
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	case when Items.Item.CountPackages then 1 else Items.Capacity end as UnitsInside,
 	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package,
-	|	case when Items.Warehouse = Value ( Catalog.Warehouses.EmptyRef ) then Items.Ref.Warehouse else Items.Warehouse end as Warehouse,
-	|	sum ( case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end ) as Quantity,
-	|	min ( LineNumber ) as LineNumber
+	|	case when Items.Warehouse = value ( Catalog.Warehouses.EmptyRef ) then Items.Ref.Warehouse else Items.Warehouse end as Warehouse,
+	|	sum ( Items.QuantityPkg ) as Quantity, min ( LineNumber ) as LineNumber
 	|into Items
 	|from Document.WriteOff.Items as Items
 	|where Items.Ref = &Ref
-	|group by Items.Item, Items.Feature, Items.Account, Items.Series,	
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end,
-	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
-	|	case when Items.Warehouse = Value ( Catalog.Warehouses.EmptyRef ) then Items.Ref.Warehouse else Items.Warehouse end
+	|group by Items.Item, Items.Feature, Items.Account, Items.Series, Items.Package, Items.Ref, Items.Capacity,
+	|	Items.Warehouse
 	|;
 	|// #Items
 	|select Items.LineNumber as LineNumber, Items.Item.Description as Item, Items.Item.Code as Code,
-	|	Items.Unit as Unit, Items.Quantity as Quantity, Cost.Price as Cost, Items.Quantity * Cost.Price as Amount
+	|	Items.Unit as Unit, Items.Quantity as Quantity, Cost.Price * Items.UnitsInside as Cost,
+	|	Items.Quantity * Cost.Price * Items.UnitsInside as Amount
 	|from Items as Items
 	|	//
 	|	// Details
@@ -891,7 +890,7 @@ Procedure putHead ( Params, Env )
 	area = Env.T.GetArea ( "Head" );
 	p = area.Parameters;
 	p.Fill ( Env.Fields );
-	p.AmountInWords = NumberInWords ( Env.AmountTotal, ? ( Params.Key = "WriteOffen", "L = en_EN", "L = ru_RU" ) );
+	p.AmountInWords = NumberInWords ( Env.AmountTotal, ? ( Params.SelectedLanguage = "en", "L = en_EN", "L = ru_RU" ) );
 	Params.TabDoc.Put ( area );        
 	
 EndProcedure 

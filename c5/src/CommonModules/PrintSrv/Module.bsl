@@ -2,7 +2,7 @@ Function Print ( val Params, val Language ) export
 	
 	nextObject = false;
 	objects = getObjects ( Params.Objects );
-	createTabDoc ( Params );
+	augment ( Params, Language );
 	tabDoc = Params.TabDoc;
 	for each object in objects do
 		if ( nextObject ) then
@@ -34,11 +34,12 @@ Function getObjects ( Objects )
 	
 EndFunction 
 
-Procedure createTabDoc ( Params )
+Procedure augment ( Params, Language )
 	
 	tabDoc = new SpreadsheetDocument ();
 	tabDoc.PrintParametersKey = Params.Key;
 	Params.TabDoc = tabDoc;
+	Params.SelectedLanguage = Language;
 	
 EndProcedure
 

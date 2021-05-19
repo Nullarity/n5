@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 // *****************************
@@ -37,6 +37,8 @@ goods.Add ( row );
 
 p.Items = goods;
 Call ( "Documents.ReceiveItems.Receive", p );
+
+// Write off
 
 Call ( "Common.OpenList", Meta.Documents.WriteOff );
 Click ( "#FormCreate" );

@@ -264,7 +264,7 @@ Procedure putFooter(Params, Env)
 	p = area.Parameters;
 	fields = Env.Fields;
 	p.Fill(fields);
-	if (Params.Key = "BillRo") then
+	if (Params.SelectedLanguage = "ro") then
 		format = "L=ro_RO; FS=false";
 		numerationOptions = fields.OptionsRo;
 	else

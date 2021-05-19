@@ -54,6 +54,7 @@ Function GetParams () export
 	p.Insert ( "Reference" );
 	p.Insert ( "TabDoc" );
 	p.Insert ( "Languages" );
+	p.Insert ( "SelectedLanguage" );
 	return p;
 	
 EndFunction 

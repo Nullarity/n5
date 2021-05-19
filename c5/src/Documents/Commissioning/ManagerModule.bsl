@@ -119,7 +119,7 @@ Procedure putFooter ( Params, Env )
 	items = Env.Items;
 	amount = items.Total ( "Amount" );
 	p.Amount = amount;
-	p.AmountInWords = NumberInWords ( amount, ? ( Params.Key = "Commissioningen", "L = en_EN", "L = ru_RU" ) );
+	p.AmountInWords = NumberInWords ( amount, ? ( Params.SelectedLanguage = "en", "L = en_EN", "L = ru_RU" ) );
 	Params.TabDoc.Put ( area );
 	
 EndProcedure
