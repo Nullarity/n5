@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Creates a new Bank Account
 //
 // Returns:
@@ -71,7 +71,8 @@ else
 
 	Close ();
 	if ( not fromOwner ) then
-		Close ( list );
+		With ();
+		Close ();
 	endif;	
 
 	return code;

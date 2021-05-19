@@ -539,11 +539,11 @@ Procedure sqlPrintData ( Env )
 	|;
 	|// #Items
 	|select Items.Item Item, sum ( Items.QuantityPkg ) as Quantity,
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
 	|from Document.Disassembling.Items as Items
 	|where Items.Ref = &Ref
 	|group by Items.Item, 	
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end
+	|	case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end
 	|order by min ( Items.LineNumber )
 	|";
 	Env.Selection.Add ( s );

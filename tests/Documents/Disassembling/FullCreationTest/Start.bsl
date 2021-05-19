@@ -2,6 +2,9 @@
 CloseAll ();
 
 env = getEnv ();
+
+goto ~here;
+
 createEnv ( env );
 
 Call ( "Catalogs.UserSettings.CostOnline", true );
@@ -9,6 +12,8 @@ Call ( "Catalogs.UserSettings.CostOnline", true );
 // ***********************************
 // Create Disassembling
 // ***********************************
+
+~here:
 
 Call ( "Common.OpenList", Meta.Documents.Disassembling );
 Click ( "#FormCreate" );
@@ -37,11 +42,13 @@ endif;
 
 table = Get ( "#ItemsList" );
 
-for i = 1 to 2 do
-	row = Env.Items [ i - 1 ];
+for item = 1 to 2 do
+	With ();
+	row = Env.Items [ item - 1 ];
 	GoToRow ( table, "Item", row.Item );
 	table.Choose ();
-	if ( i = 2 ) then // count packages
+	Get( "#FeaturesList" ).Choose ();
+	if ( item = 2 ) then // The second item with packages
 		With ( selectionForm );
 		tablePackages = Get ( "#PackagesList" );
 		tablePackages.Choose ();
@@ -120,7 +127,7 @@ Run ( "PrintForm" );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "#2CFF22E7" );
+	id = Call ( "Common.ScenarioID", "#2D1BA92F" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Date", CurrentDate () );

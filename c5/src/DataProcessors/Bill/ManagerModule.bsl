@@ -158,7 +158,7 @@ Procedure sqlItems(Env)
 	document = Env.Document;
 	s = "
 		|// Items
-		|select case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
+		|select presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
 		|	case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as Quantity,
 		|	" + total + " as Total, " + vat + " as VAT, " + amount + " as Amount, " + discount + " as Discount, " + price + " as Price,
 		|	Items.Feature.Description as Feature, Items.Item.FullDescription as Item

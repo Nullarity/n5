@@ -26,7 +26,13 @@ Procedure applyResult ( Result )
 	Reference = result.Reference;
 	params = Parameters.Params;
 	if ( params.Caption = undefined ) then
-		Title = PrintSrv.GetFormCaption ( params.Name + Parameters.Language, params.Manager, params.Objects [ 0 ] );
+		objects = params.Objects; 
+		if ( TypeOf ( objects ) = Type ( "Array" ) ) then
+			printingObject = objects [ 0 ];
+		else
+			printingObject = objects;
+		endif;
+		Title = PrintSrv.GetFormCaption ( params.Name + Parameters.Language, params.Manager, printingObject );
 	else
 		Title = Parameters.Caption;
 	endif; 

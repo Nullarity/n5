@@ -1,4 +1,4 @@
-//	Create LVI Startup and test print form
+﻿//	Create LVI Startup and test print form
 //	1. Create Vendor Invoice
 //	2. Create Startup based on VendorInvoice
 //	3. Test print form
@@ -8,7 +8,7 @@ CloseAll ();
 
 StandardProcessing = false;
 
-id = Call ( "Common.ScenarioID", "2A4DECC9" );
+id = Call ( "Common.ScenarioID", "2D1FA9E4" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -200,7 +200,7 @@ Procedure createEnv ( Env )
 	Put ( "#ItemsItem", env.Item1 );
 	Next ();
 	
-	Set ( "#ItemsQuantity", 1, table );
+	Set ( "#ItemsQuantity", 20, table );
 	Set ( "#ItemsPrice", 1000, table );
 	
 	Click ( "#ItemsTableAdd" );
@@ -208,7 +208,7 @@ Procedure createEnv ( Env )
 	Put ( "#ItemsItem", env.Item2 );
 	Next ();
 	
-	Set ( "#ItemsQuantity", 1, table );
+	Set ( "#ItemsQuantity", 20, table );
 	Set ( "#ItemsPrice", 100, table );
 	
 	Click ( "#FormPostAndClose" );

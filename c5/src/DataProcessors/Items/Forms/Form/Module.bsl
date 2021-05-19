@@ -186,8 +186,7 @@ Procedure filterItems ( Setup )
 	DC.DeleteFilter ( ItemsList, "IsReserve" );
 	DC.DeleteFilter ( ItemsList, "Service" );
 	DC.DeleteFilter ( FeaturesList, "Quantity" );
-	DC.DeleteFilter ( FeaturesList, "Ref.Owner.Service" );
-	DC.DeleteFilter ( FeaturesList, "Ref" );
+	DC.DeleteFilter ( FeaturesList, "Service" );
 	if ( Setup = FilterNone ) then
 		return;
 	elsif ( Setup = FilterAvailableOnly ) then
@@ -207,14 +206,10 @@ Procedure filterItems ( Setup )
 		item.LeftValue = new DataCompositionField ( "Quantity" );
 		item.ComparisonType = DataCompositionComparisonType.Greater;
 		item.RightValue = 0;
-		////item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
-		////item.Use = true;
-		////item.LeftValue = new DataCompositionField ( "Ref.Owner.Service" );
-		////item.RightValue = true;
 		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
 		item.Use = true;
-		item.LeftValue = new DataCompositionField ( "Ref" );
-		item.RightValue = PredefinedValue ( "Catalog.Features.EmptyRef" );
+		item.LeftValue = new DataCompositionField ( "Service" );
+		item.RightValue = true;
 	elsif ( Setup = FilterReserveOnly ) then
 		DC.AddFilter ( ItemsList, "IsReserve", true );
 	endif; 
@@ -776,8 +771,9 @@ Procedure completeSelection ()
 	else
 		addRows ( getRow () );
 		showNotification ();
+		activateSelection ();
+		activateItems ();
 	endif; 
-	activateSelection ();
 	
 EndProcedure
 
@@ -808,7 +804,8 @@ Procedure openDetails ()
 		p.Insert ( "ShowSocial", ShowSocial );
 		p.Insert ( "ShowExtraCharge", ShowExtraCharge );
 	endif; 
-	OpenForm ( "DataProcessor.Items.Form." + form, p, ThisObject );
+	callback = new NotifyDescription ( "DetailsCompleted", ThisObject );
+	OpenForm ( "DataProcessor.Items.Form." + form, p, ThisObject, , , , callback );
 	
 EndProcedure
 
@@ -1209,6 +1206,17 @@ Procedure activateSelection ()
 	else
 		Items.GroupSelectedStuff.CurrentPage = Items.GroupSelectedItems;
 	endif; 
+	
+EndProcedure
+
+&AtClient
+Procedure DetailsCompleted ( Result, Params ) export
+	
+	if ( Result = undefined ) then
+		return;
+	endif;
+	activateSelection ();
+	activateItems ();
 	
 EndProcedure
 

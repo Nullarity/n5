@@ -639,7 +639,7 @@ Procedure sqlPrintData ( Env )
 	|;
 	|// #Items
 	|select Items.Item as Item, Items.QuantityPkg as Quantity, Items.Price as Price, Items.Amount as Amount,
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit
 	|from Document.Startup.Items as Items
 	|where Items.Ref = &Ref
 	|order by Items.LineNumber

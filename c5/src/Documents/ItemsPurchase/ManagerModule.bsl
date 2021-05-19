@@ -85,14 +85,8 @@ Procedure sqlItems ( Env )
 	s = "
 	|// #Items
 	|select Items.Item.FullDescription as Item, Items.Feature.Description as Feature,  
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
-	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as Quantity,
-	|	case when Items.Item.CountPackages then Items.Package.Description else """" end as Package,
-	|	case 
-	|		when case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end = 0 then Items.Total
-	|		else Items.Total / case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end 
-	|	end as Price,
-	|	Items.Total as Amount
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	Items.QuantityPkg as Quantity, Items.Price as Price, Items.Total as Amount
 	|from Document.VendorInvoice.Items as Items
 	|where Items.Ref = &Base
 	|order by Items.LineNumber
@@ -174,7 +168,7 @@ Procedure putTable ( Params, Env )
 	p = area.Parameters;
 	for each row in table do
 		p.Fill ( row );
-		p.Item = Print.FormatItem ( row.Item, row.Package, row.Feature );
+		p.Item = Print.FormatItem ( row.Item, , row.Feature );
 		tabDoc.Put ( area );
 	enddo;
 	rowsCount = table.Count ();

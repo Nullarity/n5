@@ -74,8 +74,9 @@ Procedure sqlItems ( Env )
 	s = "
 	|// Items
 	|select Items.Item Item, Items.Feature as Feature, Items.Account as Account, Items.Series as Series,
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Description end as Unit,
-	|	case when Items.Item.CountPackages then Items.Package.Code else Items.Item.Unit.Code end as UnitCode,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit.Code else Items.Package.Code end as UnitCode,
+	|	case when Items.Item.CountPackages then 1 else Items.Capacity end as UnitsInside,
 	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package";
 	if ( startup ) then
 		s = s + ",
@@ -89,19 +90,14 @@ Procedure sqlItems ( Env )
 	|into Items
 	|from Document." + Env.Table + ".Items as Items
 	|where Items.Ref = &Ref
-	|group by Items.Item, Items.Feature, Items.Account, Items.Series,	
-	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Description end,
-	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end";
+	|group by Items.Item, Items.Feature, Items.Account, Items.Series, Items.Package, Items.Ref, Items.Capacity";	
 	if ( startup ) then
-		s = s + ",
-		|	case when Items.Warehouse = value ( Catalog.Warehouses.EmptyRef ) then Items.Ref.Warehouse else Items.Warehouse end";
+		s = s + ", Items.Warehouse
+		|";
 	else
-		s = s + ",
-		|	Items.Ref.Department, Items.Employee";
+		s = s + ", Items.Employee
+		|";
 	endif;
-	s = s + ",
-	|	case when Items.Item.CountPackages then Items.Package.Code else Items.Item.Unit.Code end
-	|";
 	Env.Selection.Add ( s );
 
 EndProcedure
@@ -112,7 +108,8 @@ Procedure sqlItemsTable ( Env )
 	|// #Items
 	|select Items.LineNumber as LineNumber, Items.Item.Description as Item, Items.Item.Code as Code,
 	|	Items.Unit as Unit, isnull ( Items.Quantity, 0 ) as Quantity, Items.UnitCode as UnitCode,
-	|	isnull ( Cost.Price, 0 ) as Cost, isnull ( Items.Quantity * Cost.Price, 0 ) as Amount
+	|	isnull ( Cost.Price, 0 ) * Items.UnitsInside as Cost,
+	|	isnull ( Cost.Price, 0 ) * Items.Quantity * Items.UnitsInside as Amount
 	|from Items as Items";
 	if ( Env.Startup ) then
 		s = s + "

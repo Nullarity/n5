@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group4</name>
     <id>40</id>
@@ -5821,9 +5821,10 @@ index by Reserves.Feature
 // Features
 //
 select Catalog.Ref as Ref, Catalog.DeletionMark as DeletionMark, Catalog.Code as Code, Catalog.Description as Description,
-	sum ( Balances.QuantityBalance ) as Quantity, max ( Reserves.Reserve ) as Reserve 
+	sum ( Balances.QuantityBalance ) as Quantity, max ( Reserves.Reserve ) as Reserve
 from ( 
-	select value ( Catalog.Features.EmptyRef ) as Ref, false as DeletionMark, &quot;&quot; as Code, &quot;&lt;...>&quot; as Description
+	select &amp;Features as Ref, false as DeletionMark, &quot;&quot; as Code, &quot;&lt;...>&quot; as Description
+	where &amp;Features = value ( Catalog.Features.EmptyRef )
 	union all
 	select Catalog.Ref, Catalog.DeletionMark, Catalog.Code, Catalog.Description
 	from Catalog.Features as Catalog
@@ -5831,7 +5832,7 @@ from (
 	union all
 	select Catalog.Ref, Catalog.DeletionMark, Catalog.Code, Catalog.Description
 	from Catalog.Features as Catalog
-	where Catalog.Ref = &amp;Features
+	where Catalog.Parent = &amp;Features
 	and not Catalog.IsFolder ) as Catalog
 	//
 	// Balances
@@ -5843,9 +5844,12 @@ from (
 	//
 	left join ReservesAmount as Reserves
 	on Reserves.Feature = Catalog.Ref
-where Catalog.Ref &lt;> value ( Catalog.Features.EmptyRef )
-or Balances.QuantityBalance &lt;> 0
-or &amp;Warehouse = value ( Catalog.Warehouses.EmptyRef )
+	//
+	// Service
+	//
+	left join Catalog.Items as Items
+	on Items.Ref = &amp;Item
+{where max ( Items.Service ) as Service}
 group by Catalog.Ref, Catalog.DeletionMark, Catalog.Code, Catalog.Description
 order by Catalog.Description
 </queryText>
@@ -5853,6 +5857,131 @@ order by Catalog.Description
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Code</dataPath>
+        <field>Code</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Description</dataPath>
+        <field>Description</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Quantity</dataPath>
+        <field>Quantity</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Reserve</dataPath>
+        <field>Reserve</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Reserve</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DocumentOrder</dataPath>
+        <field>DocumentOrder</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>RowKey</dataPath>
+        <field>RowKey</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Warehouse</dataPath>
+        <field>Warehouse</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Item</dataPath>
+        <field>Item</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Feature</dataPath>
+        <field>Feature</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Package</dataPath>
+        <field>Package</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Service</dataPath>
+        <field>Service</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
     </extInfo>
   </attributes>
   <attributes>

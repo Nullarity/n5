@@ -1,11 +1,11 @@
-// - Create Vendor Invoice
+﻿// - Create Vendor Invoice
 // - Create Items Purchase
 // - Check Template
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B6AA0A2" );
+id = Call ( "Common.ScenarioID", "2D1B9B67" );
 env = getEnv ( id );
 createEnv ( env );
 

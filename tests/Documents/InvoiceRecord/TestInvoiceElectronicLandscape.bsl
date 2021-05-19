@@ -1,4 +1,4 @@
-With ( "Invoice Record #*" );
+﻿With ( "Invoice Record #*" );
 Put ( "#Status", "Saved" );
 Click ( "#FormWrite" );
 Set ( "#Type", "Invoice Electronic, Landscape" );

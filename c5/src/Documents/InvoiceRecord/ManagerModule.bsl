@@ -163,17 +163,16 @@ Procedure sqlItems(Env)
 	s = "
 		|// #Items
 		|select case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Capacity else """" end as Capacity,
-		|	case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
-		|	case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as Quantity,
-		|	case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Package.Description else """" end as Package,
+		|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+		|	Items.QuantityPkg as Quantity,
 		|	case when Items.Item refs Catalog.Items then
 		|		( case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end * Items.Item.Weight ) / 1000
 		|		when Items.Item refs Catalog.FixedAssets then ( Items.Quantity * Items.Item.Weight ) / 1000
 		|		else 0
 		|	end as Weight, " + total + " as Total, " + vat + " as VAT, 
 		|	case 
-		|		when case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end = 0 then " + amount + "
-		|		else (" + amount + ") / case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end 
+		|		when case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end = 0 then " + amount + "
+		|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
 		|	end as Price, " + amount + " as Amount, 
 		|	case when Items.Item refs Catalog.Items then isnull ( Items.Feature.Description, """" ) else """" end as Feature,
 		|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
@@ -181,7 +180,7 @@ Procedure sqlItems(Env)
 		|from Document.InvoiceRecord.Items as Items
 		|where Items.Ref = &Ref 
 		|union all
-		|select """", Services.Item.Unit.Code, Services.Quantity, """", 0, " + total + ", " + vat + ", 
+		|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
 		|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
 		|	" + amount + ", isnull ( Services.Feature.Description, """" ), Services.Description,
 		|	Services.VATRate, false, Services.OtherInfo, false, 0, 0, """"
