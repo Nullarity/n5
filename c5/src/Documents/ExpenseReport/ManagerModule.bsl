@@ -1012,9 +1012,9 @@ Procedure sqlPrintData ( Env )
 	|where Documents.Ref = &Ref
 	|;
 	|// #Items
-	|select presentation ( Items.Item ) as Item, case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
-	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as Quantity, Items.LineNumber as Line, Items.Amount as Amount,
-	|	Items.Item.Code as Code, 1 as Sort
+	|select presentation ( Items.Item ) as Item,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	Items.QuantityPkg as Quantity, Items.LineNumber as Line, Items.Amount as Amount, Items.Item.Code as Code, 1 as Sort
 	|from Document.ExpenseReport.Items as Items
 	|where Items.Ref = &Ref
 	|union all

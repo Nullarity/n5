@@ -179,6 +179,6 @@ EndProcedure
 &AtClient
 Procedure TypeOnChange ( Item )
 	
-	Appearance.Apply ( ThisObject, "Object.IntangibleAssets.Type" );
+	Appearance.Apply ( ThisObject, "TableRow.Type" );
 	
 EndProcedure

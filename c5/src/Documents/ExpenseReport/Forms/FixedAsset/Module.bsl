@@ -179,6 +179,6 @@ EndProcedure
 &AtClient
 Procedure TypeOnChange ( Item )
 	
-	Appearance.Apply ( ThisObject, "Object.FixedAssets.Type" );
+	Appearance.Apply ( ThisObject, "TableRow.Type" );
 	
 EndProcedure

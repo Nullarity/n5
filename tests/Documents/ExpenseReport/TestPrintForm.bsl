@@ -1,4 +1,4 @@
-// CAD Rate = 10
+﻿// CAD Rate = 10
 Call ( "Common.Init" );
 CloseAll ();
 
@@ -23,7 +23,7 @@ endif;
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "2863C6C2" );
+	id = Call ( "Common.ScenarioID", "2D1FCB93" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Warehouse", "_Warehouse: " + id );
@@ -141,7 +141,7 @@ Procedure createEnv ( Env )
 	if ( Call ( "Common.DataCreated", id ) ) then
 		return;
 	endif;
-	
+
 	Run ( "ExpenseReportAccount" );
 	
 	// *************************
@@ -240,8 +240,7 @@ Procedure createEnv ( Env )
 	Call ( "Documents.ExpenseReport.Create", p );
 	form = With ( "Expense Report*" );
 	
-	Click ( "#FormWrite" );
-
+	Click ( "#JustSave" );
 	Click ( "#PaymentsCreate" );
 
 //	With ( DialogsTitle );
