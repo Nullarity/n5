@@ -34,7 +34,7 @@ Procedure applyResult ( Result )
 		endif;
 		Title = PrintSrv.GetFormCaption ( params.Template + Parameters.Language, params.Manager, printingObject );
 	else
-		Title = Parameters.Caption;
+		Title = params.Caption;
 	endif; 
 	
 EndProcedure

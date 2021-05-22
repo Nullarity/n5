@@ -186,7 +186,7 @@ Function Language ( val Form ) export
 	|and Settings.Form = &Form";
 	q = new Query ( s );
 	q.SetParameter ( "User", SessionParameters.User );
-	q.SetParameter ( "Form", Enums.PrintForms [ Form ] );
+	q.SetParameter ( "Form", Form );
 	table = q.Execute ().Unload ();
 	if ( table.Count () = 0 ) then
 		return undefined;

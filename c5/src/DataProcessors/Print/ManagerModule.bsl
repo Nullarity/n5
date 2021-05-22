@@ -7,6 +7,7 @@ Function Print(Params, Env) export
 	setContext(Params, Env);
 	getData(Params, Env);
 	putHeader(Params, Env);
+	putInfo(Params, Env);
 	putTable(Params, Env);
 	putTotals(Params, Env);
 	putFooter(Params, Env);
@@ -31,7 +32,11 @@ Procedure setContext(Params, Env)
 	Env.Insert ( "IsQuote", type = Type ( "DocumentRef.Quote" ) );
 	Env.Insert ( "IsInvoice", type = Type ( "DocumentRef.Invoice" ) );
 	Env.Insert ( "IsVendorInvoice", type = Type ( "DocumentRef.VendorInvoice" ) );
-	Env.Insert("Document", Metadata.FindByType ( type ).Name );
+	Env.Insert ( "Document", Metadata.FindByType ( type ).Name );
+	formKey = Params.Key;
+	for each item in Enums.PrintForms do
+		Env.Insert ( "Print" + Conversion.EnumItemToName ( item ), item = formKey );
+	enddo;
 	
 EndProcedure
 
@@ -49,7 +54,7 @@ Procedure sqlFields(Env)
 	
 	document = Env.Document;
 	s = "";
-	if ( Env.Bill ) then
+	if ( Env.PrintBill ) then
 		s = s + "
 		|// Documents
 		|select Roles.Ref as Ref, Roles.Role as Role
@@ -78,7 +83,7 @@ Procedure sqlFields(Env)
 		|where Roles.Ref in ( select Ref from DocumentsRoles )
 		|;"
 	endif;
-	s = "
+	s = s + "
 	|// @Fields
 	|select Documents.Date as Date, Documents.Number as Number, Documents.Company.FullDescription as Company,
 	|	Documents.Company.CodeFiscal as CodeFiscal, Documents.Currency as Currency,
@@ -87,9 +92,12 @@ Procedure sqlFields(Env)
 	|	Documents.Company.BankAccount.AccountNumber as AccountNumber, Documents.Company.BankAccount.Bank.Description as Bank,
 	|	Documents.Company.BankAccount.Bank.Code as BankCode, Documents.Company as CompanyRef,
 	|	Documents.Company.Discounts and Documents.Discount <> 0 as Discounts,
-	|	Constants.Features and DocumentFeatures.Exists is not null as Features,
-	|	RolesDirector.Director as Director, RolesAccountant.Accountant as Accountant, 
-	|	Logos.Logo as Logo
+	|	Constants.Features and DocumentFeatures.Exists is not null as Features, Logos.Logo as Logo
+	|";
+	if ( Env.PrintBill ) then
+		s = s + ", RolesDirector.Director as Director, RolesAccountant.Accountant as Accountant";
+	endif;
+	s = s + "	 
 	|from Document." + document + " as Documents
 	|	//
 	|	// Constants
@@ -112,28 +120,34 @@ Procedure sqlFields(Env)
 	|	) as DocumentFeatures
 	|	on DocumentFeatures.Exists
 	|	//
-	|	// Accountant
-	|	//
-	|	left join ( 
-	|		select Roles.Individual.Description as Accountant
-	|		from Roles as Roles
-	|		where Roles.Role = value ( Enum.Roles.AccountantChief )
-	|		) as RolesAccountant
-	|	on true
-	|	//
-	|	// Director
-	|	//
-	|	left join ( 
-	|		select Roles.Individual.Description as Director
-	|		from Roles as Roles
-	|		where Roles.Role = value ( Enum.Roles.GeneralManager )
-	|		) as RolesDirector
-	|	on true
-	|	//
 	|	// Logos
 	|	//
 	|	left join InformationRegister.Logos as Logos
 	|	on Logos.Company = Documents.Company
+	|";
+	if ( Env.PrintBill ) then
+		s = s + "
+		|	//
+		|	// Accountant
+		|	//
+		|	left join ( 
+		|		select Roles.Individual.Description as Accountant
+		|		from Roles as Roles
+		|		where Roles.Role = value ( Enum.Roles.AccountantChief )
+		|		) as RolesAccountant
+		|	on true
+		|	//
+		|	// Director
+		|	//
+		|	left join ( 
+		|		select Roles.Individual.Description as Director
+		|		from Roles as Roles
+		|		where Roles.Role = value ( Enum.Roles.GeneralManager )
+		|		) as RolesDirector
+		|	on true
+		|";
+	endif;
+	s = s + "
 	|where Documents.Ref = &Ref 
 	|";
 	Env.Selection.Add(s);
@@ -213,16 +227,25 @@ Procedure getTables(Env)
 	
 EndProcedure
 
-Procedure putHeader(Params, Env)
+Procedure putHeader ( Params, Env )
 	
-	area = Env.T.GetArea("Header");
+	area = Env.T.GetArea ( Conversion.EnumItemToName ( Params.Key ) + "Header" );
 	p = area.Parameters;
 	fields = Env.Fields;
 	p.Fill(fields);
 	p.Date = Format(fields.Date, "DLF=D");
+	Print.InjectLogo ( fields.Logo, area );
+	Params.TabDoc.Put(area);
+	
+EndProcedure
+
+Procedure putInfo ( Params, Env )
+	
+	area = Env.T.GetArea ( "CurrencyAndTax" );
+	p = area.Parameters;
+	fields = Env.Fields;
 	p.Taxes = Print.VATInfo ( fields.VATUse, Params.SelectedLanguage );
 	p.Currency = Print.CurrencyInfo ( fields.Currency, fields.Rate, fields.Factor );
-	Print.InjectLogo ( fields.Logo, area );
 	Params.TabDoc.Put(area);
 	
 EndProcedure
