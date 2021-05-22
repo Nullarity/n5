@@ -59,7 +59,7 @@ Procedure sqlFields ( Env )
 	|	Invoice.Vendor.Number as VendorNumber, Invoice.Vendor.Issued as VendorIssued,
 	|	Invoice.Vendor.IssuedBy as VendorIssuedBy, Invoice.Vendor.Address as VendorAddress,
 	|	Invoice.Contract.DateStart as ContractDate, Invoice.Contract.Code as ContractNumber,
-	|	ItemsPurchase.Series as Series, Invoice.Currency.OptionsRo as CurrencyOptions, Invoice.Amount as Amount, 
+	|	ItemsPurchase.Series as Series, Invoice.Currency as Currency, Invoice.Amount as Amount, 
 	|	ItemsPurchase.IncomeTaxAmount as IncomeTaxAmount, ItemsPurchase.Advance as Advance,
 	|	ItemsPurchase.Total as Total, ItemsPurchase.Status as Status 
 	|from Document.ItemsPurchase as ItemsPurchase
@@ -186,20 +186,18 @@ EndProcedure
 Procedure putFooter ( Params, Env )
 	
 	fields = Env.Fields;
-	format = "L=ro_RO";
-	option = fields.CurrencyOptions;
 	area = Env.T.GetArea ( "Footer" );
 	p = area.Parameters;
 	p.Fill ( fields );
-	p.AmountInWords = NumberInWords ( fields.Amount, format, option );
+	p.AmountInWords = Conversion.AmountToWords ( fields.Amount, fields.Currency );
 	if ( fields.IncomeTaxAmount > 0 ) then
-		p.IncomeTaxAmountInWords = NumberInWords ( fields.IncomeTaxAmount, format, option );
+		p.IncomeTaxAmountInWords = Conversion.AmountToWords ( fields.IncomeTaxAmount, fields.Currency );
 	endif;
 	if ( fields.Advance > 0 ) then
-		p.AdvanceInWords = NumberInWords ( fields.Advance, format, option );
+		p.AdvanceInWords = Conversion.AmountToWords ( fields.Advance, fields.Currency );
 	endif;
 	if ( fields.Total > 0 ) then
-		p.TotalInWords = NumberInWords ( fields.Total, format, option );
+		p.TotalInWords = Conversion.AmountToWords ( fields.Total, fields.Currency );
 	endif;
 	Params.TabDoc.Put ( area );
 	

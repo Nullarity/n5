@@ -299,7 +299,7 @@ EndFunction
 Procedure setPageSettings ( Params )
 	
 	Params.TabDoc.FitToPage = true;
-	Params.TabDoc.PageOrientation = ? ( Params.Name = "WaybillCar", PageOrientation.Portrait, PageOrientation.Landscape );
+	Params.TabDoc.PageOrientation = ? ( Params.Template = "WaybillCar", PageOrientation.Portrait, PageOrientation.Landscape );
 	
 EndProcedure
 

@@ -59,7 +59,7 @@ Procedure sqlFields ( Env )
 	|	Invoice.Vendor.Number as VendorNumber, Invoice.Vendor.Issued as VendorIssued,
 	|	Invoice.Vendor.IssuedBy as VendorIssuedBy, isnull ( Invoice.Vendor.Address.Description, """" ) as VendorAddress,
 	|	Invoice.Contract.DateStart as ContractDate, Invoice.Contract.Code as ContractCode,
-	|	ServicesPurchase.Series as Series, Invoice.Currency.OptionsRo as CurrencyOptions, Invoice.Amount as Amount,
+	|	ServicesPurchase.Series as Series, Invoice.Currency as Currency, Invoice.Amount as Amount,
 	|	ServicesPurchase.Surcharges as Surcharges, ServicesPurchase.Discount as Discount,
 	|	ServicesPurchase.IncomeTaxAmount as IncomeTaxAmount, ServicesPurchase.Advance as Advance,
 	|	ServicesPurchase.IncomeTaxAmount + ServicesPurchase.Advance as Deductions, 
@@ -225,34 +225,32 @@ EndProcedure
 Procedure putFooter ( Params, Env )
 	
 	fields = Env.Fields;
-	format = "L=ro_RO";
-	option = fields.CurrencyOptions;
 	area = Env.T.GetArea ( "Footer" );
 	p = area.Parameters;
 	p.Fill ( fields );
 	if ( fields.Surcharges > 0 ) then
-		p.SurchargesInWords = NumberInWords ( fields.Surcharges, format, option );
+		p.SurchargesInWords = Conversion.AmountToWords ( fields.Surcharges, fields.Currency );
 	endif;
 	if ( fields.Discount > 0 ) then
-		p.DiscountInWords = NumberInWords ( fields.Discount, format, option );
+		p.DiscountInWords = Conversion.AmountToWords ( fields.Discount, fields.Currency );
 	endif;
 	if ( fields.SurchargesMinusDiscount <> 0 ) then
-		p.SurchargesMinusDiscountInWords = NumberInWords ( fields.SurchargesMinusDiscount, format, option );
+		p.SurchargesMinusDiscountInWords = Conversion.AmountToWords ( fields.SurchargesMinusDiscount, fields.Currency );
 	endif;
 	if ( fields.Paid > 0 ) then
-		p.PaidInWords = NumberInWords ( fields.Paid, format, option );
+		p.PaidInWords = Conversion.AmountToWords ( fields.Paid, fields.Currency );
 	endif;
 	if ( fields.Deductions > 0 ) then
-		p.DeductionsInWords = NumberInWords ( fields.Deductions, format, option );
+		p.DeductionsInWords = Conversion.AmountToWords ( fields.Deductions, fields.Currency );
 	endif;
 	if ( fields.IncomeTaxAmount > 0 ) then
-		p.IncomeTaxAmountInWords = NumberInWords ( fields.IncomeTaxAmount, format, option );
+		p.IncomeTaxAmountInWords = Conversion.AmountToWords ( fields.IncomeTaxAmount, fields.Currency );
 	endif;
 	if ( fields.Advance > 0 ) then
-		p.AdvanceInWords = NumberInWords ( fields.Advance, format, option );
+		p.AdvanceInWords = Conversion.AmountToWords ( fields.Advance, fields.Currency );
 	endif;
 	if ( fields.Total > 0 ) then
-		p.TotalInWords = NumberInWords ( fields.Total, format, option );
+		p.TotalInWords = Conversion.AmountToWords ( fields.Total, fields.Currency );
 	endif;
 	Params.TabDoc.Put ( area );
 	

@@ -361,7 +361,7 @@ Procedure sqlPrintData ( Env )
 	|	Document.Company.Discounts as Discounts, Document.DeliveryDate as DeliveryDate,
 	|	Document.Company.PaymentAddress.Presentation as Address, Document.Creator.Description as Salesman,
 	|	Document.Customer.FullDescription as Customer, Document.Customer.ShippingAddress.Presentation as ShippingAddress,
-	|	Document.Contract.CustomerTerms.Description as Terms, Document.Taxable as Taxable,
+	|	Document.Contract.CustomerTerms.Description as Terms, Document.VATUse > 0 as Taxable,
 	|	Document.Amount as Amount, Document.Tax as Tax, Document.Amount - Document.Tax as Subtotal,
 	|	Document.Discount as Discount, Document.GrossAmount as GrossAmount, Document.Currency.Description as Currency,
 	|	Document.Memo as Memo

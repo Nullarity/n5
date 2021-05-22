@@ -542,18 +542,13 @@ Function ParametersToMap ( Parameters ) export
 EndFunction 
 
 &AtServer
-Function AmountToWords ( Amount, Currency = undefined, Romanian = true ) export
+Function AmountToWords ( Amount, Currency = undefined, Language = "ro" ) export
 	
 	if ( Currency = undefined ) then
 		Currency = Application.Currency ();
 	endif;
-	if ( Romanian ) then
-		numOptions = DF.Values ( Currency, "OptionsRo" ).OptionsRo;
-		format = "L=ro_RO; FS=false";
-	else
-		numOptions = DF.Values ( Currency, "OptionsEn" ).OptionsEn;
-		format = "L=en_EN; FS=false";
-	endif;
+	numOptions = DF.Values ( Currency, "Options" + Language ) [ "Options" + Language ];
+	format = "L=" + Language + "_" + Upper ( Language ) + "; FS=false";
 	return NumberInWords ( Amount, format, numOptions );
 	
 EndFunction 

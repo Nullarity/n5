@@ -37,7 +37,8 @@ EndFunction
 Procedure augment ( Params, Language )
 	
 	tabDoc = new SpreadsheetDocument ();
-	tabDoc.PrintParametersKey = Params.Key;
+	k = Params.Key;
+	tabDoc.PrintParametersKey = ? ( TypeOf ( k ) = Type ( "EnumRef.PrintForms" ), Conversion.EnumItemToName ( k ), k );
 	Params.TabDoc = tabDoc;
 	Params.SelectedLanguage = Language;
 	
@@ -73,8 +74,9 @@ Function printObject ( Params, Object, Language )
 	env = new Structure ();
 	SQL.Init ( env );
 	manager = getManager ( Params, Object );
-	if ( Params.Name <> undefined ) then
-		env.Insert ( "T", Manager.GetTemplate ( Params.Name + Language ) );
+	name = Params.Template;
+	if ( name <> undefined ) then
+		env.Insert ( "T", Manager.GetTemplate ( name + Language ) );
 	endif; 
 	return manager.Print ( Params, env );
 	

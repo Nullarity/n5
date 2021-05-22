@@ -6,7 +6,7 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	p.Objects = List;
 	name = "IntangibleAssetsCommissioning";
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	p.Languages = "en, ru";
 	Print.Print ( p );
 	

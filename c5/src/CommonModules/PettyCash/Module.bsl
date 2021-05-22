@@ -428,7 +428,7 @@ Procedure Output ( Scope ) export
 	p = Print.GetParams ();
 	p.Objects = Scope;
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	Print.Print ( p );
 	
 EndProcedure 

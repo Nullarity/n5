@@ -7,7 +7,7 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	p.Manager = "DataProcessors.Inventory";
 	name = "Inventory" + CurrentLanguage ();
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	Print.Print ( p );
 	
 EndProcedure

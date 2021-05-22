@@ -3,12 +3,12 @@
 Procedure CommandProcessing ( List, CommandExecuteParameters )
 	
 	p = Print.GetParams ();
-	p.Manager = "DataProcessors.Bill";
+	p.Manager = "DataProcessors.Quote";
 	p.Objects = List;
-	name = "Bill";
+	name = "Quote";
 	p.Key = name;
-	p.Name = name;
-	p.Languages = "ru, ro";
+	p.Template = name;
+	p.Languages = "en, ru, ro";
 	Print.Print ( p );
 	
 EndProcedure

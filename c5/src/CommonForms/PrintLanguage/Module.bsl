@@ -45,7 +45,7 @@ EndProcedure
 &AtServer
 Function settingID ()
 	
-	return Enum.SettingsPrintFormLanguage () + "_" + Parameters.Form;
+	return Enum.SettingsPrintFormLanguage () + "_" + Conversion.EnumItemToName ( Parameters.Form );
 	
 EndFunction
 

@@ -4,7 +4,7 @@ Procedure InvoiceRecord ( Objects ) export
 	p = Print.GetParams ();
 	p.Objects = Objects;
 	p.Key = "InvoiceRecord";
-	p.Name = "Invoice";
+	p.Template = "Invoice";
 	Print.Print ( p );
 	
 EndProcedure

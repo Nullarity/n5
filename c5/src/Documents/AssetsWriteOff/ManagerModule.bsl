@@ -22,7 +22,7 @@ Function Print ( Params, Env ) export
 	Print.SetFooter ( Params.TabDoc );
 	setPageSettings ( Params );
 	getPrintData ( Params, Env );
-	if ( Params.Name = "MF3" ) then
+	if ( Params.Template = "MF3" ) then
 		putHeader1Page1 ( Params, Env );
 		putMemberRow ( Params, Env, 1 );
 		putRowPage1 ( Params, Env );

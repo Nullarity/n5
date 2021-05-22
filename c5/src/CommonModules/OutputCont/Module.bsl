@@ -1043,3 +1043,24 @@ Function ReconciliationContract ( Params = undefined, Language = undefined ) exp
 	return Output.FormatStr ( s, Params ); 
 	
 EndFunction
+
+&AtServer
+Function PrintVATInfo0 ( Language ) export
+	
+	return NStr ( "ru = 'НДС не применяется'; ro = 'TVA nu se aplică'; en = 'VAT Not Applicable'", Language );
+	
+EndFunction
+
+&AtServer
+Function PrintVATInfo1 ( Language ) export
+	
+	return NStr ( "ru = 'НДС включен в цену'; ro = 'TVA inclus in preț'; en = 'VAT Included in Price'", Language );
+	
+EndFunction
+
+&AtServer
+Function PrintVATInfo2 ( Language ) export
+	
+	return NStr ( "ru = 'НДС не включен в цену'; ro = 'TVA exclus din preț'; en = 'VAT Excluded from Price'", Language );
+	
+EndFunction

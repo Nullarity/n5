@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="12e573df-b87e-4b9e-8f1b-b9b40187d9d2">
+  <producedTypes>
+    <objectType typeId="bae7b3af-8f5a-4550-926f-64f5de9e63ff" valueTypeId="6269d4bb-f7e2-4a57-b442-671c3a2f2227"/>
+    <managerType typeId="c130d56f-33b3-480a-b325-81995ac90d4a" valueTypeId="49a0127b-1932-4b45-a14a-607fcdf25c6b"/>
+  </producedTypes>
+  <name>Print</name>
+  <useStandardCommands>true</useStandardCommands>
+  <templates uuid="cbb36042-26c3-4d30-a1ad-4e3be3dc345b">
+    <name>BillEn</name>
+    <synonym>
+      <key>en</key>
+      <value>Bill</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет на оплату</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cont de plată</value>
+    </synonym>
+  </templates>
+  <templates uuid="7dcd0d52-fea3-47c9-b04f-5f3cf6839d43">
+    <name>BillRo</name>
+    <synonym>
+      <key>en</key>
+      <value>Bill</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет на оплату</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cont de plată</value>
+    </synonym>
+  </templates>
+  <templates uuid="0d17552c-bd17-4196-a314-1fd8a46ed9fa">
+    <name>BillRu</name>
+    <synonym>
+      <key>en</key>
+      <value>Bill</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет на оплату</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cont de plată</value>
+    </synonym>
+  </templates>
+  <templates uuid="7f36b412-5258-48a9-8374-56f12c5694da">
+    <name>TemplateEn</name>
+  </templates>
+  <templates uuid="21b47b20-6a00-4a11-92d6-9525f9f322a9">
+    <name>TemplateRo</name>
+  </templates>
+  <templates uuid="ab1fc3da-f155-403b-a0ac-cbf3cbea18b5">
+    <name>TemplateRu</name>
+  </templates>
+  <commands uuid="082e36e5-d956-4af9-83a3-a0317e5496b8">
+    <name>Bill</name>
+    <synonym>
+      <key>en</key>
+      <value>Bill</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет на оплату</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cont de plată</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.SalesOrder</types>
+      <types>DocumentRef.Quote</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print bill</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать счета на оплату</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimarea facturii de plată</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="7b2beadc-ca0e-4584-a970-c06198c436b5">
+    <name>InternalOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Internal Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Внутренняя заявка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda interna</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.InternalOrder</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print Internal Order form</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать внутренней заявки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimarea comenzii interne</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="ffd0a88c-20a1-4ea2-8f47-8119b3540191">
+    <name>Invoice</name>
+    <synonym>
+      <key>en</key>
+      <value>Invoice</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Накладная</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Factura</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.Invoice</types>
+      <types>DocumentRef.PickupOrder</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print Invoice</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать накладной</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimați factura </value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="d6f0058e-ace3-40f3-af74-adc9dd9795d7">
+    <name>PurchaseOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Purchase Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ поставщику</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda furnizorului</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.PurchaseOrder</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print Purchase Order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать заказа поставщику</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimați comanda furnizorului</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="dcbf5f7a-2df4-4303-aa65-c4a77c354225">
+    <name>Quote</name>
+    <synonym>
+      <key>en</key>
+      <value>Quote</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Коммерческое предложение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ofertă comercială</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.SalesOrder</types>
+      <types>DocumentRef.Quote</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Forms print form of quote</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Формирует печатную форму коммерческого предложения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Formează un formular tipărit a ofertei comerciale</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+  <commands uuid="c8d3a91f-b33f-489d-90e6-331455488340">
+    <name>SalesOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Sales Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ покупателя</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda cumpărătorului</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.SalesOrder</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print Sales Order form</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать заказа покупателя</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimați comanda cumpărătorului</value>
+    </toolTip>
+    <shortcut></shortcut>
+  </commands>
+</mdclass:DataProcessor>

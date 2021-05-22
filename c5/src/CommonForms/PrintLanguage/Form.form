@@ -8,8 +8,10 @@
     <userVisible>
       <common>true</common>
     </userVisible>
-    <dataPath xsi:type="form:DataPath">
-      <segments>Language</segments>
+    <dataPath xsi:type="form:MultiLanguageDataPath">
+      <paths xsi:type="form:DataPath">
+        <segments>Language</segments>
+      </paths>
     </dataPath>
     <titleLocation>Top</titleLocation>
     <extendedTooltip>
@@ -75,8 +77,10 @@
         <role>Role.SaveSettings</role>
       </for>
     </userVisible>
-    <dataPath xsi:type="form:DataPath">
-      <segments>MakeDefault</segments>
+    <dataPath xsi:type="form:MultiLanguageDataPath">
+      <paths xsi:type="form:DataPath">
+        <segments>MakeDefault</segments>
+      </paths>
     </dataPath>
     <titleLocation>Right</titleLocation>
     <toolTip>
@@ -326,8 +330,7 @@
   <parameters>
     <name>Form</name>
     <valueType>
-      <types>String</types>
-      <stringQualifiers/>
+      <types>EnumRef.PrintForms</types>
     </valueType>
     <keyParameter>true</keyParameter>
   </parameters>

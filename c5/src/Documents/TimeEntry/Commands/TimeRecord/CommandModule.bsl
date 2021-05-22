@@ -5,7 +5,7 @@ Procedure CommandProcessing ( CommandParameter, CommandExecuteParameters )
 	p = Print.GetParams ();
 	p.Objects = CommandParameter;
 	p.Key = "TimeEntry";
-	p.Name = "TimeEntry";
+	p.Template = "TimeEntry";
 	Print.Print ( p );
 	
 EndProcedure

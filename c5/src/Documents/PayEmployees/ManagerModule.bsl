@@ -245,9 +245,9 @@ EndProcedure
 
 Function Print ( Params, Env ) export
 	
-	if ( Params.Name = "Payroll" ) then
+	if ( Params.Template = "Payroll" ) then
 		printPayroll ( Params, Env );	
-	elsif ( Params.Name = "Paysheet" ) then
+	elsif ( Params.Template = "Paysheet" ) then
 		printPaysheet ( Params, Env );	
 	endif;
 	return true;

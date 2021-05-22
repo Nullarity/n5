@@ -5,10 +5,11 @@ Procedure Print ( Params ) export
 	if ( supportedLanguages = undefined ) then
 		printForm ( Params );
 	else
-		language = PrintSrv.Language ( Params.Name );
+		form = Params.Key;
+		language = PrintSrv.Language ( form );
 		if ( language = undefined
 			or unsupportedLanguage ( supportedLanguages, language ) ) then
-			p = new Structure ( "Languages, Form", supportedLanguages, Params.Name );
+			p = new Structure ( "Languages, Form", supportedLanguages, form );
 			callback = new NotifyDescription ( "LanguageSelected", ThisObject, Params );
 			OpenForm ( "CommonForm.PrintLanguage", p, , , , , callback );
 		else
@@ -46,14 +47,14 @@ EndFunction
 Function GetParams () export
 	
 	p = new Structure ();
-	p.Insert ( "Name" );
+	p.Insert ( "Template" );
 	p.Insert ( "Caption" );
 	p.Insert ( "Key" );
 	p.Insert ( "Objects" );
 	p.Insert ( "Manager" );
+	p.Insert ( "Languages" );
 	p.Insert ( "Reference" );
 	p.Insert ( "TabDoc" );
-	p.Insert ( "Languages" );
 	p.Insert ( "SelectedLanguage" );
 	return p;
 	
@@ -225,6 +226,35 @@ Function FormatItem ( Item, Package = undefined, Feature = undefined, Series = u
 		s = s + ", #" + Series;
 	endif; 
 	return s;
+	
+EndFunction
+
+&AtServer
+Function VATInfo ( VATUse, Language = undefined ) export
+	
+	if ( VATUse = 1 ) then
+		return OutputCont.PrintVATInfo1 ( Language );
+	elsif ( VATUse = 2 ) then
+		return OutputCont.PrintVATInfo2 ( Language );
+	else
+		return OutputCont.PrintVATInfo0 ( Language );
+	endif;
+	
+EndFunction
+
+&AtServer
+Function CurrencyInfo ( Currency, Rate, Factor ) export
+	
+	localCurrency = Application.Currency ();
+	if ( LocalCurrency = Currency ) then
+		return String ( localCurrency );
+	else
+		s = "1 " + Currency + " = " + Rate;
+		if ( Factor <> 1 ) then
+			s = s + " / " + Factor;
+		endif;
+		return s + " " + localCurrency;
+	endif;
 	
 EndFunction
 

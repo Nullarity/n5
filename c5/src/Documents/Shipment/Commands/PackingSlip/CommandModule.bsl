@@ -10,7 +10,7 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	endif;
 	name = "PackingSlip";
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	p.Languages = "en, ru, ro";
 	Print.Print ( p );
 	

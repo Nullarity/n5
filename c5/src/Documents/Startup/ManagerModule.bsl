@@ -687,7 +687,7 @@ Procedure footer ( Params, Env )
 	p.Fill ( Env.Fields );
 	p.Quantity = Env.QuantityTotal;
 	p.Amount = Env.AmountTotal;
-	p.AmountWords = Conversion.AmountToWords ( p.Amount, , false );
+	p.AmountWords = Conversion.AmountToWords ( p.Amount, , CurrentLanguage ().LanguageCode );
 	tabDoc.Put ( area );        
 	
 EndProcedure

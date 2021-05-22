@@ -32,7 +32,7 @@ Procedure applyResult ( Result )
 		else
 			printingObject = objects;
 		endif;
-		Title = PrintSrv.GetFormCaption ( params.Name + Parameters.Language, params.Manager, printingObject );
+		Title = PrintSrv.GetFormCaption ( params.Template + Parameters.Language, params.Manager, printingObject );
 	else
 		Title = Parameters.Caption;
 	endif; 

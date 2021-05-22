@@ -12,7 +12,7 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 		name = "WriteOff";
 	endif;
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	Print.Print ( p );
 	
 EndProcedure

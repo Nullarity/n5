@@ -7,7 +7,7 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	p.Objects = List;
 	name = "MF1";
 	p.Key = name;
-	p.Name = name;
+	p.Template = name;
 	Print.Print ( p );
 	
 EndProcedure
