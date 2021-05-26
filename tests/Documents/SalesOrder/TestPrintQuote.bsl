@@ -1,106 +1,91 @@
+﻿// Create and print Quote
+
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27B870B8" );
-env = getEnv ( id );
-createEnv ( env );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "2D27C084" ) );
+getEnv ();
+createEnv ();
 
-Commando ( "e1cib/list/Document.SalesOrder" );
-With ( "Sales Orders" );
-p = Call ( "Common.Find.Params" );
+Commando("e1cib/list/Document.SalesOrder");
+p = Call("Common.Find.Params");
 p.Where = "Memo";
-p.What = id;
-Call ( "Common.Find", p );  
+p.What = this.ID;
+Call("Common.Find", p);
+Click ( "#FormDataProcessorPrintQuote" );
+With ();
+Put("#Language", "Default");
+Click("#FormOK");
+With();
+CheckTemplate ( "#TabDoc" );
 
-Click ( "#FormDataProcessorQuoteQuote" );
+Procedure getEnv ()
 
-// *************************
-// Procedures
-// *************************
+	id = this.ID;
+	this.Insert ( "Customer", "Customer " + id );
+	this.Insert ( "Warehouse", "Warehouse " + id );
+	this.Insert ( "Item1", "Item1 " + id );
+	this.Insert ( "Item2", "Item2 " + id );
 
-Function getEnv ( ID )
+EndProcedure
 
-	p = new Structure ();
-	p.Insert ( "ID", ID );
-	p.Insert ( "Customer", "Customer " + ID );
-	p.Insert ( "Warehouse", "Warehouse " + ID );
-	p.Insert ( "Department", "Department " + ID );
-	p.Insert ( "Item1", "Item1 " + ID );
-	p.Insert ( "Item2", "Item2 " + ID );
-	return p;
+Procedure createEnv ()
 
-EndFunction
-
-Procedure createEnv ( Env )
-
-	id = Env.ID;
+	id = this.ID;
 	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
-	
-	// *************************
-	// Create Customer
-	// *************************
-	
-	 p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
-	 p.Description = Env.Customer;
-	 Call ( "Catalogs.Organizations.CreateCustomer", p );
 
-	 // *************************
-	 // Create Warehouse
-	 // *************************
+	#region createCustomer
+	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Organizations.CreateCustomer", p );
+	#endregion
 	
-	 p = Call ( "Catalogs.Warehouses.Create.Params" );
-	 p.Description = Env.Customer;
-	 Call ( "Catalogs.Warehouses.Create", p );
-	
-	// *************************
-	// Create Warehouse
-	// *************************
-	
-	p = Call ( "Catalogs.Departments.Create.Params" );
-	p.Description = Env.Department;
-	Call ( "Catalogs.Departments.Create", p );
+	#region createWarehouse
+	p = Call ( "Catalogs.Warehouses.Create.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Warehouses.Create", p );
+	#endregion
 
-	 // *************************
-	 // Create Items
-	 // *************************
-	
-	 p = Call ( "Catalogs.Items.Create.Params" );
-	 p.Description = Env.Item1;
-	 Call ( "Catalogs.Items.Create", p );
+	#region createItems
+	p = Call ( "Catalogs.Items.Create.Params" );
+	p.Description = this.Item1;
+	Call ( "Catalogs.Items.Create", p );
 
-	 p.Description = Env.Item2;
-	 Call ( "Catalogs.Items.Create", p );
+	p.Description = this.Item2;
+	Call ( "Catalogs.Items.Create", p );
+	#endregion
 
-	// *************************
-	// Create SalesOrder
-	// *************************
-
+	#region createSalesOrder
 	Commando ( "e1cib/data/Document.SalesOrder" );
-	With ( "Sales Order (create)" );
-	Put ( "#Customer", Env.Customer );
-	Put ( "#DeliveryDate", "01/01/2018" );
-	Put ( "#Warehouse", Env.Warehouse );
-	Put ( "#Department", Env.Department );
-	Put ( "#Memo", id );
-
+	With ();
+	Put ( "#Customer", this.Customer );
+	Put ( "#Warehouse", this.Warehouse );
+	PUt ( "#Memo", id );
+	
 	Click ( "#ItemsTableAdd" );
-	Put ( "#ItemsItem", Env.Item1 );
+	Put ( "#ItemsItem", this.Item1 );
+	Activate ( "#ItemsFeature" ).Create ();
+	With ();
+	Set ( "#Description", Call ( "Common.GetID" ) );
+	Click ( "#FormWriteAndClose" );
+	
+	With ();
+	Items = Get ( "#ItemsTable" );
+	
 	Put ( "#ItemsPrice", "100" );
 	Put ( "#ItemsQuantity", "5" );
-
-	Click ( "#ItemsTableAdd" );
-	Put ( "#ItemsItem", Env.Item2 );
-	Put ( "#ItemsPrice", "200" );
-	Put ( "#ItemsQuantity", "2" );
 	
-	Click ( "#PaymentsAdd" );
-	Put ( "#PaymentsPaymentOption", "15#" );
-
-
+	Click ( "#ItemsTableAdd" );
+	Put ( "#ItemsItem", this.Item2 );
+	Put ( "#ItemsPrice", "200" );
+	Put ( "#ItemsDiscountRate", 10 );
+	Put ( "#ItemsQuantity", "10" );
+	Set ( "#Memo", id );
 	Click ( "#FormWrite" );
-	Click ( "#FormClose" );
+	Close ();
+	#endregion
 
 	RegisterEnvironment ( id );
 

@@ -13,9 +13,11 @@ Procedure CommandProcessing ( List, CommandExecuteParameters )
 	else
 		p.Objects = List;
 	endif;
-	name = "Invoice";
-	p.Key = name;
-	p.Template = name;
+	p.Manager = "DataProcessors.Print";
+	form = PredefinedValue ( "Enum.PrintForms.Invoice" );
+	p.Caption = form;
+	p.Key = form;
+	p.Template = "Template";
 	p.Languages = "en, ru, ro";
 	Print.Print ( p );
 	

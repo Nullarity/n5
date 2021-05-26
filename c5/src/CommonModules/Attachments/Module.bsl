@@ -576,23 +576,6 @@ Procedure RemoveAttachmentConfirmation ( Answer, Params ) export
 	
 EndProcedure 
 
-&AtClient
-Procedure Add ( Reference, Table, Control, Name, Size, FolderID, GeneratePreview ) export
-	
-	data = AttachmentsSrv.AddFile ( Reference, Name, Size, FolderID, GeneratePreview );
-	fileName = FileSystem.GetFileName ( Name );
-	search = Table.FindRows ( new Structure ( "File", fileName ) );
-	if ( search.Count () = 0 ) then
-		row = Table.Add ();
-		FillPropertyValues ( row, data );
-		row.Dirty = Reference.IsEmpty ();
-		Control.CurrentRow = row.GetID ();
-	else
-		Control.CurrentRow = search [ 0 ].GetID ();
-	endif; 
-	
-EndProcedure 
-
 &AtServer
 Function GetCount ( Reference ) export
 	

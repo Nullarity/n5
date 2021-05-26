@@ -262,13 +262,25 @@ EndFunction
 Procedure InjectLogo ( Logo, Area ) export
 	
 	drawings = Area.Drawings;
+	placeholder = findPlaceholder ( drawings );
 	if ( Logo = null ) then
-		drawings.Delete ( drawings.Logo );
+		drawings.Delete ( placeholder );
 	else
-		drawings.Logo.Picture = new Picture ( Logo.Get (), true );
+		placeholder.Picture = new Picture ( Logo.Get (), true );
 	endif;
 	
 EndProcedure
+
+&AtServer
+Function findPlaceholder ( Drawings )
+	
+	for each image in Drawings do
+		if ( StrStartsWith ( image.Name, "Logo" ) ) then
+			return image;
+		endif;
+	enddo;
+	
+EndFunction
 
 &AtServer
 Procedure InjectPaid ( Paid, Area ) export

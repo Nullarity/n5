@@ -1,170 +1,92 @@
+﻿// Create and print Sales Order
+
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A4DE83A" );
-env = getEnv ( id );
-createEnv ( env );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "2D27E68C" ) );
+getEnv ();
+createEnv ();
 
-Commando ( "e1cib/data/Document.SalesOrder" );
-formMain = With ( "Sales Order (cr*" );
-Put ( "#Company", Env.Company );
-Put ( "#Department", Env.Department );
-Put ( "#Customer", Env.Customer );
-
-table = Get ( "#Services" );
-Click ( "#ServicesAdd" );
-
-Put ( "#ServicesItem", env.Item, table );
-Put ( "#ServicesQuantity", 10, table );
-Put ( "#ServicesPrice", 100, table );
-
-Click ( "#ServicesAdd" );
-
-Put ( "#ServicesItem", env.Item, table );
-Put ( "#ServicesQuantity", 5, table );
-Put ( "#ServicesPrice", 200, table );
-Next ();
-Click ( "#FormWrite" );
-Click ( "#FormPrintSalesOrder" );
+Commando("e1cib/list/Document.SalesOrder");
+p = Call("Common.Find.Params");
+p.Where = "Memo";
+p.What = this.ID;
+Call("Common.Find", p);
+Click ( "#FormDataProcessorPrintSalesOrder" );
 With ();
-Call ( "Common.CheckLogic", "#TabDoc" );
+Put("#Language", "Default");
+Click("#FormOK");
+With();
+CheckTemplate ( "#TabDoc" );
 
-// *************************
-// Procedures
-// *************************
+Procedure getEnv ()
 
-Function getEnv ( ID )
-
-	p = new Structure ();
-	p.Insert ( "ID", ID );
-	p.Insert ( "Item", "Service " + ID );
-	p.Insert ( "Company", "Company: " + ID );
-	p.Insert ( "Customer", "Customer: " + ID );
-	p.Insert ( "PaymentAddress", "Payment Address: " + ID );
-	p.Insert ( "ShippingAddress", "Shipping Address: " + ID );
-	p.Insert ( "Department", "Department: " + ID );
-	return p;
-
-EndFunction
-
-Procedure createEnv ( Env )
-
-	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
-		return;
-	endif;
-	
-	// *************************
-	// Create Item
-	// *************************
-	
-	p = Call ( "Catalogs.Items.Create.Params" );
-	p.Description = Env.Item;
-	p.Service = true;
-	Call ( "Catalogs.Items.Create", p );
-	
-	// *************************
-	// Create Customer
-	// *************************
-	Commando ( "e1cib/data/Catalog.Organizations" );
-	With ( "Organizations (create)" );
-	Put ( "#Description", Env.Customer );
-	Click ( "#Customer" );
-	Click ( "#FormWriteAndClose" );
-
-	// *************************
-	// Create Company
-	// *************************
-	Call ( "Catalogs.Companies.Create", Env.Company );
-	
-	// *************************
-	// Addresses
-	// *************************
-	MainWindow.ExecuteCommand ( "e1cib/Data/Catalog.Addresses" );
-	With ( "Addresses (create)" );
-	Click ( "#Manual" );
-	Put ( "#Address", Env.PaymentAddress );
-	setValue ( "#Owner", Env.Company, "Companies" );
-	Click ( "#FormWriteAndClose" );
-
-	MainWindow.ExecuteCommand ( "e1cib/Data/Catalog.Addresses" );
-	With ();
-	Click ( "#Manual" );
-	Put ( "#Address", Env.ShippingAddress );
-	setValue ( "#Owner", Env.Customer, "Organizations", "Name" );
-	Click ( "#FormWriteAndClose" );
-	
-	// Complete Company
-	Commando ( "e1cib/list/Catalog.Companies" );
-	With ( "Companies" );
-
-	p = Call ( "Common.Find.Params" );
-	p.Where = "Description";
-	p.What = Env.Company;
-	Call ( "Common.Find", p );
-	Click ( "#FormChange" );
-	With ( Env.Company + "*" );
-	Put ( "#PaymentAddress", Env.PaymentAddress );
-	Click ( "#FormWriteAndClose" );
-
-	// Complete Customer
-	Commando ( "e1cib/list/Catalog.Organizations" );
-	With ();
-
-	p = Call ( "Common.Find.Params" );
-	p.Where = "Name";
-	p.What = Env.Customer;
-	Call ( "Common.Find", p );
-	Click ( "#FormChange" );
-	With ();
-	Put ( "#ShippingAddress", Env.ShippingAddress );
-	Click ( "#FormWriteAndClose" );
-	
-	// *************************
-	// Create Roles
-	// *************************
-	Commando ( "e1cib/data/Document.Roles" );
-	With ( "Roles (create)" );
-	Put ( "#Company", Env.Company );
-	Put ( "#User", "Accounant" );
-	Put ( "#Role", "Chief Accountant" );
-	Click ( "#Apply" );
-	
-	Commando ( "e1cib/data/Document.Roles" );
-	With ( "Roles (create)" );
-	Put ( "#Company", Env.Company );
-	Put ( "#User", "Director" );
-	Put ( "#Role", "General Manager" );
-	Click ( "#Apply" );
-	
-	// *************************
-	// Create Department
-	// *************************
-	
-	p = Call ( "Catalogs.Departments.Create.Params" );
-	p.Description = Env.Department;
-	p.Company = Env.Company;
-	Call ( "Catalogs.Departments.Create", p );
-
-	Call ( "Common.StampData", id );
+	id = this.ID;
+	this.Insert ( "Customer", "Customer " + id );
+	this.Insert ( "Warehouse", "Warehouse " + id );
+	this.Insert ( "Item1", "Item1 " + id );
+	this.Insert ( "Item2", "Item2 " + id );
 
 EndProcedure
 
-Procedure setValue ( Field, Value, Object, GoToRow = "Description" )
+Procedure createEnv ()
 
-	form = CurrentSource;
-	Choose ( Field );
-	With ( "Select data type" );
-	GotoRow ( "#TypeTree", "", Object );
-	Click ( "#OK" );
-	if ( Object = "Companies" ) then
-		With ( "Addresses*" );
-		Put ( "#Owner", Value );
-	else
-		With ( Object );
-		GotoRow ( "#List", GoToRow, Value );
-		Click ( "#FormChoose" );
-		CurrentSource = form;
+	id = this.ID;
+	if ( EnvironmentExists ( id ) ) then
+		return;
 	endif;
+
+	#region createCustomer
+	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Organizations.CreateCustomer", p );
+	#endregion
 	
+	#region createWarehouse
+	p = Call ( "Catalogs.Warehouses.Create.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Warehouses.Create", p );
+	#endregion
+
+	#region createItems
+	p = Call ( "Catalogs.Items.Create.Params" );
+	p.Description = this.Item1;
+	Call ( "Catalogs.Items.Create", p );
+
+	p.Description = this.Item2;
+	Call ( "Catalogs.Items.Create", p );
+	#endregion
+
+	#region createSalesOrder
+	Commando ( "e1cib/data/Document.SalesOrder" );
+	With ();
+	Put ( "#Customer", this.Customer );
+	Put ( "#Warehouse", this.Warehouse );
+	PUt ( "#Memo", id );
+	
+	Click ( "#ItemsTableAdd" );
+	Put ( "#ItemsItem", this.Item1 );
+	Activate ( "#ItemsFeature" ).Create ();
+	With ();
+	Set ( "#Description", Call ( "Common.GetID" ) );
+	Click ( "#FormWriteAndClose" );
+	
+	With ();
+	Items = Get ( "#ItemsTable" );
+	
+	Put ( "#ItemsPrice", "100" );
+	Put ( "#ItemsQuantity", "5" );
+	
+	Click ( "#ItemsTableAdd" );
+	Put ( "#ItemsItem", this.Item2 );
+	Put ( "#ItemsPrice", "200" );
+	Put ( "#ItemsDiscountRate", 10 );
+	Put ( "#ItemsQuantity", "10" );
+	Set ( "#Memo", id );
+	Click ( "#FormWrite" );
+	Close ();
+	#endregion
+
+	RegisterEnvironment ( id );
+
 EndProcedure

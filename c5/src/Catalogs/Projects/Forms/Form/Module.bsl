@@ -792,13 +792,6 @@ Procedure setCompletionDate ()
 	
 EndProcedure 
 
-&AtClient
-Procedure TextEditorDocumentComplete ( Item )
-	
-	EditorBegun = true;
-	
-EndProcedure
-
 // *****************************************
 // *********** Group Tasks
 

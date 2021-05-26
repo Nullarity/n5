@@ -130,6 +130,7 @@ Procedure fixName ( Name )
 	
 	pattern = "[\\/:*?<>|]+";
 	matches = Regexp.Select ( Name, pattern );
+	//@skip-warning
 	for each match in matches do
 		Name = Regexp.Replace ( Name, pattern, "" );
 	enddo; 

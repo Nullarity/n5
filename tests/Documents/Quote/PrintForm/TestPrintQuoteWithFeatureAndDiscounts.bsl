@@ -7,45 +7,28 @@ id = Call ( "Common.ScenarioID", "2D193AF9" );
 env = getEnv ( id );
 createEnv ( env );
 
-Commando ( "e1cib/data/Document.Quote" );
-With ( "Quote (create)" );
-Put ( "#Customer", Env.Customer );
-tomorrow = Format ( CurrentDate () + 86400, "DLF=D" );
-Put ( "#DeliveryDate", tomorrow );
-Put ( "#DueDate", tomorrow );
-Put ( "#Warehouse", Env.Warehouse );
-PUt ( "#Memo", id );
-
-Click ( "#ItemsAdd" );
-Put ( "#ItemsItem", Env.Item1 );
-Activate ( "#ItemsFeature" ).Create ();
+Commando("e1cib/list/Document.Quote");
+p = Call("Common.Find.Params");
+p.Where = "Memo";
+p.What = id;
+Call("Common.Find", p);
+Click("#FormChange");
 With ();
-Set ( "#Description", Call ( "Common.GetID" ) );
-Click ( "#FormWriteAndClose" );
-
-With ();
-Items = Get ( "#Items" );
-
-Put ( "#ItemsPrice", "100" );
-Put ( "#ItemsQuantity", "5" );
-
-Click ( "#ItemsAdd" );
-Put ( "#ItemsItem", Env.Item2 );
-Put ( "#ItemsPrice", "200" );
-Put ( "#ItemsDiscountRate", 10 );
-Put ( "#ItemsQuantity", "10" );
-Click ( "#JustSave" );
-Click ( "#FormDataProcessorQuoteQuote" );
+Pick ( "#VATUse", "Included in Price" );
+Click ( "#FormDataProcessorPrintQuote" );
+With();
+Put("#Language", "Default");
+Click("#FormOK");
 With ();
 Run ( "VATincluded" );
-
 Close ();
 With ();
 Pick ( "#VATUse", "Excluded from Price" );
-
-Click ( "#JustSave" );
-Click ( "#FormDataProcessorQuoteQuote" );
+Click ( "#FormDataProcessorPrintQuote" );
 With ();
+Put("#Language", "Default");
+Click("#FormOK");
+With();
 Run ( "VATNotincluded" );
 
 // *************************
@@ -97,6 +80,39 @@ Procedure createEnv ( Env )
 
 	p.Description = Env.Item2;
 	Call ( "Catalogs.Items.Create", p );
+
+	#region createQuote
+	Commando ( "e1cib/data/Document.Quote" );
+	With ( "Quote (create)" );
+	Put ( "#Customer", Env.Customer );
+	tomorrow = Format ( CurrentDate () + 86400, "DLF=D" );
+	Put ( "#DeliveryDate", tomorrow );
+	Put ( "#DueDate", tomorrow );
+	Put ( "#Warehouse", Env.Warehouse );
+	PUt ( "#Memo", id );
+	
+	Click ( "#ItemsAdd" );
+	Put ( "#ItemsItem", Env.Item1 );
+	Activate ( "#ItemsFeature" ).Create ();
+	With ();
+	Set ( "#Description", Call ( "Common.GetID" ) );
+	Click ( "#FormWriteAndClose" );
+	
+	With ();
+	Items = Get ( "#Items" );
+	
+	Put ( "#ItemsPrice", "100" );
+	Put ( "#ItemsQuantity", "5" );
+	
+	Click ( "#ItemsAdd" );
+	Put ( "#ItemsItem", Env.Item2 );
+	Put ( "#ItemsPrice", "200" );
+	Put ( "#ItemsDiscountRate", 10 );
+	Put ( "#ItemsQuantity", "10" );
+	Set ( "#Memo", id );
+	Click ( "#JustSave" );
+	Close ();
+	#endregion
 
 	RegisterEnvironment ( id );
 

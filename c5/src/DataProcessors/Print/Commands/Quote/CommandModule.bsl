@@ -3,11 +3,12 @@
 Procedure CommandProcessing ( List, CommandExecuteParameters )
 	
 	p = Print.GetParams ();
-	p.Manager = "DataProcessors.Quote";
+	p.Manager = "DataProcessors.Print";
 	p.Objects = List;
-	name = "Quote";
-	p.Key = name;
-	p.Template = name;
+	form = PredefinedValue ( "Enum.PrintForms.Quote" );
+	p.Caption = form;
+	p.Key = form;
+	p.Template = "Template";
 	p.Languages = "en, ru, ro";
 	Print.Print ( p );
 	

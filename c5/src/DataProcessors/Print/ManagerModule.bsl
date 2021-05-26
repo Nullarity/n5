@@ -1,16 +1,17 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
-Function Print(Params, Env) export
+Function Print ( Params, Env ) export
 	
-	Print.SetFooter(Params.TabDoc);
-	setPageSettings(Params);
-	setContext(Params, Env);
-	getData(Params, Env);
-	putHeader(Params, Env);
-	putInfo(Params, Env);
-	putTable(Params, Env);
-	putTotals(Params, Env);
-	putFooter(Params, Env);
+	Print.SetFooter ( Params.TabDoc );
+	setPageSettings ( Params);
+	setContext ( Params, Env );
+	getData ( Params, Env );
+	putHeader ( Params, Env );
+	putInfo ( Params, Env );
+	putTable ( Params, Env );
+	putTotals ( Params, Env );
+	putFooter ( Params, Env );
+	putMemo ( Params, Env );
 	return true;
 	
 EndFunction
@@ -40,13 +41,13 @@ Procedure setContext(Params, Env)
 	
 EndProcedure
 
-Procedure getData(Params, Env)
+Procedure getData ( Params, Env )
 	
-	sqlFields(Env);
-	getFields(Params, Env);
-	defineAmount(Env);
-	sqlItems(Env);
-	getTables(Env);
+	sqlFields ( Env );
+	getFields ( Params, Env );
+	defineAmount ( Env );
+	sqlItems ( Env );
+	getTables ( Env );
 	
 EndProcedure
 
@@ -86,16 +87,46 @@ Procedure sqlFields(Env)
 	s = s + "
 	|// @Fields
 	|select Documents.Date as Date, Documents.Number as Number, Documents.Company.FullDescription as Company,
-	|	Documents.Company.CodeFiscal as CodeFiscal, Documents.Currency as Currency,
-	|	Documents.Rate as Rate, Documents.Factor as Factor, Documents.VATUse as VATUse,
-	|	Documents.Customer.FullDescription as Customer, Documents.Company.PaymentAddress.Presentation as Address,
-	|	Documents.Company.BankAccount.AccountNumber as AccountNumber, Documents.Company.BankAccount.Bank.Description as Bank,
-	|	Documents.Company.BankAccount.Bank.Code as BankCode, Documents.Company as CompanyRef,
-	|	Documents.Company.Discounts and Documents.Discount <> 0 as Discounts,
-	|	Constants.Features and DocumentFeatures.Exists is not null as Features, Logos.Logo as Logo
+	|	Documents.Currency as Currency, Documents.Rate as Rate, Documents.Factor as Factor, Documents.VATUse as VATUse,
+	|	Documents.Company.PaymentAddress.Presentation as Address, Documents.Company as CompanyRef,
+	|	Documents.Memo as Memo, Constants.Features and DocumentFeatures.Exists is not null as Features,
+	|	Logos.Logo as Logo
 	|";
 	if ( Env.PrintBill ) then
-		s = s + ", RolesDirector.Director as Director, RolesAccountant.Accountant as Accountant";
+		s = s + ", Documents.Company.CodeFiscal as CodeFiscal, RolesDirector.Director as Director,
+		| RolesAccountant.Accountant as Accountant, Documents.Company.BankAccount.AccountNumber as AccountNumber,
+		| Documents.Company.BankAccount.Bank.Description as Bank, Documents.Company.BankAccount.Bank.Code as BankCode,
+		| Documents.Creator.Description as Responsible, Documents.Customer.FullDescription as Customer,
+		| Documents.Company.Discounts and Documents.Discount <> 0 as Discounts";
+	elsif ( Env.PrintQuote ) then
+		s = s + ", Documents.Guarantee as Guarantee, Documents.Creator.Description as Responsible,
+		| Documents.Customer.FullDescription as Customer,
+		| Documents.Company.Discounts and Documents.Discount <> 0 as Discounts
+		|"
+	elsif ( Env.PrintInvoice ) then
+		s = s + ", Documents.Customer.ShippingAddress.Presentation as ShippingAddress,
+		| Documents.Contract.CustomerTerms.Description as Terms, Documents.SalesOrder.Number as SalesOrderNumber,
+		| Documents.Shipment.Number as ShipmentNumber, Documents.PaymentDate as PaymentDate,
+		| Documents.Creator.Description as Responsible, Documents.Customer.FullDescription as Customer,
+		| Documents.Company.Discounts and Documents.Discount <> 0 as Discounts
+		|";
+	elsif ( Env.PrintSalesOrder ) then
+		s = s + ", Documents.Customer.ShippingAddress.Presentation as ShippingAddress,
+		| Documents.Contract.CustomerTerms.Description as Terms, Documents.DeliveryDate as DeliveryDate,
+		| Documents.Creator.Description as Responsible, Documents.Customer.FullDescription as Customer,
+		| Documents.Company.Discounts and Documents.Discount <> 0 as Discounts
+		|";
+	elsif ( Env.PrintPurchaseOrder ) then
+		s = s + ", Documents.Warehouse.Address.Presentation as ShippingAddress,
+		| Documents.Contract.VendorTerms.Description as Terms, Documents.DeliveryDate as DeliveryDate,
+		| Documents.Manager.Description as Responsible, Documents.Vendor.FullDescription as Vendor,
+		| Documents.Company.Discounts and Documents.Discount <> 0 as Discounts
+		|";
+	elsif ( Env.PrintInternalOrder ) then
+		s = s + ", Documents.Warehouse.Address.Presentation as ShippingAddress,
+		| Documents.DeliveryDate as DeliveryDate, Documents.Department.Description as Department,
+		| Documents.Responsible.Description as Responsible, false as Discounts
+		|";
 	endif;
 	s = s + "	 
 	|from Document." + document + " as Documents
@@ -166,7 +197,13 @@ Procedure defineAmount(Env)
 	fields = Env.Fields;
 	total = "Total";
 	vat = "VAT";
-	discount = "Discount";
+	if ( Env.PrintInternalOrder ) then
+		discountRate = "0";
+		discount = "0";
+	else
+		discountRate = "DiscountRate";
+		discount = "Discount";
+	endif;
 	price = "Price";
 	if ( fields.Currency <> Application.Currency () ) then
 		rate = " * &Rate / &Factor";
@@ -175,12 +212,13 @@ Procedure defineAmount(Env)
 		price = price + rate;
 		discount = discount + rate;
 	endif;
-	list = new Structure();
-	list.Insert("Total", "cast ( " + total + " as Number ( 15, 2 ) )");
-	list.Insert("VAT", "cast ( " + vat + " as Number ( 15, 2 ) )");
-	list.Insert("Price", "cast ( " + price + " as Number ( 15, 2 ) )");
-	list.Insert("Discount", "cast ( " + discount + " as Number ( 15, 2 ) )");
-	Env.Insert("AmountFields", list);
+	list = new Structure ();
+	list.Insert ( "Total", "cast ( " + total + " as Number ( 15, 2 ) )" );
+	list.Insert ( "VAT", "cast ( " + vat + " as Number ( 15, 2 ) )" );
+	list.Insert ( "Price", "cast ( " + price + " as Number ( 15, 2 ) )" );
+	list.Insert ( "Discount", "cast ( " + discount + " as Number ( 15, 2 ) )" );
+	list.Insert ( "DiscountRate", discountRate );
+	Env.Insert ( "AmountFields", list );
 	
 EndProcedure
 
@@ -190,6 +228,7 @@ Procedure sqlItems(Env)
 	total = amountFields.Total;
 	vat = amountFields.VAT;
 	discount = amountFields.Discount;
+	discountRate = amountFields.DiscountRate;
 	price = amountFields.Price;
 	amount = total + " - " + vat;
 	document = Env.Document;
@@ -198,13 +237,13 @@ Procedure sqlItems(Env)
 	|select presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
 	|	Items.QuantityPkg as Quantity,
 	|	" + total + " as Total, " + vat + " as VAT, " + amount + " as Amount, " + discount + " as Discount, " + price + " as Price,
-	|	Items.Feature.Description as Feature, Items.Item.FullDescription as Item, Items.DiscountRate as DiscountRate
+	|	Items.Feature.Description as Feature, Items.Item.FullDescription as Item, " + discountRate + " as DiscountRate
 	|into Items
 	|from Document." + document + ".Items as Items
 	|where Items.Ref = &Ref 
 	|union all
 	|select Services.Item.Unit.Code, Services.Quantity, " + total + ", " + vat + ", " + amount + ", " + discount + ", " + price + ", 
-	|	Services.Feature.Description, Services.Description, Services.DiscountRate
+	|	Services.Feature.Description, Services.Description, " + discountRate + "
 	|from Document." + document + ".Services as Services
 	|where Services.Ref = &Ref 
 	|;
@@ -280,12 +319,12 @@ Function getAreas(Env)
 	header = "Table";
 	row = "Row";
 	fields = Env.Fields;
-	if (fields.Discounts) then
+	if ( fields.Discounts ) then
 		header = header + "Discount";
 		row = row + "Discount";
 	endif;
 	t = Env.T;
-	return new Structure("Header, Area", t.GetArea(header), t.GetArea(row));
+	return new Structure ( "Header, Area", t.GetArea ( header ), t.GetArea ( row ) );
 	
 EndFunction
 
@@ -295,7 +334,7 @@ Function vatIncluded ( Env )
 	
 EndFunction
 
-Procedure putTotals(Params, Env)
+Procedure putTotals ( Params, Env )
 	
 	prepareTotals ( Env );
 	tabDoc = Params.TabDoc;
@@ -362,14 +401,44 @@ Procedure putToPay ( Params, Env )
 	
 EndProcedure
 
-Procedure putFooter(Params, Env)
+Procedure putFooter ( Params, Env )
 	
-	area = Env.T.GetArea("Signatures");
+	if ( Env.PrintQuote ) then
+		putQuoteFooter ( Params, Env );
+	elsif ( Env.PrintBill) then
+		putSignatures ( Params, Env );
+	endif;
+	
+EndProcedure
+
+Procedure putQuoteFooter ( Params, Env )
+	
+	area = Env.T.GetArea ( "QuoteFooter" );
+	area.Parameters.Fill ( Env.Fields );
+	Params.TabDoc.Put ( area );
+	
+EndProcedure
+
+Procedure putSignatures ( Params, Env )
+	
+	area = Env.T.GetArea ( "Signatures" );
 	p = area.Parameters;
 	fields = Env.Fields;
-	p.Fill(fields);
+	p.Fill ( fields );
 	p.TotalInWords = Conversion.AmountToWords ( Env.Totals.Total, fields.Currency, Params.SelectedLanguage );
-	Params.TabDoc.Put(area);
+	Params.TabDoc.Put ( area );
+	
+EndProcedure
+
+Procedure putMemo ( Params, Env )
+	
+	memo = Env.Fields.Memo;
+	if ( IsBlankString ( memo ) ) then
+		return;
+	endif;
+	area = Env.T.GetArea ( "Memo" );
+	area.Parameters.Memo = memo;
+	Params.TabDoc.Put ( area );
 	
 EndProcedure
 

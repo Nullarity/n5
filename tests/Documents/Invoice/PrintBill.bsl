@@ -1,18 +1,18 @@
-﻿// Create and print Purchase Order
+﻿// Create and print Bill
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2D27EFE7" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "2D278FD6" ) );
 getEnv ();
 createEnv ();
 
-Commando("e1cib/list/Document.PurchaseOrder");
+Commando("e1cib/list/Document.Invoice");
 p = Call("Common.Find.Params");
 p.Where = "Memo";
 p.What = this.ID;
 Call("Common.Find", p);
-Click ( "#FormDataProcessorPrintPurchaseOrder" );
+Click ( "#FormDataProcessorPrintBill" );
 With ();
 Put("#Language", "Default");
 Click("#FormOK");
@@ -22,7 +22,7 @@ CheckTemplate ( "#TabDoc" );
 Procedure getEnv ()
 
 	id = this.ID;
-	this.Insert ( "Vendor", "Vendor " + id );
+	this.Insert ( "Customer", "Customer " + id );
 	this.Insert ( "Warehouse", "Warehouse " + id );
 	this.Insert ( "Item1", "Item1 " + id );
 	this.Insert ( "Item2", "Item2 " + id );
@@ -35,16 +35,16 @@ Procedure createEnv ()
 	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
-
-	#region createVendor
-	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
-	p.Description = this.Vendor;
-	Call ( "Catalogs.Organizations.CreateVendor", p );
+	
+	#region createCustomer
+	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
 	
 	#region createWarehouse
 	p = Call ( "Catalogs.Warehouses.Create.Params" );
-	p.Description = this.Vendor;
+	p.Description = this.Customer;
 	Call ( "Catalogs.Warehouses.Create", p );
 	#endregion
 
@@ -57,10 +57,13 @@ Procedure createEnv ()
 	Call ( "Catalogs.Items.Create", p );
 	#endregion
 	
-	#region createPurchaseOrder
-	Commando ( "e1cib/data/Document.PurchaseOrder" );
+	#region createInvoice
+	Commando ( "e1cib/data/Document.Invoice" );
 	With ();
-	Put ( "#Vendor", this.Vendor );
+	Put ( "#Customer", this.Customer );
+	Put ( "#PaymentOption", "no discounts");
+	tomorrow = Format ( CurrentDate () + 86400, "DLF=D" );
+	Put ( "#PaymentDate", tomorrow );
 	Put ( "#Warehouse", this.Warehouse );
 	PUt ( "#Memo", id );
 	
