@@ -56,17 +56,55 @@ Procedure SetRate ( Form ) export
 	
 EndProcedure 
 
-Procedure CalcTotals ( Object ) export
+Procedure CalcTotals ( Source ) export
 	
-	items = Object.Items;
-	services = Object.Services;
+	p = getTotalParams ( Source );
+	object = p.Object;
+	items = object.Items;
+	services = object.Services;
 	amount = items.Total ( "Total" ) + services.Total ( "Total" );
-	Object.VAT = items.Total ( "VAT" ) + services.Total ( "VAT" );
-	Object.Amount = amount;
-	Object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
-	Object.GrossAmount = amount - ? ( Object.VATUse = 2, Object.VAT, 0 ) + Object.Discount;
+	object.VAT = items.Total ( "VAT" ) + services.Total ( "VAT" );
+	object.Amount = amount;
+	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
+	object.GrossAmount = amount - ? ( object.VATUse = 2, object.VAT, 0 ) + object.Discount;
+	if ( not p.CalcContractAmount ) then
+		return;
+	endif;
+	if ( p.ContractCurrency = p.LocalCurrency ) then
+		object.ContractAmount = amount;
+	else
+		if ( object.Currency = p.LocalCurrency) then
+			object.ContractAmount = amount / object.Rate * object.Factor;
+		else
+			object.ContractAmount = amount * object.Rate / object.Factor;
+		endif; 
+	endif; 
 	
 EndProcedure 
+
+Function getTotalParams ( Source )
+	
+	params = new Structure ( "Object, CalcContractAmount, LocalCurrency, ContractCurrency" );
+	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
+	object = ? ( clientForm, Source.Object, Source );
+	type = TypeOf ( object.Ref );
+	if ( type = Type ( "DocumentRef.ExpenseReport" )
+		or type = Type ( "CatalogRef.Leads" ) ) then
+		params.CalcContractAmount = false;
+	else
+		params.CalcContractAmount = true;
+		if ( clientForm ) then
+			params.LocalCurrency = Source.LocalCurrency;
+			params.ContractCurrency = Source.ContractCurrency;
+		else
+			params.LocalCurrency = Application.Currency ();
+			params.ContractCurrency = object.ContractCurrency;
+		endif;
+	endif;
+	params.Object = object;
+	return params;
+	
+EndFunction
 
 &AtServer
 Procedure SetPayment ( Object ) export

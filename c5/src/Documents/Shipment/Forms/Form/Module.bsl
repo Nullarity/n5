@@ -354,7 +354,7 @@ EndProcedure
 &AtClient
 Procedure ItemsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -434,14 +434,14 @@ EndProcedure
 &AtClient
 Procedure ServicesOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesAfterDeleteRow ( Item )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 

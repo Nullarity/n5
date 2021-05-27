@@ -140,7 +140,7 @@ Procedure addItem ( Fields )
 	endif; 
 	Computations.Amount ( row );
 	Computations.Total ( row, Object.VATUse );
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -339,14 +339,14 @@ EndProcedure
 &AtClient
 Procedure ItemsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -533,14 +533,14 @@ EndProcedure
 &AtClient
 Procedure ServicesOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesAfterDeleteRow ( Item )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -694,7 +694,7 @@ Procedure applyPrices ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -733,7 +733,7 @@ Procedure applyVATUse ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure

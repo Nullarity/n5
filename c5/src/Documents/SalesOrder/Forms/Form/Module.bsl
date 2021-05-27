@@ -385,7 +385,7 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	if ( Row <> undefined ) then
 		Computations.Total ( Row, object.VATUse, CalcVAT );
 	endif;
-	InvoiceForm.CalcTotals ( object );
+	InvoiceForm.CalcTotals ( Form );
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
 

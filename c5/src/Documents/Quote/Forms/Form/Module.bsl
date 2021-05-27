@@ -208,7 +208,7 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
 	Forms.DeleteLastRow ( Object.Items, "Item" );
 	Forms.DeleteLastRow ( Object.Services, "Item" );
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	PaymentsTable.Fix ( Object );
 	
 EndProcedure
@@ -263,7 +263,7 @@ Procedure addItem ( Fields )
 	Computations.Discount ( row );
 	Computations.Amount ( row );
 	Computations.Total ( row, Object.VATUse );
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -273,7 +273,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	if ( SelectedValue.Operation = Enum.ChoiceOperationsPickItems () ) then
 		addSelectedItems ( SelectedValue );
 		addSelectedServices ( SelectedValue );
-		InvoiceForm.CalcTotals ( Object );
+		InvoiceForm.CalcTotals ( ThisObject );
 	endif; 
 	
 EndProcedure
@@ -321,7 +321,7 @@ EndProcedure
 Procedure ContractOnChange ( Item )
 	
 	applyContract ();
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -358,7 +358,7 @@ Procedure applyPrices ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -366,7 +366,7 @@ EndProcedure
 Procedure CurrencyOnChange ( Item )
 	
 	applyCurrency ();
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -412,14 +412,14 @@ EndProcedure
 &AtClient
 Procedure ItemsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -609,14 +609,14 @@ EndProcedure
 &AtClient
 Procedure ServicesOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesAfterDeleteRow ( Item )
 	
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -755,7 +755,7 @@ Procedure applyVATUse ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure

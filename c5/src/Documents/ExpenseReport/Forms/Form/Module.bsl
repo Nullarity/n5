@@ -126,7 +126,7 @@ Procedure fillByOrder ()
 		table = FillerSrv.GetData ( fillingParams ( "SalesOrderItems", Base ) );
 		loadSalesOrders ( table );
 	endif; 
-	InvoiceForm.CalcTotals ( Object );
+	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
 

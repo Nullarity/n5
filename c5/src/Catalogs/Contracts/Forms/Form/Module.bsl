@@ -1,3 +1,4 @@
+
 // *****************************************
 // *********** Form events
 
@@ -11,6 +12,7 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	InvoiceForm.SetLocalCurrency ( ThisObject );
 	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
@@ -110,6 +112,12 @@ Procedure readAppearance ()
 	|VendorBank enable Object.VendorPayment <> Enum.PaymentMethods.Cash;
 	|CustomerVATAdvance show Object.Customer;
 	|VendorVATAdvance show Object.Vendor;
+	|CustomerRateType show Object.Customer and Object.Currency <> LocalCurrency;
+	|CustomerRate CustomerFactor show Object.Customer and Object.Currency <> LocalCurrency
+	|	and Object.CustomerRateType = Enum.CurrencyRates.Fixed;
+	|VendorRateType show Object.Vendor and Object.Currency <> LocalCurrency;
+	|VendorRate VendorFactor show Object.Vendor and Object.Currency <> LocalCurrency
+	|	and Object.VendorRateType = Enum.CurrencyRates.Fixed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -173,24 +181,72 @@ EndFunction
 // *********** Group Form
 
 &AtClient
-Procedure CustomerOnChange ( Item )
+Procedure CurrencyOnChange ( Item )
+
+	applyCurrency ();
+
+EndProcedure
+
+&AtServer
+Procedure applyCurrency ()
 	
-	applyCustomer ();
-	Appearance.Apply ( ThisObject, "Object.Customer" );
+	if ( Object.Currency.IsEmpty () ) then
+		return;
+	endif;
+	setCurrencyRate ( true, true );
+	Appearance.Apply ( ThisObject, "Object.Currency" );
+	
+EndProcedure
+
+&AtServer
+Procedure setCurrencyRate ( Customer, Vendor )
+	
+	if ( Customer ) then
+		Object.CustomerRate = 1;
+		Object.CustomerFactor = 1;
+	endif;
+	if ( Vendor ) then
+		Object.VendorRate = 1;
+		Object.VendorFactor = 1;
+	endif;
+	currency = Object.Currency;
+	changeCustomer = Customer and Object.Customer and Object.CustomerRateType = Enums.CurrencyRates.Fixed;
+	changeVendor = Vendor and Object.Vendor and Object.VendorRateType = Enums.CurrencyRates.Fixed;
+	if ( currency = LocalCurrency
+		or not ( changeCustomer or changeVendor ) ) then
+		return;
+	endif;
+	rates = CurrenciesSrv.Get ( currency );
+	if ( changeCustomer ) then
+		Object.CustomerRate = rates.Rate;
+		Object.CustomerFactor = rates.Factor;
+	endif;
+	if ( changeVendor ) then
+		Object.VendorRate = rates.Rate;
+		Object.VendorFactor = rates.Factor;
+	endif;
 	
 EndProcedure
 
 &AtClient
+Procedure CustomerOnChange ( Item )
+	
+	applyCustomer ();
+	
+EndProcedure
+
+&AtServer
 Procedure applyCustomer ()
 	
-	if ( Object.Customer ) then
-		return;
+	setCurrencyRate ( true, false );
+	if ( not Object.Customer ) then
+		Object.CustomerPrices = undefined;
+		Object.CustomerTerms = undefined;
+		Object.CustomerDelivery = 0;
+		Object.Export = false;
+		Object.CustomerVATAdvance = undefined;
 	endif; 
-	Object.CustomerPrices = undefined;
-	Object.CustomerTerms = undefined;
-	Object.CustomerDelivery = 0;
-	Object.Export = false;
-	Object.CustomerVATAdvance = undefined;
+	Appearance.Apply ( ThisObject, "Object.Customer" );
 	
 EndProcedure
 
@@ -198,21 +254,21 @@ EndProcedure
 Procedure VendorOnChange ( Item )
 	
 	applyVendor ();
-	Appearance.Apply ( ThisObject, "Object.Vendor" );
 	
 EndProcedure
 
-&AtClient
+&AtServer
 Procedure applyVendor ()
 	
-	if ( Object.Vendor ) then
-		return;
+	setCurrencyRate ( false, true );
+	if ( not Object.Vendor ) then
+		Object.VendorPrices = undefined;
+		Object.VendorTerms = undefined;
+		Object.VendorDelivery = 0;
+		Object.Import = false;
+		Object.VendorVATAdvance = undefined;
 	endif; 
-	Object.VendorPrices = undefined;
-	Object.VendorTerms = undefined;
-	Object.VendorDelivery = 0;
-	Object.Import = false;
-	Object.VendorVATAdvance = undefined;
+	Appearance.Apply ( ThisObject, "Object.Vendor" );
 	
 EndProcedure
 
@@ -249,6 +305,37 @@ Procedure resetVendorBank ()
 	endif; 
 
 EndProcedure 
+
+&AtClient
+Procedure CustomerRateTypeOnChange ( Item )
+
+	applyCustomerRateType ();
+
+EndProcedure
+
+&AtServer
+Procedure applyCustomerRateType ()
+	
+	setCurrencyRate ( true, false );
+	Appearance.Apply ( ThisObject, "Object.CustomerRateType" );
+	
+EndProcedure
+
+&AtClient
+Procedure VendorRateTypeOnChange ( Item )
+
+	applyVendorRateType ();
+
+EndProcedure
+
+&AtServer
+Procedure applyVendorRateType ()
+	
+	setCurrencyRate ( false, true);
+	Appearance.Apply ( ThisObject, "Object.VendorRateType" );
+	
+EndProcedure
+
 
 // *****************************************
 // *********** Table Items

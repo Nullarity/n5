@@ -48,6 +48,8 @@ EndFunction
 Procedure getData ( Env )
 	
 	sqlFields ( Env );
+	getFields ( Env );
+	defineAmount ( Env );
 	sqlItems ( Env );
 	sqlOrders ( Env );
 	sqlAllocation ( Env );
@@ -61,11 +63,44 @@ Procedure sqlFields ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Date as Date, Documents.Contract as Contract, Documents.Amount as Amount
+	|select Documents.Date as Date, Documents.Contract as Contract, Documents.Amount as Amount,
+	|	Documents.Currency as Currency, Documents.Rate as Rate, Documents.Factor as Factor,
+	|	Documents.Contract.Currency as ContractCurrency, Constants.Currency as LocalCurrency
 	|from Document.SalesOrder as Documents
+	|	//
+	|	// Constants
+	|	//
+	|	join Constants as Constants
+	|	on true
 	|where Documents.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure getFields ( Env )
+	
+	Env.Q.SetParameter ( "Ref", Env.Ref );
+	SQL.Perform ( Env );
+	
+EndProcedure 
+
+Procedure defineAmount ( Env )
+	
+	list = new Structure ();
+	Env.Insert ( "AmountFields", list );
+	fields = Env.Fields;
+	contractAmount = "Amount";
+	if ( fields.ContractCurrency <> fields.Currency ) then
+		foreign = fields.Currency <> fields.LocalCurrency;
+		if ( foreign ) then
+			rate = " * &Rate / &Factor";
+		else
+			rate = " / &Rate * &Factor";
+		endif; 
+		contractAmount = contractAmount + rate;
+	endif; 
+	list.Insert ( "ContractAmount", "cast ( " + contractAmount + " as Number ( 15, 2 ) )" );
 	
 EndProcedure
 
@@ -164,7 +199,8 @@ Procedure sqlPayments ( Env )
 	s = "
 	|// ^Payments
 	|select case when Payments.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Payments.PaymentDate end as PaymentDate,
-	|	Payments.Option as Option, Payments.Amount as Amount, PaymentDetails.PaymentKey as PaymentKey
+	|	Payments.Option as Option, PaymentDetails.PaymentKey as PaymentKey, "
+	+ Env.AmountFields.ContractAmount + " as Amount
 	|from Document.SalesOrder.Payments as Payments
 	|	//
 	|	// PaymentDetails
@@ -181,7 +217,10 @@ EndProcedure
 
 Procedure getTables ( Env )
 	
-	Env.Q.SetParameter ( "Ref", Env.Ref );
+	fields = Env.Fields;
+	q = Env.Q;
+	q.SetParameter ( "Rate", fields.Rate );
+	q.SetParameter ( "Factor", fields.Factor );
 	SQL.Perform ( Env );
 	
 EndProcedure 
