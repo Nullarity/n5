@@ -292,11 +292,22 @@ Procedure sqlLinks ()
 	s = "
 	|// #VendorInvoices
 	|select Documents.Ref as Document,
-	|	case when Documents.Reference = """" then Documents.Number else Documents.Reference end as Number,
-	|	case when Documents.ReferenceDate = datetime ( 1, 1, 1 ) then Documents.Date else Documents.ReferenceDate end as Date
-	|from Document.VendorInvoice as Documents
-	|where Documents.PurchaseOrder = &Ref
-	|and not Documents.DeletionMark
+	|	case when Documents.Ref.Reference = """" then Documents.Ref.Number else Documents.Ref.Reference end as Number,
+	|	case when Documents.Ref.ReferenceDate = datetime ( 1, 1, 1 ) then Documents.Ref.Date else Documents.Ref.ReferenceDate end as Date
+	|from (
+	|	select Documents.Ref as Ref
+	|	from Document.VendorInvoice as Documents
+	|	where Documents.PurchaseOrder = &Ref
+	|	union
+	|	select Items.Ref
+	|	from Document.VendorInvoice.Items as Items
+	|	where Items.PurchaseOrder = &Ref
+	|	union
+	|	select Services.Ref
+	|	from Document.VendorInvoice.Services as Services
+	|	where Services.PurchaseOrder = &Ref
+	|) as Documents
+	|where not Documents.Ref.DeletionMark
 	|order by Date
 	|;
 	|// #Payments

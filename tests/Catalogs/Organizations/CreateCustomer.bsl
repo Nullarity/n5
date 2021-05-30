@@ -22,6 +22,8 @@ if (_ = undefined) then
 else
 	name = _.Description;
 	currency = _.Currency;
+	rateType = _.RateType;
+	rate = _.Rate;
 	terms = _.Terms;
 	taxGroup = _.TaxGroup;
 	closeAdvances = _.CloseAdvances;
@@ -52,6 +54,12 @@ Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");
 Set("#Currency", currency);
 CurrentSource.GotoNextItem();
+if ( rateType <> undefined ) then
+	Put("#CustomerRateType", rateType);
+endif;
+if ( rate <> undefined ) then
+	Set("#CustomerRate", rate);
+endif;
 if (terms <> undefined) then
 	Set("#CustomerTerms", terms);
 endif;

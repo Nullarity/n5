@@ -45,16 +45,78 @@ EndProcedure
 Procedure SetRate ( Form ) export
 	
 	object = Form.Object;
-	if ( Form.ContractCurrency = Form.LocalCurrency ) then
-		currency = object.Currency;
-	else
-		currency = Form.ContractCurrency;
-	endif; 
-	rates = CurrenciesSrv.Get ( currency );
-	object.Rate = rates.Rate;
-	object.Factor = rates.Factor;
+	if ( object.Contract.IsEmpty () ) then
+		return;
+	endif;
+	currencyRate = contractCurrencyRate ( object );
+	if ( currencyRate = undefined ) then
+		if ( Form.ContractCurrency = Form.LocalCurrency ) then
+			currency = object.Currency;
+		else
+			currency = Form.ContractCurrency;
+		endif; 
+		currencyRate = CurrenciesSrv.Get ( currency );
+	endif;
+	object.Rate = currencyRate.Rate;
+	object.Factor = currencyRate.Factor;
 	
 EndProcedure 
+
+&AtServer
+Function contractCurrencyRate ( Object )
+	
+	contract = Object.Contract;
+	type = TypeOf ( object.Ref );
+	isQuote = type = Type ( "DocumentRef.Quote" );
+	isSO = type = Type ( "DocumentRef.SalesOrder" );
+	isInvoice = type = Type ( "DocumentRef.Invoice" );
+	isPO = type = Type ( "DocumentRef.PurchaseOrder" );
+	isVendorInvoice = type = Type ( "DocumentRef.VendorInvoice" );
+	isReturn = type = Type ( "DocumentRef.Return" );
+	isVendorReturn = type = Type ( "DocumentRef.VendorReturn" );
+	if ( isQuote or isReturn ) then
+		data = DF.Values ( contract, "CustomerRateType, CustomerRate, CustomerFactor" );
+		if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
+			and data.CustomerRate <> 0 ) then
+			return contractRate ( data.CustomerRate, data.CustomerFactor );
+		endif;
+	elsif ( isSO or isInvoice ) then
+		data = DF.Values ( contract, "CustomerRateType, CustomerRate, CustomerFactor" );
+		base = ? ( isSO, object.Quote, object.SalesOrder );
+		if ( data.CustomerRateType = Enums.CurrencyRates.Fixed ) then
+			if ( not base.IsEmpty () ) then
+				return DF.Values ( base, "Rate, Factor" );
+			elsif ( data.CustomerRate <> 0 ) then
+				return contractRate ( data.CustomerRate, data.CustomerFactor );
+			endif;
+		endif;
+	elsif ( isPO or isVendorReturn ) then
+		data = DF.Values ( contract, "VendorRateType, VendorRate, VendorFactor" );
+		if ( data.VendorRateType = Enums.CurrencyRates.Fixed
+			and data.VendorRate <> 0 ) then
+			return contractRate ( data.VendorRate, data.VendorFactor );
+		endif;
+	elsif ( isVendorInvoice ) then
+		data = DF.Values ( contract, "VendorRateType, VendorRate, VendorFactor" );
+		base = object.PurchaseOrder;
+		if ( data.VendorRateType = Enums.CurrencyRates.Fixed ) then
+			if ( not base.IsEmpty () ) then
+				return DF.Values ( base, "Rate, Factor" );
+			elsif ( data.VendorRate <> 0 ) then
+				return contractRate ( data.VendorRate, data.VendorFactor );
+			endif;
+		endif;
+	endif;
+	return undefined;
+	
+EndFunction
+
+&AtServer
+Function contractRate ( Rate, Factor )
+	
+	return new Structure ( "Rate, Factor", Rate, Factor );
+	
+EndFunction
 
 Procedure CalcTotals ( Source ) export
 	
@@ -70,7 +132,7 @@ Procedure CalcTotals ( Source ) export
 	if ( not p.CalcContractAmount ) then
 		return;
 	endif;
-	if ( p.ContractCurrency = p.LocalCurrency ) then
+	if ( p.ContractCurrency = object.Currency ) then
 		object.ContractAmount = amount;
 	else
 		if ( object.Currency = p.LocalCurrency) then

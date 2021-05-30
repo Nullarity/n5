@@ -1,11 +1,15 @@
-﻿// Create a contract in USD with fixed currency 15 lei
-// Create a SO in MDL then receive a payment in MDL
-// Create an Invoice in MDL for 50% amount and check SO status
+﻿// User should be prevented from posting invoice without closing prepayment
+// if PaymentBalance is less then invoice amount.
+// Scenario:
+// Create SO $20
+// Receive a prepayment $15
+// Create an invoice $10 and check if system reject posting such invoice.
+// Why? Because we have only $5 left to be invoiced without prepayment
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D2CD5A2" );
+id = Call ( "Common.ScenarioID", "A005" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -16,16 +20,14 @@ Clear("#StatusFilter");
 Click("#FormCreate");
 With();
 Put ( "#Customer", this.Customer );
-Put ( "#Currency", "MDL" );
-Check("#Rate", 15);
+Put ( "#VATUse", 0 );
 Put ( "#Memo", id );
 Items = Get ( "!ItemsTable" );
 Click ( "!ItemsTableAdd" );
 Items.EndEditRow ();
 Set ( "!ItemsItem", this.Item, Items );
-Set ( "!ItemsQuantityPkg", 2, Items );
-Set ( "!ItemsPrice", 10, Items );
-Set ( "!ItemsDiscountRate", 5, Items );
+Set ( "!ItemsQuantityPkg", 20, Items );
+Set ( "!ItemsPrice", 1, Items );
 
 Click("#FormSendForApproval");
 With();
@@ -45,27 +47,21 @@ Click ( "!Button0" );
 With ();
 Click ( "#FormDocumentPaymentCreateBasedOn" );
 With ();
+Set("#Amount", 15);
+Next();
 Click ( "!FormPostAndClose" );
 #endregion
 
-#region checkInvoive1
+#region checkInvoive
 Commando("e1cib/command/Document.Invoice.Create");
 Set("#Customer", this.Customer);
 Next ();
+Click ( "!FormPost" );
+error = "* 15.00 USD *";
+Call ( "Common.CheckPostingError", error );
 Items = Get ( "!ItemsTable" );
-Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
-Check("#Currency", "USD");
-Check("#Rate", 15);
-Put("#Currency", "MDL");
-Click ( "!FormPostAndClose" );
-#endregion
-
-#region checkInvoive2
-Commando("e1cib/command/Document.Invoice.Create");
-Set("#Customer", this.Customer);
-Next ();
-Items = Get ( "!ItemsTable" );
-Assert ( Call("Table.Count", Items ) ).Empty ();
+Set ( "#ItemsQuantity", 5, Items );
+Click ( "!FormPost" );
 #endregion
 
 // *************************
@@ -93,8 +89,6 @@ Procedure createEnv ()
 	p.Description = this.Customer;
 	p.Terms = "Due on receipt";
 	p.Currency = "USD";
-	p.RateType = "Fixed";
-	p.Rate = 15;
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
 

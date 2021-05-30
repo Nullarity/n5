@@ -1,7 +1,7 @@
 Function Post ( Env ) export
 	
 	getData ( Env );
-	expenseDebts ( Env, Env.Adjustments, Env.IsCustomer );
+	expenseDebts ( Env, Env.Adjustments, Env.Customer );
 	fields = Env.Fields;
 	if ( fields.UseReceiver ) then
 		expenseDebts ( Env, Env.ReceiverDebts, fields.IsCustomer );
@@ -33,10 +33,10 @@ EndProcedure
 Procedure setContext ( Env )
 	
 	if ( Env.Type = Type ( "DocumentRef.AdjustDebts" ) ) then
-		Env.Insert ( "IsCustomer", true );
+		Env.Insert ( "Customer", true );
 		Env.Insert ( "Table", "AdjustDebts" );
 	else
-		Env.Insert ( "IsCustomer", false );
+		Env.Insert ( "Customer", false );
 		Env.Insert ( "Table", "AdjustVendorDebts" );
 	endif; 
 	
@@ -47,7 +47,7 @@ Procedure sqlFields ( Env )
 	s = "
 	|// @Fields
 	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,";
-	if ( Env.IsCustomer ) then
+	if ( Env.Customer ) then
 		s = s + "
 		|Documents.CustomerAccount as OrganizationAccount, Documents.Customer as Organization,";
 	else
@@ -305,7 +305,7 @@ EndFunction
 Function getAccountData ( Env )
 
 	if ( Env.Fields.IsDebt ) then
-		if ( Env.IsCustomer ) then
+		if ( Env.Customer ) then
 			organization = "Cr";
 			receiver = "Dr";
 			operation = Enums.Operations.AdjustDebts;
@@ -315,7 +315,7 @@ Function getAccountData ( Env )
 			operation = Enums.Operations.AdjustVendorDebts;
 		endif;
 	else
-		if ( Env.IsCustomer ) then
+		if ( Env.Customer ) then
 			organization = "Dr";
 			receiver = "Cr";
 			operation = Enums.Operations.AdjustAdvances;

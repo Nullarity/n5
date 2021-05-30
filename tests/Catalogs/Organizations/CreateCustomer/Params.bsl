@@ -1,6 +1,8 @@
 p = new Structure ();
 p.Insert ( "Description", "_Customer: " + CurrentDate () );
 p.Insert ( "Currency", __.LocalCurrency );
+p.Insert ( "RateType" );
+p.Insert ( "Rate" );
 p.Insert ( "Delivery", 0 );
 p.Insert ( "Terms" );
 p.Insert ( "ClearTerms", false );

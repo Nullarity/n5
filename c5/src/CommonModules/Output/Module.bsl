@@ -5299,6 +5299,14 @@ Procedure PaymentExpired ( Params = undefined, Field = "", DataKey = undefined, 
 EndProcedure
 
 &AtServer
+Procedure UnexpectedPayments ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'There is no planned %Amount payments in the %Document for this invoice';ro = 'Nu există %Amount plăți planificate în %Document pentru această factură';ru = 'В %Document нет запланированных %Amount платежей для этой накладной'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
 Procedure PeriodError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='Period is incorrect'; ro='Perioadă specificată incorect'; ru='Некорректно задан период'" );

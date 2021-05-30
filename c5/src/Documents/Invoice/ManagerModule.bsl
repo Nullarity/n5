@@ -419,6 +419,7 @@ Procedure sqlSalesOrders ( Env )
 	|	and SalesOrders.Feature = Items.Feature
 	|	and SalesOrders.Price = Items.Price
 	|	and SalesOrders.DiscountRate = Items.DiscountRate
+	|	and SalesOrders.Ref.Currency = &Currency
 	|where Items.SalesOrder <> value ( Document.SalesOrder.EmptyRef )
 	|union all
 	|select Services.Item, Services.LineNumber, Services.Table, Services.Feature, Services.Quantity,
@@ -599,6 +600,7 @@ Procedure getTables ( Env )
 	q = Env.Q;
 	q.SetParameter ( "Timestamp", ? ( Env.Realtime, undefined, fields.Timestamp ) );
 	q.SetParameter ( "Warehouse", fields.Warehouse );
+	q.SetParameter ( "Currency", fields.Currency );
 	q.SetParameter ( "Rate", fields.Rate );
 	q.SetParameter ( "Factor", fields.Factor );
 	SQL.Perform ( Env );

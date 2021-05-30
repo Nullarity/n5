@@ -8,4 +8,8 @@ Click("#Customer");
 Click("#Vendor");
 CheckState("#CustomerRateType, #CustomerRate, #CustomerFactor, #VendorRateType, #VendorRate, #VendorFactor", "Visible", false);
 Put ("#Currency", "USD");
+Check ("#CustomerRateType", "Operation Date");
+Check ("#VendorRateType", "Operation Date");
+Put ("#CustomerRateType", "Fixed");
+Put ("#VendorRateType", "Fixed");
 CheckState("#CustomerRateType, #CustomerRate, #CustomerFactor, #VendorRateType, #VendorRate, #VendorFactor", "Visible");

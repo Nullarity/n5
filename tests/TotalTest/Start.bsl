@@ -39,8 +39,8 @@ exceptions.Add("DataProcessors.Update.SkipUpdate");
 exceptions.Add("CommonForms.Settings.TestClosingAfterChangingLicense");
 p.Exceptions = exceptions;
 
-agents = 30;
-batch = 3;
+agents = 40;
+batch = 2;
 
 StoreScenarios ();
 for i = 1 to agents do

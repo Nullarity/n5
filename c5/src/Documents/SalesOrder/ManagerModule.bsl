@@ -65,7 +65,8 @@ Procedure sqlFields ( Env )
 	|// @Fields
 	|select Documents.Date as Date, Documents.Contract as Contract, Documents.Amount as Amount,
 	|	Documents.Currency as Currency, Documents.Rate as Rate, Documents.Factor as Factor,
-	|	Documents.Contract.Currency as ContractCurrency, Constants.Currency as LocalCurrency
+	|	Documents.Contract.Currency as ContractCurrency, Constants.Currency as LocalCurrency,
+	|	Documents.ContractAmount as ContractAmount
 	|from Document.SalesOrder as Documents
 	|	//
 	|	// Constants

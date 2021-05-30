@@ -2582,7 +2582,7 @@
 		value ( Enum.SalesOrderPoints.Shipping ),
 		value ( Enum.SalesOrderPoints.Invoicing ),
 		value ( Enum.SalesOrderPoints.Finish )
-	) then cast ( ( Documents.ContractAmount - Debts.PaymentBalance ) * 100 / Documents.ContractAmount as Number ( 3 ) )
+	) then cast ( ( Documents.ContractAmount - Debts.PaymentBalance ) * 100 / Documents.ContractAmount as Number ( 15 ) )
 	else 0
 	end as PaidPercent,
 	Statuses.Status in (
@@ -2595,8 +2595,8 @@
 		value ( Enum.SalesOrderPoints.Shipping ),
 		value ( Enum.SalesOrderPoints.Invoicing ),
 		value ( Enum.SalesOrderPoints.Finish )
-	) then cast ( ( Documents.ContractAmount - isnull ( Discounts.AmountTurnover, 0 ) - ( Debts.PaymentBalance + Debts.OverpaymentBalance - Debts.AmountBalance ) )
-		* 100 / ( Documents.ContractAmount - isnull ( Discounts.AmountTurnover, 0 ) ) as Number ( 3 ) )
+	) then cast ( ( Documents.ContractAmount - isnull ( Discounts.AmountTurnover, 0 ) - Debts.PaymentBalance - Debts.OverpaymentBalance + Debts.AmountBalance )
+		* 100 / ( Documents.ContractAmount - isnull ( Discounts.AmountTurnover, 0 ) ) as Number ( 15 ) )
 	else 0
 	end as ShippedPercent,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
@@ -2914,6 +2914,99 @@ from Document.SalesOrder as Documents
           <accountField></accountField>
         </role>
       </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Changes</dataPath>
+        <field>Changes</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Items</dataPath>
+        <field>Items</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Payments</dataPath>
+        <field>Payments</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Services</dataPath>
+        <field>Services</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PointInTime</dataPath>
+        <field>PointInTime</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Status</dataPath>
+        <field>Status</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Status</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Paid</dataPath>
+        <field>Paid</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Paid</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Shipped</dataPath>
+        <field>Shipped</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Shipped</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PaidPercent</dataPath>
+        <field>PaidPercent</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Paid percent</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Changes.Ref</dataPath>
         <field>Changes.Ref</field>
@@ -2967,10 +3060,6 @@ from Document.SalesOrder as Documents
           <balanceGroupName></balanceGroupName>
           <accountField></accountField>
         </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
-        <dataPath>Changes</dataPath>
-        <field>Changes</field>
       </fields>
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Items.Ref</dataPath>
@@ -3206,10 +3295,6 @@ from Document.SalesOrder as Documents
           <accountField></accountField>
         </role>
       </fields>
-      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
-        <dataPath>Items</dataPath>
-        <field>Items</field>
-      </fields>
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Payments.Ref</dataPath>
         <field>Payments.Ref</field>
@@ -3263,10 +3348,6 @@ from Document.SalesOrder as Documents
           <balanceGroupName></balanceGroupName>
           <accountField></accountField>
         </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
-        <dataPath>Payments</dataPath>
-        <field>Payments</field>
       </fields>
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Services.Ref</dataPath>
@@ -3466,104 +3547,6 @@ from Document.SalesOrder as Documents
           <accountField></accountField>
         </role>
       </fields>
-      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
-        <dataPath>Services</dataPath>
-        <field>Services</field>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>PointInTime</dataPath>
-        <field>PointInTime</field>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>Status</dataPath>
-        <field>Status</field>
-        <title>
-          <localValue>
-            <content>
-              <key>en</key>
-              <value>Status</value>
-            </content>
-          </localValue>
-        </title>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>Paid</dataPath>
-        <field>Paid</field>
-        <title>
-          <localValue>
-            <content>
-              <key>en</key>
-              <value>Paid</value>
-            </content>
-          </localValue>
-        </title>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>PaidPercent</dataPath>
-        <field>PaidPercent</field>
-        <title>
-          <localValue>
-            <content>
-              <key>en</key>
-              <value>Paid percent</value>
-            </content>
-          </localValue>
-        </title>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>Shipped</dataPath>
-        <field>Shipped</field>
-        <title>
-          <localValue>
-            <content>
-              <key>en</key>
-              <value>Shipped</value>
-            </content>
-          </localValue>
-        </title>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
-      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
-        <dataPath>ShippedPercent</dataPath>
-        <field>ShippedPercent</field>
-        <title>
-          <localValue>
-            <content>
-              <key>en</key>
-              <value>Shipped percent</value>
-            </content>
-          </localValue>
-        </title>
-        <role>
-          <accountTypeExpression></accountTypeExpression>
-          <balanceGroupName></balanceGroupName>
-          <accountField></accountField>
-        </role>
-      </fields>
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>TaskProgress</dataPath>
         <field>TaskProgress</field>
@@ -3653,6 +3636,23 @@ from Document.SalesOrder as Documents
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Document</dataPath>
         <field>Document</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ShippedPercent</dataPath>
+        <field>ShippedPercent</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Shipped percent</value>
+            </content>
+          </localValue>
+        </title>
         <role>
           <accountTypeExpression></accountTypeExpression>
           <balanceGroupName></balanceGroupName>

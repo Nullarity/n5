@@ -193,8 +193,26 @@ Procedure applyCurrency ()
 	if ( Object.Currency.IsEmpty () ) then
 		return;
 	endif;
+	resetRateType ( true, true );
 	setCurrencyRate ( true, true );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
+	
+EndProcedure
+
+&AtServer
+Procedure resetRateType ( Customer, Vendor )
+	
+	if ( Object.Currency = LocalCurrency ) then
+		Object.CustomerRateType = undefined;
+		Object.VendorRateType = undefined;
+	else
+		if ( Customer ) then
+			Object.CustomerRateType = ? ( Object.Customer, Enums.CurrencyRates.Current, undefined );
+		endif;
+		if ( Vendor ) then
+			Object.VendorRateType = ? ( Object.Vendor, Enums.CurrencyRates.Current, undefined );
+		endif;
+	endif;
 	
 EndProcedure
 
@@ -238,6 +256,7 @@ EndProcedure
 &AtServer
 Procedure applyCustomer ()
 	
+	resetRateType ( true, false );
 	setCurrencyRate ( true, false );
 	if ( not Object.Customer ) then
 		Object.CustomerPrices = undefined;
@@ -260,6 +279,7 @@ EndProcedure
 &AtServer
 Procedure applyVendor ()
 	
+	resetRateType ( false, true );
 	setCurrencyRate ( false, true );
 	if ( not Object.Vendor ) then
 		Object.VendorPrices = undefined;

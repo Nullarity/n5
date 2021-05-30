@@ -181,6 +181,9 @@ Function detailPayments ( Env )
 	contract = Env.Fields.Contract;
 	ref = Env.Ref;
 	table = closeResource ( Env, Env.Payments );
+	if ( unexpectedPayments ( Env ) ) then
+		return false;
+	endif;
 	for each row in table do
 		amount = row.Amount;
 		if ( row.PaymentDate <= date ) then
@@ -212,6 +215,23 @@ Function detailPayments ( Env )
 		movement.Bill = bill;
 	enddo; 
 	return true;
+	
+EndFunction
+
+Function unexpectedPayments ( Env )
+	
+	unexpected = false;
+	ref = Env.Ref;
+	currency = Env.Fields.ContractCurrency;
+	for each row in Env.Documents do
+		if ( row.Document = undefined ) then
+			continue;
+		endif;
+		Output.UnexpectedPayments ( new Structure ( "Document, Amount",
+			row.Document, Conversion.NumberToMoney ( row.Amount, currency ) ), , ref );
+		unexpected = true;
+	enddo;
+	return unexpected;
 	
 EndFunction
 
@@ -363,10 +383,12 @@ Procedure FromOrder ( Env ) export
 	endif; 
 	PaymentDetails.Init ( Env );
 	table = SQL.Fetch ( Env, "$Payments" );
-	date = Env.Fields.Date;
+	fields = Env.Fields;
+	date = fields.Date;
 	ref = Env.Ref;
-	contract = Env.Fields.Contract;
+	contract = fields.Contract;
 	details = Env.PaymentDetails;
+	fixAmount ( fields.ContractAmount, table );
 	for each row in table do
 		movement = recordset.AddReceipt ();
 		movement.Period = date;
@@ -382,6 +404,13 @@ Procedure FromOrder ( Env ) export
 		movement.Payment = row.Amount;
 	enddo; 
 	PaymentDetails.Save ( Env );
+	
+EndProcedure
+
+Procedure fixAmount ( ContractAmount, Payments )
+	
+	row = Payments [ Payments.Count () - 1 ];
+	row.Amount = row.Amount + ( ContractAmount - row.Amount );
 	
 EndProcedure
 

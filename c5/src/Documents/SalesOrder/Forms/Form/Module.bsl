@@ -183,13 +183,19 @@ EndProcedure
 &AtServer
 Procedure applyContract ()
 	
-	data = DF.Values ( Object.Contract, "CustomerPrices, Currency, CustomerDelivery as Delivery" );
+	data = DF.Values ( Object.Contract,
+		"CustomerPrices, Currency, CustomerRateType, CustomerRate, CustomerFactor, CustomerDelivery as Delivery" );
 	ContractCurrency = data.Currency;
-	Object.Currency = ContractCurrency;
-	Object.Prices = data.CustomerPrices;
-	currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
+		and data.CustomerRate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
+	else
+		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	endif;
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
+	Object.Currency = ContractCurrency;
+	Object.Prices = data.CustomerPrices;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	InvoiceForm.SetDelivery ( ThisObject, data );
 	PaymentsTable.Fill ( Object );
@@ -459,6 +465,16 @@ Procedure sqlLinks ()
 	|from Document.Invoice as Documents
 	|where Documents.SalesOrder = &Ref
 	|and not Documents.DeletionMark
+	|union 
+	|select Items.Ref, Items.Ref.Number, Items.Ref.Date
+	|from Document.Invoice.Items as Items
+	|where Items.SalesOrder = &Ref
+	|and not Items.Ref.DeletionMark
+	|union 
+	|select Services.Ref, Services.Ref.Number, Services.Ref.Date
+	|from Document.Invoice.Services as Services
+	|where Services.SalesOrder = &Ref
+	|and not Services.Ref.DeletionMark
 	|order by Date
 	|;
 	|// #Payments

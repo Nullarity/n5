@@ -533,6 +533,17 @@ EndProcedure
 &AtServer
 Procedure LoadContract ( Object ) export
 	
+	data = contractData ( Object );
+	FillPropertyValues ( Object, data );
+	currency = contractCurrency ( Object, data );
+	Object.ContractRate = currency.Rate;
+	Object.ContractFactor = currency.Factor;
+	
+EndProcedure 
+
+&AtServer
+Function contractData ( Object )
+	
 	fields = new Array ();
 	fields.Add ( "Currency as ContractCurrency" );
 	type = TypeOf ( Object.Ref );
@@ -541,23 +552,41 @@ Procedure LoadContract ( Object ) export
 		or type = Type ( "DocumentRef.Refund" ) ) then
 		fields.Add ( "CustomerPayment as Method" );
 		fields.Add ( "CustomerCashFlow as CashFlow" );
+		fields.Add ( "CustomerRateType as ContractRateType" );
+		fields.Add ( "CustomerRate as ContractRate" );
+		fields.Add ( "CustomerFactor as ContractFactor" );
 	else
 		if ( Object.Method <> Enums.PaymentMethods.ExpenseReport ) then
 			fields.Add ( "VendorPayment as Method" );
 		endif;
 		fields.Add ( "VendorCashFlow as CashFlow" );
+		fields.Add ( "VendorRateType as ContractRateType" );
+		fields.Add ( "VendorRate as ContractRate" );
+		fields.Add ( "VendorFactor as ContractFactor" );
 	endif;
 	if ( payment ) then
 		fields.Add ( "CustomerVATAdvance as VATAdvance" );
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
 		fields.Add ( "VendorVATAdvance as VATAdvance" );
 	endif;
-	FillPropertyValues ( Object, DF.Values ( Object.Contract, fields ) );
-	info = CurrenciesSrv.Get ( Object.ContractCurrency, Object.Date );
-	Object.ContractRate = info.Rate;
-	Object.ContractFactor = info.Factor;
+	return DF.Values ( Object.Contract, fields );
 	
-EndProcedure 
+EndFunction
+
+&AtServer
+Function contractCurrency ( Object, Fields )
+	
+	result = undefined;
+	if ( Fields.ContractRateType = Enums.CurrencyRates.Fixed ) then
+		if ( Object.Base <> undefined ) then
+			result = DF.Values ( Object.Base, "Rate, Factor" );
+		elsif ( Fields.ContractRate <> 0 ) then
+			result = new Structure ( "Rate, Factor", Fields.ContractRate, Fields.ContractFactor )
+		endif;
+	endif;
+	return ? ( result = undefined, CurrenciesSrv.Get ( Object.ContractCurrency, Object.Date ), result );
+	
+EndFunction
 
 &AtClient
 Procedure Show ( Item ) export
