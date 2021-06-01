@@ -81,6 +81,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Links show ShowLinks;
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )

@@ -1,6 +1,5 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
-	
 Procedure PresentationFieldsGetProcessing ( Fields, StandardProcessing )
 	
 	DocumentPresentation.StandardFields ( Fields, StandardProcessing );
@@ -533,17 +532,16 @@ Procedure sqlPrintData ( Env )
 	|// @Fields
 	|select Document.Number as Number, Document.Date as Date, Document.Creator as Creator,
 	|	Document.Set as Set, Document.QuantityPkg as Quantity, 
-	|	case when Document.Set.CountPackages then Document.Package.Description else Document.Set.Unit.Code end as Unit
+	|	isnull ( Document.Package.Description, Document.Set.Unit.Code ) as Unit
 	|from Document.Disassembling as Document
 	|where Document.Ref = &Ref
 	|;
 	|// #Items
 	|select Items.Item Item, sum ( Items.QuantityPkg ) as Quantity,
-	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Unit
 	|from Document.Disassembling.Items as Items
 	|where Items.Ref = &Ref
-	|group by Items.Item, 	
-	|	case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end
+	|group by Items.Item, Items.Package
 	|order by min ( Items.LineNumber )
 	|";
 	Env.Selection.Add ( s );
