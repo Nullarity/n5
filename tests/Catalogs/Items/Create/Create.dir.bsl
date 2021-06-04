@@ -4,7 +4,6 @@
 // Returns:
 // Structure ( "Code, Description" )
 
-package = "PK";
 Pause (1);
 MainWindow.ExecuteCommand ( "e1cib/data/Catalog.Items" );
 form = With ( "Items (create)" );
@@ -17,6 +16,8 @@ if ( _ = undefined ) then
 	feature = undefined;
 	useCustomsGroup = false;
 	itemType = undefined;
+	package = "PK";
+	capacity = 5;
 else
 	name = _.Description;
 	countPkg = _.CountPackages;
@@ -30,6 +31,8 @@ else
 	feature = ? ( _.Feature = undefined, undefined, _.Feature );
 	useCustomsGroup = _.UseCustomsGroup;
 	itemType = _.ItemType;
+	package = ? ( _.Unit = undefined, "PK", _.Unit );
+	capacity = ? ( _.Capacity = undefined, 5, _.Capacity );
 endif;
 With ();
 Set ( "#Description", name );
@@ -68,15 +71,17 @@ unit = TrimAll ( Fetch ( "#Unit" ) );
 
 if ( not service ) then
 	field = Activate ( "#Package" );
-	field.OpenDropList ();
-	field.Create ();
-	With ( "Packages (create)" );
+	if ( Fetch ("#Package") <> package ) then
+		field.OpenDropList ();
+		field.Create ();
+		With ( "Packages (create)" );
+		
+		Set ( "#Unit", package );
+		Set ( "#Capacity", capacity );
+		Click ( "#FormWriteAndClose" );
 	
-	Set ( "#Unit", package );
-	Set ( "#Capacity", "5" );
-	Click ( "#FormWriteAndClose" );
-	
-	With ( form );
+		With ( form );
+	endif;
 	if ( countPkg ) then
 		Click ( "#CountPackages" );
 		Click ( "Yes", Forms.Get1C () ); // Closes 1C standard dialog

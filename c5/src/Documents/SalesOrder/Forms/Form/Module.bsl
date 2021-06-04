@@ -15,10 +15,17 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	OrderForm.LoadProcess ( ThisObject );
+	initCurrency ();
+	Appearance.Apply ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure initCurrency ()
+	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	InvoiceForm.SetContractCurrency ( ThisObject );
 	InvoiceForm.SetCurrencyList ( ThisObject );
-	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
@@ -37,8 +44,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	setCurrentUser ();
 	if ( isNew () ) then
 		Copy = not Parameters.CopyingValue.IsEmpty ();
-		InvoiceForm.SetLocalCurrency ( ThisObject );
-		InvoiceForm.SetCurrencyList ( ThisObject );
+		initCurrency ();
 		DocumentForm.Init ( Object );
 		if ( Parameters.Basis = undefined ) then
 			fillNew ();
@@ -82,6 +88,7 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Links show ShowLinks;
 	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )

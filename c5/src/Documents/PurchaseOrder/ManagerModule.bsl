@@ -51,7 +51,8 @@ Procedure sqlFields ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Date as Date, Documents.Amount as Amount, Documents.Contract as Contract
+	|select Documents.Date as Date, Documents.Amount as Amount, Documents.Contract as Contract,
+	|	Documents.ContractAmount as ContractAmount
 	|from Document.PurchaseOrder as Documents
 	|where Documents.Ref = &Ref
 	|";

@@ -247,6 +247,42 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="33536f69-2a2d-4b7c-b54b-a225578c8426">
+    <name>ContractAmount</name>
+    <synonym>
+      <key>en</key>
+      <value>Total in Contract Currency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Итого в валюте договора</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Total în valuta contractului</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Order amount in contract currency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма заказа в валюте договора</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma comenzii în valuta contractului</value>
+    </toolTip>
+    <markNegatives>true</markNegatives>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="21f24235-55e7-40c5-a7b3-10d916964d02">
     <name>Creator</name>
     <synonym>
@@ -869,6 +905,79 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="c3a37743-e2a4-4ff3-9ca6-26636dffaf75">
+    <name>VAT</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>TVA</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma TVA</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="2a5628c8-0299-414e-84ea-d7a234a309b5">
+    <name>VATUse</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>TVA</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>1</precision>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT use</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Применение НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Aplicarea TVA</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="578d7314-b351-4914-b487-2a02d86f7cbc">
     <name>Vendor</name>
     <synonym>
@@ -948,79 +1057,6 @@
       <field>Document.PurchaseOrder.Attribute.Company</field>
     </choiceParameterLinks>
     <fillFromFillingValue>true</fillFromFillingValue>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="c3a37743-e2a4-4ff3-9ca6-26636dffaf75">
-    <name>VAT</name>
-    <synonym>
-      <key>en</key>
-      <value>VAT</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>НДС</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>TVA</value>
-    </synonym>
-    <type>
-      <types>DefinedType.Amount</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>VAT amount</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Сумма НДС</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Suma TVA</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="2a5628c8-0299-414e-84ea-d7a234a309b5">
-    <name>VATUse</name>
-    <synonym>
-      <key>en</key>
-      <value>VAT</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>НДС</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>TVA</value>
-    </synonym>
-    <type>
-      <types>Number</types>
-      <numberQualifiers>
-        <precision>1</precision>
-      </numberQualifiers>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>VAT use</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Применение НДС</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Aplicarea TVA</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>

@@ -191,14 +191,17 @@ Procedure makeDiscount ( Env, Row )
 	movement = register.Add ();
 	date = Env.Fields.Date;
 	movement.Period = date;
-	movement.Document = Row.Document;
+	document = Row.Document;
+	movement.Document = document;
 	amount = Row.Discount;
 	movement.Amount = amount;
 	detail = Row.Detail;
 	if ( detail <> undefined ) then
+		movement.Detail = detail;
 		movement = register.Add ();
 		movement.Period = date;
 		movement.Document = detail;
+		movement.Detail = document;
 		movement.Amount = amount;
 	endif;
 	

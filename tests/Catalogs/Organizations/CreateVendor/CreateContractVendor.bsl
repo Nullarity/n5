@@ -11,6 +11,13 @@ itemContractForm = With ( "General (Contracts)", true );
 useParams = ( _ <> undefined );
 mainCurrency = ? ( useParams, _.Currency, Call ( "Select.MainCurrencyName" ) );
 Set ( "!Currency", mainCurrency );
+Next();
+if ( _.RateType <> undefined ) then
+	Put("#VendorRateType", _.RateType);
+endif;
+if ( _.Rate <> undefined ) then
+	Set("#VendorRate", _.Rate);
+endif;
 if ( useParams ) then
 	if ( AppName <> "MobileVTree" ) then
 		Choose ( "#VendorBank" );

@@ -2582,7 +2582,9 @@
 		value ( Enum.SalesOrderPoints.Shipping ),
 		value ( Enum.SalesOrderPoints.Invoicing ),
 		value ( Enum.SalesOrderPoints.Finish )
-	) then cast ( ( Documents.ContractAmount - Debts.PaymentBalance ) * 100 / Documents.ContractAmount as Number ( 15 ) )
+	) then cast ( ( Documents.ContractAmount - isnull ( Discounts.AmountTurnover, 0 ) - Debts.PaymentBalance )
+		* 100 / ( Documents.ContractAmount - - isnull ( Discounts.AmountTurnover, 0 ) ) as Number ( 15 )
+	)
 	else 0
 	end as PaidPercent,
 	Statuses.Status in (

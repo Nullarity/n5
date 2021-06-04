@@ -10,6 +10,8 @@ p.Insert ( "CostMethod" );
 p.Insert ( "Feature" );
 p.Insert ( "UseCustomsGroup", false );
 p.Insert ( "CustomsGroup" );
+p.Insert ( "Unit" );
+p.Insert ( "Capacity" );
 if ( AppName = "c5" ) then
 	p.Insert ( "VAT", "20%" );
 	p.Insert ( "Social", false );

@@ -15,11 +15,18 @@ var ServicesRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	initCurrency ();
+	setRejection ();
+	Appearance.Apply ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure initCurrency ()
+	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	InvoiceForm.SetContractCurrency ( ThisObject );
 	InvoiceForm.SetCurrencyList ( ThisObject );
-	setRejection ();
-	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
@@ -47,7 +54,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		Copy = not Parameters.CopyingValue.IsEmpty ();
-		InvoiceForm.SetLocalCurrency ( ThisObject );
+		initCurrency ();
 		DocumentForm.Init ( Object );
 		fillNew ();
 		fillByCustomer ();
@@ -68,6 +75,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Links show ShowLinks;
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )

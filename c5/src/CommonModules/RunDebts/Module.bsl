@@ -1,8 +1,7 @@
 Function FromInvoice ( Env ) export
 
 	setContext ( Env );
-	initVars ( Env );
-	if ( Env.Fields.ContractAmount = 0 ) then
+	if ( forFree ( Env ) ) then
 		clearRecords ( Env );
 		return true;
 	endif; 
@@ -64,15 +63,18 @@ Procedure setContext ( Env )
 	
 EndProcedure
 
-Procedure initVars ( Env )
-	
-	if ( Env.PaymentsRegister = "Debts" ) then
-		Env.Insert ( "OrderName", "SalesOrder" );
+Function forFree ( Env )
+
+	fields = Env.Fields;
+	type = Env.Type;
+	if ( type = Type ( "DocumentRef.Invoice" )
+		or type = Type ( "DocumentRef.VendorInvoice" ) ) then
+		return 0 = ( fields.ContractAmount - fields.PaymentDiscount );
 	else
-		Env.Insert ( "OrderName", "PurchaseOrder" );	
+		return 0 = fields.ContractAmount;
 	endif;
-	
-EndProcedure
+
+EndFunction
 
 Procedure clearRecords ( Env )
 	
@@ -423,6 +425,7 @@ Procedure getPayments ( Env )
 	endif;
 	fields = Env.Fields;
 	q = Env.Q;
+	q.SetParameter ( "Ref", Env.Ref );
 	q.SetParameter ( "Option", fields.PaymentOption );
 	q.SetParameter ( "Contract", fields.Contract );
 	q.SetParameter ( "Return", ? ( Env.Return, -1, 1 ) );
@@ -445,6 +448,10 @@ Procedure sqlDocuments ( Env )
 		|	select case Services.SalesOrder when value ( Document.SalesOrder.EmptyRef ) then undefined else Services.SalesOrder end,
 		|		Services.ContractAmount + Services.ContractVAT
 		|	from Services as Services
+		|	union all
+		|	select Discounts.SalesOrder, - Discounts.Discount
+		|	from Document.Invoice.Discounts as Discounts
+		|	where Discounts.Ref = &Ref
 		|) as Documents
 		|group by Documents.Document
 		|index by Document
@@ -474,6 +481,10 @@ Procedure sqlDocuments ( Env )
 		|	union all
 		|	select undefined, Accounts.ContractAmount + Accounts.ContractVAT
 		|	from Accounts as Accounts
+		|	union all
+		|	select Discounts.PurchaseOrder, - Discounts.Discount
+		|	from Document.VendorInvoice.Discounts as Discounts
+		|	where Discounts.Ref = &Ref
 		|) as Documents
 		|group by Documents.Document
 		|index by Document

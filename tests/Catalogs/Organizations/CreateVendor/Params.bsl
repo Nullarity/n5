@@ -3,6 +3,8 @@ StandardProcessing = false;
 p = new Structure ();
 p.Insert ( "Description" );
 p.Insert ( "Currency" );
+p.Insert ( "RateType" );
+p.Insert ( "Rate" );
 p.Insert ( "Organization" );
 p.Insert ( "Delivery" );
 p.Insert ( "CloseAdvances", true );

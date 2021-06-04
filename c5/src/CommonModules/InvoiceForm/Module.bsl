@@ -2,7 +2,7 @@
 Procedure SetContractCurrency ( Form ) export
 	
 	object = Form.Object;
-	Form.ContractCurrency = DF.Pick ( object.Contract, "Currency" );
+	Form.ContractCurrency = DF.Pick ( object.Contract, "Currency", undefined );
 	
 EndProcedure 
 
@@ -290,35 +290,27 @@ EndProcedure
 Function getDiscounts ( Object, Vendor )
 	
 	if ( Vendor ) then
+		table = "AccumulationRegister.VendorDiscounts";
 		document = "PurchaseOrder";
-		invoice = "VendorInvoice";
-		payment = "VendorPayment";
-		register = "VendorDebts";
 	else
+		table = "AccumulationRegister.Discounts";
 		document = "SalesOrder";
-		invoice = "Invoice";
-		payment = "Payment";
-		register = "Debts";
 	endif; 
 	s = "
-	|select Discounts.Document as " + document + ", sum ( Discounts.Discount ) as Discount
+	|select Discounts.Document as " + document + ", sum ( Discounts.Amount ) as Discount
 	|from (
-	|	select Debts.Document as Document, - Debts.Payment as Discount
-	|	from AccumulationRegister." + register + " as Debts
-	|	where Debts.Document in ( &Orders )
-	|	and Debts.Recorder refs Document." + payment + "
-	|	and Debts.Payment < 0
-	|	and Debts.Period < &Date
+	|	select Discounts.Document as Document, Discounts.Amount as Amount
+	|	from " + table + " as Discounts
+	|	where Discounts.Document in ( &Orders )
+	|	and Discounts.Period < &Date
 	|	union all
-	|	select Discounts." + document + ", - Discounts.Discount
-	|	from Document." + invoice + ".Discounts as Discounts
-	|	where Discounts.Ref <> &Ref
-	|	and Discounts.Ref.Contract = &Contract
-	|	and Discounts." + document + " in ( &Orders )
-	|	and Discounts.Ref.Posted
+	|	select Discounts.Detail, - Discounts.Amount
+	|	from " + table + " as Discounts
+	|	where Discounts.Detail in ( &Orders )
+	|	and Discounts.Period < &Date
 	|	) as Discounts
 	|group by Discounts.Document
-	|having sum ( Discounts.Discount ) > 0
+	|having sum ( Discounts.Amount ) > 0
 	|order by Discounts.Document.Date
 	|";
 	q = new Query ( s );
@@ -346,11 +338,11 @@ Procedure SetPaymentsApplied ( Form ) export
 		or type = Type ( "DocumentRef.PurchaseOrder" ) ) then
 		data = getDebt ( Object );
 		benefit = data.Benefit;
-		Form.PaymentsApplied = object.Amount - benefit - data.Debt;
+		Form.PaymentsApplied = object.ContractAmount - benefit - data.Debt;
 		Form.Benefit = benefit;
 	else
 		data = getAdvance ( Object );
-		Form.PaymentsApplied = Min ( data.Advance, object.Amount );
+		Form.PaymentsApplied = Min ( data.Advance, object.ContractAmount );
 		Form.Benefit = data.Benefit;
 	endif;
 
@@ -421,9 +413,20 @@ Function getDebt ( Object )
 		resource = "Amount";
 		factor = -1;
 	endif;
-	s = "select " + resource + "Balance as Amount, isnull ( Discounts.AmountTurnover, 0 ) as Benefit from AccumulationRegister."
+	s = "select " + resource + "Balance as Amount, isnull ( Discounts.Amount, 0 ) as Benefit from AccumulationRegister."
 		+ register + ".Balance ( , Document = &Document )
-		|left join AccumulationRegister." + discount + ".Turnovers ( , , , Document = &Document ) as Discounts
+		|left join (
+		|	select sum ( Discounts.Amount ) as Amount
+		|	from (
+		|		select Discounts.Amount as Amount
+		|		from AccumulationRegister." + discount + " as Discounts
+		|		where Discounts.Document = &Document
+		|		union all
+		|		select - Discounts.Amount
+		|		from AccumulationRegister." + discount + " as Discounts
+		|		where Discounts.Detail = &Document
+		|	) as Discounts
+		|) as Discounts
 		|on true";
 	q = new Query ( s );
 	q.SetParameter ( "Document", ref );
@@ -448,27 +451,38 @@ Function getAdvance ( Object )
 		register = "Debts";
 		orderRegister = "SalesOrderDebts";
 		discount = "Discounts";
-		order = ? ( type = Type ( "DocumentRef.Invoice" ), Object.SalesOrder, undefined );
+		orders = ? ( type = Type ( "DocumentRef.Invoice" ), getOrders ( Object, false ), undefined );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" )
 	 	or type = Type ( "DocumentRef.VendorReturn" ) ) then
 		register = "VendorDebts";
 		orderRegister = "PurchaseOrderDebts";
 		discount = "VendorDiscounts";
-		order = ? ( type = Type ( "DocumentRef.VendorInvoice" ), Object.PurchaseOrder, undefined );
+		orders = ? ( type = Type ( "DocumentRef.VendorInvoice" ), getOrders ( Object, true ), undefined );
 	endif;
-	if ( order = undefined
-		or order.IsEmpty () ) then
+	if ( orders = undefined
+		or orders.Count () = 0 ) then
 		s = "select OverpaymentBalance as Amount, 0 as Benefit from AccumulationRegister."
 			+ register + ".Balance ( , Contract = &Contract )";
 	else
-		s = "select OverpaymentBalance as Amount, isnull ( Discounts.AmountTurnover, 0 ) as Benefit from AccumulationRegister."
-			+ orderRegister + ".Balance ( , Document = &Order )
-			|left join AccumulationRegister." + discount + ".Turnovers ( , , , Document = &Order ) as Discounts
+		s = "select OverpaymentBalance as Amount, isnull ( Discounts.Amount, 0 ) as Benefit from AccumulationRegister."
+			+ orderRegister + ".Balance ( , Document in ( &Orders ) )
+			|left join (
+			|	select sum ( Discounts.Amount ) as Amount
+			|	from (
+			|		select Discounts.Amount as Amount
+			|		from AccumulationRegister." + discount + " as Discounts
+			|		where Discounts.Document in ( &Orders )
+			|		union all
+			|		select - Discounts.Amount
+			|		from AccumulationRegister." + discount + " as Discounts
+			|		where Discounts.Detail in ( &Orders )
+			|	) as Discounts
+			|) as Discounts
 			|on true";
 	endif;
 	q = new Query ( s );
 	q.SetParameter ( "Contract", Object.Contract );
-	q.SetParameter ( "Order", order );
+	q.SetParameter ( "Orders", orders );
 	table = q.Execute ().Unload ();
 	result = new Structure ( "Advance, Benefit", 0, 0 );
 	if ( table.Count () > 0 ) then
@@ -483,7 +497,7 @@ EndFunction
 Procedure CalcBalanceDue ( Form ) export
 
 	object = Form.Object;
-	Form.BalanceDue = object.Amount - Form.PaymentsApplied - Form.Benefit;
+	Form.BalanceDue = object.ContractAmount - Form.PaymentsApplied - Form.Benefit;
 	
 EndProcedure
 

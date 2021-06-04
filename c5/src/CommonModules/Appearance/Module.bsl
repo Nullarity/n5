@@ -60,7 +60,7 @@ Procedure applyAppearance ( Form, Value, IsItemUpdate, CanBeDisallowed )
 		endif; 
 		dependencyFound = true;
 		result = eval ( item.Expression );
-		formatFields ( items, item, result );
+		formatFields ( Form, items, item, result );
 	enddo;
 	if ( Value = undefined or CanBeDisallowed or dependencyFound ) then
 	else
@@ -82,7 +82,7 @@ Function appearanceDependsOn ( Item, Value, IsItemUpdate )
 	
 EndFunction 
 
-Procedure formatFields ( Items, AppearanceItem, Result )
+Procedure formatFields ( Form, Items, AppearanceItem, Result )
 	
 	yes = Result;
 	no = not Result;
@@ -134,18 +134,28 @@ Procedure formatFields ( Items, AppearanceItem, Result )
 			elsif ( format = "title"
 				or format = "назвать" ) then
 				if ( yes ) then
-					item.Title = eval ( operation [ 1 ] + "()" );
+					item.Title = expressionToValue ( Form, operation [ 1 ] );
 				endif;
 			elsif ( format = "hint"
 				or format = "подсказать" ) then
 				if ( yes ) then
-					item.InputHint = eval ( operation [ 1 ] + "()" );
+					item.InputHint = expressionToValue ( Form, operation [ 1 ] );
 				endif;
 			endif;
 		enddo;
 	enddo; 
 	
 EndProcedure 
+
+Function expressionToValue ( Form, Expression )
+	
+	try
+		return eval ( Expression + "()" );
+	except
+		return eval ( "String(" + Expression + ")" );
+	endtry;
+	
+EndFunction
 
 Procedure Update ( Form, Item, CanBeDisallowed = false ) export
 	

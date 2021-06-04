@@ -22,10 +22,8 @@ var InvoiceRecordExists;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
+	initCurrency ();
 	InvoiceRecords.Read ( ThisObject );
-	InvoiceForm.SetLocalCurrency ( ThisObject );
-	InvoiceForm.SetContractCurrency ( ThisObject );
-	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure
 
@@ -39,11 +37,20 @@ Procedure updateBalanceDue ()
 EndProcedure
 
 &AtServer
+Procedure initCurrency ()
+	
+	InvoiceForm.SetLocalCurrency ( ThisObject );
+	InvoiceForm.SetContractCurrency ( ThisObject );
+	InvoiceForm.SetCurrencyList ( ThisObject );
+	
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
-		InvoiceForm.SetLocalCurrency ( ThisObject );
+		initCurrency ();
 		Base = Parameters.Basis;
 		if ( Base = undefined ) then
 			Copy = not Parameters.CopyingValue.IsEmpty ();
@@ -78,6 +85,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )

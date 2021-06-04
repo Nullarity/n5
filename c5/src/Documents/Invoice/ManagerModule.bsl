@@ -51,6 +51,7 @@ Function Post ( Env ) export
 	makeSales ( Env );
 	ItemDetails.Save ( Env );
 	if ( not Env.RestoreCost ) then
+		makeDiscounts ( Env );
 		commitVAT ( Env );
 		makeIncome ( Env );
 		attachSequence ( Env );
@@ -73,6 +74,7 @@ Procedure getData ( Env )
 	sqlItems ( Env );
 	sqlSales ( Env );
 	if ( not Env.RestoreCost ) then
+		sqlDiscounts ( Env );
 		sqlVAT ( Env );
 		sqlSequence ( Env );
 		sqlShipping ( Env );
@@ -871,6 +873,25 @@ Procedure makeSales ( Env )
 	
 EndProcedure
 
+Procedure makeDiscounts ( Env )
+
+	fields = Env.Fields;
+	amount = fields.PaymentDiscount;
+	if ( amount = 0 ) then
+		return;
+	endif;
+	date = fields.Date;
+	ref = Env.Ref;
+	for each row in Env.Discounts do
+		movement = Env.Registers.Discounts.Add ();
+		movement.Period = date;
+		movement.Document = ref;
+		movement.Detail = row.SalesOrder;
+		movement.Amount = row.Discount;
+	enddo;
+	
+EndProcedure
+
 Procedure makeIncome ( Env )
 	
 	fields = Env.Fields;
@@ -1128,6 +1149,7 @@ Procedure flagRegisters ( Env )
 	registers.Expenses.Write = true;
 	if ( not Env.RestoreCost ) then
 		registers.Debts.Write = true;
+		registers.Discounts.Write = true;
 		if ( not Env.CheckBalances ) then
 			registers.Items.Write = true;
 			registers.SalesOrders.Write = true;
@@ -1135,6 +1157,18 @@ Procedure flagRegisters ( Env )
 			registers.Work.Write = true;
 		endif; 
 	endif;
+	
+EndProcedure
+
+Procedure sqlDiscounts ( Env )
+	
+	s = "
+	|// #Discounts
+	|select Discounts.SalesOrder as SalesOrder, Discounts.Discount as Discount
+	|from Document.Invoice.Discounts as Discounts
+	|where Discounts.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
 	
 EndProcedure
 

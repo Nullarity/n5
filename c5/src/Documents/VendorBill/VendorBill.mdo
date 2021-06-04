@@ -162,41 +162,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="b6ce77b5-ca61-4b97-9d1d-3f9475e7239a">
-    <name>Discount</name>
-    <synonym>
-      <key>en</key>
-      <value>Discount Amount</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Сумма скидки</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Suma de reducere</value>
-    </synonym>
-    <type>
-      <types>DefinedType.Amount</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>The discount amount for immediate-term payment. If the payment is not made within the specified period, the discount will not apply</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Сумма предоставляемой скидки за срочность платежа. Если оплата не будет произведена в указанный период, скидка применяться не будет</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Cuantumul reducerii a determinat urgența plății. Dacă plata nu este efectuată în perioada specificată, această reducere nu se va aplica</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="af03f185-b20c-4c04-9164-c3c0784d6f37">
     <name>Base</name>
     <synonym>
@@ -304,33 +269,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="37b76a91-aa3d-46c9-9a33-aca2a76d0fed">
-    <name>Deposit</name>
-    <synonym>
-      <key>ru</key>
-      <value>Счет компании</value>
-    </synonym>
-    <synonym>
-      <key>en</key>
-      <value>Company Account</value>
-    </synonym>
-    <type>
-      <types>CatalogRef.BankAccounts</types>
-    </type>
-    <toolTip>
-      <key>ru</key>
-      <value>Счет компании</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <choiceParameterLinks>
-      <name>Filter.Owner</name>
-      <field>Document.VendorBill.Attribute.Company</field>
-    </choiceParameterLinks>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="36194b56-6f77-4662-a763-e40570e3ec7b">
     <name>Contact</name>
     <synonym>
@@ -414,6 +352,42 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="8266592e-fbc0-4bab-abd9-9ec43b3fabcd">
+    <name>ContractAmount</name>
+    <synonym>
+      <key>en</key>
+      <value>Total in Contract Currency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Итого в валюте договора</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Total în valuta contractului</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Order amount in contract currency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма заказа в валюте договора</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma comenzii în valuta contractului</value>
+    </toolTip>
+    <markNegatives>true</markNegatives>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="67f9dcc1-751a-4a19-8bf3-f994ab36fc31">
     <name>Creator</name>
     <synonym>
@@ -442,6 +416,68 @@
     <toolTip>
       <key>ro</key>
       <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="37b76a91-aa3d-46c9-9a33-aca2a76d0fed">
+    <name>Deposit</name>
+    <synonym>
+      <key>ru</key>
+      <value>Счет компании</value>
+    </synonym>
+    <synonym>
+      <key>en</key>
+      <value>Company Account</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.BankAccounts</types>
+    </type>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет компании</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.VendorBill.Attribute.Company</field>
+    </choiceParameterLinks>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b6ce77b5-ca61-4b97-9d1d-3f9475e7239a">
+    <name>Discount</name>
+    <synonym>
+      <key>en</key>
+      <value>Discount Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма скидки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma de reducere</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The discount amount for immediate-term payment. If the payment is not made within the specified period, the discount will not apply</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма предоставляемой скидки за срочность платежа. Если оплата не будет произведена в указанный период, скидка применяться не будет</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cuantumul reducerii a determinat urgența plății. Dacă plata nu este efectuată în perioada specificată, această reducere nu se va aplica</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -604,6 +640,41 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="35376ef5-55da-43f5-9ab6-56c45e81511e">
+    <name>Option</name>
+    <synonym>
+      <key>en</key>
+      <value>Payment Options</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вариант оплаты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Modalitate de plată</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.PaymentOptions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Document payment options</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вариант оплаты документа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Opțiunea de plată a documentelor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="68bb86ac-c31d-4013-ace8-a123c753cd1b">
     <name>PaymentDate</name>
     <synonym>
@@ -635,41 +706,6 @@
     <toolTip>
       <key>ro</key>
       <value>Data estimată a plății facturilor</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="35376ef5-55da-43f5-9ab6-56c45e81511e">
-    <name>Option</name>
-    <synonym>
-      <key>en</key>
-      <value>Payment Options</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Вариант оплаты</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Modalitate de plată</value>
-    </synonym>
-    <type>
-      <types>CatalogRef.PaymentOptions</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Document payment options</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Вариант оплаты документа</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Opțiunea de plată a documentelor</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>

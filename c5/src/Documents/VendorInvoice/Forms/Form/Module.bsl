@@ -26,9 +26,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	updateBalanceDue ();
 	readItemsPurchase ();
 	readServicesPurchase ();
-	InvoiceForm.SetLocalCurrency ( ThisObject );
-	InvoiceForm.SetContractCurrency ( ThisObject );
-	InvoiceForm.SetCurrencyList ( ThisObject );
+	initCurrency ();
 	setSocial ();
 	Appearance.Apply ( ThisObject );
 	
@@ -124,6 +122,15 @@ Procedure fillServicesPurchase ( Fields )
 EndProcedure
 
 &AtServer
+Procedure initCurrency ()
+	
+	InvoiceForm.SetLocalCurrency ( ThisObject );
+	InvoiceForm.SetContractCurrency ( ThisObject );
+	InvoiceForm.SetCurrencyList ( ThisObject );
+	
+EndProcedure
+
+&AtServer
 Procedure setSocial () 
 
 	UseSocial = findSocial ( Object.Items );
@@ -149,8 +156,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		Base = Parameters.Basis;
-		InvoiceForm.SetLocalCurrency ( ThisObject );
-		InvoiceForm.SetCurrencyList ( ThisObject );
+		initCurrency ();
 		if ( Base = undefined ) then
 			Copy = not Parameters.CopyingValue.IsEmpty ();
 			fillNew ();
@@ -196,6 +202,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )
@@ -283,17 +291,25 @@ EndProcedure
 &AtServer
 Procedure applyContract ()
 	
-	data = DF.Values ( Object.Contract, "VendorPrices, Currency, Import, VendorAdvances" );
+	data = DF.Values ( Object.Contract,
+		"VendorPrices, Currency, Import, VendorAdvances, VendorRateType, VendorRate, VendorFactor" );
 	ContractCurrency = data.Currency;
-	Object.Currency = ContractCurrency;
+	if ( data.VendorRateType = Enums.CurrencyRates.Fixed
+		and data.VendorRate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.VendorRate, data.VendorFactor );
+	else
+		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	endif;
 	Object.CloseAdvances = data.VendorAdvances;
-	Object.Prices = data.VendorPrices;
-	Object.Import = data.Import;
-	currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
+	Object.Currency = ContractCurrency;
+	Object.Prices = data.VendorPrices;
+	Object.Import = data.Import;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	updateContent ();
+	updateTotals ( ThisObject );
+	updateBalanceDue ();
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	
 EndProcedure
@@ -418,7 +434,9 @@ Procedure sqlPurchaseOrder ()
 	
 	s = "
 	|// @Fields
-	|select Documents.Company as Company, Documents.Contract as Contract, Documents.Currency as Currency,
+	|select Documents.Company as Company, Documents.Contract as Contract,
+	|	Documents.Contract.Currency as ContractCurrency, Documents.Contract.VendorRateType as RateType,
+	|	Documents.Rate as Rate, Documents.Factor as Factor, Documents.Currency as Currency,
 	|	Documents.Vendor as Vendor, Documents.Prices as Prices, Documents.VATUse as VATUse,
 	|	Documents.Warehouse as Warehouse, Documents.Department as Department,
 	|	Documents.Contract.Import as Import, Documents.Contract.VendorAdvances as CloseAdvances
@@ -432,14 +450,18 @@ EndProcedure
 &AtServer
 Procedure headerByPurchaseOrder ()
 	
-	FillPropertyValues ( Object, Env.Fields );
+	fields = Env.Fields;
+	FillPropertyValues ( Object, fields );
 	Object.PurchaseOrder = Base;
-	data = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountTaken, AdvanceGiven" );
+	ContractCurrency = fields.ContractCurrency;
+	if ( fields.RateType = Enums.CurrencyRates.Current ) then
+		currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+		Object.Rate = currency.Rate;
+		Object.Factor = currency.Factor;
+	endif;
+	data = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountTaken" );
 	Object.VendorAccount = data.VendorAccount;
 	Object.DiscountAccount = data.DiscountTaken;
-	currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
-	Object.Rate = currency.Rate;
-	Object.Factor = currency.Factor;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure 
@@ -654,6 +676,15 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	object.Amount = amount;
 	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
 	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
+	if ( Form.ContractCurrency = object.Currency ) then
+		object.ContractAmount = amount;
+	else
+		if ( object.Currency = Form.LocalCurrency) then
+			object.ContractAmount = amount / object.Rate * object.Factor;
+		else
+			object.ContractAmount = amount * object.Rate / object.Factor;
+		endif; 
+	endif; 
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
 	
@@ -1059,7 +1090,6 @@ EndProcedure
 Procedure VendorOnChange ( Item )
 	
 	applyVendor ();
-	updateTotals ( ThisObject );
 
 EndProcedure
 
@@ -1067,7 +1097,6 @@ EndProcedure
 Procedure ContractOnChange ( Item )
 	
 	applyContract ();
-	updateTotals ( ThisObject );
 
 EndProcedure
 

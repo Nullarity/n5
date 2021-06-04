@@ -1,22 +1,24 @@
 ﻿// Create a contract in USD with fixed currency 15 lei
-// Create a SO in MDL then receive a payment in MDL
-// Create the first Invoice in MDL for 50% amount and check SO status
-// Create the second Invoice right from SO and check totals
+// Create a PO in MDL then receive a payment in MDL
+// Create the first Vendor Invoice in MDL for 50% amount and check PO status
+// Create the second Vendor Invoice right from PO and check totals
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A00E" );
+id = Call ( "Common.ScenarioID", "A00I" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
 
-#region newSalesOrder
-Commando("e1cib/list/Document.SalesOrder");
-Clear("#StatusFilter");
+goto ~1;
+
+#region newPurchaseOrder
+Commando("e1cib/list/Document.PurchaseOrder");
+Clear("#WarehouseFilter");
 Click("#FormCreate");
 With();
-Put ( "#Customer", this.Customer );
+Put ( "#Vendor", this.Vendor );
 Put ( "#Currency", "MDL" );
 Check("#Rate", 15);
 Put ( "#Memo", id );
@@ -27,30 +29,19 @@ Set ( "!ItemsItem", this.Item, Items );
 Set ( "!ItemsQuantityPkg", 20, Items );
 Set ( "!ItemsPrice", 10, Items );
 
-Click("#FormSendForApproval");
-With();
-Click ( "!Button0" );
+Click("#FormPostAndClose");
 #endregion
 
-#region approveSO
-With();
-Click ( "!FormChange" );
+#region payPO
 With ();
-Click ( "!FormCompleteApproval" );
-With ();
-Click ( "!Button0" );
-#endregion
-
-#region paySO
-With ();
-Click ( "#FormDocumentPaymentCreateBasedOn" );
+Click ( "#FormDocumentVendorPaymentCreateBasedOn" );
 With ();
 Click ( "!FormPostAndClose" );
 #endregion
 
 #region firstInvoice50percent
-Commando("e1cib/command/Document.Invoice.Create");
-Set("#Customer", this.Customer);
+Commando("e1cib/command/Document.VendorInvoice.Create");
+Set("#Vendor", this.Vendor);
 Next ();
 Items = Get ( "!ItemsTable" );
 Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
@@ -66,8 +57,10 @@ Set ( "!ItemsQuantityPkg", 10, Items );
 Click ( "!FormPostAndClose" );
 #endregion
 
+~1:
+
 #region checkShippingPercent
-Call("Documents.SalesOrder.ListByMemo", id);
+Call("Documents.PurchaseOrder.ListByMemo", id);
 With();
 Check("#List / #ShippedPercent", "50%");
 #endregion
@@ -79,7 +72,7 @@ Check("#BalanceDue", 0);
 #endregion
 
 #region secondInvoice50percent
-Click("#FormInvoice");
+Click("#FormVendorInvoice");
 With();
 Check ( "#ContractAmount", 6.67 );
 Check ( "#PaymentsApplied", 6.66 );
@@ -94,7 +87,6 @@ Procedure getEnv ()
 
 	id = this.ID;
 	this.Insert ( "Vendor", "Vendor " + id );
-	this.Insert ( "Customer", "Customer " + id );
 	this.Insert ( "Item", "Item " + id );
 
 EndProcedure
@@ -106,19 +98,13 @@ Procedure createEnv ()
 		return;
 	endif;
 
-	#region createCustomer
-	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
-	p.Description = this.Customer;
+	#region createVendor
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = this.Vendor;
 	p.Terms = "Due on receipt";
 	p.Currency = "USD";
 	p.RateType = "Fixed";
 	p.Rate = 15;
-	Call ( "Catalogs.Organizations.CreateCustomer", p );
-	#endregion
-
-	#region createVendor
-	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
-	p.Description = this.Vendor;
 	Call ( "Catalogs.Organizations.CreateVendor", p );
 	#endregion
 
@@ -128,18 +114,6 @@ Procedure createEnv ()
 	p.Unit = "UT";
 	p.Capacity = 1;
 	Call ( "Catalogs.Items.Create", p );
-	#endregion
-
-	#region CreateVI
-	Commando("e1cib/command/Document.VendorInvoice.Create");
-	Set ( "!Vendor", this.Vendor );
-	Items = Get ( "!ItemsTable" );
-	Click ( "!ItemsTableAdd" );
-	Items.EndEditRow ();
-	Set ( "!ItemsItem", this.Item, Items );
-	Set ( "!ItemsQuantityPkg", 1000, Items );
-	Set ( "!ItemsPrice", 3, Items );
-	Click ( "!FormPostAndClose" );
 	#endregion
 
 	RegisterEnvironment ( id );

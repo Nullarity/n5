@@ -23,9 +23,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	InvoiceRecords.Read ( ThisObject );
-	InvoiceForm.SetLocalCurrency ( ThisObject );
-	InvoiceForm.SetContractCurrency ( ThisObject );
-	InvoiceForm.SetCurrencyList ( ThisObject );
+	initCurrency ();
 	setSocial ();
 	Appearance.Apply ( ThisObject );
 	
@@ -38,6 +36,15 @@ Procedure updateBalanceDue ()
 	InvoiceForm.CalcBalanceDue ( ThisObject );
 	Appearance.Apply ( ThisObject, "BalanceDue" );
 
+EndProcedure
+
+&AtServer
+Procedure initCurrency ()
+	
+	InvoiceForm.SetLocalCurrency ( ThisObject );
+	InvoiceForm.SetContractCurrency ( ThisObject );
+	InvoiceForm.SetCurrencyList ( ThisObject );
+	
 EndProcedure
 
 &AtServer
@@ -66,8 +73,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		Base = Parameters.Basis;
-		InvoiceForm.SetLocalCurrency ( ThisObject );
-		InvoiceForm.SetCurrencyList ( ThisObject );
+		initCurrency ();
 		if ( Base = undefined ) then
 			Copy = not Parameters.CopyingValue.IsEmpty ();
 			fillNew ();
@@ -113,6 +119,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Links show ShowLinks;
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )
@@ -198,12 +206,15 @@ Procedure applyContract ()
 	else
 		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
 	endif;
+	Object.CloseAdvances = data.CustomerAdvances;
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
 	Object.Currency = ContractCurrency;
 	Object.Prices = data.CustomerPrices;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	updateContent ();
+	updateTotals ( ThisObject );
+	updateBalanceDue ();
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 
 EndProcedure
@@ -260,7 +271,9 @@ Procedure sqlSalesOrder ()
 	s = "
 	|// @Fields
 	|select Documents.Company as Company, Documents.Contract as Contract, Documents.Currency as Currency,
-	|	Documents.Customer as Customer, Documents.Prices as Prices, Documents.VATUse as VATUse,
+	|	Documents.Contract.Currency as ContractCurrency, Documents.Contract.CustomerRateType as RateType,
+	|	Documents.Rate as Rate, Documents.Factor as Factor, Documents.Customer as Customer,
+	|	Documents.Prices as Prices, Documents.VATUse as VATUse,
 	|	Documents.Warehouse as Warehouse, Documents.Department as Department,
 	|	Documents.Contract.CustomerAdvances as CloseAdvances
 	|from Document.SalesOrder as Documents
@@ -273,15 +286,18 @@ EndProcedure
 &AtServer
 Procedure headerBySalesOrder ()
 	
-	FillPropertyValues ( Object, Env.Fields );
+	fields = Env.Fields;
+	FillPropertyValues ( Object, fields );
 	Object.SalesOrder = Base;
+	ContractCurrency = fields.ContractCurrency;
+	if ( fields.RateType = Enums.CurrencyRates.Current ) then
+		currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+		Object.Rate = currency.Rate;
+		Object.Factor = currency.Factor;
+	endif;
 	data = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven" );
 	Object.CustomerAccount = data.CustomerAccount;
 	Object.DiscountAccount = data.DiscountGiven;
-	currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
-	Object.Rate = currency.Rate;
-	Object.Factor = currency.Factor;
-	InvoiceForm.SetContractCurrency ( ThisObject );
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure 
@@ -787,8 +803,15 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
 	Forms.DeleteLastRow ( Object.Items, "Item" );
 	Forms.DeleteLastRow ( Object.Services, "Item" );
-	updateTotals ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	loadDiscounts ();
+	updateTotals ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -838,7 +861,6 @@ EndProcedure
 Procedure CustomerOnChange ( Item )
 	
 	applyCustomer ();
-	updateTotals ( ThisObject );
 
 EndProcedure
 
@@ -846,7 +868,6 @@ EndProcedure
 Procedure ContractOnChange ( Item )
 	
 	applyContract ();
-	updateTotals ( ThisObject );
 	
 EndProcedure
 

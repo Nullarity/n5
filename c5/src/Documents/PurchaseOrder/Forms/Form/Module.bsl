@@ -16,9 +16,7 @@ var Copy;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
-	InvoiceForm.SetLocalCurrency ( ThisObject );
-	InvoiceForm.SetContractCurrency ( ThisObject );
-	InvoiceForm.SetCurrencyList ( ThisObject );
+	initCurrency ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -33,12 +31,20 @@ Procedure updateBalanceDue ()
 EndProcedure
 
 &AtServer
+Procedure initCurrency ()
+	
+	InvoiceForm.SetLocalCurrency ( ThisObject );
+	InvoiceForm.SetContractCurrency ( ThisObject );
+	InvoiceForm.SetCurrencyList ( ThisObject );
+	
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( isNew () ) then
 		Copy = not Parameters.CopyingValue.IsEmpty ();
-		InvoiceForm.SetLocalCurrency ( ThisObject );
-		InvoiceForm.SetCurrencyList ( ThisObject );
+		initCurrency ();
 		DocumentForm.Init ( Object );
 		if ( Parameters.Basis = undefined ) then
 			fillNew ();
@@ -77,6 +83,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Links show ShowLinks;
+	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
+	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
 	|filled ( LocalCurrency )
 	|and filled ( ContractCurrency )
@@ -85,7 +93,7 @@ Procedure readAppearance ()
 	|PicturesPanel show PicturesEnabled;
 	|ItemsShowPictures press PicturesEnabled;
 	|VAT show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0
+	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -166,6 +174,15 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	object.Amount = amount;
 	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
 	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
+	if ( Form.ContractCurrency = object.Currency ) then
+		object.ContractAmount = amount;
+	else
+		if ( object.Currency = Form.LocalCurrency) then
+			object.ContractAmount = amount / object.Rate * object.Factor;
+		else
+			object.ContractAmount = amount * object.Rate / object.Factor;
+		endif; 
+	endif; 
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
 	

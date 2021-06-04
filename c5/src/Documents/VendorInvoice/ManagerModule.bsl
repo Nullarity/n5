@@ -113,7 +113,7 @@ Procedure sqlFields ( Env )
 	
 	s = "
 	|// @Fields
-	|select top 1 Documents.Warehouse as Warehouse, Documents.Vendor as Vendor,
+	|select top 1 Documents.Warehouse as Warehouse, Documents.Vendor as Vendor, Documents.ContractAmount as ContractAmount,
 	|	Documents.Company as Company, Documents.Contract as Contract, Documents.Currency as Currency, Documents.Contract.Currency as ContractCurrency,
 	|	Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency, Constants.AdvancesMonthly as AdvancesMonthly,
 	|	Documents.PointInTime as Timestamp, Documents.VendorAccount as VendorAccount, Lots.Ref as Lot, Documents.CloseAdvances as CloseAdvances,
