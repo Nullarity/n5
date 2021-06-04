@@ -6,12 +6,10 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A00I" );
+id = Call ( "Common.ScenarioID", "A00L" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
-
-goto ~1;
 
 #region newPurchaseOrder
 Commando("e1cib/list/Document.PurchaseOrder");
@@ -56,8 +54,6 @@ Activate ( "#ItemsTable" );
 Set ( "!ItemsQuantityPkg", 10, Items );
 Click ( "!FormPostAndClose" );
 #endregion
-
-~1:
 
 #region checkShippingPercent
 Call("Documents.PurchaseOrder.ListByMemo", id);

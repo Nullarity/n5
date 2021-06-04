@@ -1,15 +1,17 @@
-﻿// Create a contract in USD with fixed currency 15 lei
-// Create a SO in MDL then receive a payment in MDL
-// Create the first Invoice in MDL for 50% amount and check SO status
-// Create the second Invoice right from SO and check totals
+﻿// Create SO with 2% for early payment
+// Receive a 100% prepayment
+// Sell items and check if reverse transactions come up
+// Check Record Invoice with negative amount for discount
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A00J" );
+id = Call ( "Common.ScenarioID", "A00M" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
+
+//goto ~1;
 
 #region newSalesOrder
 Commando("e1cib/list/Document.SalesOrder");
@@ -17,8 +19,6 @@ Clear("#StatusFilter");
 Click("#FormCreate");
 With();
 Put ( "#Customer", this.Customer );
-Put ( "#Currency", "MDL" );
-Check("#Rate", 15);
 Put ( "#Memo", id );
 Items = Get ( "!ItemsTable" );
 Click ( "!ItemsTableAdd" );
@@ -48,42 +48,21 @@ With ();
 Click ( "!FormPostAndClose" );
 #endregion
 
-#region firstInvoice50percent
-Commando("e1cib/command/Document.Invoice.Create");
-Set("#Customer", this.Customer);
-Next ();
-Items = Get ( "!ItemsTable" );
-Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
-Check ( "#PaymentsApplied", 13.33 );
-Check("#Currency", "USD");
-Check("#Rate", 15);
-Put("#Currency", "MDL");
-Check ( "#ContractAmount", 13.33 );
-Check ( "#PaymentsApplied", 13.33 );
-Check ( "#BalanceDue", 0 );
-Activate ( "#ItemsTable" );
-Set ( "!ItemsQuantityPkg", 10, Items );
-Click ( "!FormPostAndClose" );
-#endregion
+~1:
 
-#region checkShippingPercent
-Call("Documents.SalesOrder.ListByMemo", id);
+#region sell
+Call("Documents.Invoice.ListByMemo", id);
 With();
-Check("#List / #ShippedPercent", "50%");
-#endregion
-
-#region checkBalanceDue
-Click("#FormChange");
-With();
-Check("#BalanceDue", 0);
-#endregion
-
-#region secondInvoice50percent
-Click("#FormInvoice");
-With();
-Check ( "#ContractAmount", 6.67 );
-Check ( "#PaymentsApplied", 6.66 );
-Check ( "#BalanceDue", 0.01 );
+if (Call("Table.Count", Get("#List"))) then
+	Click("#FormChange");
+	With();
+else
+	Commando("e1cib/command/Document.Invoice.Create");
+	Set("#Customer", this.Customer);
+	Set("#Memo", id);
+endif;
+Click ( "#FormPost" );
+Click("#FormReportRecordsShow");
 #endregion
 
 // *************************
@@ -109,10 +88,6 @@ Procedure createEnv ()
 	#region createCustomer
 	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
 	p.Description = this.Customer;
-	p.Terms = "Due on receipt";
-	p.Currency = "USD";
-	p.RateType = "Fixed";
-	p.Rate = 15;
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
 
