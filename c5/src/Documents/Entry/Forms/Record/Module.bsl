@@ -57,7 +57,7 @@ EndProcedure
 &AtClient
 Procedure activateAccount ()
 	
-	if ( Parameters.NewRow ) then
+	if ( Parameters.row ) then
 		return;
 	endif;
 	if ( not AccountDr.IsEmpty ()

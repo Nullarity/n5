@@ -21,9 +21,9 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|PageFields unlock TableRow.Edit;
-	|PageFields show TableRow.Edit or not NewRow;
-	|Employee unlock TableRow.Edit or NewRow;
-	|PageInfo show not TableRow.Edit and NewRow
+	|PageFields show TableRow.Edit or not row;
+	|Employee unlock TableRow.Edit or row;
+	|PageInfo show not TableRow.Edit and row
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -33,7 +33,7 @@ EndProcedure
 Procedure loadParams ()
 	
 	Object.Company = Parameters.Company;
-	NewRow = Parameters.NewRow;
+	NewRow = Parameters.row;
 	ReadOnly = Parameters.ReadOnly;
 	
 EndProcedure 
@@ -72,7 +72,7 @@ Procedure pickValue ( Operation, Value )
 	SelectedValue = new Structure ();
 	SelectedValue.Insert ( "Operation", Operation );
 	SelectedValue.Insert ( "Value", Value );
-	SelectedValue.Insert ( "NewRow", Parameters.NewRow );
+	SelectedValue.Insert ( "row", Parameters.NewRow );
 	#if ( WebClient ) then
 		// Bug workaround 8.3.14.1592. NotifyChoice () will not close the form.
 		// Idle handler is required

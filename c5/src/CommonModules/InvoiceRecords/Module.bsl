@@ -221,6 +221,8 @@ Procedure fillByInvoice ( Env, Object, Base )
 	fillHeader ( Env, Object );
 	fillItems ( Env, Object );
 	fillServices ( Env, Object );
+	fillDiscounts ( Env, Object );
+	fixTotals ( Object );
 
 EndProcedure
 
@@ -230,6 +232,7 @@ Procedure getDataInvoice ( Env, Base )
 	sqlFieldsInvoice ( Env );
 	sqlItems ( Env );
 	sqlServices ( Env );
+	sqlDiscounts ( Env );
 	getTables ( Env, Base );
 
 EndProcedure
@@ -276,6 +279,20 @@ Procedure sqlServices ( Env )
 EndProcedure
 
 &AtServer
+Procedure sqlDiscounts ( Env )
+	
+	s = "
+	|// #Discounts
+	|select Discounts.Item as Item, Discounts.SalesOrder as SalesOrder, Discounts.VATCode as VATCode,
+	|	Discounts.VATRate as VATRate, Discounts.Amount as Amount, Discounts.VAT as VAT
+	|from Document.Invoice.Discounts as Discounts
+	|where Discounts.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
+&AtServer
 Procedure fillServices ( Env, Object ) 
 
 	services = Object.Services;
@@ -285,6 +302,30 @@ Procedure fillServices ( Env, Object )
 		FillPropertyValues ( newRow, row );
 	enddo;
 
+EndProcedure
+
+&AtServer
+Procedure fillDiscounts ( Env, Object ) 
+
+	discounts = Object.Discounts;
+	discounts.Clear ();
+	for each row in Env.Discounts do
+		newRow = discounts.Add ();
+		FillPropertyValues ( newRow, row );
+	enddo;
+
+EndProcedure
+
+&AtServer
+Procedure fixTotals ( Object )
+	
+	discounts = Object.Discounts;
+	total = discounts.Total ( "Amount" );
+	vat = discounts.Total ( "VAT" );
+	amount = total - vat;
+	Object.Amount = Object.Amount - ? ( Object.VATUse = 1, total, amount );
+	Object.VAT = Object.VAT - vat;
+	
 EndProcedure
 
 &AtServer

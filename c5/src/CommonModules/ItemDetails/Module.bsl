@@ -22,12 +22,13 @@ Function getTable ()
 	
 EndFunction
 
-Function GetKey ( Env, Item, Package = undefined, Feature, Series = undefined, Warehouse = undefined, Account = undefined ) export
+Function GetKey ( Env, Item, Package = undefined, Feature = undefined, Series = undefined,
+	Warehouse = undefined, Account = undefined ) export
 	
 	details = new Structure ( "Item, Package, Feature, Series, Warehouse, Account" );
 	details.Item = Item;
 	details.Package = ? ( Package = undefined, Catalogs.Packages.EmptyRef (), Package );
-	details.Feature = Feature;
+	details.Feature = ? ( Feature = undefined, Catalogs.Features.EmptyRef (), Feature );
 	details.Series = Series;
 	details.Warehouse = Warehouse;
 	details.Account = Account;

@@ -45,3 +45,9 @@ Function AccountsName () export
 	return Constants.AccountsPresentation.Get () = Enums.Presentation.Name;
 	
 EndFunction 
+
+Function Discounts () export
+	
+	return Constants.Discounts.Get ();
+	
+EndFunction 

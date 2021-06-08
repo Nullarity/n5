@@ -6,12 +6,10 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A00M" );
+id = Call ( "Common.ScenarioID", "A014" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
-
-//goto ~1;
 
 #region newSalesOrder
 Commando("e1cib/list/Document.SalesOrder");
@@ -24,8 +22,9 @@ Items = Get ( "!ItemsTable" );
 Click ( "!ItemsTableAdd" );
 Items.EndEditRow ();
 Set ( "!ItemsItem", this.Item, Items );
-Set ( "!ItemsQuantityPkg", 20, Items );
+Set ( "!ItemsQuantityPkg", 40, Items );
 Set ( "!ItemsPrice", 10, Items );
+Click ( "!ItemsTableAdd" );
 
 Click("#FormSendForApproval");
 With();
@@ -48,8 +47,6 @@ With ();
 Click ( "!FormPostAndClose" );
 #endregion
 
-~1:
-
 #region sell
 Call("Documents.Invoice.ListByMemo", id);
 With();
@@ -62,7 +59,25 @@ else
 	Set("#Memo", id);
 endif;
 Click ( "#FormPost" );
+Check("#Benefit", 8);
+Check("#PaymentsApplied", 392);
+Check("#BalanceDue", 0);
 Click("#FormReportRecordsShow");
+With ();
+CheckTemplate ( "#TabDoc" );
+#endregion
+
+#region vatRecord
+Close();
+With();
+Click("#NewInvoiceRecord");
+With();
+Check("#VAT", 65.34);
+Check("#Amount", 392);
+Set("#Number", Call("Common.GetID"));
+Click("#FormPrint");
+With();
+Call("Documents.SalesOrder.CheckInvoiceRecordWithPaymentDiscount");
 #endregion
 
 // *************************

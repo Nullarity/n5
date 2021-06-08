@@ -47,7 +47,7 @@ Procedure loadData ()
 	Object.Date = owner.Date;
 	TableRow = Object.Employees.Add ();
 	FillPropertyValues ( TableRow, FormOwner.Items.Employees.CurrentData );
-	if ( Parameters.NewRow ) then
+	if ( Parameters.row ) then
 		TableRow.Date = Object.Date;
 	else
 		table = Object.Additions;

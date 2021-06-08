@@ -318,7 +318,7 @@ EndProcedure
 Procedure updateContent ()
 	
 	reloadTables ();
-	loadDiscounts ();
+	DiscountsTable.Load ( Object );
 	InvoiceForm.SetPayment ( Object );
 	
 EndProcedure 
@@ -399,6 +399,7 @@ Procedure applyVATUse ()
 	for each row in Object.Accounts do
 		Computations.Total ( row, vatUse );
 	enddo;
+	DiscountsTable.RecalcVAT ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure
@@ -414,7 +415,7 @@ Procedure fillByPurchaseOrder ()
 	headerByPurchaseOrder ();
 	table = FillerSrv.GetData ( fillingParams ( "PurchaseOrderItems", Object.PurchaseOrder ) );
 	loadPurchaseOrders ( table );
-	loadDiscounts ();
+	DiscountsTable.Load ( Object );
 	updateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	
@@ -640,13 +641,6 @@ Procedure loadSalesOrders ( Table )
 		docRow.DocumentOrder = row.SalesOrder;
 		docRow.DocumentOrderRowKey = row.RowKey;
 	enddo; 
-	
-EndProcedure 
-
-&AtServer
-Procedure loadDiscounts ()
-	
-	InvoiceForm.SetDiscounts ( Object );
 	
 EndProcedure 
 
@@ -987,7 +981,7 @@ Procedure loadRow ( Params, Table )
 	
 	value = Params.Value;
 	if ( value = undefined ) then
-		if ( Params.NewRow ) then
+		if ( Params.row ) then
 			Object [ Table.Name ].Delete ( Table.CurrentData );
 		endif;
 	else
@@ -1022,7 +1016,7 @@ Procedure editRow ( Table, NewRow = false )
 	endif; 
 	p = new Structure ();
 	p.Insert ( "Company", Object.Company );
-	p.Insert ( "NewRow", NewRow );
+	p.Insert ( "row", NewRow );
 	if ( Table = Items.FixedAssets ) then
 		form = "Document.VendorInvoice.Form.FixedAsset";
 	else
@@ -1203,7 +1197,7 @@ Function fillTables ( val Result, val Report )
 	meta = Metadata.Reports;
 	if ( Report = meta.PurchaseOrderItems.Name ) then
 		loadPurchaseOrders ( table );
-		loadDiscounts ();
+		DiscountsTable.Load ( Object );
 	elsif ( Report = meta.InternalOrders.Name ) then
 		loadInternalOrders ( table );
 	elsif ( Report = meta.SalesOrderItems.Name ) then
@@ -2143,8 +2137,59 @@ EndProcedure
 &AtClient
 Procedure RefreshDiscounts ( Command )
 	
-	loadDiscounts ();
+	updateDiscounts ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateDiscounts ()
+	
+	DiscountsTable.Load ( Object );
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+	
+	Cancel = true;
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsOnEditEnd ( Item, NewRow, CancelEdit )
+
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsAfterDeleteRow ( Item )
+	
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsItemOnChange ( Item )
+	
+	DiscountsTable.ApplyItem ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure DiscountsVATCodeOnChange ( Item )
+	
+	DiscountsTable.SetRate ( ThisObject );
+	DiscountsTable.CalcVAT ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsAmountOnChange ( Item )
+	
+	DiscountsTable.CalcVAT ( ThisObject );
+
 EndProcedure
 
 // *****************************************

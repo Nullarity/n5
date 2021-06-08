@@ -27,6 +27,9 @@ Function Post ( Env ) export
 	if ( invalidRows ( Env ) ) then
 		return false;
 	endif; 
+	if ( not applyDiscount ( Env ) ) then
+		return false;
+	endif;
 	makeValues ( Env );
 	if ( not distributeExpenses ( Env ) ) then
 		return false;
@@ -35,6 +38,7 @@ Function Post ( Env ) export
 	makeFixedAssets ( Env );
 	makeIntangibleAssets ( Env );
 	makeAccounts ( Env );
+	makeDiscounts ( Env );
 	commitVAT ( Env );
 	makeInternalOrders ( Env );
 	makeReserves ( Env );
@@ -78,6 +82,7 @@ Function getData ( Env )
 	sqlFixedAssets ( Env );
 	sqlIntangibleAssets ( Env );
 	sqlAccounts ( Env );
+	sqlDiscounts ( Env );
 	sqlReserves ( Env );
 	sqlVAT ( Env );
 	sqlContractAmount ( Env );
@@ -127,7 +132,7 @@ Procedure sqlFields ( Env )
 	|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 	|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey, Documents.Import as Import,
 	|	isnull ( Distribution.Exist, false ) as DistributionExists, isnull ( Forms.Exists, false ) as Forms,
-	|	isnull ( PaymentDiscounts.Discount, 0 ) as PaymentDiscount, Documents.DiscountAccount as DiscountAccount
+	|	isnull ( PaymentDiscounts.Amount, 0 ) as PaymentDiscount, Documents.DiscountAccount as DiscountAccount
 	|from Document.VendorInvoice as Documents
 	|	//
 	|	// Lots
@@ -143,7 +148,7 @@ Procedure sqlFields ( Env )
 	|	//
 	|	// Payment discounts
 	|	//
-	|	left join ( select sum ( Discount ) from Document.VendorInvoice.Discounts where Ref = &Ref ) as PaymentDiscounts
+	|	left join ( select sum ( Amount ) from Document.VendorInvoice.Discounts where Ref = &Ref ) as PaymentDiscounts
 	|	on true
 	|	//
 	|	// Constants
@@ -267,7 +272,7 @@ Procedure sqlItems ( Env )
 	amount = Env.AmountFields;
 	s = "
 	|select ""Items"" as Table, Items.LineNumber as LineNumber, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Quantity as Quantity, Items.DiscountRate as DiscountRate,
+	|	Items.Quantity as Quantity, Items.DiscountRate as DiscountRate, Items.VATCode as VATCode,
 	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as QuantityPkg,
 	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package,
 	|	case when ( Items.Warehouse = value ( Catalog.Warehouses.EmptyRef ) ) then &Warehouse else Items.Warehouse end as Warehouse, Items.RowKey as RowKey,
@@ -282,8 +287,9 @@ Procedure sqlItems ( Env )
 	|index by Items.Item, Items.Feature, Items.Series, Items.RowKey, Items.DocumentOrder, Items.DocumentOrderRowKey
 	|;
 	|select ""Services"" as Table, Services.LineNumber as LineNumber, Services.Item as Item, Services.Feature as Feature,
-	|	Services.RowKey as RowKey, Services.Quantity as Quantity, Services.DiscountRate as DiscountRate, Services.Description as Description,
-	|	Services.Account as Account, Services.Expense as Expense, Services.Department as Department, Services.Product as Product,
+	|	Services.VATCode as VATCode, Services.RowKey as RowKey, Services.Quantity as Quantity,
+	|	Services.DiscountRate as DiscountRate, Services.Description as Description, Services.Account as Account,
+	|	Services.Expense as Expense, Services.Department as Department, Services.Product as Product,
 	|	Services.ProductFeature as ProductFeature, Services.DocumentOrder as DocumentOrder, Services.DocumentOrderRowKey as DocumentOrderRowKey,
 	|	case when Services.PurchaseOrder = value ( Document.PurchaseOrder.EmptyRef ) then Services.Ref.PurchaseOrder else Services.PurchaseOrder end as PurchaseOrder,
 	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount, " + amount.Total + " as Total,
@@ -372,6 +378,43 @@ Procedure sqlAccounts ( Env )
 	|	Accounts.Quantity as Quantity, Accounts.Dim1 as Dim1, Accounts.Dim2 as Dim2, Accounts.Dim3 as Dim3,
 	|	Accounts.Amount as Amount, Accounts.ContractAmount as ContractAmount, Accounts.ContractVAT as ContractVAT
 	|from Accounts as Accounts
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure sqlDiscounts ( Env )
+	
+	vat = "VAT";
+	amount = "( Amount - VAT )";
+	fields = Env.Fields;
+	if ( fields.ContractCurrency <> fields.LocalCurrency ) then
+		vat = vat + " * &Rate / &Factor";
+		amount = amount + " * &Rate / &Factor";
+	endif; 
+	s = "
+	|select Discounts.PurchaseOrder as PurchaseOrder, Discounts.Item as Item, Discounts.VATCode as VATCode,
+	|	Discounts.VATAccount as VATAccount, Discounts.Income as Income, Details.ItemKey as ItemKey,
+	|	Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount, Discounts.Amount as Total, "
+	+ amount + " as Amount,"
+	+ vat + " as VAT"
+	+ "
+	|into Discounts
+	|from Document.VendorInvoice.Discounts as Discounts
+	|	//
+	|	// Details
+	|	//
+	|	left join InformationRegister.ItemDetails as Details
+	|	on Details.Item = Discounts.Item
+	|	and Details.Package = value ( Catalog.Packages.EmptyRef )
+	|	and Details.Feature = value ( Catalog.Features.EmptyRef )
+	|	and Details.Series = value ( Catalog.Series.EmptyRef )
+	|	and Details.Warehouse = value ( Catalog.Warehouses.EmptyRef )
+	|	and Details.Account = value ( ChartOfAccounts.General.EmptyRef )
+	|where Discounts.Ref = &Ref
+	|;
+	|// #Discounts
+	|select * from Discounts
 	|";
 	Env.Selection.Add ( s );
 	
@@ -477,11 +520,11 @@ EndProcedure
 Procedure sqlCost ( Env )
 	
 	s = "
-	|// ^Cost
+	|// #Cost
 	|select Items.Item as Item, Items.Item.CostMethod as CostMethod, Items.Package as Package, Items.Feature as Feature,
 	|	Items.Series as Series, Items.Warehouse as Warehouse, Items.Account as Account, Details.ItemKey as Itemkey,
 	|	Items.QuantityPkg as Quantity, Items.Quantity as Units, Items.Amount as Amount,
-	|	Items.ContractAmount as ContractAmount
+	|	Items.ContractAmount as ContractAmount, Items.VATCode as VATCode
 	|from Items as Items
 	|	//
 	|	// Details
@@ -618,10 +661,10 @@ Procedure sqlExpenses ( Env )
 		flag = "false";
 	endif; 
 	s = "
-	|// ^Expenses
+	|// #Expenses
 	|select Services.Item as Item, Services.Feature as Feature, Services.Account as Account, Services.Expense as Expense,
 	|	Services.Department as Department, Services.Product as Product, Services.ProductFeature as ProductFeature,
-	|	Services.Description as Description,
+	|	Services.Description as Description, Services.VATCode as VATCode,
 	|	sum ( Services.Quantity ) as Quantity, sum ( Services.Amount ) as Amount,
 	|	sum ( Services.ContractAmount ) as ContractAmount, Details.ItemKey as Itemkey,
 	|" + flag + " as Distribute
@@ -637,7 +680,7 @@ Procedure sqlExpenses ( Env )
 	|	and Details.Warehouse = value ( Catalog.Warehouses.EmptyRef )
 	|	and Details.Account = value ( ChartOfAccounts.General.EmptyRef )
 	|group by Services.Item, Services.Feature, Services.Account, Services.Expense, Services.Department,
-	|	Services.Product, Services.ProductFeature, Services.Description, Details.ItemKey, " + flag + "
+	|	Services.VATCode, Services.Product, Services.ProductFeature, Services.Description, Details.ItemKey, " + flag + "
 	|";
 	Env.Selection.Add ( s );
 	
@@ -841,26 +884,81 @@ Function invalidRows ( Env )
 	
 EndFunction
 
+Function applyDiscount ( Env )
+	
+	discounts = prepareDiscounts ( Env );
+	decreaseCost ( Env, discounts );
+	if ( discounts.Count () > 0 ) then
+		ref = Env.Ref;
+		for each row in discounts do
+			Output.CannotApplyDiscount ( new Structure ( "Discount", Conversion.NumberToMoney ( row.Amount ) ),
+				"Discounts", ref );
+		enddo;
+		return false;
+	endif;
+	return true;
+	
+EndFunction
+
+Function prepareDiscounts ( Env )
+	
+	discounts = Env.Discounts.Copy ();
+	amountType = Metadata.AccountingRegisters.General.Resources.Amount.Type;
+	CollectionsSrv.Adjust ( discounts, "Amount", amountType );
+	CollectionsSrv.Adjust ( discounts, "ContractAmount", amountType );
+	return discounts;
+	
+EndFunction
+
+Procedure decreaseCost ( Env, Discounts )
+	
+	p = new Structure ();
+	p.Insert ( "FilterColumns", "VATCode" );
+	p.Insert ( "DistribColumnsTable1", "Amount, ContractAmount" );
+	p.Insert ( "KeyColumn", "Amount" );
+	cost = Env.Cost;
+	table = CollectionsSrv.Combine ( Discounts, cost, p );
+	for each discount in table do
+		row = cost.Add ();
+		FillPropertyValues ( row, discount );
+		row.Quantity = 0;
+		row.Units = 0;
+		row.Amount = - row.Amount;
+		row.ContractAmount = - row.ContractAmount;
+	enddo;
+	if ( discounts.Count () = 0 ) then
+		return;
+	endif;
+	expenses = Env.Expenses;
+	table = CollectionsSrv.Combine ( Discounts, expenses, p );
+	for each discount in table do
+		row = expenses.Add ();
+		FillPropertyValues ( row, discount );
+		row.Quantity = 0;
+		row.Amount = - row.Amount;
+		row.ContractAmount = - row.ContractAmount;
+	enddo;
+	
+EndProcedure
+
 Procedure makeValues ( Env )
 
 	ItemDetails.Init ( Env );
-	table = SQL.Fetch ( Env, "$Cost" );
-	makeCost ( Env, table );
-	table = SQL.Fetch ( Env, "$Expenses" );
-	makeExpenses ( Env, table );
-	commitExpenses ( Env, table );
+	makeCost ( Env );
+	makeExpenses ( Env );
+	commitExpenses ( Env );
 	ItemDetails.Save ( Env );
 	
 EndProcedure
 
-Procedure makeCost ( Env, Table )
+Procedure makeCost ( Env )
 	
 	p = GeneralRecords.GetParams ();
 	recordset = Env.Registers.Cost;
 	fields = Env.Fields;
 	lot = fields.Lot;
 	date = fields.Date;
-	for each row in Table do
+	for each row in Env.Cost do
 		movement = recordset.AddReceipt ();
 		movement.Period = date;
 		if ( row.ItemKey = null ) then
@@ -912,12 +1010,12 @@ Procedure commitCost ( Env, Params, Row )
 
 EndProcedure
 
-Procedure makeExpenses ( Env, Table )
+Procedure makeExpenses ( Env )
 
 	fields = Env.Fields;
 	date = fields.Date;
 	recordset = Env.Registers.Expenses;
-	for each row in Table do
+	for each row in Env.Expenses do
 		movement = recordset.Add ();
 		movement.Period = date;
 		if ( row.ItemKey = null ) then
@@ -936,7 +1034,7 @@ Procedure makeExpenses ( Env, Table )
 	
 EndProcedure
 
-Procedure commitExpenses ( Env, Table )
+Procedure commitExpenses ( Env )
 	
 	p = GeneralRecords.GetParams ();
 	fields = Env.Fields;
@@ -948,7 +1046,7 @@ Procedure commitExpenses ( Env, Table )
 	vendor = fields.Vendor;
 	contract = fields.Contract;
 	currency = fields.ContractCurrency;
-	for each row in table do
+	for each row in Env.Expenses do
 		if ( row.Distribute ) then
 			continue;
 		endif; 
@@ -1170,7 +1268,7 @@ Procedure makeItemExpenses ( Env, Row )
 	movement.TableRow = Row.ServicesLineNumber;
 	movement.Amount = row.Amount;
 	
-EndProcedure 
+EndProcedure
 
 Procedure makeItems ( Env )
 
@@ -1518,6 +1616,7 @@ Procedure flagRegisters ( Env )
 	registers.ProducerPrices.Write = true;
 	registers.RangeLocations.Write = true;
 	registers.RangeStatuses.Write = true;
+	registers.VendorDiscounts.Write = true;
 	
 EndProcedure
 
@@ -1592,6 +1691,10 @@ Procedure sqlVAT ( Env )
 	|	select " + fields + "
 	|	from Document.VendorInvoice.Accounts as Records
 	|	where Records.Ref = &Ref
+	|	union all
+	|	select Discounts.VATAccount, sum ( - Discounts.VAT ), sum ( - Discounts.Amount )
+	|	from Discounts as Discounts
+	|	group by Discounts.VATAccount
 	|	) as Taxes
 	|group by Taxes.Account
 	|having sum ( Taxes.Amount ) > 0
@@ -1612,6 +1715,42 @@ Procedure sqlProducerPrices ( Env )
 	Env.Selection.Add ( s );
 	
 EndProcedure 
+
+Procedure makeDiscounts ( Env )
+
+	fields = Env.Fields;
+	amount = fields.PaymentDiscount;
+	if ( amount = 0 ) then
+		return;
+	endif;
+	date = fields.Date;
+	ref = Env.Ref;
+	discounts = Env.Registers.VendorDiscounts;
+	sales = Env.Registers.Sales;
+	for each row in Env.Discounts do
+		if ( row.ItemKey = null ) then
+			row.ItemKey = ItemDetails.GetKey ( Env, row.Item );
+		endif; 
+		movement = discounts.Add ();
+		movement.Period = date;
+		movement.Document = ref;
+		movement.Detail = row.PurchaseOrder;
+		movement.Amount = row.Total;
+//		movement = sales.Add ();
+//		movement.Period = date;
+//		movement.ItemKey = row.ItemKey;
+//		movement.Department = department;
+//		movement.Account = row.Income;
+//		movement.Amount = - row.Amount;
+//		movement.SalesOrder = row.SalesOrder;
+//		rowSales = salesTable.Add ();
+//		rowSales.Operation = Enums.Operations.SalesDiscount;
+//		rowSales.Income = row.Income;
+//		rowSales.Amount = - ( row.Amount - row.VAT );
+//		rowSales.ContractAmount = - row.ContractAmount;
+	enddo;
+
+EndProcedure
 
 Procedure commitVAT ( Env )
 	

@@ -186,7 +186,7 @@ Procedure makeCost ( Env, Cost )
 	movement.Quantity = 1;
 	if ( Cost = undefined ) then
 		if ( fields.ItemKey = null ) then
-			fields.ItemKey = ItemDetails.GetKey ( Env, fields.Item, Catalogs.Packages.EmptyRef (), fields.Feature, fields.Series, fields.Warehouse, fields.Account );
+			fields.ItemKey = ItemDetails.GetKey ( Env, fields.Item, , fields.Feature, fields.Series, fields.Warehouse, fields.Account );
 		endif; 
 	else
 		movement.Lot = Cost.Lot;

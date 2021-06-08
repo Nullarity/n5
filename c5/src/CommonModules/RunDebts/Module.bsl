@@ -449,7 +449,7 @@ Procedure sqlDocuments ( Env )
 		|		Services.ContractAmount + Services.ContractVAT
 		|	from Services as Services
 		|	union all
-		|	select Discounts.SalesOrder, - Discounts.Discount
+		|	select Discounts.SalesOrder, - Discounts.Amount
 		|	from Document.Invoice.Discounts as Discounts
 		|	where Discounts.Ref = &Ref
 		|) as Documents
@@ -482,7 +482,7 @@ Procedure sqlDocuments ( Env )
 		|	select undefined, Accounts.ContractAmount + Accounts.ContractVAT
 		|	from Accounts as Accounts
 		|	union all
-		|	select Discounts.PurchaseOrder, - Discounts.Discount
+		|	select Discounts.PurchaseOrder, - Discounts.Amount
 		|	from Document.VendorInvoice.Discounts as Discounts
 		|	where Discounts.Ref = &Ref
 		|) as Documents

@@ -215,7 +215,7 @@ Procedure LoadRow ( Form, Params ) export
 	
 	value = Params.Value;
 	if ( value = undefined ) then
-		if ( Params.NewRow ) then
+		if ( Params.row ) then
 			Form.Object.Compensations.Delete ( Form.TableRow );
 		endif;
 	else
@@ -265,7 +265,7 @@ Procedure EditRow ( Form, NewRow = false ) export
 	object = Form.Object;
 	p = new Structure ();
 	p.Insert ( "Company", object.Company );
-	p.Insert ( "NewRow", NewRow );
+	p.Insert ( "row", NewRow );
 	p.Insert ( "ReadOnly", object.Posted );
 	if ( isPayroll ( object ) ) then
 		name = "Document.Payroll.Form.Row";
@@ -281,7 +281,7 @@ Procedure LoadTaxRow ( Form, Params ) export
 	
 	changedRow = Params.Value;
 	if ( changedRow = undefined ) then
-		if ( Params.NewRow ) then
+		if ( Params.row ) then
 			Form.Object.Taxes.Delete ( Form.TableTaxRow );
 		endif;
 	else
@@ -313,7 +313,7 @@ Procedure EditTaxRow ( Form, NewRow = false ) export
 	object = Form.Object;
 	p = new Structure ();
 	p.Insert ( "Company", object.Company );
-	p.Insert ( "NewRow", NewRow );
+	p.Insert ( "row", NewRow );
 	p.Insert ( "ReadOnly", object.Posted );
 	if ( isPayroll ( object ) ) then
 		name = "Document.Payroll.Form.TaxRow";

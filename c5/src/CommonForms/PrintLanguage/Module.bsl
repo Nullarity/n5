@@ -83,7 +83,7 @@ Procedure saveLanguage ()
 	
 	obj = Logins.Settings ( "Ref" ).Ref.GetObject ();
 	table = obj.Print;
-	form = Enums.PrintForms [ Parameters.Form ];
+	form = Parameters.Form;
 	row = table.Find ( form, "Form" );
 	if ( row = undefined ) then
 		row = table.Add ();

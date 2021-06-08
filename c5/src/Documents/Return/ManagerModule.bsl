@@ -113,7 +113,6 @@ Procedure getFields ( Env )
 	Env.Insert ( "CostOnline", Options.CostOnline ( Env.Fields.Company ) );
 	Env.Insert ( "SalesTable", new ValueTable () );
 	table = Env.SalesTable;
-	table.Columns.Add ( "Item", new TypeDescription ( "CatalogRef.Items" ) );
 	table.Columns.Add ( "Income", new TypeDescription ( "ChartOfAccountsRef.General" ) );
 	table.Columns.Add ( "Amount", new TypeDescription ( "Number" ) );
 	table.Columns.Add ( "ContractAmount", new TypeDescription ( "Number" ) );
@@ -616,7 +615,6 @@ Procedure makeSales ( Env, Table )
 		movement.SalesOrder = row.SalesOrder;
 		if ( usual ) then
 			rowSales = sales.Add ();
-			rowSales.Item = row.Item;
 			rowSales.Income = row.Income;
 			rowSales.Amount = - row.AmountGeneral;
 			rowSales.ContractAmount = - row.ContractAmount;

@@ -130,13 +130,14 @@ Procedure readAppearance ()
 	|CreatePayment show BalanceDue <> 0;
 	|#c ServicesSalesOrder show Items.Services.CurrentData <> undefined
 	|	and filled ( Items.Services.CurrentData.SalesOrder );
-	|VAT ItemsVATAccount ServicesVATAccount show Object.VATUse > 0;
+	|VAT ItemsVATAccount ServicesVATAccount DiscountsVATAccount show Object.VATUse > 0;
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
 	|Header GroupItems GroupServices Footer Discounts GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|ItemsSelectItems ServicesSelectItems ItemsScan ItemsApplySalesOrders ServicesApplySalesOrders DiscountsRefreshDiscounts disable inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0;
+	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal
+	|	DiscountsVATCode DiscountsVAT show Object.VATUse > 0;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|#s DiscountsPage hide Mobile and Form.Object.Discounts.Count () = 0;
 	|#s ItemsApplySalesOrders hide filled ( Object.TimeEntry );
@@ -223,7 +224,7 @@ EndProcedure
 Procedure updateContent ()
 	
 	reloadTables ();
-	loadDiscounts ();
+	DiscountsTable.Load ( Object );
 	InvoiceForm.SetPayment ( Object );
 	
 EndProcedure 
@@ -249,7 +250,7 @@ Procedure fillBySaleOrder ()
 	headerBySalesOrder ();
 	table = FillerSrv.GetData ( fillingParams () );
 	loadSalesOrders ( table, true );
-	loadDiscounts ();
+	DiscountsTable.Load ( Object );
 	updateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	
@@ -376,13 +377,6 @@ Procedure loadSalesOrders ( Table, Clean )
 			docRow.SalesOrder = undefined;
 		endif; 
 	enddo; 
-	
-EndProcedure 
-
-&AtServer
-Procedure loadDiscounts ()
-	
-	InvoiceForm.SetDiscounts ( Object );
 	
 EndProcedure 
 
@@ -809,7 +803,6 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	loadDiscounts ();
 	updateTotals ( ThisObject );
 
 EndProcedure
@@ -960,6 +953,7 @@ Procedure applyVATUse ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
+	DiscountsTable.RecalcVAT ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure
@@ -1016,7 +1010,7 @@ Function fillTables ( val Result, val Source )
 	else
 		loadSalesOrders ( table, Result.ClearTable );
 	endif;
-	loadDiscounts ();
+	DiscountsTable.Load ( Object );
 	updateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	return true;
@@ -1467,6 +1461,57 @@ EndProcedure
 &AtClient
 Procedure RefreshDiscounts ( Command )
 	
-	loadDiscounts ();
+	updateDiscounts ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateDiscounts ()
+	
+	DiscountsTable.Load ( Object );
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+	
+	Cancel = true;
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsOnEditEnd ( Item, NewRow, CancelEdit )
+
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsAfterDeleteRow ( Item )
+	
+	updateBalanceDue ();
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsItemOnChange ( Item )
+	
+	DiscountsTable.ApplyItem ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure DiscountsVATCodeOnChange ( Item )
+	
+	DiscountsTable.SetRate ( ThisObject );
+	DiscountsTable.CalcVAT ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsAmountOnChange ( Item )
+	
+	DiscountsTable.CalcVAT ( ThisObject );
+
 EndProcedure

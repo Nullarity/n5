@@ -161,32 +161,38 @@ Procedure sqlItems(Env)
 	amount = total + " - " + vat;
 	producerPrice = amountFields.ProducerPrice;
 	s = "
-		|// #Items
-		|select case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Capacity else """" end as Capacity,
-		|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
-		|	Items.QuantityPkg as Quantity,
-		|	case when Items.Item refs Catalog.Items then
-		|		( case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end * Items.Item.Weight ) / 1000
-		|		when Items.Item refs Catalog.FixedAssets then ( Items.Quantity * Items.Item.Weight ) / 1000
-		|		else 0
-		|	end as Weight, " + total + " as Total, " + vat + " as VAT, 
-		|	case 
-		|		when case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end = 0 then " + amount + "
-		|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
-		|	end as Price, " + amount + " as Amount, 
-		|	case when Items.Item refs Catalog.Items then isnull ( Items.Feature.Description, """" ) else """" end as Feature,
-		|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
-		|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge, Items.Item.OfficialCode as OfficialCode
-		|from Document.InvoiceRecord.Items as Items
-		|where Items.Ref = &Ref 
-		|union all
-		|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
-		|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
-		|	" + amount + ", isnull ( Services.Feature.Description, """" ), Services.Description,
-		|	Services.VATRate, false, Services.OtherInfo, false, 0, 0, """"
-		|from Document.InvoiceRecord.Services as Services
-		|where Services.Ref = &Ref 
-		|";
+	|// #Items
+	|select case when Items.Item refs Catalog.Items and Items.Item.CountPackages then Items.Capacity else """" end as Capacity,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|	Items.QuantityPkg as Quantity,
+	|	case when Items.Item refs Catalog.Items then
+	|		( case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end * Items.Item.Weight ) / 1000
+	|		when Items.Item refs Catalog.FixedAssets then ( Items.Quantity * Items.Item.Weight ) / 1000
+	|		else 0
+	|	end as Weight, " + total + " as Total, " + vat + " as VAT, 
+	|	case 
+	|		when case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end = 0 then " + amount + "
+	|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
+	|	end as Price, " + amount + " as Amount, 
+	|	case when Items.Item refs Catalog.Items then isnull ( Items.Feature.Description, """" ) else """" end as Feature,
+	|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
+	|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge, Items.Item.OfficialCode as OfficialCode
+	|from Document.InvoiceRecord.Items as Items
+	|where Items.Ref = &Ref 
+	|union all
+	|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
+	|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
+	|	" + amount + ", isnull ( Services.Feature.Description, """" ), Services.Description,
+	|	Services.VATRate, false, Services.OtherInfo, false, 0, 0, """"
+	|from Document.InvoiceRecord.Services as Services
+	|where Services.Ref = &Ref 
+	|union all
+	|select """", """", 0, 0, - Discounts.Amount * &Rate / &Factor, - Discounts.VAT * &Rate / &Factor, 0, 
+	|	- ( Discounts.Amount - Discounts.VAT ) * &Rate / &Factor, """", Discounts.Item.FullDescription,
+	|	Discounts.VATRate, false, """", false, 0, 0, """"
+	|from Document.InvoiceRecord.Discounts as Discounts
+	|where Discounts.Ref = &Ref 
+	|";
 	Env.Selection.Add(s);
 	
 EndProcedure

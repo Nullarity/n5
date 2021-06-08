@@ -1,11 +1,11 @@
-// Create Payment
+﻿// Create Payment
 // Create Invoice base on payment
 // Check if invoice has been applied prepayment
 
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "2BD21C8"));
+this.Insert("ID", Call("Common.ScenarioID", "A00V"));
 getEnv();
 createEnv();
 

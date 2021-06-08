@@ -534,7 +534,7 @@ Procedure loadRow ( Params, Table )
 	
 	value = Params.Value;
 	if ( value = undefined ) then
-		if ( Params.NewRow ) then
+		if ( Params.row ) then
 			Object [ Table.Name ].Delete ( Table.CurrentData );
 		endif;
 	else
@@ -569,7 +569,7 @@ Procedure editRow ( Table, NewRow = false )
 	endif; 
 	p = new Structure ();
 	p.Insert ( "Company", Object.Company );
-	p.Insert ( "NewRow", NewRow );
+	p.Insert ( "row", NewRow );
 	if ( Table = Items.FixedAssets ) then
 		form = "Document.ExpenseReport.Form.FixedAsset";
 	else

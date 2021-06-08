@@ -6771,3 +6771,11 @@ Procedure SelectFile ( Module = undefined, CallbackParams = undefined, Params = 
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
 
 EndProcedure
+
+&AtServer
+Procedure CannotApplyDiscount ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Can''t apply the discount %Discount. Perhaps, Items and Services tables are empty or VAT rates are incorrect';ro = 'Nu se poate aplica reducerea %Discount. Poate că tabelele Articole și Servicii sunt goale sau cotele de TVA sunt incorecte';ru = 'Не могу применить скидку %Discount. Вероятно, таблицы товаров/услуг не заполнены или неверно заданы ставки НДС'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

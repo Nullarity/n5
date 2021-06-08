@@ -53,7 +53,7 @@ Function DimsToString ( Account, Dim1, Dim2, Dim3 ) export
 
 EndFunction 
  
-Function NumberToMoney ( Number, Currency = "USD" ) export
+Function NumberToMoney ( Number, Currency = "MDL" ) export
 	
 	return Format ( Number, "NFD=2; NZ=" ) + " " + Currency;
 	

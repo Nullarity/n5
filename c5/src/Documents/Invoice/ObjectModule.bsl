@@ -6,7 +6,6 @@ var Realtime;
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 
 	checkWarehouse ( CheckedAttributes );
-	checkDiscountAccount ( CheckedAttributes );
 	checkVAT ( CheckedAttributes );
 	checkAdvanceAccount ( CheckedAttributes );
 	
@@ -20,20 +19,12 @@ Procedure checkWarehouse ( CheckedAttributes )
 	
 EndProcedure 
 
-Procedure checkDiscountAccount ( CheckedAttributes )
-	
-	value = Discounts.Total ( "Discount" );
-	if ( value > 0 ) then
-		CheckedAttributes.Add ( "DiscountAccount" );
-	endif; 
-	
-EndProcedure 
-
 Procedure checkVAT ( CheckedAttributes )
 	
 	if ( VATUse > 0 ) then
 		CheckedAttributes.Add ( "Items.VATAccount" );
 		CheckedAttributes.Add ( "Services.VATAccount" );
+		CheckedAttributes.Add ( "Discounts.VATAccount" );
 	endif; 
 	
 EndProcedure 

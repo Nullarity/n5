@@ -230,7 +230,7 @@ Procedure loadRow ( Params )
 	value = Params.Value;
 	data = Items.Items.CurrentData;
 	if ( value = undefined ) then
-		if ( Params.NewRow ) then
+		if ( Params.row ) then
 			Object.Items.Delete ( data );
 		endif;
 	else
@@ -258,7 +258,7 @@ Procedure editRow ( NewRow = false )
 	p = new Structure ();
 	p.Insert ( "Company", Object.Company );
 	p.Insert ( "ShowPrices", Object.ShowPrices );
-	p.Insert ( "NewRow", NewRow );
+	p.Insert ( "row", NewRow );
 	OpenForm ( "Document.Startup.Form.LVI", p, ThisObject );
 
 EndProcedure

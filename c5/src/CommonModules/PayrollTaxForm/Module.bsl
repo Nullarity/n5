@@ -24,7 +24,7 @@ Procedure loadParams ( Form )
 	
 	p = Form.Parameters;
 	Form.Object.Company = p.Company;
-	Form.NewRow = p.NewRow;
+	Form.row = p.row;
 	Form.ReadOnly = p.ReadOnly;
 	
 EndProcedure 
@@ -46,7 +46,7 @@ Procedure loadData ( Form )
 	object.Date = owner.Date;
 	tableRow = object.Taxes.Add ();
 	FillPropertyValues ( tableRow, formOwner.Items.Taxes.CurrentData );
-	if ( Form.NewRow ) then
+	if ( Form.row ) then
 		tableRow.Edit = true;
 	endif; 
 	Form.TableRow = tableRow;
