@@ -503,7 +503,7 @@ Procedure editRow ( NewRow = false )
 	p.Insert ( "Company", Object.Company );
 	p.Insert ( "DisableDr", not Operation.AccountDr.IsEmpty () );
 	p.Insert ( "DisableCr", not Operation.AccountCr.IsEmpty () );
-	p.Insert ( "row", NewRow );
+	p.Insert ( "NewRow", NewRow );
 	OpenForm ( "Document.Entry.Form.Record", p, ThisObject, , , , new NotifyDescription ( "RecordClosed", ThisObject, NewRow ) );
 	
 EndProcedure 

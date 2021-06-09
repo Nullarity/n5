@@ -36,7 +36,7 @@ Procedure loadRow ( Params )
 	value = Params.Value;
 	data = Items.Items.CurrentData;
 	if ( value = undefined ) then
-		if ( Params.row ) then
+		if ( Params.NewRow ) then
 			Object.Items.Delete ( data );
 		endif;
 	else
@@ -62,7 +62,7 @@ Procedure editRow ( NewRow = false )
 	endif; 
 	p = new Structure ();
 	p.Insert ( "Company", Object.Company );
-	p.Insert ( "row", NewRow );
+	p.Insert ( "NewRow", NewRow );
 	OpenForm ( "Document.AssetsBalances.Form.Row", p, ThisObject );
 
 EndProcedure

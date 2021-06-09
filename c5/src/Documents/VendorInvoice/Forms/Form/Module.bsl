@@ -981,7 +981,7 @@ Procedure loadRow ( Params, Table )
 	
 	value = Params.Value;
 	if ( value = undefined ) then
-		if ( Params.row ) then
+		if ( Params.NewRow ) then
 			Object [ Table.Name ].Delete ( Table.CurrentData );
 		endif;
 	else
@@ -1016,7 +1016,7 @@ Procedure editRow ( Table, NewRow = false )
 	endif; 
 	p = new Structure ();
 	p.Insert ( "Company", Object.Company );
-	p.Insert ( "row", NewRow );
+	p.Insert ( "NewRow", NewRow );
 	if ( Table = Items.FixedAssets ) then
 		form = "Document.VendorInvoice.Form.FixedAsset";
 	else

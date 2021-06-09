@@ -40,7 +40,7 @@ Procedure EditRow ( Form, NewRow = false ) export
 	p = new Structure ();
 	object = Form.Object;
 	p.Insert ( "Company", object.Company );
-	p.Insert ( "row", NewRow );
+	p.Insert ( "NewRow", NewRow );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Hiring" ) ) then
 		name = "Document.Hiring.Form.Row";
 	else

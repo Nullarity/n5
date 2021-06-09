@@ -19,7 +19,7 @@ EndProcedure
 Procedure init ()
 	
 	Currency = Application.Currency ();
-	if ( Parameters.row ) then
+	if ( Parameters.NewRow ) then
 		Schedule = Application.Schedule ();
 	endif;
 
@@ -46,7 +46,7 @@ Procedure loadData ()
 	Object.Date = owner.Date;
 	TableRow = Object.Employees.Add ();
 	FillPropertyValues ( TableRow, FormOwner.Items.Employees.CurrentData );
-	if ( Parameters.row ) then
+	if ( Parameters.NewRow ) then
 		TableRow.DateStart = Object.Date;
 		TableRow.Schedule = Schedule;
 		TableRow.Currency = Currency;

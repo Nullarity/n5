@@ -290,7 +290,7 @@ Procedure EditRow ( Form, NewRow = false ) export
 	object = Form.Object;
 	p = new Structure ();
 	p.Insert ( "Company", object.Company );
-	p.Insert ( "row", NewRow );
+	p.Insert ( "NewRow", NewRow );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Commissioning" ) ) then
 		name = "Document.Commissioning.Form.Row";
 	else
@@ -339,7 +339,7 @@ Procedure LoadRow ( Form, Params ) export
 	value = Params.Value;
 	data = Form.Items.Items.CurrentData;
 	if ( value = undefined ) then
-		if ( Params.row ) then
+		if ( Params.NewRow ) then
 			Form.Object.Items.Delete ( data );
 		endif;
 	else

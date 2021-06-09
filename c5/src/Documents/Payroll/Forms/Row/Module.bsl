@@ -32,7 +32,7 @@ EndProcedure
 Procedure loadParams ()
 	
 	Object.Company = Parameters.Company;
-	NewRow = Parameters.row;
+	NewRow = Parameters.NewRow;
 	ReadOnly = Parameters.ReadOnly;
 	
 EndProcedure 
@@ -86,7 +86,7 @@ Procedure pickValue ( Operation, Value )
 	SelectedValue = new Structure ();
 	SelectedValue.Insert ( "Operation", Operation );
 	SelectedValue.Insert ( "Value", Value );
-	SelectedValue.Insert ( "row", Parameters.NewRow );
+	SelectedValue.Insert ( "NewRow", Parameters.NewRow );
 	#if ( WebClient ) then
 		// Bug workaround 8.3.14.1592. NotifyChoice () will not close the form.
 		// Idle handler is required
