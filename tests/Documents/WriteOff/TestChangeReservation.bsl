@@ -203,7 +203,10 @@ Procedure createEnv ( Env )
 	// ***********************************
 	// Create Vendor
 	// ***********************************
-	Call ( "Catalogs.Organizations.CreateVendor", env.Vendor );
+
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = Env.Vendor;
+	Call ( "Catalogs.Organizations.CreateVendor", p );
 	
 	// ***********************************
 	// Create Warehouses

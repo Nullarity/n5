@@ -198,7 +198,7 @@ EndProcedure
 Procedure sqlRecords ()
 	
 	s = "
-	|select Records.Recorder as Document, valuetype ( Records.Recorder ) as Operation, Records.Period as Date,
+	|select Records.Recorder as Document, valuetype ( Records.Recorder ) as Operation, max ( Records.Period ) as Date,
 	|	Records.Recorder.ReferenceDate as ReferenceDate, Records.Recorder.Number as Number,
 	|	Records.Recorder.Reference as Reference
 	|";
@@ -229,7 +229,7 @@ Procedure sqlRecords ()
 		|and Records.BalancedExtDimension2 = Records.ExtDimension2";
 	endif;
 	s = s + " )
-	|group by Records.Period, Records.Recorder";
+	|group by Records.Recorder";
 	if ( Detailed ) then
 		s = s + ", Records.ExtDimension2";
 	endif;

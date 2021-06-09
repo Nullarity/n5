@@ -1,4 +1,4 @@
-Call ( "Common.OpenList", Meta.Documents.VendorInvoice );
+﻿Call ( "Common.OpenList", Meta.Documents.VendorInvoice );
 
 p = Call ( "Common.Find.Params" );
 p.Where = "Memo";

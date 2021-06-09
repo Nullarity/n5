@@ -42,7 +42,9 @@ Procedure createEnv ( Env )
 	// Create Customs
 	// ***********************
 
-	Call ( "Catalogs.Organizations.CreateVendor", Env.Customs );
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = Env.Customs;
+	Call ( "Catalogs.Organizations.CreateVendor", p );
 	
 	Call ( "Common.StampData", id );
 

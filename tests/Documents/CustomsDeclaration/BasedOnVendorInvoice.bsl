@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2BE5A0DE" );
+id = Call ( "Common.ScenarioID", "A01X" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -157,7 +157,9 @@ Procedure createEnv ( Env )
 	// Create Customs
 	// ***********************************
 	
-	Call ( "Catalogs.Organizations.CreateVendor", Env.Customs );
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = Env.Customs;
+	Call ( "Catalogs.Organizations.CreateVendor", p );
 	
 	// ***********************************
 	// Create Customs groups

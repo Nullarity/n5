@@ -29,9 +29,9 @@ Function GetKey ( Env, Item, Package = undefined, Feature = undefined, Series = 
 	details.Item = Item;
 	details.Package = ? ( Package = undefined, Catalogs.Packages.EmptyRef (), Package );
 	details.Feature = ? ( Feature = undefined, Catalogs.Features.EmptyRef (), Feature );
-	details.Series = Series;
-	details.Warehouse = Warehouse;
-	details.Account = Account;
+	details.Series = ? ( Series = undefined, Catalogs.Series.EmptyRef (), Series );
+	details.Warehouse = ? ( Warehouse = undefined, Catalogs.Warehouses.EmptyRef (), Warehouse );
+	details.Account = ? ( Account = undefined, ChartsOfAccounts.General.EmptyRef (), Account );
 	search = Env.NewItemKeys.FindRows ( details );
 	if ( search.Count () = 0 ) then
 		itemKey = newKey ( Env, details );

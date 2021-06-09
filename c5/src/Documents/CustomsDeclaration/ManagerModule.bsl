@@ -478,56 +478,37 @@ Procedure saveDistribution ( Env, DistributedExpenses )
 	entry.Company = fields.Company;
 	entry.Operation = Enums.Operations.AdditionalExpenses;
 	for each row in DistributedExpenses do
-		makeAdditionalCost ( Env, row, entry );
+		makeAdditionalCost ( Env, row );
 		commitAdditionalCost ( Env, row, entry );
 		makeItemExpenses ( Env, row );
 	enddo; 
 
 EndProcedure 
 
-Procedure makeAdditionalCost ( Env, Row, Entry )
+Procedure makeAdditionalCost ( Env, Row )
 	
-	recordset = distributionRecordset ( Env, row.Document, "Cost" );
+	recordset = distributionRecordset ( Env, row.Document );
 	movement = recordset.Add ();
 	movement.Period = Row.Date;
 	movement.ItemKey = Row.ItemKey;
 	movement.Lot = Row.Lot;
 	movement.Amount = Row.Amount;
-	if ( Env.Ref <> Row.Document ) then
-		ref = Env.Ref;
-		Entry.Dependency = ref;
+	ref = Env.Ref;
+	if ( ref <> Row.Document ) then
 		movement.Dependency = ref;
 	endif; 
 	
 EndProcedure 
 
-Function distributionRecordset ( Env, Document, Name )
+Function distributionRecordset ( Env, Document )
 	
-	if ( Env.DistributionRecordsets [ Name ] = undefined ) then
-		Env.DistributionRecordsets [ Name ] = new Map ();
-	endif; 
-	recordsets = Env.DistributionRecordsets [ Name ];
+	recordsets = Env.DistributionRecordsets;
 	recordset = recordsets [ Document ];
 	if ( recordset = undefined ) then
-		if ( Name = "General" ) then
-			if ( Document = Env.Ref ) then
-				return Env.Registers.General;
-			else
-				recordset = AccountingRegisters.General.CreateRecordSet ();
-				recordset.Filter.Recorder.Set ( Document );
-				recordsets [ Document ] = recordset;
-				return recordset;
-			endif; 
-		elsif ( Name = "Cost" ) then
-			if ( Document = Env.Ref ) then
-				return Env.Registers.Cost;
-			else
-				recordset = AccumulationRegisters.Cost.CreateRecordSet ();
-				recordset.Filter.Recorder.Set ( Document );
-				recordsets [ Document ] = recordset;
-				return recordset;
-			endif; 
-		endif; 
+		recordset = AccumulationRegisters.Cost.CreateRecordSet ();
+		recordset.Filter.Recorder.Set ( Document );
+		recordsets [ Document ] = recordset;
+		return recordset;
 	else
 		return recordset;
 	endif; 
@@ -542,15 +523,15 @@ Procedure commitAdditionalCost ( Env, Row, Entry )
 	Entry.DimDr2 = Row.Warehouse;
 	Entry.DimDr2Type = "Warehouses";
 	document = Row.Document;
-	if ( Env.Ref <> document ) then
-		Entry.Dependency = Env.Ref;
+	if ( document <> Env.Ref ) then
+		Entry.Dependency = document;
 	endif; 
 	Entry.AccountDr = Row.Account;
 	Entry.AccountCr = fields.CustomsAccount;
 	Entry.DimCr1 = fields.Customs;
 	Entry.DimCr2 = fields.Contract;
 	Entry.Amount = Row.Amount;
-	Entry.Recordset = distributionRecordset ( Env, document, "General" );
+	Entry.Recordset = Env.Registers.General;
 	Entry.Content = getContent ( Entry, Row );
 	GeneralRecords.Add ( Entry );
 	
@@ -593,10 +574,8 @@ EndProcedure
 Procedure writeDistribution ( Env )
 	
 	if ( Env.Fields.DistributionExists ) then
-		for each recordsetType in Env.DistributionRecordsets do
-			for each recordset in recordsetType.Value do
-				recordset.Value.Write ( false );
-			enddo; 
+		for each recordset in Env.DistributionRecordsets do
+			recordset.Value.Write ( false );
 		enddo; 
 	endif;
 	

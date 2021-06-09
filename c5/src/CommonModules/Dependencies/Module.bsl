@@ -10,13 +10,9 @@ Function SqlDependants () export
 	
 	s = "
 	|// ^Dependants
-	|select distinct Cost.Recorder as Document, ""AccumulationRegister.Cost"" as RegisterName
+	|select distinct Cost.Recorder as Document
 	|from AccumulationRegister.Cost as Cost
 	|where Cost.Dependency = &Ref
-	|union
-	|select distinct General.Recorder, ""AccountingRegister.General""
-	|from AccountingRegister.General as General
-	|where General.Dependency = &Ref
 	|";
 	return s;
 	
@@ -25,11 +21,7 @@ EndFunction
 Procedure Clear ( Ref, Table ) export
 	
 	for each row in Table do
-		if ( row.RegisterName = "AccumulationRegister.Cost" ) then
-			recordset = AccumulationRegisters.Cost.CreateRecordSet ();
-		elsif ( row.RegisterName = "AccountingRegister.General" ) then
-			recordset = AccountingRegisters.General.CreateRecordSet ();
-		endif; 
+		recordset = AccumulationRegisters.Cost.CreateRecordSet ();
 		recordset.Filter.Recorder.Set ( row.Document );
 		recordset.Read ();
 		count = recordset.Count () - 1;
@@ -72,11 +64,9 @@ Function SqlDependencies () export
 	|where Cost.Recorder = &Ref
 	|and Cost.Dependency <> undefined
 	|union
-	|select distinct General.Dependency
-	|from AccountingRegister.General as General
-	|where General.Recorder = &Ref
-	|and General.Dependency <> undefined
-	|and General.Operation = value ( Enum.Operations.AdditionalExpenses )
+	|select distinct Expenses.Source
+	|from InformationRegister.ItemExpenses as Expenses
+	|where Expenses.Document = &Ref
 	|";
 	return s;
 	

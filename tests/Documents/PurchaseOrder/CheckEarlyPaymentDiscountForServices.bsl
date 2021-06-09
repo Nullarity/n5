@@ -1,11 +1,11 @@
-﻿// Create PO with 2% for early payment
+﻿// Create PO (with services) with 2% for early payment
 // Receive a 100% prepayment
-// Buy items and check if reverse transactions come up
+// Purchase services and check if reverse transactions come up
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A01B" );
+id = Call ( "Common.ScenarioID", "A01F" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -16,12 +16,12 @@ Click("#FormCreate");
 With();
 Put ( "#Vendor", this.Vendor );
 Put ( "#Memo", id );
-Items = Get ( "!ItemsTable" );
-Click ( "!ItemsTableAdd" );
+Items = Get ( "!Services" );
+Click ( "!ServicesAdd" );
 Items.EndEditRow ();
-Set ( "!ItemsItem", this.Item, Items );
-Set ( "!ItemsQuantityPkg", 40, Items );
-Set ( "!ItemsPrice", 10, Items );
+Set ( "!ServicesItem", this.Item, Items );
+Set ( "!ServicesQuantity", 40, Items );
+Set ( "!ServicesPrice", 10, Items );
 Click("#FormPostAndClose");
 #endregion
 
@@ -40,7 +40,10 @@ if (Call("Table.Count", Get("#List"))) then
 	With();
 else
 	Commando("e1cib/command/Document.VendorInvoice.Create");
-	Set("#Vendor", this.Vendor);
+	Put("#Vendor", this.Vendor);
+	Items = Get ( "!Services" );
+	Set ( "#ServicesAccount", "7121", Items );
+	Set ( "!ServicesExpense", "Others", Items );
 	Set("#Memo", id);
 endif;
 Click ( "#FormPost" );
@@ -60,7 +63,7 @@ Procedure getEnv ()
 
 	id = this.ID;
 	this.Insert ( "Vendor", "Vendor " + id );
-	this.Insert ( "Item", "Item " + id );
+	this.Insert ( "Item", "Service " + id );
 
 EndProcedure
 
@@ -80,8 +83,7 @@ Procedure createEnv ()
 	#region createItem
 	p = Call ( "Catalogs.Items.Create.Params" );
 	p.Description = this.Item;
-	p.Unit = "UT";
-	p.Capacity = 1;
+	p.Service = true;
 	Call ( "Catalogs.Items.Create", p );
 	#endregion
 

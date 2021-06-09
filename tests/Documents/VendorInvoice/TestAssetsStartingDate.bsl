@@ -59,7 +59,9 @@ Procedure createEnv ( env )
 		return;
 	endif;
 
-	Call ( "Catalogs.Organizations.CreateVendor", Env.Vendor );
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = Env.Vendor;
+	Call ( "Catalogs.Organizations.CreateVendor", p );
 	
 	p = Call ( "Catalogs.FixedAssets.Create.Params" );
 	p.Description = env.FixedAsset;

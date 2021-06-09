@@ -56,6 +56,7 @@ Procedure setContext ( Env )
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", false );
+		Env.Insert ( "OrderName", "PurchaseOrder" );	
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", false );
 	endif;

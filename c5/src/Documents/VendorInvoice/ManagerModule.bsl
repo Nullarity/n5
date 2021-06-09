@@ -655,19 +655,24 @@ EndProcedure
 
 Procedure sqlExpenses ( Env )
 	
-	if ( Env.Fields.DistributionExists ) then
-		flag = "case when Services.IntoIntangibleAssets or Services.IntoFixedAssets or Services.IntoItems then true else false end";
-	else
-		flag = "false";
-	endif; 
+	distribute = Env.Fields.DistributionExists;
 	s = "
 	|// #Expenses
 	|select Services.Item as Item, Services.Feature as Feature, Services.Account as Account, Services.Expense as Expense,
 	|	Services.Department as Department, Services.Product as Product, Services.ProductFeature as ProductFeature,
-	|	Services.Description as Description, Services.VATCode as VATCode,
+	|	Services.Description as Description, Services.VATCode as VATCode, 
 	|	sum ( Services.Quantity ) as Quantity, sum ( Services.Amount ) as Amount,
-	|	sum ( Services.ContractAmount ) as ContractAmount, Details.ItemKey as Itemkey,
-	|" + flag + " as Distribute
+	|	sum ( Services.ContractAmount ) as ContractAmount, Details.ItemKey as Itemkey
+	|";
+	if ( distribute ) then
+		s = s + ", min ( Services.LineNumber ) as LineNumber,
+		| Services.IntoIntangibleAssets or Services.IntoFixedAssets or Services.IntoItems as Distribute,
+		| Services.IntoIntangibleAssets as IntoIntangibleAssets, Services.IntoFixedAssets as IntoFixedAssets,
+		| Services.IntoItems as IntoItems, Services.IntoDocument as IntoDocument, Services.Distribution as Distribution";
+	else
+		s = s + ", false as Distribute";
+	endif;
+	s = s + "
 	|from Services as Services
 	|	//
 	|	// Details
@@ -680,8 +685,13 @@ Procedure sqlExpenses ( Env )
 	|	and Details.Warehouse = value ( Catalog.Warehouses.EmptyRef )
 	|	and Details.Account = value ( ChartOfAccounts.General.EmptyRef )
 	|group by Services.Item, Services.Feature, Services.Account, Services.Expense, Services.Department,
-	|	Services.VATCode, Services.Product, Services.ProductFeature, Services.Description, Details.ItemKey, " + flag + "
+	|	Services.VATCode, Services.Product, Services.ProductFeature, Services.Description, Details.ItemKey
 	|";
+	if ( distribute ) then
+		s = s + ", Services.IntoIntangibleAssets, Services.IntoFixedAssets, Services.IntoItems,
+		| Services.IntoDocument, Services.Distribution
+		|";
+	endif;
 	Env.Selection.Add ( s );
 	
 EndProcedure
@@ -689,20 +699,6 @@ EndProcedure
 Procedure sqlDistributingExpenses ( Env )
 	
 	s = "
-	|// ^DistributingExpenses
-	|select Services.LineNumber as ServicesLineNumber, Services.Amount as Amount, Services.ContractAmount as ContractAmount,
-	|	Services.Item as ServicesItem, Services.Item.Description as ServicesItemDescription,
-	|	case when Services.IntoDocument = value ( Document.VendorInvoice.EmptyRef ) then &Ref else Services.IntoDocument end as Document,
-	|	Services.IntoFixedAssets as IntoFixedAssets, Services.IntoIntangibleAssets as IntoIntangibleAssets,	Services.IntoItems as IntoItems, 
-	|	case when Services.Distribution = value ( Enum.Distribution.Quantity ) then ""Quantity""
-	|		when Services.Distribution = value ( Enum.Distribution.Amount ) then ""Amount""
-	|		when Services.Distribution = value ( Enum.Distribution.Weight ) then ""Weight""
-	|	end as DistributeColumn
-	|from Services as Services
-	|where Services.IntoFixedAssets
-	|or Services.IntoIntangibleAssets
-	|or Services.IntoItems
-	|;
 	|select distinct
 	|	case when Services.IntoDocument = value ( Document.VendorInvoice.EmptyRef ) then &Ref else Services.IntoDocument end as Document,
 	|	isnull ( ExchangeRates.Rate, 1 ) as Rate, isnull ( ExchangeRates.Factor, 1 ) as Factor
@@ -888,6 +884,7 @@ Function applyDiscount ( Env )
 	
 	discounts = prepareDiscounts ( Env );
 	decreaseCost ( Env, discounts );
+	decreaseExpenses ( Env, discounts );
 	if ( discounts.Count () > 0 ) then
 		ref = Env.Ref;
 		for each row in discounts do
@@ -926,9 +923,18 @@ Procedure decreaseCost ( Env, Discounts )
 		row.Amount = - row.Amount;
 		row.ContractAmount = - row.ContractAmount;
 	enddo;
-	if ( discounts.Count () = 0 ) then
+	
+EndProcedure
+
+Procedure decreaseExpenses ( Env, Discounts )
+	
+	if ( Discounts.Count () = 0 ) then
 		return;
 	endif;
+	p = new Structure ();
+	p.Insert ( "FilterColumns", "VATCode" );
+	p.Insert ( "DistribColumnsTable1", "Amount, ContractAmount" );
+	p.Insert ( "KeyColumn", "Amount" );
 	expenses = Env.Expenses;
 	table = CollectionsSrv.Combine ( Discounts, expenses, p );
 	for each discount in table do
@@ -1116,7 +1122,7 @@ EndFunction
 Function getDistributingTables ( Env )
 	
 	tables = new Structure ();
-	tables.Insert ( "Expenses", SQL.Fetch ( Env, "$DistributingExpenses" ) );
+	tables.Insert ( "Expenses", getDistributingExpenses ( Env ) );
 	tables.Insert ( "ExpensesByRow", tables.Expenses.CopyColumns () );
 	amountType = Metadata.AccountingRegisters.General.Resources.Amount.Type;
 	CollectionsSrv.Adjust ( tables.ExpensesByRow, "Amount", amountType );
@@ -1126,6 +1132,46 @@ Function getDistributingTables ( Env )
 	return tables;
 	
 EndFunction 
+
+Function getDistributingExpenses ( Env )
+	
+	table = new ValueTable ();
+	columns = table.Columns;
+	columns.Add ( "ServicesLineNumber" );
+	columns.Add ( "Amount" );
+	columns.Add ( "ContractAmount" );
+	columns.Add ( "ServicesItem" );
+	columns.Add ( "ServicesDescription" );
+	columns.Add ( "VATCode" );
+	columns.Add ( "Document" );
+	columns.Add ( "IntoFixedAssets" );
+	columns.Add ( "IntoIntangibleAssets" );
+	columns.Add ( "IntoItems" );
+	columns.Add ( "DistributeColumn" );
+	ref = Env.Ref;
+	for each expense in Env.Expenses do
+		if ( not ( expense.IntoFixedAssets
+			or expense.IntoIntangibleAssets
+			or expense.IntoItems ) ) then
+			continue;
+		endif;
+		row = table.Add ();
+		row.ServicesLineNumber = expense.LineNumber;
+		row.Amount = expense.Amount;
+		row.ContractAmount = expense.ContractAmount;
+		row.ServicesItem = expense.Item;
+		row.ServicesDescription = expense.Description;
+		row.VATCode = expense.VATCode;
+		row.IntoFixedAssets = expense.IntoFixedAssets;
+		row.IntoIntangibleAssets = expense.IntoIntangibleAssets;
+		row.IntoItems = expense.IntoItems;
+		row.DistributeColumn = expense.LineNumber;
+		row.Document = ? ( expense.IntoDocument.IsEmpty (), ref, expense.IntoDocument );
+		row.DistributeColumn = Conversion.EnumItemToName ( expense.Distribution );
+	enddo;
+	return table;
+
+EndFunction
 
 Function getBase ( Env )
 	
@@ -1146,7 +1192,7 @@ Function getDistributingParams ( Env )
 	p.Insert ( "FilterColumns", "Document" );
 	p.Insert ( "DistribColumnsTable1", "Amount, ContractAmount" );
 	p.Insert ( "DistributeTables" );
-	p.Insert ( "AssignСоlumnsTаble1", "ServicesItem, ServicesItemDescription, ServicesLineNumber" );
+	p.Insert ( "AssignСоlumnsTаble1", "ServicesItem, ServicesLineNumber, ServicesDescription" );
 	p.Insert ( "AssignColumnsTable2", "Table, Document, Item, Warehouse, Account, ItemKey, Lot, Date, LineNumber" );
 	return p;
 	
@@ -1157,61 +1203,48 @@ Procedure saveDistribution ( Env, DistributedExpenses )
 	fields = Env.Fields;
 	Env.DistributionRecordsets = new Map ();
 	entry = GeneralRecords.GetParams ();
-	entry.Date = fields.Date;
+	entry.Recordset = Env.Registers.General;
 	entry.Company = fields.Company;
 	entry.Operation = Enums.Operations.AdditionalExpenses;
 	for each row in DistributedExpenses do
 		if ( row.Table = Enums.Tables.Items ) then
-			makeAdditionalCost ( Env, row, entry );
+			makeAdditionalCost ( Env, row );
 		endif; 
 		commitAdditionalCost ( Env, row, entry );
-		makeItemExpenses ( Env, row );
 	enddo; 
+	DistributedExpenses.GroupBy ( "Date, Document, Table, LineNumber, ServicesLineNumber", "Amount" );
+	for each row in DistributedExpenses do
+		makeItemExpenses ( Env, row );
+	enddo;
 
 EndProcedure 
 
-Procedure makeAdditionalCost ( Env, Row, Entry )
+Procedure makeAdditionalCost ( Env, Row )
 	
-	recordset = distributionRecordset ( Env, row.Document, "Cost" );
+	recordset = distributionRecordset ( Env, Row.Document );
 	movement = recordset.Add ();
 	movement.Period = Row.Date;
 	movement.ItemKey = Row.ItemKey;
 	movement.Lot = Row.Lot;
 	movement.Amount = Row.Amount;
 	if ( Env.Ref <> Row.Document ) then
-		ref = Env.Ref;
-		Entry.Dependency = ref;
-		movement.Dependency = ref;
+		movement.Dependency = Env.Ref;
 	endif; 
 	
 EndProcedure 
 
-Function distributionRecordset ( Env, Document, Name )
+Function distributionRecordset ( Env, Document )
 	
-	if ( Env.DistributionRecordsets [ Name ] = undefined ) then
-		Env.DistributionRecordsets [ Name ] = new Map ();
-	endif; 
-	recordsets = Env.DistributionRecordsets [ Name ];
+	recordsets = Env.DistributionRecordsets;
 	recordset = recordsets [ Document ];
 	if ( recordset = undefined ) then
-		if ( Name = "General" ) then
-			if ( Document = Env.Ref ) then
-				return Env.Registers.General;
-			else
-				recordset = AccountingRegisters.General.CreateRecordSet ();
-				recordset.Filter.Recorder.Set ( Document );
-				recordsets [ Document ] = recordset;
-				return recordset;
-			endif; 
-		elsif ( Name = "Cost" ) then
-			if ( Document = Env.Ref ) then
-				return Env.Registers.Cost;
-			else
-				recordset = AccumulationRegisters.Cost.CreateRecordSet ();
-				recordset.Filter.Recorder.Set ( Document );
-				recordsets [ Document ] = recordset;
-				return recordset;
-			endif; 
+		if ( Document = Env.Ref ) then
+			return Env.Registers.Cost;
+		else
+			recordset = AccumulationRegisters.Cost.CreateRecordSet ();
+			recordset.Filter.Recorder.Set ( Document );
+			recordsets [ Document ] = recordset;
+			return recordset;
 		endif; 
 	else
 		return recordset;
@@ -1234,8 +1267,11 @@ Procedure commitAdditionalCost ( Env, Row, Entry )
 		Entry.DimDr2 = undefined;
 		Entry.DimDr2Type = undefined;
 	endif; 
-	if ( Env.Ref <> Row.Document ) then
-		Entry.Dependency = Env.Ref;
+	if ( Row.Document = Env.Ref ) then
+		Entry.Date = fields.Date;
+	else
+		Entry.Dependency = Row.Document;
+		Entry.Date = Row.Date;
 	endif; 
 	Entry.AccountDr = row.Account;
 	Entry.AccountCr = fields.VendorAccount;
@@ -1244,7 +1280,6 @@ Procedure commitAdditionalCost ( Env, Row, Entry )
 	Entry.CurrencyCr = fields.Currency;
 	Entry.CurrencyAmountCr = row.ContractAmount;
 	Entry.Amount = row.Amount;
-	Entry.Recordset = distributionRecordset ( Env, row.Document, "General" );
 	Entry.Content = getContent ( Entry, row );
 	GeneralRecords.Add ( Entry );
 	
@@ -1252,7 +1287,7 @@ EndProcedure
 
 Function getContent ( Entry, Row )
 	
-	return "" + Entry.Operation + ": " + row.ServicesItemDescription;
+	return "" + Entry.Operation + ": " + row.ServicesDescription;
 	
 EndFunction 
 
@@ -1588,10 +1623,8 @@ EndFunction
 Procedure writeDistribution ( Env )
 	
 	if ( Env.Fields.DistributionExists ) then
-		for each recordsetType in Env.DistributionRecordsets do
-			for each recordset in recordsetType.Value do
-				recordset.Value.Write ( false );
-			enddo; 
+		for each recordset in Env.DistributionRecordsets do
+			recordset.Value.Write ( false );
 		enddo; 
 	endif; 
 	

@@ -1,4 +1,4 @@
-With ( "*(Organizations)" );
+﻿With ( "*(Organizations)" );
 Click ( "#VendorPage" );
 Choose ( "#VendorContract" );
 formContracts = With ( "Contracts" );
@@ -7,9 +7,9 @@ search = new Map ();
 search.Insert ( "Description", "General" );
 list.GotoRow ( search, RowGotoDirection.Down );
 Click ( "Edit", formContracts.GetCommandBar () );
-itemContractForm = With ( "General (Contracts)", true );
 useParams = ( _ <> undefined );
-mainCurrency = ? ( useParams, _.Currency, Call ( "Select.MainCurrencyName" ) );
+mainCurrency = ? ( useParams, _.Currency, "MDL" );
+itemContractForm = With ();
 Set ( "!Currency", mainCurrency );
 Next();
 if ( _.RateType <> undefined ) then
