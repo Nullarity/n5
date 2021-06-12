@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A017" );
+id = Call ( "Common.ScenarioID", "A025" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -16,15 +16,15 @@ Put("#Vendor", this.Vendor);
 #endregion
 
 #region testing
-Check("#Benefit", 8);
+Check("#Discount", 8);
 Check("#PaymentsApplied", 392);
 Check("#BalanceDue", 0);
 Activate("#Discounts");
 Click("#DiscountsDelete");
-Check("#Benefit", 0);
+Check("#Discount", 0);
 Check("#BalanceDue", 8);
 Click("#DiscountsRefreshDiscounts");
-Check("#Benefit", 8);
+Check("#Discount", 8);
 Check("#PaymentsApplied", 392);
 Check("#BalanceDue", 0);
 discounts = Get("#Discounts");
@@ -37,14 +37,14 @@ Check("#DiscountsVAT", 2, discounts);
 Pick("#VATUse", 0);
 Pick("#VATUse", 1);
 Check("#DiscountsVAT", 2, discounts);
-Check("#Benefit", 12);
+Check("#Discount", 12);
 Check("#BalanceDue", -4);
 #endregion
 
 #region refillAndSave
 Click("#DiscountsRefreshDiscounts");
 Click("#JustSave");
-Check("#Benefit", 8);
+Check("#Discount", 8);
 Check("#PaymentsApplied", 392);
 Check("#BalanceDue", 0);
 #endregion

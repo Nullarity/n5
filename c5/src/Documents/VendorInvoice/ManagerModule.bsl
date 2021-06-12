@@ -26,8 +26,8 @@ Function Post ( Env ) export
 	endif;
 	if ( invalidRows ( Env ) ) then
 		return false;
-	endif; 
-	if ( not applyDiscount ( Env ) ) then
+	endif;
+	if ( not distributeDiscounts ( Env ) ) then
 		return false;
 	endif;
 	makeValues ( Env );
@@ -40,6 +40,7 @@ Function Post ( Env ) export
 	makeAccounts ( Env );
 	makeDiscounts ( Env );
 	commitVAT ( Env );
+	commitIncome ( Env );
 	makeInternalOrders ( Env );
 	makeReserves ( Env );
 	makeVendorServices ( Env );
@@ -110,6 +111,8 @@ Function getData ( Env )
 	amount = Env.ContractAmount;
 	fields.Insert ( "Amount", amount.Amount );
 	fields.Insert ( "ContractAmount", amount.ContractAmount );
+	Env.Insert ( "SalesTable" );
+	Env.Insert ( "DistributionRecordsets" );
 	return true;
 	
 EndFunction
@@ -131,8 +134,8 @@ Procedure sqlFields ( Env )
 	|	end as date,
 	|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 	|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey, Documents.Import as Import,
-	|	isnull ( Distribution.Exist, false ) as DistributionExists, isnull ( Forms.Exists, false ) as Forms,
-	|	isnull ( PaymentDiscounts.Amount, 0 ) as PaymentDiscount, Documents.DiscountAccount as DiscountAccount
+	|	isnull ( Distribution.Exist, false ) as DistributionExists, isnull ( Forms.Exists, false ) as Forms, Documents.Department as Department,
+	|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery, isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery	
 	|from Document.VendorInvoice as Documents
 	|	//
 	|	// Lots
@@ -146,9 +149,26 @@ Procedure sqlFields ( Env )
 	|	on PaymentDetails.Option = Documents.PaymentOption
 	|	and PaymentDetails.Date = case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end
 	|	//
-	|	// Payment discounts
+	|	// DiscountsBefore
 	|	//
-	|	left join ( select sum ( Amount ) from Document.VendorInvoice.Discounts where Ref = &Ref ) as PaymentDiscounts
+	|	left join (
+	|		select top 1 true as Exists
+	|		from Document.VendorInvoice.Discounts
+	|		where Ref = &Ref
+	|		and Detail = undefined
+	|		and Document refs Document.PurchaseOrder
+	|	) as DiscountsBefore
+	|	on true
+	|	//
+	|	// DiscountsAfter
+	|	//
+	|	left join (
+	|		select top 1 true as Exists
+	|		from Document.VendorInvoice.Discounts
+	|		where Ref = &Ref
+	|		and ( Detail <> undefined
+	|			or not Document refs Document.PurchaseOrder )
+	|	) as DiscountsAfter
 	|	on true
 	|	//
 	|	// Constants
@@ -206,7 +226,8 @@ EndProcedure
 Procedure setContext ( Env )
 	
 	Env.Insert ( "PurchaseOrderExists", Env.PurchaseOrderExists <> undefined and Env.PurchaseOrderExists.Exist );
-	Env.Insert ( "DistributionRecordsets" );
+	fields = Env.Fields;
+	Env.Insert ( "PaymentDiscounts", fields.DiscountsBeforeDelivery or fields.DiscountsAfterDelivery );
 
 EndProcedure
 
@@ -385,6 +406,9 @@ EndProcedure
 
 Procedure sqlDiscounts ( Env )
 	
+	if ( not Env.PaymentDiscounts ) then
+		return;
+	endif;
 	vat = "VAT";
 	amount = "( Amount - VAT )";
 	fields = Env.Fields;
@@ -393,9 +417,11 @@ Procedure sqlDiscounts ( Env )
 		amount = amount + " * &Rate / &Factor";
 	endif; 
 	s = "
-	|select Discounts.PurchaseOrder as PurchaseOrder, Discounts.Item as Item, Discounts.VATCode as VATCode,
-	|	Discounts.VATAccount as VATAccount, Discounts.Income as Income, Details.ItemKey as ItemKey,
-	|	Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount, Discounts.Amount as Total, "
+	|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
+	|	Discounts.VATCode as VATCode, Discounts.VATAccount as VATAccount, Discounts.Income as Income,
+	|	Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount,
+	|	Discounts.Detail = undefined and Discounts.Document refs Document.PurchaseOrder as BeforeDelivery,
+	|	Discounts.Amount as Total, "
 	+ amount + " as Amount,"
 	+ vat + " as VAT"
 	+ "
@@ -444,7 +470,16 @@ Procedure sqlContractAmount ( Env )
 	|		union all
 	|		select " + fields.VAT + ", " + fields.ContractVAT + ", " + fields.ContractVAT + "
 	|		from Document.VendorInvoice as Document
-	|		where Document.Ref = &Ref ) as Items
+	|		where Document.Ref = &Ref";
+	if ( Env.PaymentDiscounts ) then
+		s = s + "
+		|union all
+		|select - Discounts.Amount, - Discounts.ContractAmount, - Discounts.ContractVAT
+		|from Discounts as Discounts
+		|";
+	endif;
+	s = s + "
+	|) as Items
 	|";
 	Env.Selection.Add ( s );
 	
@@ -880,8 +915,11 @@ Function invalidRows ( Env )
 	
 EndFunction
 
-Function applyDiscount ( Env )
+Function distributeDiscounts ( Env )
 	
+	if ( not Env.PaymentDiscounts ) then
+		return true;
+	endif;
 	discounts = prepareDiscounts ( Env );
 	decreaseCost ( Env, discounts );
 	decreaseExpenses ( Env, discounts );
@@ -899,7 +937,7 @@ EndFunction
 
 Function prepareDiscounts ( Env )
 	
-	discounts = Env.Discounts.Copy ();
+	discounts = Env.Discounts.Copy ( new Structure ( "BeforeDelivery", true ) );
 	amountType = Metadata.AccountingRegisters.General.Resources.Amount.Type;
 	CollectionsSrv.Adjust ( discounts, "Amount", amountType );
 	CollectionsSrv.Adjust ( discounts, "ContractAmount", amountType );
@@ -1650,6 +1688,7 @@ Procedure flagRegisters ( Env )
 	registers.RangeLocations.Write = true;
 	registers.RangeStatuses.Write = true;
 	registers.VendorDiscounts.Write = true;
+	registers.Sales.Write = true;
 	
 EndProcedure
 
@@ -1724,13 +1763,19 @@ Procedure sqlVAT ( Env )
 	|	select " + fields + "
 	|	from Document.VendorInvoice.Accounts as Records
 	|	where Records.Ref = &Ref
-	|	union all
-	|	select Discounts.VATAccount, sum ( - Discounts.VAT ), sum ( - Discounts.Amount )
-	|	from Discounts as Discounts
-	|	group by Discounts.VATAccount
+	|";
+	if ( Env.PaymentDiscounts ) then
+		s = s + "
+		|union all
+		|select Discounts.VATAccount, sum ( - Discounts.VAT ), sum ( - Discounts.Amount )
+		|from Discounts as Discounts
+		|group by Discounts.VATAccount
+		|";
+	endif;
+	s = s + " 
 	|	) as Taxes
 	|group by Taxes.Account
-	|having sum ( Taxes.Amount ) > 0
+	|having sum ( Taxes.Amount ) <> 0
 	|";
 	Env.Selection.Add ( s );
 	
@@ -1751,39 +1796,55 @@ EndProcedure
 
 Procedure makeDiscounts ( Env )
 
-	fields = Env.Fields;
-	amount = fields.PaymentDiscount;
-	if ( amount = 0 ) then
+	if ( not Env.PaymentDiscounts ) then
 		return;
 	endif;
+	fields = Env.Fields;
 	date = fields.Date;
 	ref = Env.Ref;
+	department = fields.Department;
 	discounts = Env.Registers.VendorDiscounts;
 	sales = Env.Registers.Sales;
 	for each row in Env.Discounts do
 		if ( row.ItemKey = null ) then
 			row.ItemKey = ItemDetails.GetKey ( Env, row.Item );
-		endif; 
+		endif;
 		movement = discounts.Add ();
 		movement.Period = date;
-		movement.Document = ref;
-		movement.Detail = row.PurchaseOrder;
 		movement.Amount = row.Total;
-//		movement = sales.Add ();
-//		movement.Period = date;
-//		movement.ItemKey = row.ItemKey;
-//		movement.Department = department;
-//		movement.Account = row.Income;
-//		movement.Amount = - row.Amount;
-//		movement.SalesOrder = row.SalesOrder;
-//		rowSales = salesTable.Add ();
-//		rowSales.Operation = Enums.Operations.SalesDiscount;
-//		rowSales.Income = row.Income;
-//		rowSales.Amount = - ( row.Amount - row.VAT );
-//		rowSales.ContractAmount = - row.ContractAmount;
+		if ( row.BeforeDelivery ) then
+			movement.Document = ref;
+			movement.Detail = row.Document;
+		else
+			movement.Document = row.Document;
+			movement.Detail = row.Detail;
+			movement = sales.Add ();
+			movement.Period = date;
+			movement.ItemKey = row.ItemKey;
+			movement.Department = department;
+			movement.Account = row.Income;
+			movement.Amount = row.Amount;
+			rowSales = salesTable ( Env ).Add ();
+			rowSales.Income = row.Income;
+			rowSales.Amount = row.Amount;
+			rowSales.ContractAmount = row.ContractAmount;
+		endif;
 	enddo;
 
 EndProcedure
+
+Function salesTable ( Env )
+	
+	if ( Env.SalesTable = undefined ) then
+		Env.SalesTable = new ValueTable ();
+		table = Env.SalesTable;
+		table.Columns.Add ( "Income", new TypeDescription ( "ChartOfAccountsRef.General" ) );
+		table.Columns.Add ( "Amount", new TypeDescription ( "Number" ) );
+		table.Columns.Add ( "ContractAmount", new TypeDescription ( "Number" ) );
+	endif;
+	return Env.SalesTable;
+	
+EndFunction
 
 Procedure commitVAT ( Env )
 	
@@ -1815,6 +1876,36 @@ Procedure commitVAT ( Env )
 		and p.DataCr.Fields.Currency ) then
 		record.CurrencyAmountCr = record.CurrencyAmountCr + ( amount.ContractVAT - contractVAT );
 	endif; 
+	
+EndProcedure
+
+Procedure commitIncome ( Env )
+	
+	table = Env.SalesTable;
+	if ( table = undefined ) then
+		return;
+	endif;
+	table.GroupBy ( "Income", "Amount, ContractAmount" );
+	fields = Env.Fields;
+	p = GeneralRecords.GetParams ();
+	p.Date = fields.Date;
+	p.Company = fields.Company;
+	p.Recordset = Env.Registers.General;
+	vendorAccount = fields.VendorAccount;
+	vendor = fields.Vendor;
+	contract = fields.Contract;
+	currency = fields.ContractCurrency;
+	for each row in Env.SalesTable do
+		p.Operation = Enums.Operations.SalesDiscount;
+		p.AccountDr = row.Income;
+		p.Amount = - row.Amount;
+		p.AccountCr = vendorAccount;
+		p.DimCr1 = vendor;
+		p.DimCr2 = contract;
+		p.CurrencyCr = currency;
+		p.CurrencyAmountCr = - row.ContractAmount;
+		GeneralRecords.Add ( p );
+	enddo; 
 	
 EndProcedure
 

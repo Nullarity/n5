@@ -53,13 +53,16 @@ Procedure prepareRegisterTypesTable ( Env )
 	
 	Env.Insert ( "RegisterTypesTable", new ValueTable () );
 	table = Env.RegisterTypesTable;
-	table.Columns.Add ( "Order" );
-	table.Columns.Add ( "RegisterType" );
-	table.Columns.Add ( "MetadataObject" );
+	columns = table.Columns;
+	columns.Add ( "Order" );
+	columns.Add ( "Name" );
+	columns.Add ( "RegisterType" );
+	columns.Add ( "MetadataObject" );
 	for each movement in Env.Object.RegisterRecords do
 		metadataObject = movement.Metadata ();
 		registerRow = table.Add ();
 		registerRow.MetadataObject = metadataObject;
+		registerRow.Name = metadataObject.Name;
 		if ( Metadata.AccountingRegisters.Contains ( metadataObject ) ) then
 			registerRow.Order = 0;
 			registerRow.RegisterType = "Accounting";
@@ -76,7 +79,7 @@ Procedure prepareRegisterTypesTable ( Env )
 			registerRow.Order = 100;
 		endif;
 	enddo;
-	table.Sort ( "Order" );
+	table.Sort ( "Order, Name" );
 	
 EndProcedure 
 

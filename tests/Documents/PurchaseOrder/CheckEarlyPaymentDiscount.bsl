@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A01B" );
+id = Call ( "Common.ScenarioID", "A027" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -44,7 +44,7 @@ else
 	Set("#Memo", id);
 endif;
 Click ( "#FormPost" );
-Check("#Benefit", 8);
+Check("#Discount", 8);
 Check("#PaymentsApplied", 392);
 Check("#BalanceDue", 0);
 Click("#FormReportRecordsShow");

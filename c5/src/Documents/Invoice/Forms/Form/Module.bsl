@@ -91,7 +91,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	setAccuracy ();
 	setLinks ();
 	setSocial ();
-	Forms.ActivatePage ( ThisObject, "ItemsTable,Services" );
+	Forms.ActivatePage ( ThisObject, "ItemsTable,Services,Discounts" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();

@@ -8609,7 +8609,6 @@
           <segments>Object.Discounts</segments>
         </dataPath>
         <titleLocation>None</titleLocation>
-        <excludedCommands>Add</excludedCommands>
         <excludedCommands>Change</excludedCommands>
         <excludedCommands>Copy</excludedCommands>
         <excludedCommands>EndEdit</excludedCommands>
@@ -8670,20 +8669,18 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>DiscountsPurchaseOrder</name>
+          <name>DiscountsDocument</name>
           <id>984</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
             <common>true</common>
           </userVisible>
-          <dataPath xsi:type="form:MultiLanguageDataPath">
-            <paths xsi:type="form:DataPath">
-              <segments>Object.Discounts.PurchaseOrder</segments>
-            </paths>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Discounts.Document</segments>
           </dataPath>
           <extendedTooltip>
-            <name>DiscountsPurchaseOrderExtendedTooltip</name>
+            <name>DiscountsDocumentExtendedTooltip</name>
             <id>986</id>
             <visible>true</visible>
             <enabled>true</enabled>
@@ -8698,7 +8695,7 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>DiscountsPurchaseOrderContextMenu</name>
+            <name>DiscountsDocumentContextMenu</name>
             <id>985</id>
             <visible>true</visible>
             <enabled>true</enabled>
@@ -8708,8 +8705,57 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>InputField</type>
-          <readOnly>true</readOnly>
           <editMode>EnterOnInput</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:InputFieldExtInfo">
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>DiscountsDetail</name>
+          <id>1130</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Discounts.Detail</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>DiscountsDetailExtendedTooltip</name>
+            <id>1132</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>DiscountsDetailContextMenu</name>
+            <id>1131</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <editMode>Enter</editMode>
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
@@ -8986,6 +9032,37 @@
             <representationInContextMenu>Auto</representationInContextMenu>
           </items>
           <items xsi:type="form:Button">
+            <name>DiscountsAdd</name>
+            <id>1133</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <extendedTooltip>
+              <name>DiscountsAddExtendedTooltip</name>
+              <id>1134</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <type>Label</type>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <extInfo xsi:type="form:LabelDecorationExtInfo">
+                <horizontalAlign>Left</horizontalAlign>
+              </extInfo>
+            </extendedTooltip>
+            <commandName>Form.Item.Discounts.StandardCommand.Add</commandName>
+            <representation>Auto</representation>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <placementArea>UserCmds</placementArea>
+            <representationInContextMenu>Auto</representationInContextMenu>
+            <locationInCommandBar>InAdditionalSubmenu</locationInCommandBar>
+          </items>
+          <items xsi:type="form:Button">
             <name>DiscountsDelete</name>
             <id>1108</id>
             <visible>true</visible>
@@ -9014,6 +9091,7 @@
             <autoMaxHeight>true</autoMaxHeight>
             <placementArea>UserCmds</placementArea>
             <representationInContextMenu>Auto</representationInContextMenu>
+            <locationInCommandBar>InAdditionalSubmenu</locationInCommandBar>
           </items>
           <visible>true</visible>
           <enabled>true</enabled>
@@ -9025,10 +9103,6 @@
         <handlers>
           <event>OnEditEnd</event>
           <name>DiscountsOnEditEnd</name>
-        </handlers>
-        <handlers>
-          <event>BeforeAddRow</event>
-          <name>DiscountsBeforeAddRow</name>
         </handlers>
         <handlers>
           <event>AfterDeleteRow</event>
@@ -10908,59 +10982,6 @@
         </extInfo>
       </items>
       <items xsi:type="form:FormField">
-        <name>Benefit</name>
-        <id>1035</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <dataPath xsi:type="form:MultiLanguageDataPath">
-          <paths xsi:type="form:DataPath">
-            <segments>Benefit</segments>
-          </paths>
-        </dataPath>
-        <extendedTooltip>
-          <name>BenefitExtendedTooltip</name>
-          <id>1037</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <type>Label</type>
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-          <extInfo xsi:type="form:LabelDecorationExtInfo">
-            <horizontalAlign>Left</horizontalAlign>
-          </extInfo>
-        </extendedTooltip>
-        <contextMenu>
-          <name>BenefitContextMenu</name>
-          <id>1036</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <autoFill>true</autoFill>
-        </contextMenu>
-        <type>InputField</type>
-        <readOnly>true</readOnly>
-        <editMode>Enter</editMode>
-        <showInHeader>true</showInHeader>
-        <headerHorizontalAlign>Left</headerHorizontalAlign>
-        <showInFooter>true</showInFooter>
-        <extInfo xsi:type="form:InputFieldExtInfo">
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-          <wrap>true</wrap>
-          <chooseType>true</chooseType>
-          <typeDomainEnabled>true</typeDomainEnabled>
-          <textEdit>true</textEdit>
-        </extInfo>
-      </items>
-      <items xsi:type="form:FormField">
         <name>PaymentsApplied</name>
         <id>1021</id>
         <visible>true</visible>
@@ -11660,32 +11681,6 @@
     <edit>
       <common>true</common>
     </edit>
-  </attributes>
-  <attributes>
-    <name>Benefit</name>
-    <title>
-      <key>en</key>
-      <value>Benefit</value>
-    </title>
-    <title>
-      <key>ru</key>
-      <value>Льгота</value>
-    </title>
-    <title>
-      <key>ro</key>
-      <value>Beneficiu</value>
-    </title>
-    <id>16</id>
-    <valueType>
-      <types>DefinedType.Amount</types>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
-    <functionalOptions>FunctionalOption.EarlyPayments</functionalOptions>
   </attributes>
   <formCommands>
     <name>ApplyPurchaseOrders</name>

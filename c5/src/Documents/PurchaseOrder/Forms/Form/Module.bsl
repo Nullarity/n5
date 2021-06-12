@@ -323,6 +323,10 @@ Procedure sqlLinks ()
 	|	select Services.Ref
 	|	from Document.VendorInvoice.Services as Services
 	|	where Services.PurchaseOrder = &Ref
+	|	union
+	|	select Discounts.Ref
+	|	from Document.VendorInvoice.Discounts as Discounts
+	|	where Discounts.Document = &Ref
 	|) as Documents
 	|where not Documents.Ref.DeletionMark
 	|order by Date
@@ -343,7 +347,7 @@ Procedure sqlLinks ()
 	|	and &Ref in ( Documents.Detail, Documents.Document )
 	|)
 	|and not Documents.DeletionMark
-	|";
+	|order by Date";
 	selection.Add ( s );
 	
 EndProcedure 

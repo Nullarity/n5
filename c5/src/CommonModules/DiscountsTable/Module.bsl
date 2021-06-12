@@ -2,27 +2,29 @@
 Procedure Load ( Object ) export
 		
 	sale = TypeOf ( Object.Ref ) = Type ( "DocumentRef.Invoice" );
-	data = getDiscounts ( Object, sale );
-	table = discountsVAT ( data );
-	order = ? ( sale, "SalesOrder", "PurchaseOrder" );
-	discounts = Object.Discounts; 
-	discounts.Clear ();
 	item = Application.Discounts ();
 	accounts = AccountsMap.Item ( item, Object.Company, Object.Warehouse, "Income, VAT" );
 	useVAT = Object.VATUse > 0;
-	for each row in table do
-		newRow = discounts.Add ();
-		newRow [ order ] = row.Document; 
-		newRow.Item = item; 
-		newRow.VATCode = row.VATCode;
-		rate = row.VATRate;
-		newRow.VATRate = rate; 
-		newRow.Amount = row.Amount;
-		if ( useVAT ) then
-			calcRowVAT ( newRow );
-		endif;
-		newRow.Income = accounts.Income; 
-		newRow.VATAccount = accounts.VAT; 
+	table = Object.Discounts; 
+	table.Clear ();
+	discounts = getDiscounts ( Object, sale );
+	for each discount in discounts do
+		vatBase = getBase ( discount );
+		for each base in vatBase do
+			newRow = table.Add ();
+			newRow.Document = discount.Document; 
+			newRow.Detail = discount.Detail; 
+			newRow.Item = item; 
+			newRow.VATCode = base.VATCode;
+			rate = base.VATRate;
+			newRow.VATRate = rate; 
+			newRow.Amount = base.Amount;
+			if ( useVAT ) then
+				calcRowVAT ( newRow );
+			endif;
+			newRow.Income = accounts.Income; 
+			newRow.VATAccount = accounts.VAT; 
+		enddo;
 	enddo;
 	
 EndProcedure
@@ -39,67 +41,66 @@ Function getDiscounts ( Object, Sale )
 	
 	if ( Sale ) then
 		register = "AccumulationRegister.Discounts";
-		document = "Document.SalesOrder";
+		discountDebts = "AccumulationRegister.DiscountDebts";
+		orders = InvoiceForm.GetOrders ( Object, false );
 	else
 		register = "AccumulationRegister.VendorDiscounts";
-		document = "Document.PurchaseOrder";
+		discountDebts = "AccumulationRegister.VendorDiscountDebts";
+		orders = InvoiceForm.GetOrders ( Object, true );
 	endif; 
 	s = "
-	|// #Orders
-	|select Orders.Ref as Document, Orders.VATCode as VATCode, Orders.VATCode.Rate as VATRate,
-	|	sum ( Orders.Total ) as Amount
+	|select Discounts.Document as Document, Discounts.Detail as Detail, sum ( Discounts.Amount ) as Amount
 	|from (
-	|	select Items.Ref as Ref, Items.VATCode as VATCode, Items.Total as Total
-	|	from " + document + ".Items as Items
-	|	where Items.Ref in ( &Orders )
-	|	union all
-	|	select Services.Ref, Services.VATCode, Services.Total
-	|	from " + document + ".Services as Services
-	|	where Services.Ref in ( &Orders )
-	|) as Orders
-	|group by Orders.Ref, Orders.VATCode
-	|;
-	|// #Discounts
-	|select Discounts.Document as Document, sum ( Discounts.Amount ) as Amount
-	|from (
-	|	select Discounts.Document as Document, Discounts.Amount as Amount
+	|	select Discounts.Document as Document, undefined as Detail, Discounts.Amount as Amount
 	|	from " + register + " as Discounts
 	|	where Discounts.Document in ( &Orders )
 	|	and Discounts.Period < &Date
 	|	union all
-	|	select Discounts.Detail, - Discounts.Amount
+	|	select Discounts.Detail, undefined, - Discounts.Amount
 	|	from " + register + " as Discounts
 	|	where Discounts.Detail in ( &Orders )
 	|	and Discounts.Period < &Date
+	|	union all
+	|	select DiscountDebts.Document, DiscountDebts.Detail, DiscountDebts.AmountBalance
+	|	from " + discountDebts + ".Balance ( &Date, Contract = &Contract";
+	if ( orders.Count () > 0 ) then
+		s = s + " and Document in ( &Orders )";	
+	endif;
+	s = s + " ) as DiscountDebts
+	|	where DiscountDebts.AmountBalance > 0
 	|	) as Discounts
-	|group by Discounts.Document
+	|group by Discounts.Document, Discounts.Detail
 	|having sum ( Discounts.Amount ) > 0
-	|order by Discounts.Document.Date
 	|";
-	data = SQL.Create ( s );
-	q = data.Q;
+	q = new Query ( s );
 	q.SetParameter ( "Ref", Object.Ref );
 	q.SetParameter ( "Contract", Object.Contract );
 	q.SetParameter ( "Date", Periods.GetDocumentDate ( Object ) );
-	q.SetParameter ( "Orders", InvoiceForm.GetOrders ( Object, not Sale ) );
-	SQL.Perform ( data, false );
-	return data;
+	q.SetParameter ( "Orders", orders );
+	return q.Execute ().Unload ();
 	
 EndFunction 
 
 &AtServer
-Function discountsVAT ( Data )
+Function getBase ( Row )
 	
-	p = new Structure ();
-	p.Insert ( "FilterColumns", "Document" );
-	p.Insert ( "DistribColumnsTable1", "Amount" );
-	p.Insert ( "KeyColumn", "Amount" );
-	p.Insert ( "AssignСоlumnsTаble1", "Document" );
-	p.Insert ( "AssignСоlumnsTаble2", "VATCode, VATRate" );
-	discounts = data.Discounts;
-	amountType = Metadata.Documents.Invoice.TabularSections.Discounts.Attributes.Amount.Type;
-	CollectionsSrv.Adjust ( discounts, "Amount", amountType );
-	table = CollectionsSrv.Combine ( discounts, data.Orders, p );
+	base = ? ( Row.Detail = undefined, Row.Document, Row.Detail );
+	name = base.Metadata ().FullName ();
+	s = "
+	|select Items.VATCode as VATCode, Items.VATCode.Rate as VATRate, sum ( Items.Total ) as Total
+	|from (
+	|	select VATCode as VATCode, Total as Total from " + name + ".Items where Ref = &Ref
+	|	union all 
+	|	select VATCode, Total from " + name + ".Services where Ref = &Ref
+	|	) as Items
+	|group by Items.VATCode
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", base );
+	table = q.Execute ().Unload ();
+	type = Metadata.Documents.Invoice.TabularSections.Discounts.Attributes.Amount.Type;
+	CollectionsSrv.Adjust ( table, "Total", type );
+	Collections.Distribute ( Row.Amount, table, "Total", "Amount" );
 	return table;
 	
 EndFunction

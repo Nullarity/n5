@@ -483,6 +483,11 @@ Procedure sqlLinks ()
 	|from Document.Invoice.Services as Services
 	|where Services.SalesOrder = &Ref
 	|and not Services.Ref.DeletionMark
+	|union 
+	|select Discounts.Ref, Discounts.Ref.Number, Discounts.Ref.Date
+	|from Document.Invoice.Discounts as Discounts
+	|where Discounts.SalesOrder = &Ref
+	|and not Discounts.Ref.DeletionMark
 	|order by Date
 	|;
 	|// #Payments
@@ -501,7 +506,7 @@ Procedure sqlLinks ()
 	|	and &Ref in ( Documents.Detail, Documents.Document )
 	|)
 	|and not Documents.DeletionMark
-	|";
+	|order by Date";
 	selection.Add ( s );
 	
 EndProcedure 

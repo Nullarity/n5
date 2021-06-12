@@ -21,24 +21,28 @@ Procedure setContext ( Env )
 		Env.Insert ( "Customer", true );
 		Env.Insert ( "Register", "Debts" );
 		Env.Insert ( "Discounts", "Discounts" );
+		Env.Insert ( "DiscountDebts", "DiscountDebts" );
 		Env.Insert ( "IncomingPayment", true );
 	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
 		Env.Insert ( "Refund", true );
 		Env.Insert ( "Customer", true );
 		Env.Insert ( "Register", "Debts" );
 		Env.Insert ( "Discounts", "Discounts" );
+		Env.Insert ( "DiscountDebts", "DiscountDebts" );
 		Env.Insert ( "IncomingPayment", false );
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
 		Env.Insert ( "Refund", true );
 		Env.Insert ( "Customer", false );
 		Env.Insert ( "Register", "VendorDebts" );
 		Env.Insert ( "Discounts", "VendorDiscounts" );
+		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
 		Env.Insert ( "IncomingPayment", true );
 	else
 		Env.Insert ( "Refund", false );
 		Env.Insert ( "Customer", false );
 		Env.Insert ( "Register", "VendorDebts" );
 		Env.Insert ( "Discounts", "VendorDiscounts" );
+		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
 		Env.Insert ( "IncomingPayment", false );
 	endif;
 	
@@ -139,23 +143,43 @@ Procedure proceedDiscount ( Env, Row )
 		return;
 	endif;
 	fields = Env.Fields;
-	movement = Env.Registers [ Env.Register ].Add ();
-	movement.Period = fields.date;
-	movement.Contract = Row.Contract;
-	movement.Document = Row.Document;
-	movement.Detail = Row.Detail;
-	movement.PaymentKey = Row.PaymentKey;
-	movement.Payment = - discount;
-	if ( Row.Debt <> 0 ) then
-		movement.Amount = - discount;
-		commitDiscount ( Env, Row );
-	endif; 
-	if ( Row.Bill <> 0 ) then
-		movement.Bill = - discount;
-	endif; 
-	makeDiscount ( Env, Row );
+	if ( providedAfterDelivery ( Row ) ) then
+		movement = Env.Registers [ Env.DiscountDebts ].Add ();
+		movement.Period = fields.date;
+		movement.Contract = Row.Contract;
+		movement.Document = Row.Document;
+		movement.Detail = Row.Detail;
+		movement.Amount = discount;
+	else	
+		movement = Env.Registers [ Env.Register ].Add ();
+		movement.Period = fields.date;
+		movement.Contract = Row.Contract;
+		movement.Document = Row.Document;
+		movement.Detail = Row.Detail;
+		movement.PaymentKey = Row.PaymentKey;
+		movement.Payment = - discount;
+		if ( Row.Debt <> 0 ) then
+			movement.Amount = - discount;
+			commitDiscount ( Env, Row );
+		endif; 
+		if ( Row.Bill <> 0 ) then
+			movement.Bill = - discount;
+		endif; 
+		makeDiscount ( Env, Row );
+	endif;
 
 EndProcedure
+
+Function providedAfterDelivery ( Row )
+	
+	orders = new Array ();
+	orders.Add ( TypeOf ( undefined ) );
+	orders.Add ( Type ( "DocumentRef.SalesOrder" ) );
+	orders.Add ( Type ( "DocumentRef.PurchaseOrder" ) );
+	return orders.Find ( TypeOf ( Row.Document ) ) = undefined
+	or Row.Detail <> undefined;
+	
+EndFunction
 
 Procedure commitDiscount ( Env, Row )
 	
@@ -662,5 +686,6 @@ Procedure flagRegisters ( Env )
 	registers.General.Write = true;
 	registers [ Env.Register ].Write = true;
 	registers [ Env.Discounts ] .Write = true;
+	registers [ Env.DiscountDebts ] .Write = true;
 	
 EndProcedure

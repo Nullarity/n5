@@ -175,7 +175,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	setLinks ();
 	setAccuracy ();
 	setSocial ();
-	Forms.ActivatePage ( ThisObject, "ItemsTable,Services,FixedAssets,IntangibleAssets,Accounts" );
+	Forms.ActivatePage ( ThisObject, "ItemsTable,Services,FixedAssets,IntangibleAssets,Accounts,Discounts" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
@@ -656,19 +656,23 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	accounts = object.Accounts;
 	fixedAssets = object.FixedAssets;
 	intangibleAssets = object.IntangibleAssets;
+	discounts = object.Discounts;
 	vat = items.Total ( "VAT" )
 	+ services.Total ( "VAT" )
 	+ accounts.Total ( "VAT" )
 	+ fixedAssets.Total ( "VAT" )
-	+ intangibleAssets.Total ( "VAT" );
+	+ intangibleAssets.Total ( "VAT" )
+	- discounts.Total ( "VAT" );
+	paymentDiscount = discounts.Total ( "Amount" );
 	amount = items.Total ( "Total" )
 	+ services.Total ( "Total" )
 	+ accounts.Total ( "Total" )
 	+ fixedAssets.Total ( "Total" )
-	+ intangibleAssets.Total ( "Total" );
+	+ intangibleAssets.Total ( "Total" )
+	- paymentDiscount;
 	object.VAT = vat;
 	object.Amount = amount;
-	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
+	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" ) + paymentDiscount;
 	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
 	if ( Form.ContractCurrency = object.Currency ) then
 		object.ContractAmount = amount;
@@ -2145,28 +2149,29 @@ EndProcedure
 Procedure updateDiscounts ()
 	
 	DiscountsTable.Load ( Object );
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 
-&AtClient
-Procedure DiscountsBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+&AtServer
+Procedure applyPaymentDiscount ()
 	
-	Cancel = true;
+	InvoiceForm.SetPaymentsApplied ( ThisObject );
+	updateTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure DiscountsOnEditEnd ( Item, NewRow, CancelEdit )
 
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 
 &AtClient
 Procedure DiscountsAfterDeleteRow ( Item )
 	
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 
@@ -2209,4 +2214,4 @@ Procedure applyCurrency ()
 	updateTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	
-EndProcedure 
+EndProcedure

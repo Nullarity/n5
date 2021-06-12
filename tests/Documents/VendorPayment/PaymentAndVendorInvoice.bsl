@@ -1,11 +1,11 @@
-// Create VendorPayment
+﻿// Create VendorPayment
 // Create VendorInvoice base on payment
 // Check if vendor invoice has been applied prepayment
 
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "2B23BDCC"));
+this.Insert("ID", Call("Common.ScenarioID", "A02B"));
 getEnv();
 createEnv();
 

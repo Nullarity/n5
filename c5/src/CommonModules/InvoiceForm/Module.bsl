@@ -273,27 +273,38 @@ EndFunction
 &AtServer
 Procedure SetPaymentsApplied ( Form ) export
 	
+	object = Form.Object;
+	isOrder = iOrder ( object.Ref );
 	if ( not documentReady ( Form ) ) then
 		Form.PaymentsApplied = 0;
-		Form.Benefit = 0;
+		if ( isOrder ) then
+			Form.Benefit = 0;
+		endif;
 		return;
 	endif;
-	object = Form.Object;
-	type = TypeOf ( object.Ref );
-	if ( object.Posted
-		or type = Type ( "DocumentRef.SalesOrder" )
-		or type = Type ( "DocumentRef.PurchaseOrder" ) ) then
+	if ( object.Posted or isOrder ) then
 		data = getDebt ( Object );
-		benefit = data.Benefit;
-		Form.PaymentsApplied = object.ContractAmount - benefit - data.Debt;
-		Form.Benefit = benefit;
+		if ( isOrder ) then
+			benefit = data.Benefit;
+			Form.PaymentsApplied = object.ContractAmount - benefit - data.Debt;
+			Form.Benefit = benefit;
+		else
+			Form.PaymentsApplied = object.ContractAmount - data.Debt;
+		endif;
 	else
 		data = getAdvance ( Object );
 		Form.PaymentsApplied = Min ( data.Advance, object.ContractAmount );
-		Form.Benefit = data.Benefit;
 	endif;
 
 EndProcedure
+
+Function iOrder ( Ref )
+	
+	type = TypeOf ( Ref );
+	return type = Type ( "DocumentRef.SalesOrder" )
+		or type = Type ( "DocumentRef.PurchaseOrder" );
+	
+EndFunction
 
 &AtServer
 Function documentReady ( Form )
@@ -328,42 +339,17 @@ EndFunction
 Function getDebt ( Object )
 	
 	ref = Object.Ref;
-	type = TypeOf ( ref ); 
-	benefit = 0;
-	if ( type = Type ( "DocumentRef.SalesOrder" ) ) then
-		register = "SalesOrderDebts";
-		discount = "Discounts";
-		resource = "Payment";
-		factor = 1;
-	elsif ( type = Type ( "DocumentRef.PurchaseOrder" ) ) then
-		register = "PurchaseOrderDebts";
-		discount = "VendorDiscounts";
-		resource = "Payment";
-		factor = 1;
-	elsif ( type = Type ( "DocumentRef.Invoice" ) ) then
-		register = "InvoiceDebts";
-		discount = "Discounts";
-		resource = "Amount";
-		benefit = Object.Discounts.Total ( "Amount" );
-		factor = 1;
-	elsif ( type = Type ( "DocumentRef.Return" ) ) then
-		register = "InvoiceDebts";
-		discount = "Discounts";
-		resource = "Amount";
-		factor = -1;
-	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
-		register = "VendorInvoiceDebts";
-		discount = "VendorDiscounts";
-		resource = "Amount";
-		benefit = Object.Discounts.Total ( "Amount" );
-		factor = 1;
-	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
-		register = "VendorInvoiceDebts";
-		discount = "VendorDiscounts";
-		resource = "Amount";
-		factor = -1;
-	endif;
-	s = "select " + resource + "Balance as Amount, isnull ( Discounts.Amount, 0 ) as Benefit from AccumulationRegister."
+	type = TypeOf ( ref );
+	q = new Query ();
+	if ( iOrder ( ref ) ) then
+		if ( type = Type ( "DocumentRef.SalesOrder" ) ) then
+			register = "SalesOrderDebts";
+			discount = "Discounts";
+		elsif ( type = Type ( "DocumentRef.PurchaseOrder" ) ) then
+			register = "PurchaseOrderDebts";
+			discount = "VendorDiscounts";
+		endif;
+		s = "select PaymentBalance as Debt, isnull ( Discounts.Amount, 0 ) as Benefit from AccumulationRegister."
 		+ register + ".Balance ( , Document = &Document )
 		|left join (
 		|	select sum ( Discounts.Amount ) as Amount
@@ -371,60 +357,67 @@ Function getDebt ( Object )
 		|		select Discounts.Amount as Amount
 		|		from AccumulationRegister." + discount + " as Discounts
 		|		where Discounts.Document = &Document
-		|		and Discounts.Recorder <> &Document
 		|	) as Discounts
 		|) as Discounts
-		|on true";
-	q = new Query ( s );
-	q.SetParameter ( "Document", ref );
-	table = q.Execute ().Unload ();
-	result = new Structure ( "Debt, Benefit", 0, 0 );
-	if ( table.Count () > 0 ) then
-		row = table [ 0 ];
-		result.Debt = row.Amount * factor;
-		result.Benefit = row.Benefit + benefit;
+		|on true
+		|";
+	else
+		if ( type = Type ( "DocumentRef.Invoice" ) ) then
+			register = "InvoiceDebts";
+			factor = 1;
+		elsif ( type = Type ( "DocumentRef.Return" ) ) then
+			register = "InvoiceDebts";
+			factor = -1;
+		elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
+			register = "VendorInvoiceDebts";
+			factor = 1;
+		elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
+			register = "VendorInvoiceDebts";
+			factor = -1;
+		endif;
+		s = "select AmountBalance * &Factor as Debt from AccumulationRegister."
+		+ register + ".Balance ( , Document = &Document )";
+		q.SetParameter ( "Factor", factor );
 	endif;
-	return result;
+	q.Text = s;
+	q.SetParameter ( "Document", ref );
+	return Conversion.RowToStructure ( q.Execute ().Unload () );
 	
 EndFunction
 
 &AtServer
 Function getAdvance ( Object )
 	
-	discount = 0;
 	ref = Object.Ref;
 	type = TypeOf ( ref ); 
 	if ( type = Type ( "DocumentRef.Invoice" ) ) then
 		register = "Debts";
-		discount = Object.Discounts.Total ( "Amount" );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		register = "VendorDebts";
-		discount = Object.Discounts.Total ( "Amount" );
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		register = "Debts";
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		register = "VendorDebts";
 	endif;
-	s = "select OverpaymentBalance as Amount from AccumulationRegister."
-		+ register + ".Balance ( , Contract = &Contract )";
+	s = "select OverpaymentBalance as Advance from AccumulationRegister."
+	+ register + ".Balance ( , Contract = &Contract )";
 	q = new Query ( s );
 	q.SetParameter ( "Contract", Object.Contract );
-	table = q.Execute ().Unload ();
-	result = new Structure ( "Advance, Benefit", 0, discount );
-	if ( table.Count () > 0 ) then
-		row = table [ 0 ];
-		result.Advance = row.Amount;
-	endif;
-	return result;
+	return Conversion.RowToStructure ( q.Execute ().Unload () );
 	
 EndFunction
 
 Procedure CalcBalanceDue ( Form ) export
 
-	object = Form.Object;
-	Form.BalanceDue = object.ContractAmount - Form.PaymentsApplied - Form.Benefit;
+	Form.BalanceDue = Form.Object.ContractAmount - Form.PaymentsApplied - appliedDiscount ( Form );
 	
 EndProcedure
+
+Function appliedDiscount ( Form )
+	
+	return ? ( iOrder ( Form.Object.Ref ), Form.Benefit, 0 );
+	
+EndFunction
 
 &AtServer
 Procedure SetPaidPercent ( Form ) export

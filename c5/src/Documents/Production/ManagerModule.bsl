@@ -83,7 +83,7 @@ Function getData ( Env )
 	sqlAllocation ( Env );
 	sqlDelivery ( Env );
 	getTables ( Env );
-	Env.Insert ( "CheckBalances", Shortage.Check ( Env.Fields.Company, Env.Realtime, Env.RestoreCost ) );
+	Env.Insert ( "DistributionRecordsets" );
 	return true;
 	
 EndFunction
@@ -141,8 +141,8 @@ EndProcedure
 
 Procedure setContext ( Env )
 	
+	Env.Insert ( "CheckBalances", Shortage.Check ( Env.Fields.Company, Env.Realtime, Env.RestoreCost ) );
 	Env.Insert ( "ProductionOrderExists", Env.ProductionOrderExists <> undefined and Env.ProductionOrderExists.Exist );
-	Env.Insert ( "DistributionRecordsets" );
 
 EndProcedure
 

@@ -53,7 +53,7 @@ Function Post ( Env ) export
 	if ( not Env.RestoreCost ) then
 		makeDiscounts ( Env );
 		commitVAT ( Env );
-		makeIncome ( Env );
+		commitIncome ( Env );
 		attachSequence ( Env );
 		if ( not checkBalances ( Env ) ) then
 			return false;
@@ -912,7 +912,7 @@ Procedure makeDiscounts ( Env )
 
 EndProcedure
 
-Procedure makeIncome ( Env )
+Procedure commitIncome ( Env )
 	
 	fields = Env.Fields;
 	Env.SalesTable.GroupBy ( "Income, Operation", "Amount, ContractAmount" );

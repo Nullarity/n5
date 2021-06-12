@@ -57,7 +57,6 @@ Function getData ( Env )
 		selection.Add ( Dependencies.SqlDependants () );
 	endif; 
 	getFields ( Env );
-	setContext ( Env );
 	if ( not removeDependency ( Env ) ) then
 		return false;
 	endif;
@@ -72,6 +71,7 @@ Function getData ( Env )
 		endif; 
 	endif;
 	getTables ( Env );
+	Env.Insert ( "DistributionRecordsets" );
 	return true;
 	
 EndFunction
@@ -120,12 +120,6 @@ Procedure getFields ( Env )
 	SQL.Perform ( Env );
 	
 EndProcedure 
-
-Procedure setContext ( Env )
-	
-	Env.Insert ( "DistributionRecordsets" );
-
-EndProcedure
 
 Function removeDependency ( Env )
 	

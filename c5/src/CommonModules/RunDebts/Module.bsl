@@ -1,7 +1,8 @@
 Function FromInvoice ( Env ) export
 
 	setContext ( Env );
-	if ( forFree ( Env ) ) then
+	fields = Env.Fields;
+	if ( fields.ContractAmount = 0 ) then
 		clearRecords ( Env );
 		return true;
 	endif; 
@@ -10,8 +11,12 @@ Function FromInvoice ( Env ) export
 	getPayments ( Env );
 	if ( Env.Return ) then
 		closeDebts ( Env );
+	elsif ( fields.DiscountsAfterDelivery ) then
+		if ( not closeDiscounts ( Env ) ) then
+			return false;
+		endif;
 	endif;
-	if ( Env.Fields.CloseAdvances ) then
+	if ( fields.CloseAdvances ) then
 		closeOverpayments ( Env );
 	endif;
 	if ( not Env.Return
@@ -63,19 +68,6 @@ Procedure setContext ( Env )
 	Env.Insert ( "NewPaymentDate", Env.Fields.PaymentDate <> Date ( 3999, 12, 31 ) );
 	
 EndProcedure
-
-Function forFree ( Env )
-
-	fields = Env.Fields;
-	type = Env.Type;
-	if ( type = Type ( "DocumentRef.Invoice" )
-		or type = Type ( "DocumentRef.VendorInvoice" ) ) then
-		return 0 = ( fields.ContractAmount - fields.PaymentDiscount );
-	else
-		return 0 = fields.ContractAmount;
-	endif;
-
-EndFunction
 
 Procedure clearRecords ( Env )
 	
@@ -159,11 +151,17 @@ Procedure closeDebts ( Env )
 	if ( table.Count () = 0 ) then
 		return;
 	endif;
+	decreaseDebts ( Env, table );
+	
+EndProcedure
+
+Procedure decreaseDebts ( Env, Table )
+	
 	fields = Env.Fields;
 	date = fields.Date;
 	contract = fields.Contract;
 	recordset = Env.Registers [ Env.PaymentsRegister ];
-	for each row in table do
+	for each row in Table do
 		movement = recordset.AddReceipt ();
 		movement.Period = date;
 		movement.Contract = contract;
@@ -176,6 +174,22 @@ Procedure closeDebts ( Env )
 	enddo; 
 	
 EndProcedure
+
+Function closeDiscounts ( Env )
+	
+	p = new Structure ();
+	p.Insert ( "FilterColumns", "Document, Detail" );
+	p.Insert ( "KeyColumn", "Amount" );
+	p.Insert ( "DecreasingColumns2", "Amount" );
+	table = CollectionsSrv.Decrease ( Env.Debts, Env.Discounts, p );
+	if ( Env.Discounts.Count () > 0 ) then
+		// not enough discounts
+		return false;
+	endif;
+	decreaseDebts ( Env, table );
+	return true;
+	
+EndFunction
 
 Function detailPayments ( Env )
 	
@@ -421,9 +435,7 @@ Procedure getPayments ( Env )
 	
 	sqlDocuments ( Env );
 	sqlPayments ( Env );
-	if ( Env.Return ) then
-		sqlDebts ( Env );
-	endif;
+	sqlDebts ( Env );
 	fields = Env.Fields;
 	q = Env.Q;
 	q.SetParameter ( "Ref", Env.Ref );
@@ -436,6 +448,7 @@ EndProcedure
 
 Procedure sqlDocuments ( Env )
 	
+	fields = Env.Fields;
 	type = Env.Type;
 	if ( type = Type ( "DocumentRef.Invoice" ) ) then
 		s = "
@@ -481,11 +494,16 @@ Procedure sqlDocuments ( Env )
 		|	from IntangibleAssets as IntangibleAssets
 		|	union all
 		|	select undefined, Accounts.ContractAmount + Accounts.ContractVAT
-		|	from Accounts as Accounts
-		|	union all
-		|	select Discounts.PurchaseOrder, - Discounts.Amount
-		|	from Document.VendorInvoice.Discounts as Discounts
-		|	where Discounts.Ref = &Ref
+		|	from Accounts as Accounts";
+		if ( fields.DiscountsBeforeDelivery ) then
+			s = s + "
+			|union all
+			|select Discounts.Document, - Discounts.Total
+			|from Discounts as Discounts
+			|where BeforeDelivery
+			|";
+		endif;
+		s = s + "
 		|) as Documents
 		|group by Documents.Document
 		|index by Document
@@ -494,6 +512,15 @@ Procedure sqlDocuments ( Env )
 		|select Documents.Amount as Amount, Documents.Document as Document
 		|from Documents as Documents
 		|";
+		if ( fields.DiscountsAfterDelivery ) then
+			s = s + "
+			|;
+			|// #Discounts
+			|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Total as Amount
+			|from Discounts as Discounts
+			|where not BeforeDelivery
+			|";
+		endif;
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		s = "
 		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount
@@ -515,7 +542,8 @@ Procedure sqlDocuments ( Env )
 		|from Documents as Documents
 		|";
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
-		s = "// #Documents
+		s = "
+		|// #Documents
 		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount
 		|into Documents
 		|from (
@@ -613,13 +641,20 @@ EndProcedure
 
 Procedure sqlDebts ( Env )
 	
+	if ( Env.Return ) then
+		source = "select Document, Detail from Documents";
+	elsif ( Env.Fields.DiscountsAfterDelivery ) then
+		source = "select Document, Detail from Discounts where not BeforeDelivery";
+	else
+		return;
+	endif;		
 	s = "
 	|// #Debts
 	|select Debts.Document as Document, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
 	|	Debts.AmountBalance as Amount
 	|from AccumulationRegister." + Env.PaymentsRegister + ".Balance ( &Timestamp,
 	|	Contract = &Contract
-	|	and ( Document, Detail ) in ( select Document, Detail from Documents ) ) as Debts
+	|	and ( Document, Detail ) in ( " + source + " ) ) as Debts
 	|";
 	Env.Selection.Add ( s );
 	
