@@ -577,7 +577,7 @@ Function payerData(val Payer, val Operation, val Company)
 	
 	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
 	if (Operation = Enums.BankOperations.Payment) then
-		accounts = AccountsMap.Organization(Payer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken");
+		accounts = AccountsMap.Organization(Payer, Company, "CustomerAccount, AdvanceTaken");
 		data.Account = accounts.CustomerAccount;
 		data.AdvanceAccount = accounts.AdvanceTaken;
 		contract = DF.Values(Payer, "CustomerContract, CustomerContract.Company as Company");
@@ -585,7 +585,7 @@ Function payerData(val Payer, val Operation, val Company)
 			data.Contract = contract.CustomerContract;
 		endif;
 	elsif (Operation = Enums.BankOperations.ReturnFromVendor) then
-		accounts = AccountsMap.Organization(Payer, Company, "VendorAccount, DiscountGiven, AdvanceTaken");
+		accounts = AccountsMap.Organization(Payer, Company, "VendorAccount, AdvanceTaken");
 		data.Account = accounts.VendorAccount;
 		data.AdvanceAccount = accounts.AdvanceTaken;
 		contract = DF.Values(Payer, "VendorContract, VendorContract.Company as Company");
@@ -721,7 +721,7 @@ Function receiverData(val Receiver, val Operation, val Company)
 			data.Contract = contract.VendorContract;
 		endif;
 	elsif (Operation = Enums.BankOperations.ReturnToCustomer) then
-		accounts = AccountsMap.Organization(Receiver, Company, "CustomerAccount, DiscountGiven, AdvanceGiven");
+		accounts = AccountsMap.Organization(Receiver, Company, "CustomerAccount, AdvanceGiven");
 		data.Account = accounts.CustomerAccount;
 		data.AdvanceAccount = accounts.AdvanceGiven;
 		contract = DF.Values(Receiver, "CustomerContract, CustomerContract.Company as Company");

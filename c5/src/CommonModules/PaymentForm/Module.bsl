@@ -441,11 +441,11 @@ Procedure SetOrganizationAccounts ( Object ) export
 	
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" ) ) then
-		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven, AdvanceTaken" );
+		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, AdvanceTaken" );
 		Object.CustomerAccount = accounts.CustomerAccount;
 		Object.AdvanceAccount = accounts.AdvanceTaken;
 	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
-		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven, AdvanceGiven" );
+		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, AdvanceGiven" );
 		Object.CustomerAccount = accounts.CustomerAccount;
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
@@ -454,7 +454,7 @@ Procedure SetOrganizationAccounts ( Object ) export
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 		Object.IncomeTaxAccount = accounts.IncomeTax;
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountGiven, AdvanceTaken" );
+		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, AdvanceTaken" );
 		Object.VendorAccount = accounts.VendorAccount;
 		Object.AdvanceAccount = accounts.AdvanceTaken;
 	endif; 

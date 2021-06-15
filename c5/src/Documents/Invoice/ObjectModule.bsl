@@ -66,7 +66,7 @@ Procedure headerByShipment ()
 	Memo = "";
 	Date = CurrentSessionDate ();
 	Shipment = Base.Ref;
-	data = AccountsMap.Organization ( Customer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken" );
+	data = AccountsMap.Organization ( Customer, Company, "CustomerAccount, AdvanceTaken" );
 	CustomerAccount = data.CustomerAccount;
 	CloseAdvances = DF.Pick ( Contract, "CustomerAdvances" );
 	

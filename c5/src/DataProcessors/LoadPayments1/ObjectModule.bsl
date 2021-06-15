@@ -1282,7 +1282,7 @@ Procedure fillExpense(Row, RowDetail)
 				Row.Contract = rowReceiver.CustomerContract;
 				Row.BankOperation = Enums.BankOperations.ReturnToCustomer;
 				setCashFlow(Row, rowReceiver.CustomerCashFlow, Env.FlowOtherExpense);
-				accounts = AccountsMap.Organization(receiver, Company, "CustomerAccount, DiscountGiven, AdvanceGiven");
+				accounts = AccountsMap.Organization(receiver, Company, "CustomerAccount, AdvanceGiven");
 				Row.Account = accounts.CustomerAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
 			endif;
@@ -1383,14 +1383,14 @@ Procedure fillReceipt(Row, RowDetail)
 			Row.Contract = rowPayer.CustomerContract;
 			Row.BankOperation = Enums.BankOperations.Payment;
 			setCashFlow(Row, rowPayer.CustomerCashFlow, Env.FlowReceipt);
-			accounts = AccountsMap.Organization(payer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken");
+			accounts = AccountsMap.Organization(payer, Company, "CustomerAccount, AdvanceTaken");
 			Row.Account = accounts.CustomerAccount;
 			Row.AdvanceAccount = accounts.AdvanceTaken;
 		else
 			Row.Contract = rowPayer.VendorContract;
 			Row.BankOperation = Enums.BankOperations.ReturnFromVendor;
 			setCashFlow(Row, rowPayer.VendorCashFlow, Env.FlowOtherReceipt);
-			accounts = AccountsMap.Organization(payer, Company, "VendorAccount, DiscountGiven, AdvanceTaken");
+			accounts = AccountsMap.Organization(payer, Company, "VendorAccount, AdvanceTaken");
 			Row.Account = accounts.VendorAccount;
 			Row.AdvanceAccount = accounts.AdvanceTaken;
 		endif;

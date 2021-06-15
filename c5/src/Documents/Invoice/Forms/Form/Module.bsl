@@ -295,7 +295,7 @@ Procedure headerBySalesOrder ()
 		Object.Rate = currency.Rate;
 		Object.Factor = currency.Factor;
 	endif;
-	data = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven" );
+	data = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount" );
 	Object.CustomerAccount = data.CustomerAccount;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
