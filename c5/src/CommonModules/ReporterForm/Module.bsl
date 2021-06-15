@@ -154,7 +154,9 @@ Function simpleReport ( Report )
 	or Report = "IncomeStatement"
 	or Report = "Debts"
 	or Report = "Reconciliation"
-	or Report = "VendorDebts";
+	or Report = "VendorDebts"
+	or Report = "SalesRegister"
+	or Report = "PurchasesRegister";
 		
 EndFunction 
 
@@ -350,11 +352,13 @@ EndProcedure
 
 Procedure addPeriod ( Parts, Composer )
 	
-	p = DC.FindParameter ( Composer, "Period" );
-	if ( p.Use ) then
-		period = p.Value;
-		Parts.Add ( PeriodPresentation ( period.StartDate, period.EndDate, "FP=true" ) );
-	endif; 
+	#if ( not MobileClient ) then
+		p = DC.FindParameter ( Composer, "Period" );
+		if ( p.Use ) then
+			period = p.Value;
+			Parts.Add ( PeriodPresentation ( period.StartDate, period.EndDate, "FP=true" ) );
+		endif; 
+	#endif
 	
 EndProcedure 
 

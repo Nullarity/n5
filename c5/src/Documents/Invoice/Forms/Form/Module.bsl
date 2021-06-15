@@ -1469,28 +1469,29 @@ EndProcedure
 Procedure updateDiscounts ()
 	
 	DiscountsTable.Load ( Object );
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 
-&AtClient
-Procedure DiscountsBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+&AtServer
+Procedure applyPaymentDiscount ()
 	
-	Cancel = true;
+	InvoiceForm.SetPaymentsApplied ( ThisObject );
+	updateTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure DiscountsOnEditEnd ( Item, NewRow, CancelEdit )
 
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 
 &AtClient
 Procedure DiscountsAfterDeleteRow ( Item )
 	
-	updateBalanceDue ();
+	applyPaymentDiscount ();
 	
 EndProcedure
 

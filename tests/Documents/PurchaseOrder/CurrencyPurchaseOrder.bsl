@@ -1,11 +1,9 @@
-﻿// Create PO with 2% for early payment
-// Receive a 100% prepayment
-// Buy items and check if reverse transactions come up
+﻿// Check PO in currency
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A02W" );
+id = Call ( "Common.ScenarioID", "A038" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -26,30 +24,28 @@ Click("#FormPostAndClose");
 #endregion
 
 #region payPO
+Call("Documents.PurchaseOrder.ListByMemo", id);
 With ();
-Click ( "#FormDocumentVendorPaymentCreateBasedOn" );
+Click ( "!FormDocumentVendorPaymentCreateBasedOn" );
 With ();
 Click ( "!FormPostAndClose" );
 #endregion
 
-#region buy
-Call("Documents.VendorInvoice.ListByMemo", id);
-With();
-if (Call("Table.Count", Get("#List"))) then
-	Click("#FormChange");
-	With();
-else
-	Commando("e1cib/command/Document.VendorInvoice.Create");
-	Set("#Vendor", this.Vendor);
-	Set("#Memo", id);
-endif;
-Click ( "#FormPost" );
-Check("#Discount", 8);
-Check("#PaymentsApplied", 392);
-Check("#BalanceDue", 0);
-Click("#FormReportRecordsShow");
-With ();
-CheckTemplate ( "#TabDoc" );
+#region checkInvoive1
+Commando("e1cib/command/Document.VendorInvoice.Create");
+Set("#Vendor", this.Vendor);
+Next ();
+Items = Get ( "!ItemsTable" );
+Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
+Click ( "!FormPostAndClose" );
+#endregion
+
+#region checkInvoive2
+Commando("e1cib/command/Document.VendorInvoice.Create");
+Set("#Vendor", this.Vendor);
+Next ();
+Items = Get ( "!ItemsTable" );
+Assert ( Call("Table.Count", Items ) ).Empty ();
 #endregion
 
 // *************************
@@ -70,19 +66,19 @@ Procedure createEnv ()
 	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
+	
+	#region createItems
+	p = Call ( "Catalogs.Items.Create.Params" );
+	p.Description = this.Item;
+	Call ( "Catalogs.Items.Create", p );
+	#endregion
 
 	#region createVendor
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
 	p.Description = this.Vendor;
+	p.Terms = "Due on receipt";
+	p.Currency = "EUR";
 	Call ( "Catalogs.Organizations.CreateVendor", p );
-	#endregion
-
-	#region createItem
-	p = Call ( "Catalogs.Items.Create.Params" );
-	p.Description = this.Item;
-	p.Unit = "UT";
-	p.Capacity = 1;
-	Call ( "Catalogs.Items.Create", p );
 	#endregion
 
 	RegisterEnvironment ( id );

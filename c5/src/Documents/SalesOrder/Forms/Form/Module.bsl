@@ -486,7 +486,7 @@ Procedure sqlLinks ()
 	|union 
 	|select Discounts.Ref, Discounts.Ref.Number, Discounts.Ref.Date
 	|from Document.Invoice.Discounts as Discounts
-	|where Discounts.SalesOrder = &Ref
+	|where Discounts.Document = &Ref
 	|and not Discounts.Ref.DeletionMark
 	|order by Date
 	|;

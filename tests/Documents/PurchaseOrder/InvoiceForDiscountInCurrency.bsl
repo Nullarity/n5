@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A030" );
+id = Call ( "Common.ScenarioID", "A033" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -17,6 +17,9 @@ Click("#FormCreate");
 With();
 Put ( "#Vendor", this.Vendor );
 Put ( "#Memo", id );
+Check("#Rate", 21);
+Put ( "#Currency", "MDL" );
+Check("#Rate", 21);
 Items = Get ( "!Services" );
 Click ( "!ServicesAdd" );
 Items.EndEditRow ();
@@ -29,6 +32,7 @@ Click("#FormPostAndClose");
 #region buy
 Commando("e1cib/command/Document.VendorInvoice.Create");
 Put("#Vendor", this.Vendor);
+Put("#Currency", "MDL");
 Items = Get ( "!Services" );
 Set ( "#ServicesAccount", "7121", Items );
 Set ( "!ServicesExpense", "Others", Items );
@@ -48,7 +52,6 @@ else
 	Set("#Memo", id);
 endif;
 Click ( "#FormPost" );
-Click("#FormReportRecordsShow");
 #endregion
 
 #region receiveDiscountInvoice
@@ -60,8 +63,15 @@ if (Call("Table.Count", Get("#List"))) then
 else
 	Commando("e1cib/command/Document.VendorInvoice.Create");
 	Put("#Vendor", this.Vendor);
+	Put("#Currency", "MDL");
 	Set("#Memo", id);
 endif;
+Check("#Discount", 39.9); // 1.9 * 21
+Check("#VAT", -6.72);
+Check("#Amount", -39.9);
+Check("#ContractAmount", -1.9);
+Check("#PaymentsApplied", -1.9);
+Check("#BalanceDue", 0);
 Click ( "#FormPost" );
 Click("#FormReportRecordsShow");
 With ();
@@ -111,6 +121,9 @@ Procedure createEnv ()
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
 	p.Description = this.Vendor;
 	p.Terms = id;
+	p.Currency = "USD";
+	p.RateType = "Fixed";
+	p.Rate = 21;
 	Call ( "Catalogs.Organizations.CreateVendor", p );
 	#endregion
 

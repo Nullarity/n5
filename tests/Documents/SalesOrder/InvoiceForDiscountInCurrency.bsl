@@ -1,71 +1,102 @@
-﻿// Create PO (with services) with 10% for early payment
-// Purchase services
-// Pay 90% in advance
-// Receive 10% discount invoice
+﻿// Create SO (with services) with 10% for early payment
+// Sell services
+// Receive 90% in advance
+// Create 10% discount invoice
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A030" );
+id = Call ( "Common.ScenarioID", "A03A" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
 
-#region newPurchaseOrder
-Commando("e1cib/list/Document.PurchaseOrder");
+#region newSalesOrder
+Commando("e1cib/list/Document.SalesOrder");
+Clear("#StatusFilter");
 Click("#FormCreate");
 With();
-Put ( "#Vendor", this.Vendor );
+Put ( "#Customer", this.Customer );
 Put ( "#Memo", id );
+Check("#Rate", 21);
+Put ( "#Currency", "MDL" );
+Check("#Rate", 21);
 Items = Get ( "!Services" );
 Click ( "!ServicesAdd" );
 Items.EndEditRow ();
 Set ( "!ServicesItem", this.Item, Items );
 Set ( "!ServicesQuantity", 40, Items );
 Set ( "!ServicesPrice", 10, Items );
-Click("#FormPostAndClose");
+Click("#FormSendForApproval");
+With();
+Click ( "!Button0" );
 #endregion
 
-#region buy
-Commando("e1cib/command/Document.VendorInvoice.Create");
-Put("#Vendor", this.Vendor);
-Items = Get ( "!Services" );
-Set ( "#ServicesAccount", "7121", Items );
-Set ( "!ServicesExpense", "Others", Items );
+#region approveSO
+With();
+Click ( "!FormChange" );
+With ();
+Click ( "!FormCompleteApproval" );
+With ();
+Click ( "!Button0" );
+#endregion
+
+#region sell
+Commando("e1cib/command/Document.Invoice.Create");
+Put("#Customer", this.Customer);
+Put("#Currency", "MDL");
 Click ( "#FormPostAndClose" );
 #endregion
 
 #region payPO
-Call("Documents.VendorPayment.ListByMemo", id);
+Call("Documents.Payment.ListByMemo", id);
 With();
 if (Call("Table.Count", Get("#List"))) then
 	Click("#FormChange");
 	With();
 else
-	Commando("e1cib/command/Document.VendorPayment.Create");
-	Put("#Vendor", this.Vendor);
+	Commando("e1cib/command/Document.Payment.Create");
+	Put("#Customer", this.Customer);
 	Set("#Amount", 360); // (400 - 10%)
 	Set("#Memo", id);
 endif;
 Click ( "#FormPost" );
-Click("#FormReportRecordsShow");
 #endregion
 
-#region receiveDiscountInvoice
-Call("Documents.VendorInvoice.ListByMemo", id);
+#region sendDiscountInvoice
+Call("Documents.Invoice.ListByMemo", id);
 With();
 if (Call("Table.Count", Get("#List"))) then
 	Click("#FormChange");
 	With();
 else
-	Commando("e1cib/command/Document.VendorInvoice.Create");
-	Put("#Vendor", this.Vendor);
+	Commando("e1cib/command/Document.Invoice.Create");
+	Put("#Customer", this.Customer);
+	Put("#Currency", "MDL");
 	Set("#Memo", id);
 endif;
+Check ( "#Discount", 39.9 );
+Check ( "#VAT", -6.72 );
+Check ( "#Amount", -39.9 );
+Check ( "#ContractAmount", -1.9 );
+Check ( "#PaymentsApplied", -1.9 );
+Check ( "#BalanceDue", 0 );
 Click ( "#FormPost" );
 Click("#FormReportRecordsShow");
 With ();
 CheckTemplate("#TabDoc");
+Close();
+#endregion
+
+#region createVATrecord
+Call("Documents.Invoice.ListByMemo", id);
+With();
+Click("#FormChange");
+With();
+Click("#NewInvoiceRecord");
+With();
+Assert ( Fetch ( "#Discounts / #DiscountsDocument [ 1 ]" ) ).Filled ();
+Assert ( Fetch ( "#Discounts / #DiscountsDetail [ 1 ]" ) ).Filled ();
 #endregion
 
 // *************************
@@ -75,7 +106,7 @@ CheckTemplate("#TabDoc");
 Procedure getEnv ()
 
 	id = this.ID;
-	this.Insert ( "Vendor", "Vendor " + id );
+	this.Insert ( "Customer", "Customer " + id );
 	this.Insert ( "Item", "Service " + id );
 
 EndProcedure
@@ -107,11 +138,14 @@ Procedure createEnv ()
 	Click("#FormWriteAndClose");
 	#endregion
 	
-	#region createVendor
-	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
-	p.Description = this.Vendor;
+	#region createCustomer
+	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
+	p.Description = this.Customer;
 	p.Terms = id;
-	Call ( "Catalogs.Organizations.CreateVendor", p );
+	p.Currency = "USD";
+	p.RateType = "Fixed";
+	p.Rate = 21;
+	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
 
 	#region createItem

@@ -124,32 +124,73 @@ Procedure CalcTotals ( Source ) export
 	object = p.Object;
 	items = object.Items;
 	services = object.Services;
-	amount = items.Total ( "Total" ) + services.Total ( "Total" );
-	object.VAT = items.Total ( "VAT" ) + services.Total ( "VAT" );
+	vendorInvoice = p.VendorInvoice;
+	paymentDiscounts = p.PaymentDiscounts;
+	if ( vendorInvoice ) then
+		accounts = object.Accounts;
+		fixedAssets = object.FixedAssets;
+		intangibleAssets = object.IntangibleAssets;
+	endif;
+	if ( paymentDiscounts ) then
+		discounts = object.Discounts;
+		discountVAT = discounts.Total ( "VAT" );
+		discountAmount = discounts.Total ( "Amount" );
+	else
+		discountVAT = 0;
+		discountAmount = 0;
+	endif;
+	inContractCurrency = object.Currency = Source.ContractCurrency;
+	rate = object.Rate;
+	factor = object.Factor;
+	if ( paymentDiscounts
+		and not inContractCurrency ) then
+		discountVAT = discountVAT * rate / factor;
+		discountAmount = discountAmount * rate / factor;
+	endif;
+	vat = items.Total ( "VAT" )
+	+ services.Total ( "VAT" )
+	- discountVAT;
+	amount = items.Total ( "Total" )
+	+ services.Total ( "Total" )
+	- discountAmount;
+	if ( vendorInvoice ) then
+		vat = vat 
+		+ accounts.Total ( "VAT" )
+		+ fixedAssets.Total ( "VAT" )
+		+ intangibleAssets.Total ( "VAT" );
+		amount = amount
+		+ accounts.Total ( "Total" )
+		+ fixedAssets.Total ( "Total" )
+		+ intangibleAssets.Total ( "Total" );
+	endif;
+	discountTotal = items.Total ( "Discount" ) + services.Total ( "Discount" ) + discountAmount;
+	object.VAT = vat;
 	object.Amount = amount;
-	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
-	object.GrossAmount = amount - ? ( object.VATUse = 2, object.VAT, 0 ) + object.Discount;
+	object.Discount = discountTotal;
+	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + discountTotal;
 	if ( not p.CalcContractAmount ) then
 		return;
 	endif;
-	if ( p.ContractCurrency = object.Currency ) then
+	if ( inContractCurrency ) then
 		object.ContractAmount = amount;
 	else
 		if ( object.Currency = p.LocalCurrency) then
-			object.ContractAmount = amount / object.Rate * object.Factor;
+			object.ContractAmount = amount / rate * factor;
 		else
-			object.ContractAmount = amount * object.Rate / object.Factor;
+			object.ContractAmount = amount * rate / factor;
 		endif; 
 	endif; 
-	
+
 EndProcedure 
 
 Function getTotalParams ( Source )
 	
-	params = new Structure ( "Object, CalcContractAmount, LocalCurrency, ContractCurrency" );
+	params = new Structure ( "Object, CalcContractAmount, LocalCurrency, ContractCurrency, PaymentDiscounts, VendorInvoice" );
 	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
 	object = ? ( clientForm, Source.Object, Source );
 	type = TypeOf ( object.Ref );
+	params.VendorInvoice = type = Type ( "DocumentRef.VendorInvoice" );
+	params.PaymentDiscounts = params.VendorInvoice or ( type = Type ( "DocumentRef.Invoice" ) );
 	if ( type = Type ( "DocumentRef.ExpenseReport" )
 		or type = Type ( "CatalogRef.Leads" ) ) then
 		params.CalcContractAmount = false;

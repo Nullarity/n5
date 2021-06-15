@@ -118,8 +118,9 @@ Procedure sqlFields ( Env )
 		|	Documents.CloseAdvances as CloseAdvances, Documents.Customer as Customer,
 		|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 		|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey,
-		|	Documents.Contract.Currency as ContractCurrency, isnull ( PaymentDiscounts.Amount, 0 ) as PaymentDiscount,
-		|	Documents.DiscountAccount as DiscountAccount
+		|	Documents.Contract.Currency as ContractCurrency,
+		|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery,
+		|	isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery	
 		|";
 	endif; 
 	s = s + "
@@ -134,9 +135,26 @@ Procedure sqlFields ( Env )
 		|	on PaymentDetails.Option = Documents.PaymentOption
 		|	and PaymentDetails.Date = case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end
 		|	//
-		|	// Payment discounts
+		|	// DiscountsBefore
 		|	//
-		|	left join ( select sum ( Amount ) from Document.Invoice.Discounts where Ref = &Ref ) as PaymentDiscounts
+		|	left join (
+		|		select top 1 true as Exists
+		|		from Document.Invoice.Discounts
+		|		where Ref = &Ref
+		|		and Detail = undefined
+		|		and Document refs Document.SalesOrder
+		|	) as DiscountsBefore
+		|	on true
+		|	//
+		|	// DiscountsAfter
+		|	//
+		|	left join (
+		|		select top 1 true as Exists
+		|		from Document.Invoice.Discounts
+		|		where Ref = &Ref
+		|		and ( Detail <> undefined
+		|			or not Document refs Document.SalesOrder )
+		|	) as DiscountsAfter
 		|	on true
 		|";
 	endif;
@@ -196,6 +214,8 @@ Procedure setContext ( Env )
 	
 	Env.Insert ( "SalesOrderExists", Env.SalesOrderExists <> undefined and Env.SalesOrderExists.Exist );
 	Env.Insert ( "TimeEntryExists", Env.TimeEntryExists <> undefined and Env.TimeEntryExists.Exist );
+	fields = Env.Fields;
+	Env.Insert ( "PaymentDiscounts", fields.DiscountsBeforeDelivery or fields.DiscountsAfterDelivery );
 
 EndProcedure
 
@@ -397,7 +417,16 @@ Procedure sqlContractAmount ( Env )
 	|		union all
 	|		select " + fields.VAT + ", " + fields.ContractVAT + ", " + fields.ContractVAT + "
 	|		from Document.Invoice as Document
-	|		where Document.Ref = &Ref ) as Items
+	|		where Document.Ref = &Ref";
+	if ( Env.PaymentDiscounts ) then
+		s = s + "
+		|union all
+		|select - Discounts.Amount, - Discounts.ContractAmount, - Discounts.ContractVAT
+		|from Discounts as Discounts
+		|";
+	endif;
+	s = s + "
+	|) as Items
 	|";
 	Env.Selection.Add ( s );
 	
@@ -438,6 +467,7 @@ Procedure sqlSalesOrders ( Env )
 	|	and SalesOrders.Feature = Services.Feature
 	|	and ( SalesOrders.Price = Services.Price or Services.Quantity = 0 )
 	|	and ( SalesOrders.DiscountRate = Services.DiscountRate or Services.Quantity = 0 )
+	|	and SalesOrders.Ref.Currency = &Currency
 	|where Services.SalesOrder <> value ( Document.SalesOrder.EmptyRef )
 	|";
 	Env.Selection.Add ( s );
@@ -876,11 +906,10 @@ EndProcedure
 
 Procedure makeDiscounts ( Env )
 
-	fields = Env.Fields;
-	amount = fields.PaymentDiscount;
-	if ( amount = 0 ) then
+	if ( not Env.PaymentDiscounts ) then
 		return;
 	endif;
+	fields = Env.Fields;
 	date = fields.Date;
 	ref = Env.Ref;
 	discounts = Env.Registers.Discounts;
@@ -893,20 +922,25 @@ Procedure makeDiscounts ( Env )
 		endif; 
 		movement = discounts.Add ();
 		movement.Period = date;
-		movement.Document = ref;
-		movement.Detail = row.SalesOrder;
 		movement.Amount = row.Total;
+		if ( row.BeforeDelivery ) then
+			movement.Document = ref;
+			movement.Detail = row.Document;
+		else
+			movement.Document = row.Document;
+			movement.Detail = row.Detail;
+		endif;
 		movement = sales.Add ();
 		movement.Period = date;
 		movement.ItemKey = row.ItemKey;
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Amount = - row.Amount;
-		movement.SalesOrder = row.SalesOrder;
+		movement.SalesOrder = row.Document;
 		rowSales = salesTable.Add ();
 		rowSales.Operation = Enums.Operations.SalesDiscount;
 		rowSales.Income = row.Income;
-		rowSales.Amount = - ( row.Amount - row.VAT );
+		rowSales.Amount = - row.Amount;
 		rowSales.ContractAmount = - row.ContractAmount;
 	enddo;
 
@@ -1182,17 +1216,22 @@ EndProcedure
 
 Procedure sqlDiscounts ( Env )
 	
+	if ( not Env.PaymentDiscounts ) then
+		return;
+	endif;
 	vat = "VAT";
-	amount = "Amount";
+	amount = "( Amount - VAT )";
 	fields = Env.Fields;
 	if ( fields.ContractCurrency <> fields.LocalCurrency ) then
 		vat = vat + " * &Rate / &Factor";
 		amount = amount + " * &Rate / &Factor";
 	endif; 
 	s = "
-	|select Discounts.SalesOrder as SalesOrder, Discounts.Item as Item, Discounts.VATAccount as VATAccount,
-	|	Discounts.Income as Income, Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT,
-	|	Discounts.Amount - Discounts.VAT as ContractAmount, Discounts.Amount as Total, "
+	|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
+	|	Discounts.VATCode as VATCode, Discounts.VATAccount as VATAccount, Discounts.Income as Income,
+	|	Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount,
+	|	Discounts.Detail = undefined and Discounts.Document refs Document.SalesOrder as BeforeDelivery,
+	|	Discounts.Amount as Total, "
 	+ amount + " as Amount,"
 	+ vat + " as VAT"
 	+ "
@@ -1233,9 +1272,15 @@ Procedure sqlVAT ( Env )
 	|	select value ( Enum.Operations.VATPayable ), " + fields + "
 	|	from Document.Invoice.Services as Records
 	|	where Records.Ref = &Ref
-	|	union all
-	|	select value ( Enum.Operations.VATDiscount ), Discounts.VATAccount, - Discounts.VAT, - Discounts.ContractVAT
-	|	from Discounts as Discounts
+	|";
+	if ( Env.PaymentDiscounts ) then
+		s = s + "
+		|union all
+		|select value ( Enum.Operations.VATDiscount ), Discounts.VATAccount, - Discounts.VAT, - Discounts.ContractVAT
+		|from Discounts as Discounts
+		|";
+	endif;
+	s = s + "
 	|	) as Taxes
 	|group by Taxes.Operation, Taxes.Account
 	|having sum ( Taxes.Amount ) <> 0

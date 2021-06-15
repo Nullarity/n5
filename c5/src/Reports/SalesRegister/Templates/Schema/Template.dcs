@@ -276,6 +276,23 @@ from (
 		value ( Enum.FormStatuses.Submitted )
 	)
 	union all
+	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		- case when Table.Ref.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Number, Table.Ref.DeliveryDate, 
+		Table.Ref.Customer.CodeFiscal, Table.Ref.Customer, Table.Ref, Table.Ref.Description,
+		Table.Ref.Base
+	from Document.InvoiceRecord.Discounts as Table
+	where not Table.Ref.DeletionMark
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+	and Table.Ref.Status in (
+		value ( Enum.FormStatuses.Unloaded ),
+		value ( Enum.FormStatuses.Printed ),
+		value ( Enum.FormStatuses.Submitted )
+	)
+	union all
 	select Table.VAT, Table.Total - Table.VAT,	Table.VATCode, Table.Number, Table.Date, 
 		Table.Customer.CodeFiscal, Table.Customer, Table.Ref, Table.Description, Table.Base
 	from Document.VATSales as Table

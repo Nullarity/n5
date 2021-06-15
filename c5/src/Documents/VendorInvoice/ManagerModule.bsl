@@ -301,7 +301,7 @@ Procedure sqlItems ( Env )
 	|	Items.Social as Social, Items.Price as Price, Items.ProducerPrice as ProducerPrice, Items.Range as Range, Items.Item.CountPackages as CountPackages,
 	|	case when Items.PurchaseOrder = value ( Document.PurchaseOrder.EmptyRef ) then Items.Ref.PurchaseOrder else Items.PurchaseOrder end as PurchaseOrder,
 	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount, " + amount.Total + " as Total,
-	|	" + amount.ContractVAT + " as ContractVAT
+	|	" + amount.ContractVAT + " as ContractVAT, Items.Amount as DocumentAmount
 	|into Items
 	|from Document.VendorInvoice.Items as Items
 	|where Items.Ref = &Ref
@@ -314,7 +314,7 @@ Procedure sqlItems ( Env )
 	|	Services.ProductFeature as ProductFeature, Services.DocumentOrder as DocumentOrder, Services.DocumentOrderRowKey as DocumentOrderRowKey,
 	|	case when Services.PurchaseOrder = value ( Document.PurchaseOrder.EmptyRef ) then Services.Ref.PurchaseOrder else Services.PurchaseOrder end as PurchaseOrder,
 	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount, " + amount.Total + " as Total,
-	|	" + amount.ContractVAT + " as ContractVAT";
+	|	" + amount.ContractVAT + " as ContractVAT, Services.Amount as DocumentAmount";
 	if ( Env.Fields.DistributionExists ) then
 		s = s + ", Services.IntoFixedAssets as IntoFixedAssets, Services.IntoIntangibleAssets as IntoIntangibleAssets,
 		|	Services.IntoItems as IntoItems, Services.Distribution as Distribution, Services.IntoDocument as IntoDocument";
@@ -531,6 +531,7 @@ Procedure sqlInvalidRows ( Env )
 		|	and PurchaseOrders.Item = Items.Item
 		|	and PurchaseOrders.Feature = Items.Feature
 		|	and PurchaseOrders.DiscountRate = Items.DiscountRate
+		|	and PurchaseOrders.Ref.Currency = &Currency
 		|where PurchaseOrders.RowKey is null
 		|union
 		|select Services.LineNumber, Services.Table, Services.PurchaseOrder
@@ -545,6 +546,7 @@ Procedure sqlInvalidRows ( Env )
 		|	and PurchaseOrders.Feature = Services.Feature
 		|	and ( PurchaseOrders.DiscountRate = Services.DiscountRate
 		|		or ( PurchaseOrders.Quantity = 0 and Services.Quantity = 0 ) )
+		|	and PurchaseOrders.Ref.Currency = &Currency
 		|where PurchaseOrders.RowKey is null
 		|";
 	endif; 
@@ -809,11 +811,12 @@ Procedure sqlPurchaseOrders ( Env )
 	
 	s = "
 	|// ^PurchaseOrders
-	|select Items.PurchaseOrder as PurchaseOrder, Items.RowKey as RowKey, Items.Quantity as Quantity, Items.Total as Amount
+	|select Items.PurchaseOrder as PurchaseOrder, Items.RowKey as RowKey, Items.Quantity as Quantity,
+	|	Items.DocumentAmount as Amount
 	|from Items as Items
 	|where Items.PurchaseOrder <> value ( Document.PurchaseOrder.EmptyRef )
 	|union all
-	|select Services.PurchaseOrder, Services.RowKey, Services.Quantity, Services.Total
+	|select Services.PurchaseOrder, Services.RowKey, Services.Quantity, Services.DocumentAmount
 	|from Services as Services
 	|where Services.PurchaseOrder <> value ( Document.PurchaseOrder.EmptyRef )
 	|";
@@ -896,9 +899,7 @@ Procedure getTables ( Env )
 	Env.Q.SetParameter ( "Timestamp", fields.Timestamp );
 	Env.Q.SetParameter ( "Rate", fields.Rate );
 	Env.Q.SetParameter ( "Factor", fields.Factor );
-	if ( fields.DistributionExists ) then
-		Env.Q.SetParameter ( "Currency", fields.Currency );
-	endif; 
+	Env.Q.SetParameter ( "Currency", fields.Currency );
 	SQL.Prepare ( Env );
 	Env.Insert ( "Data", Env.Q.ExecuteBatch () );
 	SQL.Unload ( Env, Env.Data );

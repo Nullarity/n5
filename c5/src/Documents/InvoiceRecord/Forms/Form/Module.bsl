@@ -102,6 +102,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	endif;
 	setAccuracy ();
 	setLinks ();
+	Forms.ActivatePage ( ThisObject, "Items,Services,Discounts" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
@@ -131,7 +132,8 @@ Procedure readAppearance ()
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Base show filled ( Object.Base );
 	|PageServices show Object.ShowServices;
-	|Company Customer Currency Rate Factor VATUse Items Services Prices Date LoadingPoint UnloadingPoint lock filled ( Object.Base );
+	|Company Customer Currency Rate Factor VATUse Items Services Discounts Prices Date LoadingPoint UnloadingPoint
+	|lock filled ( Object.Base );
 	|GroupHeader PageMain PageMore Footer unlock Object.Status = Enum.FormStatuses.Saved;
 	|Warning hide Object.Status = Enum.FormStatuses.Saved;
 	|LoadingAddress enable filled ( Object.LoadingPoint );
@@ -141,7 +143,8 @@ Procedure readAppearance ()
 	|Links show ShowLinks;
 	|Series FormNumber show filled ( Object.Range );
 	|Number show empty ( Object.Range );
-	|ItemsVAT ItemsVATCode ItemsTotal show Object.VATUse > 0;
+	|ItemsVAT ItemsVATCode ItemsTotal ServicesVAT ServicesVATCode ServicesTotal DiscountsVATCode
+	|show Object.VATUse > 0;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|FormUnloadInvoices FormLoadInvoices show RangeOnline;
 	|" );
@@ -356,8 +359,9 @@ Procedure calcTotals ( Object )
 	
 	items = Object.Items;
 	services = Object.Services;
-	Object.VAT = items.Total ( "VAT" ) + services.Total ( "VAT" );
-	Object.Amount = items.Total ( "Total" ) + services.Total ( "Total" );
+	discounts = Object.Discounts;
+	Object.VAT = items.Total ( "VAT" ) + services.Total ( "VAT" ) - discounts.Total ( "VAT" );
+	Object.Amount = items.Total ( "Total" ) + services.Total ( "Total" ) - discounts.Total ( "Amount" );
 	
 EndProcedure 
 
@@ -442,6 +446,30 @@ EndProcedure
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure Print ( Command )
+	
+	checkAndPrint ();
+
+EndProcedure
+
+&AtClient
+Procedure checkAndPrint ()
+	
+	status = Object.Status;
+	if ( status = PredefinedValue ( "Enum.FormStatuses.Saved" ) ) then
+		if ( not RangeOnline ) then
+			Object.Status = PredefinedValue ( "Enum.FormStatuses.Printed" );
+		endif;
+	elsif ( status = PredefinedValue ( "Enum.FormStatuses.Unloaded" ) ) then
+		Object.Status = PredefinedValue ( "Enum.FormStatuses.Printed" );
+	endif;
+	if ( Write () ) then
+		FormsPrint.InvoiceRecord ( Object.Ref );
+	endif;
+	
+EndProcedure
 
 &AtClient
 Procedure DateOnChange ( Item )
@@ -529,6 +557,7 @@ Procedure applyVATUse ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
+	DiscountsTable.RecalcVAT ( ThisObject );
 	calcTotals ( Object );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
@@ -1044,26 +1073,41 @@ Procedure ServicesVATOnChange ( Item )
 	
 EndProcedure
 
+// *****************************************
+// *********** Table Discounts
+
 &AtClient
-Procedure Print ( Command )
+Procedure DiscountsOnEditEnd ( Item, NewRow, CancelEdit )
+
+	calcTotals ( Object );
 	
-	checkAndPrint ();
+EndProcedure
+
+&AtClient
+Procedure DiscountsAfterDeleteRow ( Item )
+	
+	calcTotals ( Object );
+	
+EndProcedure
+
+&AtClient
+Procedure DiscountsItemOnChange ( Item )
+	
+	DiscountsTable.ApplyItem ( ThisObject );
 
 EndProcedure
 
 &AtClient
-Procedure checkAndPrint ()
+Procedure DiscountsVATCodeOnChange ( Item )
 	
-	status = Object.Status;
-	if ( status = PredefinedValue ( "Enum.FormStatuses.Saved" ) ) then
-		if ( not RangeOnline ) then
-			Object.Status = PredefinedValue ( "Enum.FormStatuses.Printed" );
-		endif;
-	elsif ( status = PredefinedValue ( "Enum.FormStatuses.Unloaded" ) ) then
-		Object.Status = PredefinedValue ( "Enum.FormStatuses.Printed" );
-	endif;
-	if ( Write () ) then
-		FormsPrint.InvoiceRecord ( Object.Ref );
-	endif;
+	DiscountsTable.SetRate ( ThisObject );
+	DiscountsTable.CalcVAT ( ThisObject );
 	
+EndProcedure
+
+&AtClient
+Procedure DiscountsAmountOnChange ( Item )
+	
+	DiscountsTable.CalcVAT ( ThisObject );
+
 EndProcedure

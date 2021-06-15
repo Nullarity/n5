@@ -186,14 +186,17 @@
 		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>select VATPurchase.VAT as VAT, VATPurchase.Amount as Amount, VATPurchase.Ref as Ref,
-	( VATPurchase.VAT + VATPurchase.Amount ) as Total, VATPurchase.Rate as Rate, VATPurchase.Date as Date, 
-	VATPurchase.Number as Number, VATPurchase.CodeFiscal as CodeFiscal, VATPurchase.Vendor as Vendor
+	( VATPurchase.VAT + VATPurchase.Amount ) as Total, VATPurchase.Rate as Rate,
+	VATPurchase.CodeFiscal as CodeFiscal, VATPurchase.Vendor as Vendor,
+	case when VATPurchase.Date = datetime ( 1, 1, 1 ) then VATPurchase.DocumentDate else VATPurchase.Date end as Date, 
+	case when VATPurchase.Number = "" then VATPurchase.DocumentNumber else VATPurchase.Number end as Number
 {select VAT, Amount, Total, Rate.*, CodeFiscal, Vendor.*, Number, Date, Ref.*}
 from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
 		Table.VATCode as Rate, Table.Ref.Series + Table.Ref.Reference as Number, Table.Ref.ReferenceDate as Date, 
-		Table.Ref.Vendor.CodeFiscal as CodeFiscal, Table.Ref.Vendor as Vendor, Table.Ref as Ref
+		Table.Ref.Vendor.CodeFiscal as CodeFiscal, Table.Ref.Vendor as Vendor, Table.Ref as Ref,
+		Table.Ref.Date as DocumentDate, Table.Ref.Number as DocumentNumber
 	from Document.VendorInvoice.Accounts as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -204,7 +207,8 @@ from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
 		Table.VATCode, Table.Ref.Series + Table.Ref.Reference, Table.Ref.ReferenceDate, 
-		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.FixedAssets as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -215,7 +219,8 @@ from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
 		Table.VATCode, Table.Ref.Series + Table.Ref.Reference, Table.Ref.ReferenceDate, 
-		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.IntangibleAssets as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -226,7 +231,8 @@ from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
 		Table.VATCode, Table.Ref.Series + Table.Ref.Reference, Table.Ref.ReferenceDate, 
-		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Items as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -237,7 +243,8 @@ from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
 		Table.VATCode, Table.Ref.Series + Table.Ref.Reference, Table.Ref.ReferenceDate, 
-		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Services as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -245,8 +252,21 @@ from (
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
+	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Series + Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.Discounts as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
+	union all
 	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT, Table.Ref.Number, Table.Ref.Date, 
-		Items.CodeFiscal, Items.Vendor, Table.Ref
+		Items.CodeFiscal, Items.Vendor, Table.Ref, null, null
 	from Document.CustomsDeclaration.Charges as Table
 		//
 		// Custom Groups
@@ -290,7 +310,7 @@ from (
 	and Table.Charge.VAT.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Number, Table.Date, 
-		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref, null, null
 	from Document.VATPurchases as Table
 	where not Table.Ref.DeletionMark
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -299,7 +319,8 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Items as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -310,7 +331,8 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Services as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -321,7 +343,8 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.FixedAssets as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -332,7 +355,8 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.IntangibleAssets as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -343,7 +367,8 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref
+		Table.VATCode, Table.DocumentSeries + Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Accounts as Table
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -455,6 +480,11 @@ and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.ExpenseReport.Services as Table
+where Table.Ref in ( &amp;Documents )
+and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.VendorInvoice.Discounts as Table
 where Table.Ref in ( &amp;Documents )
 and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 </query>

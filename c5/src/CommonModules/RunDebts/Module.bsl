@@ -181,8 +181,8 @@ Function closeDiscounts ( Env )
 	p.Insert ( "FilterColumns", "Document, Detail" );
 	p.Insert ( "KeyColumn", "Amount" );
 	p.Insert ( "DecreasingColumns2", "Amount" );
-	table = CollectionsSrv.Decrease ( Env.Debts, Env.Discounts, p );
-	if ( Env.Discounts.Count () > 0 ) then
+	table = CollectionsSrv.Decrease ( Env.Debts, Env.DiscountsTable, p );
+	if ( Env.DiscountsTable.Count () > 0 ) then
 		// not enough discounts
 		return false;
 	endif;
@@ -461,11 +461,16 @@ Procedure sqlDocuments ( Env )
 		|	union all
 		|	select case Services.SalesOrder when value ( Document.SalesOrder.EmptyRef ) then undefined else Services.SalesOrder end,
 		|		Services.ContractAmount + Services.ContractVAT
-		|	from Services as Services
-		|	union all
-		|	select Discounts.SalesOrder, - Discounts.Amount
-		|	from Document.Invoice.Discounts as Discounts
-		|	where Discounts.Ref = &Ref
+		|	from Services as Services";
+		if ( fields.DiscountsBeforeDelivery ) then
+			s = s + "
+			|union all
+			|select Discounts.Document, - Discounts.Total
+			|from Discounts as Discounts
+			|where BeforeDelivery
+			|";
+		endif;
+		s = s + "
 		|) as Documents
 		|group by Documents.Document
 		|index by Document
@@ -474,6 +479,15 @@ Procedure sqlDocuments ( Env )
 		|select Documents.Amount as Amount, Documents.Document as Document
 		|from Documents as Documents
 		|";
+		if ( fields.DiscountsAfterDelivery ) then
+			s = s + "
+			|;
+			|// #DiscountsTable
+			|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Total as Amount
+			|from Discounts as Discounts
+			|where not BeforeDelivery
+			|";
+		endif;
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		s = "
 		|select Documents.Document as Document, sum ( Documents.Amount ) as Amount
@@ -515,7 +529,7 @@ Procedure sqlDocuments ( Env )
 		if ( fields.DiscountsAfterDelivery ) then
 			s = s + "
 			|;
-			|// #Discounts
+			|// #DiscountsTable
 			|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Total as Amount
 			|from Discounts as Discounts
 			|where not BeforeDelivery

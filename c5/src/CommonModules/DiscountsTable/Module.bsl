@@ -110,11 +110,19 @@ Procedure ApplyItem ( Form ) export
 	
 	object = Form.Object;
 	row = Form.Items.Discounts.CurrentData;
-	data = DiscountsTableSrv.GetData ( row.Item, object.Company, object.Warehouse );
-	row.Income = data.IncomeAccount;
-	row.VATAccount = data.VATAccount;
+	invoiceRecord = TypeOf ( object.Ref ) = Type ( "DocumentRef.InvoiceRecord" );
+	if ( invoiceRecord ) then
+		warehouse = object.LoadingPoint;
+	else
+		warehouse = object.Warehouse;
+	endif;
+	data = DiscountsTableSrv.GetData ( row.Item, object.Company, warehouse );
 	row.VATCode = data.VAT;
 	row.VATRate = data.Rate;
+	if ( not invoiceRecord ) then
+		row.Income = data.IncomeAccount;
+		row.VATAccount = data.VATAccount;
+	endif;
 	DiscountsTable.CalcVAT ( Form );
 	
 EndProcedure
@@ -139,7 +147,6 @@ Procedure SetRate ( Form ) export
 	
 EndProcedure
 
-&AtServer
 Procedure RecalcVAT ( Form ) export
 	
 	object = Form.Object;

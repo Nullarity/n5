@@ -651,38 +651,7 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	if ( Row <> undefined ) then
 		Computations.Total ( Row, object.VATUse, CalcVAT );
 	endif;
-	items = object.Items;
-	services = object.Services;
-	accounts = object.Accounts;
-	fixedAssets = object.FixedAssets;
-	intangibleAssets = object.IntangibleAssets;
-	discounts = object.Discounts;
-	vat = items.Total ( "VAT" )
-	+ services.Total ( "VAT" )
-	+ accounts.Total ( "VAT" )
-	+ fixedAssets.Total ( "VAT" )
-	+ intangibleAssets.Total ( "VAT" )
-	- discounts.Total ( "VAT" );
-	paymentDiscount = discounts.Total ( "Amount" );
-	amount = items.Total ( "Total" )
-	+ services.Total ( "Total" )
-	+ accounts.Total ( "Total" )
-	+ fixedAssets.Total ( "Total" )
-	+ intangibleAssets.Total ( "Total" )
-	- paymentDiscount;
-	object.VAT = vat;
-	object.Amount = amount;
-	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" ) + paymentDiscount;
-	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
-	if ( Form.ContractCurrency = object.Currency ) then
-		object.ContractAmount = amount;
-	else
-		if ( object.Currency = Form.LocalCurrency) then
-			object.ContractAmount = amount / object.Rate * object.Factor;
-		else
-			object.ContractAmount = amount * object.Rate / object.Factor;
-		endif; 
-	endif; 
+	InvoiceForm.CalcTotals ( Form );
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
 	
@@ -2211,6 +2180,7 @@ EndProcedure
 Procedure applyCurrency ()
 	
 	InvoiceForm.SetRate ( ThisObject );
+//	InvoiceForm.SetPaymentsApplied ( ThisObject );
 	updateTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	

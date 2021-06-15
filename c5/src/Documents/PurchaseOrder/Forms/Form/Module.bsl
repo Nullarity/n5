@@ -143,13 +143,19 @@ EndProcedure
 &AtServer
 Procedure applyContract ()
 	
-	data = DF.Values ( Object.Contract, "VendorPrices, Currency, VendorDelivery as Delivery" );
+	data = DF.Values ( Object.Contract,
+		"VendorPrices, Currency, VendorRateType, VendorRate, VendorFactor, VendorDelivery as Delivery" );
 	ContractCurrency = data.Currency;
-	Object.Currency = ContractCurrency;
-	Object.Prices = data.VendorPrices;
-	currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	if ( data.VendorRateType = Enums.CurrencyRates.Fixed
+		and data.VendorRate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.VendorRate, data.VendorFactor );
+	else
+		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	endif;
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
+	Object.Currency = ContractCurrency;
+	Object.Prices = data.VendorPrices;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	InvoiceForm.SetDelivery ( ThisObject, data );
 	PaymentsTable.Fill ( Object );

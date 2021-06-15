@@ -4523,21 +4523,19 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>DiscountsSalesOrder</name>
-          <id>532</id>
+          <name>DiscountsDocument</name>
+          <id>541</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
             <common>true</common>
           </userVisible>
-          <dataPath xsi:type="form:MultiLanguageDataPath">
-            <paths xsi:type="form:DataPath">
-              <segments>Object.Discounts.SalesOrder</segments>
-            </paths>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Discounts.Document</segments>
           </dataPath>
           <extendedTooltip>
-            <name>DiscountsSalesOrderExtendedTooltip</name>
-            <id>534</id>
+            <name>DiscountsDocumentExtendedTooltip</name>
+            <id>543</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -4551,8 +4549,8 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>DiscountsSalesOrderContextMenu</name>
-            <id>533</id>
+            <name>DiscountsDocumentContextMenu</name>
+            <id>542</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -4561,7 +4559,57 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>InputField</type>
-          <editMode>EnterOnInput</editMode>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:InputFieldExtInfo">
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>DiscountsDetail</name>
+          <id>544</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Discounts.Detail</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>DiscountsDetailExtendedTooltip</name>
+            <id>546</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>DiscountsDetailContextMenu</name>
+            <id>545</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <editMode>Enter</editMode>
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
@@ -4587,6 +4635,10 @@
               <segments>Object.Discounts.Item</segments>
             </paths>
           </dataPath>
+          <handlers>
+            <event>OnChange</event>
+            <name>DiscountsItemOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>DiscountsItemExtendedTooltip</name>
             <id>531</id>
@@ -4640,6 +4692,10 @@
             </paths>
           </dataPath>
           <skipOnInput>true</skipOnInput>
+          <handlers>
+            <event>OnChange</event>
+            <name>DiscountsVATCodeOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>DiscountsVATCodeExtendedTooltip</name>
             <id>540</id>
@@ -4750,6 +4806,10 @@
               <segments>Object.Discounts.Amount</segments>
             </paths>
           </dataPath>
+          <handlers>
+            <event>OnChange</event>
+            <name>DiscountsAmountOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>DiscountsAmountExtendedTooltip</name>
             <id>528</id>
@@ -4805,6 +4865,14 @@
           <horizontalAlign>Left</horizontalAlign>
           <autoFill>true</autoFill>
         </autoCommandBar>
+        <handlers>
+          <event>OnEditEnd</event>
+          <name>DiscountsOnEditEnd</name>
+        </handlers>
+        <handlers>
+          <event>AfterDeleteRow</event>
+          <name>DiscountsAfterDeleteRow</name>
+        </handlers>
         <searchStringAddition>
           <visible>true</visible>
           <enabled>true</enabled>
