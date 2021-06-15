@@ -1275,7 +1275,7 @@ Procedure fillExpense(Row, RowDetail)
 				Row.Contract = rowReceiver.VendorContract;
 				Row.BankOperation = Enums.BankOperations.VendorPayment;
 				setCashFlow(Row, rowReceiver.VendorCashFlow, Env.FlowExpense);
-				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
+				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, AdvanceGiven");
 				Row.Account = accounts.VendorAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
 			else
@@ -1314,7 +1314,7 @@ Function fillByPaymentOrder(Row, RowDetail)
 				Row.AdvanceAccount = accounts.AdvanceTaken;
 			else
 				Row.BankOperation = Enums.BankOperations.VendorPayment;
-				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
+				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, AdvanceGiven");
 				Row.Account = accounts.VendorAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
 			endif;

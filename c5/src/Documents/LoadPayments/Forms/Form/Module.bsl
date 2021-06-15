@@ -713,7 +713,7 @@ Function receiverData(val Receiver, val Operation, val Company)
 	
 	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
 	if (Operation = Enums.BankOperations.VendorPayment) then
-		accounts = AccountsMap.Organization(Receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
+		accounts = AccountsMap.Organization(Receiver, Company, "VendorAccount, AdvanceGiven");
 		data.Account = accounts.VendorAccount;
 		data.AdvanceAccount = accounts.AdvanceGiven;
 		contract = DF.Values(Receiver, "VendorContract, VendorContract.Company as Company");

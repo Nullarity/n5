@@ -449,7 +449,7 @@ Procedure SetOrganizationAccounts ( Object ) export
 		Object.CustomerAccount = accounts.CustomerAccount;
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
-		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountTaken, AdvanceGiven, IncomeTax" );
+		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, AdvanceGiven, IncomeTax" );
 		Object.VendorAccount = accounts.VendorAccount;
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 		Object.IncomeTaxAccount = accounts.IncomeTax;
