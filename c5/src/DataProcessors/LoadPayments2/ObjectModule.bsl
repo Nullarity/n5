@@ -201,7 +201,6 @@ Procedure createPayment(Row, RowDetail)
 	object.Customer = Row.Payer;
 	object.CustomerAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
-	object.DiscountAccount = Row.DiscountAccount;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
 	PaymentForm.SetVATAdvance ( object );
@@ -467,7 +466,6 @@ Procedure createVendorPayment(Row, RowDetail)
 	object.Vendor = Row.Receiver;
 	object.VendorAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
-	object.DiscountAccount = Row.DiscountAccount;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
 	PaymentForm.CalcContractAmount(object, 1);

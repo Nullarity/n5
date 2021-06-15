@@ -75,7 +75,7 @@ Procedure sqlFields ( Env )
 	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,
 	|	Documents.Amount as Amount, Documents.ContractAmount as PaymentAmount, Documents.Rate as Rate,
 	|	Documents.Factor as Factor, Documents.BankAccount as BankAccount, Documents.Method as Method,
-	|	Documents.Location as Location, Documents.Account as Account, Documents.DiscountAccount as DiscountAccount, 
+	|	Documents.Location as Location, Documents.Account as Account,
 	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
 	|	Documents.ContractRate as ContractRate, Documents.ContractFactor as ContractFactor, Documents.CashFlow as CashFlow,
 	|	Documents.AdvanceAccount as AdvanceAccount, Constants.AdvancesMonthly as AdvancesMonthly
@@ -160,7 +160,6 @@ Procedure proceedDiscount ( Env, Row )
 		movement.Payment = - discount;
 		if ( Row.Debt <> 0 ) then
 			movement.Amount = - discount;
-			commitDiscount ( Env, Row );
 		endif; 
 		if ( Row.Bill <> 0 ) then
 			movement.Bill = - discount;
@@ -180,34 +179,6 @@ Function providedAfterDelivery ( Row )
 	or Row.Detail <> undefined;
 	
 EndFunction
-
-Procedure commitDiscount ( Env, Row )
-	
-	discount = Row.Discount;
-	fields = Env.Fields;
-	p = GeneralRecords.GetParams ();
-	p.Date = fields.Date;
-	p.Company = fields.Company;
-	if ( Env.Customer ) then
-		contractors = "Dr";
-		discounts = "Cr";
-	else
-		contractors = "Cr";
-		discounts = "Dr";
-	endif; 
-	p.Insert ( "Account" + contractors, fields.OrganizationAccount );
-	p.Insert ( "Currency" + contractors, fields.ContractCurrency );
-	p.Insert ( "CurrencyAmount" + contractors, - discount );
-	p.Insert ( "Dim" + contractors + "1", Row.Organization );
-	p.Insert ( "Dim" + contractors + "2", Row.Contract );
-	p.Amount = Currencies.Convert ( - discount, fields.ContractCurrency, fields.LocalCurrency, fields.Date, fields.ContractRate, fields.ContractFactor );
-	p.Operation = Enums.Operations.DiscountGiven;
-	p.Recordset = Env.Buffer;
-	p.Insert ( "Account" + discounts, fields.DiscountAccount );
-	GeneralRecords.Add ( p );
-	Env.Discount = Env.Discount + discount;
-	
-EndProcedure
 
 Procedure makeDiscount ( Env, Row )
 	

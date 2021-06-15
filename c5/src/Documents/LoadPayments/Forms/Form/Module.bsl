@@ -42,12 +42,12 @@ Procedure readAppearance()
 	|GroupFileInfo show Object.Status = 1;
 	|GroupError show Object.Status = 2;
 	|#c ExpensesBankOperation unlock ExpensesRow <> undefined and empty ( ExpensesRow.Document );
-	|#c ExpensesReceiver ExpensesContract ExpensesAdvanceAccount ExpensesDiscountAccount unlock ExpensesRow <> undefined
+	|#c ExpensesReceiver ExpensesContract ExpensesAdvanceAccount unlock ExpensesRow <> undefined
 	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.VendorPayment, Enum.BankOperations.ReturnToCustomer );
 	|#c ExpensesOperation unlock ExpensesRow <> undefined
 	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.InternalMovement, Enum.BankOperations.OtherExpense );
 	|#c ReceiptsBankOperation unlock ReceiptsRow <> undefined and empty ( ReceiptsRow.Document );
-	|#c ReceiptsReceiver ReceiptsContract ReceiptsAdvanceAccount ReceiptsDiscountAccount unlock ReceiptsRow <> undefined
+	|#c ReceiptsReceiver ReceiptsContract ReceiptsAdvanceAccount unlock ReceiptsRow <> undefined
 	|	and inlist ( ReceiptsRow.BankOperation, Enum.BankOperations.Payment, Enum.BankOperations.ReturnFromVendor );
 	|#c ReceiptsOperation unlock ReceiptsRow <> undefined and ReceiptsRow.BankOperation = Enum.BankOperations.OtherReceipt;
 	|");
@@ -517,21 +517,18 @@ Procedure applyBankOperation(Row)
 		row.Receiver = undefined;
 		row.Contract = undefined;
 		row.AdvanceAccount = undefined;
-		row.DiscountAccount = undefined;
 		row.CashFlow = Object.InternalMovement;
 		Appearance.Apply(ThisObject, "ExpensesRow.BankOperation");
 	elsif (operation = PredefinedValue("Enum.BankOperations.OtherExpense")) then
 		row.Receiver = undefined;
 		row.Contract = undefined;
 		row.AdvanceAccount = undefined;
-		row.DiscountAccount = undefined;
 		row.CashFlow = Object.OtherExpense;
 		Appearance.Apply(ThisObject, "ExpensesRow.BankOperation");
 	elsif (operation = PredefinedValue("Enum.BankOperations.OtherReceipt")) then
 		row.Payer = undefined;
 		row.Contract = undefined;
 		row.AdvanceAccount = undefined;
-		row.DiscountAccount = undefined;
 		row.CashFlow = Object.OtherReceipt;
 		Appearance.Apply(ThisObject, "ReceiptsRow.BankOperation");
 	elsif (operation = PredefinedValue("Enum.BankOperations.Payment")
@@ -578,12 +575,11 @@ EndProcedure
 &AtServerNoContext
 Function payerData(val Payer, val Operation, val Company)
 	
-	data = new Structure("Account, AdvanceAccount, DiscountAccount, Contract, CashFlow");
+	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
 	if (Operation = Enums.BankOperations.Payment) then
 		accounts = AccountsMap.Organization(Payer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken");
 		data.Account = accounts.CustomerAccount;
 		data.AdvanceAccount = accounts.AdvanceTaken;
-		data.DiscountAccount = accounts.DiscountGiven;
 		contract = DF.Values(Payer, "CustomerContract, CustomerContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.CustomerContract;
@@ -592,7 +588,6 @@ Function payerData(val Payer, val Operation, val Company)
 		accounts = AccountsMap.Organization(Payer, Company, "VendorAccount, DiscountGiven, AdvanceTaken");
 		data.Account = accounts.VendorAccount;
 		data.AdvanceAccount = accounts.AdvanceTaken;
-		data.DiscountAccount = accounts.DiscountGiven;
 		contract = DF.Values(Payer, "VendorContract, VendorContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.VendorContract;
@@ -716,12 +711,11 @@ EndProcedure
 &AtServerNoContext
 Function receiverData(val Receiver, val Operation, val Company)
 	
-	data = new Structure("Account, AdvanceAccount, DiscountAccount, Contract, CashFlow");
+	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
 	if (Operation = Enums.BankOperations.VendorPayment) then
 		accounts = AccountsMap.Organization(Receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
 		data.Account = accounts.VendorAccount;
 		data.AdvanceAccount = accounts.AdvanceGiven;
-		data.DiscountAccount = accounts.DiscountTaken;
 		contract = DF.Values(Receiver, "VendorContract, VendorContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.VendorContract;
@@ -730,7 +724,6 @@ Function receiverData(val Receiver, val Operation, val Company)
 		accounts = AccountsMap.Organization(Receiver, Company, "CustomerAccount, DiscountGiven, AdvanceGiven");
 		data.Account = accounts.CustomerAccount;
 		data.AdvanceAccount = accounts.AdvanceGiven;
-		data.DiscountAccount = accounts.DiscountGiven;
 		contract = DF.Values(Receiver, "CustomerContract, CustomerContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.CustomerContract;
@@ -770,4 +763,3 @@ EndProcedure
 // *********** Variables Initialization
 
 WritingStarted = false;
-

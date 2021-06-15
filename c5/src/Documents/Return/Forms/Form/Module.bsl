@@ -156,9 +156,8 @@ Procedure applyCustomer ()
 	
 	customer = Object.Customer;
 	company = Object.Company;
-	data = AccountsMap.Organization ( customer, company, "CustomerAccount, DiscountGiven" );
+	data = AccountsMap.Organization ( customer, company, "CustomerAccount" );
 	Object.CustomerAccount = data.CustomerAccount;
-	Object.DiscountAccount = data.DiscountGiven;
 	data = DF.Values ( customer, "CustomerContract, CustomerContract.Company as Company, VATUse" );
 	if ( data.Company = company ) then
 		Object.Contract = data.CustomerContract;
@@ -230,7 +229,7 @@ Procedure sqlFields ()
 	s = "
 	|// @Fields
 	|select Document.Company as Company, Document.Contract as Contract, Document.Currency as Currency, Document.Customer as Customer, 
-	|	Document.CustomerAccount as CustomerAccount, Document.Department as Department, Document.DiscountAccount as DiscountAccount, Document.Ref as Invoice,
+	|	Document.CustomerAccount as CustomerAccount, Document.Department as Department, Document.Ref as Invoice,
 	|	Document.VATUse as VATUse, Document.Contract.Currency as ContractCurrency, 
 	|	Document.Warehouse as Warehouse, Document.Contract.CustomerAdvances as CloseAdvances
 	|from Document.Invoice as Document

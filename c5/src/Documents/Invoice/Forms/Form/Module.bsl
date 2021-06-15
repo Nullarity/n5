@@ -182,9 +182,8 @@ Procedure applyCustomer ()
 	
 	customer = Object.Customer;
 	company = Object.Company;
-	data = AccountsMap.Organization ( customer, company, "CustomerAccount, DiscountGiven" );
+	data = AccountsMap.Organization ( customer, company, "CustomerAccount" );
 	Object.CustomerAccount = data.CustomerAccount;
-	Object.DiscountAccount = data.DiscountGiven;
 	data = DF.Values ( customer, "CustomerContract, CustomerContract.Company as Company, VATUse" );
 	if ( data.Company = company ) then
 		Object.Contract = data.CustomerContract;
@@ -298,7 +297,6 @@ Procedure headerBySalesOrder ()
 	endif;
 	data = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven" );
 	Object.CustomerAccount = data.CustomerAccount;
-	Object.DiscountAccount = data.DiscountGiven;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure 

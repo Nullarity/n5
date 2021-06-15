@@ -68,7 +68,6 @@ Procedure headerByShipment ()
 	Shipment = Base.Ref;
 	data = AccountsMap.Organization ( Customer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken" );
 	CustomerAccount = data.CustomerAccount;
-	DiscountAccount = data.DiscountGiven;
 	CloseAdvances = DF.Pick ( Contract, "CustomerAdvances" );
 	
 EndProcedure 

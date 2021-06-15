@@ -1057,7 +1057,7 @@ Procedure sqlRepeats()
 	|;
 	|// #Repeats
 	|select Repeats.LineNumber as LineNumber, Table.Document as Document, true as Expense, Table.Account as Account,
-	|	Table.AdvanceAccount as AdvanceAccount, Table.DiscountAccount as DiscountAccount, Table.BankOperation as BankOperation,
+	|	Table.AdvanceAccount as AdvanceAccount, Table.BankOperation as BankOperation,
 	|	Table.CashFlow as CashFlow, Table.Contract as Contract, Table.Receiver as Organization, Table.Operation as Operation, Table.Date as Date, Table.Amount as Amount 
 	|from Document.LoadPayments.Expenses as Table
 	|	//
@@ -1069,7 +1069,7 @@ Procedure sqlRepeats()
 	|	and Repeats.Expense
 	|where not Table.Document.DeletionMark
 	|union all
-	|select Repeats.LineNumber, Table.Document, false, Table.Account, Table.AdvanceAccount, Table.DiscountAccount,
+	|select Repeats.LineNumber, Table.Document, false, Table.Account, Table.AdvanceAccount,
 	|	Table.BankOperation, Table.CashFlow, Table.Contract, Table.Payer, Table.Operation, Table.Date, Table.Amount
 	|from Document.LoadPayments.Receipts as Table
 	|	//
@@ -1278,7 +1278,6 @@ Procedure fillExpense(Row, RowDetail)
 				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
 				Row.Account = accounts.VendorAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
-				Row.DiscountAccount = accounts.DiscountTaken;
 			else
 				Row.Contract = rowReceiver.CustomerContract;
 				Row.BankOperation = Enums.BankOperations.ReturnToCustomer;
@@ -1286,7 +1285,6 @@ Procedure fillExpense(Row, RowDetail)
 				accounts = AccountsMap.Organization(receiver, Company, "CustomerAccount, DiscountGiven, AdvanceGiven");
 				Row.Account = accounts.CustomerAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
-				Row.DiscountAccount = accounts.DiscountGiven;
 			endif;
 		endif;
 	endif;
@@ -1319,7 +1317,6 @@ Function fillByPaymentOrder(Row, RowDetail)
 				accounts = AccountsMap.Organization(receiver, Company, "VendorAccount, DiscountTaken, AdvanceGiven");
 				Row.Account = accounts.VendorAccount;
 				Row.AdvanceAccount = accounts.AdvanceGiven;
-				Row.DiscountAccount = accounts.DiscountTaken;
 			endif;
 		endif;
 		return true;
@@ -1389,7 +1386,6 @@ Procedure fillReceipt(Row, RowDetail)
 			accounts = AccountsMap.Organization(payer, Company, "CustomerAccount, DiscountGiven, AdvanceTaken");
 			Row.Account = accounts.CustomerAccount;
 			Row.AdvanceAccount = accounts.AdvanceTaken;
-			Row.DiscountAccount = accounts.DiscountGiven;
 		else
 			Row.Contract = rowPayer.VendorContract;
 			Row.BankOperation = Enums.BankOperations.ReturnFromVendor;
@@ -1397,7 +1393,6 @@ Procedure fillReceipt(Row, RowDetail)
 			accounts = AccountsMap.Organization(payer, Company, "VendorAccount, DiscountGiven, AdvanceTaken");
 			Row.Account = accounts.VendorAccount;
 			Row.AdvanceAccount = accounts.AdvanceTaken;
-			Row.DiscountAccount = accounts.DiscountGiven;
 		endif;
 	endif;
 	

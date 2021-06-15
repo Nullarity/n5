@@ -443,23 +443,19 @@ Procedure SetOrganizationAccounts ( Object ) export
 	if ( type = Type ( "DocumentRef.Payment" ) ) then
 		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven, AdvanceTaken" );
 		Object.CustomerAccount = accounts.CustomerAccount;
-		Object.DiscountAccount = accounts.DiscountGiven;
 		Object.AdvanceAccount = accounts.AdvanceTaken;
 	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
 		accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, DiscountGiven, AdvanceGiven" );
 		Object.CustomerAccount = accounts.CustomerAccount;
-		Object.DiscountAccount = accounts.DiscountGiven;
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
 		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountTaken, AdvanceGiven, IncomeTax" );
 		Object.VendorAccount = accounts.VendorAccount;
-		Object.DiscountAccount = accounts.DiscountTaken;
 		Object.AdvanceAccount = accounts.AdvanceGiven;
 		Object.IncomeTaxAccount = accounts.IncomeTax;
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
 		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountGiven, AdvanceTaken" );
 		Object.VendorAccount = accounts.VendorAccount;
-		Object.DiscountAccount = accounts.DiscountGiven;
 		Object.AdvanceAccount = accounts.AdvanceTaken;
 	endif; 
 	
@@ -608,10 +604,6 @@ EndProcedure
 &AtServer
 Procedure Check ( Object, Cancel, CheckedAttributes ) export
 	
-	discount = Object.Payments.Total ( "Discount" );
-	if ( discount > 0 ) then
-		CheckedAttributes.Add ( "DiscountAccount" );
-	endif; 
 	if ( not credits ( Object ) ) then
 		CheckedAttributes.Add ( "Amount" );
 	endif;

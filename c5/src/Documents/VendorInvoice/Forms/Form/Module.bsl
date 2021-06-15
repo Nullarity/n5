@@ -460,9 +460,8 @@ Procedure headerByPurchaseOrder ()
 		Object.Rate = currency.Rate;
 		Object.Factor = currency.Factor;
 	endif;
-	data = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, DiscountTaken" );
+	data = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount" );
 	Object.VendorAccount = data.VendorAccount;
-	Object.DiscountAccount = data.DiscountTaken;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	
 EndProcedure 

@@ -76,7 +76,7 @@ Procedure sqlFields ( Env )
 	|	Documents.Contract as Contract, Documents.CustomerAccount as CustomerAccount,
 	|	Documents.Customer as Customer, Documents.PaymentOption as PaymentOption,
 	|	PaymentDetails.PaymentKey as PaymentKey, " + paymentDate + " as PaymentDate, 
-	|	Documents.Contract.Currency as ContractCurrency, Documents.DiscountAccount as DiscountAccount, Lots.Ref as Lot
+	|	Documents.Contract.Currency as ContractCurrency, Lots.Ref as Lot
 	|from Document.Return as Documents
 	|	//
 	|	// Lots
