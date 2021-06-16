@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -47,7 +47,7 @@ Click ( "Yes" );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "25145D6A#" );
+	id = Call ( "Common.ScenarioID", "A04C" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "FirstName", id );
@@ -62,5 +62,7 @@ Procedure fill ( Env )
 	Set ( "#FirstName", Env.FirstName );
 	Set ( "#LastName", Env.LastName );
 	Set ( "#Patronymic", Env.Patronymic );
+	Set ( "#Code", TestingID () );
+	Click("Yes", "1?:*");
 	
 EndProcedure

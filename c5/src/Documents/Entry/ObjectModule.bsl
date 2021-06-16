@@ -42,6 +42,7 @@ EndProcedure
 Function getNumerator () 
 	
 	numerator = DF.Pick ( Operation, "Numerator" );
+	lockNumerator ( numerator );
 	if ( numerator.IsEmpty () ) then
 		prefix = "";
 		numerator = Catalogs.Numeration.Default;
@@ -52,6 +53,16 @@ Function getNumerator ()
 	return new Structure ( "Prefix, Code", prefix, code );
 	
 EndFunction
+
+Procedure lockNumerator ( Numerator )
+	
+	lock = new DataLock ();
+	item = lock.Add ( "Catalog.Numeration" );
+	item.SetValue ( "Ref", Numerator );
+	item.Mode = DataLockMode.Exclusive;
+	lock.Lock ();
+	
+EndProcedure
 
 Function getCode ( Numerator ) 
 	
