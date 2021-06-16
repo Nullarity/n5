@@ -294,6 +294,7 @@ Function getVATUse ( Params, Object )
 	
 	type = Params.Type;
 	if ( type.Assembling
+		or type.ProductionOrder
 		or type.Disassembling ) then
 		return 0;
 	else
