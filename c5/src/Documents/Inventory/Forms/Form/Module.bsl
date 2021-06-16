@@ -108,7 +108,7 @@ Procedure sqlLinks ()
 		|// #WriteOff
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
 		|from Document.WriteOff as Documents
-		|where Documents.Inventory = &Ref
+		|where Documents.Base = &Ref
 		|and not Documents.DeletionMark
 		|";
 		selection.Add ( s );

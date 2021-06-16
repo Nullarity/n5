@@ -148,6 +148,7 @@ Procedure fillByInventory ()
 	SQL.Perform ( Env );
 	headerByInventory ();
 	itemsByInventory ();
+	recalcTotals ();
 	
 EndProcedure
 
@@ -212,6 +213,23 @@ Procedure checkItemsFilling ()
 EndProcedure
 
 &AtServer
+Procedure recalcTotals ()
+	
+	vatUse = Object.VATUse;
+	for each row in Object.Items do
+		Computations.Total ( row, vatUse );
+	enddo; 
+	for each row in Object.FixedAssets do
+		Computations.Total ( row, vatUse );
+	enddo; 
+	for each row in Object.IntangibleAssets do
+		Computations.Total ( row, vatUse );
+	enddo; 
+	calcTotals ( Object );
+	
+EndProcedure
+
+&AtServer
 Procedure fillByAssetsInventory ()
 	
 	setEnvAssets ();
@@ -219,6 +237,7 @@ Procedure fillByAssetsInventory ()
 	SQL.Perform ( Env );
 	headerByInventory ();
 	assetsByInventory ();
+	recalcTotals ();
 	
 EndProcedure
 
@@ -249,8 +268,8 @@ Procedure sqlAssetsInventory ()
 	|where Document.Ref = &Base
 	|;
 	|// #Items
-	|select Items.Item as Item,	Items.AmountDifference as Amount, value ( Enum.Amortization.Linear ) as Method, Items.Ref.Department as Department,
-	|	Items.Ref.Employee as Employee
+	|select Items.Item as Item,	Items.AmountDifference as Amount, value ( Enum.Amortization.Linear ) as Method,
+	|	Items.Ref.Department as Department, Items.Ref.Employee as Employee
 	|from Document." + table + ".Items as Items
 	|where Items.Ref = &Base 
 	|and ( Items.Difference > 0 

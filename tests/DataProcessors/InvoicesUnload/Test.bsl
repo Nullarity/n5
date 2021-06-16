@@ -1,9 +1,9 @@
-// Create Invoice and Unload it
+﻿// Create Invoice and Unload it
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2BD8D26A" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A03F" ) );
 getEnv ();
 createEnv ();
 

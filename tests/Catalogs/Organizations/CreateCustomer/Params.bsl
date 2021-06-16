@@ -1,6 +1,9 @@
 p = new Structure ();
 p.Insert ( "Description", "_Customer: " + CurrentDate () );
+p.Insert ( "CodeFiscal" );
 p.Insert ( "Currency", __.LocalCurrency );
+p.Insert ( "BankAccount" );
+p.Insert ( "PaymentAddress" );
 p.Insert ( "RateType" );
 p.Insert ( "Rate" );
 p.Insert ( "Delivery", 0 );

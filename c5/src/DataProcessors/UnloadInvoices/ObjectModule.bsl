@@ -12,6 +12,7 @@ var Object;
 var Fields;
 var ItemsTable;
 var ServicesTable;
+var BenefitsTable;
 var EmptyDate;
 
 Procedure Exec() export
@@ -42,38 +43,43 @@ EndProcedure
 Procedure initDataReader()
 	
 	s = "
-		|select Invoices.Company.CodeFiscal as CompanyCodeFiscal, Invoices.Company.FullDescription as Company,
-		|	Invoices.Company.VAT as VATPayer,
-		|	isnull ( Invoices.Company.PaymentAddress.Address, """" ) as CompanyAddress,
-		|	isnull ( Invoices.Account.Bank.Description, """" ) as CompanyBank,
-		|	isnull ( Invoices.Account.Bank.Code, """" ) as CompanyBankCode,
-		|	isnull ( Invoices.Account.AccountNumber, """" ) as CompanyAccountNumber,
-		|	isnull ( Invoices.Customer.CodeFiscal, """" ) as CustomerCodeFiscal, Invoices.Customer.FullDescription as Customer,
-		|	isnull ( Invoices.Customer.PaymentAddress.Address, """" ) as CustomerAddress,
-		|	isnull ( Invoices.CustomerAccount.Bank.Description, """" ) as CustomerBank,
-		|	isnull ( Invoices.CustomerAccount.Bank.Code, """" ) as CustomerBankCode,
-		|	isnull ( Invoices.CustomerAccount.AccountNumber, """" ) as CustomerAccountNumber,
-		|	isnull ( Invoices.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal, Invoices.Carrier.FullDescription as Carrier,
-		|	isnull ( Invoices.Carrier.PaymentAddress.Address, """" ) as CarrierAddress,
-		|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank, """" ) as CarrierBank,
-		|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank.Code, """" ) as CarrierBankCode,
-		|	isnull ( Invoices.Carrier.VendorContract.VendorBank.AccountNumber, """" ) as CarrierAccountNumber,
-		|	isnull ( Invoices.LoadingAddress.Address, """" ) as LoadingAddress,
-		|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress	
-		|from Document.InvoiceRecord as Invoices
-		|where Invoices.Ref = &Ref
-		|;
-		|select 1 as Table, Items.Item.Code as Code, Items.Item.FullDescription as Item, Items.Item.Unit.Description as Unit,
-		|	isnull ( Items.Package.Description, """" ) as Package, isnull ( Items.Item.Weight, 0 ) as Weight
-		|from Document.InvoiceRecord.Items as Items
-		|where Items.Ref = &Ref
-		|order by Items.LineNumber
-		|;
-		|select Services.Item.Code as Code, Services.Description as Item, Services.Item.Unit.Description as Unit
-		|from Document.InvoiceRecord.Services as Services
-		|where Services.Ref = &Ref
-		|order by Services.LineNumber
-		|";
+	|select Invoices.Company.CodeFiscal as CompanyCodeFiscal, Invoices.Company.FullDescription as Company,
+	|	Invoices.Company.VAT as VATPayer,
+	|	isnull ( Invoices.Company.PaymentAddress.Address, """" ) as CompanyAddress,
+	|	isnull ( Invoices.Account.Bank.Description, """" ) as CompanyBank,
+	|	isnull ( Invoices.Account.Bank.Code, """" ) as CompanyBankCode,
+	|	isnull ( Invoices.Account.AccountNumber, """" ) as CompanyAccountNumber,
+	|	isnull ( Invoices.Customer.CodeFiscal, """" ) as CustomerCodeFiscal, Invoices.Customer.FullDescription as Customer,
+	|	isnull ( Invoices.Customer.PaymentAddress.Address, """" ) as CustomerAddress,
+	|	isnull ( Invoices.CustomerAccount.Bank.Description, """" ) as CustomerBank,
+	|	isnull ( Invoices.CustomerAccount.Bank.Code, """" ) as CustomerBankCode,
+	|	isnull ( Invoices.CustomerAccount.AccountNumber, """" ) as CustomerAccountNumber,
+	|	isnull ( Invoices.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal, Invoices.Carrier.FullDescription as Carrier,
+	|	isnull ( Invoices.Carrier.PaymentAddress.Address, """" ) as CarrierAddress,
+	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank, """" ) as CarrierBank,
+	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank.Code, """" ) as CarrierBankCode,
+	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.AccountNumber, """" ) as CarrierAccountNumber,
+	|	isnull ( Invoices.LoadingAddress.Address, """" ) as LoadingAddress,
+	|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress	
+	|from Document.InvoiceRecord as Invoices
+	|where Invoices.Ref = &Ref
+	|;
+	|select 1 as Table, Items.Item.Code as Code, Items.Item.FullDescription as Item, Items.Item.Unit.Description as Unit,
+	|	isnull ( Items.Package.Description, """" ) as Package, isnull ( Items.Item.Weight, 0 ) as Weight
+	|from Document.InvoiceRecord.Items as Items
+	|where Items.Ref = &Ref
+	|order by Items.LineNumber
+	|;
+	|select Services.Item.Code as Code, Services.Description as Item, Services.Item.Unit.Description as Unit
+	|from Document.InvoiceRecord.Services as Services
+	|where Services.Ref = &Ref
+	|order by Services.LineNumber
+	|;
+	|select Discounts.Item.Code as Code, Discounts.Item.FullDescription as Item, Discounts.Item.Unit.Description as Unit
+	|from Document.InvoiceRecord.Discounts as Discounts
+	|where Discounts.Ref = &Ref
+	|order by Discounts.LineNumber
+	|";
 	DataReader = new Query(s);
 	
 EndProcedure
@@ -96,6 +102,7 @@ Procedure read()
 	Fields = data[0].Unload()[0];
 	ItemsTable = data[1].Unload();
 	ServicesTable = data[2].Unload();
+	BenefitsTable = data[3].Unload();
 	
 EndProcedure
 
@@ -196,6 +203,8 @@ Procedure unload()
 		XML.WriteText(value);
 		XML.WriteEndElement();
 	endif;
+	rate = Object.Rate;
+	factor = Object.Factor;
 	XML.WriteStartElement("Merchandises");
 	for each row in Object.Items do
 		details = ItemsTable[row.LineNumber - 1];
@@ -204,8 +213,8 @@ Procedure unload()
 		writeAttribute("Name", details.Item, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
 		qty = row.Quantity;
-		total = row.Total;
-		vat = row.VAT;
+		total = row.Total * rate / factor;
+		vat = row.VAT * rate / factor;;
 		amount = total - vat;
 		writeAttribute("Quantity", qty, true, "NFD=3; NDS=.; NZ=0; NG=");
 		writeAttribute("UnitPriceWithoutTVA", amount / qty, true, "NFD=2; NDS=.; NZ=0; NG=");
@@ -226,8 +235,8 @@ Procedure unload()
 		writeAttribute("Name", details.Item, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
 		qty = row.Quantity;
-		total = row.Total;
-		vat = row.VAT;
+		total = row.Total * rate / factor;;
+		vat = row.VAT * rate / factor;;
 		amount = total - vat;
 		writeAttribute("Quantity", qty, true, "NFD=3; NDS=.; NZ=0; NG=");
 		writeAttribute("UnitPriceWithoutTVA", amount / ?(qty = 0, 1, qty), true, "NFD=2; NDS=.; NZ=0; NG=");
@@ -236,6 +245,23 @@ Procedure unload()
 		writeAttribute("TotalTVA", vat, true, "NFD=2; NDS=.; NZ=0; NG=");
 		writeAttribute("TotalPrice", total, true, "NFD=2; NDS=.; NZ=0; NG=");
 		writeAttribute("OtherInfo", row.OtherInfo);
+		XML.WriteEndElement();
+	enddo;
+	for each row in Object.Discounts do
+		details = BenefitsTable[row.LineNumber - 1];
+		XML.WriteStartElement("Row");
+		writeAttribute("Code", TrimR(details.Code));
+		writeAttribute("Name", details.Item, true);
+		writeAttribute("UnitOfMeasure", details.Unit, true);
+		total = row.Amount * rate / factor;;
+		vat = row.VAT * rate / factor;;
+		amount = total - vat;
+		writeAttribute("Quantity", 0, true, "NFD=3; NDS=.; NZ=0; NG=");
+		writeAttribute("UnitPriceWithoutTVA", - amount, true, "NFD=2; NDS=.; NZ=0; NG=");
+		writeAttribute("TotalPriceWithoutTVA", - amount, true, "NFD=2; NDS=.; NZ=0; NG=");
+		writeAttribute("TVA", row.VATRate, true, "NFD=; NDS=.; NZ=0; NG=");
+		writeAttribute("TotalTVA", - vat, true, "NFD=2; NDS=.; NZ=0; NG=");
+		writeAttribute("TotalPrice", - total, true, "NFD=2; NDS=.; NZ=0; NG=");
 		XML.WriteEndElement();
 	enddo;
 	XML.WriteEndElement();

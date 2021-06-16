@@ -19,6 +19,9 @@ if (_ = undefined) then
 	clearTerms = false;
 	delivery = 0;
 	items = new Array();
+	codeFiscal = undefined;
+	bankAccount = undefined;
+	paymentAddress = undefined;
 else
 	name = _.Description;
 	currency = _.Currency;
@@ -28,25 +31,43 @@ else
 	clearTerms = ?(_.Property("ClearTerms"), _.ClearTerms, false);
 	delivery = _.Delivery;
 	items = _.Items;
+	codeFiscal = _.CodeFiscal;
+	bankAccount = _.BankAccount;
+	paymentAddress = _.PaymentAddress;
 endif;
 //
 // Fill general
 //
 Set("Name", name);
+if (codeFiscal<> undefined) then
+	Set("#CodeFiscal", codeFiscal);
+endif;
 
 if (Fetch("#Customer") = "No") then
 	Click("#Customer");
 endif;
+
 Click("#FormWrite");
+CheckErrors();
 
-//
-// Setup Contract
-//
-
-With ( "Customer*" );
 if ( AppName = "c5" ) then
 	Get ( "#CustomerPage" ).Expand ();
 endif;
+if ( paymentAddress <> undefined ) then
+	CheckErrors();
+	field = Activate("#PaymentAddress");
+	field.OpenDropList ();
+	field.Create ();
+	With();
+	Click("#Manual");
+	Set("#Address", paymentAddress);
+	Click("#FormWriteAndClose");
+	CheckErrors();
+	With();
+endif;
+//
+// Setup Contract
+//
 Activate("#CustomerPage");
 Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");
@@ -57,6 +78,16 @@ if (terms <> undefined) then
 endif;
 if (clearTerms) then
 	Clear("#CustomerTerms");
+endif;
+if ( bankAccount <> undefined ) then
+	Activate("#CustomerBank").Create ();
+	With();
+	Set("#AccountNumber", bankAccount);
+	Put("#Account", "2421");
+	Next();
+	Click("#FormWriteAndClose");
+	CheckErrors();
+	With();
 endif;
 Set("#CustomerDelivery", delivery);
 

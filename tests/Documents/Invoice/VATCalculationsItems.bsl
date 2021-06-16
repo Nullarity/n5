@@ -1,8 +1,8 @@
-
+﻿
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "25CFD6BF" );
+id = Call ( "Common.ScenarioID", "A047" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -44,8 +44,8 @@ Check ( "#VAT", 20 );
 Check ( "#Amount", 120 );
 
 Set ( "#ItemsQuantityPkg", 1, table );
-Check ( "#VAT", 8.89 );
-Check ( "#Amount", 53.34 );
+Check ( "#VAT", 10 );
+Check ( "#Amount", 60 );
 
 Set ( "#ItemsPrice", 100, table );
 Check ( "#VAT", 18 );

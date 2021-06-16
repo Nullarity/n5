@@ -1227,7 +1227,7 @@ Procedure sqlDiscounts ( Env )
 		amount = amount + " * &Rate / &Factor";
 	endif; 
 	s = "
-	|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
+	|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
 	|	Discounts.VATCode as VATCode, Discounts.VATAccount as VATAccount, Discounts.Income as Income,
 	|	Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount,
 	|	Discounts.Detail = undefined and Discounts.Document refs Document.SalesOrder as BeforeDelivery,

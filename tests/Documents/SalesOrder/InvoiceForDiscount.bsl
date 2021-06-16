@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A02P" );
+id = Call ( "Common.ScenarioID", "A03C" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -74,6 +74,13 @@ Check ( "#Discount", 40 );
 Check ( "#Amount", -40 );
 Check ( "#PaymentsApplied", -40 );
 Check ( "#BalanceDue", 0 );
+
+// Put wrong discount amount and check error message
+Put ("#Discounts / #DiscountsAmount [1]", 50); // 10 more then 40
+Click ( "#FormPost" );
+Call("Common.CheckPostingError", "The registered discount is exceeded *");
+// Update discounts and check records
+Click("#DiscountsRefreshDiscounts");
 Click ( "#FormPost" );
 Click("#FormReportRecordsShow");
 With ();

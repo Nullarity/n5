@@ -2401,10 +2401,12 @@
 		else 0
 	end as Status,
 	Documents.Posted and isnull ( Debts.AmountBalance, 0 ) = 0 as Paid,
-	case when Documents.Posted then cast ( ( Documents.Amount - isnull ( PaymentDiscounts.AmountTurnover, 0 ) - Debts.AmountBalance )
-		* 100 / ( Documents.Amount - isnull ( PaymentDiscounts.AmountTurnover, 0 ) ) as Number ( 3 )
-	)
-		else 0
+
+
+	case when Documents.ContractAmount = 0 then 0
+		when Documents.Posted then cast ( ( Documents.ContractAmount - isnull ( PaymentDiscounts.AmountTurnover, 0 ) - Debts.AmountBalance )
+			* 100 / ( Documents.ContractAmount - isnull ( PaymentDiscounts.AmountTurnover, 0 ) ) as Number ( 15 ) )
+	else 0
 	end as PaidPercent,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
 from Document.Invoice as Documents

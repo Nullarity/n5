@@ -6779,3 +6779,11 @@ Procedure CannotApplyDiscount ( Params = undefined, Field = "", DataKey = undefi
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Procedure CannotCloseDiscount ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The registered discount is exceeded by %Amount';ro = 'Reducerea înregistrată este depășită cu %Amount';ru = 'Превышена зарегистрированная скидка на %Amount'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

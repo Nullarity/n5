@@ -11,7 +11,7 @@ Function FromInvoice ( Env ) export
 	getPayments ( Env );
 	if ( Env.Return ) then
 		closeDebts ( Env );
-	elsif ( fields.DiscountsAfterDelivery ) then
+	elsif ( Env.DiscountsAfterDelivery ) then
 		if ( not closeDiscounts ( Env ) ) then
 			return false;
 		endif;
@@ -33,6 +33,7 @@ EndFunction
 
 Procedure setContext ( Env )
 	
+	fields = Env.Fields;
 	type = Env.Type; 
 	if ( type = Type ( "DocumentRef.Invoice" ) ) then
 		Env.Insert ( "PaymentsRegister", "Debts" );
@@ -40,30 +41,35 @@ Procedure setContext ( Env )
 		Env.Insert ( "OrderName", "SalesOrder" );
 		Env.Insert ( "ReverseVAT", not Env.Fields.AdvancesMonthly );
 		Env.Insert ( "Return", false );
+		Env.Insert ( "DiscountsAfterDelivery", fields.DiscountsAfterDelivery );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", Env.PurchaseOrderExists );
 		Env.Insert ( "OrderName", "PurchaseOrder" );	
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", false );
+		Env.Insert ( "DiscountsAfterDelivery", fields.DiscountsAfterDelivery );
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		Env.Insert ( "PaymentsRegister", "Debts" );
 		Env.Insert ( "OrderExists", Env.SalesOrderExists );
 		Env.Insert ( "OrderName", "SalesOrder" );	
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", true );
+		Env.Insert ( "DiscountsAfterDelivery", false );
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", Env.PurchaseOrderExists );
 		Env.Insert ( "OrderName", "PurchaseOrder" );
 		Env.Insert ( "ReverseVAT", not Env.Fields.AdvancesMonthly );
 		Env.Insert ( "Return", true );
+		Env.Insert ( "DiscountsAfterDelivery", false );
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", false );
 		Env.Insert ( "OrderName", "PurchaseOrder" );	
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", false );
+		Env.Insert ( "DiscountsAfterDelivery", false );
 	endif;
 	Env.Insert ( "NewPaymentDate", Env.Fields.PaymentDate <> Date ( 3999, 12, 31 ) );
 	
@@ -183,7 +189,12 @@ Function closeDiscounts ( Env )
 	p.Insert ( "DecreasingColumns2", "Amount" );
 	table = CollectionsSrv.Decrease ( Env.Debts, Env.DiscountsTable, p );
 	if ( Env.DiscountsTable.Count () > 0 ) then
-		// not enough discounts
+		ref = Env.Ref;
+		currency = Env.Fields.ContractCurrency;
+		for each error in Env.DiscountsTable do
+			msg = new Structure ( "Amount", Conversion.NumberToMoney ( error.Amount, currency ) );
+			Output.CannotCloseDiscount ( msg, Output.Row ( "Discounts", error.LineNumber, "Amount" ), ref );
+		enddo;
 		return false;
 	endif;
 	decreaseDebts ( Env, table );
@@ -483,7 +494,8 @@ Procedure sqlDocuments ( Env )
 			s = s + "
 			|;
 			|// #DiscountsTable
-			|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Total as Amount
+			|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail,
+			|	Discounts.Total as Amount
 			|from Discounts as Discounts
 			|where not BeforeDelivery
 			|";
@@ -530,7 +542,8 @@ Procedure sqlDocuments ( Env )
 			s = s + "
 			|;
 			|// #DiscountsTable
-			|select Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Total as Amount
+			|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail,
+			|	Discounts.Total as Amount
 			|from Discounts as Discounts
 			|where not BeforeDelivery
 			|";
@@ -657,7 +670,7 @@ Procedure sqlDebts ( Env )
 	
 	if ( Env.Return ) then
 		source = "select Document, Detail from Documents";
-	elsif ( Env.Fields.DiscountsAfterDelivery ) then
+	elsif ( Env.DiscountsAfterDelivery ) then
 		source = "select Document, Detail from Discounts where not BeforeDelivery";
 	else
 		return;
