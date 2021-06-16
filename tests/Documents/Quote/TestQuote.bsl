@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 id = Call ( "Common.ScenarioID", "2BE5ABB1" );
@@ -85,7 +85,7 @@ Procedure createEnv ( Env )
 	form = With ( Env.Company + "*" );
 	Put ( "#PaymentAddress", Env.PaymentAddress );
 	
-	path = __.Files + "logo.png";
+	path = __.Files + "Files/logo.png";
 	App.SetFileDialogResult ( true, path );
 	Click ( "#UploadStamp" );
     Pause (2);

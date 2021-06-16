@@ -1,4 +1,4 @@
-// Create a new Company
+﻿// Create a new Company
 // Upload log and save
 
 Call("Common.Init");
@@ -12,7 +12,7 @@ Set("#Description", "Company " + id);
 CheckState("#Photo", "Visible", false);
 
 // Upload log and save
-App.SetFileDialogResult(true, __.Files + "logo.png");
+App.SetFileDialogResult(true, __.Files + "Files/logo.png");
 Click("#Upload");
 Click("#Write");
 CheckState("#Photo", "Visible");

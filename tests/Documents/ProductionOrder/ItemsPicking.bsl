@@ -1,4 +1,4 @@
-// Create 1 Item & 1 Service
+﻿// Create 1 Item & 1 Service
 // Create Production Order
 // Pick Item
 // Pick Service
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28E79FFA" );
+id = Call ( "Common.ScenarioID", "A048" );
 env = getEnv ( id );
 createEnv ( env );
 
