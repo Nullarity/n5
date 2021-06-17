@@ -296,7 +296,7 @@ EndProcedure
 &AtServer
 Procedure EmptyLoadList ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='Load list is empty. Before operation please mark with ""Load"" necessary documents'; ro='!!!Lista de încărcare este goală. Înainte de operație, marcați documentele necesare cu bifa ""Încărcați""'; ru='Список для загрузки пуст. Перед операцией, отметьте флажками необходимые документы'" );
+	text = NStr ("en = 'Load list is empty. Before operation please mark with ""Load"" necessary documents'; ro = 'Lista de încărcare este goală. Înainte de operație, marcați documentele necesare cu bifa ""Încărcați""'; ru = 'Список для загрузки пуст. Перед операцией, отметьте флажками необходимые документы'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -304,7 +304,7 @@ EndProcedure
 &AtServer
 Procedure UndefinedCodeFiscal1 ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='Code Fiscal is empty'; ro='!!!Codul fiscal este gol'; ru='Не заполнен фискальный код'" );
+	text = NStr ("en = 'Code Fiscal is empty'; ro = 'Codul fiscal nu este completat'; ru = 'Не заполнен фискальный код'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -312,7 +312,7 @@ EndProcedure
 &AtServer
 Procedure UndefinedCodeFiscal2 ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='%Row: Code Fiscal is empty'; ro='!!!%Row: Codul fiscal este gol'; ru='%Row: Не заполнен фискальный код'" );
+	text = NStr ("en = '%Row: Code Fiscal is empty'; ro = '%Row: Codul fiscal nu este completat'; ru = '%Row: Не заполнен фискальный код'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -320,7 +320,7 @@ EndProcedure
 &AtServer
 Procedure UndefinedAccountNumber ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='%Row: Bank Account Number is empty'; ro='!!!%Row: Numărul contului bancar este gol'; ru='%Row: Не указан номер банковского счета'" );
+	text = NStr ("en = '%Row: Bank Account Number is empty'; ro = '%Row: Numărul contului bancar nu este completat'; ru = '%Row: Не указан номер банковского счета'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -543,7 +543,7 @@ EndFunction
 &AtServer
 Procedure FormExists ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'The number is not unique'; ro = '!!!Numărul nu este unic'; ru = 'Номер не уникальный'" );
+	text = NStr ("en = 'The number is not unique'; ro = 'Numărul nu este unic'; ru = 'Номер не уникальный'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -852,7 +852,7 @@ EndProcedure
 &AtServer
 Procedure VendorReturnDifferentPackages ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='!!!Return package (%Package) differs from receipt package (%PackageReceipt)';ro='Ambalajul de retur (%Package) diferă de ambalajul de primire (%PackageReceipt)';ru='Упаковка при возврате (%Package) отличается от упаковки при поступлении (%PackageReceipt)'" );
+	text = NStr ("en = 'Packaging on return (%Package) is different from packaging on receipt (%PackageReceipt)'; ro = 'Ambalajul de retur (%Package) diferă de ambalajul de primire (%PackageReceipt)'; ru = 'Упаковка при возврате (%Package) отличается от упаковки при поступлении (%PackageReceipt)'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -860,14 +860,14 @@ EndProcedure
 &AtServer
 Procedure VendorReturnExcessQuantity ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='!!!The quantity %Quantity of item %Item is insufficient. By document %VendorInvoice available %QuantityBalance';ro='Nu este suficient %Quantity de marfă %Item. Conform documentului %VendorInvoice, sunt disponibile %QuantityBalance.';ru='Не хватает %Quantity товара %Item. По документу %VendorInvoice доступно %QuantityBalance'" );
+	text = NStr ("en = 'The quantity %Quantity of item %Item is insufficient. The amount of stock listed for %VendorInvoice is %QuantityBalance'; ro = 'Nu este suficient %Quantity de marfă %Item. Conform documentului %VendorInvoice, sunt disponibile %QuantityBalance.'; ru = 'Не хватает %Quantity товара %Item. По документу %VendorInvoice доступно %QuantityBalance'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
 
 Procedure NoItemsToReturn ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='!!!In document %Document no items to return';ro='În documentul %Document nu există bunuri pentru returnare';ru='В документе %Document нет товаров для возврата'" );
+	text = NStr ("en = 'There are no items to return in the %Document'; ro = 'În documentul %Document nu există bunuri pentru returnare'; ru = 'В документе %Document нет товаров для возврата'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -889,7 +889,7 @@ EndFunction
 &AtClient
 Procedure WrongVATUse ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='!!!VAT use for the selected document is different from the current';ro='Aplicarea TVA pentru documentul selectat diferă de cea actuală';ru='Применение НДС у выбранного документа отличается от текущего'" );
+	text = NStr ("en = 'Application of VAT in the selected document is different from the current'; ro = 'Aplicarea TVA pentru documentul selectat diferă de cea actuală'; ru = 'Применение НДС у выбранного документа отличается от текущего'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -897,7 +897,7 @@ EndProcedure
 &AtServer
 Function DataInputErrorsFound () export
 
-	text = NStr ( "en='Data input errors found!'; ro='!!!Erorile de introducere a datelor au fost găsite'; ru='Обнаружены ошибки ввода данных!'" );
+	text = NStr ( "en='Data input errors found!'; ro='Erori la introducerea datelor'; ru='Обнаружены ошибки ввода данных!'" );
 	return text;
 
 EndFunction
@@ -905,7 +905,7 @@ EndFunction
 &AtClient
 Procedure LoadPaymentsConfirmation ( Module, CallbackParams = undefined, Params = undefined, ProcName = "LoadPaymentsConfirmation" ) export
 
-	text = NStr ("en = 'Would you like to load the file?';ro = '!!!Doriți să încărcați fișierul?';ru = 'Загрузить файл?'" );
+	text = NStr ("en = 'Would you like to load the file?'; ro = 'Doriți să încărcați fișierul?'; ru = 'Загрузить файл?'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	Output.OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -914,7 +914,7 @@ EndProcedure
 &AtServer
 Procedure LoadPaymentsFirst ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'Payments’ file has not been uploaded yet';ro = '!!!Fișierul de plăți nu a fost încărcat încă';ru = 'Не загружен файл с платежами'" );
+	text = NStr ("en = 'Payments’ file has not been uploaded yet'; ro = 'Fișierul de plăți nu a fost încărcat încă'; ru = 'Не загружен файл с платежами'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -922,7 +922,7 @@ EndProcedure
 &AtServer
 Procedure PaymentsNotSelected ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'No payments selected for loading';ro = '!!!Nu au fost selectate plăți pentru încărcare';ru = 'Не выбраны платежи для загрузки'" );
+	text = NStr ("en = 'No payments selected for loading'; ro = 'Nu au fost selectate plăți pentru încărcare'; ru = 'Не выбраны платежи для загрузки'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -930,7 +930,7 @@ EndProcedure
 &AtClient
 Procedure UpdateByCodeFiscal ( Module, CallbackParams = undefined, Params = undefined, ProcName = "UpdateByCodeFiscal" ) export
 
-	text = NStr ("en = '!!!Organization data will be updated, continue?';ro = '!!!Datele terț vor fi actualizate, continuați?';ru = 'Данные контрагента будут обновлены, продолжить?'" );
+	text = NStr ("en = 'Organization data will be updated. Would you like to continue?'; ro = 'Datele terțului vor fi actualizate, doriți să continuați?'; ru = 'Данные контрагента будут обновлены, продолжить?'" );
 	title = NStr ( "en = ''; ro= ''; ru= ''" );
 	Output.OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -939,7 +939,7 @@ EndProcedure
 &AtClient
 Procedure UpdateByWrongCodeFiscal ( Module, CallbackParams = undefined, Params = undefined, ProcName = "UpdateByCodeFiscal" ) export
 
-	text = NStr ("en = '!!!An organization with the specified fiscal code already exists in the system. Continue?';ro = '!!!O organizație cu codul fiscal specificat există deja în sistem. Continuați?';ru = 'В системе уже существет организация с указанным фискальным кодом. Продолжить?'" );
+	text = NStr ("en = 'An organization with the specified fiscal code already exists in the system. Would you like to continue?'; ro = 'O organizație cu codul fiscal specificat există deja în sistem. Doriți să сontinuați?'; ru = 'В системе уже существет организация с указанным фискальным кодом. Продолжить?'" );
 	title = NStr ( "en = ''; ro= ''; ru= ''" );
 	Output.OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -948,7 +948,7 @@ EndProcedure
 &AtServer
 Procedure OrganizationNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = '!!!There is no data for this fiscal code in the national registry';ro = '!!!Nu există date pentru acest cod fiscal în registrul național';ru = 'По этому фискальному коду в национальном реестре данных нет'" );
+	text = NStr ("en = 'There is no data for this fiscal code in the national registry'; ro = 'Nu există date pentru acest cod fiscal în registrul național'; ru = 'По этому фискальному коду в национальном реестре данных нет'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -956,7 +956,7 @@ EndProcedure
 &AtServer
 Procedure WeakInvoice ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = '%Invoice does not have registered Tax Invoice';ro = '!!!%Invoice nu are o factură fiscală înregistrată';ru = 'Для %Invoice нет зарегистрированной налоговой накладной'" );
+	text = NStr ("en = '%Invoice does not have registered Tax Invoice'; ro = '%Invoice nu are o factură fiscală înregistrată'; ru = 'Для %Invoice нет зарегистрированной налоговой накладной'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
