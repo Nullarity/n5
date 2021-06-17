@@ -8,12 +8,17 @@ getEnv ();
 createEnv ();
 
 list = new Array ();
+list.Add ( "ExpenseReport" );
 list.Add ( "PurchaseOrder" );
 list.Add ( "VendorInvoice" );
 
 for each document in list do
 	Commando("e1cib/command/Document." + document + ".Create");
-	Set("!Vendor", this.Vendor);
+	if ( document = "ExpenseReport" ) then
+		Put("!VATUse", "Included in Price");
+	else
+		Set("!Vendor", this.Vendor);
+	endif;
 	table = Get("!ItemsTable");
 	Click("!ItemsTableAdd");
 	table.EndEditRow();
