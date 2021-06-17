@@ -877,6 +877,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	Computations.ExtraCharge ( ItemsRow );
@@ -887,6 +888,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
 	Computations.ExtraCharge ( ItemsRow );

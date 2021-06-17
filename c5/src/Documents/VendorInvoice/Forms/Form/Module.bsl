@@ -1396,6 +1396,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1412,6 +1413,7 @@ EndProcedure
 Procedure applyQuantity ()
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	updateTotals ( ThisObject, ItemsRow );
 	
@@ -1645,6 +1647,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	updateTotals ( ThisObject, ServicesRow );
 	

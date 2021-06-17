@@ -453,6 +453,7 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	
 EndProcedure
@@ -461,6 +462,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
+	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	
 EndProcedure
@@ -602,6 +604,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	
 EndProcedure

@@ -504,6 +504,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
+	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
 	Computations.Total ( ServicesRow, Object.VATUse );
 	

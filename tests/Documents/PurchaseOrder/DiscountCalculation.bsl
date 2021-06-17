@@ -3,25 +3,19 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A04P" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A04Q" ) );
 getEnv ();
 createEnv ();
 
 list = new Array ();
-list.Add ( "SalesOrder" );
-list.Add ( "Invoice" );
-list.Add ( "Quote" );
+list.Add ( "PurchaseOrder" );
+list.Add ( "VendorInvoice" );
 
 for each document in list do
 	Commando("e1cib/command/Document." + document + ".Create");
-	Set("!Customer", this.Customer);
-	if (document="Quote") then
-		table = Get("!Items");
-		Click("!ItemsAdd");
-	else
-		table = Get("!ItemsTable");
-		Click("!ItemsTableAdd");
-	endif;
+	Set("!Vendor", this.Vendor);
+	table = Get("!ItemsTable");
+	Click("!ItemsTableAdd");
 	table.EndEditRow();
 	Set("!ItemsItem", this.Item, table);
 	Set("!ItemsQuantityPkg", 1, table);
@@ -61,7 +55,7 @@ enddo;
 Procedure getEnv ()
 
 	id = this.ID;
-	this.Insert ( "Customer", "Customer " + id );
+	this.Insert ( "Vendor", "Vendor " + id );
 	this.Insert ( "Item", "Item " + id );
 	this.Insert ( "Service", "Service " + id );
 
@@ -74,10 +68,10 @@ Procedure createEnv ()
 		return;
 	endif;
 	
-	#region createCustomer
-	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
-	p.Description = this.Customer;
-	Call ( "Catalogs.Organizations.CreateCustomer", p );
+	#region createVendor
+	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
+	p.Description = this.Vendor;
+	Call ( "Catalogs.Organizations.CreateVendor", p );
 	#endregion
 
 	#region createItems
