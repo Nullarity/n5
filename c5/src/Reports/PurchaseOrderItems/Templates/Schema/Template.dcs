@@ -328,6 +328,10 @@
 			<dataPath>VATRate</dataPath>
 			<field>VATRate</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Description</dataPath>
+			<field>Description</field>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Balances
@@ -344,7 +348,7 @@ index by PurchaseOrder, RowKey
 //
 select Items.Item as Item, false as Service, Items.Feature as Feature, Items.Package as Package, Items.QuantityPkg as QuantityPkgOrdered, Items.Quantity as QuantityOrdered,
 	Balances.RowKey as RowKey, Items.DocumentOrder as DocumentOrder, Items.DocumentOrderRowKey as DocumentOrderRowKey,
-	Items.Price as Price, Items.Prices as Prices,
+	Items.Price as Price, Items.Prices as Prices, "" as Description,
 	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end as DeliveryDate,
 	case when Items.DocumentOrder refs Document.SalesOrder then cast ( Items.DocumentOrder as Document.SalesOrder ).Customer else cast ( Items.DocumentOrder as Document.InternalOrder ).Department end as Customer,
 	Balances.PurchaseOrder as PurchaseOrder, Balances.Quantity as Quantity,
@@ -353,8 +357,8 @@ select Items.Item as Item, false as Service, Items.Feature as Feature, Items.Pac
 	Items.QuantityPkg - Balances.Quantity / Items.Capacity as QuantityPkgSold,
 	Items.VATCode as VATCode, Items.VATRate as VATRate, Items.Capacity as Capacity, Balances.Warehouse as Warehouse, Items.DiscountRate as DiscountRate,
 	case when Items.Quantity = Balances.Quantity then Items.Discount else Items.Amount / 100 * Items.DiscountRate end as Discount
-	{select Item.*, Feature.*, Package.*, QuantityPkgOrdered, QuantityOrdered, Quantity, RowKey, DocumentOrder.*, DocumentOrderRowKey, Price, Prices, DeliveryDate, PurchaseOrder.*, Quantity, QuantityPkg,
-		Amount, Customer.*, QuantitySold, QuantityPkgSold, VATCode.*, VATRate, Capacity, Warehouse.*, DiscountRate, Discount}
+{select Item.*, Feature.*, Package.*, QuantityPkgOrdered, QuantityOrdered, Quantity, RowKey, DocumentOrder.*, DocumentOrderRowKey, Price, Prices, DeliveryDate, PurchaseOrder.*, Quantity, QuantityPkg,
+	Amount, Customer.*, QuantitySold, QuantityPkgSold, VATCode.*, VATRate, Capacity, Warehouse.*, DiscountRate, Discount, Description}
 from Document.PurchaseOrder.Items as Items
 	//
 	// Balances
@@ -369,7 +373,8 @@ from Document.PurchaseOrder.Items as Items
 	Items.QuantityPkg - Balances.Quantity / Items.Capacity as QuantityPkgSold,
 	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end between &amp;DeliveryDateStart and &amp;DeliveryDateEnd}
 union all
-select Services.Item, true, Services.Feature, null, Services.Quantity, Services.Quantity, Balances.RowKey, Services.DocumentOrder, Services.DocumentOrderRowKey, Services.Price, Services.Prices,
+select Services.Item, true, Services.Feature, null, Services.Quantity, Services.Quantity, Balances.RowKey, Services.DocumentOrder, Services.DocumentOrderRowKey,
+	Services.Price, Services.Prices, Services.Description,
 	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end,
 	Services.DocumentOrder.Department, Balances.PurchaseOrder, Balances.Quantity, Balances.Quantity,
 	Balances.Amount, Services.Quantity - Balances.Quantity, Services.Quantity - Balances.Quantity,
@@ -1522,6 +1527,9 @@ from Document.PurchaseOrder.Services as Services
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Prices</dcsset:field>

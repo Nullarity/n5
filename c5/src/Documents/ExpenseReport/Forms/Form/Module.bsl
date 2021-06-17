@@ -229,7 +229,6 @@ Procedure loadInternalOrders ( Table )
 			docRow = services.Add ();
 			FillPropertyValues ( docRow, row );
 			item = row.Item;
-			docRow.Description = DF.Pick ( item, "FullDescription" );
 			accounts = AccountsMap.Item ( item, company, warehouse, "VAT" );
 			docRow.VATAccount = accounts.VAT;
 		else
@@ -268,7 +267,6 @@ Procedure loadSalesOrders ( Table )
 			docRow = services.Add ();
 			FillPropertyValues ( docRow, row );
 			item = row.Item;
-			docRow.Description = DF.Pick ( item, "FullDescription" );
 			accounts = AccountsMap.Item ( item, company, warehouse, "VAT" );
 			docRow.VATAccount = accounts.VAT;
 		else

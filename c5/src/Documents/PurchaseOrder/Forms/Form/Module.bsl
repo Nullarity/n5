@@ -257,7 +257,6 @@ Procedure loadAllocation ( Table )
 		if ( row.ItemService ) then
 			docRow = services.Add ();
 			FillPropertyValues ( docRow, row );
-			docRow.Description = DF.Pick ( item, "FullDescription" );
 			package = undefined;
 		else
 			docRow = itemsTable.Add ();

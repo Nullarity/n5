@@ -433,6 +433,10 @@
 			<dataPath>VATRate</dataPath>
 			<field>VATRate</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Description</dataPath>
+			<field>Description</field>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Vendors &amp; Items
@@ -466,7 +470,7 @@ index by InternalOrder, RowKey
 // Items and Services
 //
 select Items.Ref as InternalOrder, Items.RowKey as RowKey, Items.Item as Item, false as Service,Items.Package as Package,
-	isnull ( Items.Package.Capacity, 1 ) as Capacity,
+	isnull ( Items.Package.Capacity, 1 ) as Capacity, "" as Description,
 	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end as DeliveryDate,
 	Items.Feature as Feature, Items.QuantityPkg as QuantityPkgOrdered, Items.Quantity as QuantityOrdered,
 	Balances.Warehouse as Warehouse, Balances.Quantity as Quantity, Items.Price as Price, Items.Amount as Amount,
@@ -493,7 +497,7 @@ from Document.InternalOrder.Items as Items
 case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end between &amp;DeliveryDateStart and &amp;DeliveryDateEnd, 
 VendorItems.Vendor = &amp;Vendor, DepartmentItems.Department = &amp;Department}
 union all
-select Services.Ref, Services.RowKey, Services.Item, true, null, 1,
+select Services.Ref, Services.RowKey, Services.Item, true, null, 1, Description,
 	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end,
 	Services.Feature, Services.Quantity, Services.Quantity, Balances.Warehouse, Balances.Quantity,
 	Services.Price, Services.Amount, Services.Prices, Services.VATCode, Services.VATRate
@@ -572,7 +576,7 @@ index by InternalOrder, InternalOrderRowKey
 //
 select allowed Items.Item as Item, Items.Service as Service, Items.Package as Package, Items.Capacity as Capacity, Items.Feature as Feature,
 	Items.RowKey as RowKey, Items.InternalOrder as InternalOrder, Items.Warehouse as Warehouse, Items.DeliveryDate as DeliveryDate,
-	Items.QuantityPkgOrdered as QuantityPkgOrdered, Items.Quantity as Quantity, Items.Price as Price,
+	Items.QuantityPkgOrdered as QuantityPkgOrdered, Items.Quantity as Quantity, Items.Price as Price, Items.Description as Description,
 	case when Items.QuantityOrdered = Items.Quantity then Items.Amount else Items.Quantity * Items.Price end as Amount,
 	Items.QuantityOrdered as QuantityOrdered, Items.Prices as Prices, Items.Quantity / Items.Capacity as QuantityPkgBalance,
 	( Items.QuantityOrdered - Items.Quantity ) as QuantityGot,
@@ -586,7 +590,7 @@ select allowed Items.Item as Item, Items.Service as Service, Items.Package as Pa
 {select InternalOrder.*, Warehouse.*, Item.*, Service, Package.*, Capacity, Feature.*,
 	Quantity, QuantityOrdered, QuantityPkgOrdered, QuantityGot, QuantityPkgGot, QuantityPkgBalance,
 	Price, Amount, QuantityReserve, QuantityPkgReserve, QuantityForAllocation, QuantityPkgForAllocation,
-	QuantityAllocated, QuantityPkgAllocated, DeliveryDate, RowKey, Prices.*, VATCode.*, VATRate}
+	QuantityAllocated, QuantityPkgAllocated, DeliveryDate, RowKey, Prices.*, VATCode.*, VATRate, Description}
 from Items as Items
 	//
 	// Reserves
@@ -1839,11 +1843,6 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Asof</dcscor:parameter>
-					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>Warehouse</dcscor:parameter>
 					<dcscor:value xsi:type="v8:StandardPeriod">
 						<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
@@ -1923,6 +1922,9 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Package</dcsset:field>

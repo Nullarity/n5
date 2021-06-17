@@ -293,6 +293,10 @@
 			<dataPath>VATCode</dataPath>
 			<field>VATCode</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Description</dataPath>
+			<field>Description</field>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Vendors &amp; Items
@@ -325,9 +329,9 @@ select Items.RowKey as RowKey, Items.Item as Item, Items.Feature as Feature, Ite
 	Allocation.DocumentOrder as DocumentOrder, Allocation.QuantityBalance as QuantityBalance,
 	Allocation.QuantityBalance / Items.Capacity as QuantityPkgBalance,
 	Allocation.CustomerOrDepartment as CustomerOrDepartment, Items.Capacity as Capacity,
-	0 as Price, 0 as Amount, Items.VATCode as VATCode, Items.VATRate as VATRate
+	0 as Price, 0 as Amount, Items.VATCode as VATCode, Items.VATRate as VATRate, "" as Description
 {select Item.*, Feature.*, Package.*, DeliveryDate, RowKey, DocumentOrder.*, QuantityBalance, QuantityPkgBalance, CustomerOrDepartment.*, Capacity,
-	Price, Amount, VATCode.*, VATRate}
+	Price, Amount, VATCode.*, VATRate, Description}
 from Document.SalesOrder.Items as Items
 	//
 	// Allocation
@@ -348,7 +352,8 @@ union all
 select Services.RowKey, Services.Item, Services.Feature, null,
 	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end,
 	Allocation.DocumentOrder, Allocation.QuantityBalance,
-	Allocation.QuantityBalance, Allocation.CustomerOrDepartment, 1, 0, 0, Services.VATCode, Services.VATRate
+	Allocation.QuantityBalance, Allocation.CustomerOrDepartment, 1, 0, 0, Services.VATCode, Services.VATRate,
+	Services.Description
 from Document.SalesOrder.Services as Services
 	//
 	// Allocation
@@ -371,7 +376,7 @@ select Items.RowKey, Items.Item, Items.Feature, Items.Package,
 	Allocation.DocumentOrder, Allocation.QuantityBalance,
 	Allocation.QuantityBalance / Items.Capacity, Allocation.CustomerOrDepartment, Items.Capacity,
 	Items.Price, case when Allocation.QuantityBalance = Items.Quantity then Items.Amount else Items.Amount / Items.Quantity * Allocation.QuantityBalance end,
-	Items.VATCode, Items.VATRate
+	Items.VATCode, Items.VATRate, ""
 from Document.InternalOrder.Items as Items
 	//
 	// Allocation
@@ -394,7 +399,7 @@ select Services.RowKey, Services.Item, Services.Feature, null,
 	Allocation.DocumentOrder, Allocation.QuantityBalance,
 	Allocation.QuantityBalance, Allocation.CustomerOrDepartment, 1,
 	Services.Price, case when Allocation.QuantityBalance = Services.Quantity then Services.Amount else Services.Amount / case when Services.Quantity = 0 then 1 else Services.Quantity end * Allocation.QuantityBalance end,
-	Services.VATCode, Services.VATRate
+	Services.VATCode, Services.VATRate, Services.Description
 from Document.InternalOrder.Services as Services
 	//
 	// Allocation
@@ -914,6 +919,9 @@ from Document.InternalOrder.Services as Services
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Package</dcsset:field>

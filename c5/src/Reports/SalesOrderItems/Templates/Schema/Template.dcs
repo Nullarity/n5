@@ -513,6 +513,10 @@
 			<dataPath>VATRate</dataPath>
 			<field>VATRate</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Description</dataPath>
+			<field>Description</field>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Vendors &amp; Items
@@ -551,7 +555,8 @@ select Items.Ref as SalesOrder, Items.RowKey as RowKey, Items.Item as Item, fals
 	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end as DeliveryDate,
 	Items.DiscountRate as DiscountRate,	Items.VATCode as VATCode, Items.VATRate as VATRate, 
 	Balances.Warehouse as Warehouse, Balances.Quantity as Quantity, Balances.Amount as Amount,
-	case when Items.Quantity = Balances.Quantity then Items.Discount else Items.Amount / 100 * Items.DiscountRate end as Discount
+	case when Items.Quantity = Balances.Quantity then Items.Discount else Items.Amount / 100 * Items.DiscountRate end as Discount,
+	"" as Description
 into Items
 from Document.SalesOrder.Items as Items
 	//
@@ -570,7 +575,8 @@ select Services.Ref, Services.RowKey, Services.Item, true, null, 1, Services.Fea
 	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end, 
 	Services.DiscountRate, Services.VATCode, Services.VATRate, 
 	Balances.Warehouse, Balances.Quantity, Balances.Amount,
-	case when Services.Quantity = Balances.Quantity then Services.Discount else Services.Amount / 100 * Services.DiscountRate end
+	case when Services.Quantity = Balances.Quantity then Services.Discount else Services.Amount / 100 * Services.DiscountRate end,
+	Services.Description
 from Document.SalesOrder.Services as Services
 	//
 	// Balances
@@ -642,7 +648,7 @@ index by SalesOrder, SalesOrderRowKey
 // Main selection
 //
 select Items.Item as Item, Items.Service as Service, Items.Package as Package,
-	Items.Feature as Feature, Items.RowKey as RowKey,
+	Items.Feature as Feature, Items.RowKey as RowKey, Items.Description as Description,
 	Items.SalesOrder as SalesOrder, Items.Warehouse as Warehouse, Items.DeliveryDate as DeliveryDate,
 	Items.Price as Price, Items.Prices as Prices, Items.Capacity as Capacity,
 	Items.QuantityPkgOrdered as QuantityPkgOrdered, Items.QuantityOrdered as QuantityOrdered,
@@ -660,7 +666,7 @@ select Items.Item as Item, Items.Service as Service, Items.Package as Package,
 	DiscountRate, Discount, Feature.*, QuantityOrdered, QuantityPkgOrdered,
 	QuantitySold, QuantityPkgSold, Price, QuantityPkg, Amount, Quantity, QuantityReserve,
 	QuantityPkgReserve, QuantityForAllocation, QuantityPkgForAllocation, QuantityAllocated,
-	QuantityPkgAllocated, RowKey, Prices.*, VATCode.*, VATRate}
+	QuantityPkgAllocated, RowKey, Prices.*, VATCode.*, VATRate, Description}
 from Items as Items
 	//
 	// Reserves
@@ -2183,6 +2189,9 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 						<dcsset:field>Item.Service</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Prices</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
@@ -2291,11 +2300,6 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 					<dcscor:value xsi:nil="true"/>
 					<dcsset:userSettingID>379791e8-bb2b-4aed-8799-18f5c80b68e9</dcsset:userSettingID>
 				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Department</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
 				<dcsset:item xsi:type="dcsset:OrderItemField">
@@ -2375,6 +2379,9 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>RowKey</dcsset:field>
@@ -2456,11 +2463,6 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 					<dcscor:value xsi:nil="true"/>
 					<dcsset:userSettingID>379791e8-bb2b-4aed-8799-18f5c80b68e9</dcsset:userSettingID>
 				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Department</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
 				<dcsset:item xsi:type="dcsset:OrderItemField">
@@ -2540,6 +2542,9 @@ from AccumulationRegister.Items.Balance ( {&amp;Asof},
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
 					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>RowKey</dcsset:field>

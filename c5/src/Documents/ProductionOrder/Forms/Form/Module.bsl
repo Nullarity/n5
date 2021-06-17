@@ -131,11 +131,9 @@ Procedure loadAllocation ( Table )
 	services = Object.Services;
 	itemsTable = Object.Items;
 	for each row in Table do
-		item = row.Item;
 		if ( row.ItemService ) then
 			docRow = services.Add ();
 			FillPropertyValues ( docRow, row );
-			docRow.Description = DF.Pick ( item, "FullDescription" );
 		else
 			docRow = itemsTable.Add ();
 			FillPropertyValues ( docRow, row );

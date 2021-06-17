@@ -350,7 +350,6 @@ Procedure loadSalesOrders ( Table, Clean )
 			docRow = services.Add ();
 			FillPropertyValues ( docRow, row );
 			item = row.Item;
-			docRow.Description = DF.Pick ( item, "FullDescription" );
 			accounts = AccountsMap.Item ( item, company, warehouse, "Income, VAT" );
 			docRow.Income = accounts.Income;
 			docRow.VATAccount = accounts.VAT;
