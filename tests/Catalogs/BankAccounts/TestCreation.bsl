@@ -42,7 +42,7 @@ EndProcedure
 
 Procedure createBankAccount ( Env )
 
-	OpenMenu ( "Catalogs / Companies" );
+	Commando("e1cib/list/Catalog.Companies");
 	With ( "Companies" );
 
 	GotoRow ( "#List", "Description", __.Company );

@@ -26,7 +26,7 @@ if ( TypeOf ( _ ) = Type ( "String" ) ) then
 else
 	fromOwner = true;
 	if ( _.Company <> undefined ) then
-		OpenMenu ( "Catalogs / Companies" );
+		Commando("e1cib/list/Catalog.Companies");
 		list = With ( "Companies" );
 		GotoRow ( "#List", "Description", _.Company );
 		Click ( "#FormChange" );

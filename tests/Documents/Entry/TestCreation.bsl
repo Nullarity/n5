@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28494BC4" );
+id = Call ( "Common.ScenarioID", "A04S" );
 env = getEnv ( id );
 createEnv ( env );
 createEntry ( env );
@@ -61,9 +61,9 @@ Procedure createEntry ( Env )
 	form = With ( "Entry (cr*" );
 	Click ( "#RecordsAdd" );
 	With ( "Record" );
-	Put ( "#AccountDr", "10300" );
+	Put ( "#AccountDr", "2431" );
 	Put ( "#DimDr1", Env.CADBankAccount );
-	Put ( "#AccountCr", "10300" );
+	Put ( "#AccountCr", "2431" );
 	Put ( "#DimCr1", Env.LocalBankAccount );
 	
 	checkRecord ( Env );
@@ -80,11 +80,11 @@ Procedure createEntry ( Env )
 	CheckState ( "#CurrencyAmountCr, #RateCr, #FactorCr", "Enable" );
 
 	// Change to non-currency account and check accessibility
-	Put ( "#AccountCr", "0000" );
+	Put ( "#AccountCr", "0" );
 	CheckState ( "#CurrencyCr, #CurrencyAmountCr, #RateCr, #FactorCr", "Enable", false );
 
 	// Set back credit account and test reverse-calculation (Amount -> CurrencyCrAmount)
-	Put ( "#AccountCr", "10300" );
+	Put ( "#AccountCr", "2431" );
 	Put ( "#DimCr1", Env.LocalBankAccount );
 	
 	Set ( "#Amount", "500" );
@@ -99,7 +99,7 @@ Procedure createEntry ( Env )
 	Check ( "#Amount", "400" );
 	
 	// Check Contractors
-	Put ( "#AccountDr", "11000" );
+	Put ( "#AccountDr", "2212" );
 	Put ( "#DimDr1", Env.Customer );
 	Check ( "#DimDr2", "General" );
 	Check ( "#CurrencyDr", __.LocalCurrency );
@@ -115,9 +115,9 @@ Procedure checkRecord ( Env )
 	CheckState ( "#CurrencyCr", "Enable" );
 	CheckState ( "#CurrencyAmountCr, #RateCr, #FactorCr, #CurrencyAmountCr", "Enable", false );
 
-	Check ( "#AccountDr", "10300" );
+	Check ( "#AccountDr", "2431" );
 	Check ( "#DimDr1", Env.CADBankAccount );
-	Check ( "#AccountCr", "10300" );
+	Check ( "#AccountCr", "2431" );
 	Check ( "#DimCr1", Env.LocalBankAccount );
 
 EndProcedure
