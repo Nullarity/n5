@@ -198,7 +198,7 @@ Procedure setRates ( Object )
 	data = CurrenciesSrv.Get ( Object.Currency, Object.Date );
 	Object.Rate = data.Rate;
 	Object.Factor = data.Factor;
-	
+
 EndProcedure 
 
 &AtServer
@@ -268,14 +268,51 @@ EndProcedure
 Procedure loadContract ( Form )
 	
 	object = Form.Object;
-	currency = DF.Pick ( object.Contract, "Currency" );
-	object.ContractCurrency = currency;
-	data = CurrenciesSrv.Get ( currency, object.Date );
-	object.ContractRate = data.Rate;
-	object.ContractFactor = data.Factor;
-	object.Currency = currency;
+	fields = new Array ();
+	fields.Add ( "Currency" );
+	if ( isAdjustDebts ( Form ) ) then
+		fields.Add ( "CustomerRateType as RateType" );
+		fields.Add ( "CustomerRate as Rate" );
+		fields.Add ( "CustomerFactor as Factor" );
+	else
+		fields.Add ( "VendorRateType as RateType" );
+		fields.Add ( "VendorRate as Rate" );
+		fields.Add ( "VendorFactor as Factor" );
+	endif;
+	data = DF.Values ( object.Contract, StrConcat ( fields, "," ) );
+	contractCurrency = data.Currency;
+	object.ContractCurrency = contractCurrency;
+	if ( data.RateType = Enums.CurrencyRates.Fixed
+		and data.Rate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.Rate, data.Factor );
+	else
+		currency = CurrenciesSrv.Get ( contractCurrency, Object.Date );
+	endif;
+	Object.ContractRate = currency.Rate;
+	Object.ContractFactor = currency.Factor;
+	Object.Currency = contractCurrency;
 	AdjustDebtsForm.ApplyCurrency ( Form );
+
+EndProcedure
+
+&AtServer
+Procedure loadVendorContract ( Form )
 	
+	object = Form.Object;
+	data = DF.Values ( object.Contract, "Currency, CustomerRateType, CustomerRate, CustomerFactor" );
+	contractCurrency = data.Currency;
+	object.ContractCurrency = contractCurrency;
+	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
+		and data.CustomerRate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
+	else
+		currency = CurrenciesSrv.Get ( contractCurrency, Object.Date );
+	endif;
+	Object.ContractRate = currency.Rate;
+	Object.ContractFactor = currency.Factor;
+	Object.Currency = contractCurrency;
+	AdjustDebtsForm.ApplyCurrency ( Form );
+
 EndProcedure
 
 &AtServer

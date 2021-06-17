@@ -574,7 +574,7 @@ Function contractCurrency ( Object, Fields )
 	
 	result = undefined;
 	if ( Fields.ContractRateType = Enums.CurrencyRates.Fixed ) then
-		if ( Object.Base <> undefined ) then
+		if ( ValueIsFilled ( Object.Base ) ) then
 			result = DF.Values ( Object.Base, "Rate, Factor" );
 		elsif ( Fields.ContractRate <> 0 ) then
 			result = new Structure ( "Rate, Factor", Fields.ContractRate, Fields.ContractFactor )

@@ -171,13 +171,19 @@ EndProcedure
 &AtServer
 Procedure applyContract ()
 	
-	data = DF.Values ( Object.Contract, "Currency, CustomerAdvances" );
+	data = DF.Values ( Object.Contract,
+		"Currency, CustomerAdvances, CustomerRateType, CustomerRate, CustomerFactor" );
 	ContractCurrency = data.Currency;
-	Object.Currency = ContractCurrency;
+	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
+		and data.CustomerRate <> 0 ) then
+		currency = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
+	else
+		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	endif;
 	Object.CloseAdvances = data.CustomerAdvances;
-	currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
 	Object.Rate = currency.Rate;
 	Object.Factor = currency.Factor;
+	Object.Currency = ContractCurrency;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 

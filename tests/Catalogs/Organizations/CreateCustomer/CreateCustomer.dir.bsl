@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Creates a new Customer
 //
 // Conditions:
@@ -34,6 +34,8 @@ else
 	codeFiscal = _.CodeFiscal;
 	bankAccount = _.BankAccount;
 	paymentAddress = _.PaymentAddress;
+	rateType = _.RateType;
+	rate = _.Rate;
 endif;
 //
 // Fill general
@@ -50,9 +52,8 @@ endif;
 Click("#FormWrite");
 CheckErrors();
 
-if ( AppName = "c5" ) then
-	Get ( "#CustomerPage" ).Expand ();
-endif;
+Get ( "#CustomerPage" ).Expand ();
+
 if ( paymentAddress <> undefined ) then
 	CheckErrors();
 	field = Activate("#PaymentAddress");
@@ -73,6 +74,12 @@ Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");
 Set("#Currency", currency);
 CurrentSource.GotoNextItem();
+if ( rateType <> undefined ) then
+	Put("#CustomerRateType", rateType);
+endif;
+if ( rate <> undefined ) then
+	Set("#CustomerRate", rate);
+endif;
 if (terms <> undefined) then
 	Set("#CustomerTerms", terms);
 endif;
