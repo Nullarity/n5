@@ -266,7 +266,7 @@ Procedure completeCost ( Env, Cost, Items )
 		quantityBalance = row.QuantityBalance;
 		msg.QuantityBalance = Conversion.NumberToQuantity ( quantityBalance, package );
 		msg.Quantity = Conversion.NumberToQuantity ( row.Quantity - quantityBalance, package );
-		OutputCont.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
+		Output.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
 	enddo; 
 		
 EndProcedure 

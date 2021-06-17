@@ -60,8 +60,8 @@ Procedure commitRecords ( Env )
 	
 	fields = Env.Fields;
 	debtAccount = fields.DebtAccount;
-	closeDebts = OutputCont.CloseEmployeeDebts ();
-	formationDebts = OutputCont.FormationEmployeeDebts ();
+	closeDebts = Output.CloseEmployeeDebts ();
+	formationDebts = Output.FormationEmployeeDebts ();
 	p = GeneralRecords.GetParams ();
 	p.Date = fields.Date;
 	p.Company = fields.Company;

@@ -170,7 +170,7 @@ Function run ()
 		return false;
 	endif;
 	if ( not checkData ( list ) ) then
-		raise OutputCont.DataInputErrorsFound ();
+		raise Output.DataInputErrorsFound ();
 	endif;
 	p = DataProcessors.UnloadInvoices.GetParams ();
 	p.Invoices = list;
@@ -189,7 +189,7 @@ Function getSelection ()
 
 	rows = Object.Invoices.Unload ( new Structure ( "Unload", true ) );
 	if ( rows.Count () = 0 ) then
-		OutputCont.EmptyUploadList ( , "Invoices" );
+		Output.EmptyUploadList ( , "Invoices" );
 		return undefined;
 	else
 		return rows.UnloadColumn ( "Invoice" );
@@ -203,7 +203,7 @@ Function checkData ( Invoices )
 	ok = true;
 	code = DF.Pick ( Object.Company, "CodeFiscal" );
 	if ( code = "" ) then
-		OutputCont.UndefinedCodeFiscal1 ( , "Company" );
+		Output.UndefinedCodeFiscal1 ( , "Company" );
 		ok = false;
 	endif;
 	errors = wrongInvoices ( Invoices );
@@ -218,13 +218,13 @@ Function checkData ( Invoices )
 			row = table.FindRows ( new Structure ( "Invoice", invoice ) ) [ 0 ];
 			msg = new Structure ( "Row", Format ( row.LineNumber, "NG=" ) );
 			if ( error.CustomerCodeFiscal ) then
-				OutputCont.UndefinedCodeFiscal2 ( msg, "Customer", invoice );
+				Output.UndefinedCodeFiscal2 ( msg, "Customer", invoice );
 			endif;
 			if ( error.CustomerBankAccount ) then
-				OutputCont.UndefinedAccountNumber ( msg, "CustomerAccount", invoice );
+				Output.UndefinedAccountNumber ( msg, "CustomerAccount", invoice );
 			endif;
 			if ( error.CompanyBankAccount ) then
-				OutputCont.UndefinedAccountNumber ( msg, "Account", invoice );
+				Output.UndefinedAccountNumber ( msg, "Account", invoice );
 			endif;
 		enddo;
 	endif;

@@ -174,7 +174,7 @@ Procedure CheckInvoice ( Source, Cancel, WriteMode, PostingMode ) export
 		return;
 	endif;
 	Cancel = true;
-	OutputCont.InvoicePrinted ();
+	Output.InvoicePrinted ();
 	
 EndProcedure
 

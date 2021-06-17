@@ -21,7 +21,7 @@ Procedure fillByBase ( FillingData )
 	Company = FillingData.Company;
 	data = rangeData ();
 	if ( data = undefined ) then
-		raise OutputCont.UndefinedRangeLocation ( new Structure ( "Range", Range ) );
+		raise Output.UndefinedRangeLocation ( new Structure ( "Range", Range ) );
 	endif;
 	Account = data.Account;
 	Capacity = data.Capacity;

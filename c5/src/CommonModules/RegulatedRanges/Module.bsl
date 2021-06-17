@@ -209,9 +209,9 @@ Function newNumber ( Range, Data )
 	
 	next = data.Next;
 	if ( next > data.Finish ) then
-		raise OutputCont.RangeFinished ( new Structure ( "Range", Range ) );
+		raise Output.RangeFinished ( new Structure ( "Range", Range ) );
 	elsif ( data.Status = null ) then
-		raise OutputCont.RangeInactive ( new Structure ( "Range", Range ) );
+		raise Output.RangeInactive ( new Structure ( "Range", Range ) );
 	endif;
 	commit ( Range, next );
 	return new Structure ( "Series, Number", Data.Prefix, next );
@@ -249,19 +249,19 @@ EndProcedure
 Procedure shiftRange ( Range, Series, Number, Data )
 	
 	if ( data.Status = null ) then
-		raise OutputCont.RangeInactive ( new Structure ( "Range", Range ) );
+		raise Output.RangeInactive ( new Structure ( "Range", Range ) );
 	endif;
 	ok = Series = data.Prefix
 	and Number >= data.Start
 	and Number <= data.Finish;
 	if ( not ok ) then
-		raise OutputCont.RangeError ( new Structure ( "Range, Series, Number", Range, Series, Number ) );
+		raise Output.RangeError ( new Structure ( "Range, Series, Number", Range, Series, Number ) );
 	endif;
 	shift = ( Number - data.Next );
 	if ( shift = 0 ) then
 		commit ( Range, Number );
 	elsif ( shift > 0 ) then
-		raise OutputCont.RangeJumpstart ( new Structure ( "Range, Number", Range, Number ) );
+		raise Output.RangeJumpstart ( new Structure ( "Range, Number", Range, Number ) );
 	endif;
 	
 EndProcedure
@@ -273,7 +273,7 @@ Function Duplication ( Object ) export
 		or formNotFound ( Object ) ) then
 		return false;
 	else
-		OutputCont.FormExists ( , "FormNumber", Object.Ref );
+		Output.FormExists ( , "FormNumber", Object.Ref );
 		return true;
 	endif;
 	

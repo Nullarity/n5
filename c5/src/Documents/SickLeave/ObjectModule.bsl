@@ -53,7 +53,7 @@ Function alreadySick ()
 		return false;
 	endif;
 	document = table [ 0 ].Ref;
-	OutputCont.EmployeeAlreadySick ( new Structure ( "Ref", document ), , document );
+	Output.EmployeeAlreadySick ( new Structure ( "Ref", document ), , document );
 	return true;
 	
 EndFunction

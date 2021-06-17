@@ -56,7 +56,7 @@ Function checkCompany ()
 	if ( ValueIsFilled ( Company ) ) then
 		return true;
 	endif;
-	OutputCont.CompanyEmpty ();
+	Output.CompanyEmpty ();
 	return false;
 
 EndFunction
@@ -67,7 +67,7 @@ Function checkPeriod ()
 		and ( Year ( DateStart ) = Year ( DateEnd ) ) then
 		return true;
 	endif;
-	OutputCont.PeriodYearError ();
+	Output.PeriodYearError ();
 	return false;
 
 EndFunction 

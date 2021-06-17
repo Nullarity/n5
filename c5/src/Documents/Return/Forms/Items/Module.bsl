@@ -36,7 +36,7 @@ Procedure OnOpen ( Cancel )
 	loadData ();
 	fill ();
 	if ( Object.Items.Count () = 0 ) then
-		OutputCont.NoItemsToReturn ( new Structure ( "Document", Invoice ), , Invoice );
+		Output.NoItemsToReturn ( new Structure ( "Document", Invoice ), , Invoice );
 		Close ();			
 	endif;
 	

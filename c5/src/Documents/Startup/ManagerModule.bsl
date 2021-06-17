@@ -395,14 +395,14 @@ Procedure residualIgnored ( Env, Row )
 	
 	p = new Structure ( "Item, Details, CostLimit, Price, ResidualValue",
 	Row.Item, Env.Details, Env.CostLimit, Env.Price, Row.ResidualValue );
-	OutputCont.ResidualValueIgnored ( p );
+	Output.ResidualValueIgnored ( p );
 
 EndProcedure
 
 Procedure priceLess ( Env, Row )
 
 	p = new Structure ( "Item, Details, Price, ResidualValue", Row.Item, Env.Details, Env.Price, Row.ResidualValue );
-	OutputCont.PriceIsLessThenResidualValue ( p );
+	Output.PriceIsLessThenResidualValue ( p );
 
 EndProcedure
 

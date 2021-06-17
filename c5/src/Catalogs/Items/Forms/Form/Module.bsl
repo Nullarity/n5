@@ -220,7 +220,7 @@ Function formInUse ()
 		or formIsNew ( ref ) ) then
 		return false;
 	endif;
-	OutputCont.FormInUse ();
+	Output.FormInUse ();
 	return true;
 	
 EndFunction

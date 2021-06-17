@@ -72,7 +72,7 @@ Function checkProducerPrices ()
 	p = new Structure ( "Item" );
 	for each row in table do
 		p.Item = row.Item;
-		OutputCont.ProducerPriceEmpty ( p, "Items[" + row.Line + "].ProducerPrice" );
+		Output.ProducerPriceEmpty ( p, "Items[" + row.Line + "].ProducerPrice" );
 	enddo;
 	return false;
 

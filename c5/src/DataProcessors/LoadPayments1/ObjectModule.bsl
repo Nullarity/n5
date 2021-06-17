@@ -179,7 +179,7 @@ Function checkTxtFormat(Line, String)
 	
 	if (Line = 1
 			and String <> "1CClientBankExchange(V:M.1)") then
-		Progress.Put(OutputCont.WrongFileFormat(), JobKey, true);
+		Progress.Put(Output.WrongFileFormat(), JobKey, true);
 		return false;
 	endif;
 	return true;
@@ -189,7 +189,7 @@ EndFunction
 Procedure processingLine(Line)
 	
 	LineProcessing.Line = Line;
-	Progress.Put(OutputCont.ProcessingLine(LineProcessing), JobKey);
+	Progress.Put(Output.ProcessingLine(LineProcessing), JobKey);
 	
 EndProcedure
 
@@ -307,11 +307,11 @@ Function getXBase(Encoding)
 	try
 		xBase.OpenFile(Path, , true);
 	except
-		Progress.Put(OutputCont.UnableToOpenFile(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToOpenFile(new Structure("Error", ErrorDescription())), JobKey, true);
 		return undefined;
 	endtry;
 	if (not xBase.IsOpen()) then
-		Progress.Put(OutputCont.DBFFileNotOpened(), JobKey, true);
+		Progress.Put(Output.DBFFileNotOpened(), JobKey, true);
 		return undefined;
 	endif;
 	return xBase;
@@ -342,7 +342,7 @@ Function checkStructureMobias(Xbase)
 		or (fields.Find("FKOD_D") = undefined)
 		or (fields.Find("SCET_D") = undefined)
 		or (fields.Find("SCETMY_D") = undefined) then
-		Progress.Put(OutputCont.DBFInvalidStructure(), JobKey, true);
+		Progress.Put(Output.DBFInvalidStructure(), JobKey, true);
 		closeXBase(Xbase);
 		return false;
 	endif;
@@ -355,7 +355,7 @@ Function closeXBase(Xbase)
 	try
 		Xbase.CloseFile();
 	except
-		Progress.Put(OutputCont.CommonError(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.CommonError(new Structure("Error", ErrorDescription())), JobKey, true);
 		return false;
 	endtry;
 	return true;
@@ -454,7 +454,7 @@ Function checkStructureMaib(XBase)
 			or fields.Find("BIC") = undefined
 			or fields.Find("COD_TRANZ") = undefined
 			or fields.Find("URGENT") = undefined) then
-		Progress.Put(OutputCont.DBFInvalidStructure(), JobKey, true);
+		Progress.Put(Output.DBFInvalidStructure(), JobKey, true);
 		closeXBase(Xbase);
 		return false;
 	endif;
@@ -603,7 +603,7 @@ Function checkStructureExim(Xbase)
 			or fields.Find("URGENT") = undefined
 			or fields.Find("DOCUMENT") = undefined
 			or fields.Find("CONT_CORES") = undefined) then
-		Progress.Put(OutputCont.DBFInvalidStructure(), JobKey, true);
+		Progress.Put(Output.DBFInvalidStructure(), JobKey, true);
 		closeXBase(Xbase);
 		return false;
 	endif;
@@ -614,7 +614,7 @@ EndFunction
 Function checkCurrency(Xbase, Currency)
 	
 	if (Xbase.TV <> Currency) then
-		Progress.Put(OutputCont.AccountCurrencyError(), JobKey, true);
+		Progress.Put(Output.AccountCurrencyError(), JobKey, true);
 		closeXBase(Xbase);
 		return false;
 	endif;
@@ -727,7 +727,7 @@ Procedure extractFinCom(Table)
 			try
 				rowTable[attribute.LocalName] = attribute.NodeValue;
 			except
-				Progress.Put(OutputCont.UnableToReadFile(new Structure("Error", ErrorDescription())), JobKey, true);
+				Progress.Put(Output.UnableToReadFile(new Structure("Error", ErrorDescription())), JobKey, true);
 			endtry;
 		enddo;
 	enddo;
@@ -741,7 +741,7 @@ Function getXMLReader()
 	try
 		xmlReader.OpenFile(Path);
 	except
-		Progress.Put(OutputCont.UnableToOpenFile(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToOpenFile(new Structure("Error", ErrorDescription())), JobKey, true);
 		return undefined;
 	endtry;
 	return xmlReader;
@@ -868,7 +868,7 @@ Procedure extractComert ( Table )
 			try
 				row [ child.NodeName ] = child.TextContent;
 			except
-				Progress.Put(OutputCont.UnableToReadFile(new Structure("Error", ErrorDescription())), JobKey, true);
+				Progress.Put(Output.UnableToReadFile(new Structure("Error", ErrorDescription())), JobKey, true);
 			endtry;
 		enddo;				
 	enddo;
@@ -901,7 +901,7 @@ Function readEuroCreditBank()
 		row.Type = 1;
 		values = StrSplit(line, "*");
 		if (values.Count() < 34) then
-			Progress.Put(OutputCont.WrongFileFormat(), JobKey, true);
+			Progress.Put(Output.WrongFileFormat(), JobKey, true);
 			return false;
 		endif;
 		row.OrderNumber = values[12];
@@ -931,7 +931,7 @@ EndFunction
 Function readDetails()
 	
 	if (DetailsTable.Count() = 0) then
-		Progress.Put(OutputCont.DataNotFound(), JobKey, true);
+		Progress.Put(Output.DataNotFound(), JobKey, true);
 		return false;
 	endif;
 	getData();
@@ -1218,7 +1218,7 @@ Function error(Row)
 	if (Row.Error
 			or Row.Amount = 0
 			or Row.Date = Date(1, 1, 1)) then
-		OutputCont.RowContainsError(new Structure("Line", Row.LineNumber));
+		Output.RowContainsError(new Structure("Line", Row.LineNumber));
 		return true;
 	endif;
 	return false;

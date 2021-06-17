@@ -112,7 +112,7 @@ Procedure Load ( Command )
 	
 	if ( setNumbers () ) then
 		Notify ( Enum.MessageInvoicesExchnage () );
-		OutputCont.DataSuccessfullyLoaded ();
+		Output.DataSuccessfullyLoaded ();
 	endif;
 	
 EndProcedure
@@ -145,7 +145,7 @@ Function getSelection ()
 
 	rows = Object.Invoices.Unload ( new Structure ( "Load", true ) );
 	if ( rows.Count () = 0 ) then
-		OutputCont.EmptyLoadList ( , "Invoices" );
+		Output.EmptyLoadList ( , "Invoices" );
 		return undefined;
 	else
 		return rows;

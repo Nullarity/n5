@@ -132,14 +132,14 @@ Function getData ()
 	sqlFields ();
 	getFields ();
 	if ( not Env.Fields.Import ) then
-		OutputCont.OnlyImportAllowed ( new Structure ( "VendorInvoice", Base ), "Import", Base );
+		Output.OnlyImportAllowed ( new Structure ( "VendorInvoice", Base ), "Import", Base );
 		return false;
 	endif;
 	sqlItems ();
 	sqlCustomGroups ();
 	getTables ();
 	if ( Env.CustomGroups.Count () = 0 ) then
-		OutputCont.FillingDataNotFound ();
+		Output.FillingDataNotFound ();
 		return false;
 	endif;
 	return true;
@@ -589,7 +589,7 @@ Procedure CustomGroupsCustomsGroupOnChange ( Item )
 		updateTotals ( ThisObject );
 	else
 		CustomsRow.CustomsGroup = undefined;
-		OutputCont.CustomsGroupAlreadyExists ( filter, Output.Row ( "CustomsGroups", CustomsRow.LineNumber, "CustomsGroup" ) );
+		Output.CustomsGroupAlreadyExists ( filter, Output.Row ( "CustomsGroups", CustomsRow.LineNumber, "CustomsGroup" ) );
 	endif;
 	filterTables ();
 	filterItems ();
@@ -904,7 +904,7 @@ Procedure ChargesChargeOnChange ( Item )
 	filter = new Structure ( "CustomsGroup, Charge", ChargesRow.CustomsGroup, charge );
 	if ( Object.Charges.FindRows ( filter ).Count () > 1 ) then
 		ChargesRow.Charge = undefined;
-		OutputCont.ChargeAlreadyExist ( filter, Output.Row ( "Charges", ChargesRow.LineNumber, "Charge" ) );
+		Output.ChargeAlreadyExist ( filter, Output.Row ( "Charges", ChargesRow.LineNumber, "Charge" ) );
 		return;
 	endif;
 	ChargesRow.VAT = ( DF.Pick ( charge, "Type" ) = PredefinedValue ( "Enum.CustomsCharges.VAT" ) );

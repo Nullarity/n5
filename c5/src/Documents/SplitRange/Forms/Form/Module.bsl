@@ -39,7 +39,7 @@ EndProcedure
 Procedure fillNew ()
 	
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
-		raise OutputCont.DocumentCannotBeCopied ();
+		raise Output.DocumentCannotBeCopied ();
 	endif;
 	if ( not Object.Range.IsEmpty () ) then
 		return;
@@ -132,7 +132,7 @@ Function newRange ( Range, Start, Finish )
 	obj.Start = Start;
 	obj.Finish = Finish;
 	obj.Creator = SessionParameters.User;
-	obj.Memo = OutputCont.SplitRangeMemo ();
+	obj.Memo = Output.SplitRangeMemo ();
 	obj.Source = source;
 	obj.Write ();
 	return obj.Ref;
@@ -151,7 +151,7 @@ Procedure BeforeClose ( Cancel, Exit, MessageText, StandardProcessing )
 	
 	if ( Modified ) then
 		Cancel = true;
-		OutputCont.CloseDocumentConfirmation ( ThisObject );
+		Output.CloseDocumentConfirmation ( ThisObject );
 	endif;
 
 EndProcedure
@@ -173,7 +173,7 @@ EndProcedure
 &AtClient
 Procedure Post ( Command )
 	
-	OutputCont.SplitRangeConfirmation ( ThisObject );
+	Output.SplitRangeConfirmation ( ThisObject );
 	
 EndProcedure
 

@@ -314,7 +314,7 @@ Procedure Items ( Env, Table ) export
 		elsif ( type = production ) then
 			Output.WarehouseBalanceError ( p, Output.Row ( "Expenses", row.LineNumber, field ), Env.Ref );
 		elsif ( type = form ) then
-			OutputCont.FormBalanceError ( p, "Range", Env.Fields.Base );
+			Output.FormBalanceError ( p, "Range", Env.Fields.Base );
 		else
 			Output.WarehouseBalanceError ( p, Output.Row ( "Items", row.LineNumber, field ), Env.Ref );
 		endif;

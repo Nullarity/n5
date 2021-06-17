@@ -127,7 +127,7 @@ Procedure put ( Params, Env )
 	words.Add ( Conversion.AmountToWords ( fields.Amount, fields.Currency ) );
 	if ( fields.VendorPayment
 		and details.IncomeTaxRate > 0 ) then
-		words.Add ( OutputCont.IncomeTaxRetained ( new Structure ( "Rate, Amount", details.IncomeTaxRate, Format ( details.IncomeTaxAmount, "NFD=2" ) ) ) );	
+		words.Add ( Output.IncomeTaxRetained ( new Structure ( "Rate, Amount", details.IncomeTaxRate, Format ( details.IncomeTaxAmount, "NFD=2" ) ) ) );	
 	endif;
 	p.AmountInWords = StrConcat ( words, " " );
 	Params.TabDoc.Put ( area );

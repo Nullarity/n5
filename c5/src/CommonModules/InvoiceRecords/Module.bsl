@@ -189,7 +189,7 @@ Procedure getTables ( Env, Base )
 	q = Env.Q;
 	q.SetParameter ( "Ref", Base.Ref );
 	q.SetParameter ( "Company", Base.Company );
-	q.SetParameter ( "Transfer", OutputCont.Transfer () );
+	q.SetParameter ( "Transfer", Output.Transfer () );
 	SQL.Perform ( Env );
 
 EndProcedure

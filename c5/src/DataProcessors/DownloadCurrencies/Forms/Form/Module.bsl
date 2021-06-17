@@ -76,7 +76,7 @@ Function checkList ()
 	
 	error = Object.List.FindRows ( new Structure ( "Download", true ) ).Count () = 0;
 	if ( error ) then
-		OutputCont.CheckCurrency ( , "List [ 0 ].Download" );
+		Output.CheckCurrency ( , "List [ 0 ].Download" );
 	endif;
 	return not error;
 	
@@ -102,7 +102,7 @@ Function dateEndValid ()
 
 	valid = true;
 	if ( BegOfDay ( Object.DateEnd ) > BegOfDay ( CurrentDate () ) ) then
-		OutputCont.InvalidDateEnd ( , "DateEnd" );
+		Output.InvalidDateEnd ( , "DateEnd" );
 		valid = false;
 	endif;
 	return valid;

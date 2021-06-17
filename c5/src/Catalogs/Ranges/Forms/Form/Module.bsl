@@ -170,7 +170,7 @@ Procedure checkCreation ()
 		return;
 	endif;
 	if ( not DF.Pick ( item, "Form" ) ) then
-		raise OutputCont.ItemIsNotForm ( new Structure ( "Item", item ) );
+		raise Output.ItemIsNotForm ( new Structure ( "Item", item ) );
 	endif;
 	
 EndProcedure

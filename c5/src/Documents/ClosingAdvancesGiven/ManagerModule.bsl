@@ -63,8 +63,8 @@ EndProcedure
 
 Procedure commitRecords ( Env )
 	
-	closeAdvances = OutputCont.CloseAdvancesGiven ();
-	givenAdvances = OutputCont.GivenAdvances ();
+	closeAdvances = Output.CloseAdvancesGiven ();
+	givenAdvances = Output.GivenAdvances ();
 	fields = Env.Fields;
 	p = GeneralRecords.GetParams ();
 	p.Date = fields.Date;

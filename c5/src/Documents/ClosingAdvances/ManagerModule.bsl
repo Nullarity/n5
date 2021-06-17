@@ -65,8 +65,8 @@ EndProcedure
 
 Procedure commitRecords ( Env )
 	
-	closeAdvances = OutputCont.CloseAdvances ();
-	receiptAdvances = OutputCont.ReceiptAdvances ();
+	closeAdvances = Output.CloseAdvances ();
+	receiptAdvances = Output.ReceiptAdvances ();
 	p = GeneralRecords.GetParams ();
 	fields = Env.Fields;
 	p.Date = fields.Date;
@@ -113,9 +113,9 @@ Procedure commitVAT ( Record, Row, Fields )
 	Record.DimDr2 = Row.Contract;
 	Record.Amount = Row.VATAmount;
 	if ( Row.CloseAdvance ) then
-		Record.Content = OutputCont.CloseAdvancesVAT ();
+		Record.Content = Output.CloseAdvancesVAT ();
 	else
-		Record.Content = OutputCont.ReceiptAdvancesVAT ();
+		Record.Content = Output.ReceiptAdvancesVAT ();
 	endif;
 	GeneralRecords.Add ( Record );
 

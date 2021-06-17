@@ -43,7 +43,7 @@ Function checkProducerPrices ()
 	for each row in table do
 		error = true;
 		p.Item = row.Item;
-		OutputCont.ProducerPriceEmpty ( p, "Items[" + row.Line + "].ProducerPrice" );
+		Output.ProducerPriceEmpty ( p, "Items[" + row.Line + "].ProducerPrice" );
 	enddo;
 	return not error;
 

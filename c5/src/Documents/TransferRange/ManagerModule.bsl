@@ -61,7 +61,7 @@ Function make ( Env )
 	fields = Env.Fields;
 	range = fields.Range;
 	if ( wrongSender ( Env ) ) then
-		OutputCont.RangeNotFound ( new Structure ( "Range, Warehouse", range, fields.Sender ), "Range", ref );
+		Output.RangeNotFound ( new Structure ( "Range, Warehouse", range, fields.Sender ), "Range", ref );
 		return false;
 	endif;
 	movement = Env.Registers.RangeLocations.Add ();

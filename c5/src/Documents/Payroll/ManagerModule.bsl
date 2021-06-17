@@ -290,7 +290,7 @@ Function getAverageIncome ( Row )
 	
 	p = new Structure ( "BaseAmount, WorkedDays, Bonuses, QuarterlyBonuses, AnnualBonuses, AverageDays, AverageDailyIncome" );
 	FillPropertyValues ( p, Row );
-	return OutputCont.AverageIncome ( p );
+	return Output.AverageIncome ( p );
 	
 EndFunction
 
@@ -298,7 +298,7 @@ Function getDailyRate ( Row )
 	
 	p = new Structure ( "AverageDailyIncome, ScheduledDays, CalendarDays, BaseHolidays, DailyRate" );
 	FillPropertyValues ( p, Row );
-	return OutputCont.DailyRate ( p );	
+	return Output.DailyRate ( p );	
 	
 EndFunction
 
@@ -306,7 +306,7 @@ Function getSicknessResult ( Row )
 	
 	p = new Structure ( "DailyRate, SickDays, SeniorityAmendment, Result" );
 	FillPropertyValues ( p, Row );
-	return OutputCont.SicknessResult ( p );	
+	return Output.SicknessResult ( p );	
 	
 EndFunction
 
@@ -403,7 +403,7 @@ Function getVacationsResult ( Row )
 	
 	p = new Structure ( "DailyRate, VacationDays, Result" );
 	FillPropertyValues ( p, Row );
-	return OutputCont.VacationsResult ( p );	
+	return Output.VacationsResult ( p );	
 	
 EndFunction
 

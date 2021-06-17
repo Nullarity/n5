@@ -59,7 +59,7 @@ Function make ( Env )
 	lock ( Env );
 	ref = Env.Ref;
 	if ( rangeInUse ( Env ) ) then
-		OutputCont.RangeAlreadyEnrolled ( , "Range", ref );
+		Output.RangeAlreadyEnrolled ( , "Range", ref );
 		return false;
 	endif;
 	fields = Env.Fields;

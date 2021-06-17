@@ -483,7 +483,7 @@ Procedure createButton ( Name, Parent, CommandName, Title = "" )
 	button = Items.Add ( Name, Type ( "FormButton" ), Parent );
 	button.CommandName = CommandName;
 	if ( CommandName = "ChoiceInvoice" ) then
-		button.Title = OutputCont.ChooseVendorInvoice ();
+		button.Title = Output.ChooseVendorInvoice ();
 		button.Picture = PictureLib.ChooseValue;
 	else	
 		button.Title = Title;	
@@ -619,7 +619,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 		if ( data.VATUse = Object.VATUse ) then
 			selectItems ( SelectedValue );	
 		else
-			OutputCont.WrongVATUse ();
+			Output.WrongVATUse ();
 		endif; 
 	elsif ( type = Type ( "Structure" ) ) then
 		fillItems ( SelectedValue.Items );

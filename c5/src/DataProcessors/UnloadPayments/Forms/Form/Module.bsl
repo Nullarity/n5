@@ -195,7 +195,7 @@ Function getOrders ()
 
 	rows = Object.PaymentOrders.Unload ( new Structure ( "Unload", true ), "PaymentOrder" );
 	if ( rows.Count () = 0 ) then
-		OutputCont.EmptyUploadList ();
+		Output.EmptyUploadList ();
 		return undefined;
 	else
 		return rows.UnloadColumn ( "PaymentOrder" );

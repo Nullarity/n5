@@ -87,7 +87,7 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	if ( Object.UseProxy = 2 
 		and Items.ProxyServer.MarkIncomplete ) then
 		Cancel = true;
-		OutputCont.ProxyServerNotSet ( , "ProxyServer" );
+		Output.ProxyServerNotSet ( , "ProxyServer" );
 	endif;
 	
 EndProcedure

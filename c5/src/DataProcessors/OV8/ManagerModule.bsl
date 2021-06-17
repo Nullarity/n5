@@ -6,7 +6,7 @@ Function Print ( Params, Env ) export
 	setPageSettings ( Params );
 	getData ( Params, Env );
 	if ( Env.Items.Count () = 0 ) then
-		OutputCont.PrintFormsTabularSectionIsEmpty ();
+		Output.PrintFormsTabularSectionIsEmpty ();
 		return false;
 	endif;
 	header ( Params, Env );

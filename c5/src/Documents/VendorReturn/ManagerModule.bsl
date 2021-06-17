@@ -727,7 +727,7 @@ Function differentPackages ( Env )
 	ref = Env.Ref;
 	for each row in table do
 		FillPropertyValues ( msg, row );
-		OutputCont.VendorReturnDifferentPackages ( msg, Output.Row ( "Items", row.LineNumber, "Package" ), ref );
+		Output.VendorReturnDifferentPackages ( msg, Output.Row ( "Items", row.LineNumber, "Package" ), ref );
 	enddo;
 	return table.Count () > 0; 
 	
@@ -740,7 +740,7 @@ Function excessQuantity ( Env )
 	ref = Env.Ref;
 	for each row in table do
 		FillPropertyValues ( msg, row );
-		OutputCont.VendorReturnExcessQuantity ( msg, Output.Row ( "Items", row.LineNumber, "Item" ), ref );
+		Output.VendorReturnExcessQuantity ( msg, Output.Row ( "Items", row.LineNumber, "Item" ), ref );
 	enddo;
 	return table.Count () > 0;
 	

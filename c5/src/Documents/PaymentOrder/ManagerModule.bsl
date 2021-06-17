@@ -124,11 +124,11 @@ Function paymentContentOk ( Env )
 
 	contentOk = true;
 	if ( StrLen ( Env.PrintParams.paymentContentStr ) > 210 ) then
-		OutputCont.SymbolCountInPaymentContentError ( , "PaymentContent" );
+		Output.SymbolCountInPaymentContentError ( , "PaymentContent" );
 		contentOk = false;
 	endif;
 	if ( Env.PrintParams.paymentContentArray.Count () > 5 ) then
-		OutputCont.RowCountInPaymentContentError ( , "PaymentContent" );
+		Output.RowCountInPaymentContentError ( , "PaymentContent" );
 		contentOk = false;
 	endif;
 	return contentOk;

@@ -173,7 +173,7 @@ Procedure showError ( Env )
 	fields = Env.Fields;
 	msg.Item = fields.Item;
 	msg.Warehouse = fields.Warehouse;
-	OutputCont.FormCostBalanceError ( msg, "Range", fields.Base );
+	Output.FormCostBalanceError ( msg, "Range", fields.Base );
 		
 EndProcedure 
 

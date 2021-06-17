@@ -233,11 +233,11 @@ EndFunction
 Function VATInfo ( VATUse, Language = undefined ) export
 	
 	if ( VATUse = 1 ) then
-		return OutputCont.PrintVATInfo1 ( Language );
+		return Output.PrintVATInfo1 ( Language );
 	elsif ( VATUse = 2 ) then
-		return OutputCont.PrintVATInfo2 ( Language );
+		return Output.PrintVATInfo2 ( Language );
 	else
-		return OutputCont.PrintVATInfo0 ( Language );
+		return Output.PrintVATInfo0 ( Language );
 	endif;
 	
 EndFunction

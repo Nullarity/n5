@@ -46,7 +46,7 @@ Function checkPeriod ()
 	if ( Periods.Ok ( DateOpening, Date ) ) then
 		return true;
 	endif; 
-	OutputCont.IncorrectDateOpening ();
+	Output.IncorrectDateOpening ();
 	return false;
 	
 EndFunction 
@@ -70,7 +70,7 @@ Function waybillAlreadyExists ()
 	if ( table.Count () > 0 ) then
 		for each row in table do
 			p = new Structure ( "DateStart, DateEnd, Car, Document", Conversion.DateToString ( DateOpening ), Conversion.DateToString ( Date ), Car, row.Ref );
-			OutputCont.WrongWaybillPeriod ( p, , row.Ref );
+			Output.WrongWaybillPeriod ( p, , row.Ref );
 		enddo;
 		return true;
 	endif;
@@ -85,11 +85,11 @@ Function checkBoundary ()
 		return true;
 	endif; 
 	if ( BegOfDay ( Verso [ 0 ].DateStart ) < DateOpening ) then
-		OutputCont.BackSideIncorrectDateStart ( , Output.Row ( "BackSide", 1, "DateStart" ) );
+		Output.BackSideIncorrectDateStart ( , Output.Row ( "BackSide", 1, "DateStart" ) );
 		return false;
 	endif; 
 	if ( Verso [ lastIndex ].DateEnd > Date ) then
-		OutputCont.BackSideIncorrectDateEnd ( , Output.Row ( "BackSide", lastIndex + 1, "DateEnd" ) );
+		Output.BackSideIncorrectDateEnd ( , Output.Row ( "BackSide", lastIndex + 1, "DateEnd" ) );
 		return false;
 	endif; 
 	return true;
@@ -103,7 +103,7 @@ Function checkVerso ()
 	for each row in Verso do
 		if ( row.DateStart > row.DateEnd ) then
 			p = new Structure ( "Table, LineNumber", versoPresentation, row.LineNumber );
-			OutputCont.WorkSequenceIncorrect ( p, Output.Row ( "Work", row.LineNumber, "DateStart" ) );
+			Output.WorkSequenceIncorrect ( p, Output.Row ( "Work", row.LineNumber, "DateStart" ) );
 			error = true;
 		endif; 
 	enddo;

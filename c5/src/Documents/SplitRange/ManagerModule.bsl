@@ -79,14 +79,14 @@ Function make ( Env )
 	finish = data.Finish;
 	last = data.Last;
 	if ( ( finish - last ) < 2 ) then
-		OutputCont.RangeSplitError1 ( , "Range", Env.Ref );
+		Output.RangeSplitError1 ( , "Range", Env.Ref );
 		return false;
 	elsif ( splitter < ( last + 1 )
 		or splitter >= finish ) then
-		OutputCont.RangeSplitError2 ( , "Splitter", Env.Ref );
+		Output.RangeSplitError2 ( , "Splitter", Env.Ref );
 		return false;
 	elsif ( data.Status <> Enums.RangeStatuses.Active ) then
-		OutputCont.RangeSplitError3 ( , "Range", Env.Ref );
+		Output.RangeSplitError3 ( , "Range", Env.Ref );
 		return false;
 	endif;
 	deactivate ( Env );

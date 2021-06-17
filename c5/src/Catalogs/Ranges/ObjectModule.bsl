@@ -24,7 +24,7 @@ EndProcedure
 Function checkRange ()
 	
 	if ( Start > Finish ) then
-		OutputCont.RangeIncorrect ( , "Finish" );
+		Output.RangeIncorrect ( , "Finish" );
 		return false;
 	endif;
 	return true;

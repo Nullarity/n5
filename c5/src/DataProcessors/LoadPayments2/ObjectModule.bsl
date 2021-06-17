@@ -37,7 +37,7 @@ Procedure init()
 	Receipts = SourceObject.Receipts;
 	Creator = SourceObject.Creator;
 	Currency = DF.Pick ( BankAccount, "Currency" );
-	Memo = OutputCont.DownloadedFromClientBank ();
+	Memo = Output.DownloadedFromClientBank ();
 	Method = Enums.PaymentMethods.Bank;
 	LineProcessing = new Structure ( "Line" );
 	Dims = new Structure();
@@ -182,7 +182,7 @@ EndProcedure
 Procedure processingLine(Line)
 	
 	LineProcessing.Line = Line;
-	Progress.Put(OutputCont.ProcessingLine(LineProcessing), JobKey);
+	Progress.Put(Output.ProcessingLine(LineProcessing), JobKey);
 	
 EndProcedure
 
@@ -296,7 +296,7 @@ Procedure writeDocument(Object, Row, NewDocument)
 		Row.Document = Object.Ref;
 		Row.Download = false;
 	except
-		Progress.Put(OutputCont.ErrorSavingBankDocument(new Structure("Line, Error", Row.LineNumber, ErrorDescription())), JobKey, true);
+		Progress.Put(Output.ErrorSavingBankDocument(new Structure("Line, Error", Row.LineNumber, ErrorDescription())), JobKey, true);
 	endtry;
 	
 EndProcedure
@@ -311,7 +311,7 @@ Function postDocument(Object, Row)
 		Object.Write(DocumentWriteMode.Posting);
 		SetPrivilegedMode(false);
 	except
-		Progress.Put(OutputCont.ErrorPostingBankDocument(new Structure("Line, Error", Row.LineNumber, ErrorDescription())), JobKey, true);
+		Progress.Put(Output.ErrorPostingBankDocument(new Structure("Line, Error", Row.LineNumber, ErrorDescription())), JobKey, true);
 		return false;
 	endtry;
 	return true;

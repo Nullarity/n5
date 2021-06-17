@@ -56,13 +56,13 @@ Function Check ( Env ) export
 	for each row in table do
 		if ( row.Error = 1 ) then
 			field = Output.Row ( "Items", row.LineNumber, "Item" );
-			OutputCont.RangeIsEmpty ( , field, ref );
+			Output.RangeIsEmpty ( , field, ref );
 		elsif ( row.Error = 2 ) then
 			field = Output.Row ( "Items", row.LineNumber, "Item" );
-			OutputCont.RangeDoubled ( , field, ref );
+			Output.RangeDoubled ( , field, ref );
 		elsif ( row.Error = 3 ) then
 			field = Output.Row ( "Items", row.LineNumber, qty );
-			OutputCont.RangeIncomplete ( , field, ref );
+			Output.RangeIncomplete ( , field, ref );
 		endif;
 	enddo;
 	return false;
@@ -83,7 +83,7 @@ Function MakeReceipt ( Env ) export
 			error = true;
 			p = new Structure ( "Range", row.Range );
 			field = Output.Row ( "Items", row.LineNumber, "Item" );
-			OutputCont.RangeAlreadyInUse ( p, field, ref );
+			Output.RangeAlreadyInUse ( p, field, ref );
 		else
 			range = row.Range;
 			movement = locations.Add ();

@@ -15,7 +15,7 @@ Procedure DownloadCurrencies ( Data ) export
 	init ( Data );
 	initParameters ();
 	if ( hostNameEmpty () ) then
-		fillErrorText ( OutputCont.NationalBankHostNotSet () );
+		fillErrorText ( Output.NationalBankHostNotSet () );
 	else
 		downloadPeriod ();
 	endif;
@@ -139,13 +139,13 @@ Procedure downloadPeriod ()
 	while ( dateCounter <= DateEnd ) do
 		setStrDate ( dateCounter );
 		dateStruct.Date = StrDate;
-		Progress.Put ( OutputCont.LoadingRatesOnDate ( dateStruct ), JobKey );
+		Progress.Put ( Output.LoadingRatesOnDate ( dateStruct ), JobKey );
 		fillRatesTable ();
 		if ( error () ) then
 			break;
 		endif;
 		if ( RatesTable.Count () = 0 ) then
-			OutputCont.NoInformationRates ( dateStruct );
+			Output.NoInformationRates ( dateStruct );
 		else
 			download ( dateCounter );
 		endif;
@@ -205,7 +205,7 @@ Procedure fillRatesTable ()
 			enddo;
 		endif; 
 	else
-		OutputCont.WrongFileFormatRates ();
+		Output.WrongFileFormatRates ();
 	endif; 
 	
 EndProcedure
@@ -217,13 +217,13 @@ Function getXMLString ()
 	if ( fileName <> "" ) then
 		str = TrimAll ( getTextDoc ( fileName ).GetText () );
 		if ( Find ( str, "No information" ) > 0 ) then
-			fillErrorText ( OutputCont.NoInformationRates ( new Structure ( "Date", StrDate ) ) );
+			fillErrorText ( Output.NoInformationRates ( new Structure ( "Date", StrDate ) ) );
 			str = "";
 		elsif ( Find ( str, "Error" ) > 0 ) then
-			fillErrorText ( OutputCont.ErrorGettingInformationRates ( new Structure ( "Date, Error", StrDate, str ) ) );
+			fillErrorText ( Output.ErrorGettingInformationRates ( new Structure ( "Date, Error", StrDate, str ) ) );
 			str = "";
 		elsif ( str = "" ) then
-			fillErrorText ( OutputCont.NotFilledFileRates () );
+			fillErrorText ( Output.NotFilledFileRates () );
 		endif;
 		DeleteFiles ( fileName );
 	endif;
@@ -240,11 +240,11 @@ Function getFileName ()
 	except
 		errorDescription = ErrorDescription ();
 		if ( IsBlankString ( errorDescription ) ) then
-			fillErrorText ( OutputCont.InternetConnectionFailed () );
+			fillErrorText ( Output.InternetConnectionFailed () );
 		elsif ( Find ( errorDescription, "407" ) > 0 ) or ( Find ( errorDescription, "authentication" ) > 0 ) then
-			fillErrorText ( OutputCont.InternetConnectionFailedProxy () );
+			fillErrorText ( Output.InternetConnectionFailedProxy () );
 		else
-			fillErrorText ( OutputCont.CommonError ( new Structure ( "Error", errorDescription ) ) );
+			fillErrorText ( Output.CommonError ( new Structure ( "Error", errorDescription ) ) );
 		endif;
 		fileName = "";
 	endtry;
@@ -283,10 +283,10 @@ Function getRateRow ( Currency )
 		rateRow = RatesTable.Find ( CurrencyStruct.Description, MatchingStruct.Description );
 		CurrencyStruct.FullDescription = TrimR ( Currency.FullDescription );
 		if ( rateRow = undefined ) then
-			OutputCont.CurrencyNotFound ( CurrencyStruct );
+			Output.CurrencyNotFound ( CurrencyStruct );
 		else
 			CurrencyStruct.Insert ( "FileCode", rateRow [ MatchingStruct.Code ] );
-			OutputCont.WrongCurrencyCode ( CurrencyStruct );
+			Output.WrongCurrencyCode ( CurrencyStruct );
 			CurrencyStruct.Delete ( "FileCode" );
 		endif;
 	endif;
@@ -328,7 +328,7 @@ Procedure showMessages ()
 	if ( error () ) then
 		Progress.Put ( ErrorText, JobKey, true );
 	else
-		OutputCont.EndOfExchageRatesLoad ();
+		Output.EndOfExchageRatesLoad ();
 	endif;
 
 EndProcedure

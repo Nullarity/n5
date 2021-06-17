@@ -15,7 +15,7 @@ Function Check ( Reference, Status ) export
 		or Status = PredefinedValue ( "Enum.FormStatuses.Submitted" ) ) then
 		return true;
 	else
-		OutputCont.FormNotReady ( new Structure ( "Ref", Reference ), "Status", Reference );
+		Output.FormNotReady ( new Structure ( "Ref", Reference ), "Status", Reference );
 		return false;
 	endif;
 	

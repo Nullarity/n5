@@ -59,7 +59,7 @@ EndProcedure
 Function isCopy()
 	
 	if (not Parameters.CopyingValue.IsEmpty()) then
-		OutputCont.CannotCopyBankingApp();
+		Output.CannotCopyBankingApp();
 		return true;
 	endif;
 	return false;
@@ -378,7 +378,7 @@ Procedure PathOnChange(Item)
 	
 	makeDirty();
 	if (not IsBlankString(Object.Path)) then
-		OutputCont.LoadPaymentsConfirmation(ThisObject);
+		Output.LoadPaymentsConfirmation(ThisObject);
 	endif;
 	
 EndProcedure

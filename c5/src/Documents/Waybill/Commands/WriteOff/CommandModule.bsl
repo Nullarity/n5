@@ -16,7 +16,7 @@ Function checkWaybill ( Waybill )
 	if ( flag ) then
 		return true;
 	endif; 
-	OutputCont.WaybillWriteOffError ();
+	Output.WaybillWriteOffError ();
 	return false;
 	
 EndFunction 

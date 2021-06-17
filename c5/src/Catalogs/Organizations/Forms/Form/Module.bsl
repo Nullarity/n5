@@ -424,11 +424,11 @@ Procedure Fill ( Command )
 		return;	
 	endif;
 	if ( not Object.Ref.IsEmpty () ) then
-		OutputCont.UpdateByCodeFiscal ( ThisObject );
+		Output.UpdateByCodeFiscal ( ThisObject );
 		return;
 	endif;
 	if ( WrongCode ) then
-		OutputCont.UpdateByWrongCodeFiscal ( ThisObject );
+		Output.UpdateByWrongCodeFiscal ( ThisObject );
 		return;		
 	endif;
 	fillByCodeFiscal ();
@@ -483,7 +483,7 @@ Procedure applyFilling ()
 	
 	result = GetFromTempStorage ( AddressLoad );
 	if ( result = undefined ) then
-		OutputCont.OrganizationNotFound ();
+		Output.OrganizationNotFound ();
 	else
 		Write ( new Structure ( "Fields", result ) );	
 	endif;

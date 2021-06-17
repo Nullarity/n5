@@ -637,7 +637,7 @@ EndProcedure
 Procedure TransferOnChange ( Item )
 	
 	if ( Object.Transfer ) then
-		Object.Redirects = OutputCont.Transfer ();;
+		Object.Redirects = Output.Transfer ();;
 	else
 		Object.Redirects = "";
 	endif;

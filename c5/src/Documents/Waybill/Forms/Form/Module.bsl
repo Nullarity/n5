@@ -979,7 +979,7 @@ Procedure splitPeriod ( TableRow )
 	if ( TableRow.DateEnd > TableRow.DateStart ) then
 		return;
 	endif;
-	OutputCont.WorkTimeOnTwoDays ( ThisObject, TableRow );
+	Output.WorkTimeOnTwoDays ( ThisObject, TableRow );
 	
 EndProcedure 
 

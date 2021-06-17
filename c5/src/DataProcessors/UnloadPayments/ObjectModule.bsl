@@ -265,7 +265,7 @@ Procedure saveData(Text, Suffix = "")
 		putToStorage(data, Suffix);
 	except
 		ProcessingError = true;
-		Progress.Put(OutputCont.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
 	
 EndProcedure
@@ -478,7 +478,7 @@ Procedure saveDataExim(Text)
 		text.Write(TempFile);
 		putToStorage(new BinaryData(TempFile));
 	except
-		Progress.Put(OutputCont.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
 	
 EndProcedure
@@ -534,7 +534,7 @@ Function getMobiasDbf()
 	try
 		xBase.CreateFile(TempFile);
 	except
-		Progress.Put(OutputCont.DBFErrorCreate(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.DBFErrorCreate(new Structure("Error", ErrorDescription())), JobKey, true);
 		return undefined;
 	endtry;
 	xBase.Encoding = XBaseEncoding.ANSI;
@@ -565,7 +565,7 @@ Procedure closeXBase(XBase)
 		XBase.CloseFile();
 		putToStorage(new BinaryData(TempFile));
 	except
-		Progress.Put(OutputCont.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
 	
 EndProcedure
@@ -635,7 +635,7 @@ Function getMaibDbf()
 		xBase.CreateFile(TempFile);
 	except
 		ProcessingError = true;
-		Progress.Put(OutputCont.DBFErrorCreate(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.DBFErrorCreate(new Structure("Error", ErrorDescription())), JobKey, true);
 		return undefined;
 	endtry;
 	xBase.Encoding = XBaseEncoding.ANSI;
@@ -817,7 +817,7 @@ Procedure saveXml(XML)
 		XML.Save(TempFile);
 		putToStorage(new BinaryData(TempFile));
 	except
-		Progress.Put(OutputCont.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
 	
 EndProcedure
@@ -892,7 +892,7 @@ Procedure commitUnloading()
 		except
 			RollbackTransaction();
 			ProcessingError = true;
-			Progress.Put(OutputCont.CommonError(new Structure("Error", ErrorDescription())), JobKey, true);
+			Progress.Put(Output.CommonError(new Structure("Error", ErrorDescription())), JobKey, true);
 			return;
 		endtry;
 	enddo;

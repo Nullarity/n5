@@ -12,7 +12,7 @@ Function checkDoubles ()
 	doubles = Collections.GetDoubles ( Charges, "Charge" );
 	if ( doubles.Count () > 0 ) then
 		for each row in doubles do
-			OutputCont.DoubleCustomsCharges ( , Output.Row ( "Charges", row.LineNumber, "Charge" ) );
+			Output.DoubleCustomsCharges ( , Output.Row ( "Charges", row.LineNumber, "Charge" ) );
 		enddo; 
 		return false;
 	endif; 

@@ -187,7 +187,7 @@ Procedure completeCost ( Env, Cost, Items )
 		unit = row.Unit;
 		msg.QuantityBalance = Conversion.NumberToQuantity ( quantityBalance, unit );
 		msg.Quantity = Conversion.NumberToQuantity ( row.Quantity - quantityBalance, unit );
-		OutputCont.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
+		Output.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
 	enddo; 
 		
 EndProcedure 

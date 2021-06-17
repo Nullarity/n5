@@ -7,7 +7,7 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 			Cancel = true;
 		endif;
 	else
-		OutputCont.LoadPaymentsFirst ( , "Path" );
+		Output.LoadPaymentsFirst ( , "Path" );
 		Cancel = true;
 	endif;
 	
@@ -64,7 +64,7 @@ Function checkTables ()
 		enddo;
 	enddo;
 	if ( not paymentsExist ) then
-		OutputCont.PaymentsNotSelected ( , "Details" );
+		Output.PaymentsNotSelected ( , "Details" );
 		error = true;
 	endif;
 	return not error;

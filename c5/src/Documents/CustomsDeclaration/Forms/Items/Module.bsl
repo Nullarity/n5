@@ -102,7 +102,7 @@ Procedure itemsByInvoice ()
 	
 	table = Env.Items;
 	if ( table.Count () = 0 ) then
-		raise OutputCont.ItemsNotFoundByCustomsGroup ( new Structure ( "CustomsGroup, Invoice", Parameters.CustomsGroup, Parameters.VendorInvoice ) );
+		raise Output.ItemsNotFoundByCustomsGroup ( new Structure ( "CustomsGroup, Invoice", Parameters.CustomsGroup, Parameters.VendorInvoice ) );
 	endif;
 	tableItems = Object.Items;
 	for each row in table do

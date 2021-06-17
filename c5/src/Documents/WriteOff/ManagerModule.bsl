@@ -662,11 +662,11 @@ Function makeRanges ( Env )
 		if ( row.NotFound ) then
 			error = true;
 			p = new Structure ( "Range, Warehouse", row.Range, row.Warehouse );
-			OutputCont.RangeNotFound ( p, Output.Row ( "Items", row.LineNumber, "Item" ), ref );
+			Output.RangeNotFound ( p, Output.Row ( "Items", row.LineNumber, "Item" ), ref );
 		elsif ( row.Broken ) then
 			error = true;
 			p = new Structure ( "Range, Quantity, Balance, Warehouse", row.Range, row.Quantity, row.Balance, row.Warehouse );
-			OutputCont.RangeIsBroken ( p, Output.Row ( "Items", row.LineNumber, field ), ref );
+			Output.RangeIsBroken ( p, Output.Row ( "Items", row.LineNumber, field ), ref );
 		else
 			movement = recordset.Add ();
 			movement.Period = date;

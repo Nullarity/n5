@@ -365,13 +365,13 @@ Function getPeriod ()
 	p = new Structure ( "DateStart, DateEnd", Conversion.DateToString ( DateStart ), Conversion.DateToString ( DateEnd ) );
 	if ( not ValueIsFilled ( DateStart )
 		and not ValueIsFilled ( DateEnd ) ) then
-		return OutputCont.ReconciliationPeriodAll ( p, LanguageCode );
+		return Output.ReconciliationPeriodAll ( p, LanguageCode );
 	elsif ( not ValueIsFilled ( DateStart ) ) then
-		return OutputCont.ReconciliationPeriodTo ( p, LanguageCode );	
+		return Output.ReconciliationPeriodTo ( p, LanguageCode );	
 	elsif ( not ValueIsFilled ( DateEnd ) ) then
-		return OutputCont.ReconciliationPeriodFrom ( p, LanguageCode );	
+		return Output.ReconciliationPeriodFrom ( p, LanguageCode );	
 	endif;
-	return OutputCont.ReconciliationPeriod ( p, LanguageCode );		
+	return Output.ReconciliationPeriod ( p, LanguageCode );		
 	
 EndFunction
 
@@ -379,7 +379,7 @@ Function getInformation ()
 	
 	fields = Env.Fields;
 	p = new Structure ( "Company, Organization", fields.Company, fields.Organization );
-	return OutputCont.ReconciliationInformation ( p, LanguageCode );	
+	return Output.ReconciliationInformation ( p, LanguageCode );	
 	
 EndFunction
 
@@ -400,7 +400,7 @@ Procedure putBalances ( ContractRow, Closing )
 	p = area.Parameters;
 	p.Fill ( ContractRow );
 	if ( Detailed ) then
-		p.Contract = OutputCont.ReconciliationContract ( new Structure ( "Contract", ContractRow.Contract ), LanguageCode );
+		p.Contract = Output.ReconciliationContract ( new Structure ( "Contract", ContractRow.Contract ), LanguageCode );
 	endif;
 	if ( Ready ) then
 		if ( Closing ) then
@@ -474,12 +474,12 @@ Function totalInfo ()
 	amount = Env.Balance.Amount;
 	if ( amount > 0 ) then
 		p.Amount = Conversion.NumberToMoney ( amount, CurrencyPresentation );
-		return OutputCont.ReconciliationTotalPlus ( p, LanguageCode );
+		return Output.ReconciliationTotalPlus ( p, LanguageCode );
 	elsif ( amount < 0 ) then
 		p.Amount = Conversion.NumberToMoney ( - amount, CurrencyPresentation );
-		return OutputCont.ReconciliationTotalMinus ( p, LanguageCode );	
+		return Output.ReconciliationTotalMinus ( p, LanguageCode );	
 	else
-		return OutputCont.ReconciliationTotalZero ( p, LanguageCode );
+		return Output.ReconciliationTotalZero ( p, LanguageCode );
 	endif;
 	
 EndFunction

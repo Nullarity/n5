@@ -26,7 +26,7 @@ Function checkCarAndAsset ()
 	endif; 
 	p = new Structure ( "Car, Warehouse, FixedAsset" );
 	FillPropertyValues ( p, table [ 0 ] );
-	OutputCont.CarAccountingDataError ( p );
+	Output.CarAccountingDataError ( p );
 	return false;
 	
 EndFunction 

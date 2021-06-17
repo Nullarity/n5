@@ -46,7 +46,7 @@ Function alreadyOnVacation ()
 	error = false;
 	for each row in result do
 		p = new Structure ( "Ref, Employee", row.Ref, row.Employee );
-		OutputCont.EmployeeAlreadyOnVacation ( p, , row.Ref );
+		Output.EmployeeAlreadyOnVacation ( p, , row.Ref );
 		error = true;
 	enddo;
 	return error;
