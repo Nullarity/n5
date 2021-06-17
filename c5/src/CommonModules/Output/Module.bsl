@@ -2786,7 +2786,7 @@ EndFunction
 &AtServer
 Function Meeting () export
 
-	text = NStr ( "en='Meeting'; ro='!!!'; ru='Встреча'" );
+	text = NStr ("en = 'Meeting'; ro = 'Întâlnire'; ru = 'Встреча'" );
 	return text;
 
 EndFunction
@@ -6024,7 +6024,7 @@ EndFunction
 &AtClient
 Procedure MeetingNotStarted ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'The meting has not been started';ro = '!!!Întâlnirea nu a fost demarată';ru = 'Эта встреча еще не началась'" );
+	text = NStr ("en = 'The meting has not been started'; ro = 'Această întâlnire încă nu s-a început'; ru = 'Эта встреча еще не началась'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6427,7 +6427,7 @@ EndFunction
 &AtServer
 Function AutoEmployee () export
 
-	text = NStr ( "en = 'Will be created automatically on write';ro = '!!!Va fi creat automat la scriere';ru = 'Будет создан автоматически при записи'" );
+	text = NStr ("en = 'Will be created automatically on write'; ro = 'Va fi creat automat la înregistrare'; ru = 'Будет создан автоматически при записи'" );
 	return text;
 
 EndFunction
@@ -6435,7 +6435,7 @@ EndFunction
 &AtServer
 Procedure TimeEntryItemsNotValid ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'The row cannot be reconciled with the document %TimeEntry'; ro = '!!!'; ru = 'Строка не согласована с документом %TimeEntry'" );
+	text = NStr ("en = 'The row cannot be reconciled with the document %TimeEntry'; ro = 'Răndul de este în acord cu documentul %TimeEntry'; ru = 'Строка не согласована с документом %TimeEntry'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6443,7 +6443,7 @@ EndProcedure
 &AtServer
 Procedure WrongTenantAccess ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Login" ) export
 
-	text = NStr ("en='You cannot create/change this user in the current tenant without giving access to this tenant. Probably, you need to switch your session to required tenant before working with user access';ru='Вы не можете создать/изменить этого пользователя в текущем арендаторе без предоставления доступа к нему. Вероятно, вам нужно переключить сессию на требуемого арендатора, и выполнить настройку оттуда';ro='!!!'" );
+	text = NStr ("en = 'You cannot create/change this user in the current tenant without giving access to this tenant. Probably, you need to switch your session to required tenant before working with user access'; ro = 'Nu aveți suficiente drepturi de a crea / modifica acest utilizator în cadrul chiriașului curent fără a-i acorda drepturi de acces. Probabil aveți nevoie să schimbați sesiune pe chiriașil necesar și să îndepliniți operația de acolo'; ru = 'Вы не можете создать/изменить этого пользователя в текущем арендаторе без предоставления доступа к нему. Вероятно, вам нужно переключить сессию на требуемого арендатора, и выполнить настройку оттуда'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6451,7 +6451,7 @@ EndProcedure
 &AtServer
 Procedure WrongMembershipTenantAccess ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Login" ) export
 
-	text = NStr ("en = 'You cannot create/change this group in the current tenant without giving access to this tenant. Probably, you need to switch your session to required tenant before working with user access'; ro = '!!!'; ru = 'Вы не можете создать/изменить эту группу в текущем арендаторе без предоставления доступа к нему. Вероятно, вам нужно переключить сессию на требуемого арендатора, и выполнить настройку оттуда'" );
+	text = NStr ("en = 'You cannot create/change this group in the current tenant without giving access to this tenant. Probably, you need to switch your session to required tenant before working with user access'; ro = 'Nu aveți suficiente drepturi de a crea / modifica acest grup în cadrul chiriașului curent fără a-i acorda drepturi de acces. Probabil aveți nevoie să schimbați sesiune pe chiriașil necesar și să îndepliniți operația de acolo'; ru = 'Вы не можете создать/изменить эту группу в текущем арендаторе без предоставления доступа к нему. Вероятно, вам нужно переключить сессию на требуемого арендатора, и выполнить настройку оттуда'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6459,7 +6459,7 @@ EndProcedure
 &AtServer
 Procedure LoginAlreadyExists ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='Login already exists';ro='!!!';ru='Такой логин уже существует'" );
+	text = NStr ("en = 'Login already exists'; ro = 'Acest login deja există'; ru = 'Такой логин уже существует'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6467,7 +6467,7 @@ EndProcedure
 &AtServer
 Function UserAccessChangingError ( Params ) export
 
-	text = NStr ("en='%Tenant access changing error: %Error';ro='!!!';ru='Ошибка изменения доступа для %Tenant: %Error'" );
+	text = NStr ("en = '%Tenant access changing error: %Error'; ro = 'Eroare de acces al %Tenant access changing error: %Error'; ru = 'Ошибка изменения доступа для %Tenant: %Error'" );
 	return FormatStr ( text, Params );
 
 EndFunction
@@ -6475,7 +6475,7 @@ EndFunction
 &AtServer
 Procedure FormRequired ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'The operation cannot be performed from the list. Please open the main form and repeat the operation'; ro = '!!!'; ru = 'Операция не может быть выполнена из списка. Пожалуйста, откройте основную форму и повторите операцию'" );
+	text = NStr ("en = 'The operation cannot be performed from the list. Please open the main form and repeat the operation'; ro = 'Operația nu poate fi executată din listă. Dechideți vă rog forma principală și repetați operația'; ru = 'Операция не может быть выполнена из списка. Пожалуйста, откройте основную форму и повторите операцию'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6483,7 +6483,7 @@ EndProcedure
 &AtServer
 Procedure ValueDuplicated ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en='This value already exists in the list';ru='Это значение уже существует в списке';ro='!!!'" );
+	text = NStr ("en = 'This value already exists in the list'; ro = 'Această valoare deja există în listă'; ru = 'Это значение уже существует в списке'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6507,7 +6507,7 @@ EndFunction
 &AtServer
 Procedure WorkBalanceError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'Not enough %Resource item %Item in billable time. The balance of %TimeEntry is %ResourceBalance '; ro = '!!!'; ru = 'Не хватает %Resource услуги %Item в остатке оплачиваемых часов. В остатке %TimeEntry числится %ResourceBalance'" );
+	text = NStr ("en = 'Not enough %Resource item %Item in billable time. The balance of %TimeEntry is %ResourceBalance '; ro = '%Resource insuficient/ă pentru serviciul %Item ăn soldul serviciilor cu plată. Sold la %TimeEntry este de %ResourceBalance'; ru = 'Не хватает %Resource услуги %Item в остатке оплачиваемых часов. В остатке %TimeEntry числится %ResourceBalance'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6515,7 +6515,7 @@ EndProcedure
 &AtServer
 Function UndefinedCostPriceType () export
 
-	text = NStr ( "en = 'Please specify the type of accounting prices in the source document or company settings';ro = '!!!';ru = 'Задайте пожалуйста тип учетных цен в исходном документе или настройках компании'" );
+	text = NStr ("en = 'Please specify the type of accounting prices in the source document or company settings'; ro = 'Selectați vă ră rog tipul de preț din documentul inițial sau din setările companiei'; ru = 'Задайте пожалуйста тип учетных цен в исходном документе или настройках компании'" );
 	return text;
 
 EndFunction
@@ -6523,7 +6523,7 @@ EndFunction
 &AtServer
 Procedure InvoiceCheckFillingErrors ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'Check filling errors have been found. Invoice can’t be produced';ro = '!!!';ru = 'Реализация не может быть проведена из-за наличия ошибок заполнения документа'" );
+	text = NStr ("en = 'Check filling errors have been found. Invoice can’t be produced'; ro = 'Vânzarea nu poate fi vlidată din cauza unor erori la cmpletarea documentului'; ru = 'Реализация не может быть проведена из-за наличия ошибок заполнения документа'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6547,7 +6547,7 @@ EndFunction
 &AtServer
 Function Filled () export
 	
-	text = NStr ( "en = 'filled'; ru = 'заполненным'");
+	text = NStr ("en = 'filled'; ru = 'заполненным'; ro = 'umplut'");
 	return text;
 	
 EndFunction
@@ -6563,7 +6563,7 @@ EndFunction
 &AtServer
 Function Existed () export
 	
-	text = NStr ( "en = 'existed'; ru = 'существующим'");
+	text = NStr ("en = 'existed'; ru = 'существующим'; ro = 'a existat'");
 	return text;
 	
 EndFunction
@@ -6627,7 +6627,7 @@ EndFunction
 &AtClient
 Procedure CompleteMeetingConfirmation ( Module, CallbackParams = undefined, Params = undefined, ProcName = "CompleteMeetingConfirmation" ) export
 
-	text = NStr ( "en = 'Would you like to complete the meeting?';ro = '!!!';ru = 'Завершить это собрание?'" );
+	text = NStr ("en = 'Would you like to complete the meeting?'; ro = 'Data finalizării nu poate fi anterioară datei începutului întâlnirii'; ru = 'Завершить это собрание?'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	openQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -6636,7 +6636,7 @@ EndProcedure
 &AtServer
 Procedure WrongFinishingDate1 ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'Finishing date can’t be earlier then meeting start date';ro = '!!!';ru = 'Дата завершения не может быть раньше начала встречи'" );
+	text = NStr ("en = 'Finishing date can’t be earlier then meeting start date'; ro = 'Data finalizării nu poate fi anterioară datei începutului întâlnirii'; ru = 'Дата завершения не может быть раньше начала встречи'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6644,7 +6644,7 @@ EndProcedure
 &AtServer
 Procedure WrongFinishingDate2 ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'Finishing date can’t be in the future period';ro = '!!!';ru = 'Дата завершения не может быть в будущем периоде'" );
+	text = NStr ("en = 'Finishing date can’t be in the future period'; ro = 'Data finalizării nu poate fi în periada viitoare'; ru = 'Дата завершения не может быть в будущем периоде'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6652,7 +6652,7 @@ EndProcedure
 &AtServer
 Procedure EventExpired ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'The event can''t be scheduled because the start date has already expired'; ro = '!!!'; ru = 'Событие не может быть запланировано, потому что дата начала уже истекла'" );
+	text = NStr ("en = ""The event can't be scheduled because the start date has already expired""; ro = 'Evenimentul nu poate fi planificat deoarece data începutul a expirat deja'; ru = 'Событие не может быть запланировано, потому что дата начала уже истекла'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6660,7 +6660,7 @@ EndProcedure
 &AtServer
 Procedure EventNotStarted ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'The event has not been started'; ro = '!!!'; ru = 'Событие еще не началось'" );
+	text = NStr ("en = 'The event has not been started'; ro = 'Evenimentul încă nu s-a început'; ru = 'Событие еще не началось'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6668,7 +6668,7 @@ EndProcedure
 &AtServer
 Procedure ResponsibleBusy ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = '%Responsible is busy at this time: %Event'; ro = '!!!'; ru = '%Responsible занят в это время, см. %Event'" );
+	text = NStr ("en = '%Responsible is busy at this time: %Event'; ro = '%Responsible la moment este ocupat/ă, vezi evenimentul: %Event'; ru = '%Responsible занят в это время, см. %Event'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6676,23 +6676,31 @@ EndProcedure
 &AtServer
 Function EventBody ( Params ) export
 
-	text = NStr ( "en = 'Subject: %FullSubject
-                   |Organization: %Organization.
-                   |Contact: %Contact.
-                   |Scheduled: %Start %StartTime - %Finish.
-                   |Dutation: %Duration
-                   |Content: %Content
-                   |
-                   |The event can be opened here:
-                   |%URL'; ro = '!!!'; ru = 'Тема: %FullSubject
-                   |Контрагент: %Organization.
-                   |Контакт: %Contact.
-                   |Запланировано: %Start %StartTime - %Finish.
-                   |Продолжительность: %Duration
-                   |Содержание: %Content
-                   |
-                   |Событие может быть открыто по ссылке:
-                   |%URL'" );
+	text = NStr ("en = 'Subject: %FullSubject"
+"Organization: %Organization."
+"Contact: %Contact."
+"Scheduled: %Start %StartTime - %Finish."
+"Dutation: %Duration"
+"Content: %Content"
+""
+"The event can be opened here:"
+"%URL'; ro = 'Subiect: %FullSubject"
+"Terț: %Organization."
+"Contract: %Contact."
+"Planificat: %Start %StartTime - %Finish."
+"Durata: %Duration"
+"Conținut: %Content"
+""
+"Evenimentul poate fi accesat aici:"
+"%URL'; ru = 'Тема: %FullSubject"
+"Контрагент: %Organization."
+"Контакт: %Contact."
+"Запланировано: %Start %StartTime - %Finish."
+"Продолжительность: %Duration"
+"Содержание: %Content"
+""
+"Событие может быть открыто по ссылке:"
+"%URL'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -6700,7 +6708,7 @@ EndFunction
 &AtServer
 Function EventSubject ( Params ) export
 
-	text = NStr ( "en = 'Event(%Severity): %Starting at %StartTime with duration of %Duration; %Organization; %Subject'; ro = '!!!'; ru = 'Событие(%Severity): %Starting в %StartTime продолжительностью %Duration; %Organization; %Subject'" );
+	text = NStr ("en = 'Event(%Severity): %Starting at %StartTime with duration of %Duration; %Organization; %Subject'; ro = 'Eveniment(%Severity): %Starting la %StartTime cu durata of %Duration; %Organization; %Subject'; ru = 'Событие(%Severity): %Starting в %StartTime продолжительностью %Duration; %Organization; %Subject'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -6708,7 +6716,7 @@ EndFunction
 &AtServer
 Function Today () export
 
-	text = NStr ( "en = 'today'; ro = '!!!'; ru = 'сегодня'" );
+	text = NStr ("en = 'today'; ro = 'astăzi'; ru = 'сегодня'" );
 	return text;
 
 EndFunction
@@ -6716,7 +6724,7 @@ EndFunction
 &AtServer
 Function Tomorrow () export
 
-	text = NStr ( "en = 'tomorrow';ro = '!!!';ru = 'завтра'" );
+	text = NStr ("en = 'tomorrow'; ro = 'măine'; ru = 'завтра'" );
 	return text;
 
 EndFunction
@@ -6724,7 +6732,7 @@ EndFunction
 &AtServer
 Function CheckFillingError () export
 
-	text = NStr ( "en='Data filling errors detected'; ro='!!!'; ru='Обнаружены ошибки заполнения данных'" );
+	text = NStr ("en = 'Data filling errors detected'; ro = 'Erori de completare a datelor detectate'; ru = 'Обнаружены ошибки заполнения данных'" );
 	return text;
 
 EndFunction
@@ -6732,9 +6740,9 @@ EndFunction
 &AtServer
 Procedure WrongExternalLibrary ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'Wrong or missing library in the %File.
-                   |Internal library will be used instead'; ro = '!!!Biblioteca greșită sau lipsă din% File.
-                   |În schimb va fi utilizată biblioteca internă'; ru = 'Не удалось загрузить библиотеку из файла %File. Будет использована внутренняя компонента'" );
+	text = NStr ("en = 'Wrong or missing library in the %File."
+"Internal library will be used instead'; ro = 'Bibliotecă greșită sau lipsă în %File."
+"Se va utiliza biblioteca internă'; ru = 'Не удалось загрузить библиотеку из файла %File. Будет использована внутренняя компонента'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
@@ -6742,7 +6750,7 @@ EndProcedure
 &AtServer
 Function CommonFieldInUse ( Params ) export
 
-	text = NStr ( "en = '%Property can''t be private because it is already used by %Owner';ro = '!!!';ru = 'Свойство не может быть приватным, потому что оно уже используется в %Owner'" );
+	text = NStr ("en = ""%Property can't be private because it is already used by %Owner""; ro = '%Property nu poate fi privat deoarece este deja utilizat de %Owner'; ru = 'Свойство не может быть приватным, потому что оно уже используется в %Owner'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -6750,7 +6758,7 @@ EndFunction
 &AtServer
 Function InteractiveCreationForbidden () export
 
-	text = NStr ( "en='This object cannot be created interactively'; ro='!!!'; ru='Этот объект не может создаваться интерактивно'" );
+	text = NStr ("en = 'This object cannot be created interactively'; ro = 'Acest obiect nu poate fi creat în mod interactiv'; ru = 'Этот объект не может создаваться интерактивно'" );
 	return text;
 
 EndFunction
@@ -6758,7 +6766,7 @@ EndFunction
 &AtServer
 Function AccessKeysNotAvailable ( Params ) export
 
-	text = NStr ( "en = 'Failed to access the access key in %Number attempts. Session will be terminated'; ro = '!!!'; ru = 'Не удалось обратиться к ключу доступа за %Number попыток. Сессия будет завершена'" );
+	text = NStr ("en = 'Failed to access the access key in %Number attempts. Session will be terminated'; ro = 'Nu a reușit să acceseze cheia de acces în %Number de încercări. Sesiunea va fi terminată'; ru = 'Не удалось обратиться к ключу доступа за %Number попыток. Сессия будет завершена'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -6766,7 +6774,7 @@ EndFunction
 &AtClient
 Procedure SelectFile ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SelectFile" ) export
 
-	text = NStr ( "en = 'Please select a file'; ro = '!!!'; ru = 'Выберите пожалуйста файл'" );
+	text = NStr ("en = 'Please select a file'; ro = 'Vă rugăm să selectați un fișier'; ru = 'Выберите пожалуйста файл'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
 
