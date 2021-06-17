@@ -53,7 +53,7 @@ Procedure fillByShipment ()
 	
 	headerByShipment ();
 	tablesByShipment ();
-	InvoiceForm.SetDiscounts ( ThisObject );
+	DiscountsTable.Load ( ThisObject );
 	InvoiceForm.CalcTotals ( ThisObject );
 	InvoiceForm.SetPayment ( ThisObject );
 
