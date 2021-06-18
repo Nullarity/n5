@@ -1,4 +1,4 @@
-// Test calculation Extra Charge
+﻿// Test calculation Extra Charge
 //
 // 1. Creating VendorInvoice with producer price
 // 2. Creating invoice record
@@ -64,6 +64,9 @@ p.Button = "#ItemsListContextMenuFind";
 Call ( "Common.Find", p );
 
 table = Get ( "#ItemsList" );
+table.Choose ();
+
+table = Get ( "#FeaturesList" );
 table.Choose ();
 
 details = With ( "Details" );

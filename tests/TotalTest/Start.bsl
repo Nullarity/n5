@@ -37,6 +37,16 @@ exceptions.Add("Documents.Document.TheSameSubject");
 exceptions.Add("DataProcessors.Update.RegularUpdate");
 exceptions.Add("DataProcessors.Update.SkipUpdate");
 exceptions.Add("CommonForms.Settings.TestClosingAfterChangingLicense");
+
+// Cost changers
+exceptions.Add("Documents.AssetsTransfer.TestCreation.Start");
+exceptions.Add("Documents.Commissioning.TestCreation.Start");
+exceptions.Add("Documents.Disassembling.FullCreationTest.Start");
+exceptions.Add("Documents.ExpenseReport.Start");
+exceptions.Add("Documents.ExpenseReport.TestCurrency");
+exceptions.Add("Documents.ExpenseReport.TestCurrencyCopy");
+exceptions.Add("Documents.Inventory.TestCreation.Start");
+
 p.Exceptions = exceptions;
 
 agents = 40;
@@ -56,6 +66,8 @@ endif;
 if ( p.UpdateOnly ) then
 	return;
 endif;
+
+//return;
 
 params = new Structure ();
 params.Insert ( "Name", String ( p.Application ) );
