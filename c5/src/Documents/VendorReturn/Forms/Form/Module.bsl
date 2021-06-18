@@ -236,7 +236,8 @@ Procedure sqlFields ()
 	|// @Fields
 	|select Document.Warehouse as Warehouse, Document.VendorAccount as VendorAccount, 
 	|	Document.Contract.VendorAdvances as CloseAdvances, Document.Company as Company, Document.Vendor as Vendor, 
-	|	Document.Contract as Contract, Document.Currency as Currency, Document.Contract.Currency as ContractCurrency, 
+	|	Document.Contract as Contract, Document.Currency as Currency, Document.Contract.Currency as ContractCurrency,
+	|	Document.Contract.VendorRateType as RateType, Document.Rate as Rate, Document.Factor as Factor,
 	|	Document.VATUse as VATUse
 	|from Document.VendorInvoice as Document
 	|where Document.Ref = &Base
@@ -372,11 +373,13 @@ Procedure fillHeader ()
 	fields = Env.Fields;
 	FillPropertyValues ( Object, fields );
 	ContractCurrency = fields.ContractCurrency;
-	currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
-	Object.Rate = currency.Rate;
-	Object.Factor = currency.Factor;
+	if ( fields.RateType = Enums.CurrencyRates.Current ) then
+		currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+		Object.Rate = currency.Rate;
+		Object.Factor = currency.Factor;
+	endif;
 	InvoiceForm.SetCurrencyList ( ThisObject );
-	
+
 EndProcedure
 
 &AtServer

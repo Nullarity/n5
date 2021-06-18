@@ -287,14 +287,20 @@ Procedure fillByQuote ()
 	Env.Q.SetParameter ( "Base", Parameters.Basis );
 	SQL.Perform ( Env );
 	checkQuote ();
+
 	fields = Env.Fields;
 	FillPropertyValues ( Object, fields );
+	ContractCurrency = fields.ContractCurrency;
+	if ( fields.RateType = Enums.CurrencyRates.Current ) then
+		currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+		Object.Rate = currency.Rate;
+		Object.Factor = currency.Factor;
+	endif;
+	settings = Logins.Settings ( "Department" );
+	Object.Department = settings.Department;
 	Object.Items.Load ( Env.Items );
 	Object.Services.Load ( Env.Services );
 	Object.Payments.Load ( Env.Payments );
-	settings = Logins.Settings ( "Department" );
-	Object.Department = settings.Department;
-	ContractCurrency = fields.ContractCurrency;
 	InvoiceForm.SetCurrencyList ( ThisObject );
 
 EndProcedure
@@ -308,7 +314,8 @@ Procedure sqlQuote ()
 	|	Document.Creator as Creator, Document.Currency as Currency, Document.Contract.Currency as ContractCurrency,
 	|	Document.Customer as Customer, Document.DeliveryDate as DeliveryDate, Document.Discount as Discount,
 	|	Document.DueDate as DueDate, Document.Factor as Factor, Document.GrossAmount as GrossAmount,
-	|	Document.Prices as Prices, Document.Rate as Rate, Document.VAT as VAT, Document.VATUse as VATUse, Document.Warehouse as Warehouse,
+	|	Document.Prices as Prices, Document.Rate as Rate, Document.VAT as VAT, Document.VATUse as VATUse,
+	|	Document.Warehouse as Warehouse, Document.Contract.CustomerRateType as RateType,
 	|	presentation ( RejectedQuotes.Cause ) as RejectionCause, Document.Ref as Quote
 	|from Document.Quote as Document
 	|	//

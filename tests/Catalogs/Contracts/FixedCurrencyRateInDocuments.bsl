@@ -8,6 +8,16 @@ this.Insert ( "ID", Call ( "Common.ScenarioID", "A04W" ) );
 getEnv ();
 createEnv ();
 
+#region VendorInvoice
+Commando("e1cib/command/Document.VendorInvoice.Create");
+Put("#Vendor", this.Vendor);
+Check("#Currency", "USD");
+Check("#Rate", 15);
+CheckState("#ContractAmount","Visible", false);
+Put("#Currency", "MDL");
+CheckState("#ContractAmount","Visible");
+#endregion
+
 #region VendorReturn
 Commando("e1cib/command/Document.VendorReturn.Create");
 Put("#Vendor", this.Vendor);

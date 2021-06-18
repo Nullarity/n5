@@ -1,9 +1,9 @@
-// Check SO in currency
+﻿// Check SO in currency
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2CF2FC17" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A058" ) );
 getEnv ();
 createEnv ();
 
@@ -11,6 +11,7 @@ createEnv ();
 Commando("e1cib/command/Document.Quote.Create");
 Set ( "!Customer", this.Customer );
 Set ( "!DueDate", Format ( CurrentDate() + 86400, "DLF=D" ) );
+Set ( "!Rate", 22 ); // This rate should NOT migrate to SO
 Items = Get ( "!Items" );
 Click ( "!ItemsAdd" );
 Items.EndEditRow ();
@@ -25,6 +26,7 @@ Click ( "!Button0" );
 
 #region approveSO
 With();
+Assert(Number(Fetch("#Rate"))).Not_ ().Equal(22);
 Click ( "!FormSendForApproval" );
 With ();
 Click ( "!Button0" );
