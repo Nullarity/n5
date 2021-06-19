@@ -136,6 +136,39 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
+Procedure _5_0_15_1 () export
+	
+	// Consider the following code as template of update procedure
+	BeginTransaction ();
+	for each tenant in Tenants do
+		activateTenant ( tenant );
+		_5_0_15_1_setContractRateType ();
+	enddo;
+	CommitTransaction ();
+	
+EndProcedure
+
+Procedure _5_0_15_1_setContractRateType ()
+	
+	localCurrency = Application.Currency ();
+	selection = Catalogs.Contracts.Select ();
+	while ( selection.Next () ) do
+		if ( selection.Currency = localCurrency
+			or selection.DeletionMark ) then
+			continue;
+		endif;
+		obj = selection.GetObject ();
+		if ( obj.Customer ) then
+			obj.CustomerRateType = Enums.CurrencyRates.Current;
+		endif;
+		if ( obj.Vendor ) then
+			obj.VendorRateType = Enums.CurrencyRates.Current;
+		endif;
+		obj.Write ();
+	enddo;
+	
+EndProcedure
+
 #endregion
 
 Procedure updateReports ()

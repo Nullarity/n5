@@ -13,7 +13,12 @@ EndProcedure
 Procedure defineService ( Form )
 	
 	item = Form.Record.Item;
-	Form.Service = item.IsEmpty () or DF.Pick ( item, "Service", true );
+	if ( item.IsEmpty () ) then
+		
+	endif;
+	data = DF.Values ( item, "Service, IsFolder" );
+	Form.IsFolder = data.IsFolder;
+	Form.Service = data.Service;
 	
 EndProcedure 
 
@@ -33,8 +38,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|GroupExpense enable Service;
-	|ExpenseAccount enable not Service
+	|GroupExpense enable Service or IsFolder or not filled ( Record.Item );
+	|ExpenseAccount enable not Service or IsFolder or not filled ( Record.Item )
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -62,7 +67,6 @@ EndProcedure
 
 &AtClient
 Procedure resetExpenses ()
-	
 	
 	if ( Service ) then
 		Record.ExpenseAccount = undefined;

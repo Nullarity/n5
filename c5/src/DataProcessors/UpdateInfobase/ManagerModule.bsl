@@ -1,7 +1,7 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
 #region Help
-// Intermediate release means that the following updates must be generated based on last intermediate release.
+// Intermediate release means that the following updates must be generated based on the last intermediate release.
 // Explanation. Let’s say we have these changes in our application:
 // Release 1.0.0.1. We create Catalog1 with Delivery string field.
 // Release 1.0.1.1. We decide to change type of Delivery field from string to number.
@@ -39,6 +39,7 @@ Function GetReleases () export
 	
 	list = new Array ();
 	list.Add ( entry ( "1.0.0.1", false ) );
+	list.Add ( entry ( "5.0.15.1", true ) );
 	return list;
 	
 EndFunction
