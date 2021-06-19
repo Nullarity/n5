@@ -1144,6 +1144,20 @@ Function LaunchParametersUpdateCanceled () export
 	
 EndFunction
 
+&AtClient
+Function LaunchParametersRunMainScenario () export
+	
+	return "RunMainScenario";
+	
+EndFunction
+
+&AtClient
+Function LaunchParametersInitNode () export
+	
+	return "InitialFillingNode";
+	
+EndFunction
+
 #endregion
 
 #region Constants

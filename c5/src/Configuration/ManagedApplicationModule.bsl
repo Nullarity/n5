@@ -76,9 +76,9 @@ EndProcedure
 
 Procedure OnStart ()
 
-	if ( LaunchParameters [ "InitialFillingNode" ] <> undefined ) then
-		StartingSrv.InitNode ();
+	if ( initNode () ) then
 		Exit ( false );
+		return;
 	endif;
 	SessionInfo = StartingSrv.SessionInfo ();
 	MailIsOpen = false;
@@ -89,6 +89,37 @@ Procedure OnStart ()
 	endif;
 	Starting.Go ();
 	AttachEmailCheck ();
+	AttachIdleHandler ( "runMainScenario", 1, true );
+	
+EndProcedure
+
+Function initNode ()
+	
+	if ( LaunchParameters [ Enum.LaunchParametersInitNode () ] <> undefined ) then
+		StartingSrv.InitNode ();
+		return true;
+	endif;
+	return false;
+	
+EndFunction
+
+Procedure runMainScenario () export
+	
+	#if ( ThinClient or ThickClientManagedApplication ) then
+		port = LaunchParameters [ Enum.LaunchParametersRunMainScenario () ];
+		if ( port = undefined ) then
+			return;
+		endif;
+		try
+			connector = Eval ( "new TestedApplication ( ""localhost"", " + port + " )" );
+		except
+			return;
+		endtry;
+		connector.Connect ();
+		button = connector.FindObject ( Type ( "TestedFormButton" ), , "FormCatalogScenariosRun", 3 );
+		button.Click ();
+		connector.Disconnect ();
+	#endif
 	
 EndProcedure
 

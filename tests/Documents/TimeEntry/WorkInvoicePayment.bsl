@@ -1,4 +1,4 @@
-// Create time entry (services only)
+﻿// Create time entry (services only)
 // Generate Invoice
 // Generate Payment
 // Print Invoice
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2BDC5DF9" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A05Q" ) );
 getEnv ();
 createEnv ();
 
@@ -32,12 +32,6 @@ Click("#CreatePayment");
 Click("OK", "1?:*");
 With();
 Click("#FormPostAndClose");
-
-// Print Invoice
-With();
-Click("#FormDocumentInvoiceInvoice");
-
-Disconnect ( true );
 
 // *************************
 // Procedures

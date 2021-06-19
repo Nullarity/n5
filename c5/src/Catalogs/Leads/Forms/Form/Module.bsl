@@ -361,6 +361,7 @@ EndProcedure
 Procedure applyItem ()
 	
 	p = new Structure ();
+	p.Insert ( "Company", Object.Company );
 	p.Insert ( "Date", Object.Date );
 	p.Insert ( "Currency", Object.Currency );
 	p.Insert ( "Item", ItemsRow.Item );
@@ -382,7 +383,7 @@ EndProcedure
 Function getItemData ( val Params )
 	
 	item = Params.Item;
-	data = DF.Values ( item, "Package, Package.Capacity as Capacity, VAT, VAT.Rate as Rate," );
+	data = DF.Values ( item, "Package, Package.Capacity as Capacity, VAT, VAT.Rate as Rate" );
 	price = Goods.Price ( , Params.Date, Params.Prices, item, data.Package, , , , , , Params.Currency );
 	accounts = AccountsMap.Item ( item, Params.Company, , "VAT" );
 	data.Insert ( "Price", price );
@@ -557,6 +558,7 @@ EndProcedure
 Procedure applyService ()
 	
 	p = new Structure ();
+	p.Insert ( "Company", Object.Company );
 	p.Insert ( "Date", Object.Date );
 	p.Insert ( "Currency", Object.Currency );
 	p.Insert ( "Item", ServicesRow.Item );

@@ -1,4 +1,4 @@
-Commando ( "e1cib/command/Catalog.Users.Create" );
+﻿Commando ( "e1cib/command/Catalog.Users.Create" );
 
 // Fill profile
 Set ( "#Description", _.Name );
@@ -55,6 +55,7 @@ enddo;
 
 // Commit changes
 Click ( "#Commit" );
+Pause ( 3 );
 With();
 Click("#FormWriteAndClose");
 Pause ( 3 * __.Performance );

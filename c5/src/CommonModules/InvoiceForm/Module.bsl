@@ -139,13 +139,15 @@ Procedure CalcTotals ( Source ) export
 		discountVAT = 0;
 		discountAmount = 0;
 	endif;
-	inContractCurrency = object.Currency = Source.ContractCurrency;
-	rate = object.Rate;
-	factor = object.Factor;
-	if ( paymentDiscounts
-		and not inContractCurrency ) then
-		discountVAT = discountVAT * rate / factor;
-		discountAmount = discountAmount * rate / factor;
+	if ( p.CalcContractAmount ) then
+		inContractCurrency = object.Currency = Source.ContractCurrency;
+		rate = object.Rate;
+		factor = object.Factor;
+		if ( paymentDiscounts
+			and not inContractCurrency ) then
+			discountVAT = discountVAT * rate / factor;
+			discountAmount = discountAmount * rate / factor;
+		endif;
 	endif;
 	vat = items.Total ( "VAT" )
 	+ services.Total ( "VAT" )

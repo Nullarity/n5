@@ -1,9 +1,9 @@
-// Create a new Lead
+﻿// Create a new Lead
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "282F5BA2" );
+id = Call ( "Common.ScenarioID", "A05R" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -15,13 +15,13 @@ Set("#FirstName", env.FirstName);
 Set("#LastName", env.LastName);
 
 // Add item
-Click("#ItemsTableAdd");
+Click("#ItemsAdd");
 Set("#ItemsItem", env.Item);
 Set("#ItemsQuantityPkg", 5);
 Set("#ItemsQuantity", 50);
 Set("#ItemsPrice", 3);
 Next();
-Set("#ItemsAmount[1]", 300, Get("#ItemsTable"));
+Set("#ItemsAmount[1]", 30, Get("#Items"));
 
 // Add service
 Click("#ServicesAdd");
@@ -29,7 +29,7 @@ Set("#ServicesItem", env.Service);
 Set("#ServicesQuantity", 50);
 Set("#ServicesPrice", 3);
 Next();
-Set("#ServicesAmount[1]", 300, Get("#Services"));
+Set("#ServicesAmount[1]", 30, Get("#Services"));
 
 Click("#FormWrite");
 
