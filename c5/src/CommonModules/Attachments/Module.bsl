@@ -683,3 +683,10 @@ Function getStoredFiles ( StoredFiles )
 	return files;
 	
 EndFunction
+
+&AtClient
+Procedure SelectFilesFolder ( Params ) export
+	
+	OpenForm ( "CommonForm.System" );
+	
+EndProcedure

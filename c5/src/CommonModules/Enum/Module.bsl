@@ -1275,3 +1275,12 @@ Function AdditionalPropertiesInteractive () export
 EndFunction
 
 #endregion
+#region Exceptions
+
+Function ExceptionsUndefinedFilesFolder () export
+	
+	return "ExceptionsUndefinedFilesFolder";
+	
+EndFunction
+
+#endregion

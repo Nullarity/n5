@@ -7852,3 +7852,20 @@ Function PrintVATInfo2 ( Language ) export
 	return NStr ( "ru = 'НДС не включен в цену'; ro = 'TVA exclus din preț'; en = 'VAT Excluded from Price'", Language );
 	
 EndFunction
+
+&AtServer
+Function UndefinedFilesFolder () export
+
+	text = NStr ( "en = 'The folder for storing uploaded files is not set, contact your system administrator to resolve the situation. This setting is defined in menu Settings / System / Folder of Object''s Service Files';ro = 'Dosarul pentru stocarea fișierelor încărcate nu este setat, contactați administratorul de sistem pentru a rezolva situația. Această setare este definită în meniul Settings / System / Folder of Object''s Service Files (Setări / Sistem / Dosar de fișiere de serviciu)';ru = 'Не задана папка для хранения загружаемых файлов, обратитесь в системному администратору для разрешения ситуации. Настройка пути выполняется в меню Настройки / Система / Папка служебных файлов объектов'" );
+	return text;
+
+EndFunction
+
+&AtClient
+Procedure SelectFilesFolder ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SelectFilesFolder" ) export
+
+	text = NStr ("en = 'Please specify a folder for storing uploaded files';ro = 'Vă rugăm să specificați un folder pentru stocarea fișierelor încărcate';ru = 'Задайте пожалуйста путь к папке, где будут храниться загружаемые в систему файлы'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure

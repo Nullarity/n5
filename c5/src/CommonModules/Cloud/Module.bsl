@@ -80,7 +80,15 @@ EndFunction
 
 Function GetFolders () export
 	
-	return Constants.Folders.Get ();
+	folder = Constants.Folders.Get ();
+	if ( folder = "" ) then
+		if ( Logins.Sysadmin () ) then
+			raise Enum.ExceptionsUndefinedFilesFolder ();
+		else
+			raise Output.UndefinedFilesFolder ();
+		endif;
+	endif;
+	return folder;
 	
 EndFunction 
 

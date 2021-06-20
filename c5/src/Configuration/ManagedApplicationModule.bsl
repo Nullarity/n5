@@ -292,3 +292,13 @@ Procedure DemoSessionWarning2 () export
 	showWarning ( 2 );
 	
 EndProcedure
+
+Procedure ErrorDisplayProcessing ( ErrorInfo, SessionTerminationRequired, StandardProcessing )
+	
+	id = ErrorInfo.Description;
+	if ( id = Enum.ExceptionsUndefinedFilesFolder () ) then
+		StandardProcessing = false;
+		Output.SelectFilesFolder ( Attachments );
+	endif;
+	
+EndProcedure
