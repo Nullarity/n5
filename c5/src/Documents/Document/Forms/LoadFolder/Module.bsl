@@ -59,27 +59,9 @@ EndProcedure
 Procedure FolderStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	LocalFiles.Prepare ( new NotifyDescription ( "OpenDialog", ThisObject ) );
+	LocalFiles.SelectFolder ( Item );
 	
 EndProcedure
-
-&AtClient
-Procedure OpenDialog ( Result, Params ) export
-	
-	dialog = new FileDialog ( FileDialogMode.ChooseDirectory );
-	dialog.Show ( new NotifyDescription ( "SelectFolder", ThisObject ) );
-	
-EndProcedure 
-
-&AtClient
-Procedure SelectFolder ( Result, Params ) export
-	
-	if ( Result = undefined ) then
-		return;
-	endif; 
-	Folder = Result [ 0 ];
-	
-EndProcedure 
 
 &AtClient
 Procedure Load ( Command )

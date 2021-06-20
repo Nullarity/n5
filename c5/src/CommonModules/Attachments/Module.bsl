@@ -87,7 +87,9 @@ EndProcedure
 &AtClient
 Function fileSelected ( Params )
 	
-	if ( Params.Control.CurrentData = undefined ) then
+	control = Params.Control;
+	if ( control <> undefined
+		and control.CurrentData = undefined ) then
 		Output.SelectFile ();
 		return false;
 	else

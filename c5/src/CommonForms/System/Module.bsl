@@ -62,7 +62,6 @@ Function checkCloudSaaS ()
 		fields.Add ( "EmailAttachmentsURL" );
 		fields.Add ( "EmailAttachments" );
 		fields.Add ( "EmailStyle" );
-		fields.Add ( "Folders" );
 		fields.Add ( "FoldersURL" );
 		fields.Add ( "CKEditorURL" );
 		fields.Add ( "CKEditorURLie" );
@@ -208,31 +207,20 @@ Procedure SaaSOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure FoldersStartChoice ( Item, ChoiceData, StandardProcessing )
+	
+	StandardProcessing = false;
+	LocalFiles.SelectFolder ( Item );
+
+EndProcedure
+
+&AtClient
 Procedure BackupStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	selectBackup ();
+	LocalFiles.SelectFolder ( Item );
 	
 EndProcedure
-
-&AtClient
-Procedure selectBackup ()
-	
-	dialog = new FileDialog ( FileDialogMode.ChooseDirectory );
-	dialog.Show ( new NotifyDescription ( "BackupSelected", ThisObject ) );
-	
-EndProcedure
-
-&AtClient
-Procedure BackupSelected ( Folders, Params ) export
-	
-	if ( Folders = undefined ) then
-		return;
-	endif; 
-	Object.Backup = Folders [ 0 ];
-	Modified = true;
-	
-EndProcedure 
 
 &AtClient
 Procedure UseProxyOnChange ( Item )

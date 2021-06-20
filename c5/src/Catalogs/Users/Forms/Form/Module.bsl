@@ -910,30 +910,12 @@ Procedure createNewEmployee ()
 EndProcedure
 
 &AtClient
-Procedure DocumentsFolderStartChoice ( Item, ChoiceData, StandardProcessing )
+Procedure FolderStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	LocalFiles.Prepare ( new NotifyDescription ( "ChooseFolder", ThisObject ) );
+	LocalFiles.SelectFolder ( Item );
 	
 EndProcedure
-
-&AtClient
-Procedure ChooseFolder ( Result, Params ) export
-	
-	dialog = new FileDialog ( FileDialogMode.ChooseDirectory );
-	dialog.Show ( new NotifyDescription ( "SelectFolder", ThisObject ) );
-	
-EndProcedure 
-
-&AtClient
-Procedure SelectFolder ( Folder, Params ) export
-	
-	if ( Folder = undefined ) then
-		return;
-	endif; 
-	Object.Folder = Folder [ 0 ];
-	
-EndProcedure 
 
 // *****************************************
 // *********** Page Access

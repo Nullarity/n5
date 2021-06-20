@@ -13,23 +13,13 @@ var OldDateEnd;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	setCloud ();
 	Catalogs.Projects.ReadJunctions ( Object.Ref, Tables, false );
 	setFlags ( ThisObject );
 	setAccessRightsFlags ();
 	setCanChangeApprovalList ();
-	if ( Clouds ) then
-		initEditor ( CurrentObject );
-	endif;
+	initEditor ( CurrentObject );
 	Appearance.Apply ( ThisObject );
 		
-EndProcedure
-
-&AtServer
-Procedure setCloud ()
-	
-	Clouds = Cloud.Cloud ();
-	
 EndProcedure
 
 &AtClientAtServerNoContext
@@ -112,7 +102,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
-		setCloud ();
 		setAccessRightsFlags ();
 		setFlags ( ThisObject );
 		copyingValue = Parameters.CopyingValue;
@@ -160,7 +149,6 @@ Procedure readAppearance ()
 	|TasksAmount TasksTimeType show TasksAmountVisible;
 	|TasksAmount lock not TasksAmountAllowed;
 	|TasksTask TasksTimeType show Object.ProjectType = Enum.ProjectTypes.Regular;
-	|EditorPage show Clouds;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
