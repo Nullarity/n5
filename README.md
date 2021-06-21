@@ -1,4 +1,4 @@
-[![Github All Releases](https://img.shields.io/github/downloads/atom/atom/total.svg)]()
+[![Github All Releases](https://img.shields.io/github/downloads/Contabilizare/c5/total.svg)](https://GitHub.com/Contabilizare/c5/releases/)
 
 Contabilizare 5 это простая и удобная программа для ведения бухгалтерского и хозяйственного учета коммерческих предприятий Молдовы. Справка по программе расположена на сайте https://cont.help.
 
