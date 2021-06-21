@@ -17,6 +17,16 @@
       <command>Document.Timesheet.StandardCommand.OpenList</command>
       <visible/>
     </visibilityFragments>
+    <visibilityFragments>
+      <command>Document.Timesheet.Command.List</command>
+      <visible>
+        <common>true</common>
+      </visible>
+    </visibilityFragments>
+    <visibilityFragments>
+      <command>Report.Timesheet.StandardCommand.Open</command>
+      <visible/>
+    </visibilityFragments>
   </commandsVisibility>
   <commandsPlacement>
     <placementFragments>
@@ -24,17 +34,25 @@
       <commands>Catalog.Employees.StandardCommand.OpenList</commands>
       <commands>DocumentJournal.Salary.StandardCommand.OpenList</commands>
     </placementFragments>
+    <placementFragments>
+      <group>NavigationPanelSeeAlso</group>
+      <commands>Document.Timesheet.Command.List</commands>
+    </placementFragments>
   </commandsPlacement>
   <commandsOrder>
     <orderFragments>
       <group>NavigationPanelImportant</group>
       <commands>Catalog.Employees.StandardCommand.OpenList</commands>
       <commands>DocumentJournal.Salary.StandardCommand.OpenList</commands>
-      <commands>Document.Timesheet.Command.List</commands>
+      <commands>Report.Timesheet.Command.Show</commands>
     </orderFragments>
     <orderFragments>
       <group>NavigationPanelOrdinary</group>
       <commands>Document.Timesheet.StandardCommand.OpenList</commands>
+    </orderFragments>
+    <orderFragments>
+      <group>NavigationPanelSeeAlso</group>
+      <commands>Document.Timesheet.Command.List</commands>
     </orderFragments>
   </commandsOrder>
 </cmi:CommandInterface>

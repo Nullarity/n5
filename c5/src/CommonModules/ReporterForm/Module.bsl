@@ -156,6 +156,7 @@ Function simpleReport ( Report )
 	or Report = "Reconciliation"
 	or Report = "VendorDebts"
 	or Report = "SalesRegister"
+	or Report = "Timesheet"
 	or Report = "PurchasesRegister";
 		
 EndFunction 
