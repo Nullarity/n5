@@ -21,7 +21,7 @@ p.Project = AppName;
 p.Workspace = "/home/dmitry/" + AppName;
 p.GitFolder = "/home/dmitry/git/" + AppName;
 p.GitUser = "nullarity";
-p.GitPassword = Call ("TotalTest.GitPassword", , "System");
+p.GitPassword = Call ("Tools.GitPassword", , "System");
 p.GitRepo = "github.com/contabilizare/c5";
 p.TestingOnly = _ <> undefined and _ = "TestingOnly";
 exceptions = new Array();
