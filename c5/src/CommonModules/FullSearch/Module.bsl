@@ -169,13 +169,13 @@ Function highlight ( Text, Highlights )
 				continue;
 			else
 				if ( i > 1 ) then
-					result.Add ( Mid ( source, 1, i - 1 ) );
+					result.Add ( Mid ( part, 1, i - 1 ) );
 				endif; 
 				result.Add ( foundPart );
 				wordSize = StrLen ( word );
 				j = i + wordSize;
 				if ( j <= sourceSize ) then
-					result.Add ( Mid ( source, j ) );
+					result.Add ( Mid ( part, j ) );
 				endif;
 				found = true;
 				break;
