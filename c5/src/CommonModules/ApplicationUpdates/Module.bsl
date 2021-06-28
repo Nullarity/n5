@@ -1,9 +1,9 @@
 #if ( ThinClient or Server or ThickClientOrdinaryApplication ) then
 
 &AtServer
-Procedure Check () export
+Procedure Check ( FirstTime ) export
 	
-	if ( noneed () ) then
+	if ( not FirstTime and noneed () ) then
 		return;
 	endif;
 	BeginTransaction ();

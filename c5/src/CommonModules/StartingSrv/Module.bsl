@@ -161,9 +161,11 @@ Function RunUpdate ( Error ) export
 	
 EndFunction
 
-Procedure CheckUpdates () export
+Procedure CheckUpdates ( FirstTime ) export
 	
-	Jobs.Run ( "ApplicationUpdates.Check", , , , TesterCache.Testing () );
+	params = new Array ();
+	params.Add ( FirstTime );
+	Jobs.Run ( "ApplicationUpdates.Check", params, , , TesterCache.Testing () );
 	
 EndProcedure
 

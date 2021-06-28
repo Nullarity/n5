@@ -211,7 +211,11 @@ EndProcedure
 &AtClient
 Procedure PrepareUpdater ( OK, Params ) export
 	
-	LocalFiles.CheckExistence ( BinDir () + "1cv8.exe", new NotifyDescription ( "CheckingExistence1cv8", ThisObject ) );
+	file = BinDir () + "1cv8";
+	if ( Framework.IsWindows () ) then
+		file = file + ".exe";
+	endif;
+	LocalFiles.CheckExistence ( file, new NotifyDescription ( "CheckingExistence1cv8", ThisObject ) );
 	
 EndProcedure
 
@@ -501,9 +505,11 @@ EndFunction
 
 &AtClient
 Procedure runUpdater ( File )
-	
+
 	#if ( not MobileClient ) then
+		runner = getRunner ();
 		p = new Structure ();
+		p.Insert ( "Runner", runner );
 		p.Insert ( "Connection", ConnectionString );
 		p.Insert ( "Update", File );
 		p.Insert ( "User", RootUser );
@@ -512,12 +518,42 @@ Procedure runUpdater ( File )
 		p.Insert ( "Backup", Backup );
 		p.Insert ( "Tenant", Tenant );
 		p.Insert ( "TenantUse", TenantUse );
-		params = Conversion.ToJSON ( p );
-		RunSystem ( "/Z """" /N """ + CurrentLanguage () + """ /IBConnectionString ""File='" + UpdaterFolder + "';"" /C """ + StrReplace ( params, """", """""" ) + """" );
+		params = escapeString ( Conversion.ToJSON ( p ) );
+		command = " /N " + CurrentLanguage () + " /IBConnectionString ""File='" + UpdaterFolder + "';"" /C """ + params + """";
+		if ( Framework.IsWindows () ) then
+			System ( """start """" " + runner + command + """" );
+		else
+			System ( runner + command + " &" );
+		endif;
 		Exit ( false );
 	#endif
 
 EndProcedure
+
+&AtClient
+Function getRunner ()
+	
+	#if ( ThinClient ) then
+		file = "1cv8c";
+	#else
+		file = "1cv8";
+	#endif
+	if ( Framework.IsWindows () ) then
+		file = file + ".exe";
+	endif;
+	return """" + BinDir () + file + """";
+	
+EndFunction
+
+&AtClient
+Function escapeString ( Params )
+	
+	s = StrReplace ( Params, """", "#0#7#" );
+	s = StrReplace ( s, "/", "#0#8#" );
+	s = StrReplace ( s, "\", "#0#9#" );
+	return s;
+	
+EndFunction
 
 &AtClient
 Procedure Disconnection ( Result, File ) export

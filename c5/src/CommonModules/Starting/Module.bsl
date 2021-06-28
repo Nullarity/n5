@@ -287,8 +287,7 @@ Procedure checkLicense ()
 		// Insert your code
 		// OpenHelp ( "Configuration" );
 	endif; 
-	if ( SessionInfo.CheckUpdates
-		and not SessionInfo.NewUpdates ) then
+	if ( SessionInfo.CheckUpdates ) then
 		StartUpdatesChecking ();
 	endif;
 	

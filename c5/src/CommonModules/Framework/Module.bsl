@@ -59,3 +59,13 @@ Function IsLinux () export
 	or type = PlatformType.Linux_x86_64;
 	
 EndFunction
+
+&AtClient
+Function IsWindows () export
+	
+	info = new SystemInfo ();
+	type = info.PlatformType;
+	return type = PlatformType.Windows_x86
+	or type = PlatformType.Windows_x86_64;
+	
+EndFunction

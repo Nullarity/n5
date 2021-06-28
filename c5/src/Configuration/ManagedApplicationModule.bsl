@@ -9,6 +9,7 @@ var TemporaryFolder export;
 var TimeShift;
 var SessionInfo export;
 var FrameworkVersion export;
+var FirstTimeUpdateCheck export;
 
 Procedure BeforeStart ( Cancel )
 	
@@ -25,6 +26,7 @@ Procedure init ()
 	
 	si = new SystemInfo ();
 	FrameworkVersion = si.AppVersion;
+	FirstTimeUpdateCheck = true;
 	
 EndProcedure
 
@@ -132,7 +134,8 @@ EndProcedure
 Procedure StartUpdatesChecking () export
 	
 	StopUpdatesChecking ();
-	StartingSrv.CheckUpdates ();
+	StartingSrv.CheckUpdates ( FirstTimeUpdateCheck );
+	FirstTimeUpdateCheck = false;
 	AttachIdleHandler ( "_checkUpdates", 10, true );
 	
 EndProcedure
@@ -140,8 +143,15 @@ EndProcedure
 Procedure _checkUpdates () export
 	
 	if ( ApplicationUpdatesSrv.NewUpdates () ) then
-		OpenForm ( "DataProcessor.Updates.Form" );
+		if ( not SessionInfo.NewUpdates ) then
+			OpenForm ( "DataProcessor.Updates.Form" );
+		endif;
 	else
+		manuallyUpdated = SessionInfo.NewUpdates;
+		if ( manuallyUpdated ) then
+			SessionInfo.NewUpdates = false;
+			RefreshInterface ();
+		endif;
 		AttachIdleHandler ( "StartUpdatesChecking", Enum.ConstantsUpdateCheckingPeriod (), true );
 	endif;
 	
