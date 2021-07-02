@@ -169,6 +169,35 @@ Procedure _5_0_15_1_setContractRateType ()
 	
 EndProcedure
 
+Procedure _5_0_16_1 () export
+	
+	// Consider the following code as template of update procedure
+	BeginTransaction ();
+	for each tenant in Tenants do
+		activateTenant ( tenant );
+		loadAccounts2020 ();
+	enddo;
+	CommitTransaction ();
+	
+EndProcedure
+
+Procedure loadAccounts2020 ()
+	
+	t = GetTemplate ( "Accounts2020" );
+	j = t.TableHeight;
+	for i = 3 to j do
+		id = t.Area ( i, 1, i, 1 ).Text;
+		obj = ChartsOfAccounts.General [ id ].GetObject ();
+		description = t.Area ( i, 4, i, 4 ).Text;
+		obj.Description = description;
+		obj.DescriptionRo = description;
+		obj.DescriptionRu = t.Area ( i, 3, i, 3 ).Text;
+		obj.Class = Enums.Accounts [ t.Area ( i, 5, i, 5 ).Text ];
+		obj.Write ();
+	enddo;
+	
+EndProcedure
+
 #endregion
 
 Procedure updateReports ()

@@ -1,7 +1,5 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
-#endif
-
 Procedure PresentationFieldsGetProcessing ( Fields, StandardProcessing )
 	
 	StandardProcessing = false;
@@ -80,3 +78,5 @@ Function findAccounts ( Parameters )
 	return q.Execute ().Unload ();
 	
 EndFunction 
+
+#endif

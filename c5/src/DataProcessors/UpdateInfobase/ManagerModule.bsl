@@ -40,6 +40,7 @@ Function GetReleases () export
 	list = new Array ();
 	list.Add ( entry ( "1.0.0.1", false ) );
 	list.Add ( entry ( "5.0.15.1", true ) );
+	list.Add ( entry ( "5.0.16.1", true ) );
 	return list;
 	
 EndFunction
