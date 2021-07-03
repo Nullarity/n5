@@ -47,6 +47,16 @@ Procedure setYearByDefault ( Form )
 EndProcedure 
 
 &AtServer
+Procedure filterByYear ()
+	
+	if ( Year = 0 ) then
+		return;
+	endif;
+	Holidays.Parameters.SetParameterValue ( "Year", Date ( Year, 1, 1 ) );
+	
+EndProcedure 
+
+&AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	filterByHoliday ();
@@ -63,13 +73,6 @@ Procedure YearOnChange ( Item )
 	filterByYear ();
 	
 EndProcedure
-
-&AtServer
-Procedure filterByYear ()
-	
-	Holidays.Parameters.SetParameterValue ( "Year", Date ( Year, 1, 1 ) );
-	
-EndProcedure 
 
 &AtClient
 Procedure YearClearing ( Item, StandardProcessing )

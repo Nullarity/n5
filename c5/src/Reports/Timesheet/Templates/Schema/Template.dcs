@@ -383,6 +383,7 @@ from Calendar as Calendar
 	//
 	left join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 	and Schedules.Minutes &gt; 0
 	//
@@ -507,37 +508,6 @@ into ScheduledIntervals
 from ScheduledLocation as Intervals
 index by Employee, Schedule
 ;
-// Schedules
-select Schedules.Schedule as Schedule, Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd,
-	sum ( Schedules.Minutes ) / 60 as Hours, sum ( case Schedules.Minutes when 0 then 0 else 1 end ) as Days,
-	sum ( Schedules.MinutesEvening ) / 60 as HoursEvening, sum ( case Schedules.MinutesEvening when 0 then 0 else 1 end ) as DaysEvening,
-	sum ( Schedules.MinutesNight ) / 60 as HoursNight, sum ( case Schedules.MinutesNight when 0 then 0 else 1 end ) as DaysNight,
-	sum ( case when HolidaysList.Day is null then 0 else Schedules.Minutes end ) / 60 as HolidaysHours,
-	sum ( case when HolidaysList.Day is null then 0 else case Schedules.Minutes when 0 then 0 else 1 end end ) as HolidaysDays
-into Schedules
-from InformationRegister.Schedules as Schedules
-	//
-	// Intervals
-	//
-	join (
-		select Intervals.Schedule as Schedule, Intervals.DateStart as DateStart,
-			Intervals.DateEnd as DateEnd
-		from Intervals as Intervals
-		union
-		select Intervals.Schedule, &amp;StartMonth, &amp;EndMonth
-		from Intervals as Intervals
-		) as Intervals
-	on Intervals.Schedule = Schedules.Schedule
-	and Schedules.Day between Intervals.DateStart and Intervals.DateEnd
-	//
-	// Holidays
-	//
-	left join InformationRegister.Holidays as HolidaysList
-	on HolidaysList.Reference = Schedules.Schedule.Holidays
-	and HolidaysList.Day = Schedules.Day
-	and Schedules.Minutes &gt; 0
-group by Schedules.Schedule, Intervals.DateStart, Intervals.DateEnd
-;
 // Deviations
 select Hours.Employee as Employee, Hours.Time as Time, Hours.Day as Day, sum ( Hours.Minutes ) as Minutes
 into Deviations
@@ -602,6 +572,7 @@ from Document.Vacation.Employees as Vacations
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Time.Day
 	//
 	// Holidays
@@ -638,6 +609,7 @@ from InformationRegister.Hours as Hours
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Hours.Day
 	//
 	// Spans
@@ -670,6 +642,7 @@ from Document.SickLeave as SickLeaves
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 where SickLeaves.Posted
 union all
@@ -679,38 +652,56 @@ where Hours.Day between &amp;DateStart and &amp;DateEnd
 and Hours.Time = value ( Enum.Time.Sickness )
 index by Employee, Day
 ;
+// Only holidays falling on working days
+select distinct HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
+	Schedules.Schedule as Schedule
+into Holidays
+from InformationRegister.Holidays as HolidaysList
+	//
+	// Schedules
+	//
+	join InformationRegister.Schedules as Schedules
+	on Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Day = HolidaysList.Day
+	and Schedules.Schedule.Holidays = HolidaysList.Reference
+	and Schedules.Minutes &gt; 0
+where HolidaysList.Day between &amp;DateStart and &amp;DateEnd
+;
 // SimpleHours
 select Location.Employee as Employee, Calendar.Day as Day,
 	sum ( case
-		when HolidaysList.Reference is not null then 0
+		when HolidaysList.Day is not null then 0
 		when Vacations.Day is not null then 0
 		when SickLeaves.Day is not null then 0
-		when Schedules.Minutes - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) &lt; 0 then
+		when Schedules.Minutes - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) &lt; 0 then
 			0
 		else
-			Schedules.Minutes - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 )
+			Schedules.Minutes
+			- case when Preholidays.Day is null then 0 else 60 end
+			- isnull ( Absences.Minutes, 0 )
+			+ isnull ( UsedBankHours.Minutes, 0 )
 	end ) / 60 as Hours,		
 	sum ( case
-		when HolidaysList.Reference is not null then 0
+		when HolidaysList.Day is not null then 0
 		when Vacations.Day is not null then 0
 		when SickLeaves.Day is not null then 0
-		when Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) &lt; 0 then
+		when Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) &lt; 0 then
 			0
-		when Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) &gt; Schedules.MinutesEvening then
+		when Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) &gt; Schedules.MinutesEvening then
 			Schedules.MinutesEvening
 		else
-			Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) )
+			Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) )
 	end ) / 60 as HoursEvening,
 	sum ( case
-		when HolidaysList.Reference is not null then 0
+		when HolidaysList.Day is not null then 0
 		when Vacations.Day is not null then 0
 		when SickLeaves.Day is not null then 0
-		when Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) ) &lt; 0 then
+		when Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) ) &lt; 0 then
 			0
-		when Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) ) &gt; Schedules.MinutesNight then
+		when Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end  - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) ) &gt; Schedules.MinutesNight then
 			Schedules.MinutesNight
 		else
-			Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) )
+			Schedules.MinutesNight + ( Schedules.MinutesEvening + ( Schedules.Minutes - Schedules.MinutesEvening - Schedules.MinutesNight - case when Preholidays.Day is null then 0 else 60 end - isnull ( Absences.Minutes, 0 ) + isnull ( UsedBankHours.Minutes, 0 ) ) )
 	end ) / 60 as HoursNight
 into SimpleHours
 from Location as Location
@@ -729,14 +720,20 @@ from Location as Location
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
-	and Schedules.Day between Location.DateStart and Location.DateEnd
 	//
 	// Holidays
 	//
-	left join InformationRegister.Holidays as HolidaysList
-	on HolidaysList.Reference = Schedules.Schedule.Holidays
+	left join Holidays as HolidaysList
+	on HolidaysList.Schedule = Schedules.Schedule
 	and HolidaysList.Day = Schedules.Day
+	//
+	// Preholidays
+	//
+	left join Holidays as Preholidays
+	on Preholidays.Schedule = Schedules.Schedule
+	and Preholidays.Preholiday = Schedules.Day
 	and Schedules.Minutes &gt; 0
 	//
 	// Absences
@@ -1019,32 +1016,6 @@ from (
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
 		<useRestriction>true</useRestriction>
 		<expression>&amp;Period.StartDate</expression>
-	</parameter>
-	<parameter>
-		<name>EndMonth</name>
-		<title xsi:type="xs:string">End month</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>DateTime</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>true</useRestriction>
-		<expression>endofperiod ( &amp;Period.EndDate, "month" )</expression>
-	</parameter>
-	<parameter>
-		<name>StartMonth</name>
-		<title xsi:type="xs:string">Start month</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>DateTime</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>true</useRestriction>
-		<expression>beginofperiod ( &amp;Period.StartDate, "month" )</expression>
 	</parameter>
 	<parameter>
 		<name>Period</name>
