@@ -1,13 +1,47 @@
-﻿Call ( "Common.Init" );
+﻿// Check if payroll takes into account pre-holidays
+
+Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A05U" );
+id = Call ( "Common.ScenarioID", "A05W" );
 env = getEnv ( id );
 createEnv ( env );
 
-make ( "01/01/2017", "01/31/2017", env );
-form = With ( "Timesheet*" );
-Call ( "Common.CheckLogic", "#Result" );
+#region createPayroll
+Call("Documents.Payroll.ListByMemo", id);
+With();
+if (Call("Table.Count", Get("#List"))) then
+	Click("#FormChange");
+	With();
+else
+	Commando ( "e1cib/command/Document.Payroll.Create" );
+	documentDate = Date ( Fetch ( "#DateStart" ) );
+	date = Call("Common.ToDate", env.Date);
+	direction = ? ( documentDate < date, 1, -1 );
+	breaker = 1;
+	while ( breaker < 200 ) do
+		dateStart = Date ( Fetch ( "#DateStart" ) );
+		if ( dateStart = date ) then
+			break;
+		else
+			Click ( ? ( direction = 1, "#NextPeriod", "#PreviousPeriod" ) );
+		endif;
+		breaker = breaker + 1;
+	enddo;
+	Set("#Memo", id);
+	Click("#JustSave");
+endif;
+
+Click ( "#Fill" );
+With ( "Payroll: Setup Filters" );
+table = Get ( "#UserSettings" );
+GotoRow ( table, "Setting", "Department" );
+Put ( "#UserSettingsValue", env.Department, table );
+Click ( "#FormFill" );
+Pause(4);
+With();
+Activate("#Compensations");
+Check("#Compensations / #CompensationsHours [1]", 167); // 168-1 preholiday hour
 
 // *************************
 // Procedures
@@ -17,11 +51,11 @@ Function getEnv ( ID )
 	
 	p = new Structure ();
 	p.Insert ( "ID", ID );
-	p.Insert ( "Date", "01/01/2017" );
+	p.Insert ( "Date", "1/01/2017" );
 	p.Insert ( "Year", "2017" );
 	p.Insert ( "Employee", "Employee1: " + id );
-	p.Insert ( "Department1", "_Department1 " + ID );
-	p.Insert ( "Department2", "_Department2 " + ID );
+	p.Insert ( "Department", "_Department " + ID );
+	p.Insert ( "Holidays", "Holidays " + ID );
 	return p;
 	
 EndFunction
@@ -29,14 +63,14 @@ EndFunction
 Procedure createEnv ( Env )
 	
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
 	date = Env.Date;
 	
 	// *************************
-	// Create Employees
+	// Create Employee
 	// *************************
 	
 	employees = new Array ();
@@ -56,11 +90,7 @@ Procedure createEnv ( Env )
 	// *************************
 	
 	p = Call ( "Catalogs.Departments.Create.Params" );
-	p.Description = Env.Department1;
-	Call ( "Catalogs.Departments.Create", p );
-	
-	p = Call ( "Catalogs.Departments.Create.Params" );
-	p.Description = Env.Department2;
+	p.Description = Env.Department;
 	Call ( "Catalogs.Departments.Create", p );
 	
 	// *************************
@@ -73,22 +103,31 @@ Procedure createEnv ( Env )
 	p.Method = "Monthly Rate";
 	Call ( "CalculationTypes.Compensations.Create", p );
 	
-	p = Call ( "CalculationTypes.Compensations.Create.Params" );
-	vacation = "Vacation: " + id;
-	p.Description = vacation;
-	p.Method = "Vacation";
-	Call ( "CalculationTypes.Compensations.Create", p );
+	// **************************
+	// Create Holidays & Schedule
+	// **************************
 	
-	// *************************
-	// Create Schedule
-	// *************************
-	
+	holidays = Env.Holidays;
+	p = Call ( "Catalogs.Holidays.Create.Params" );
+	p.Description = holidays;
+	days = p.Days;
+	holiday = Call ( "Catalogs.Holidays.Create.Day" );
+	holiday.Day = Date ( 2017, 1, 4 );
+	holiday.Title = "Some Holiday 1";
+	days.Add ( holiday );
+	holiday = Call ( "Catalogs.Holidays.Create.Day" );
+	holiday.Day = Date ( 2017, 1, 7 );
+	holiday.Title = "Some Holiday 2";
+	days.Add ( holiday );
+	Call ( "Catalogs.Holidays.Create", p );
+
 	p = Call ( "Catalogs.Schedules.Create.Params" );
 	schedule = "_Schedule: " + id;
 	p.Year = Env.Year;
 	p.Description = schedule;
 	p.MondayEvening = 1;
 	p.MondayNight = 1;
+	p.Holidays = holidays;
 	Call ( "Catalogs.Schedules.Create", p );
 	
 	// *************************
@@ -96,48 +135,11 @@ Procedure createEnv ( Env )
 	// *************************
 	
 	params = Call ( "Documents.Hiring.Create.Params" );
-	addEmployee ( params, employee1Main, "Accountant", Env.Department1, mainCompensation, schedule, date, "10000" );
+	addEmployee ( params, employee1Main, "Accountant", Env.Department, mainCompensation, schedule, date, "10000" );
 	params.Date = date;
 	Call ( "Documents.Hiring.Create", params );
 	
-	// *************************
-	// Transfer
-	// *************************
-	
-	Commando ( "e1cib/data/Document.EmployeesTransfer" );
-	form = With ( "Employees Transfer (create)" );
-	Put ( "#Date", "01/15/2017" );
-	Click ( "#EmployeesContextMenuAdd" );
-	With ( "Employee" );
-	Put ( "#Employee", employee1Main );
-	Put ( "#Action", "Change" );
-	Put ( "#Date", "01/15/2017" );
-	Put ( "#Department", Env.Department2 );
-	Put ( "#Position", "Manager" );
-	Put ( "#Compensation", mainCompensation );
-	Put ( "#Rate", "15000" );
-	Click ( "#FormOK" );
-	
-	With ( form );
-	Click ( "#FormPostAndClose" );
-	
-	// *************************
-	// Vacation
-	// *************************
-	
-	Commando ( "e1cib/data/Document.Vacation" );
-	With ( "Vacation (create)" );
-	Put ( "#Date", "01/29/2017" );
-	table = Activate ( "#Employees" );
-	Click ( "#EmployeesContextMenuAdd" );
-	Put ( "#EmployeesEmployee", employee1Main, table );
-	Put ( "#EmployeesDateStart", "01/29/2017", table );
-	Put ( "#EmployeesDateEnd", "01/31/2017", table );
-	Put ( "#EmployeesCompensation", vacation, table );
-	
-	Click ( "#FormPostAndClose" );
-	
-	Call ( "Common.StampData", id );
+	RegisterEnvironment(id);
 	
 EndProcedure
 
