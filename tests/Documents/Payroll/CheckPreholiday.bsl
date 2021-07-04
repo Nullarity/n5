@@ -38,9 +38,10 @@ table = Get ( "#UserSettings" );
 GotoRow ( table, "Setting", "Department" );
 Put ( "#UserSettingsValue", env.Department, table );
 Click ( "#FormFill" );
-Pause(4);
+Pause(3 * __.Performance);
 With();
 Activate("#Compensations");
+Check("#Compensations / #CompensationsResult [1]", 10000); // Amount should not be changed
 Check("#Compensations / #CompensationsHours [1]", 167); // 168-1 preholiday hour
 
 // *************************

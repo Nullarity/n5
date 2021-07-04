@@ -553,6 +553,7 @@ from Calendar as Calendar
 	//
 	left join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 	and Schedules.Minutes &gt; 0
 	//
@@ -714,6 +715,7 @@ from InformationRegister.Schedules as Schedules
 		from Intervals as Intervals
 		) as Intervals
 	on Intervals.Schedule = Schedules.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day between Intervals.DateStart and Intervals.DateEnd
 	//
 	// Holidays
@@ -721,6 +723,7 @@ from InformationRegister.Schedules as Schedules
 	left join Holidays as HolidaysList
 	on HolidaysList.Schedule = Schedules.Schedule
 	and HolidaysList.Day = Schedules.Day
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 	//
 	// Preholidays
@@ -728,6 +731,7 @@ from InformationRegister.Schedules as Schedules
 	left join Holidays as Preholidays
 	on Preholidays.Schedule = Schedules.Schedule
 	and Preholidays.Preholiday = Schedules.Day
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 group by Schedules.Schedule, Intervals.DateStart, Intervals.DateEnd
 ;
@@ -742,8 +746,8 @@ from InformationRegister.Schedules as Schedules
 	left join InformationRegister.Holidays as Holidays
 	on Holidays.Reference = Schedules.Schedule.Holidays
 	and Holidays.Day = Schedules.Day
-	and Schedules.Year = Year ( &amp;DateStart )
-where Schedules.Year = Year ( &amp;DateStart )
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+where Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 and Schedules.Minutes &gt; 0
 and Schedules.Schedule in ( select distinct Intervals.Schedule from Intervals )
 group by Schedules.Schedule
@@ -880,6 +884,7 @@ from Document.Vacation.Employees as Vacations
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Time.Day
 	//
 	// Holidays
@@ -887,6 +892,7 @@ from Document.Vacation.Employees as Vacations
 	left join InformationRegister.Holidays as HolidaysList
 	on HolidaysList.Reference = Schedules.Schedule.Holidays
 	and HolidaysList.Day = Schedules.Day
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 	//
 	// Spans
@@ -921,6 +927,7 @@ from InformationRegister.Hours as Hours
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Hours.Day
 	//
 	// Spans
@@ -951,6 +958,7 @@ from Document.Vacation.Employees as Vacations
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day between Vacations.DateStart and Vacations.DateEnd
 	//
 	// Holidays
@@ -994,6 +1002,7 @@ from VacationsToCalculate as Vacations
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Vacations.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day &gt;= dateadd ( beginofperiod ( Vacations.DateStart, month ), month, -3 )
 	and Schedules.Day &lt; beginofperiod ( Vacations.DateStart, month )
 	and Schedules.Minutes &gt; 0
@@ -1086,6 +1095,7 @@ from (
 			//
 			join InformationRegister.Schedules as Schedules
 			on Schedules.Schedule = Compensations.Schedule
+			and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 			and Schedules.Day between Compensations.DateStart and Compensations.DateEnd
 			//
 			// Holidays
@@ -1309,6 +1319,7 @@ from (
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Time.Day
 	//
 	// Spans
@@ -1346,7 +1357,8 @@ from SickLeavesToCalculate as SickLeaves
 	// Schedules
 	//
 	join InformationRegister.Schedules as Schedules
-	on Schedules.Day &gt;= dateadd ( beginofperiod ( SickLeaves.DateStart, month ), month, -3 )
+	on Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Day &gt;= dateadd ( beginofperiod ( SickLeaves.DateStart, month ), month, -3 )
 	and Schedules.Day &lt; beginofperiod ( SickLeaves.DateStart, month )
 	and Schedules.Minutes &gt; 0
 group by SickLeaves.Ref, SickLeaves.Employee, Schedules.Schedule, beginofperiod ( Schedules.Day, month )
@@ -1444,6 +1456,7 @@ from (
 			//
 			join InformationRegister.Schedules as Schedules
 			on Schedules.Schedule = Compensations.Schedule
+			and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 			and Schedules.Day between Compensations.DateStart and Compensations.DateEnd
 			//
 			// Holidays
@@ -1518,8 +1531,8 @@ from Location as Location
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
-	and Schedules.Day between Location.DateStart and Location.DateEnd
 	//
 	// Holidays
 	//
