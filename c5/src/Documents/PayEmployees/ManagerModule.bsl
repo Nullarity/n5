@@ -39,9 +39,8 @@ Procedure sqlFields ( Env )
 	s = "
 	|// @Fields
 	|select Documents.Date as Date, Documents.Company as Company, Documents.DepositLiabilities as DepositLiabilities,
-	|	Documents.EmployeesDebt as EmployeesDebt, Documents.EmployerDebt as EmployerDebt, Documents.Method as Method,
-	|	Documents.BankAccount as BankAccount, Documents.CashFlow as CashFlow, Documents.Location as Location,
-	|	Documents.Account as Account
+	|	Documents.Method as Method, Documents.BankAccount as BankAccount, Documents.CashFlow as CashFlow,
+	|	Documents.Location as Location, Documents.Account as Account
 	|from Document.PayEmployees as Documents
 	|where Documents.Ref = &Ref
 	|";
@@ -138,25 +137,15 @@ Procedure commitTaxes ( Env )
 	p.Date = fields.Date;
 	p.Company = fields.Company;
 	p.Recordset = Env.Buffer;
-	employeesDebt = fields.EmployeesDebt;
-	employerDebt = fields.EmployerDebt;
 	compensations = Env.Compensations;
 	table = distributeTaxes ( Env );
 	for each taxRow in table do
 		amount = taxRow.Result;
 		compensationRow = compensations [ taxRow.LN - 1 ];
 		method = taxRow.Method;
-		if ( method = Enums.Calculations.MedicalInsurance ) then
-			p.AccountDr = employerDebt;
-		else
-			p.AccountDr = compensationRow.AccountDr;
-			compensationRow.Amount = compensationRow.Amount - amount;
-		endif; 
-		if ( method = Enums.Calculations.SocialInsuranceEmployee ) then
-			p.AccountCr = employeesDebt;
-		else
-			p.AccountCr = taxRow.AccountCr;
-		endif; 
+		p.AccountDr = compensationRow.AccountDr;
+		compensationRow.Amount = compensationRow.Amount - amount;
+		p.AccountCr = taxRow.AccountCr;
 		employee = compensationRow.Employee;
 		p.Amount = amount;
 		p.DimDr1 = employee;

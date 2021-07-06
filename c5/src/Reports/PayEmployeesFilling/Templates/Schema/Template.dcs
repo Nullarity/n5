@@ -185,8 +185,7 @@ from (
 		Based.Account as Account, Based.Amount as Base, Based.Amount / 100 * Rates.Rate as Result
 	from (
 		select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Taxes.Ref as Tax,
-		case when Taxes.Ref.Method = value ( Enum.Calculations.SocialInsuranceEmployee ) then &amp;EmployeesDebt else Taxes.Ref.Account end as Account,
-		sum ( Compensations.Amount ) as Amount
+		Taxes.Ref.Account as Account, sum ( Compensations.Amount ) as Amount
 		from AllCompensations as Compensations
 			//
 			// Taxes
@@ -195,11 +194,7 @@ from (
 			on Taxes.CalculationType = Compensations.Compensation
 			// There are fixed set of accounts which should be calculated
 			// at this point in time (actual Payment)
-			and Taxes.Ref.Method in (
-				value ( Enum.Calculations.MedicalInsurance ),
-				value ( Enum.Calculations.MedicalInsuranceEmployee ),
-				value ( Enum.Calculations.SocialInsuranceEmployee )
-			)
+			and Taxes.Ref.Method = value ( Enum.Calculations.MedicalInsurance )
 		group by Compensations.Employee, Compensations.Compensation, Taxes.Ref
 		) as Based
 		//
@@ -395,7 +390,7 @@ group by Deductions.Employee
 index by Employee
 ;
 // OtherTaxesAccounts
-select distinct case when Taxes.Ref.Method = value ( Enum.Calculations.SocialInsuranceEmployee ) then &amp;EmployeesDebt else Taxes.Ref.Account end as Account
+select distinct Taxes.Ref.Account as Account
 into OtherTaxesAccounts
 from AllCompensations as Compensations
 	//
@@ -487,9 +482,7 @@ from (
 	select OtherTaxes.Employee, - OtherTaxes.Result
 	from OtherTaxes as OtherTaxes
 	where OtherTaxes.Compensation in ( select distinct Compensation from TaxableCompensations )
-	and OtherTaxes.Tax.Method in (
-		value ( Enum.Calculations.MedicalInsuranceEmployee ),
-		value ( Enum.Calculations.SocialInsuranceEmployee ) )
+	and OtherTaxes.Tax.Method = value ( Enum.Calculations.MedicalInsurance )
 	) as Base
 	//
 	// Taxes
@@ -581,11 +574,9 @@ from (
 order by Taxes.Employee.Description, Taxes.Employee.Code,
 	case Taxes.Tax.Method
 		when value ( Enum.Calculations.MedicalInsurance ) then 0
-		when value ( Enum.Calculations.SocialInsuranceEmployee ) then 1
-		when value ( Enum.Calculations.MedicalInsuranceEmployee ) then 2
-	 	when value ( Enum.Calculations.IncomeTax ) then 3
-		when value ( Enum.Calculations.FixedIncomeTax ) then 4
-		else 5
+	 	when value ( Enum.Calculations.IncomeTax ) then 1
+		when value ( Enum.Calculations.FixedIncomeTax ) then 2
+		else 3
 	end
 ;
 // Final selection: Compensations
@@ -785,18 +776,6 @@ order by Compensations.Employee.Description, Compensations.Employee.Code,
 		</valueType>
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
 		<useRestriction>true</useRestriction>
-	</parameter>
-	<parameter>
-		<name>EmployeesDebt</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Employee's debt</v8:content>
-			</v8:item>
-		</title>
-		<value xsi:nil="true"/>
-		<useRestriction>true</useRestriction>
-		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Percent</name>

@@ -375,106 +375,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="ae1e61e2-a5ba-4107-9e43-1e3a7ca81e99">
-    <name>EmployeesDebt</name>
-    <synonym>
-      <key>en</key>
-      <value>Employees Debt</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Задолженность персонала</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Datoriile angajaților</value>
-    </synonym>
-    <type>
-      <types>ChartOfAccountsRef.General</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Employee's other debt account. It is used to calculate taxes which will be applied during the payment process</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Счет учета прочей задолженности для накопления налогов к удержанию у сотрудников при выплате ЗП</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Contul de evidență altor datorii pentru acumularea impozitelor la deducerea la plată salariului</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillChecking>ShowError</fillChecking>
-    <choiceParameters>
-      <name>Filter.Folder</name>
-      <value xsi:type="core:BooleanValue"/>
-    </choiceParameters>
-    <choiceParameters>
-      <name>Filter.Class</name>
-      <value xsi:type="core:ReferenceValue">
-        <value>Enum.Accounts.EnumValue.OtherCurrentAssets</value>
-      </value>
-    </choiceParameters>
-    <choiceParameters>
-      <name>Filter.Offline</name>
-      <value xsi:type="core:BooleanValue"/>
-    </choiceParameters>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="b0811fce-4e07-49dc-af46-beee555436de">
-    <name>EmployerDebt</name>
-    <synonym>
-      <key>en</key>
-      <value>Employer Debt</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Предстоящие обязательства</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Angajamente viitoare</value>
-    </synonym>
-    <type>
-      <types>ChartOfAccountsRef.General</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Employer's other debt account. Used for accumulating taxes which will be applied in payment process</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Счет учета прочей задолженности для накопления налогов к удержанию у работодателя при выплате ЗП</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Contul de evidență altor datorii pentru acumularea impozitelor la deducerea la angajator la plata salar</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillChecking>ShowError</fillChecking>
-    <choiceParameters>
-      <name>Filter.Folder</name>
-      <value xsi:type="core:BooleanValue"/>
-    </choiceParameters>
-    <choiceParameters>
-      <name>Filter.Class</name>
-      <value xsi:type="core:ReferenceValue">
-        <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
-      </value>
-    </choiceParameters>
-    <choiceParameters>
-      <name>Filter.Offline</name>
-      <value xsi:type="core:BooleanValue"/>
-    </choiceParameters>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="4675fda4-b5a6-4f9c-abb6-06ead5cd7f72">
     <name>Memo</name>
     <synonym>
@@ -2512,45 +2412,6 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="aceda528-fd64-4403-b7b8-57359eab1902">
-      <name>Medical</name>
-      <synonym>
-        <key>en</key>
-        <value>Medical</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Медстрах</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Asigurarea medicală</value>
-      </synonym>
-      <type>
-        <types>Number</types>
-        <numberQualifiers>
-          <precision>15</precision>
-          <scale>2</scale>
-        </numberQualifiers>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>Medical insurance, employer</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Медицинское страхование, работодатель</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Asigurare medicala, angajator</value>
-      </toolTip>
-      <markNegatives>true</markNegatives>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
     <attributes uuid="1a131be0-75e6-4a64-83a1-25b516c27364">
       <name>Net</name>
       <synonym>
@@ -2633,7 +2494,7 @@
       <name>Social</name>
       <synonym>
         <key>en</key>
-        <value>Social, Employer</value>
+        <value>Social</value>
       </synonym>
       <synonym>
         <key>ru</key>
@@ -2652,54 +2513,15 @@
       </type>
       <toolTip>
         <key>en</key>
-        <value>Social insurance, employer</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Социальное страхование, компания</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Asigurări sociale, angajator</value>
-      </toolTip>
-      <markNegatives>true</markNegatives>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
-    <attributes uuid="ddd3a980-0f94-48a6-bc34-023d3004d07d">
-      <name>SocialEmployee</name>
-      <synonym>
-        <key>en</key>
-        <value>Social</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Соцфонд</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Asigurarea socială</value>
-      </synonym>
-      <type>
-        <types>Number</types>
-        <numberQualifiers>
-          <precision>15</precision>
-          <scale>2</scale>
-        </numberQualifiers>
-      </type>
-      <toolTip>
-        <key>en</key>
         <value>Social insurance</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Asigurări sociale</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
         <value>Социальное страхование</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Asigurarea socială</value>
       </toolTip>
       <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>

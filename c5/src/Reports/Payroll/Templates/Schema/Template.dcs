@@ -524,7 +524,6 @@ into Taxes
 from Document.PayEmployees.Taxes as Taxes
 {where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
 where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
-and Taxes.Tax.Method &lt;&gt; value ( Enum.Calculations.MedicalInsurance )
 and Taxes.Ref.Posted
 ;
 // Main selection

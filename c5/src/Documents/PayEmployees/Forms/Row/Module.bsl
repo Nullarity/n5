@@ -118,6 +118,6 @@ EndProcedure
 &AtClient
 Procedure EditOnChange ( Item )
 	
-	Appearance.Apply ( ThisObject, "Object.Compensations.Edit" );
+	Appearance.Apply ( ThisObject, "TableRow.Edit" );
 	
 EndProcedure

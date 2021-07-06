@@ -50,9 +50,7 @@ Procedure sqlEmployees ( Env )
 	|select Employees.Account as Account, Employees.Compensation as Compensation,
 	|	Employees.Individual as Employee, Employees.IncomeTax as IncomeTax,
 	|	Employees.IncomeTaxAccount as IncomeTaxAccount, Employees.Medical as Medical,
-	|	Employees.MedicalAccount as MedicalAccount, Employees.Paid as Paid, Employees.Balance as Balance,
-	|	Employees.Social as Social, Employees.EmployeesDebt as EmployeesDebt,
-	|	Employees.SocialAccrued as SocialAccrued
+	|	Employees.MedicalAccount as MedicalAccount, Employees.Paid as Paid, Employees.Balance as Balance
 	|from Document.PayrollBalances.Employees as Employees
 	|where Employees.Ref = &Ref
 	|";
@@ -76,7 +74,6 @@ Procedure commit ( Env )
 	p.Recordset = Env.Registers.General;
 	for each row in Env.Employees do
 		commitCompensation ( p, row );
-		commitSocial ( env, p, row );
 		commitMedical ( env, p, row );
 		commitIncomeTax ( p, row );
 	enddo; 
@@ -105,35 +102,6 @@ Procedure commitCompensation ( Params, Row )
 		Params.Amount = balance;
 		Params.DimDr1 = Row.Employee;
 		Params.DimDr2 = compensation;
-		GeneralRecords.Add ( Params );
-	endif; 
-	
-EndProcedure 
-
-Procedure commitSocial ( Env, Params, Row )
-	
-	employee = Row.Employee;
-	employeesDebt = Row.EmployeesDebt;
-	accrued = row.SocialAccrued;
-	if ( accrued <> 0 ) then
-		Params.AccountDr = employeesDebt;
-		account = Row.Account;
-		Params.AccountCr = account;
-		Params.Amount = accrued;
-		Params.DimDr1 = employee;
-		GeneralRecords.Add ( Params );
-		Params.AccountCr = employeesDebt;
-		Params.AccountDr = account;
-		Params.Amount = accrued;
-		Params.DimCr1 = employee;
-		GeneralRecords.Add ( Params );
-	endif; 
-	balance = Row.Social;
-	if ( balance <> 0 ) then
-		Params.AccountDr = employeesDebt;
-		Params.AccountCr = ChartsOfAccounts.General._0;
-		Params.Amount = balance;
-		Params.DimDr1 = employee;
 		GeneralRecords.Add ( Params );
 	endif; 
 	

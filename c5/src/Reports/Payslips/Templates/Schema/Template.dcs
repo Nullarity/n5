@@ -667,9 +667,7 @@ select Taxes.Employee as Employee, Taxes.Deductions as Deductions, Taxes.Tax as 
 from Document.PayEmployees.Taxes as Taxes
 {where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
 where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
-and Taxes.Ref.Posted 
-and Taxes.Tax.Method &lt;&gt; value ( Enum.Calculations.MedicalInsurance )
-	</query>
+and Taxes.Ref.Posted</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
 	<dataSet xsi:type="DataSetQuery">
@@ -991,8 +989,7 @@ select Taxes.Employee as Employee, sum ( Taxes.Result ) as TotalTaxAmount, begin
 from Document.PayEmployees.Taxes as Taxes
 {where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
 where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
-and Taxes.Ref.Posted 
-and Taxes.Tax.Method &lt;&gt; value ( Enum.Calculations.MedicalInsurance )
+and Taxes.Ref.Posted
 group by Taxes.Employee, beginofperiod ( Taxes.Ref.Date, month )
 	 	</query>
 		<autoFillFields>false</autoFillFields>

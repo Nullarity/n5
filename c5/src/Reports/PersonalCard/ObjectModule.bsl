@@ -177,14 +177,12 @@ Procedure sqlTaxes ()
 	s = "
 	|// Taxes
 	|select Taxes.Employee as Employee, Taxes.Ref as Ref, Taxes.Date as Date, sum ( Taxes.Months ) as Months, sum ( Taxes.Deductions ) as Deductions,
-	|	sum ( Taxes.MedicalBase ) as MedicalBase, sum ( Taxes.Medical ) as Medical, sum ( Taxes.SocialBase ) as SocialBase, sum ( Taxes.Social ) as Social,
+	|	sum ( Taxes.MedicalBase ) as MedicalBase, sum ( Taxes.Medical ) as Medical,
 	|	sum ( Taxes.IncomeTaxBase ) as IncomeTaxBase, sum ( Taxes.IncomeTax ) as IncomeTax
 	|into Taxes	
 	|from ( select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Period as Months, Taxes.Deductions as Deductions,
-	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsuranceEmployee ) then Taxes.Base else 0 end as MedicalBase,
-	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsuranceEmployee ) then Taxes.Result else 0 end as Medical,
-	|		case when Taxes.Method = value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Base else 0 end as SocialBase,
-	|		case when Taxes.Method = value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Result else 0 end as Social,
+	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Base else 0 end as MedicalBase,
+	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Result else 0 end as Medical,
 	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) or Taxes.Method = value ( Enum.Calculations.FixedIncomeTax ) then Taxes.Base else 0 end as IncomeTaxBase,
 	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) or Taxes.Method = value ( Enum.Calculations.FixedIncomeTax ) then Taxes.Result else 0 end as IncomeTax
 	|	from Employees as Employees
@@ -195,14 +193,14 @@ Procedure sqlTaxes ()
 	|		on Taxes.Ref.Posted
 	|		and Taxes.Ref.Date between Employees.DateStart and Employees.DateEnd
 	|		and Taxes.Employee = &Individual			
-	|		and Taxes.Method in ( value ( Enum.Calculations.MedicalInsuranceEmployee ), value ( Enum.Calculations.SocialInsuranceEmployee ), 
+	|		and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), 
 	|			value ( Enum.Calculations.IncomeTax ), value ( Enum.Calculations.FixedIncomeTax ) )
 	|	) as Taxes
 	|group by Taxes.Employee, Taxes.Ref, Taxes.Date
 	|;
 	|// #Taxes
 	|select Taxes.Employee as Employee, Taxes.Date as Date, Compensations.Amount as Income, Taxes.Months as Months, Taxes.Deductions as Deductions, 
-	|	Taxes.MedicalBase as MedicalBase, Taxes.Medical as Medical, Taxes.SocialBase as SocialBase, Taxes.Social as Social, Taxes.IncomeTaxBase as IncomeTaxBase, 
+	|	Taxes.MedicalBase as MedicalBase, Taxes.Medical as Medical, Taxes.IncomeTaxBase as IncomeTaxBase, 
 	|	Taxes.IncomeTax as IncomeTax 
 	|from Taxes as Taxes
 	|	//
@@ -521,8 +519,6 @@ Procedure putRow ()
 	totalIncome = 0;
 	medicalBase = 0;
 	medical = 0;
-	socialBase = 0;
-	social = 0;
 	calculatedTax = 0;
 	for each row in Taxes do
 		FillPropertyValues ( p, row );
@@ -531,8 +527,6 @@ Procedure putRow ()
 		p.TotalIncome = total ( totalIncome, income );
 		p.MedicalBase = total ( medicalBase, row.MedicalBase );
 		p.Medical = total ( medical, row.Medical );
-		p.SocialBase = total ( socialBase, row.SocialBase );
-		p.Social = total ( social, row.Social );
 		p.IncomeTaxBase = row.IncomeTaxBase;
 		tax = row.IncomeTax;
 		p.IncomeTax = tax;

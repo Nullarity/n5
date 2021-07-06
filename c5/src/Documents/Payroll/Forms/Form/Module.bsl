@@ -6,6 +6,14 @@ var TableTaxRow export;
 var TableTotalsRow export;
 &AtClient
 var RemovingEmployee;
+&AtClient
+var RemovingIndividual;
+&AtClient
+var FillDocument; 
+&AtClient
+var CalculateAll; 
+&AtClient
+var CalculateTaxes; 
 
 // *****************************************
 // *********** Form events
@@ -40,7 +48,7 @@ Procedure readAppearance ()
 	|PreviousPeriod NextPeriod show Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateEnd lock Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateStart lock Object.Period <> Enum.TimesheetPeriods.Other;
-	|Compensations Taxes Period Date Number Company EmployeesDebt EmployerDebt lock Object.Posted;
+	|Compensations Taxes Period Date Number Company lock Object.Posted;
 	|PeriodGroup CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
 	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty
@@ -258,9 +266,32 @@ EndProcedure
 &AtClient
 Procedure Fill ( Command )
 	
-	runCalculations ( 1 );
+	if ( Modified ) then
+		Output.SaveModifiedObject ( ThisObject, FillDocument );
+	else
+		runCalculations ( FillDocument );
+	endif; 
 	
 EndProcedure
+
+&AtClient
+Procedure SaveModifiedObject ( Answer, Variant ) export
+	
+	if ( Answer = DialogReturnCode.No ) then
+		return;
+	endif; 
+	if ( save () ) then
+		runCalculations ( Variant );
+	endif; 
+	
+EndProcedure
+
+&AtClient
+Function save ()
+	
+	return Write ( new Structure ( "JustSave", true ) );
+	
+EndFunction
 
 &AtClient
 Procedure runCalculations ( Variant )
@@ -268,7 +299,7 @@ Procedure runCalculations ( Variant )
 	CalculationVariant = Variant;
 	if ( Forms.Check ( ThisObject, "DateStart, DateEnd, Company" ) ) then
 		params = fillingParams ();
-		if ( CalculationVariant = 1 ) then
+		if ( CalculationVariant = FillDocument ) then
 			Filler.Open ( params, ThisObject );
 		else
 			Filler.ProcessData ( params, ThisObject );
@@ -301,8 +332,6 @@ Function getFilters ()
 		item = DC.CreateParameter ( "CalculatingTaxesPayroll", ref );
 		filters.Add ( item );
 	endif; 
-	item = DC.CreateParameter ( "EmployerDebt", Object.EmployerDebt );
-	filters.Add ( item );
 	item = DC.CreateParameter ( "CalculationVariant", CalculationVariant );
 	filters.Add ( item );
 	item = DC.CreateParameter ( "Period", new StandardPeriod ( Object.DateStart, Object.DateEnd ) );
@@ -335,40 +364,20 @@ EndFunction
 Procedure Calculate ( Command )
 	
 	if ( Modified ) then
-		Output.SaveModifiedObject ( ThisObject, false );
+		Output.SaveModifiedObject ( ThisObject, CalculateAll );
 	else
-		calc ( false );
+		runCalculations ( CalculateAll );
 	endif; 
 	
 EndProcedure
-
-&AtClient
-Procedure SaveModifiedObject ( Answer, TaxesOnly ) export
-	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif; 
-	if ( Write () ) then
-		calc ( TaxesOnly );
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Procedure calc ( TaxesOnly )
-	
-	runCalculations ( ? ( TaxesOnly, 3, 2 ) );
-	Modified = true;
-	
-EndProcedure 
 
 &AtClient
 Procedure CalculateTaxes ( Command )
 	
 	if ( Modified ) then
-		Output.SaveModifiedObject ( ThisObject, true );
+		Output.SaveModifiedObject ( ThisObject, CalculateTaxes );
 	else
-		calc ( true );
+		runCalculations ( CalculateTaxes );
 	endif; 
 	
 EndProcedure
@@ -442,7 +451,15 @@ EndProcedure
 &AtClient
 Procedure CompensationsBeforeDeleteRow ( Item, Cancel )
 	
+	trackDeletion ();
+	
+EndProcedure
+
+&AtClient
+Procedure trackDeletion ()
+	
 	RemovingEmployee = TableRow.Employee;
+	RemovingIndividual = TableRow.Individual;
 	
 EndProcedure
 
@@ -450,7 +467,7 @@ EndProcedure
 Procedure CompensationsAfterDeleteRow ( Item )
 	
 	PayrollForm.DeleteTaxes ( Object, RemovingEmployee );
-	PayrollForm.CalcEmployee ( Object, RemovingEmployee );
+	PayrollForm.CalcEmployee ( Object, RemovingIndividual );
 	
 EndProcedure
 
@@ -504,13 +521,20 @@ EndProcedure
 &AtClient
 Procedure TaxesBeforeDeleteRow ( Item, Cancel )
 	
-	RemovingEmployee = TableTaxRow.Employee;
+	trackDeletion ();
 	
 EndProcedure
 
 &AtClient
 Procedure TaxesAfterDeleteRow ( Item )
 	
-	PayrollForm.CalcEmployee ( Object, RemovingEmployee );
+	PayrollForm.CalcEmployee ( Object, RemovingIndividual );
 	
 EndProcedure
+
+// *****************************************
+// *********** Variables Initialization
+
+FillDocument = 1; 
+CalculateAll = 2;
+CalculateTaxes = 3;

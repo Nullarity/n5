@@ -2623,8 +2623,7 @@ from (
 		end as Result
 	from (
 		select Compensations.Employee as Employee, Compensations.Department as Department, Compensations.Expenses as Expenses,
-			Compensations.DateStart as DateStart, Compensations.DateEnd as DateEnd, Taxes.Ref as Tax,
-			case when Taxes.Ref.Method = value ( Enum.Calculations.MedicalInsurance ) then &amp;EmployerDebt else Taxes.Ref.Account end as Account,
+			Compensations.DateStart as DateStart, Compensations.DateEnd as DateEnd, Taxes.Ref as Tax, Taxes.Ref.Account as Account,
 			sum ( Compensations.AccountingResult ) as Amount
 		from AllCompensations as Compensations
 			//
@@ -2635,7 +2634,7 @@ from (
 			and not Taxes.Ref.Method in (
 				value ( Enum.Calculations.IncomeTax ),
 				value ( Enum.Calculations.FixedIncomeTax ),
-				value ( Enum.Calculations.MedicalInsuranceEmployee )
+				value ( Enum.Calculations.MedicalInsurance )
 				)
 		group by Compensations.Employee, Compensations.Department, Compensations.Expenses, Compensations.DateStart,
 			Compensations.DateEnd, Taxes.Ref
@@ -2669,9 +2668,7 @@ from (
 order by Employee.Description, Employee.Code,
 	case Taxes.Tax.Method
 		when value ( Enum.Calculations.SocialInsurance ) then 0
-		when value ( Enum.Calculations.MedicalInsurance ) then 1
-		when value ( Enum.Calculations.SocialInsuranceEmployee ) then 2
-		else 3
+		else 1
 	end
 ;
 // Final selection: Compensations
@@ -2875,19 +2872,6 @@ order by Employee.Description, Employee.Code, DateStart, Priority, Level, Compen
 		<value xsi:nil="true"/>
 		<useRestriction>true</useRestriction>
 		<expression>case when &amp;CalculationVariant = 3 then true else false end</expression>
-		<availableAsField>false</availableAsField>
-		<use>Always</use>
-	</parameter>
-	<parameter>
-		<name>EmployerDebt</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Employer debt</v8:content>
-			</v8:item>
-		</title>
-		<value xsi:nil="true"/>
-		<useRestriction>true</useRestriction>
 		<availableAsField>false</availableAsField>
 		<use>Always</use>
 	</parameter>

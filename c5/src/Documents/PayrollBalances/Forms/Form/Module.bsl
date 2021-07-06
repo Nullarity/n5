@@ -34,10 +34,8 @@ Procedure initAccounts ()
 		if ( method = Enums.Calculations.IncomeTax
 			or method = Enums.Calculations.FixedIncomeTax ) then
 			IncomeTaxAccount = account;
-		elsif ( method = Enums.Calculations.MedicalInsuranceEmployee ) then
+		elsif ( method = Enums.Calculations.MedicalInsurance ) then
 			MedicalAccount = account;
-		elsif ( method = Enums.Calculations.SocialInsuranceEmployee ) then
-			EmployeesDebt = account;
 		endif; 
 	enddo; 
 	
@@ -57,10 +55,7 @@ Function getAccounts ()
 	|from ChartOfCalculationTypes.Taxes as Taxes
 	|where not Taxes.DeletionMark
 	|and Taxes.Account <> value ( ChartOfAccounts.General.EmptyRef )
-	|and Taxes.Method = value ( Enum.Calculations.MedicalInsuranceEmployee )
-	|union all
-	|select value ( Enum.Calculations.SocialInsuranceEmployee ), Settings.Value
-	|from InformationRegister.Settings.SliceLast ( , Parameter = value ( ChartOfCharacteristicTypes.Settings.EmployeesOtherDebt ) ) as Settings
+	|and Taxes.Method = value ( Enum.Calculations.MedicalInsurance )
 	|";
 	q = new Query ( s );
 	return q.Execute ().Unload ();
@@ -100,7 +95,6 @@ Procedure setTaxes ()
 	
 	TableRow.IncomeTaxAccount = IncomeTaxAccount;
 	TableRow.MedicalAccount = MedicalAccount;
-	TableRow.EmployeesDebt = EmployeesDebt;
 
 EndProcedure 
 

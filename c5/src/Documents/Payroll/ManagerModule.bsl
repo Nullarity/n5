@@ -75,16 +75,8 @@ Procedure sqlTaxes ( Env )
 	s = "
 	|// #Taxes
 	|select Taxes.Account as Account, Taxes.Tax.Description as Description,
-	|	Taxes.Department as Department,
-	|	case Taxes.Tax.Method
-	|		when value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Ref.EmployeesDebt
-	|		else ExpenseMethods.Account
-	|	end as AccountDr,
-	|	case Taxes.Tax.Method
-	|		when value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Individual
-	|		else ExpenseMethods.Expense
-	|	end as DimDr1,
-	|	sum ( ExpenseMethods.Rate * Taxes.Result ) as Result
+	|	Taxes.Department as Department, ExpenseMethods.Account as AccountDr,
+	|	ExpenseMethods.Expense as DimDr1, sum ( ExpenseMethods.Rate * Taxes.Result ) as Result
 	|from Document.Payroll.Taxes as Taxes
 	|	//
 	|	// ExpenseMethods
@@ -92,15 +84,7 @@ Procedure sqlTaxes ( Env )
 	|	join Catalog.ExpenseMethods.Expenses as ExpenseMethods
 	|	on ExpenseMethods.Ref = Taxes.Expenses
 	|where Taxes.Ref = &Ref
-	|group by Taxes.Account, Taxes.Tax, Taxes.Department,
-	|	case Taxes.Tax.Method
-	|		when value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Ref.EmployeesDebt
-	|		else ExpenseMethods.Account
-	|	end,
-	|	case Taxes.Tax.Method
-	|		when value ( Enum.Calculations.SocialInsuranceEmployee ) then Taxes.Individual
-	|		else ExpenseMethods.Expense
-	|	end
+	|group by Taxes.Account, Taxes.Tax, Taxes.Department, ExpenseMethods.Account, ExpenseMethods.Expense
 	|having sum ( ExpenseMethods.Rate * Taxes.Result ) <> 0
 	|";
 	Env.Selection.Add ( s );

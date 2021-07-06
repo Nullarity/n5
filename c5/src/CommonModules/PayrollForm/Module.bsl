@@ -5,11 +5,7 @@ Procedure SetAccounts ( Object ) export
 	for each row in table do
 		parameter = row.Parameter;
 		value = row.Value;
-		if ( parameter = ChartsOfCharacteristicTypes.Settings.EmployeesOtherDebt ) then
-			Object.EmployeesDebt = value;
-		elsif ( parameter = ChartsOfCharacteristicTypes.Settings.EmployerOtherDebt ) then
-			Object.EmployerDebt = value;
-		elsif ( parameter = ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) then
+		if ( parameter = ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) then
 			Object.DepositLiabilities = value;
 		endif; 
 	enddo; 
@@ -21,7 +17,6 @@ Function getAccounts ( Object )
 	
 	accounts = new Array ();
 	accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.EmployeesOtherDebt )" );
-	accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.EmployerOtherDebt )" );
 	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.PayEmployees" ) ) then
 		accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.DepositLiabilities )" );
 	endif;
@@ -68,6 +63,7 @@ Function FillTables ( Form, Result ) export
 		fillTable ( object.Base, data [ last - 2 ].Select () );
 	endif;
 	fillTotals ( object );
+	Form.Modified = true;
 	return true;
 
 EndFunction
@@ -162,25 +158,17 @@ Procedure CalcEmployee ( Object, Employee ) export
 				row.IncomeTax = row.IncomeTax + result;
 			endif;
 		elsif ( method = PredefinedValue ( "Enum.Calculations.MedicalInsurance" ) ) then
-			row.Medical = row.Medical + result;
-		elsif ( method = PredefinedValue ( "Enum.Calculations.MedicalInsuranceEmployee" ) ) then
-			row.MedicalEmployee = row.MedicalEmployee + result;
+			row.Medical = row.Medical + result; //
 		elsif ( method = PredefinedValue ( "Enum.Calculations.SocialInsurance" ) ) then
-			row.Social = row.Social + result;
-		elsif ( method = PredefinedValue ( "Enum.Calculations.SocialInsuranceEmployee" ) ) then
-			if ( Payroll ) then
-				row.SocialEmployee = row.SocialEmployee + result;
-			else
-				row.Social = row.Social + result;
-			endif; 
+			row.Social = row.Social + result; //
 		else
 			row.Other = row.Other + result;
 		endif; 
 	enddo; 
 	if ( payroll ) then
-		row.Net = row.Amount - row.Medical - row.Social - row.Other;
+		row.Net = row.Amount - row.Social - row.Other;
 	else
-		row.Net = row.Amount - row.IncomeTax - row.MedicalEmployee - row.Social - row.Other;
+		row.Net = row.Amount - row.IncomeTax - row.Medical - row.Other;
 	endif; 
 	
 EndProcedure 
@@ -195,15 +183,13 @@ Function totalsRow ( Object, Employee )
 	else
 		row = rows [ 0 ];
 		row.Amount = 0;
-		row.Social = 0;
-		row.Medical = 0;
 		row.Other = 0;
 		row.Net = 0;
 		if ( isPayroll ( Object ) ) then
-			row.SocialEmployee = 0;
+			row.Social = 0;
 		else
 			row.IncomeTax = 0;
-			row.MedicalEmployee = 0;
+			row.Medical = 0;
 		endif; 
 	endif; 
 	return row;
@@ -213,6 +199,7 @@ EndFunction
 &AtClient
 Procedure LoadRow ( Form, Params ) export
 	
+	object = Form.Object;
 	value = Params.Value;
 	if ( value = undefined ) then
 		if ( Params.NewRow ) then
@@ -223,7 +210,7 @@ Procedure LoadRow ( Form, Params ) export
 		FillPropertyValues ( tableRow, value );
 		PayrollForm.SyncTaxes ( Form );
 		PayrollForm.MakeDirty ( Form );
-		PayrollForm.CalcEmployee ( Form.Object, tableRow.Employee );
+		PayrollForm.CalcEmployee ( object, ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
 	endif;
 	
 EndProcedure 
@@ -279,10 +266,11 @@ EndProcedure
 &AtClient
 Procedure LoadTaxRow ( Form, Params ) export
 	
+	object = Form.Object;
 	changedRow = Params.Value;
 	if ( changedRow = undefined ) then
 		if ( Params.NewRow ) then
-			Form.Object.Taxes.Delete ( Form.TableTaxRow );
+			object.Taxes.Delete ( Form.TableTaxRow );
 		endif;
 	else
 		tableRow = Form.TableTaxRow;
@@ -291,7 +279,7 @@ Procedure LoadTaxRow ( Form, Params ) export
 			PayrollForm.MakeDirty ( Form );
 		endif; 
 		FillPropertyValues ( tableRow, changedRow );
-		PayrollForm.CalcEmployee ( Form.Object, tableRow.Employee );
+		PayrollForm.CalcEmployee ( object, ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
 	endif;
 	
 EndProcedure 

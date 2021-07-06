@@ -6,6 +6,12 @@ var TableTaxRow export;
 var TableTotalsRow export;
 &AtClient
 var RemovingEmployee;
+&AtClient
+var FillDocument; 
+&AtClient
+var CalculateAll; 
+&AtClient
+var CalculateTaxes; 
 
 // *****************************************
 // *********** Form events
@@ -41,7 +47,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Warning UndoPosting show Object.Posted;
-	|Compensations Taxes Date Number Company EmployeesDebt EmployerDebt DepositLiabilities PaymentGroup lock Object.Posted;
+	|Compensations Taxes Date Number Company DepositLiabilities PaymentGroup lock Object.Posted;
 	|GroupCommands CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
 	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty;
@@ -146,9 +152,32 @@ EndProcedure
 &AtClient
 Procedure Fill ( Command )
 	
-	runCalculations ( 1 );
+	if ( Modified ) then
+		Output.SaveModifiedObject ( ThisObject, FillDocument );
+	else
+		runCalculations ( FillDocument );
+	endif; 
 	
 EndProcedure
+
+&AtClient
+Procedure SaveModifiedObject ( Answer, Variant ) export
+	
+	if ( Answer = DialogReturnCode.No ) then
+		return;
+	endif; 
+	if ( save () ) then
+		runCalculations ( Variant );
+	endif; 
+	
+EndProcedure
+
+&AtClient
+Function save ()
+	
+	return Write ( new Structure ( "JustSave", true ) );
+	
+EndFunction
 
 &AtClient
 Procedure runCalculations ( Variant )
@@ -156,7 +185,7 @@ Procedure runCalculations ( Variant )
 	CalculationVariant = Variant;
 	if ( Forms.Check ( ThisObject, "Company" ) ) then
 		params = fillingParams ();
-		if ( CalculationVariant = 1 ) then
+		if ( CalculationVariant = FillDocument ) then
 			Filler.Open ( params, ThisObject );
 		else
 			Filler.ProcessData ( params, ThisObject );
@@ -189,8 +218,6 @@ Function getFilters ()
 		item = DC.CreateParameter ( "CalculatingTaxesDocument", ref );
 		filters.Add ( item );
 	endif; 
-	item = DC.CreateParameter ( "EmployeesDebt", Object.EmployeesDebt );
-	filters.Add ( item );
 	item = DC.CreateParameter ( "CalculationVariant", CalculationVariant );
 	filters.Add ( item );
 	item = DC.CreateParameter ( "Date", Catalogs.Calendar.GetDate ( Periods.GetDocumentDate ( Object ) ) );
@@ -226,40 +253,20 @@ EndFunction
 Procedure Calculate ( Command )
 	
 	if ( Modified ) then
-		Output.SaveModifiedObject ( ThisObject, false );
+		Output.SaveModifiedObject ( ThisObject, CalculateAll );
 	else
-		calc ( false );
+		runCalculations ( CalculateAll );
 	endif; 
 	
 EndProcedure
-
-&AtClient
-Procedure SaveModifiedObject ( Answer, TaxesOnly ) export
-	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif; 
-	if ( Write () ) then
-		calc ( TaxesOnly );
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Procedure calc ( TaxesOnly )
-	
-	runCalculations ( ? ( TaxesOnly, 3, 2 ) );
-	Modified = true;
-	
-EndProcedure 
 
 &AtClient
 Procedure CalculateTaxes ( Command )
 	
 	if ( Modified ) then
-		Output.SaveModifiedObject ( ThisObject, true );
+		Output.SaveModifiedObject ( ThisObject, CalculateTaxes );
 	else
-		calc ( true );
+		runCalculations ( CalculateTaxes );
 	endif; 
 	
 EndProcedure
@@ -493,3 +500,10 @@ Procedure TaxesAfterDeleteRow ( Item )
 	PayrollForm.CalcEmployee ( Object, RemovingEmployee );
 	
 EndProcedure
+
+// *****************************************
+// *********** Variables Initialization
+
+FillDocument = 1; 
+CalculateAll = 2;
+CalculateTaxes = 3;
