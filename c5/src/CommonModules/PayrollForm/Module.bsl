@@ -1,33 +1,3 @@
-&AtServer
-Procedure SetAccounts ( Object ) export
-	
-	table = getAccounts ( Object );
-	for each row in table do
-		parameter = row.Parameter;
-		value = row.Value;
-		if ( parameter = ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) then
-			Object.DepositLiabilities = value;
-		endif; 
-	enddo; 
-	
-EndProcedure 
-
-&AtServer
-Function getAccounts ( Object )
-	
-	accounts = new Array ();
-	accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.EmployeesOtherDebt )" );
-	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.PayEmployees" ) ) then
-		accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.DepositLiabilities )" );
-	endif;
-	s = "
-	|select Settings.Parameter as Parameter, Settings.Value as Value
-	|from InformationRegister.Settings.SliceLast ( , Parameter in ( " + StrConcat ( accounts, "," ) + ") ) as Settings
-	|";
-	q = new Query ( s );
-	return q.Execute ().Unload ();
-	
-EndFunction 
 
 &AtClient
 Procedure DeleteTaxes ( Object, Employee ) export

@@ -71,7 +71,7 @@ Procedure fillNew ()
 	Object.Location = settings.PaymentLocation;
 	Object.Company = settings.Company;
 	initMethod ();
-	PayrollForm.SetAccounts ( Object );
+	initAccounts ();
 	PaymentForm.SetBankAccount ( Object );
 	PaymentForm.SetAccount ( Object );
 	
@@ -105,6 +105,14 @@ Function lastMethod ()
 	return ? ( table.Count () = 0, undefined, table [ 0 ].Method );
 
 EndFunction 
+
+&AtServer
+Procedure initAccounts ()
+	
+	Object.DepositLiabilities = InformationRegisters.Settings.GetLast ( ,
+		new Structure ( "Parameter", ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) ).Value;
+	
+EndProcedure 
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

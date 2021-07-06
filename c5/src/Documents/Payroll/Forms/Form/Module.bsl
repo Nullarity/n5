@@ -67,7 +67,6 @@ Procedure fillNew ()
 	company = settings.Company;
 	Object.Company = company;
 	Object.Period = DF.Pick ( company, "PayrollPeriod" );
-	PayrollForm.SetAccounts ( Object );
 	defaultPeriod ();
 	
 EndProcedure 
