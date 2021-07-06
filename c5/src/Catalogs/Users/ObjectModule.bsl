@@ -195,6 +195,7 @@ Procedure makeProfile ()
 	
 	user = getIBUser ();
 	setProfile ( user );
+	setOptions ( user );
 	LoginsSrv.SetRights ( user );
 	user.Write ();
 	
@@ -233,8 +234,23 @@ Procedure setProfile ( User )
 		LoginsSrv.SavePassword ( Ref, password );
 	endif; 
 	
-EndProcedure 
+EndProcedure
 
+Procedure setOptions ( User )
+
+	r = InformationRegisters.UserOptions.CreateRecordManager ();	
+	r.User = Ref;
+	if ( User.Language = Metadata.Languages.Russian ) then
+		r.Romanian = false;
+		r.Russian = true;
+	else
+		r.Romanian = true;
+		r.Russian = false;
+	endif;
+	r.Write ();
+	
+EndProcedure 
+ 
 Procedure setInterface ()
 	
 	settings = new ClientSettings ();
