@@ -68,7 +68,6 @@ Function goodResponse ( Response )
 	
 EndFunction
 
-&AtClient
 Function SubscriptionExpired ( License, Error ) export
 	
 	connection = new HTTPConnection ( "www.mycont.md" );

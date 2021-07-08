@@ -397,7 +397,11 @@ EndProcedure
 Procedure displayExpiration ()
 	
 	error = undefined;
-	date = ApplicationUpdates.SubscriptionExpired ( Object.License, error );
+	#if ( WebClient ) then
+		date = subscriptionExpired ( Object.License, error );
+	#else
+		date = ApplicationUpdates.SubscriptionExpired ( Object.License, error );
+	#endif
 	if ( date = undefined ) then
 		raise error;
 	else
@@ -410,6 +414,13 @@ Procedure displayExpiration ()
 	endif;
 	
 EndProcedure
+
+&AtServerNoContext
+Function subscriptionExpired ( val License, Error )
+	
+	return ApplicationUpdates.SubscriptionExpired ( License, Error );
+	
+EndFunction
 
 &AtClient
 Procedure LicenseOnChange ( Item )
