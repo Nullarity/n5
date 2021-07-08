@@ -55,7 +55,8 @@ Procedure loadParams ()
 	VATUse = Source.VATUse;
 	type = Source.Type;
 	if not ( type.Assembling
-		or type.Disassembling ) then
+		or type.Disassembling
+		or type.TimeEntry ) then
 		VATCode = TableRow.VATCode;
 		VATRate = TableRow.VATRate;
 		VAT = TableRow.VAT;

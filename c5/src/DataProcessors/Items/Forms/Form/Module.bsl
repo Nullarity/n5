@@ -70,6 +70,24 @@ Procedure loadParams ()
 EndProcedure
 
 &AtServer
+Procedure setSocial () 
+
+	type = Source.Type;
+	invoice = type.Invoice
+	or type.InvoiceRecord;
+	if ( type.ExpenseReport
+		or invoice
+		or type.ReceiveItems
+		or type.VendorInvoice ) then
+		ShowSocial = true;
+		if ( invoice ) then
+			ShowExtraCharge = true;
+		endif;
+	endif; 
+
+EndProcedure
+
+&AtServer
 Procedure initOptions ()
 	
 	Features = Options.Features ();
@@ -332,6 +350,17 @@ Function getSearch ( Rows, Keys )
 	return search;
 	
 EndFunction 
+
+&AtClient
+Procedure setUseSocial ( Row ) 
+
+	if ( UseSocial
+		or not ShowSocial ) then
+		return;
+	endif;
+	UseSocial = row.Social
+
+EndProcedure
 
 &AtClient
 Procedure showNotification ()
@@ -842,6 +871,8 @@ Function getRow ()
 			row = getAssemblingRow ( SelectedRow, Source, Package, Feature );	
 		elsif ( type.ReceiveItems ) then
 			row = getReceiveItemsRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+		elsif ( type.TimeEntry ) then
+			row = getTimeEntryRow ( SelectedRow, Source, Package, Feature );
 		endif; 
 		cacheRow ( row );
 	endif; 
@@ -1190,6 +1221,69 @@ Function getVendorInvoiceRow ( val PricesCache, val SelectedRow, val Source, val
 	
 EndFunction 
 
+&AtServerNoContext
+Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Feature )
+	
+	row = new Structure ();
+	row.Insert ( "Feature", Feature );
+	item = SelectedRow.Ref;
+	row.Insert ( "Item", item );
+	row.Insert ( "Quantity", 1 );
+	augmentPackage ( row, Package );
+	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	row.Insert ( "Account", AccountsMap.Item ( item, Source.Company, Source.Warehouse, "Account" ).Account );
+	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
+	return row;
+	
+EndFunction 
+
+&AtServerNoContext
+Function getReceiveItemsRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+	
+	row = new Structure ();
+	row.Insert ( "Feature", Feature );
+	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	item = SelectedRow.Ref;
+	row.Insert ( "Item", item );
+	row.Insert ( "Prices", Prices );
+	row.Insert ( "Quantity", 1 );
+	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
+	augmentPackage ( row, Package );
+	pricePackage = row.Package;
+	warehouse = Source.Warehouse;
+	accounts = AccountsMap.Item ( item, Source.Company, warehouse, "Account, VAT" );
+	row.Insert ( "Account", accounts.Account );
+	row.Insert ( "VATAccount", accounts.VAT );
+	data = DF.Values ( item, "VAT, VAT.Rate as Rate, Social" );
+	row.Insert ( "VATCode", data.VAT );
+	row.Insert ( "VATRate", data.Rate );
+	row.Insert ( "Social", data.Social );
+	row.Insert ( "Total", 0 );
+	row.Insert ( "VAT", 0 );
+	row.Insert ( "ProducerPrice", 0 );
+	row.Insert ( "Price", Goods.Price ( PricesCache, Source.Date, Prices, item, pricePackage, Feature, , , , warehouse, Source.Currency ) );
+	row.Insert ( "Amount", 0 );
+	Computations.Amount ( row );
+	Computations.Total ( row, Source.VATUse );
+	return row;
+	
+EndFunction
+
+&AtServerNoContext
+Function getTimeEntryRow ( val SelectedRow, val Source, val Package, val Feature )
+	
+	row = new Structure ();
+	row.Insert ( "Feature", Feature );
+	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	item = SelectedRow.Ref;
+	row.Insert ( "Item", item );
+	row.Insert ( "Quantity", 1 );
+	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
+	augmentPackage ( row, Package );
+	return row;
+	
+EndFunction 
+
 &AtClient
 Procedure cacheRow ( Row )
 	
@@ -1485,81 +1579,4 @@ Procedure PackagesListSelection ( Item, SelectedRow, Field, StandardProcessing )
 	
 	nextPage ( Item, StandardProcessing );
 	
-EndProcedure
-
-&AtServerNoContext
-Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Feature )
-	
-	row = new Structure ();
-	row.Insert ( "Feature", Feature );
-	item = SelectedRow.Ref;
-	row.Insert ( "Item", item );
-	row.Insert ( "Quantity", 1 );
-	augmentPackage ( row, Package );
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
-	row.Insert ( "Account", AccountsMap.Item ( item, Source.Company, Source.Warehouse, "Account" ).Account );
-	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
-	return row;
-	
-EndFunction 
-
-&AtServerNoContext
-Function getReceiveItemsRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
-	
-	row = new Structure ();
-	row.Insert ( "Feature", Feature );
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
-	item = SelectedRow.Ref;
-	row.Insert ( "Item", item );
-	row.Insert ( "Prices", Prices );
-	row.Insert ( "Quantity", 1 );
-	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
-	augmentPackage ( row, Package );
-	pricePackage = row.Package;
-	warehouse = Source.Warehouse;
-	accounts = AccountsMap.Item ( item, Source.Company, warehouse, "Account, VAT" );
-	row.Insert ( "Account", accounts.Account );
-	row.Insert ( "VATAccount", accounts.VAT );
-	data = DF.Values ( item, "VAT, VAT.Rate as Rate, Social" );
-	row.Insert ( "VATCode", data.VAT );
-	row.Insert ( "VATRate", data.Rate );
-	row.Insert ( "Social", data.Social );
-	row.Insert ( "Total", 0 );
-	row.Insert ( "VAT", 0 );
-	row.Insert ( "ProducerPrice", 0 );
-	row.Insert ( "Price", Goods.Price ( PricesCache, Source.Date, Prices, item, pricePackage, Feature, , , , warehouse, Source.Currency ) );
-	row.Insert ( "Amount", 0 );
-	Computations.Amount ( row );
-	Computations.Total ( row, Source.VATUse );
-	return row;
-	
-EndFunction
-
-&AtServer
-Procedure setSocial () 
-
-	type = Source.Type;
-	invoice = type.Invoice
-	or type.InvoiceRecord;
-	if ( type.ExpenseReport
-		or invoice
-		or type.ReceiveItems
-		or type.VendorInvoice ) then
-		ShowSocial = true;
-		if ( invoice ) then
-			ShowExtraCharge = true;
-		endif;
-	endif; 
-
-EndProcedure
-
-&AtClient
-Procedure setUseSocial ( Row ) 
-
-	if ( UseSocial
-		or not ShowSocial ) then
-		return;
-	endif;
-	UseSocial = row.Social
-
 EndProcedure
