@@ -522,7 +522,7 @@ Procedure sqlTimeEntries ( Env )
 	s = "
 	|// ^TimeEntries
 	|select Items.Item as Item, Items.TimeEntryRow as RowKey, Items.Table as Table,
-	|	Items.Quantity as Quantity, 0 as Amount, Items.TimeEntry as TimeEntry,
+	|	Items.Quantity as Quantity, 0 as Amount, 0 as HourlyRate, Items.TimeEntry as TimeEntry,
 	|	TimeEntries.Ref is null as InvalidRow, Items.LineNumber as LineNumber
 	|from Items as Items
 	|	//
@@ -533,7 +533,8 @@ Procedure sqlTimeEntries ( Env )
 	|	and TimeEntries.RowKey = Items.TimeEntryRow
 	|where Items.TimeEntry <> value ( Document.TimeEntry.EmptyRef )
 	|union all
-	|select Services.Item, Services.TimeEntryRow, Services.Table, Services.Quantity, Services.Amount, Services.TimeEntry,
+	|select Services.Item, Services.TimeEntryRow, Services.Table, Services.Quantity,
+	|	Rates.HourlyRate, Services.Amount, Services.TimeEntry,
 	|	TimeEntries.Ref is null or Rates.TimeEntry is null, Services.LineNumber
 	|from Services as Services
 	|	//
@@ -548,7 +549,8 @@ Procedure sqlTimeEntries ( Env )
 	|	left join InformationRegister.TimeEntryRates as Rates
 	|	on Rates.TimeEntry = Services.TimeEntry
 	|	and Rates.RowKey = Services.TimeEntryRow
-	|	and Rates.HourlyRate = Services.Price
+	|	and ( Rates.HourlyRate = Services.Price
+	|		or Rates.HourlyRate = 0	)
 	|where Services.TimeEntry <> value ( Document.TimeEntry.EmptyRef )
 	|";
 	Env.Selection.Add ( s );
@@ -1086,7 +1088,9 @@ Function makeWork ( Env )
 		movement.TimeEntry = row.TimeEntry;
 		movement.RowKey = row.RowKey;
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount;
+		if ( row.HourlyRate <> 0 ) then
+			movement.Amount = row.Amount;
+		endif;
 	enddo; 
 	return not error;
 	
