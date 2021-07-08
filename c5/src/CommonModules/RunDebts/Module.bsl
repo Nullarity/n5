@@ -404,6 +404,10 @@ EndProcedure
 
 Procedure FromOrder ( Env ) export
 
+	fields = Env.Fields;
+	if ( fields.ContractAmount = 0 ) then
+		return;
+	endif; 
 	if ( Env.Type = Type ( "DocumentRef.SalesOrder" ) ) then
 		recordset = Env.Registers.Debts;
 	else
@@ -411,7 +415,6 @@ Procedure FromOrder ( Env ) export
 	endif; 
 	PaymentDetails.Init ( Env );
 	table = SQL.Fetch ( Env, "$Payments" );
-	fields = Env.Fields;
 	date = fields.Date;
 	ref = Env.Ref;
 	contract = fields.Contract;
