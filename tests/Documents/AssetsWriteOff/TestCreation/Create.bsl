@@ -244,9 +244,9 @@ Function hireEmployees ( Date, DateStart, id )
 	enddo;
 	
 	p.Insert ( "App" );
-	if ( not Call ( "Common.DataCreated", id ) ) then
+	if ( not RegisterEnvironment ( id ) ) then
 		Call ( "Documents.Hiring.Create", p );
-		Call ( "Common.StampData", id );
+		RegisterEnvironment ( id );
 	endif;
 	return employees;
 

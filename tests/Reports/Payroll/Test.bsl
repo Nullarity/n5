@@ -31,7 +31,7 @@ EndFunction
 Procedure createEnv ( Env )
 
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -481,7 +481,7 @@ Procedure createEnv ( Env )
 	p.Records.Add ( row ( "5312", "2411", "50000", employee2Name ) );
 	Call ( "Documents.Entry.Create", p );
 	
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 
 EndProcedure
 

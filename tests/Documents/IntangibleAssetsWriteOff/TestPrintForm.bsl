@@ -275,9 +275,9 @@ Function hireEmployees ( Date, DateStart, id )
 	employees.Add ( newEmployee ( "_Member2: " + id, DateStart, "Administration", "Stockman", compensation ) );
 	p.Employees = employees;
 	p.Insert ( "App" );
-	if ( not Call ( "Common.DataCreated", id ) ) then
+	if ( not RegisterEnvironment ( id ) ) then
 		Call ( "Documents.Hiring.Create", p );
-		Call ( "Common.StampData", id );
+		RegisterEnvironment ( id );
 	endif;
 	return employees;
 

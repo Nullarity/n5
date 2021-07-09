@@ -66,7 +66,7 @@ EndFunction
 Procedure createEnv ( Env )
 	
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	createCompany ( Env );
@@ -84,7 +84,7 @@ Procedure createEnv ( Env )
 	createPayEmployees ( Env );
 	createEntries ( Env );
 	setDefaultValues ( Env );
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 	
 EndProcedure
 
