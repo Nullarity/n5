@@ -1,6 +1,6 @@
 Procedure ChangePassword ( User, Password ) export
 	
-	name = "" + User;
+	name = DF.Pick ( User, "Description" );
 	ibuser = InfoBaseUsers.FindByName ( name );
 	ibuser.Password = Password;
 	ibuser.Write ();

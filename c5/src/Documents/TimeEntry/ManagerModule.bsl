@@ -214,12 +214,9 @@ Procedure prepareTariffsTable ( Env )
 	tariffsTable.Columns.Add ( "Amount", new TypeDescription ( "Number" ) );
 	table = Env.Tariffs;
 	for each row in table do
-		tariff = getEmployeeTariff ( Env, row );
-		if ( tariff = 0 ) then
-			continue;
-		endif; 
 		tariffRow = tariffsTable.Add ();
 		tariffRow.RowKey = row.RowKey;
+		tariff = getEmployeeTariff ( Env, row );
 		tariffRow.HourlyRate = tariff;
 		qty = row.Minutes / 60;
 		tariffRow.Quantity = qty;
@@ -258,10 +255,11 @@ Procedure makeTimeEntriesTariffs ( Env )
 	
 	table = Env.Tariffs;
 	for each row in table do
+		rate = row.HourlyRate;
 		movement = Env.Registers.TimeEntryRates.Add ();
 		movement.TimeEntry = Env.Ref;
 		movement.RowKey = row.RowKey;
-		movement.HourlyRate = row.HourlyRate;
+		movement.HourlyRate = rate;
 	enddo; 
 	recordset = Env.Registers.Work;
 	date = Env.Fields.Date;
