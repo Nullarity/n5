@@ -1,4 +1,4 @@
-Procedure Make ()
+﻿Procedure Make ()
 
 	if ( Calculated ) then
 		goto ~draw;
@@ -36,10 +36,6 @@ Procedure Make ()
 	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account in ( select Account from Compensations ), , Company = &Company
 	|							and ExtDimension2 in ( select Salary From Compensations ), ) as Turnovers
 	|;
-	|// #MedicalCompany
-	|select Turnovers.AmountTurnoverCr as TurnoverCr
-	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account in ( &EmployerOtherDebt ), , Company = &Company, ) as Turnovers
-	|;
 	|// #MedicalEmployee
 	|select Turnovers.AmountTurnoverCr as TurnoverCr
 	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account in ( select Account from MedicalTaxes ), , Company = &Company, 
@@ -47,7 +43,6 @@ Procedure Make ()
 	|";
 	Env.Selection.Add ( str );	
 	q = Env.Q;
- 	q.SetParameter ( "EmployerOtherDebt", InformationRegisters.Settings.GetLast ( , new Structure ( "Parameter", ChartsOfCharacteristicTypes.Settings.EmployerOtherDebt ) ).Value );
  	getData ();
 	
 	envFields = Env.Fields;
@@ -84,7 +79,7 @@ Procedure Make ()
 	FieldsValues [ "SalaryPayed" ] = table.Total ( "TurnoverDr" ); 
 	
 	//Taxes
-	FieldsValues [ "C37" ] = Env.MedicalCompany.Total ( "TurnoverCr" );
+	FieldsValues [ "C37" ] = 0;
 	FieldsValues [ "C38" ] = Env.MedicalEmployee.Total ( "TurnoverCr" );
 	
 	~draw:
