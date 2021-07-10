@@ -72,7 +72,10 @@ unit = TrimAll ( Fetch ( "#Unit" ) );
 if ( not service ) then
 	field = Activate ( "#Package" );
 	if ( Fetch ("#Package") <> package ) then
-		field.OpenDropList ();
+		try
+			field.OpenDropList ();
+		except
+		endtry;
 		field.Create ();
 		With ( "Packages (create)" );
 		

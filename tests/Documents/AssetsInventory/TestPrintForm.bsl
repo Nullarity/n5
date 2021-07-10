@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 env = getEnv ();
 createEnv ( env );
@@ -18,7 +18,7 @@ Call ( "Common.CheckLogic", "#TabDoc" );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "2BD8DE04" );
+	id = Call ( "Common.ScenarioID", "A06A" );
 	env = new Structure ();
 	env.Insert ( "ID", id );
 	env.Insert ( "Date", CurrentDate () );
