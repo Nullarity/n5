@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-vendorName = "_Vendor create Vendor Invoice from list#";
+vendorName = "_Vendor create Vendor Invoice from list " + "A07K";
 
 // ***********************************
 // Create Vendor if new
