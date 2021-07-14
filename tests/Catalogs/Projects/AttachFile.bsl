@@ -7,7 +7,7 @@ CloseAll ();
 content = "Test";
 
 #region upload
-project = "Project " + Call ( "Common.ScenarioID", "2D0D1063" );
+project = "Project " + Call ( "Common.ScenarioID", "A073" );
 Commando("e1cib/command/Catalog.Projects.Create");
 Put("#Owner", "ABC Distributions");
 Set("#Description", project);
@@ -18,6 +18,7 @@ doc.Write(file);
 App.SetFileDialogResult ( true, file );
 Activate("#Attachments");
 Click("#AttachmentsUpload");
+Pause ( 3 );
 DeleteFiles(file);
 #endregion
 
