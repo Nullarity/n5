@@ -13,7 +13,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D09197A" );
+id = Call ( "Common.ScenarioID", "A076" );
 env = getEnv ( id );
 
 // Create Command
@@ -53,8 +53,7 @@ p.Parameters = "/len /Z""0C931F556B""";
 Call("Tester.Run", p);
 
 // Open & give his task back
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 Click("#FormGiveBack", "Change cont*");
 With("Reason for Return");
@@ -67,8 +66,7 @@ creatorPort = env.CreatorPort;
 Connect(, creatorPort);
 
 // Open task, check status and return it to Performer with additional details
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 Click("#FormRepeat", "No much info *");
 With("Notes");
@@ -81,8 +79,7 @@ Connect(, performerPort);
 
 // Open & complete his task this time
 Close("User Tasks");
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 Click("#FormComplete", "Add more info *");
 Click("OK", "Notes");
@@ -94,8 +91,7 @@ Disconnect(true);
 Connect(, creatorPort);
 
 // Open task, check status and complete it
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 Click("#FormComplete","Add more info *");
 Click("Yes", DialogsTitle);
@@ -122,7 +118,7 @@ Function getEnv ( ID )
 	p.Insert ( "ID", ID );
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer", "accountant" );
-	p.Insert ( "CommandDescription", "Change contract date" );
+	p.Insert ( "CommandDescription", "Change contract date " + ID );
 	port = AppData.Port;
 	p.Insert ( "CreatorPort", port );
 	p.Insert ( "PerformerPort", port + 1 );

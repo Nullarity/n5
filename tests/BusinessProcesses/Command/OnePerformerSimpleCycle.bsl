@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D091A2D" );
+id = Call ( "Common.ScenarioID", "A077" );
 env = getEnv ( id );
 
 // Create Command
@@ -48,8 +48,7 @@ p.Port = port;
 Call("Tester.Run", p);
 
 // Open & complete his task
-Commando("e1cib/list/Task.UserTask");
-With();
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 Click("#FormComplete", "Change contract date *");
 Click("OK", "Notes");
@@ -57,7 +56,7 @@ Disconnect(true);
 Connect(, AppData.Port);
 
 // Open task, check status and complete process
-Commando("e1cib/list/Task.UserTask");
+Call ( "Tasks.UserTask.ListByCommand", id );
 tasksList = With();
 Click("#FormChange");
 Click("#FormComplete", "Change contract date *");
@@ -85,7 +84,7 @@ Function getEnv ( ID )
 	p.Insert ( "ID", ID );
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer", "accountant" );
-	p.Insert ( "CommandDescription", "Change contract date" );
+	p.Insert ( "CommandDescription", "Change contract date " + ID );
 	p.Insert ( "Port", AppData.Port + 1 );
 	p.Insert ( "Infobase" );
 	p.Infobase = AppName;

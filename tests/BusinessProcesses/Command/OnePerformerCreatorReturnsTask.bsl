@@ -1,4 +1,4 @@
-// Create Command: 1 Performer
+﻿// Create Command: 1 Performer
 // Run a new 1C session with Performer
 // Open & complete his task
 // Connect to the Creator's session
@@ -13,8 +13,8 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27E763F0" );
-env = getEnv ( id );
+id = Call ( "Common.ScenarioID", "A078" );
+env = getEnv ( id );                                                
 
 // Create Command
 Commando("e1cib/command/BusinessProcess.Command.Create");
@@ -52,8 +52,7 @@ p.Parameters = "/len /Z""0C931F556B""";
 Call("Tester.Run", p);
 
 // Open & complete his task
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 With ();
 //Click("#FormComplete","Task *");
@@ -68,8 +67,7 @@ creatorPort = env.CreatorPort;
 Connect(, creatorPort);
 
 // Open task, check status and return it to Performer
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 With ();
 Click("#FormRepeat");
@@ -83,8 +81,7 @@ Connect(, performerPort);
 
 // Open & complete his task again
 Close("User Tasks");
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 With ();
 Click("#FormComplete");
@@ -100,8 +97,7 @@ Disconnect(true);
 Connect(, creatorPort);
 
 // Open task, check status and complete it
-Commando("e1cib/list/Task.UserTask");
-With("User Tasks");
+Call ( "Tasks.UserTask.ListByCommand", id );
 Click("#FormChange");
 With ();
 Click("#FormComplete");
@@ -131,7 +127,7 @@ Function getEnv ( ID )
 	p.Insert ( "ID", ID );
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer", "Accountant" );
-	p.Insert ( "CommandDescription", "Change contract date" );
+	p.Insert ( "CommandDescription", "Change contract date " + ID );
 	port = AppData.Port;
 	p.Insert ( "CreatorPort", port );
 	p.Insert ( "PerformerPort", port + 1 );
