@@ -1,11 +1,11 @@
-// Create Invoice
+﻿// Create Invoice
 // Create & Close Payment
 // Check if Invoice shows link to the Payment
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27E40A43" );
+id = Call ( "Common.ScenarioID", "A07C" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -20,7 +20,7 @@ Set("#ServicesPrice", 150);
 Click("#FormPost");
 
 // Create & Close Payment
-Click("#FormDocumentPaymentCreateBasedOn");
+Click("#CreatePayment");
 With();
 Click("#FormPostAndClose");
 
