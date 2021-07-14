@@ -13,7 +13,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A076" );
+id = Call ( "Common.ScenarioID", "A07F" );
 env = getEnv ( id );
 
 // Create Command
@@ -97,8 +97,7 @@ Click("#FormComplete","Add more info *");
 Click("Yes", DialogsTitle);
 
 // Open Commands list and check if Command is completed
-Commando("e1cib/list/BusinessProcess.Command");
-With("Internal Commands");
+Call ( "BusinessProcesses.Command.ListByDescription", id );
 Check("#Completed", "Yes");
 
 // Check completed task

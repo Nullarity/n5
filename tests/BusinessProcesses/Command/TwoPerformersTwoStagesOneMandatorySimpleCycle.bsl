@@ -16,7 +16,7 @@ completeAll (env, 1);
 Disconnect(true);
 Connect(, env.CreatorPort);
 completeAll (env, 2);
-checkFinish ();
+checkFinish ( id );
 
 // *************************
 // Procedures
@@ -29,7 +29,7 @@ Function getEnv ( ID )
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer1", "accountant" );
 	p.Insert ( "Performer2", "director" );
-	p.Insert ( "CommandDescription", "Change contract date" );
+	p.Insert ( "CommandDescription", "Change contract date " + ID );
 	port = AppData.Port;
 	p.Insert ( "CreatorPort", port );
 	p.Insert ( "PerformerPort", port + 1 );
@@ -134,11 +134,10 @@ Procedure openTask ()
 	
 EndProcedure
 
-Procedure checkFinish ()
+Procedure checkFinish ( ID )
 	
 	// Open Commands list and check if Command is completed
-	Commando("e1cib/list/BusinessProcess.Command");
-	With();
+	Call ( "BusinessProcesses.Command.ListByDescription", ID );
 	Check("#Completed", "Yes");
 	
 EndProcedure

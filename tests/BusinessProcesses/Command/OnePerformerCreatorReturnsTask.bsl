@@ -106,8 +106,7 @@ With ();
 Click("Yes", DialogsTitle);
 
 // Open Commands list and check if Command is completed
-Commando("e1cib/list/BusinessProcess.Command");
-With("Internal Commands");
+Call ( "BusinessProcesses.Command.ListByDescription", id );
 Check("#Completed", "Yes");
 
 // Check completed task
