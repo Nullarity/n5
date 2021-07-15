@@ -1,4 +1,4 @@
-// Open User rights and assign Customers and Vendors rights
+﻿// Open User rights and assign Customers and Vendors rights
 
 Call("Common.Init");
 CloseAll();
@@ -12,7 +12,7 @@ List.Choose();
 
 With();
 Activate("#Group7"); // Rights
-UserGroups = Get("#UserGroups");
+UserGroups = Get("#Membership");
 Click("#RightsEditRights");
 
 With();

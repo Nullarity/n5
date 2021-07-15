@@ -39,11 +39,11 @@ Click ( "#FormOK" );
 With ( form );
 
 // Try to use new property
-try
+//try
 	Set ( "Range", 150 );
-except
-	DebugStart ();
-endtry;
+//except
+//	DebugStart ();
+//endtry;
 Next ();
 
 Set ( "Range", 250 ); // wrong value

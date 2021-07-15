@@ -1,4 +1,4 @@
-// Create two Entries: one for Today and the second for Tomorrow
+﻿// Create two Entries: one for Today and the second for Tomorrow
 // Generate Report today, tomorrow and check results
 
 Call ( "Common.Init" );
@@ -88,7 +88,7 @@ EndProcedure
 Procedure generateReport ( Env, Date )
 
 	p = Call ( "Common.Report.Params" );
-	p.Path = "Accounting / Analytic Transactions";
+	p.Path = "Accounting / Transaction Analysis";
 	p.Title = "Analytic Transactions*";
 	filters = new Array ();
 

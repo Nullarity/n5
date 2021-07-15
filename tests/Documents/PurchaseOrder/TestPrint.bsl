@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 id = Call ( "Common.ScenarioID", "2B6A981F" );
@@ -136,7 +136,7 @@ Procedure createEnv ( Env )
 	Commando ( "e1cib/data/Document.Roles" );
 	With ( "Roles (create)" );
 	Put ( "#Company", Env.Company );
-	Put ( "#User", "Accounant" );
+	Put ( "#User", "Accountant" );
 	Put ( "#Role", "Chief Accountant" );
 	Click ( "#Apply" );
 	

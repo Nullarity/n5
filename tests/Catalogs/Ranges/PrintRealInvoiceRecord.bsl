@@ -1,4 +1,4 @@
-// Purchase forms an register range
+﻿// Purchase forms an register range
 // Sell services
 // Create an Invoice Record and print it
 // Check automatic Write Off
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B6AAD0F" );
+id = Call ( "Common.ScenarioID", "A07S" );
 env = getEnv ( id );
 createEnv ( env );
 

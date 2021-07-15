@@ -1,10 +1,10 @@
-// Receive Range
+﻿// Receive Range
 // Split range
 
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "2A0E2045");
+id = Call("Common.ScenarioID", "A07X");
 env = getEnv(id);
 createEnv(env);
 
@@ -18,7 +18,7 @@ Click("Yes", "Contabilizare");
 
 // Check records
 Click("#FormShowRecords");
-With();
+With("Reco*");
 CheckTemplate("#TabDoc");
 
 // *************************

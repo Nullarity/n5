@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Creates a new Employee
 //
 // Returns:
@@ -32,7 +32,7 @@ if ( company <> undefined ) then
 	Set ( "#EmployeeCompany", company );
 endif;
 
-Set("#Code", Call("Common.GetID"));
+Set("#Code", "88888" + TestingID ());
 Click("Yes", "1?:*");
 
 Click ( "#FormWrite" );
