@@ -8,6 +8,7 @@ CloseAll ();
 list = Call ( "Common.OpenList", _ );
 Click ( "#FormCreate" );
 form = With ( "* (create*" );
+
 if ( _.Name = "Organizations" ) then
 	Click ( "More" );
 endif;

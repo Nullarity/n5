@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D091CF1" );
+id = Call ( "Common.ScenarioID", "A07O" );
 env = getEnv ( id );
 
 createCommand(env);
@@ -107,7 +107,7 @@ Procedure completeAll(Env, Method)
 	// Method 1: 2 tasks, because every second performer is not mandatory
 	// Method 2: 2 tasks will be completed in one shot
 	for i = 1 to ? ( Method = 1, 2, 1 ) do
-		openTask();
+		openTask(Env);
 		Click("#FormComplete", "Change contract date *");
 		if ( Method = 1 ) then
 			Click("OK", "Notes");
@@ -118,7 +118,7 @@ Procedure completeAll(Env, Method)
 	
 EndProcedure
 
-Procedure openTask ()
+Procedure openTask (Env)
 	
 	With("*20*");
 	if ( not Get("#Panel").CurrentVisible () ) then
@@ -128,6 +128,7 @@ Procedure openTask ()
 	table = Get("#UserTasks");
 	try
 		table.GotoFirstRow();
+		GotoRow ( table, "Presentation", Env.CommandDescription );
 	except
 	endtry;
 	table.Choose();

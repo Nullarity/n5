@@ -1,4 +1,4 @@
-// Create Item with two properties: Model and Size
+﻿// Create Item with two properties: Model and Size
 // Add condition: if Model = Wheel then Size should appear
 
 Call ( "Common.Init" );
@@ -10,6 +10,10 @@ itemName = "Some: " + CurrentDate ();
 Call ( "Common.OpenList", _ );
 Click ( "#FormCreate" );
 form = With ( "* (cr*" );
+
+if ( _.Name = "Organizations" ) then
+	Click ( "More" );
+endif;
 
 // Add Property: Model
 Pick ( "#ObjectUsage", "Current Object Settings" );
