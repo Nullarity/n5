@@ -117,7 +117,7 @@ EndProcedure
 
 Procedure openTask (Env)
 	
-	With("*20*");
+	With("*" + Format ( CurrentDate (), "DF=yyyy" ) + "*");
 	if ( not Get("#Panel").CurrentVisible () ) then
 		Click("#ShowPanel");
 	endif;

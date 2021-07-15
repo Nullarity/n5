@@ -47,10 +47,28 @@ exceptions.Add("Documents.ExpenseReport.TestCurrency");
 exceptions.Add("Documents.ExpenseReport.TestCurrencyCopy");
 exceptions.Add("Documents.Inventory.TestCreation.Start");
 
+// Regulatory reports
+exceptions.Add("Reports.RegulatoryReports.1_Invest" );
+exceptions.Add("Reports.RegulatoryReports.5_CI_2015" );
+exceptions.Add("Reports.RegulatoryReports.5_CON" );
+exceptions.Add("Reports.RegulatoryReports.AN5" );
+exceptions.Add("Reports.RegulatoryReports.AN5J" );
+exceptions.Add("Reports.RegulatoryReports.Balance" );
+exceptions.Add("Reports.RegulatoryReports.BASS" );
+exceptions.Add("Reports.RegulatoryReports.IALS14" );
+exceptions.Add("Reports.RegulatoryReports.IALS18" );
+exceptions.Add("Reports.RegulatoryReports.IPC18" );
+exceptions.Add("Reports.RegulatoryReports.IRV14" );
+exceptions.Add("Reports.RegulatoryReports.IVAO15" );
+exceptions.Add("Reports.RegulatoryReports.MED08" );
+exceptions.Add("Reports.RegulatoryReports.REV9" );
+exceptions.Add("Reports.RegulatoryReports.SERV_TS_2014" );
+exceptions.Add("Reports.RegulatoryReports.SERV_TS_2014_RO" );
+exceptions.Add("Reports.RegulatoryReports.TVA12" );
 p.Exceptions = exceptions;
 
 agents = 40;
-batch = 2;
+batch = 1;
 
 StoreScenarios ();
 for i = 1 to agents do
@@ -63,11 +81,12 @@ Pause (60);
 if ( not p.TestingOnly ) then
 	Call ( "Tester.Infobase.Deploy", p );
 endif;
+
+//return;
+
 if ( p.UpdateOnly ) then
 	return;
 endif;
-
-//return;
 
 params = new Structure ();
 params.Insert ( "Name", String ( p.Application ) );
