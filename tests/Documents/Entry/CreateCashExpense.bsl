@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Create a new Entry
 // - Select Operation with Cash Expense type, simple variant
 // - Select Individual
@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28482626" );
+id = Call ( "Common.ScenarioID", "A08K" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -35,7 +35,7 @@ Click ( "#FormPost" );
 Click ( "#Voucher" );
 With ( "Cash Voucher" );
 Check ( "#Receiver", env.Individual );
-Check ( "#ID", "Passport: Series Xl, #1234567890, Issued By Some Office, Date 1/1/2015" );
+Check ( "#ID", "Passport: Series Xl, #1234567890, Issued By Some Office, Date 1/01/2015" );
 
 // *************************
 // Procedures
@@ -67,8 +67,8 @@ Procedure createEnv ( Env )
 	p.Operation = "Cash Expense";
 	p.Description = Env.Operation;
 	p.Simple = true;
-	p.AccountDr = "12800";
-	p.AccountCr = "10400";
+	p.AccountDr = "2262";
+	p.AccountCr = "2412";
 	Call ( "Catalogs.Operations.Create", p );
 	
 	// *************************

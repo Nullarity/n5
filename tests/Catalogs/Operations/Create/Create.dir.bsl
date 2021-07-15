@@ -1,4 +1,4 @@
-// Creates a new Operation
+﻿// Creates a new Operation
 //
 // Parameters:
 // Catalogs.Schedules.WorkHours.Params
@@ -24,12 +24,12 @@ endif;
 
 value = _.AccountDr;
 if ( value <> undefined ) then
-	Set ( "#AccountDr", value );
+	Put ( "#AccountDr", value );
 endif;
 
 value = _.AccountCr;
 if ( value <> undefined ) then
-	Set ( "#AccountCr", value );
+	Put ( "#AccountCr", value );
 endif;
 
 Click ( "#FormWriteAndClose" );

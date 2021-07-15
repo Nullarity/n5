@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Create a new Entry
 // - Select Operation with Cash Receipt type, simple variant
 // - Select Individual
@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28493B5A" );
+id = Call ( "Common.ScenarioID", "A08N" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -66,8 +66,8 @@ Procedure createEnv ( Env )
 	p.Operation = "Cash Receipt";
 	p.Description = Env.Operation;
 	p.Simple = true;
-	p.AccountDr = "10400";
-	p.AccountCr = "12800";
+	p.AccountDr = "2412";
+	p.AccountCr = "2262";
 	Call ( "Catalogs.Operations.Create", p );
 	
 	// *************************

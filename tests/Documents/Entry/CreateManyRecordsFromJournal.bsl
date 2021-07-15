@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Open list of entries
 // - Set filter by operation (operation with Simple flag = false)
 // - Create a new Entry
@@ -12,7 +12,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28493BF1" );
+id = Call ( "Common.ScenarioID", "A08P" );
 env = getEnv ( id );
 createEnv ( env );
 
