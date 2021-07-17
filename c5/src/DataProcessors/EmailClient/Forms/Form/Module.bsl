@@ -1529,7 +1529,12 @@ Procedure startSearch ()
 	else
 		if ( table = Incoming ) then
 			label = Items.Labels.CurrentData;
-			scope = ? ( label.RowType = Enum.MailboxLabelsBox (), PredefinedValue ( "Enum.Search.Mail" ), PredefinedValue ( "Enum.Search.Incoming" ) );
+			if ( label = undefined
+				or label.RowType = Enum.MailboxLabelsBox () ) then
+				scope = PredefinedValue ( "Enum.Search.Mail" );
+			else
+				scope = PredefinedValue ( "Enum.Search.Incoming" );
+			endif;
 		else
 			scope = PredefinedValue ( "Enum.Search.Outgoing" );
 		endif; 
