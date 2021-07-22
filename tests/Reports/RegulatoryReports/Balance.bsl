@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B5DC38A" );
+id = Call ( "Common.ScenarioID", "A08B" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -54,7 +54,7 @@ EndFunction
 Procedure createEnv ( Env )
 	
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -116,13 +116,13 @@ Procedure createEnv ( Env )
 	p.Records.Add ( row ( "0", "2441", "2412", , , , "140" ) );
 	p.Records.Add ( row ( "2441", "0", "2441", , , "150" ) );
 	p.Records.Add ( row ( "0", "2441", "2412", , , , "150" ) );
-	p.Records.Add ( row ( "3111", "0", "3111" ) );
+	p.Records.Add ( row ( "3110", "0", "3111" ) );
 	p.Records.Add ( row ( "3131", "0", "3131" ) );
-	p.Records.Add ( row ( "0", "3331", "3331" ) );
+	p.Records.Add ( row ( "0", "3330", "3331" ) );
 	p.Records.Add ( row ( "0", "3412", "3412" ) );
 	p.Records.Add ( row ( "2251", "0", "2251" ) );
 	p.Records.Add ( row ( "2171", "5211", "217105211" ) );
-	p.Records.Add ( row ( "2172", "4130", "217204130" ) );
+	p.Records.Add ( row ( "2171", "4126", "217204130" ) );
 	Call ( "Documents.Entry.Create", p );
 	
 	// *************************
@@ -140,7 +140,7 @@ Procedure createEnv ( Env )
 	p.Records.Add ( row ( "2111", "2411", "21110" ) );
 	p.Records.Add ( row ( "2411", "0", "24110", "010" ) );
 	p.Records.Add ( row ( "0", "2412", "24120", , "020" ) );
-	p.Records.Add ( row ( "3111", "61216", "31110" ) );
+	p.Records.Add ( row ( "3110", "61216", "31110" ) );
 	p.Records.Add ( row ( "3131", "0", "3131" ) );
 	Call ( "Documents.Entry.Create", p );
 	
@@ -170,7 +170,7 @@ Procedure createEnv ( Env )
 	Set ( "#ReportField[CUATM]", "CUATM: " + id );
 	Close ( form );
 	
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 	
 EndProcedure
 

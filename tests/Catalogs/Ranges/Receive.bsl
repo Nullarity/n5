@@ -1,11 +1,11 @@
-// Create Vendor Invoice
+﻿// Create Vendor Invoice
 // Create Range
 // Post Vendor Invoice
 
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "292F2B14");
+id = Call("Common.ScenarioID", "A087");
 env = getEnv(id);
 createEnv(env);
 

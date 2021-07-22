@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -11,7 +11,7 @@ createBankAccount ( env );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "272AF853#" );
+	id = Call ( "Common.ScenarioID", "A069" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "AccountNumber", "1234567890" );
@@ -23,7 +23,7 @@ EndFunction
 Procedure createEnv ( Env )
 
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -36,7 +36,7 @@ Procedure createEnv ( Env )
 	p.Code = id;
 	Call ( "Catalogs.Banks.Create", p );
 
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 
 EndProcedure
 

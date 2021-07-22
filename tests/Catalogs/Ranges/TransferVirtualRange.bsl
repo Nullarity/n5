@@ -1,10 +1,10 @@
-// Create & register a new virtual range
+﻿// Create & register a new virtual range
 // Transfer range to another warehouse
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A3FB3C1" );
+id = Call ( "Common.ScenarioID", "A07Y" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -14,7 +14,7 @@ Set("#Sender", env.Warehouse1);
 Set("#Receiver", env.Warehouse2);
 Click("#FormWrite");
 Click("#FormShowRecords");
-With();
+With("Reco*");
 CheckTemplate("#TabDoc");
 
 Disconnect();

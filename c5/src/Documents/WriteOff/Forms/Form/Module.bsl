@@ -282,7 +282,7 @@ Procedure sqlWaybill ()
 	s = "
 	|// #Items
 	|select Items.Fuel as Item, Items.QuantityBalance as Quantity, 
-	|	Items.Fuel.Package as Package, Items.Fuel.Package.Capacity as Capacity
+	|	Items.Fuel.Package as Package, isnull ( Items.Fuel.Package.Capacity, 1 ) as Capacity
 	|from AccumulationRegister.FuelToExpense.Balance(&InventoryDate, Car = &Car) as Items
 	|";
 	Env.Selection.Add ( s );

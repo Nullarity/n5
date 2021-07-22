@@ -1,4 +1,4 @@
-// Create Phone Template
+﻿// Create Phone Template
 // Create Vendor
 // Set phone template and put the value of phone
 // Save & Close
@@ -42,7 +42,7 @@ Check ( "#Phone", "0-123-4567-890, ext.1234" );
 Set ( "#Phone", "1234567890" );
 Click ( "#FormWrite" );
 
-if ( FindMessages ( "* wrong" ).Count () <> 1 ) then
+if ( FindMessages ( "* incorrect" ).Count () <> 1 ) then
 	Stop ( "<The phone number is wrong> error messages must be shown one time" );
 endif;
 

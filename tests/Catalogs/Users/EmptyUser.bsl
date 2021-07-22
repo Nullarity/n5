@@ -1,13 +1,13 @@
-// Create User Group and try to assign rights for empty user
+﻿// Create User Group and try to assign rights for empty user
 
 Call("Common.Init");
 CloseAll();
 
-Commando("e1cib/command/Catalog.UserGroups.Create");
+Commando("e1cib/command/Catalog.Membership.Create");
 Set("#Description", "test " + CurrentDate());
 Users = Get("#Users");
 Click("#UsersAdd");
-Put("#UsersUser", "Accounant", Users);
+Put("#UsersUser", "Accountant", Users);
 Click("#UsersAdd");
 Click("#UsersAdd");
 Rights = Get("#Rights");

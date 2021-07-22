@@ -1,4 +1,4 @@
-start ();
+﻿start ();
 
 // ***********************************
 // Create item with properties
@@ -9,6 +9,10 @@ form = newItem ( _ );
 // ***********************************
 // Create properties
 // ***********************************
+
+if ( _.Name = "Organizations" ) then
+	Click ( "More" );
+endif;
 
 Pick ( "#ObjectUsage", "Current Object Settings" );
 Click ( "#OpenObjectUsage" );

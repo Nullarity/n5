@@ -1,4 +1,4 @@
-// Create Command
+﻿// Create Command
 // Open list and mark for deletion
 
 Call ( "Common.Init" );
@@ -24,8 +24,7 @@ Put ( "#PerformersPerformer", env.Performer );
 Click ( "#FormStartAndClose" );
 
 // Open Commands list and mark for deletion
-Commando("e1cib/list/BusinessProcess.Command");
-With("Internal Commands");
+Call ( "BusinessProcesses.Command.ListByDescription", id );
 Click("#FormSetDeletionMark");
 Click("Yes", "1?:*");
 
@@ -47,7 +46,7 @@ Function getEnv ( ID )
 	p.Insert ( "ID", ID );
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer", "accountant" );
-	p.Insert ( "CommandDescription", "Deletion testing" );
+	p.Insert ( "CommandDescription", "Deletion testing " + ID );
 	return p;
 	
 EndFunction

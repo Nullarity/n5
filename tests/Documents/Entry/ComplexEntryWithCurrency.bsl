@@ -1,4 +1,4 @@
-// Create Entry
+﻿// Create Entry
 // Create record with Dr and Cr
 // Create record with Dr
 // Create record 1 with Cr
@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28524F53" );
+id = Call ( "Common.ScenarioID", "A08E" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -27,7 +27,7 @@ Click("#FormOK");
 With(form);
 Click("#RecordsAdd");
 With();
-Put("#AccountDr", "11000");
+Put("#AccountDr", "2212");
 Put("#DimDr1", env.Customer);
 Set("#Amount", 1500);
 Click("#FormOK");

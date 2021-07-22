@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 
 CloseAll ();
 MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Users" );
@@ -14,12 +14,12 @@ With ( list );
 Click ( "#FormChange" );
 
 form = With ( "admin (*" );
-table = Activate ( "#UserGroups" );
+table = Activate ( "#Membership" );
 search = new Map ();
-search.Insert ( "Folder", "Managers" );
+search.Insert ( "Group", "Managers" );
 table.GotoRow ( search, RowGotoDirection.Down );
-Click ( "#UsersGroupsUse" );
-Click ( "#UsersGroupsUse" );
+Click ( "#MembershipUse" );
+Click ( "#MembershipUse" );
 Click ( "Individual rights" );
 
 editor = With ( "Individual rights" );

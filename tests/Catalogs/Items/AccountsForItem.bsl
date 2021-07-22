@@ -1,4 +1,4 @@
-// Create a new Item
+﻿// Create a new Item
 // Goto Accounts
 // Create a new record
 // Check form appearance
@@ -17,10 +17,7 @@ Click ( "#FormWrite" );
 Click ( "Accounts", GetLinks () );
 With ( id + " (Items)" );
 Click ( "#FormCreate" );
-
-// Should be disabled
-With ( "Items (cr*" );
-CheckState ( "#GroupExpense", "Enable", false );
+With ();
 
 // Should be enabled
 Clear ( "#Item" );

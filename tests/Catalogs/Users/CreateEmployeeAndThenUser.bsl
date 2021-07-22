@@ -1,9 +1,9 @@
-// Create employee and then user. Check if employee automatically pops up
+﻿// Create employee and then user. Check if employee automatically pops up
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2C016526" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A080" ) );
 id = this.ID;
 login = "user " + id;
 
@@ -20,9 +20,8 @@ Close();
 // Create user
 Commando ( "e1cib/command/Catalog.Users.Create" );
 Set ( "#Description", login );
-code = Mid ( id, 5, 3 );
-Set ( "#Code", code );
-Set ( "#Email", code + "@wsxcderfv.xxx" );
+Set ( "#Code", id );
+Set ( "#Email", id + "@wsxcderfv.xxx" );
 Click ( "#MembershipMarkAllGroups" );
 Click("#FormWrite");
 Pause (1);

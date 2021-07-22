@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 // ***********************************
@@ -8,6 +8,10 @@ CloseAll ();
 list = Call ( "Common.OpenList", _ );
 Click ( "#FormCreate" );
 form = With ( "* (create*" );
+
+if ( _.Name = "Organizations" ) then
+	Click ( "More" );
+endif;
 
 // ***********************************
 // Create properties
@@ -38,6 +42,5 @@ Click ( "#FormWrite" );
 
 if ( FindMessages ( "Field * is empty" ).Count () = 0 ) then
 	Stop ( "Error message must be shown" );
-else
-	StandardProcessing = false;
 endif;
+CloseAll ();

@@ -1,7 +1,7 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
-vendorName = "_Vendor create PO from list#";
+vendorName = "_Vendor create PO from list " + "A07J";
 
 // ***********************************
 // Create Vendor if new

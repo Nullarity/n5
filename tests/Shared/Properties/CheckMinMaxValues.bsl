@@ -1,4 +1,4 @@
-// Create Item
+﻿// Create Item
 // Add Property: range
 // Try to use new property
 // Open properties again and check if they still are there
@@ -14,6 +14,9 @@ Click ( "#FormCreate" );
 form = With ( "* (cr*" );
 
 // Add Property: range
+if ( _.Name = "Organizations" ) then
+	Click ( "More" );
+endif;
 Pick ( "#ObjectUsage", "Current Object Settings" );
 Click ( "#OpenObjectUsage" );
 With ( DialogsTitle );
@@ -36,7 +39,11 @@ Click ( "#FormOK" );
 With ( form );
 
 // Try to use new property
-Set ( "Range", 150 );
+//try
+	Set ( "Range", 150 );
+//except
+//	DebugStart ();
+//endtry;
 Next ();
 
 Set ( "Range", 250 ); // wrong value

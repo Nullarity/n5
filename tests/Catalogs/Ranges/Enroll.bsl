@@ -1,4 +1,4 @@
-// Create an Enroll Range
+﻿// Create an Enroll Range
 // Create a new Range
 // Write & check records
 
@@ -20,7 +20,7 @@ Click("#WriteAndClose");
 With();
 Click("#FormWrite");
 Click("#FormShowRecords");
-With();
+With("Reco*");
 CheckTemplate("#TabDoc");
 
 Disconnect();

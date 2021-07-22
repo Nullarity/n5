@@ -1,17 +1,17 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 Commando ( "e1cib/data/Catalog.Numeration" );
-form = With ( "Numeration (create)" );
-Put ( "#Code", "0000000000000000000000000000000" );
+Set ( "#Description", "111" );
+Set ( "#Code", "000000000000" );
 Next ();
 code = Fetch ( "#Code" );
+Click ( "#FormWriteAndClose" );
 
 Commando ( "e1cib/data/Document.Entry" );
-entry = With ( "Entry (create)" );
 Put ( "#Number", "0000000000000000000000000000000" );
 Next ();
-number = Fetch ( "#Number", entry );
+number = Fetch ( "#Number" );
 if ( StrLen ( code ) <> StrLen ( number ) + 3 ) then
 	Stop ( "Numeration code and Entry code don't correspond" );
 endif;

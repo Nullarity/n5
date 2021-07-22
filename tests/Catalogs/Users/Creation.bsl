@@ -1,9 +1,9 @@
-// Create User
+﻿// Create User
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2B6FD79E" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A085" ) );
 
 Commando ( "e1cib/command/Catalog.Users.Create" );
 
@@ -11,9 +11,9 @@ Commando ( "e1cib/command/Catalog.Users.Create" );
 id = this.ID;
 login = "user " + id;
 Set ( "#Description", login );
-code = Mid ( id, 5, 3 );
+code = Right ( id, 3 );
 Set ( "#Code", code );
-Set ( "#Email", code + "@wsxcderfv.xxx" );
+Set ( "#Email", code  + "@wsxcderfv.xxx" );
 Click ( "#MembershipMarkAllGroups" );
 
 
@@ -42,7 +42,9 @@ login = login + " " + lastName;
 Click ( "#FormWrite" );
 Pause (1);
 Commando ( "e1cib/list/Catalog.Employees" );
+With ( "Employees" ); // Force for Linux client
 Assert ( GotoRow ( "#List", "Description", login ) ).IsTrue ();
 Close ();
 Commando ( "e1cib/list/Catalog.Individuals" );
+With ( "Individuals" ); // Force for Linux client
 Assert ( GotoRow ( "#List", "Description", login ) ).IsTrue ();

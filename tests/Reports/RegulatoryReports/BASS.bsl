@@ -60,7 +60,7 @@ EndFunction
 Procedure createEnv ( Env )
 	
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -172,7 +172,7 @@ Procedure createEnv ( Env )
 	p.Records.Add ( row ( "7141", "5311", "600", sick ) );
 	Call ( "Documents.Entry.Create", p );
 	
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 	
 EndProcedure
 

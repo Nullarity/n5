@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 id = Call ( "Common.ScenarioID", "2B6A981F" );
@@ -52,7 +52,7 @@ EndFunction
 Procedure createEnv ( Env )
 
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -136,7 +136,7 @@ Procedure createEnv ( Env )
 	Commando ( "e1cib/data/Document.Roles" );
 	With ( "Roles (create)" );
 	Put ( "#Company", Env.Company );
-	Put ( "#User", "Accounant" );
+	Put ( "#User", "Accountant" );
 	Put ( "#Role", "Chief Accountant" );
 	Click ( "#Apply" );
 	
@@ -156,7 +156,7 @@ Procedure createEnv ( Env )
 	p.Company = Env.Company;
 	Call ( "Catalogs.Departments.Create", p );
 
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 
 EndProcedure
 

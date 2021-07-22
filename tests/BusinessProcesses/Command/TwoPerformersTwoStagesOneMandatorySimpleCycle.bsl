@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D091CF1" );
+id = Call ( "Common.ScenarioID", "A07O" );
 env = getEnv ( id );
 
 createCommand(env);
@@ -16,7 +16,7 @@ completeAll (env, 1);
 Disconnect(true);
 Connect(, env.CreatorPort);
 completeAll (env, 2);
-checkFinish ();
+checkFinish ( id );
 
 // *************************
 // Procedures
@@ -29,7 +29,7 @@ Function getEnv ( ID )
 	p.Insert ( "Responsible", "admin" );
 	p.Insert ( "Performer1", "accountant" );
 	p.Insert ( "Performer2", "director" );
-	p.Insert ( "CommandDescription", "Change contract date" );
+	p.Insert ( "CommandDescription", "Change contract date " + ID );
 	port = AppData.Port;
 	p.Insert ( "CreatorPort", port );
 	p.Insert ( "PerformerPort", port + 1 );
@@ -107,7 +107,7 @@ Procedure completeAll(Env, Method)
 	// Method 1: 2 tasks, because every second performer is not mandatory
 	// Method 2: 2 tasks will be completed in one shot
 	for i = 1 to ? ( Method = 1, 2, 1 ) do
-		openTask();
+		openTask(Env);
 		Click("#FormComplete", "Change contract date *");
 		if ( Method = 1 ) then
 			Click("OK", "Notes");
@@ -118,9 +118,9 @@ Procedure completeAll(Env, Method)
 	
 EndProcedure
 
-Procedure openTask ()
+Procedure openTask (Env)
 	
-	With("*20*");
+	With("*" + Format ( CurrentDate (), "DF=yyyy" ) + "*");
 	if ( not Get("#Panel").CurrentVisible () ) then
 		Click("#ShowPanel");
 	endif;
@@ -128,17 +128,17 @@ Procedure openTask ()
 	table = Get("#UserTasks");
 	try
 		table.GotoFirstRow();
+		GotoRow ( table, "Presentation", Env.CommandDescription );
 	except
 	endtry;
 	table.Choose();
 	
 EndProcedure
 
-Procedure checkFinish ()
+Procedure checkFinish ( ID )
 	
 	// Open Commands list and check if Command is completed
-	Commando("e1cib/list/BusinessProcess.Command");
-	With();
+	Call ( "BusinessProcesses.Command.ListByDescription", ID );
 	Check("#Completed", "Yes");
 	
 EndProcedure

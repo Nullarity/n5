@@ -1,11 +1,11 @@
-// Create: Item, Service, Organization, Contract
+﻿// Create: Item, Service, Organization, Contract
 // Twice add Item and Service to contract
 // Save contract and check errors
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "275D1E69" );
+id = Call ( "Common.ScenarioID", "A07A" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -18,6 +18,7 @@ Click ( "#Vendor" );
 Click ( "#FormWrite" );
 
 // Open Contract & Add Item and Service twice
+Click("#CustomerPage");
 Get ( "#CustomerContract" ).Open ();
 With ( "General (Cont*" );
 

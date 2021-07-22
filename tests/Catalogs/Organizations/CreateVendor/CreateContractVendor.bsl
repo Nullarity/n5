@@ -12,13 +12,13 @@ mainCurrency = ? ( useParams, _.Currency, "MDL" );
 itemContractForm = With ();
 Set ( "!Currency", mainCurrency );
 Next();
-if ( _.RateType <> undefined ) then
-	Put("#VendorRateType", _.RateType);
-endif;
-if ( _.Rate <> undefined ) then
-	Set("#VendorRate", _.Rate);
-endif;
 if ( useParams ) then
+	if ( _.RateType <> undefined ) then
+		Put("#VendorRateType", _.RateType);
+	endif;
+	if ( _.Rate <> undefined ) then
+		Set("#VendorRate", _.Rate);
+	endif;
 	if ( AppName <> "MobileVTree" ) then
 		Choose ( "#VendorBank" );
 		p = Call ( "Catalogs.BankAccounts.Create.Params" );

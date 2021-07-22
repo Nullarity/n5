@@ -1,4 +1,4 @@
-// Create Entry
+﻿// Create Entry
 // Create two Dr records
 // Create two Cr records
 // Post and check records
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2863B1DB" );
+id = Call ( "Common.ScenarioID", "A08G" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -17,7 +17,7 @@ form = With();
 With(form);
 Click("#RecordsAdd");
 With();
-Put("#AccountDr", "11000");
+Put("#AccountDr", "2211");
 Put("#DimDr1", env.Customer1);
 Set("#Amount", 5);
 Click("#FormOK");
@@ -26,7 +26,7 @@ Click("#FormOK");
 With(form);
 Click("#RecordsAdd");
 With();
-Put("#AccountDr", "11000");
+Put("#AccountDr", "2211");
 Put("#DimDr1", env.Customer2);
 Set("#Amount", 5);
 Click("#FormOK");

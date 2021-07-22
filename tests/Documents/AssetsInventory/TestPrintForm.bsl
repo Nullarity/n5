@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 env = getEnv ();
 createEnv ( env );
@@ -18,7 +18,7 @@ Call ( "Common.CheckLogic", "#TabDoc" );
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "2BD8DE04" );
+	id = Call ( "Common.ScenarioID", "A06A" );
 	env = new Structure ();
 	env.Insert ( "ID", id );
 	env.Insert ( "Date", CurrentDate () );
@@ -29,7 +29,7 @@ EndFunction
 Procedure createEnv ( Env )
 
  	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -39,6 +39,6 @@ Procedure createEnv ( Env )
 	Call ( "Documents.AssetsInventory.TestCreation.Create", id );
 	CloseAll ();
 
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 
 EndProcedure

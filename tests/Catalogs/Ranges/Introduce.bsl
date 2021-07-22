@@ -1,4 +1,4 @@
-// Create Item Balances
+﻿// Create Item Balances
 // Create Range
 // Post Item Balances
 // Post again because it has non-standard date for its records
@@ -7,7 +7,7 @@
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "293C9D48");
+id = Call("Common.ScenarioID", "A07Q");
 env = getEnv(id);
 createEnv(env);
 

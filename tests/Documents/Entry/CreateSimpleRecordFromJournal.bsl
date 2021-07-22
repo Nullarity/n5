@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Open list of entries
 // - Set filter by operation (operation with Simple flag = true)
 // - Create a new Entry and check prefilled accounts
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "25C3A35C" );
+id = Call ( "Common.ScenarioID", "A08Q" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -56,7 +56,7 @@ EndFunction
 Procedure createEnv ( Env )
 
 	id = Env.ID;
-	if ( Call ( "Common.DataCreated", id ) ) then
+	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
@@ -71,6 +71,6 @@ Procedure createEnv ( Env )
 	p.AccountCr = Env.AccountCr;
 	Call ( "Catalogs.Operations.Create", p );
 	
-	Call ( "Common.StampData", id );
+	RegisterEnvironment ( id );
 
 EndProcedure
