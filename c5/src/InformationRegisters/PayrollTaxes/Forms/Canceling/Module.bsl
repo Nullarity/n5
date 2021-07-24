@@ -13,7 +13,6 @@ EndProcedure
 Procedure loadParams ()
 	
 	Record.Tax = Parameters.Tax;
-	Record.Limit = Parameters.Limit;
 	Record.Rate = Parameters.Rate;
 	
 EndProcedure 

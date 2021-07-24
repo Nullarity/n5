@@ -57,7 +57,7 @@ EndFunction
 &AtClient
 Procedure openCanceling ( Data )
 	
-	p = new Structure ( "Tax, Limit, Rate" );
+	p = new Structure ( "Tax, Rate" );
 	FillPropertyValues ( p, Data );
 	OpenForm ( "InformationRegister.PayrollTaxes.Form.Canceling", p );
 	

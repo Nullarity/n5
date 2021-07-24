@@ -53,7 +53,6 @@ Procedure readAppearance ()
 	|Write Warning show empty ( Object.Ref );
 	|Method enable empty ( Object.Ref );
 	|PayrollTaxes enable filled ( Object.Ref );
-	|PayrollTaxesLimit show Object.Method = Enum.Calculations.IncomeTax;
 	|ActualRates show ShowCurrentRates;
 	|PayrollTaxes show not ShowCurrentRates
 	|" );
