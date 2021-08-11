@@ -51,10 +51,11 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Base enable Object.Method <> Enum.Calculations.FixedAmount;
 	|Write Warning show empty ( Object.Ref );
-	|Method enable empty ( Object.Ref );
+	|Method Net enable empty ( Object.Ref );
 	|PayrollTaxes enable filled ( Object.Ref );
 	|ActualRates show ShowCurrentRates;
-	|PayrollTaxes show not ShowCurrentRates
+	|PayrollTaxes show not ShowCurrentRates;
+	|Net show inlist ( Object.Method, Enum.Calculations.FixedAmount, Enum.Calculations.Percent );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -111,7 +112,7 @@ EndProcedure
 &AtClient
 Procedure ShowRecords ( Command )
 	
-	toggleRates ()
+	toggleRates ();
 
 EndProcedure
 

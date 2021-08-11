@@ -6,23 +6,12 @@ Procedure MethodOnChange ( Form ) export
 	resetBase ( object );
 	if ( TypeOf ( object.Ref ) = Type ( "ChartOfCalculationTypesRef.Compensations" ) ) then
 		resetHourlyRate ( object );
+	else
+		resetNet ( object );
 	endif; 
 	Appearance.Apply ( Form, "Object.Method" );
 	
 EndProcedure
-
-Procedure SetDescription ( Object ) export
-	
-	Object.Description = Object.Method;
-	setCode ( Object );
-	
-EndProcedure 
-
-Procedure setCode ( Object )
-	
-	Object.Code = Conversion.DescriptionToCode ( Object.Description );
-	
-EndProcedure 
 
 &AtClient
 Procedure resetBase ( Object )
@@ -54,6 +43,30 @@ Procedure resetHourlyRate ( Object )
 		Object.HourlyRate = undefined;
 	endif; 
 
+EndProcedure 
+
+&AtClient
+Procedure resetNet ( Object )
+
+	method = Object.Method;
+	if ( method <> PredefinedValue ( "Enum.Calculations.Percent" )
+		and method <> PredefinedValue ( "Enum.Calculations.FixedAmount" ) ) then
+		Object.Net = false;
+	endif; 
+
+EndProcedure
+
+Procedure SetDescription ( Object ) export
+	
+	Object.Description = Object.Method;
+	setCode ( Object );
+	
+EndProcedure 
+
+Procedure setCode ( Object )
+	
+	Object.Code = Conversion.DescriptionToCode ( Object.Description );
+	
 EndProcedure 
 
 &AtClient

@@ -296,26 +296,6 @@ Procedure loadContract ( Form )
 EndProcedure
 
 &AtServer
-Procedure loadVendorContract ( Form )
-	
-	object = Form.Object;
-	data = DF.Values ( object.Contract, "Currency, CustomerRateType, CustomerRate, CustomerFactor" );
-	contractCurrency = data.Currency;
-	object.ContractCurrency = contractCurrency;
-	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
-		and data.CustomerRate <> 0 ) then
-		currency = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
-	else
-		currency = CurrenciesSrv.Get ( contractCurrency, Object.Date );
-	endif;
-	Object.ContractRate = currency.Rate;
-	Object.ContractFactor = currency.Factor;
-	Object.Currency = contractCurrency;
-	AdjustDebtsForm.ApplyCurrency ( Form );
-
-EndProcedure
-
-&AtServer
 Procedure ApplyCurrency ( Form ) export
 	
 	setRates ( Form.Object );

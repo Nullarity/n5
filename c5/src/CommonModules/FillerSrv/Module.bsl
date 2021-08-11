@@ -38,18 +38,21 @@ Function putData ( Report, Variant, Composer, Schema, Batch )
 	endif; 
 	tcomposer = new DataCompositionTemplateComposer ();
 	try
-		template = tcomposer.Execute ( p.Schema, p.Settings, , , Type ( "DataCompositionValueCollectionTemplateGenerator" ) );
+		template = tcomposer.Execute ( p.Schema, p.Settings, , ,
+			Type ( "DataCompositionValueCollectionTemplateGenerator" ) );
 	except
 		Message ( BriefErrorDescription ( ErrorInfo () ) );
 		return undefined;
 	endtry;
 	events = p.Events;
+	if ( events.OnPrepare ) then
+		obj.OnPrepare ( template );
+	endif; 
 	if ( Batch ) then
-		p.Result = executeBatch ( template );
+		q = prepareBatch ( template );
+		p.Result = q.ExecuteBatch ();
+		p.BatchQuery = q;
 	else
-		if ( events.OnPrepare ) then
-			obj.OnPrepare ( template );
-		endif; 
 		processor = new DataCompositionProcessor ();
 		processor.Initialize ( template );
 		builder = new DataCompositionResultValueCollectionOutputProcessor ();
@@ -81,14 +84,15 @@ Procedure applyChangedComposer ( Params, Composer )
 	
 EndProcedure
 
-Function executeBatch ( Template )
+Function prepareBatch ( Template )
 	
 	q = new Query ( template.DataSets [ 0 ].Query );
+	SQL.DefineTempManager ( q );
 	for each item in template.ParameterValues do
 		q.SetParameter ( item.Name, item.Value );
 	enddo; 
 	CoreLibrary.AdjustQuery ( q );
-	return q.ExecuteBatch ();
+	return q;
 	
 EndFunction 
 

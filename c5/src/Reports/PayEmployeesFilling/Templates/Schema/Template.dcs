@@ -111,7 +111,7 @@ index by Employee
 select cast ( Balances.ExtDimension1 as Catalog.Individuals ) as Employee, Balances.ExtDimension2 as Compensation,
 	Balances.AmountBalanceCr as Amount, Balances.Account as Account
 into Compensations
-from AccountingRegister.General.Balance ( &amp;BalancesDate, Account in ( &amp;Account ), ,
+from AccountingRegister.General.Balance ( dateadd ( &amp;PaymentDate, second, 1 ), Account in ( &amp;Account ), ,
 	{ExtDimension1 in ( select Employee from CalculatingDocument where &amp;CalculatingDocument &lt;&gt; value ( Document.PayEmployees.EmptyRef ) )}
 	{Company.* as Company, ExtDimension1.* as Employee, ExtDimension2.* as Compensation} ) as Balances
 	//
@@ -119,7 +119,7 @@ from AccountingRegister.General.Balance ( &amp;BalancesDate, Account in ( &amp;A
 	//
 	join (
 		select distinct Employee.Individual as Employee
-		from InformationRegister.Personnel.SliceLast ( &amp;BalancesDate, {Employee.Individual.* as Employee, Employee.Company.* as Company} ) as Personnel
+		from InformationRegister.Personnel.SliceLast ( &amp;PaymentDate, {Employee.Individual.* as Employee, Employee.Company.* as Company} ) as Personnel
 		{where Personnel.Department.* as Department, Personnel.Position.* as Position, Personnel.Schedule.* as Schedule}
 	) as Personnel
 	on Personnel.Employee = Balances.ExtDimension1
@@ -144,132 +144,10 @@ where &amp;TaxesOnly
 {where PayEmployees.Ref = &amp;CalculatingTaxesDocument and &amp;CalculatingTaxesDocument &lt;&gt; value ( Document.PayEmployees.EmptyRef )}
 index by Employee
 ;
-// Rates
-select Rates.Tax as Tax, Rates.Limit as Limit, Rates.Rate as Rate
-into Rates
-from InformationRegister.PayrollTaxes.SliceLast ( &amp;BalancesDate ) as Rates
-where Rates.Use
-;
-// Scaled
-select Rates.Tax as Tax, Rates.Limit as Limit, Rates.Rate as Rate
-into Scaled
-from Rates as Rates
-where Rates.Limit &lt;&gt; 0
-union
-select distinct Rates.Tax, 0, 0
-from Rates as Rates
-where Rates.Limit &lt;&gt; 0
-;
-// ScaledRates
-select Scaled.Tax as Tax, Scaled.Limit as LimitFrom, min ( ScaledTo.Limit ) as LimitTo, min ( ScaledTo.Rate ) as Rate
-into ScaledRates
-from Scaled as Scaled
-	//
-	// ScateTo
-	//
-	join Scaled as ScaledTo
-	on ScaledTo.Tax = Scaled.Tax
-	and ScaledTo.Limit &gt; Scaled.Limit
-group by Scaled.Tax, Scaled.Limit, Scaled.Rate
-union all
-select Rates.Tax, 0, 999999999999, Rates.Rate
-from Rates as Rates
-where Rates.Limit = 0
-;
-// OtherTaxes
-select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Compensation as Compensation, Taxes.Tax as Tax,
-	Taxes.Account as Account, Taxes.Base as Base, Taxes.Result as Result
-into OtherTaxes
-from (
-	select false as Edit, Based.Employee as Employee, Based.Compensation as Compensation, Based.Tax as Tax,
-		Based.Account as Account, Based.Amount as Base, Based.Amount / 100 * Rates.Rate as Result
-	from (
-		select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Taxes.Ref as Tax,
-		Taxes.Ref.Account as Account, sum ( Compensations.Amount ) as Amount
-		from AllCompensations as Compensations
-			//
-			// Taxes
-			//
-			join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Taxes
-			on Taxes.CalculationType = Compensations.Compensation
-			// There are fixed set of accounts which should be calculated
-			// at this point in time (actual Payment)
-			and Taxes.Ref.Method = value ( Enum.Calculations.MedicalInsurance )
-		group by Compensations.Employee, Compensations.Compensation, Taxes.Ref
-		) as Based
-		//
-		// Rates
-		//
-		join ScaledRates as Rates
-		on Rates.Tax = Based.Tax
-		//
-		// Exclude modified records
-		//
-		left join Document.PayEmployees.Taxes as PayEmployees
-		on PayEmployees.Ref = &amp;Ref
-		and PayEmployees.Employee = Based.Employee
-		and PayEmployees.Compensation = Based.Compensation
-		and PayEmployees.Tax = Based.Tax
-		and PayEmployees.Account = Based.Account
-		and PayEmployees.Edit
-	where PayEmployees.Ref is null
-	union all
-	select true, PayEmployees.Employee, PayEmployees.Compensation, PayEmployees.Tax, PayEmployees.Account,
-		PayEmployees.Base, PayEmployees.Result
-	from Document.PayEmployees.Taxes as PayEmployees
-	where PayEmployees.Ref = &amp;Ref
-	and PayEmployees.Edit
-	// There are all possible taxes, including percentage, which user
-	// could define in this document
-	and not PayEmployees.Tax.Method in (
-			value ( Enum.Calculations.IncomeTax ),
-			value ( Enum.Calculations.FixedIncomeTax )
-		)
-	) as Taxes
-;
 // Employees
 select distinct Compensations.Employee as Employee
 into Employees
 from AllCompensations as Compensations
-index by Employee
-;
-// WorkPeriods
-select Employees.Employee.Individual as Employee, &amp;YearStart as Period, Employees.Hired as Hired
-into Employment
-from InformationRegister.Employees.SliceLast ( &amp;YearStart, Employee.Individual in ( select Employee from Employees ) ) as Employees
-where Employees.Hired
-and Employees.Employee in (
-	select Employee
-	from InformationRegister.Employment
-	where Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
-)
-union
-select Employees.Employee.Individual, Employees.Period, Employees.Hired
-from InformationRegister.Employees as Employees
-where Employees.Period &gt; &amp;YearStart and Employees.Period &lt;= &amp;BalancesDate
-and Employees.Employee.Individual in ( select Employee from Employees )
-and Employees.Employee in (
-	select Employee
-	from InformationRegister.Employment
-	where Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
-)
-index by Employee
-;
-// WorkPeriods
-select Employment.Employee as Employee, max ( Employment.Period ) as DateStart,
-	max ( isnull ( Terminated.Period, &amp;BalancesDate ) ) as DateEnd,
-	1 + sum ( datediff ( Employment.Period, isnull ( Terminated.Period, &amp;BalancesDate ), month ) ) as Period
-into WorkPeriods
-from Employment as Employment
-	//
-	// Terminated
-	//
-	left join Employment as Terminated
-	on Terminated.Employee = Employment.Employee
-	and Terminated.Period &gt; Employment.Period
-	and not Terminated.Hired
-where Employment.Hired
-group by Employment.Employee
 index by Employee
 ;
 // Calendar
@@ -300,7 +178,7 @@ from (
 	union all
 	select dateadd ( &amp;YearStart, month, 11 )
 	) as Calendar
-where Calendar.Period between &amp;YearStart and &amp;BalancesDate
+where Calendar.Period between &amp;YearStart and &amp;PaymentDate
 index by Period
 ;
 // DeductionRates
@@ -310,7 +188,7 @@ from InformationRegister.DeductionRates.SliceLast ( &amp;YearStart ) as Deductio
 union all
 select Deductions.Period, Deductions.Deduction, Deductions.Rate
 from InformationRegister.DeductionRates as Deductions
-where Deductions.Period &gt; &amp;YearStart and Deductions.Period &lt;= &amp;BalancesDate
+where Deductions.Period &gt; &amp;YearStart and Deductions.Period &lt;= &amp;PaymentDate
 index by Period
 ;
 // DeductionsList
@@ -348,7 +226,7 @@ union all
 select Deductions.Period, Deductions.Use, Deductions.Employee.Individual, Deductions.Deduction
 from InformationRegister.Deductions as Deductions
 where Employee.Individual in ( select Employee from Employees )
-and Deductions.Period &gt; &amp;YearStart and Deductions.Period &lt;= &amp;BalancesDate
+and Deductions.Period &gt; &amp;YearStart and Deductions.Period &lt;= &amp;PaymentDate
 index by Period, Employee
 ;
 // EmployeeDeductionPeriods
@@ -365,218 +243,216 @@ group by Calendar.Period, Deductions.Employee, Deductions.Deduction
 index by Period, Employee
 ;
 // Deductions
-select Deductions.Employee as Employee, sum ( case when Deductions.Use then DeductionsList.Rate / 12 else 0 end ) as Amount
+select Deductions.Employee as Employee, sum ( Deductions.Amount ) as Amount
 into Deductions
-from Calendar as Calendar
+from (
+	select Deductions.Employee as Employee, case when Deductions.Use then DeductionsList.Rate / 12 else 0 end as Amount
+	from Calendar as Calendar
+		//
+		// DeductionPeriods
+		//
+		join EmployeeDeductionPeriods as DeductionPeriods
+		on DeductionPeriods.Period = Calendar.Period
+		//
+		// Deductions
+		//
+		join EmployeeDeductions as Deductions
+		on Deductions.Period = DeductionPeriods.DeductionPeriod
+		and Deductions.Employee = DeductionPeriods.Employee
+		and Deductions.Deduction = DeductionPeriods.Deduction
+		//
+		// DeductionsList
+		//
+		join DeductionsList as DeductionsList
+		on DeductionsList.Period = Calendar.Period
+		and DeductionsList.Deduction = Deductions.Deduction
+	union all
+	select Unused.Employee.Individual, Unused.Amount
+	from InformationRegister.UnusedDeductions as Unused
+	where Unused.Employee.Individual in ( select Employee from Employees )
+	and Unused.Year = &amp;YearStart
+	union all
+	select AppliedDeductions.Employee, - AppliedDeductions.Deductions
+	from Document.PayEmployees.Taxes as AppliedDeductions
+	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate
+	and AppliedDeductions.Ref.Posted
+	and AppliedDeductions.Deductions &lt;&gt; 0
+	and AppliedDeductions.Employee in ( select Employee from Employees )
+	{where AppliedDeductions.Ref.Company.* as Company}
+	union all
+	select AppliedDeductions.Individual, - AppliedDeductions.Deductions
+	from Document.PayrollBalances.Employees as AppliedDeductions
+	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate
+	and AppliedDeductions.Ref.Posted
+	and AppliedDeductions.Deductions &lt;&gt; 0
+	and AppliedDeductions.Individual in ( select Employee from Employees )
+	{where AppliedDeductions.Ref.Company.* as Company}
+	) as Deductions
+group by Deductions.Employee
+having sum ( Deductions.Amount ) &gt; 0
+index by Employee
+;
+// Rates
+select Rates.Tax as Tax, Rates.Rate as Rate
+into Rates
+from InformationRegister.PayrollTaxes.SliceLast ( &amp;PaymentDate,
+	Tax.Net
+	or Tax.Method = value ( Enum.Calculations.MedicalInsurance ) ) as Rates
+where Rates.Use
+;
+// Medical
+select Based.Employee as Employee, Based.Compensation as Compensation, Based.Tax as Tax,
+	Based.Account as Account, Based.Amount as Base, Based.Amount / 100 * Rates.Rate as Result
+into Medical
+from (
+	select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Taxes.Ref as Tax,
+	Taxes.Ref.Account as Account, sum ( Compensations.Amount ) as Amount
+	from AllCompensations as Compensations
+		//
+		// Taxes
+		//
+		join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Taxes
+		on Taxes.CalculationType = Compensations.Compensation
+		and not Taxes.Ref.DeletionMark
+		// There are fixed set of accounts which should be calculated
+		// at this point in time (actual Payment)
+		and Taxes.Ref.Method = value ( Enum.Calculations.MedicalInsurance )
+	group by Compensations.Employee, Compensations.Compensation, Taxes.Ref
+	) as Based
 	//
-	// DeductionPeriods
+	// Rates
 	//
-	join EmployeeDeductionPeriods as DeductionPeriods
-	on DeductionPeriods.Period = Calendar.Period
+	join Rates as Rates
+	on Rates.Tax = Based.Tax
+	//
+	// Exclude modified records
+	//
+	left join Document.PayEmployees.Taxes as PayEmployees
+	on PayEmployees.Ref = &amp;Ref
+	and PayEmployees.Employee = Based.Employee
+	and PayEmployees.Compensation = Based.Compensation
+	and PayEmployees.Tax = Based.Tax
+	and PayEmployees.Account = Based.Account
+	and PayEmployees.Edit
+where PayEmployees.Ref is null
+;
+// IncomeTax
+select IncomeTax.Employee as Employee, IncomeTax.Tax as Tax, IncomeTax.Tax.Account as Account,
+	IncomeTax.Amount as Base, isnull ( EmployeeDeductions.Amount, 0 ) as Deductions,
+	( IncomeTax.Amount - isnull ( EmployeeDeductions.Amount, 0 ) ) / 100 * IncomeTax.Rate as Result
+into IncomeTax
+from (
+	select Base.Employee as Employee, sum ( Base.Amount ) as Amount, Taxes.Ref as Tax, max ( Rates.Rate ) as Rate
+	from (
+		select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Compensations.Amount as Amount
+		from AllCompensations as Compensations
+		union all
+		select Medical.Employee, Medical.Compensation, - Medical.Result
+		from Medical as Medical
+		) as Base
+		//
+		// Taxes
+		//
+		join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Taxes
+		on Taxes.CalculationType = Base.Compensation
+		and not Taxes.Ref.DeletionMark
+		and Taxes.Ref.Method = value ( Enum.Calculations.IncomeTax )
+		//
+		// Rates
+		//
+		join Rates as Rates
+		on Rates.Tax = Taxes.Ref
+	group by Base.Employee, Taxes.Ref
+	) as IncomeTax
 	//
 	// Deductions
 	//
-	join EmployeeDeductions as Deductions
-	on Deductions.Period = DeductionPeriods.DeductionPeriod
-	and Deductions.Employee = DeductionPeriods.Employee
-	and Deductions.Deduction = DeductionPeriods.Deduction
+	left join Deductions as EmployeeDeductions
+	on EmployeeDeductions.Employee = IncomeTax.Employee
 	//
-	// DeductionsList
+	// Exclude modified records
 	//
-	join DeductionsList as DeductionsList
-	on DeductionsList.Period = Calendar.Period
-	and DeductionsList.Deduction = Deductions.Deduction
-group by Deductions.Employee
-index by Employee
+	left join Document.PayEmployees.Taxes as PayEmployees
+	on PayEmployees.Ref = &amp;Ref
+	and PayEmployees.Employee = IncomeTax.Employee
+	and PayEmployees.Tax = IncomeTax.Tax
+	and PayEmployees.Account = IncomeTax.Tax.Account
+	and PayEmployees.Edit
+where PayEmployees.Ref is null
 ;
-// OtherTaxesAccounts
-select distinct Taxes.Ref.Account as Account
-into OtherTaxesAccounts
-from AllCompensations as Compensations
+// OtherDeductions
+select Basis.Employee as Employee, Taxes.Ref.Account as Account, Taxes.Ref as Tax, Basis.Amount as Base,
+	case Taxes.Ref.Method when value ( Enum.Calculations.Percent ) then Basis.Amount / 100 * Rates.Rate
+	else Rates.Rate
+	end as Result
+into OtherDeductions
+from (
+	select Basis.Employee as Employee, sum ( Basis.Amount ) as Amount
+	from (
+		select Compensations.Employee, Compensations.Amount
+		from AllCompensations as Compensations
+		union all
+		select Medical.Employee, - Medical.Result
+		from Medical as Medical
+		union all
+		select IncomeTax.Employee, - IncomeTax.Result
+		from IncomeTax as IncomeTax
+	) as Basis
+	group by Basis.Employee
+	) as Basis
 	//
 	// Taxes
 	//
 	join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Taxes
-	on Taxes.CalculationType = Compensations.Compensation
-	and not Taxes.Ref.Method in (
-		value ( Enum.Calculations.IncomeTax ),
-		value ( Enum.Calculations.FixedIncomeTax )
-	)
-;
-// CompensationAccounts
-select Compensations.Account as Account
-into CompensationAccounts
-from ChartOfCalculationTypes.Compensations as Compensations
-where not DeletionMark
-union
-select Ref
-from ChartOfAccounts.General as General
-where General.Ref in ( &amp;Account )
-;
-// TaxableCompensations
-select Taxes.Employee as Employee, Taxes.Compensation as Compensation, isnull ( Special.Tax, Taxes.Tax ) as Tax
-into TaxableCompensations
-from (
-	select Compensations.Employee as Employee, Compensations.Compensation as Compensation, isnull ( Scaled.Ref, Fixed.Ref ) as Tax
-	from AllCompensations as Compensations
-		//
-		// Scaled Income Tax
-		//
-		left join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Scaled
-		on Scaled.CalculationType = Compensations.Compensation
-		and Scaled.Ref.Method = value ( Enum.Calculations.IncomeTax )
-		//
-		// Fixed Income Tax
-		//
-		left join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Fixed
-		on Fixed.CalculationType = Compensations.Compensation
-		and Fixed.Ref.Method = value ( Enum.Calculations.FixedIncomeTax )
-	where isnull ( Scaled.Ref, Fixed.Ref ) is not null
-	) as Taxes
+	on Taxes.Ref.Net
+	and not Taxes.Ref.DeletionMark
+	and Taxes.Ref.Method in ( value ( Enum.Calculations.Percent ), value ( Enum.Calculations.FixedAmount ) )
+	and Taxes.CalculationType in ( select distinct Compensation from AllCompensations )
 	//
-	// Special Income Tax
+	// Rates
 	//
-	left join InformationRegister.IncomeTax.SliceLast ( &amp;BalancesDate, Individual in ( select Employee from Employees ) ) as Special
-	on Special.Individual = Taxes.Employee
-index by Employee
-;
-// AnnualIncome
-select cast ( AnnualIncome.ExtDimension1 as Catalog.Individuals ) as Employee, AnnualIncome.ExtDimension2 as Compensation,
-	sum ( AnnualIncome.AmountTurnoverDr ) as Amount
-into AnnualIncome
-from AccountingRegister.General.Turnovers ( &amp;YearStart, &amp;BalancesDate, ,
-	Account in ( select Account from CompensationAccounts ), ,
-	( ExtDimension1, ExtDimension2 ) in ( select distinct Employee, Compensation from TaxableCompensations )
-	) as AnnualIncome
-group by AnnualIncome.ExtDimension1, AnnualIncome.ExtDimension2
-index by Employee
-;
-// Previous IncomeTax
-select cast ( PreviousIncomeTax.BalancedExtDimension1 as Catalog.Individuals ) as Employee, PreviousIncomeTax.Account as Account,
-	sum ( PreviousIncomeTax.AmountTurnoverCr ) as Amount
-into PreviousIncomeTax
-from AccountingRegister.General.Turnovers ( &amp;YearStart, &amp;BalancesDate, ,
-	Account in ( select Tax.Account from TaxableCompensations ), ,
-	( BalancedExtDimension1, BalancedExtDimension2 ) in ( select distinct Employee, Compensation from TaxableCompensations )
-	) as PreviousIncomeTax
-group by PreviousIncomeTax.BalancedExtDimension1, PreviousIncomeTax.Account
-index by Employee
-;
-// IncomeTaxBase
-select cast ( Base.Employee as Catalog.Individuals ) as Employee, Taxes.Tax as Tax, sum ( Base.Amount ) as Amount
-into IncomeTaxBase
-from (
-	select AnnualIncome.Employee as Employee, AnnualIncome.Amount as Amount
-	from AnnualIncome as AnnualIncome
-	union all
-	select OtherAnnualTaxes.ExtDimension1, - OtherAnnualTaxes.AmountTurnoverDr
-	from AccountingRegister.General.Turnovers ( &amp;YearStart, &amp;BalancesDate, ,
-					Account in ( select Account from CompensationAccounts ), ,
-					( ExtDimension1, ExtDimension2 ) in ( select Employee, Compensation from TaxableCompensations ),
-					BalancedAccount in ( select Account from OtherTaxesAccounts ) ) as OtherAnnualTaxes
-	union all
-	select Compensations.Employee, Compensations.Amount
-	from AllCompensations as Compensations
-	where Compensations.Compensation in ( select distinct Compensation from TaxableCompensations )
-	union all
-	select OtherTaxes.Employee, - OtherTaxes.Result
-	from OtherTaxes as OtherTaxes
-	where OtherTaxes.Compensation in ( select distinct Compensation from TaxableCompensations )
-	and OtherTaxes.Tax.Method = value ( Enum.Calculations.MedicalInsurance )
-	) as Base
+	join Rates as Rates
+	on Rates.Tax = Taxes.Ref
 	//
-	// Taxes
+	// Exclude modified records
 	//
-	join ( select distinct Employee, Tax from TaxableCompensations ) as Taxes
-	on Taxes.Employee = Base.Employee
-group by Base.Employee, Taxes.Tax
-index by Employee
+	left join Document.PayEmployees.Taxes as PayEmployees
+	on PayEmployees.Ref = &amp;Ref
+	and PayEmployees.Employee = Basis.Employee
+	and PayEmployees.Tax = Taxes.Ref
+	and PayEmployees.Account = Taxes.Ref.Account
+	and PayEmployees.Edit
+where PayEmployees.Ref is null
 ;
 // Final selection: Taxes
 select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Compensation as Compensation, Taxes.Tax as Tax,
 	Taxes.Account as Account, Taxes.Base as Base, Taxes.Result as Result, Taxes.Deductions as Deductions,
-	Taxes.Period as Period, Taxes.Tax.Method as Method
+	Taxes.Tax.Method as Method
 from (
 	select false as Edit, IncomeTax.Employee as Employee, null as Compensation, IncomeTax.Tax as Tax,
 		IncomeTax.Account as Account, IncomeTax.Base as Base, IncomeTax.Result as Result,
-		IncomeTax.Deductions as Deductions, IncomeTax.Period as Period
-	from (
-		select IncomeTax.Employee as Employee, IncomeTax.Amount as Base, IncomeTax.Tax as Tax, IncomeTax.Account as Account,
-			IncomeTax.Deductions as Deductions, IncomeTax.Period as Period,
-			IncomeTax.Result - isnull ( PreviousIncomeTax.Amount, 0 ) as Result
-		from (
-			select Base.Employee as Employee, Base.Amount as Amount, Base.Tax as Tax, Base.Tax.Account as Account,
-				Deductions.Amount as Deductions, isnull ( WorkPeriods.Period, 0 ) as Period,
-				sum (
-					case
-						when Rates.LimitFrom / 12 * isnull ( WorkPeriods.Period, 1 ) &lt; ( Base.Amount - isnull ( Deductions.Amount, 0 ) ) then
-						(
-							case
-								when ( Base.Amount - isnull ( Deductions.Amount, 0 ) ) &lt; Rates.LimitTo / 12 * isnull ( WorkPeriods.Period, 1 ) then
-									( Base.Amount - isnull ( Deductions.Amount, 0 ) )
-								else
-									Rates.LimitTo / 12 * isnull ( WorkPeriods.Period, 1 )
-							end - Rates.LimitFrom / 12 * isnull ( WorkPeriods.Period, 1 )
-						) / 100 * Rates.Rate
-						else
-							0
-					end ) as Result
-			from IncomeTaxBase as Base
-				//
-				// Deductions
-				//
-				left join Deductions as Deductions
-				on Deductions.Employee = Base.Employee
-				//
-				// WorkPeriods
-				//
-				left join WorkPeriods as WorkPeriods
-				on WorkPeriods.Employee = Base.Employee
-				//
-				// Rates
-				//
-				join ScaledRates as Rates
-				on Rates.Tax = Base.Tax
-			group by Base.Employee, Base.Tax, Base.Amount, isnull ( WorkPeriods.Period, 0 ), Deductions.Amount
-			) as IncomeTax
-			//
-			// PreviousIncomeTax
-			//
-			left join PreviousIncomeTax as PreviousIncomeTax
-			on PreviousIncomeTax.Employee = IncomeTax.Employee
-			and PreviousIncomeTax.Account = IncomeTax.Account
-		) as IncomeTax
-		//
-		// Exclude modified records
-		//
-		left join Document.PayEmployees.Taxes as PayEmployees
-		on PayEmployees.Ref = &amp;Ref
-		and PayEmployees.Employee = IncomeTax.Employee
-		and PayEmployees.Tax = IncomeTax.Tax
-		and PayEmployees.Account = IncomeTax.Account
-		and PayEmployees.Edit
-	where PayEmployees.Ref is null
+		IncomeTax.Deductions as Deductions
+	from IncomeTax as IncomeTax
+	union all
+	select false, Medical.Employee, Medical.Compensation, Medical.Tax, Medical.Account,
+		Medical.Base, Medical.Result, 0
+	from Medical as Medical
+	union all
+	select false, OtherDeductions.Employee, null, OtherDeductions.Tax, OtherDeductions.Account,
+		OtherDeductions.Base, OtherDeductions.Result, 0
+	from OtherDeductions as OtherDeductions
 	union all
 	select true, PayEmployees.Employee, PayEmployees.Compensation, PayEmployees.Tax, PayEmployees.Account,
-		PayEmployees.Base, PayEmployees.Result, PayEmployees.Deductions, PayEmployees.Period
+		PayEmployees.Base, PayEmployees.Result, PayEmployees.Deductions
 	from Document.PayEmployees.Taxes as PayEmployees
 	where PayEmployees.Ref = &amp;Ref
 	and PayEmployees.Edit
-	and PayEmployees.Tax.Method in (
-			value ( Enum.Calculations.IncomeTax ),
-			value ( Enum.Calculations.FixedIncomeTax )
-		)
-	union all
-	select Taxes.Edit, Taxes.Employee, Taxes.Compensation, Taxes.Tax as Tax, Taxes.Account,
-		Taxes.Base, Taxes.Result, 0, 0
-	from OtherTaxes as Taxes
 	) as Taxes
 order by Taxes.Employee.Description, Taxes.Employee.Code,
 	case Taxes.Tax.Method
 		when value ( Enum.Calculations.MedicalInsurance ) then 0
-	 	when value ( Enum.Calculations.IncomeTax ) then 1
-		when value ( Enum.Calculations.FixedIncomeTax ) then 2
-		else 3
+		when value ( Enum.Calculations.IncomeTax ) then 1
+		else 2
 	end
 ;
 // Final selection: Compensations
@@ -806,8 +682,13 @@ order by Compensations.Employee.Description, Compensations.Employee.Code,
 		<use>Always</use>
 	</parameter>
 	<parameter>
-		<name>BalancesDate</name>
-		<title xsi:type="xs:string">Balances date</title>
+		<name>PaymentDate</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Payment date</v8:content>
+			</v8:item>
+		</title>
 		<valueType>
 			<v8:Type>xs:dateTime</v8:Type>
 			<v8:DateQualifiers>
@@ -815,8 +696,8 @@ order by Compensations.Employee.Description, Compensations.Employee.Code,
 			</v8:DateQualifiers>
 		</valueType>
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>false</useRestriction>
-		<availableAsField>false</availableAsField>
+		<useRestriction>true</useRestriction>
+		<use>Always</use>
 	</parameter>
 	<settingsVariant>
 		<dcsset:name>Default</dcsset:name>

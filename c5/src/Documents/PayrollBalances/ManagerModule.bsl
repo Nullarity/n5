@@ -48,9 +48,7 @@ Procedure sqlEmployees ( Env )
 	s = "
 	|// #Employees
 	|select Employees.Account as Account, Employees.Compensation as Compensation,
-	|	Employees.Individual as Employee, Employees.IncomeTax as IncomeTax,
-	|	Employees.IncomeTaxAccount as IncomeTaxAccount, Employees.Medical as Medical,
-	|	Employees.MedicalAccount as MedicalAccount, Employees.Paid as Paid, Employees.Balance as Balance
+	|	Employees.Individual as Employee, Employees.Balance as Balance
 	|from Document.PayrollBalances.Employees as Employees
 	|where Employees.Ref = &Ref
 	|";
@@ -74,88 +72,25 @@ Procedure commit ( Env )
 	p.Recordset = Env.Registers.General;
 	for each row in Env.Employees do
 		commitCompensation ( p, row );
-		commitMedical ( env, p, row );
-		commitIncomeTax ( p, row );
 	enddo; 
 	
 EndProcedure 
 
 Procedure commitCompensation ( Params, Row )
 	
-	paid = Row.Paid;
 	zero = ChartsOfAccounts.General._0;
 	account = Row.Account;
 	employee = Row.Employee;
 	compensation = Row.Compensation;
-	if ( paid <> 0 ) then
+	balance = Row.Balance;
+	if ( balance <> 0 ) then
 		Params.AccountDr = zero;
 		Params.AccountCr = account;
-		Params.Amount = paid;
+		Params.Amount = balance;
 		Params.DimCr1 = employee;
 		Params.DimCr2 = compensation;
 		GeneralRecords.Add ( Params );
 	endif;
-	balance = paid - Row.Balance;
-	if ( balance <> 0 ) then
-		Params.AccountDr = account;
-		Params.AccountCr = zero;
-		Params.Amount = balance;
-		Params.DimDr1 = Row.Employee;
-		Params.DimDr2 = compensation;
-		GeneralRecords.Add ( Params );
-	endif; 
-	
-EndProcedure 
-
-Procedure commitMedical ( Env, Params, Row )
-	
-	amount = row.Medical;
-	if ( amount = 0 ) then
-		return;
-	endif;
-	account = Row.Account;
-	accountTax = Row.MedicalAccount;
-	employee = Row.Employee;
-	compensation = Row.Compensation;
-	Params.AccountDr = account;
-	Params.AccountCr = accountTax;
-	Params.Amount = amount;
-	Params.DimDr1 = employee;
-	Params.DimDr2 = compensation;
-	GeneralRecords.Add ( Params );
-	Params.AccountDr = accountTax;
-	Params.AccountCr = account;
-	Params.Amount = amount;
-	Params.DimCr1 = employee;
-	Params.DimCr2 = compensation;
-	GeneralRecords.Add ( Params );
-	
-EndProcedure 
-
-Procedure commitIncomeTax ( Params, Row )
-	
-	amount = Row.IncomeTax;
-	if ( amount = 0 ) then
-		return;
-	endif;
-	account = Row.Account;
-	accountTax = Row.IncomeTaxAccount;
-	employee = Row.Employee;
-	compensation = Row.Compensation;
-	Params.AccountDr = accountTax;
-	Params.AccountCr = account;
-	Params.Amount = amount;
-	Params.DimCr1 = employee;
-	Params.DimCr2 = compensation;
-	Params.DimDr1 = employee;
-	GeneralRecords.Add ( Params );
-	Params.AccountDr = account;
-	Params.AccountCr = accountTax;
-	Params.Amount = amount;
-	Params.DimCr1 = employee;
-	Params.DimDr1 = employee;
-	Params.DimDr2 = compensation;
-	GeneralRecords.Add ( Params );
 	
 EndProcedure 
 

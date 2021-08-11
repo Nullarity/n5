@@ -1,4 +1,4 @@
-// Hire Employees
+﻿// Hire Employees
 // Create Payroll Balances
 // Post document
 // Check records
@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2866588E" );
+id = Call ( "Common.ScenarioID", "A09Y" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -27,24 +27,14 @@ compensation = env.MonthlyRate;
 Click ( "#EmployeesAdd" );
 Put ( "#EmployeesEmployee", employee.Name );
 Put ( "#EmployeesCompensation", compensation );
-Set ( "#EmployeesPaid", 10000 );
 Set ( "#EmployeesBalance", 1000 );
-Set ( "#EmployeesSocialAccrued", 1500 );
-Set ( "#EmployeesSocial", 300 );
-Set ( "#EmployeesMedical", 500 );
-Set ( "#EmployeesIncomeTax", 1200 );
 
 // Add Employee 1
 employee = env.Employees [ 1 ];
 Click ( "#EmployeesAdd" );
 Put ( "#EmployeesEmployee", employee.Name );
 Put ( "#EmployeesCompensation", compensation );
-Set ( "#EmployeesPaid", 20000 );
 Set ( "#EmployeesBalance", 2000 );
-Set ( "#EmployeesSocialAccrued", 2500 );
-Set ( "#EmployeesSocial", 400 );
-Set ( "#EmployeesMedical", 600 );
-Set ( "#EmployeesIncomeTax", 2200 );
 
 // Post
 Click ( "#FormPost" );

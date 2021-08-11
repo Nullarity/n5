@@ -64,10 +64,18 @@ for each row in _.Employees do
 	endif;
 	Put ( "#Expenses", expenses );
 	Put ( "#Rate", row.Rate );
+	if ( row.InHand ) then
+		Click ( "#InHand" );
+	endif;
 	for each rowAdditional in row.RowsAdditions do
 		Click ( "#ObjectAdditionsAdd" );
 		Put ( "#ObjectAdditionsCompensation", rowAdditional.Compensation );
 		Put ( "#ObjectAdditionsRate", rowAdditional.Rate );
+		if ( rowAdditional.InHand ) then
+			table = Get ( "#ObjectAdditions" );
+			table.EndEditRow ( false );
+			Click ( "#ObjectAdditionsInHand" );
+		endif;
 	enddo;
 	Click ( "#FormOK" );
 	With ( form );

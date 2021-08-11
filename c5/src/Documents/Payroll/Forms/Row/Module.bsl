@@ -22,7 +22,7 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|GroupVacation show inlist ( Method, Enum.Calculations.ExtendedVacation, Enum.Calculations.Vacation );
 	|GroupSickLeave show inlist ( Method, Enum.Calculations.SickDays, Enum.Calculations.SickDaysChild, Enum.Calculations.SickOnlySocial, Enum.Calculations.SickProduction );
-	|PageFields Employee Reference enable-unlock Edit;
+	|PageFields Employee Reference unlock Edit;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

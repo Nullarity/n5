@@ -12,6 +12,12 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">15</dcscor:value>
+				</dcscor:item>
+			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Schedule</dataPath>
@@ -20,10 +26,22 @@
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Position</dataPath>
 			<field>Position</field>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">10</dcscor:value>
+				</dcscor:item>
+			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Department</dataPath>
 			<field>Department</field>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">10</dcscor:value>
+				</dcscor:item>
+			</appearance>
 			<inputParameters>
 				<dcscor:item>
 					<dcscor:parameter>ChoiceParameterLinks</dcscor:parameter>
@@ -72,6 +90,12 @@
 					<v8:content>Ore</v8:content>
 				</v8:item>
 			</title>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">3</dcscor:value>
+				</dcscor:item>
+			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Day</dataPath>
@@ -121,13 +145,12 @@
 				<dcscom:orderType>Asc</dcscom:orderType>
 				<dcscom:autoOrder>false</dcscom:autoOrder>
 			</orderExpression>
-			<valueType>
-				<v8:Type>xs:string</v8:Type>
-				<v8:StringQualifiers>
-					<v8:Length>0</v8:Length>
-					<v8:AllowedLength>Variable</v8:AllowedLength>
-				</v8:StringQualifiers>
-			</valueType>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">4</dcscor:value>
+				</dcscor:item>
+			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Span</dataPath>
@@ -275,7 +298,7 @@ and Rates.Compensation.Method in ( value ( Enum.Calculations.HourlyRate ), value
 ;
 // CompensationPeriods
 select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Period as DateStart,
-	isnull ( min ( Changes.Period ), &amp;DateEnd ) as DateEnd
+	isnull ( min ( Changes.Period ), min ( Employment.DateEnd ) ) as DateEnd
 into CompensationPeriods
 from Rates as Rates
 	//
@@ -291,7 +314,7 @@ from Rates as Rates
 	join Employment as Employment
 	on Employment.Employee = Rates.Employee
 	and Employment.DateStart &lt;= Rates.Period
-	and Employment.DateEnd &gt;= isnull ( Changes.Period, &amp;DateEnd )
+	and Employment.DateEnd &gt;= isnull ( Changes.Period, Employment.DateEnd )
 where Rates.Actual
 group by Rates.Employee, Rates.Compensation, Rates.Period
 index by Employee
@@ -305,7 +328,7 @@ from CompensationPeriods as Compensations
 	//
 	join (
 		select Rates.Employee as Employee, Rates.Period as DateStart,
-			isnull ( min ( dateadd ( Changes.Period, day, -1 ) ), &amp;DateEnd ) as DateEnd
+			isnull ( min ( dateadd ( Changes.Period, day, -1 ) ), min ( Employment.DateEnd ) ) as DateEnd
 		from Rates as Rates
 			//
 			// Changes
@@ -319,7 +342,7 @@ from CompensationPeriods as Compensations
 			join Employment as Employment
 			on Employment.Employee = Rates.Employee
 			and Employment.DateStart &lt;= Rates.Period
-			and Employment.DateEnd &gt;= isnull ( Changes.Period, &amp;DateEnd )
+			and Employment.DateEnd &gt;= isnull ( Changes.Period, Employment.DateEnd )
 		group by Rates.Employee, Rates.Period
 	) as AllPeriods
 	on AllPeriods.Employee = Compensations.Employee
@@ -846,7 +869,7 @@ from (
 	select Vacations.Employee, Vacations.Department, Vacations.Position, Vacations.Hours, Vacations.Days, Vacations.Day, Vacations.Time
 	from (
 		select Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
-			sum ( case when Vacations.Minutes = 0 then 0 else 1 end ) as Days, Vacations.Day, Vacations.Time,
+			count ( Vacations.Minutes ) as Days, Vacations.Day, Vacations.Time,
 			sum ( Vacations.Minutes ) / 60 as Hours	
 		from ScheduledLocation as Location
 			//
@@ -855,11 +878,12 @@ from (
 			join Vacations as Vacations
 			on Vacations.Employee = Location.Employee
 			and Vacations.Day between Location.DateStart and Location.DateEnd
+            and Vacations.Day is not null
 		group by Location.Employee, Location.Department, Location.Position, Vacations.Day, Vacations.Time
 		) as Vacations
 	union all
 	select Location.Employee, Location.Department, Location.Position, 
-		sum ( SickLeaves.Minutes ) / 60, sum ( case when SickLeaves.Minutes = 0 then 0 else 1 end ), SickLeaves.Day,
+		count ( SickLeaves.Minutes ), sum ( SickLeaves.Minutes ) / 60, SickLeaves.Day,
 		value ( Enum.Time.Sickness )	
 	from ScheduledLocation as Location
 		//
@@ -946,7 +970,7 @@ from (
 	on Spans.Employee = Calendar.Employee
 	and Spans.Department = Calendar.Department
 	and Spans.Position = Calendar.Position
-</query>
+{where Calendar.Time as Time}</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
 	<calculatedField>
@@ -975,6 +999,7 @@ from (
 		<dataPath>Hours</dataPath>
 		<expression>sum ( Hours )</expression>
 		<group>Employee</group>
+		<group>Time</group>
 	</totalField>
 	<totalField>
 		<dataPath>Hours</dataPath>
@@ -985,6 +1010,7 @@ from (
 		<dataPath>Days</dataPath>
 		<expression>Sum(Days)</expression>
 		<group>Employee</group>
+		<group>Time</group>
 	</totalField>
 	<totalField>
 		<dataPath>Days</dataPath>
@@ -1217,6 +1243,41 @@ from (
 			<dcsat:item xsi:type="dcsat:TableRow">
 				<dcsat:tableCell>
 					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>###</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>###</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>###</v8:content>
+							</v8:item>
+						</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>DF=MM</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>DF=MM</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>DF=MM</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:item xsi:type="dcsat:Field">
 						<dcsat:value xsi:type="dcscor:Parameter">Day</dcsat:value>
 						<dcsat:appearance>
 							<dcscor:item>
@@ -1224,15 +1285,15 @@ from (
 								<dcscor:value xsi:type="v8:LocalStringType">
 									<v8:item>
 										<v8:lang>en</v8:lang>
-										<v8:content>DF=MMM</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>L=ru; DF=MMM</v8:content>
+										<v8:content>DF=MM</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
-										<v8:content>L=ru; DF=MMM</v8:content>
+										<v8:content>DF=MM</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>DF=MM</v8:content>
 									</v8:item>
 								</dcscor:value>
 							</dcscor:item>
@@ -1256,15 +1317,15 @@ from (
 								<dcscor:value xsi:type="v8:LocalStringType">
 									<v8:item>
 										<v8:lang>en</v8:lang>
-										<v8:content>DF=dd</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>DF=dd</v8:content>
+										<v8:content>DF=d</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
-										<v8:content>DF=dd</v8:content>
+										<v8:content>DF=d</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>DF=d</v8:content>
 									</v8:item>
 								</dcscor:value>
 							</dcscor:item>
@@ -1310,10 +1371,26 @@ from (
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.125</dcscor:value>
+						</dcscor:item>
 					</dcsat:appearance>
 				</dcsat:tableCell>
 				<dcsat:tableCell>
 					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.375</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.375</dcscor:value>
+						</dcscor:item>
 						<dcscor:item>
 							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
 							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
@@ -1344,6 +1421,14 @@ from (
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.125</dcscor:value>
+						</dcscor:item>
 					</dcsat:appearance>
 				</dcsat:tableCell>
 				<dcsat:tableCell>
@@ -1367,6 +1452,14 @@ from (
 						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.375</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">5.375</dcscor:value>
 						</dcscor:item>
 					</dcsat:appearance>
 				</dcsat:tableCell>
@@ -1733,7 +1826,7 @@ from (
 		</template>
 	</template>
 	<template>
-		<name>Template6</name>
+		<name>Layout4</name>
 		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
 			<dcsat:item xsi:type="dcsat:TableRow">
 				<dcsat:tableCell>
@@ -1746,6 +1839,16 @@ from (
 						<dcsat:value xsi:type="dcscor:Parameter">Time2</dcsat:value>
 					</dcsat:item>
 				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Hours</dcsat:value>
+					</dcsat:item>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Days</dcsat:value>
+					</dcsat:item>
+				</dcsat:tableCell>
 			</dcsat:item>
 		</template>
 		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
@@ -1756,45 +1859,14 @@ from (
 			<dcsat:name>Time2</dcsat:name>
 			<dcsat:expression>case when Time = value ( Enum.Time.Billable ) then NStr ( "en = 'Standard Hours'; ru = 'Основные часы'" ) else Time end</dcsat:expression>
 		</parameter>
-	</template>
-	<template>
-		<name>Template7</name>
-		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
-			<dcsat:item xsi:type="dcsat:TableRow">
-				<dcsat:tableCell>
-					<dcsat:item xsi:type="dcsat:Field">
-						<dcsat:value xsi:type="v8:LocalStringType">
-							<v8:item>
-								<v8:lang>en</v8:lang>
-								<v8:content>Info</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Расшифровка</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ro</v8:lang>
-								<v8:content>Detalii</v8:content>
-							</v8:item>
-						</dcsat:value>
-					</dcsat:item>
-					<dcsat:appearance>
-						<dcscor:item>
-							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
-							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
-						</dcscor:item>
-					</dcsat:appearance>
-				</dcsat:tableCell>
-				<dcsat:tableCell>
-					<dcsat:appearance>
-						<dcscor:item>
-							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
-							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-						</dcscor:item>
-					</dcsat:appearance>
-				</dcsat:tableCell>
-			</dcsat:item>
-		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Hours</dcsat:name>
+			<dcsat:expression>Hours</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Days</dcsat:name>
+			<dcsat:expression>Days</dcsat:expression>
+		</parameter>
 	</template>
 	<groupTemplate>
 		<groupName>Day</groupName>
@@ -1809,17 +1881,12 @@ from (
 	<groupTemplate>
 		<groupName>Time</groupName>
 		<templateType>Header</templateType>
-		<template>Template6</template>
+		<template>Layout4</template>
 	</groupTemplate>
 	<groupHeaderTemplate>
 		<groupName>Row</groupName>
 		<templateType>Header</templateType>
 		<template>Template5</template>
-	</groupHeaderTemplate>
-	<groupHeaderTemplate>
-		<groupName>Time</groupName>
-		<templateType>Header</templateType>
-		<template>Template7</template>
 	</groupHeaderTemplate>
 	<settingsVariant>
 		<dcsset:name>Default</dcsset:name>
@@ -1920,7 +1987,6 @@ from (
 					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>VerticalOverallPlacement</dcscor:parameter>
 					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
 				</dcscor:item>
@@ -2069,6 +2135,111 @@ from (
 						</dcsset:item>
 					</dcsset:selection>
 				</dcsset:row>
+				<dcsset:conditionalAppearance>
+					<dcsset:item>
+						<dcsset:selection>
+							<dcsset:item>
+								<dcsset:field>Days</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Hours</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Time</dcsset:field>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Time</dcsset:left>
+								<dcsset:comparisonType>InList</dcsset:comparisonType>
+								<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.Time.Vacation</dcsset:right>
+								<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.Time.ExtendedVacation</dcsset:right>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Days</dcsset:left>
+								<dcsset:comparisonType>Greater</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
+						<dcsset:appearance>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>BackColor</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Color">#FFCC00</dcscor:value>
+							</dcscor:item>
+						</dcsset:appearance>
+					</dcsset:item>
+					<dcsset:item>
+						<dcsset:selection>
+							<dcsset:item>
+								<dcsset:field>Days</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Hours</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Time</dcsset:field>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Time</dcsset:left>
+								<dcsset:comparisonType>Equal</dcsset:comparisonType>
+								<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.Time.Sickness</dcsset:right>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Days</dcsset:left>
+								<dcsset:comparisonType>Greater</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
+						<dcsset:appearance>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>BackColor</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Color">#008000</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>TextColor</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Color">#FFFFFF</dcscor:value>
+							</dcscor:item>
+						</dcsset:appearance>
+					</dcsset:item>
+					<dcsset:item>
+						<dcsset:selection>
+							<dcsset:item>
+								<dcsset:field>Days</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Hours</dcsset:field>
+							</dcsset:item>
+							<dcsset:item>
+								<dcsset:field>Time</dcsset:field>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Time</dcsset:left>
+								<dcsset:comparisonType>Equal</dcsset:comparisonType>
+								<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.Time.Holiday</dcsset:right>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Days</dcsset:left>
+								<dcsset:comparisonType>Greater</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
+						<dcsset:appearance>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>BackColor</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Color">#FFFF00</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:use>false</dcscor:use>
+								<dcscor:parameter>TextColor</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Color">auto</dcscor:value>
+							</dcscor:item>
+						</dcsset:appearance>
+					</dcsset:item>
+				</dcsset:conditionalAppearance>
 			</dcsset:item>
 			<dcsset:item xsi:type="dcsset:StructureItemGroup">
 				<dcsset:name>Time</dcsset:name>
@@ -2084,6 +2255,37 @@ from (
 				<dcsset:order>
 					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Time</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Hours</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Days</dcsset:field>
+					</dcsset:item>
+				</dcsset:selection>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:use>false</dcscor:use>
+						<dcscor:parameter>Title</dcscor:parameter>
+						<dcscor:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Info</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Informații</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Сводка</v8:content>
+							</v8:item>
+						</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
 			</dcsset:item>
 			<dcsset:itemsViewMode>Inaccessible</dcsset:itemsViewMode>
 		</dcsset:settings>

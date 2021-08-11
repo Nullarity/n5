@@ -23,14 +23,13 @@ Function FillTables ( Form, Result ) export
 		PayrollForm.Clean ( Form );
 		PayrollForm.MakeClean ( Form );
 	endif; 
-	last = data.Ubound ();
 	object = Form.Object;
 	if ( Form.CalculationVariant <> 3 ) then
-		fillTable ( object.Compensations, data [ last ].Select () );
+		object.Compensations.Load ( data.Compensations );
 	endif; 
-	fillTable ( object.Taxes, data [ last - 1 ].Select () );
+	object.Taxes.Load ( data.Taxes );
 	if ( isPayroll ( object ) ) then
-		fillTable ( object.Base, data [ last - 2 ].Select () );
+		object.Base.Load ( data.Base );
 	endif;
 	fillTotals ( object );
 	Form.Modified = true;
@@ -55,16 +54,6 @@ Procedure MakeClean ( Form ) export
 	
 	Form.Object.Dirty = false;
 	Appearance.Apply ( Form, "Object.Dirty" );
-	
-EndProcedure 
-
-&AtServer
-Procedure fillTable ( Table, Selection )
-	
-	while ( Selection.Next () ) do
-		row = Table.Add ();
-		FillPropertyValues ( row, selection );
-	enddo; 
 	
 EndProcedure 
 
@@ -122,22 +111,19 @@ Procedure CalcEmployee ( Object, Employee ) export
 	for each tax in taxes do
 		method = tax.Method;
 		result = tax.Result;
-		if ( method = PredefinedValue ( "Enum.Calculations.IncomeTax" )
-			or method = PredefinedValue ( "Enum.Calculations.FixedIncomeTax" ) ) then
+		if ( method = PredefinedValue ( "Enum.Calculations.IncomeTax" ) ) then
 			if ( not payroll ) then
 				row.IncomeTax = row.IncomeTax + result;
 			endif;
 		elsif ( method = PredefinedValue ( "Enum.Calculations.MedicalInsurance" ) ) then
-			row.Medical = row.Medical + result; //
+			row.Medical = row.Medical + result;
 		elsif ( method = PredefinedValue ( "Enum.Calculations.SocialInsurance" ) ) then
-			row.Social = row.Social + result; //
+			row.Social = row.Social + result;
 		else
 			row.Other = row.Other + result;
 		endif; 
 	enddo; 
-	if ( payroll ) then
-		row.Net = row.Amount - row.Social - row.Other;
-	else
+	if ( not payroll ) then
 		row.Net = row.Amount - row.IncomeTax - row.Medical - row.Other;
 	endif; 
 	
@@ -154,10 +140,10 @@ Function totalsRow ( Object, Employee )
 		row = rows [ 0 ];
 		row.Amount = 0;
 		row.Other = 0;
-		row.Net = 0;
 		if ( isPayroll ( Object ) ) then
 			row.Social = 0;
 		else
+			row.Net = 0;
 			row.IncomeTax = 0;
 			row.Medical = 0;
 		endif; 

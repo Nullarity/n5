@@ -1,11 +1,11 @@
-// Hire Employee
+﻿// Hire Employee
 // Terminate in the middle of the month
 // Calculate his salary
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "284AB954" );
+id = Call ( "Common.ScenarioID", "A099" );
 env = getEnv ( id );
 createEnv ( env );
 

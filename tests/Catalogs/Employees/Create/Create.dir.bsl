@@ -46,6 +46,19 @@ if ( createUser ) then
 	Click ("#FormWriteAndClose");
 endif;
 
+if ( _.Deductions <> 0 ) then
+	Click ( "Deductions", GetLinks () );
+	With ();
+	Click ( "#ListCreate" );
+	With ();
+	Put ( "#Deduction", _.Deductions );
+	Put ( "#Period", Format (_.DeductionsDate, "DF=MM/yyyy") );
+	Click ( "#FormWriteAndClose" );
+	With ();
+	Click ( "Main", GetLinks () );
+	With ();
+endif;
+
 Close ( form );
 
 return new Structure ( "Code, Description", code, name );

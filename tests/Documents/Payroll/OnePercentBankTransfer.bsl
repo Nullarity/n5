@@ -1,13 +1,13 @@
-﻿// Calculate salary using "In Hand" option
-// - Hire an employee
+﻿// Calculate salary when employee has regular salary and 1% from Net salary
+// - Create two compensations: Monthly Payment (standard) and BankTransfer (from Net salary)
+// - Hire two employees. The Employee1 will have gross (standard) compensations, the second "In Hand"
 // - Enter balances (with precific amount from real case)
-// - Create Payroll & check amount
-// - Pay salary & check amount
+// - Create a Payroll & check amount
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0A5" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0B2" ) );
 getEnv ();
 createEnv ();
 
@@ -37,8 +37,9 @@ Put ( "#UserSettingsValue", this.Department, table );
 Click ( "#FormFill" );
 Pause ( __.Performance * 4 );
 With ();
+Check ( "#Totals / Amount [ 1 ]", 10000 );
+Check ( "#Totals / Other [ 1 ]", 0 );
 Click("#FormPost");
-Check ( "#Compensations / Result [ 1 ]", 12172.82 );
 #endregion
 
 #region PayAndCheck
@@ -54,8 +55,10 @@ Put ( "#UserSettingsValue", this.Department, table );
 Click ( "#FormFill" );
 Pause ( __.Performance * 4 );
 With ();
-Check ( "#Totals / Amount [ 1 ]", 12172.82 );
-Check ( "#Totals / Net [ 1 ]", 10000 );
+Check ( "#Totals / Amount [ 1 ]", 10000 );
+Check ( "#Totals / Net [ 1 ]", 8177.40 );
+Check ( "#Totals / Amount [ 2 ]", 12298.97 );
+Check ( "#Totals / Net [ 2 ]", 10000 );
 #endregion
 
 // *************************
@@ -145,7 +148,20 @@ Procedure createEnv ()
 	base = p.Base;
 	base.Add ( compensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
-	#endregion
+	#endregion 
+
+	#region bankTransfer
+	p = Call ( "CalculationTypes.Taxes.Create.Params" );
+	p.Description = "Bank " + id;
+	p.Method = "Percent";
+	p.Net = true;
+	p.RateDate = date;
+	p.Rate = 1;
+	p.Account = "5346";
+	base = p.Base;
+	base.Add ( compensation );
+	Call ( "CalculationTypes.Taxes.Create", p );
+	#endregion 
 
 	#region Hiring
 	department = this.Department;
@@ -160,8 +176,8 @@ Procedure createEnv ()
 		p.Department = department;
 		p.Position = "Manager";
 		p.Rate = employee.Rate;
-		p.InHand = true;
 		p.Compensation = monthlyRate;
+		p.InHand = employee.InHand;
 		params.Employees.Add ( p );
 	enddo;
 	params.Date = this.Date;
@@ -197,18 +213,20 @@ Function getEmployees ()
 	dateStart = BegOfYear ( date )-86400;
 	dateEnd = Date ( 1, 1, 1 );
 	employees = new Array ();
-	employees.Add ( newEmployee ( "Employee " + id, dateStart, dateEnd, 10000 ) );
+	employees.Add ( newEmployee ( "Employee1 " + id, dateStart, dateEnd, 10000, false ) );
+	employees.Add ( newEmployee ( "Employee2 " + id, dateStart, dateEnd, 10000, true ) );
 	return employees;
 
 EndFunction
 
-Function newEmployee ( Name, DateStart, DateEnd, Rate )
+Function newEmployee ( Name, DateStart, DateEnd, Rate, InHand )
 
-	p = new Structure ( "Name, DateStart, DateEnd, Rate" );
+	p = new Structure ( "Name, DateStart, DateEnd, Rate, InHand" );
 	p.Name = Name;
 	p.DateStart = DateStart;
 	p.DateEnd = DateEnd;
 	p.Rate = Rate;
+	p.InHand = InHand;
 	return p;
 
 EndFunction

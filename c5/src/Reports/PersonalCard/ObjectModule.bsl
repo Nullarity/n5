@@ -183,8 +183,8 @@ Procedure sqlTaxes ()
 	|from ( select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Period as Months, Taxes.Deductions as Deductions,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Base else 0 end as MedicalBase,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Result else 0 end as Medical,
-	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) or Taxes.Method = value ( Enum.Calculations.FixedIncomeTax ) then Taxes.Base else 0 end as IncomeTaxBase,
-	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) or Taxes.Method = value ( Enum.Calculations.FixedIncomeTax ) then Taxes.Result else 0 end as IncomeTax
+	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) then Taxes.Base else 0 end as IncomeTaxBase,
+	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) then Taxes.Result else 0 end as IncomeTax
 	|	from Employees as Employees
 	|		//
 	|		//	Taxes
@@ -193,8 +193,7 @@ Procedure sqlTaxes ()
 	|		on Taxes.Ref.Posted
 	|		and Taxes.Ref.Date between Employees.DateStart and Employees.DateEnd
 	|		and Taxes.Employee = &Individual			
-	|		and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), 
-	|			value ( Enum.Calculations.IncomeTax ), value ( Enum.Calculations.FixedIncomeTax ) )
+	|		and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), value ( Enum.Calculations.IncomeTax ) )
 	|	) as Taxes
 	|group by Taxes.Employee, Taxes.Ref, Taxes.Date
 	|;

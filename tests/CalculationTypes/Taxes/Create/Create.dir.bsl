@@ -17,6 +17,10 @@ value = _.Description;
 if ( value <> undefined ) then
 	Set ( "#Description", value );
 endif;
+value = _.Net;
+if ( value <> undefined and value ) then
+	Click ( "#Net" );
+endif;
 value = _.Account;
 if ( value <> undefined ) then
 	Set ( "#Account", value );

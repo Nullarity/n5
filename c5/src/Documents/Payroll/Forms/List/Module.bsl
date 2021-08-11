@@ -34,4 +34,3 @@ Procedure ListSelection ( Item, SelectedRow, Field, StandardProcessing )
 	UserTasks.Click ( Item, SelectedRow, Field, StandardProcessing );
 	
 EndProcedure
-

@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 p = new Structure ();
 p.Insert ( "Employee" ); // If it is not found then will be created
@@ -14,4 +14,5 @@ p.Insert ( "Expenses" );
 p.Insert ( "RowsAdditions", new Array () ); // Documents.Hiring.Create.RowAdditional
 p.Insert ( "Put", false );
 p.Insert ( "PutAll", true );
+p.Insert ( "InHand", false );
 return p;

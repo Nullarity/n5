@@ -10,6 +10,7 @@ var Division;
 Procedure AfterOutput () export
 
 	init ();
+	entitle ();
 	mergeRows ();
 	
 EndProcedure
@@ -23,6 +24,19 @@ Procedure init ()
 	Position = new Structure ( "Last, Row, Column", , row, 3 );
 	Division = new Structure ( "Last, Row, Column", , row, 4 );
 
+EndProcedure
+
+Procedure entitle ()
+	
+	settings = Params.Settings;
+	period = DC.GetParameter ( settings, "Period" ).Value;
+	date = BegOfMonth ( period.StartDate );
+	dateEnd = EndOfMonth ( period.EndDate );
+	while ( date < dateEnd ) do
+		Print.Entitle ( Params.Result, Format ( date, "DF=MMMM" ), "###" + Format ( date ,"DF=MM" ) );
+		date = AddMonth ( date, 1 );
+	enddo;
+	
 EndProcedure
 
 Procedure mergeRows () 

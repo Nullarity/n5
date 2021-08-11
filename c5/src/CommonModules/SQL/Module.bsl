@@ -22,14 +22,15 @@ Procedure Prepare ( Env ) export
 	
 	q = Env.Q;
 	q.Text = StrConcat ( Env.Selection, ";" );
-	defineTempManager ( q );
+	SQL.DefineTempManager ( q );
 	Env.Selection = new Array ();
 
 EndProcedure 
 
-Procedure defineTempManager ( Q )
+Procedure DefineTempManager ( Q ) export
 	
-	if ( Find ( Q.Text, "into " ) > 0 ) then
+	if ( Find ( Q.Text, "into " ) > 0
+		or Find ( Q.Text, "INTO " ) > 0 ) then
 		if ( Q.TempTablesManager = undefined ) then
 			Q.TempTablesManager = new TempTablesManager ();
 		endif; 
@@ -93,7 +94,7 @@ EndFunction
 
 Function Exec ( Q ) export
 	
-	defineTempManager ( Q );
+	SQL.DefineTempManager ( Q );
 	env = new Structure ();
 	extractData ( Q, env, Q.ExecuteBatch () );
 	return env;

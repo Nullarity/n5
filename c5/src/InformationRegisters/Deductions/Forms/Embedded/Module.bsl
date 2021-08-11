@@ -28,7 +28,6 @@ Procedure filterByEmployee ()
 	employee = Parameters.Filter.Employee;
 	DC.SetFilter ( UnusedDeductions, "Employee", employee );
 	DC.SetFilter ( ActualDeductions, "Employee", employee );
-	DC.SetFilter ( IncomeTax, "Individual", DF.Pick ( employee, "Individual" ) );
 	
 EndProcedure 
 

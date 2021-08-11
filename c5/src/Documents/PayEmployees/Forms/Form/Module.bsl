@@ -160,32 +160,9 @@ EndProcedure
 &AtClient
 Procedure Fill ( Command )
 	
-	if ( Modified ) then
-		Output.SaveModifiedObject ( ThisObject, FillDocument );
-	else
-		runCalculations ( FillDocument );
-	endif; 
+	runCalculations ( FillDocument );
 	
 EndProcedure
-
-&AtClient
-Procedure SaveModifiedObject ( Answer, Variant ) export
-	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif; 
-	if ( save () ) then
-		runCalculations ( Variant );
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Function save ()
-	
-	return Write ( new Structure ( "JustSave", true ) );
-	
-EndFunction
 
 &AtClient
 Procedure runCalculations ( Variant )
@@ -267,6 +244,25 @@ Procedure Calculate ( Command )
 	endif; 
 	
 EndProcedure
+
+&AtClient
+Procedure SaveModifiedObject ( Answer, Variant ) export
+	
+	if ( Answer = DialogReturnCode.No ) then
+		return;
+	endif; 
+	if ( save () ) then
+		runCalculations ( Variant );
+	endif; 
+	
+EndProcedure
+
+&AtClient
+Function save ()
+	
+	return Write ( new Structure ( "JustSave", true ) );
+	
+EndFunction
 
 &AtClient
 Procedure CalculateTaxes ( Command )

@@ -68,10 +68,7 @@ Procedure sqlCompensations ( Env )
 	|			join ChartOfcalculationTypes.Taxes.BaseCalculationTypes as Compensations
 	|			on Compensations.Ref = Taxes.Tax
 	|		where Taxes.Ref = &Ref
-	|		and Taxes.Tax.Method in (
-	|			value ( Enum.Calculations.IncomeTax ),
-	|			value ( Enum.Calculations.FixedIncomeTax )
-	|		)
+	|		and Taxes.Tax.Method = value ( Enum.Calculations.IncomeTax )
 	|	) as IncomeTax
 	|	on IncomeTax.Employee = Compensations.Employee
 	|	and IncomeTax.Compensation = Compensations.Compensation
@@ -91,20 +88,14 @@ Procedure sqlTaxes ( Env )
 	|	Taxes.Tax.Description as Description
 	|from Document.PayEmployees.Taxes as Taxes
 	|where Taxes.Ref = &Ref
-	|and not Taxes.Tax.Method in (
-	|	value ( Enum.Calculations.IncomeTax ),
-	|	value ( Enum.Calculations.FixedIncomeTax )
-	|)
+	|and Taxes.Tax.Method <> value ( Enum.Calculations.IncomeTax )
 	|;
 	|// #IncomeTax
 	|select Taxes.Account as AccountCr, Taxes.Employee as Employee, Taxes.Result as Result,
 	|	Taxes.Tax.Description as Description
 	|from Document.PayEmployees.Taxes as Taxes
 	|where Taxes.Ref = &Ref
-	|and Taxes.Tax.Method in (
-	|	value ( Enum.Calculations.IncomeTax ),
-	|	value ( Enum.Calculations.FixedIncomeTax )
-	|)
+	|and Taxes.Tax.Method = value ( Enum.Calculations.IncomeTax )
 	|";
 	Env.Selection.Add ( s );
 	
@@ -142,7 +133,6 @@ Procedure commitTaxes ( Env )
 	for each taxRow in table do
 		amount = taxRow.Result;
 		compensationRow = compensations [ taxRow.LN - 1 ];
-		method = taxRow.Method;
 		p.AccountDr = compensationRow.AccountDr;
 		compensationRow.Amount = compensationRow.Amount - amount;
 		p.AccountCr = taxRow.AccountCr;

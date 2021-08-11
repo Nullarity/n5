@@ -1,13 +1,14 @@
-﻿// Calculate salary using "In Hand" option
+﻿// Calculate salary when employee has regular salary and food tickets.
+// Food should be calculated in "reverse" mode
+// - Create two compensations: Monthly Payment (standard) and FoodTickets (no IncomeTax)
 // - Hire an employee
 // - Enter balances (with precific amount from real case)
-// - Create Payroll & check amount
-// - Pay salary & check amount
+// - Create a Payroll & check amount
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0A5" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0AG" ) );
 getEnv ();
 createEnv ();
 
@@ -38,7 +39,7 @@ Click ( "#FormFill" );
 Pause ( __.Performance * 4 );
 With ();
 Click("#FormPost");
-Check ( "#Compensations / Result [ 1 ]", 12172.82 );
+Check ( "#Totals / Amount [ 1 ]", 12197.80 );
 #endregion
 
 #region PayAndCheck
@@ -54,8 +55,8 @@ Put ( "#UserSettingsValue", this.Department, table );
 Click ( "#FormFill" );
 Pause ( __.Performance * 4 );
 With ();
-Check ( "#Totals / Amount [ 1 ]", 12172.82 );
-Check ( "#Totals / Net [ 1 ]", 10000 );
+Check ( "#Totals / Amount [ 1 ]", 12197.80 );
+Check ( "#Totals / Net [ 1 ]", 10260.00 );
 #endregion
 
 // *************************
@@ -70,6 +71,7 @@ Procedure getEnv ()
 	this.Insert ( "Department", "Department " + id );
 	this.Insert ( "Employees", getEmployees () );
 	this.Insert ( "MonthlyRate", "Monthly " + id );
+	this.Insert ( "FoodTickets", "Food " + id );
 
 EndProcedure
 
@@ -102,11 +104,15 @@ Procedure createEnv ()
 	Call ( "Catalogs.Departments.Create", p );
 	#endregion
 
-	#region newCompensation
+	#region newCompensations
 	p = Call ( "CalculationTypes.Compensations.Create.Params" );
 	compensation = this.MonthlyRate;
 	p.Description = compensation;
 	p.Method = "Monthly Rate";
+	Call ( "CalculationTypes.Compensations.Create", p );
+	foodCompensation = this.FoodTickets;
+	p.Description = foodCompensation;
+	p.Method = "Fixed Amount";
 	Call ( "CalculationTypes.Compensations.Create", p );
 	#endregion
 
@@ -120,6 +126,7 @@ Procedure createEnv ()
 	p.Account = "5331";
 	base = p.Base;
 	base.Add ( compensation );
+	base.Add ( foodCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
 	#endregion
 	
@@ -132,6 +139,7 @@ Procedure createEnv ()
 	p.Account = "5331";
 	base = p.Base;
 	base.Add ( compensation );
+	base.Add ( foodCompensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
 	#endregion
 
@@ -145,7 +153,7 @@ Procedure createEnv ()
 	base = p.Base;
 	base.Add ( compensation );
 	Call ( "CalculationTypes.Taxes.Create", p );
-	#endregion
+	#endregion 
 
 	#region Hiring
 	department = this.Department;
@@ -160,8 +168,13 @@ Procedure createEnv ()
 		p.Department = department;
 		p.Position = "Manager";
 		p.Rate = employee.Rate;
-		p.InHand = true;
 		p.Compensation = monthlyRate;
+		additional = Call ( "Documents.Hiring.Create.RowAdditional" );
+		additional.Compensation = foodCompensation;
+		additional.Rate = employee.FoodRate;
+		additional.InHand = true;
+		p.RowsAdditions = new Array ();
+		p.RowsAdditions.Add ( additional );
 		params.Employees.Add ( p );
 	enddo;
 	params.Date = this.Date;
@@ -204,11 +217,12 @@ EndFunction
 
 Function newEmployee ( Name, DateStart, DateEnd, Rate )
 
-	p = new Structure ( "Name, DateStart, DateEnd, Rate" );
+	p = new Structure ( "Name, DateStart, DateEnd, Rate, FoodRate" );
 	p.Name = Name;
 	p.DateStart = DateStart;
 	p.DateEnd = DateEnd;
 	p.Rate = Rate;
+	p.FoodRate = 2000;
 	return p;
 
 EndFunction

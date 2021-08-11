@@ -134,6 +134,7 @@ Function getParams ( Report )
 	p.Insert ( "GenerateOnOpen", false );
 	p.Insert ( "CheckAccess", true );
 	p.Insert ( "CompanyInHeader", true );
+	p.Insert ( "BatchQuery" );
 	return p;
 	
 EndFunction 

@@ -96,11 +96,11 @@ Procedure sqlRates ( Env )
 	s = "
 	|// #Rates
 	|select Employees.DateStart as DateStart, Employees.Employee as Employee, Employees.Compensation as Compensation,
-	|	Employees.Rate as Rate, Employees.Currency as Currency
+	|	Employees.Rate as Rate, Employees.Currency as Currency, Employees.InHand as InHand
 	|from Document.Hiring.Employees as Employees
 	|where Employees.Ref = &Ref
 	|union all
-	|select Employees.DateStart, Additions.Employee, Additions.Compensation, Additions.Rate, Additions.Currency
+	|select Employees.DateStart, Additions.Employee, Additions.Compensation, Additions.Rate, Additions.Currency, Additions.InHand
 	|from Document.Hiring.Additions as Additions
 	|	//
 	|	// Employees
@@ -108,11 +108,6 @@ Procedure sqlRates ( Env )
 	|	join Document.Hiring.Employees as Employees
 	|	on Employees.Employee = Additions.Employee
 	|where Additions.Ref = &Ref
-	|;
-	|// #InHand
-	|select Employees.DateStart as DateStart, Employees.Employee as Employee, Employees.InHand as Yes
-	|from Document.Hiring.Employees as Employees
-	|where Employees.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );
 	
@@ -177,14 +172,8 @@ Procedure makeRates ( Env )
 		record.Compensation = row.Compensation;
 		record.Currency = row.Currency;
 		record.Rate = row.Rate;
+		record.InHand = row.InHand;
 		record.Actual = true;
-	enddo; 
-	register = Env.Registers.SalaryInHand;
-	for each row in Env.InHand do
-		record = register.Add ();
-		record.Period = row.DateStart;
-		record.Employee = row.Employee;
-		record.Yes = row.Yes;
 	enddo; 
 	
 EndProcedure 
@@ -195,7 +184,6 @@ Procedure flagRegisters ( Env )
 	registers.Employees.Write = true;
 	registers.Personnel.Write = true;
 	registers.EmployeeRates.Write = true;
-	registers.SalaryInHand.Write = true;
 	registers.Employment.Write = true;
 	
 EndProcedure
