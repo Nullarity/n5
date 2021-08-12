@@ -2,31 +2,72 @@
 
 var Params export;
 var TabDoc;
+var NoLine;
 var Line;
+var EmployeeID;
 var Employee;
 var Position;
 var Division;
+var Time;
+var TabDocWidth;
+
+Procedure OnPrepare ( Template ) export
+	
+	Reporter.MakeFlat ( Template );
+	
+EndProcedure
 
 Procedure AfterOutput () export
 
 	init ();
-	entitle ();
+	adjustView ();
 	mergeRows ();
+	hideDivision ();
 	
 EndProcedure
 
 Procedure init () 
 
+	NoLine = new Line ( SpreadsheetDocumentCellLineType.None );
 	TabDoc = Params.Result;
+	TabDocWidth = TabDoc.TableWidth;
 	Line = 0;
 	row = TabDoc.FixedTop + 1;
-	Employee = new Structure ( "Last, Row, Column", , row, 2 );
-	Position = new Structure ( "Last, Row, Column", , row, 3 );
-	Division = new Structure ( "Last, Row, Column", , row, 4 );
+	EmployeeID = new Structure ( "Last, Row, Column", , row, 2 );
+	Employee = new Structure ( "Last, Row, Column", , row, 3 );
+	Position = new Structure ( "Last, Row, Column", , row, 4 );
+	Division = new Structure ( "Last, Row, Column", , row, 5 );
+	Time = new Structure ( "Last, Row, Column", , row, 6 );
 
 EndProcedure
 
-Procedure entitle ()
+Procedure adjustView ()
+	
+	fixHeader ();
+	fixWidth ();
+	daysToMonths ();
+		
+EndProcedure
+
+Procedure fixHeader ()
+	
+	end = TabDoc.FixedTop - 2;
+	column = Division.Column;
+	for i = 1 to end do
+		TabDoc.Area ( i, 1, i, column ).Merge ();	
+	enddo;
+
+EndProcedure
+
+Procedure fixWidth ()
+	
+	TabDoc.Area ( "C1" ).ColumnWidth = 3;
+	TabDoc.Area ( "C" + EmployeeID.Column ).ColumnWidth =
+		Metadata.Catalogs.Employees.StandardAttributes.Code.Type.StringQualifiers.Length;
+	
+EndProcedure
+
+Procedure daysToMonths ()
 	
 	settings = Params.Settings;
 	period = DC.GetParameter ( settings, "Period" ).Value;
@@ -43,13 +84,16 @@ Procedure mergeRows ()
 
 	row = TabDoc.FixedTop + 1;
 	lastRow = TabDoc.TableHeight - 1;
+	employeeColumn = Employee.Column;
 	for i = row to lastRow do
-		if ( TabDoc.Area ( i, 5, i, 5 ).Text = "" ) then
+		if ( TabDoc.Area ( i, employeeColumn, i, employeeColumn ).Text = "" ) then
 			break;
 		endif;
 		mergeEmployee ( i );
+		merge ( EmployeeID, i );
 		merge ( Position, i );
 		merge ( Division, i );
+		merge ( Time, i );
 	enddo;
 	
 EndProcedure
@@ -64,11 +108,16 @@ Procedure mergeEmployee ( Row )
 		lineArea = TabDoc.Area ( lastRow, 1, Row, 1 );
 		lineArea.Merge ();
 		lineArea.Text = Line;
+		column = Time.Column;
+		TabDoc.Area ( Row - 1, column, Row - 1, TabDocWidth ).BottomBorder = NoLine;
+		TabDoc.Area ( Row, column, Row, TabDocWidth ).TopBorder = NoLine;
 	else
 		Employee.Last = value;
 		Employee.Row = Row;
 		Position.Last = undefined;
 		Division.Last = undefined;
+		EmployeeID.Last = undefined;
+		Time.Last = undefined;
 		Line = Line + 1;
 		TabDoc.Area ( Row, 1, Row, 1 ).Text = Line;
 	endif;
@@ -86,6 +135,14 @@ Procedure merge ( Area, Row )
 		Area.Row = Row;
 	endif;
 
+EndProcedure
+
+Procedure hideDivision ()
+	
+	column = "C" + Division.Column;
+	TabDoc.Area ( column + ":" + column ).Group ( "Department" );
+	TabDoc.ShowColumnGroupLevel ( 0 );
+	
 EndProcedure
 
 #endif

@@ -517,29 +517,15 @@ and Totals.Ref.Posted	</query>
 			<field>Employee</field>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>// Taxes
-select Taxes.Employee as Employee, Taxes.Deductions as Deductions, Taxes.Tax as Tax, Taxes.Period as Period,
-	Taxes.Result as TaxAmount
-into Taxes
+		<query>// Main selection
+select Taxes.Employee as Employee, Taxes.Deductions as Deductions, 
+	Taxes.Tax as Tax, Taxes.Result as TaxAmount
+{select Deductions, Tax.*, TaxAmount, Employee.*}
 from Document.PayEmployees.Taxes as Taxes
 {where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
 where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Taxes.Ref.Posted
-;
-// Main selection
-select Taxes.Employee as Employee, case when Taxes.Period = MaxPeriod.Period then Taxes.Deductions else 0 end as Deductions, 
-	Taxes.Tax as Tax, Taxes.TaxAmount as TaxAmount
-{select Deductions, Tax.*, TaxAmount, Employee.*}
-from Taxes as Taxes
-	//
-	// Max Period
-	//
-	left join (
-		select max ( Taxes.Period ) as Period, Taxes.Employee as Employee
-		from Taxes as Taxes
-		group by Taxes.Employee
-	) as MaxPeriod
-	on MaxPeriod.Employee = Taxes.Employee	 	</query>
+</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
 	<dataSet xsi:type="DataSetQuery">

@@ -671,6 +671,16 @@ Procedure ReplaceExpression ( Definition, Expression, NewExpression ) export
 	
 EndProcedure
 
+Procedure MakeFlat ( Template ) export
+	
+	for each item In Template.Templates do
+        for each row in item.Template Do            
+            row.TableID = "";
+        enddo;
+    enddo;
+	
+EndProcedure
+
 #region Details
 
 Procedure ApplyDetails ( Composer, Filters ) export

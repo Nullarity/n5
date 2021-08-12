@@ -297,7 +297,10 @@ select Rates.Tax as Tax, Rates.Rate as Rate
 into Rates
 from InformationRegister.PayrollTaxes.SliceLast ( &amp;PaymentDate,
 	Tax.Net
-	or Tax.Method = value ( Enum.Calculations.MedicalInsurance ) ) as Rates
+	or Tax.Method in (
+		value ( Enum.Calculations.MedicalInsurance ),
+		value ( Enum.Calculations.IncomeTax ) )
+	) as Rates
 where Rates.Use
 ;
 // Medical

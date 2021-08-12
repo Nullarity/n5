@@ -5,7 +5,7 @@
 		<dataSourceType>Local</dataSourceType>
 	</dataSource>
 	<dataSet xsi:type="DataSetQuery">
-		<name>DataSet1</name>
+		<name>Time</name>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Employee</dataPath>
 			<field>Employee</field>
@@ -92,8 +92,20 @@
 			</title>
 			<appearance>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Font</dcscor:parameter>
+					<dcscor:value xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xsi:type="v8ui:Font" ref="sys:DefaultGUIFont" height="7" kind="WindowsFont"/>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">2.5</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>MaximumWidth</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">3</dcscor:value>
+					<dcscor:value xsi:type="xs:decimal">2.5</dcscor:value>
 				</dcscor:item>
 			</appearance>
 		</field>
@@ -175,6 +187,16 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>WholeDay</dataPath>
+			<field>WholeDay</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Whole day</v8:content>
+				</v8:item>
+			</title>
 		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Timeline for next 3 years
@@ -576,7 +598,7 @@ select Vacations.Ref as Ref, Vacations.Employee as Employee, Time.Day as Day,
 		else value ( Enum.Time.ExtendedVacation )
 	end as Time,
 	Schedules.Minutes as Minutes, Schedules.Minutes as ScheduledMinutes, HolidaysList.Day as Holiday,
-	Spans.DateStart as SpanStart, Spans.DateEnd as SpanEnd
+	Spans.DateStart as SpanStart, Spans.DateEnd as SpanEnd, true as WholeDay
 into Vacations
 from Document.Vacation.Employees as Vacations
 	//
@@ -612,7 +634,7 @@ from Document.Vacation.Employees as Vacations
 where Vacations.Ref.Posted
 union all
 select Hours.Recorder, Hours.Employee, Hours.Day, Hours.Time, Hours.Minutes, Schedules.Minutes,
-	null, Spans.DateStart, Spans.DateEnd
+	null, Spans.DateStart, Spans.DateEnd, ( Schedules.Minutes = Hours.Minutes ) or ( Schedules.Minutes = 0 )
 from InformationRegister.Hours as Hours
 	//
 	// Exclude already created Vacation documents
@@ -646,7 +668,7 @@ index by Employee, Day
 ;
 // SickLeaves
 select SickLeaves.Employee as Employee, Calendar.Day as Day, value ( Enum.Time.Sickness ) as Time,
-	Schedules.Minutes as Minutes
+	Schedules.Minutes as Minutes, true as WholeDay
 into SickLeaves
 from Document.SickLeave as SickLeaves
 	//
@@ -669,10 +691,31 @@ from Document.SickLeave as SickLeaves
 	and Schedules.Day = Calendar.Day
 where SickLeaves.Posted
 union all
-select Hours.Employee, Hours.Day, Hours.Time, Hours.Minutes
+select Hours.Employee, Hours.Day, Hours.Time, Hours.Minutes, ( Schedules.Minutes = Hours.Minutes ) or ( Schedules.Minutes = 0 )
 from InformationRegister.Hours as Hours
+	//
+	// Exclude already created SickVacation documents
+	//
+	left join Document.SickLeave as SickLeaves
+	on SickLeaves.Employee = Hours.Employee
+	and Hours.Day between SickLeaves.DateStart and SickLeaves.DateEnd
+	and SickLeaves.Ref.Posted
+	//
+	// ScheduledIntervals
+	//
+	join ScheduledIntervals as Intervals
+	on Intervals.Employee = Hours.Employee
+	and Hours.Day between Intervals.DateStart and Intervals.DateEnd
+	//
+	// Schedules
+	//
+	join InformationRegister.Schedules as Schedules
+	on Schedules.Schedule = Intervals.Schedule
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Day = Hours.Day
 where Hours.Day between &amp;DateStart and &amp;DateEnd
 and Hours.Time = value ( Enum.Time.Sickness )
+and SickLeaves.Ref is null
 index by Employee, Day
 ;
 // Only holidays falling on working days
@@ -859,18 +902,19 @@ index by Employee
 ;
 // AllTime
 select AllTime.Employee as Employee, AllTime.Department as Department, AllTime.Position as Position, AllTime.Day as Day,
-	AllTime.Time as Time, sum ( AllTime.Hours ) as Hours, sum ( AllTime.Days ) as Days	
+	AllTime.Time as Time, max ( AllTime.WholeDay ) as WholeDay, sum ( AllTime.Hours ) as Hours, sum ( AllTime.Days ) as Days
 into AllTime
 from (
 	select Standard.Employee as Employee, Standard.Department as Department, Standard.Position as Position,
-		Standard.Hours as Hours, Standard.Days as Days,	Standard.Day as Day, Standard.Time as Time
+		Standard.Hours as Hours, Standard.Days as Days,	Standard.Day as Day, Standard.Time as Time, null as WholeDay
 	from Standard as Standard
 	union all
-	select Vacations.Employee, Vacations.Department, Vacations.Position, Vacations.Hours, Vacations.Days, Vacations.Day, Vacations.Time
+	select Vacations.Employee, Vacations.Department, Vacations.Position, Vacations.Hours, Vacations.Days, Vacations.Day,
+		Vacations.Time, Vacations.WholeDay
 	from (
 		select Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
-			count ( Vacations.Minutes ) as Days, Vacations.Day, Vacations.Time,
-			sum ( Vacations.Minutes ) / 60 as Hours	
+			sum ( Vacations.Minutes ) / 60 as Hours, count ( Vacations.Minutes ) as Days,
+			Vacations.Day as Day, Vacations.Time as Time, max ( Vacations.WholeDay ) as WholeDay
 		from ScheduledLocation as Location
 			//
 			// Vacations
@@ -883,8 +927,8 @@ from (
 		) as Vacations
 	union all
 	select Location.Employee, Location.Department, Location.Position, 
-		count ( SickLeaves.Minutes ), sum ( SickLeaves.Minutes ) / 60, SickLeaves.Day,
-		value ( Enum.Time.Sickness )	
+		sum ( SickLeaves.Minutes ) / 60, count ( SickLeaves.Minutes ), SickLeaves.Day,
+		value ( Enum.Time.Sickness ), max ( SickLeaves.WholeDay )
 	from ScheduledLocation as Location
 		//
 		// SickLeaves
@@ -904,7 +948,7 @@ from (
 	union all
 	select StandardPeriods.Employee, StandardPeriods.Department, StandardPeriods.Position,
 		sum ( Deviations.Minutes ) / 60, sum ( case when Deviations.Minutes = 0 then 0 else 1 end ),
-		Deviations.Day, Deviations.Time
+		Deviations.Day, Deviations.Time, null
 	from (
 		select Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
 			case when Location.DateStart &gt; Compensations.DateStart then Location.DateStart else Compensations.DateStart end as DateStart,
@@ -937,8 +981,8 @@ having sum ( AllTime.Hours ) &gt; 0 or sum ( AllTime.Days ) &gt; 0
 // Main selection
 select Calendar.Employee as Employee, Calendar.Department as Department, Calendar.Position as Position,
 	Calendar.Time as Time, Calendar.Day as Day, Spans.Day as Span,
-	isnull ( AllTime.Hours, 0 ) as Hours, isnull ( AllTime.Days, 0 ) as Days
-{select Employee.*, Department.*, Position.*, Day, Time, Hours, Days, Span}
+	isnull ( AllTime.Hours, 0 ) as Hours, isnull ( AllTime.Days, 0 ) as Days, isnull ( AllTime.WholeDay, false ) as WholeDay
+{select Employee.*, Department.*, Position.*, Day, Time, Hours, Days, Span, WholeDay}
 from (
 	select distinct AllTime.Employee as Employee, AllTime.Department as Department, AllTime.Position as Position,
 		AllTime.Time as Time, Calendar.Day as Day
@@ -970,8 +1014,90 @@ from (
 	on Spans.Employee = Calendar.Employee
 	and Spans.Department = Calendar.Department
 	and Spans.Position = Calendar.Position
-{where Calendar.Time as Time}</query>
+{where Calendar.Time as Time, isnull ( AllTime.WholeDay, false ) as WholeDay}</query>
 		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Signatures</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Name</dataPath>
+			<field>Name</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Name</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Director</dataPath>
+			<field>Director</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Director</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Accountant</dataPath>
+			<field>Accountant</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Accountant</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Company</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>// Company
+select top 1 Companies.Ref as Ref
+into Company
+from Catalog.Companies as Companies
+where not Companies.DeletionMark
+{where Companies.Ref.* as Company}
+;
+// Main selection
+select  Accountant.Name as Accountant, Director.Name as Director
+{select Accountant, Director}
+from Company as Company
+	//
+	// Accountant
+	//
+	left join (
+		select top 1 Roles.User.Employee.Individual.Description as Name
+		from Document.Roles as Roles
+		where Roles.Role = value ( Enum.Roles.AccountantChief )
+		and not Roles.DeletionMark
+		and Roles.Action = value ( Enum.AssignRoles.Assign )
+		and Roles.Company in ( select Ref from Company )
+		order by Roles.Date desc
+			) as Accountant
+	on true
+	//
+	// Director
+	//
+	left join (
+		select top 1 Roles.User.Employee.Individual.Description as Name
+		from Document.Roles as Roles
+		where Roles.Role = value ( Enum.Roles.GeneralManager )
+		and not Roles.DeletionMark
+		and Roles.Action = value ( Enum.AssignRoles.Assign )
+		and Roles.Company in ( select Ref from Company )
+		order by Roles.Date desc
+			) as Director
+	on true
+</query>
 	</dataSet>
 	<calculatedField>
 		<dataPath>TotalRow</dataPath>
@@ -1016,6 +1142,11 @@ from (
 		<dataPath>Days</dataPath>
 		<expression>sum ( case when Time in ( value ( Enum.Time.Evening ), value ( Enum.Time.Night )  )  then 0 else Days end )</expression>
 		<group>Overall</group>
+	</totalField>
+	<totalField>
+		<dataPath>WholeDay</dataPath>
+		<expression>WholeDay</expression>
+		<group>Day</group>
 	</totalField>
 	<parameter>
 		<name>DateEnd</name>
@@ -1081,7 +1212,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'S'; ru = 'Я'" )</expression>
+		<expression>NStr ( "en = 'S'; ru = 'Я'; ro = 'S'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Holiday</name>
@@ -1095,7 +1226,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'H'; ru = 'РП'" )</expression>
+		<expression>NStr ( "en = 'H'; ru = 'РП'; ro = 'Sn'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Vacation</name>
@@ -1109,7 +1240,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'V'; ru = 'ОТ'" )</expression>
+		<expression>NStr ( "en = 'V'; ru = 'ОТ'; ro = 'C'" )</expression>
 	</parameter>
 	<parameter>
 		<name>ExtendedVacation</name>
@@ -1123,7 +1254,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'EV'; ru = 'ОД'" )</expression>
+		<expression>NStr ( "en = 'EV'; ru = 'ОД'; ro = 'Ce'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Sickness</name>
@@ -1137,7 +1268,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'Sn'; ru = 'Б'" )</expression>
+		<expression>NStr ( "en = 'Sn'; ru = 'Б'; ro = 'Cm'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Banked</name>
@@ -1151,7 +1282,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'B+'; ru = 'Р+'" )</expression>
+		<expression>NStr ( "en = 'B+'; ru = 'Р+'; ro = 'B+'" )</expression>
 	</parameter>
 	<parameter>
 		<name>BankedUse</name>
@@ -1165,7 +1296,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'B-'; ru = 'Р-'" )</expression>
+		<expression>NStr ( "en = 'B-'; ru = 'Р-'; ro = 'B-'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Overtime</name>
@@ -1179,7 +1310,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'O'; ru = 'С'" )</expression>
+		<expression>NStr ( "en = 'O'; ru = 'С'; ro = 'Os'" )</expression>
 	</parameter>
 	<parameter>
 		<name>DayOff</name>
@@ -1193,7 +1324,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'DO'; ru = 'РП'" )</expression>
+		<expression>NStr ( "en = 'DO'; ru = 'РП'; ro = 'Ls'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Evening</name>
@@ -1207,7 +1338,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'E'; ru = 'ВЕ'" )</expression>
+		<expression>NStr ( "en = 'E'; ru = 'ВЕ'; ro = 'Se'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Night</name>
@@ -1221,7 +1352,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'N'; ru = 'Н'" )</expression>
+		<expression>NStr ( "en = 'N'; ru = 'Н'; ro = 'N'" )</expression>
 	</parameter>
 	<parameter>
 		<name>Absence</name>
@@ -1235,7 +1366,7 @@ from (
 		</valueType>
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
-		<expression>NStr ( "en = 'A'; ru = 'ПР'" )</expression>
+		<expression>NStr ( "en = 'A'; ru = 'ПР'; ro = 'A'" )</expression>
 	</parameter>
 	<template>
 		<name>Template2</name>
@@ -1333,6 +1464,10 @@ from (
 					</dcsat:item>
 					<dcsat:appearance>
 						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="7" bold="false" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
@@ -1418,6 +1553,10 @@ from (
 					</dcsat:item>
 					<dcsat:appearance>
 						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="7" bold="false" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
@@ -1449,6 +1588,10 @@ from (
 						</dcsat:value>
 					</dcsat:item>
 					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="7" bold="false" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
 						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
@@ -1527,6 +1670,76 @@ from (
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
 						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Personnel #</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Personalul №</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Таб. номер</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BorderColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:ReportLineColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Left</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Top</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Right</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
 						</dcscor:item>
@@ -1587,6 +1800,10 @@ from (
 						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
 						</dcscor:item>
 						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
@@ -1651,6 +1868,10 @@ from (
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
 						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
 						</dcscor:item>
@@ -1711,6 +1932,10 @@ from (
 						<dcscor:item>
 							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
 						</dcscor:item>
 						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
@@ -1775,6 +2000,10 @@ from (
 							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
 						</dcscor:item>
 						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
 						</dcscor:item>
@@ -1782,6 +2011,14 @@ from (
 				</dcsat:tableCell>
 			</dcsat:item>
 			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>VerticalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
 				<dcsat:tableCell>
 					<dcsat:appearance>
 						<dcscor:item>
@@ -1833,21 +2070,45 @@ from (
 					<dcsat:item xsi:type="dcsat:Field">
 						<dcsat:value xsi:type="dcscor:Parameter">Time1</dcsat:value>
 					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
 				</dcsat:tableCell>
 				<dcsat:tableCell>
 					<dcsat:item xsi:type="dcsat:Field">
 						<dcsat:value xsi:type="dcscor:Parameter">Time2</dcsat:value>
 					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
 				</dcsat:tableCell>
 				<dcsat:tableCell>
 					<dcsat:item xsi:type="dcsat:Field">
 						<dcsat:value xsi:type="dcscor:Parameter">Hours</dcsat:value>
 					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
 				</dcsat:tableCell>
 				<dcsat:tableCell>
 					<dcsat:item xsi:type="dcsat:Field">
 						<dcsat:value xsi:type="dcscor:Parameter">Days</dcsat:value>
 					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
 				</dcsat:tableCell>
 			</dcsat:item>
 		</template>
@@ -1868,6 +2129,596 @@ from (
 			<dcsat:expression>Days</dcsat:expression>
 		</parameter>
 	</template>
+	<template>
+		<name>Layout5</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Hours</dcsat:value>
+					</dcsat:item>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Days</dcsat:value>
+					</dcsat:item>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Hours</dcsat:name>
+			<dcsat:expression>Hours</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Days</dcsat:name>
+			<dcsat:expression>Days</dcsat:expression>
+		</parameter>
+	</template>
+	<template>
+		<name>Layout6</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+				<dcsat:tableCell/>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Director</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Директор</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Director</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="8" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Director</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="8" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Accountant</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Гл. бухгалтер</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Contabil șef</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="8" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Accountant</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="8" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Director</dcsat:name>
+			<dcsat:expression>Director</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Accountant</dcsat:name>
+			<dcsat:expression>Accountant</dcsat:expression>
+		</parameter>
+	</template>
 	<groupTemplate>
 		<groupName>Day</groupName>
 		<templateType>Header</templateType>
@@ -1883,11 +2734,23 @@ from (
 		<templateType>Header</templateType>
 		<template>Layout4</template>
 	</groupTemplate>
+	<groupTemplate>
+		<groupName>Footer</groupName>
+		<templateType>Header</templateType>
+		<template>Layout6</template>
+	</groupTemplate>
 	<groupHeaderTemplate>
 		<groupName>Row</groupName>
 		<templateType>Header</templateType>
 		<template>Template5</template>
 	</groupHeaderTemplate>
+	<totalFieldsTemplate>
+		<groupName1>Row</groupName1>
+		<templateType1>Header</templateType1>
+		<groupName2>TotalRow</groupName2>
+		<templateType2>Header</templateType2>
+		<template>Layout5</template>
+	</totalFieldsTemplate>
 	<settingsVariant>
 		<dcsset:name>Default</dcsset:name>
 		<dcsset:presentation xsi:type="v8:LocalStringType">
@@ -2032,6 +2895,13 @@ from (
 							<dcsset:field>Hours</dcsset:field>
 						</dcsset:item>
 					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:use>false</dcscor:use>
+							<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+							<dcscor:value xsi:type="xs:string">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
 				</dcsset:column>
 				<dcsset:column>
 					<dcsset:name>TotalRow</dcsset:name>
@@ -2122,6 +2992,9 @@ from (
 							<dcsset:field>Line</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Employee.Code</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Employee</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
@@ -2134,6 +3007,21 @@ from (
 							<dcsset:field>Time</dcsset:field>
 						</dcsset:item>
 					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:use>false</dcscor:use>
+							<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+							<dcscor:value xsi:type="xs:string">None</dcscor:value>
+						</dcscor:item>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>AttributePlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcsset:DataCompositionAttributesPlacement">Separately</dcscor:value>
+						</dcscor:item>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>FieldsTitleType</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionFieldsTitleType">Short</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
 				</dcsset:row>
 				<dcsset:conditionalAppearance>
 					<dcsset:item>
@@ -2143,9 +3031,6 @@ from (
 							</dcsset:item>
 							<dcsset:item>
 								<dcsset:field>Hours</dcsset:field>
-							</dcsset:item>
-							<dcsset:item>
-								<dcsset:field>Time</dcsset:field>
 							</dcsset:item>
 						</dcsset:selection>
 						<dcsset:filter>
@@ -2175,9 +3060,6 @@ from (
 							</dcsset:item>
 							<dcsset:item>
 								<dcsset:field>Hours</dcsset:field>
-							</dcsset:item>
-							<dcsset:item>
-								<dcsset:field>Time</dcsset:field>
 							</dcsset:item>
 						</dcsset:selection>
 						<dcsset:filter>
@@ -2211,9 +3093,6 @@ from (
 							<dcsset:item>
 								<dcsset:field>Hours</dcsset:field>
 							</dcsset:item>
-							<dcsset:item>
-								<dcsset:field>Time</dcsset:field>
-							</dcsset:item>
 						</dcsset:selection>
 						<dcsset:filter>
 							<dcsset:item xsi:type="dcsset:FilterItemComparison">
@@ -2238,6 +3117,35 @@ from (
 								<dcscor:value xsi:type="v8ui:Color">auto</dcscor:value>
 							</dcscor:item>
 						</dcsset:appearance>
+					</dcsset:item>
+					<dcsset:item>
+						<dcsset:selection>
+							<dcsset:item>
+								<dcsset:field>Hours</dcsset:field>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">WholeDay</dcsset:left>
+								<dcsset:comparisonType>Equal</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:boolean">true</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
+						<dcsset:appearance>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>Text</dcscor:parameter>
+								<dcscor:value xsi:type="dcscor:Field">Time</dcscor:value>
+							</dcscor:item>
+						</dcsset:appearance>
+						<dcsset:useInHierarchicalGroup>DontUse</dcsset:useInHierarchicalGroup>
+						<dcsset:useInOverall>DontUse</dcsset:useInOverall>
+						<dcsset:useInFieldsHeader>DontUse</dcsset:useInFieldsHeader>
+						<dcsset:useInHeader>DontUse</dcsset:useInHeader>
+						<dcsset:useInParameters>DontUse</dcsset:useInParameters>
+						<dcsset:useInFilter>DontUse</dcsset:useInFilter>
+						<dcsset:useInResourceFieldsHeader>DontUse</dcsset:useInResourceFieldsHeader>
+						<dcsset:useInOverallHeader>DontUse</dcsset:useInOverallHeader>
+						<dcsset:useInOverallResourceFieldsHeader>DontUse</dcsset:useInOverallResourceFieldsHeader>
 					</dcsset:item>
 				</dcsset:conditionalAppearance>
 			</dcsset:item>
@@ -2284,6 +3192,26 @@ from (
 								<v8:content>Сводка</v8:content>
 							</v8:item>
 						</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
+			</dcsset:item>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:name>Footer</dcsset:name>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Accountant</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Director</dcsset:field>
+					</dcsset:item>
+				</dcsset:selection>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+						<dcscor:value xsi:type="xs:string">None</dcscor:value>
 					</dcscor:item>
 				</dcsset:outputParameters>
 			</dcsset:item>
