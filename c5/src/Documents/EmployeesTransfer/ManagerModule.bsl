@@ -162,14 +162,15 @@ Procedure sqlCompensationChanges ( Env )
 	
 	s = "
 	|select Compensations.Action as Action, Compensations.Employee as Employee, Compensations.Compensation as Compensation,
-	|	Compensations.Date as Date, Compensations.Currency as Currency, Compensations.Rate as Rate
+	|	Compensations.Date as Date, Compensations.Currency as Currency, Compensations.Rate as Rate,
+	|	Compensations.InHand as InHand
 	|into Compensations
 	|from Document.EmployeesTransfer.Employees as Compensations
 	|where Compensations.Ref = &Ref
 	|and Compensations.Action <> value ( Enum.Changes.Nothing )
 	|union all
 	|select Compensations.Action, Compensations.Employee, Compensations.Compensation, Compensations.Date,
-	|	Compensations.Currency, Compensations.Rate
+	|	Compensations.Currency, Compensations.Rate, Compensations.InHand
 	|from Document.EmployeesTransfer.Additions as Compensations
 	|where Compensations.Ref = &Ref
 	|and Compensations.Action <> value ( Enum.Changes.Nothing )
@@ -178,14 +179,16 @@ Procedure sqlCompensationChanges ( Env )
 	|// #Compensations
 	|select Rows.LineNumber as LN, Compensations.Action as Action, Compensations.Employee as Employee,
 	|	Compensations.Compensation as Compensation, Compensations.Date as Date, Compensations.Currency as Currency,
-	|	Compensations.Rate as Rate, case when Last.Employee is null then false else true end as CompensationExists,
+	|	Compensations.Rate as Rate, Compensations.InHand as InHand,
+	|	case when Last.Employee is null then false else true end as CompensationExists,
 	|	case
 	|		when ( Compensations.Action = value ( Enum.Changes.Add )
 	|			and not Last.Employee is null ) then 1
 	|		when ( Compensations.Action = value ( Enum.Changes.Change )
 	|			and Compensations.Compensation = Last.Compensation
 	|			and Compensations.Currency = Last.Currency
-	|			and Compensations.Rate = Last.Rate ) then 1
+	|			and Compensations.Rate = Last.Rate
+	|			and Compensations.InHand = Last.InHand ) then 1
 	|		when ( Compensations.Action in ( value ( Enum.Changes.Change ), value ( Enum.Changes.Remove ) )
 	|			and Last.Employee is null ) then 2
 	|		else 0
@@ -196,7 +199,7 @@ Procedure sqlCompensationChanges ( Env )
 	|	//
 	|	left join (
 	|		select Rates.Employee as Employee, Rates.Compensation as Compensation,
-	|			Rates.Currency as Currency, Rates.Rate as Rate
+	|			Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand
 	|		from InformationRegister.EmployeeRates as Rates
 	|			//
 	|			// LastChanges
@@ -296,6 +299,7 @@ Function makeCompensations ( Env )
 		record.Compensation = compensation;
 		record.Currency = row.Currency;
 		record.Rate = row.Rate;
+		record.InHand = row.InHand;
 		record.Actual = row.Action <> Enums.Changes.Remove;
 	enddo; 
 	return not error;
