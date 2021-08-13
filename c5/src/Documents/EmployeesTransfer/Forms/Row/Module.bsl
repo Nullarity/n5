@@ -101,6 +101,7 @@ Procedure getData ()
 	|;
 	|// Compensations
 	|select Rates.Compensation as Compensation, Rates.Currency as Currency, Rates.Rate as Rate,
+	|	Rates.InHand as InHand,
 	|	case
 	|		when Rates.Compensation.Method in (
 	|			value ( Enum.Calculations.HourlyRate ),
