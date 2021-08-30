@@ -385,7 +385,7 @@ from Employees as Employees
 	and Terminated.Period &gt; Employees.Period
 	and not Terminated.Hired
 where Employees.Hired
-and not &amp;TaxesOnly
+	and not &amp;TaxesOnly
 ;
 // Personnel
 select &amp;DateStart as Period, Personnel.Employee as Employee, Personnel.Department as Department,
@@ -657,6 +657,13 @@ from LocationGaps as Previous
 	and Next.Expenses = Previous.Expenses
 group by Previous.DateEnd, Previous.Employee, Previous.Department, Previous.Position, Previous.Schedule, Previous.Expenses
 index by Employee
+;
+// LastLocation
+select max ( Location.DateEnd ) as DateEnd, Location.Employee as Employee, Location.Department as Department,
+	Location.Position as Position, Location.Schedule as Schedule, Location.Expenses as Expenses
+into LastLocation
+from Location as Location
+group by Location.Employee, Location.Department, Location.Position, Location.Schedule, Location.Expenses
 ;
 // Intervals
 select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
@@ -1620,7 +1627,7 @@ select Location.Employee as Employee, Location.Department as Department, Locatio
 		else 0
 	end as Number ( 15, 2 ) ) as HourlyRate,
 	case when Location.Method in ( value ( Enum.Calculations.HourlyRate ), value ( Enum.Calculations.MonthlyRate ) ) then isnull ( MonthlySchedules.Hours, 0 ) - isnull ( MonthlySchedules.HolidaysHours, 0 ) else 0 end as ScheduledHours,
-	case when Location.Method in ( value ( Enum.Calculations.HourlyRate ), value ( Enum.Calculations.MonthlyRate ) ) then isnull ( MonthlySchedules.Days, 0 ) - isnull ( MonthlySchedules.HolidaysDays, 0 ) else 0 end as ScheduledDays,
+	case when Location.Method in ( value ( Enum.Calculations.HourlyRate ), value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.Amount ) ) then isnull ( MonthlySchedules.Days, 0 ) - isnull ( MonthlySchedules.HolidaysDays, 0 ) else 0 end as ScheduledDays,
 	case when Location.Method = value ( Enum.Calculations.EveningHours ) then isnull ( Schedules.HoursEvening, 0 ) else 0 end as ScheduledEveningHours,
 	case when Location.Method = value ( Enum.Calculations.EveningHours ) then isnull ( Schedules.DaysEvening, 0 ) else 0 end as ScheduledEveningDays,
 	case when Location.Method = value ( Enum.Calculations.NightHours ) then isnull ( Schedules.HoursNight, 0 ) else 0 end as ScheduledNightHours,
@@ -1779,11 +1786,17 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 	case Time.Compensation.Method
 		when value ( Enum.Calculations.EveningHours ) then Time.HoursEvening
 		when value ( Enum.Calculations.NightHours ) then Time.HoursNight
+		when value ( Enum.Calculations.FixedAmount ) then 0
+		when value ( Enum.Calculations.Amount ) then 0
+		when value ( Enum.Calculations.CompensationPercent ) then 0
 		else Time.Hours
 	end as Hours,
 	case Time.Compensation.Method
 		when value ( Enum.Calculations.EveningHours ) then Time.DaysEvening
 		when value ( Enum.Calculations.NightHours ) then Time.DaysNight
+		when value ( Enum.Calculations.FixedAmount ) then 0
+		when value ( Enum.Calculations.Amount ) then 0
+		when value ( Enum.Calculations.CompensationPercent ) then 0
 		else Time.Days
 	end as Days,
 	case Time.Compensation.Method
@@ -1806,7 +1819,11 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 			when value ( Enum.Calculations.HourlyRate ) then
 				Time.Rate * Time.Hours
 			when value ( Enum.Calculations.FixedAmount ) then
-				Time.Rate
+				case when LastLocation.Employee is null then 0 else Time.Rate end
+			when value ( Enum.Calculations.Amount ) then
+				case Time.ScheduledDays when 0 then 0 else Time.Rate / Time.ScheduledDays * Time.Days end
+			when value ( Enum.Calculations.CompensationPercent ) then
+				case when LastLocation.Employee is null then 0 else MainRates.Rate / 100 * Time.Rate end
 			when value ( Enum.Calculations.Vacation ) then
 				Time.DailyRate * Time.Days
 			when value ( Enum.Calculations.SickDays ) then
@@ -1823,7 +1840,11 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 			when value ( Enum.Calculations.HourlyRate ) then
 				Time.Rate * Time.Hours
 			when value ( Enum.Calculations.FixedAmount ) then
-				Time.Rate
+				case when LastLocation.Employee is null then 0 else Time.Rate end
+			when value ( Enum.Calculations.Amount ) then
+				case Time.ScheduledDays when 0 then 0 else Time.Rate / Time.ScheduledDays * Time.Days end
+			when value ( Enum.Calculations.CompensationPercent ) then
+				case when LastLocation.Employee is null then 0 else MainRates.Rate / 100 * Time.Rate end
 			when value ( Enum.Calculations.Vacation ) then
 				Time.DailyRate * Time.Days
 			when value ( Enum.Calculations.SickDays ) then
@@ -1943,6 +1964,22 @@ from (
 		Standard.InHand, Standard.Currency
 	) as Time
 	//
+	// MainRates
+	//
+	left join Standard as MainRates
+	on MainRates.Employee = Time.Employee
+	and MainRates.Department = Time.Department
+	and MainRates.Position = Time.Position
+	and MainRates.Expenses = Time.Expenses
+	and MainRates.Schedule = Time.Schedule
+	and MainRates.DateStart = Time.DateStart
+	and MainRates.DateEnd = Time.DateEnd
+	and MainRates.Currency = Time.Currency
+	and MainRates.Compensation.Method in (
+		value ( Enum.Calculations.MonthlyRate ),
+		value ( Enum.Calculations.HourlyRate )
+	)
+	//
 	// ExchangeRates
 	//
 	left join ExchangeRates as ExchangeRates
@@ -1952,6 +1989,16 @@ from (
 	//
 	left join Levels as Levels
 	on Levels.Compensation = Time.Compensation
+	//
+	// LastLocation
+	//
+	left join LastLocation as LastLocation
+	on LastLocation.DateEnd = Time.DateEnd
+	and LastLocation.Employee = Time.Employee
+	and LastLocation.Department = Time.Department
+	and LastLocation.Position = Time.Position
+	and LastLocation.Schedule = Time.Schedule
+	and LastLocation.Expenses = Time.Expenses
 	//
 	// Calculated
 	//

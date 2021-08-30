@@ -176,11 +176,11 @@ Procedure sqlTaxes ()
 
 	s = "
 	|// Taxes
-	|select Taxes.Employee as Employee, Taxes.Ref as Ref, Taxes.Date as Date, sum ( Taxes.Months ) as Months, sum ( Taxes.Deductions ) as Deductions,
+	|select Taxes.Employee as Employee, Taxes.Ref as Ref, Taxes.Date as Date, sum ( Taxes.Deductions ) as Deductions,
 	|	sum ( Taxes.MedicalBase ) as MedicalBase, sum ( Taxes.Medical ) as Medical,
 	|	sum ( Taxes.IncomeTaxBase ) as IncomeTaxBase, sum ( Taxes.IncomeTax ) as IncomeTax
 	|into Taxes	
-	|from ( select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Period as Months, Taxes.Deductions as Deductions,
+	|from ( select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Deductions as Deductions,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Base else 0 end as MedicalBase,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Result else 0 end as Medical,
 	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) then Taxes.Base else 0 end as IncomeTaxBase,
@@ -198,16 +198,22 @@ Procedure sqlTaxes ()
 	|group by Taxes.Employee, Taxes.Ref, Taxes.Date
 	|;
 	|// #Taxes
-	|select Taxes.Employee as Employee, Taxes.Date as Date, Compensations.Amount as Income, Taxes.Months as Months, Taxes.Deductions as Deductions, 
-	|	Taxes.MedicalBase as MedicalBase, Taxes.Medical as Medical, Taxes.IncomeTaxBase as IncomeTaxBase, 
-	|	Taxes.IncomeTax as IncomeTax 
+	|select Taxes.Employee as Employee, Taxes.Date as Date, Compensations.Amount as Income, 1 as Months,
+	|	Taxes.Deductions as Deductions, Taxes.MedicalBase as MedicalBase, Taxes.Medical as Medical,
+	|	Taxes.IncomeTaxBase as IncomeTaxBase, Taxes.IncomeTax as IncomeTax 
 	|from Taxes as Taxes
 	|	//
 	|	//	Compensations
 	|	//
-	|	left join Document.PayEmployees.Compensations as Compensations
+	|	left join (
+	|		select Compensations.Ref as Ref, sum ( Compensations.Amount ) as Amount
+	|		from Document.PayEmployees.Compensations as Compensations
+	|		where Compensations.Ref in ( select distinct Ref from Taxes )
+	|		and Compensations.Employee = &Individual
+	|		group by Compensations.Ref
+	|	) as Compensations
 	|	on Compensations.Ref = Taxes.Ref
-	|	and Compensations.Employee = &Individual
+	|order by Taxes.Employee, Taxes.Date
 	|";
 	Env.Selection.Add ( s );
 
