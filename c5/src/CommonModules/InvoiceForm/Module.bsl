@@ -140,7 +140,7 @@ Procedure CalcTotals ( Source ) export
 		discountAmount = 0;
 	endif;
 	if ( p.CalcContractAmount ) then
-		inContractCurrency = object.Currency = Source.ContractCurrency;
+		inContractCurrency = object.Currency = p.ContractCurrency;
 		rate = object.Rate;
 		factor = object.Factor;
 		if ( paymentDiscounts
@@ -194,6 +194,7 @@ Function getTotalParams ( Source )
 	params.VendorInvoice = type = Type ( "DocumentRef.VendorInvoice" );
 	params.PaymentDiscounts = params.VendorInvoice or ( type = Type ( "DocumentRef.Invoice" ) );
 	if ( type = Type ( "DocumentRef.ExpenseReport" )
+		or type = Type ( "DocumentRef.Shipment" )
 		or type = Type ( "CatalogRef.Leads" ) ) then
 		params.CalcContractAmount = false;
 	else
@@ -203,7 +204,11 @@ Function getTotalParams ( Source )
 			params.ContractCurrency = Source.ContractCurrency;
 		else
 			params.LocalCurrency = Application.Currency ();
-			params.ContractCurrency = object.ContractCurrency;
+			if ( type = Type ( "DocumentRef.Invoice" ) ) then
+				params.ContractCurrency = DF.Pick ( object.Contract, "Currency" );
+			else
+				params.ContractCurrency = object.ContractCurrency;
+			endif;
 		endif;
 	endif;
 	params.Object = object;
