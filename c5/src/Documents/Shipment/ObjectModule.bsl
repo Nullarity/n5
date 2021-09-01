@@ -103,7 +103,7 @@ Procedure adjustItems ()
 		row.Capacity = row.CapacityPlan;
 		row.Package = row.PackagePlan;
 		row.QuantityBack = row.QuantityPlan;
-		row.QuantityPkgBack = row.QuantityPlan;
+		row.QuantityPkgBack = row.QuantityPkgPlan;
 	enddo; 
 	
 EndProcedure 
