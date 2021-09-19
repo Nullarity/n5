@@ -8,8 +8,7 @@ var TableRow;
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 
 	init ();
-	setAccount ();
-	setApplication ();
+	loadAccount ();
 	loadPayments ();
 	calcTotal ( ThisObject );
 
@@ -23,19 +22,23 @@ Procedure init ()
 EndProcedure
 
 &AtServer
-Procedure setAccount ()
+Procedure loadAccount ()
 
-	data = DF.Values ( Object.Company, "BankAccount, BankAccount.Unloading" );
-	Object.Account = data.BankAccount;
-	Object.Path = data.BankAccountUnloading;
+	account = Object.Account;
+	if ( account.IsEmpty () ) then
+		data = DF.Values ( Object.Company, "
+		|BankAccount,
+		|BankAccount.Application as Application,
+		|BankAccount.Unloading as Unloading,
+		|BankAccount.UnloadingSalary as UnloadingSalary" );
+		Object.Account = data.BankAccount;
+	else
+		data = DF.Values ( account, "Application, Unloading, UnloadingSalary" );
+	endif;
+	Object.Application = data.Application;
+	Object.Path = data.Unloading;
+	Object.PathSalary = data.UnloadingSalary;
 
-EndProcedure
-
-&AtServer
-Procedure setApplication ()
-	
-	Object.Application = DF.Pick ( Object.Account, "Application" );
-	
 EndProcedure
 
 &AtServer
@@ -101,6 +104,25 @@ Procedure OnOpen ( Cancel )
 	
 EndProcedure
 
+&AtServer
+Procedure FillCheckProcessingAtServer ( Cancel, CheckedAttributes )
+
+	checkSalary ( CheckedAttributes );
+
+EndProcedure
+
+&AtServer
+Procedure checkSalary ( CheckedAttributes )
+	
+	for each row in Object.PaymentOrders do
+		if ( row.Salary ) then
+			CheckedAttributes.Add ( "PathSalary" );
+			break;
+		endif;
+	enddo;
+	
+EndProcedure
+
 // *****************************************
 // *********** Group Form
 
@@ -114,8 +136,7 @@ EndProcedure
 &AtServer
 Procedure applyCompany ()
 	
-	setAccount ();
-	setApplication ();
+	loadAccount ();
 	loadPayments ();
 	calcTotal ( ThisObject );
 	
@@ -131,7 +152,7 @@ EndProcedure
 &AtServer
 Procedure applyAccount ()
 	
-	setApplication ();
+	loadAccount ();
 	loadPayments ();
 	calcTotal ( ThisObject );
 	
@@ -140,7 +161,15 @@ EndProcedure
 &AtClient
 Procedure ApplicationOnChange ( Item )
 	
+	resetFiles ();
+	
+EndProcedure
+
+&AtClient
+Procedure resetFiles ()
+	
 	Object.Path = "";
+	Object.PathSalary = "";
 	
 EndProcedure
 
@@ -148,8 +177,16 @@ EndProcedure
 Procedure PathStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	BankingForm.ChooseUnloading ( Object.Application, Item );
+	BankingForm.ChooseFile ( Object.Application, Item );
 	
+EndProcedure
+
+&AtClient
+Procedure PathSalaryStartChoice ( Item, ChoiceData, StandardProcessing )
+
+	StandardProcessing = false;
+	BankingForm.ChooseSalaryFile ( Object.Application, Item );
+
 EndProcedure
 
 &AtClient
@@ -173,6 +210,7 @@ Function run ()
 	else
 		p = new Structure ();
 		p.Insert ( "Path", Object.Path );
+		p.Insert ( "PathSalary", Object.PathSalary );
 		p.Insert ( "Orders", orders );
 		p.Insert ( "Application", Object.Application );
 		p.Insert ( "JobKey", UUID );
@@ -180,6 +218,8 @@ Function run ()
 		p.Insert ( "File1", File1 );
 		File2 = PutToTempStorage ( undefined, UUID );
 		p.Insert ( "File2", File2 );
+		FileSalary = PutToTempStorage ( undefined, UUID );
+		p.Insert ( "FileSalary", FileSalary );
 		FilesDescriptor = PutToTempStorage ( undefined, UUID );
 		p.Insert ( "FilesDescriptor", FilesDescriptor );
 		args = new Array ();

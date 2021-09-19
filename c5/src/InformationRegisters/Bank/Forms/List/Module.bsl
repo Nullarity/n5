@@ -420,6 +420,8 @@ Procedure openDocument ( Ref, Copying )
 		name = "Payment";
 	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
 		name = "VendorPayment";
+	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
+		name = "PayEmployees";
 	else
 		name = "Entry";
 	endif; 

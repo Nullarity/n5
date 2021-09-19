@@ -81,6 +81,9 @@ Procedure fillNew ()
 		return;
 	endif; 
 	Object.Currency = Application.Currency ();
+	if ( Object.Owner = undefined ) then
+		Object.Owner = Logins.Settings ( "Company" ).Company;
+	endif;
 	
 EndProcedure 
 
@@ -131,14 +134,23 @@ EndProcedure
 Procedure UnloadingStartChoice ( Item, ChoiceData, StandardProcessing )
 
 	StandardProcessing = false;
-	BankingForm.ChooseUnloading ( Object.Application, Item );
+	BankingForm.ChooseFile ( Object.Application, Item );
 
 EndProcedure
+
+&AtClient
+Procedure UnloadingSalaryStartChoice ( Item, ChoiceData, StandardProcessing )
+
+	StandardProcessing = false;
+	BankingForm.ChooseSalaryFile ( Object.Application, Item );
+
+EndProcedure
+
 
 &AtClient
 Procedure LoadingStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	BankingForm.ChooseLoading ( Object.Application, Item );
+	BankingForm.ChooseLoadingFile ( Object.Application, Item );
 	
 EndProcedure

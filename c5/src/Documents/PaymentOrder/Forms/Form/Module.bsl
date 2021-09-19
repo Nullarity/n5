@@ -1,3 +1,7 @@
+&AtServer
+var Env;
+&AtServer
+var Base;
 
 // *****************************************
 // *********** Form events
@@ -17,7 +21,15 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
-		fillNew ();
+		Base = Parameters.Basis;
+		if ( Base = undefined ) then
+			fillNew ();
+		else
+			baseType = TypeOf ( Parameters.Basis );
+			if ( baseType = Type ( "DocumentRef.PayEmployees" ) ) then
+				fillByPayEmployees ();
+			endif; 
+		endif; 
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
@@ -30,9 +42,12 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|Base enable filled ( Object.Base );
 	|Contract enable Object.Recipient <> Object.Company;
 	|VAT enable filled ( Object.VATRate );
-	|IncomeTax enable Object.IncomeTaxRate > 0
+	|IncomeTax enable Object.IncomeTaxRate > 0;
+	|Amount lock Object.Salary;
+	|VAT VATRate IncomeTax IncomeTaxRate ExcludeTaxes Trezorerial ToCompany hide Object.Salary;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -156,6 +171,48 @@ Procedure setPrintPaymentContent ()
 
 	PrintPaymentContent = FormAttributeToValue ( "Object" ).GetPrintPaymentContent ();
 
+EndProcedure
+
+&AtServer
+Procedure fillByPayEmployees ()
+	
+	SQL.Init ( Env );
+	sqlPayEmployees ();
+	Env.Q.SetParameter ( "Base", Parameters.Basis );
+	SQL.Perform ( Env );
+	checkPayEmployees ();
+	Object.Base = Base;
+	Object.Salary = true;
+	fields = Env.Fields;
+	FillPropertyValues ( Object, fields );
+	setRecipient ();
+	applyRecipient ();
+	setPrintPaymentContent ();
+
+EndProcedure
+
+&AtServer
+Procedure sqlPayEmployees ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Amount as Amount, Documents.BankAccount as BankAccount,
+	|	Documents.BankAccount.Bank.Organization as Recipient, Documents.CashFlow as CashFlow,
+	|	Documents.Company as Company, Documents.Posted as Posted
+	|from Document.PayEmployees as Documents
+	|where Documents.Ref = &Base
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure checkPayEmployees ()
+	
+	if ( not Env.Fields.Posted ) then
+		raise Output.BaseNotPosted ();
+	endif;
+	
 EndProcedure
 
 // *****************************************

@@ -56,9 +56,13 @@
 			<dataPath>Amount</dataPath>
 			<field>Amount</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Salary</dataPath>
+			<field>Salary</field>
+		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>select Documents.Ref as PaymentOrder, Documents.Amount as Amount, true as Unload
-{select PaymentOrder.*, Amount, Unload}
+		<query>select Documents.Ref as PaymentOrder, Documents.Amount as Amount, Documents.Salary as Salary, true as Unload
+{select PaymentOrder.*, Amount, Salary, Unload}
 from Document.PaymentOrder as Documents
 {where Documents.Unload as Unload, Documents.Date between &amp;DateStart and &amp;DateEnd, Documents.BankAccount as BankAccount,
 	Documents.Company as Company, Documents.Recipient as Recipient}
@@ -151,6 +155,9 @@ where not Documents.DeletionMark
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Amount</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Salary</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Unload</dcsset:field>

@@ -47,7 +47,7 @@ Function getTaxString ()
 	taxStr = "";
 	vATRateFilled = ( VATRate <> 0 );
 	incomTaxRateFilled = ( IncomeTaxRate <> 0 );
-	if ( not ExcludeTaxes ) then
+	if ( not ( ExcludeTaxes or Salary ) ) then
 		if ( vATRateFilled and incomTaxRateFilled ) then		
 			taxStr = "Impozit " + String ( IncomeTaxRate ) + " prc. " + Format ( IncomeTax, "ND='15';NFD='2';NDS='-';NG=0" ) + " lei, inclusiv TVA " + Format ( VATRate, "NZ=" ) + " prc. " + Format ( VAT, "ND='15'; NFD='2';NDS='-';NG=0" ) + " lei.";
 		elsif ( vATRateFilled ) and ( not incomTaxRateFilled ) then

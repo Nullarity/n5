@@ -369,7 +369,7 @@ EndProcedure
 Procedure PathStartChoice(Item, ChoiceData, StandardProcessing)
 	
 	StandardProcessing = false;
-	BankingForm.ChooseLoading(Object.Application, Item);
+	BankingForm.ChooseLoadingFile(Object.Application, Item);
 	
 EndProcedure
 

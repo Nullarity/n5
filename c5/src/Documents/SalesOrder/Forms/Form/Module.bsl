@@ -287,7 +287,6 @@ Procedure fillByQuote ()
 	Env.Q.SetParameter ( "Base", Parameters.Basis );
 	SQL.Perform ( Env );
 	checkQuote ();
-
 	fields = Env.Fields;
 	FillPropertyValues ( Object, fields );
 	ContractCurrency = fields.ContractCurrency;

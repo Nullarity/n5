@@ -6,9 +6,12 @@ var JobKey;
 var ProcessingError;
 var TempFile;
 var Files;
+var FilesSalary;
 var FilesPath;
+var FilesPathSalary;
 var File1;
 var File2;
+var FileSalary;
 var FilesDescriptor;
 
 Procedure Run(Params) export
@@ -38,7 +41,7 @@ Procedure Run(Params) export
 	if (ProcessingError) then
 		return;
 	endif;
-	PutToTempStorage(Files, FilesDescriptor);
+	PutToTempStorage(new Structure("Payments, Salary", Files, FilesSalary), FilesDescriptor);
 	clean();
 	commitUnloading();
 	
@@ -48,14 +51,17 @@ Procedure init(Params)
 	
 	ProcessingError = false;
 	Files = new Array();
+	FilesSalary = new Array();
 	SQL.Init(Env);
 	PaymentOrder = Documents.PaymentOrder;
 	ThisObject.Application = Params.Application;
 	JobKey = Params.JobKey;
 	File1 = Params.File1;
 	File2 = Params.File2;
+	FileSalary = Params.FileSalary;
 	FilesDescriptor = Params.FilesDescriptor;
 	FilesPath = Params.Path;
+	FilesPathSalary = Params.PathSalary;
 	app = ThisObject.Application;
 	if (app = PredefinedValue("Enum.Banks.Mobias")
 			or app = PredefinedValue("Enum.Banks.MAIB")) then
@@ -78,25 +84,39 @@ EndProcedure
 Procedure sqlRows()
 	
 	s = "
-		|// #Rows
-		|select Documents.Number as Number, Documents.Company.Prefix as Prefix, Documents.Date as Date, Documents.Company.CodeFiscal as CodeFiscal,
-		|	case when Documents.Division = value ( Catalog.Divisions.EmptyRef ) then false else true end as HasDivision, Documents.Division.Code as DivisionCode,
-		|	Documents.BankAccount.AccountNumber as AccountNumber, Documents.BankAccount.Bank.Code as BankCode, Documents.RecipientPresentation as RecipientPresentation,
-		|	Documents.Recipient.CodeFiscal as RecipientCodeFiscal, Documents.RecipientBankAccount.AccountNumber as RecipientAccountNumber,
-		|	Documents.RecipientBankAccount.Bank.Code as RecipientBankCode, Documents.Amount - Documents.IncomeTax as AmountWithoutTax, Documents.VATRate.Rate as VATRate,
-		|	case when Documents.VATRate = value ( Catalog.VAT.EmptyRef ) then false else true end as VATFilled, Documents.VAT as VAT, Documents.Amount as Amount,
-		|	Documents.IncomeTax as IncomeTax, Documents.IncomeTaxRate as IncomeTaxRate, Documents.ExcludeTaxes as ExcludeTaxes,
-		|	case when Documents.IncomeTaxRate = 0 then false else true end as TaxRateFilled, Documents.PaymentContent as PaymentContent,
-		|	case when Documents.Urgent then ""U"" else ""N"" end as TransferType, case when Documents.Trezorerial then ""101"" else ""001"" end as TransactionCode, 
-		|	Documents.Trezorerial as Trezorerial, Documents.Ref as PaymentOrder, Documents.BankAccount.TreasuryCode as TreasuryCode,
-		|	Documents.Company.FullDescription as CompanyName, Documents.BankAccount.Bank.Description as BankDescription,
-		|	Documents.RecipientBankAccount.Bank.Description as RecipientBankDescription, Documents.RecipientBankAccount.Bank.MFO as RecipientBankMFO,
-		|	Documents.BankAccount.Currency.Code as CurrencyCode, Documents.BankAccount.Currency.Description as CurrencyName,
-		|	case when Documents.Recipient.Alien then ""N"" else ""R"" end as RecipientResidency,
-		|	case when Documents.Company.Alien then ""N"" else ""R"" end as Residency, Documents.Company.Description as CompanyDescription
-		|from Document.PaymentOrder as Documents
-		|where Documents.Ref in ( &Orders )
-		|";
+	|// #Rows
+	|select Documents.Number as Number, Documents.Company.Prefix as Prefix, Documents.Date as Date, Documents.Company.CodeFiscal as CodeFiscal,
+	|	case when Documents.Division = value ( Catalog.Divisions.EmptyRef ) then false else true end as HasDivision, Documents.Division.Code as DivisionCode,
+	|	Documents.BankAccount.AccountNumber as AccountNumber, Documents.BankAccount.Bank.Code as BankCode, Documents.RecipientPresentation as RecipientPresentation,
+	|	Documents.Recipient.CodeFiscal as RecipientCodeFiscal, Documents.RecipientBankAccount.AccountNumber as RecipientAccountNumber,
+	|	Documents.RecipientBankAccount.Bank.Code as RecipientBankCode, Documents.Amount - Documents.IncomeTax as AmountWithoutTax, Documents.VATRate.Rate as VATRate,
+	|	case when Documents.VATRate = value ( Catalog.VAT.EmptyRef ) then false else true end as VATFilled, Documents.VAT as VAT, Documents.Amount as Amount,
+	|	Documents.IncomeTax as IncomeTax, Documents.IncomeTaxRate as IncomeTaxRate, Documents.ExcludeTaxes as ExcludeTaxes,
+	|	case when Documents.IncomeTaxRate = 0 then false else true end as TaxRateFilled, Documents.PaymentContent as PaymentContent,
+	|	case when Documents.Urgent then ""U"" else ""N"" end as TransferType, case when Documents.Trezorerial then ""101"" else ""001"" end as TransactionCode, 
+	|	Documents.Trezorerial as Trezorerial, Documents.Ref as PaymentOrder, Documents.BankAccount.TreasuryCode as TreasuryCode,
+	|	Documents.Company.FullDescription as CompanyName, Documents.BankAccount.Bank.Description as BankDescription,
+	|	Documents.RecipientBankAccount.Bank.Description as RecipientBankDescription, Documents.RecipientBankAccount.Bank.MFO as RecipientBankMFO,
+	|	Documents.BankAccount.Currency.Code as CurrencyCode, Documents.BankAccount.Currency.Description as CurrencyName,
+	|	case when Documents.Recipient.Alien then ""N"" else ""R"" end as RecipientResidency,
+	|	case when Documents.Company.Alien then ""N"" else ""R"" end as Residency, Documents.Company.Description as CompanyDescription,
+	|	Documents.Salary as Salary
+	|from Document.PaymentOrder as Documents
+	|where Documents.Ref in ( &Orders )
+	|;
+	|// #Salary
+	|select sum ( PayEmployees.Amount ) as Amount, PayEmployees.Employee.FirstName as FirstName,
+	|	PayEmployees.Employee.LastName as LastName, PayEmployees.Employee.Patronymic as Patronymic,
+	|	PayEmployees.Employee.Code as Code
+	|from Document.PayEmployees.Compensations as PayEmployees
+	|where PayEmployees.Ref in (
+	|	select distinct Base
+	|	from Document.PaymentOrder
+	|	where Ref in ( &Orders )
+	|)
+	|group by PayEmployees.Employee
+	|having sum ( PayEmployees.Amount ) > 0
+	|";
 	Env.Selection.Add(s);
 	
 EndProcedure
@@ -397,6 +417,9 @@ Procedure runEximbank()
 		addLine(text, line);
 	enddo;
 	saveDataExim(text);
+	if ( salaryExists () ) then
+		unloadEximSalary ();
+	endif;
 	
 EndProcedure
 
@@ -475,11 +498,46 @@ EndProcedure
 Procedure saveDataExim(Text)
 	
 	try
-		text.Write(TempFile);
+		Text.Write(TempFile);
 		putToStorage(new BinaryData(TempFile));
 	except
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
+	
+EndProcedure
+
+Function salaryExists ()
+	
+	return Env.Salary.Count () > 0;
+	
+EndFunction
+
+Procedure unloadEximSalary ()
+
+	currency = DF.Pick ( Application.Currency (), "Code" );
+	text = new TextDocument();
+	text.AddLine ( "TAB_NO,NAME_EM,TR_AMOUNT,KV" );
+	list = new Array ();
+	for each row in Env.Salary do
+		list.Add ( CoreLibrary.EscapeCSV ( row.Code ) );
+		name = row.LastName + "/" + row.FirstName + "/";
+		if ( row.Patronymic <> "" ) then
+			name = name + row.Patronymic; 
+		endif;
+		list.Add ( CoreLibrary.EscapeCSV ( name ) );
+		list.Add ( CoreLibrary.EscapeCSV ( Format ( row.Amount, "NFD=2; NGS=; NZ=" ) ) );
+		list.Add ( currency );
+		text.AddLine ( StrConcat ( list, "," ) );
+		list.Clear ();
+	enddo;
+	putSalaryToStorage(text);
+	
+EndProcedure
+
+Procedure putSalaryToStorage(Data)
+	
+	address = PutToTempStorage(Data, FileSalary);
+	FilesSalary.Add(new TransferableFileDescription(FilesPathSalary, address));
 	
 EndProcedure
 

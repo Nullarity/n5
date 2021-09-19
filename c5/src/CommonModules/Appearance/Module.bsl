@@ -91,9 +91,14 @@ Procedure formatFields ( Form, Items, AppearanceItem, Result )
 		formats.Add ( StrSplit ( operation, "/" ) );
 	enddo;
 	for each field in AppearanceItem.Controls do
-		item = Items.Find ( field );
-		if ( item = undefined ) then
-			continue;
+		if ( field = "ThisObject"
+			or field = "ЭтотОбъект" ) then
+			item = Form;
+		else
+			item = Items.Find ( field );
+			if ( item = undefined ) then
+				continue;
+			endif;
 		endif;
 		for each operation in formats do
 			format = operation [ 0 ];

@@ -1,3 +1,5 @@
+&AtServer
+var Env;
 &AtClient
 var TableRow export;
 &AtClient
@@ -21,16 +23,81 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	PettyCash.Read ( ThisObject );
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	findPaymentOrder ();
+	setLinks ();
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
 
 &AtServer
+Procedure findPaymentOrder ()
+	
+	s = "select top 1 1 from Document.PaymentOrder where Base = &Ref and not DeletionMark";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", Object.Ref );
+	PaymentOrderExists = not q.Execute ().IsEmpty ();
+	
+EndProcedure
+
+&AtServer
+Procedure setLinks ()
+	
+	SQL.Init ( Env );
+	sqlLinks ();
+	if ( Env.Selection.Count () = 0 ) then
+		ShowLinks = false;
+	else
+		q = Env.Q;
+		q.SetParameter ( "Ref", Object.Ref );
+		SQL.Perform ( Env, false );
+		setURLPanel ();
+	endif;
+	Appearance.Apply ( ThisObject, "ShowLinks" );
+
+EndProcedure 
+
+&AtServer
+Procedure sqlLinks ()
+	
+	if ( isNew () ) then
+		return;
+	endif; 
+	s = "
+	|// #PaymentOrders
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.PaymentOrder as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure setURLPanel ()
+	
+	parts = new Array ();
+	meta = Metadata.Documents;
+	if ( not isNew () ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.PaymentOrders, meta.PaymentOrder ) );
+	endif; 
+	s = URLPanel.Build ( parts );
+	if ( s = undefined ) then
+		ShowLinks = false;
+	else
+		ShowLinks = true;
+		Links = s;
+	endif; 
+	
+EndProcedure 
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 	
-	if ( Object.Ref.IsEmpty () ) then
+	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		setLinks ();
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.FilterAccount ( ThisObject );
@@ -42,11 +109,22 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 EndProcedure
 
 &AtServer
+Function isNew ()
+	
+	return Object.Ref.IsEmpty ();
+	
+EndFunction
+
+&AtServer
 Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|Warning UndoPosting show Object.Posted;
+	|Links show ShowLinks;
+	|ThisObject lock PaymentOrderExists;
+	|PaymentOrder hide PaymentOrderExists;
+	|WarningPaid show PaymentOrderExists;
+	|Warning UndoPosting show Object.Posted and not PaymentOrderExists;
 	|Compensations Taxes Date Number Company DepositLiabilities PaymentGroup lock Object.Posted;
 	|GroupCommands CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
@@ -55,7 +133,7 @@ Procedure readAppearance ()
 	|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
 	|NewVoucher show empty ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
 	|Reference ReferenceDate show filled ( Object.Method ) and Object.Method <> Enum.PaymentMethods.Cash;
-	|Account CashFlow show filled ( Object.Method )
+	|Account CashFlow show filled ( Object.Method );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -113,6 +191,24 @@ Procedure initAccounts ()
 		new Structure ( "Parameter", ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) ).Value;
 	
 EndProcedure 
+
+&AtClient
+Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
+	
+	if ( TypeOf ( NewObject ) = Type ( "DocumentRef.PaymentOrder" ) ) then
+		lock ();
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure lock ()
+	
+	setLinks ();
+	PaymentOrderExists = true;
+	Appearance.Apply ( ThisObject, "PaymentOrderExists" );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
@@ -511,3 +607,4 @@ EndProcedure
 FillDocument = 1; 
 CalculateAll = 2;
 CalculateTaxes = 3;
+PaymentOrderExists = false;

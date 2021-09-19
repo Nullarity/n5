@@ -7869,3 +7869,18 @@ Procedure SelectFilesFolder ( Module = undefined, CallbackParams = undefined, Pa
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
 
 EndProcedure
+
+Function SalaryExportNotSupported () export
+
+	text = NStr ( "en = 'Payroll data export is not supported for this bank';ro = 'Exportul de salarii nu este acceptat pentru această bancă';ru = 'Для данного банка экспорт данных по заработной плате не поддерживается'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function BaseNotPosted () export
+
+	text = NStr ( "en = 'Base document should be posted';ro = 'Documentul de bază ar trebui să fie înregistrat';ru = 'Документ-основание должен быть проведен'" );
+	return text;
+
+EndFunction

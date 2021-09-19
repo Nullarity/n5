@@ -56,6 +56,106 @@
       </backColor>
     </extInfo>
   </items>
+  <items xsi:type="form:Decoration">
+    <name>WarningPaid</name>
+    <id>354</id>
+    <title>
+      <key>en</key>
+      <value>Payment Order has been created. Document can't be modified</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Платежное поручение создано. Документ не может быть изменен</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Ordinul de plată a fost creat. Documentul nu poate fi modificat</value>
+    </title>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <extendedTooltip>
+      <name>WarningPaidExtendedTooltip</name>
+      <id>356</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>WarningPaidContextMenu</name>
+      <id>355</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>Label</type>
+    <autoMaxHeight>true</autoMaxHeight>
+    <extInfo xsi:type="form:LabelDecorationExtInfo">
+      <horizontalAlign>Left</horizontalAlign>
+      <backColor xsi:type="core:ColorDef">
+        <red>204</red>
+        <green>255</green>
+        <blue>204</blue>
+      </backColor>
+    </extInfo>
+  </items>
+  <items xsi:type="form:FormField">
+    <name>Links</name>
+    <id>351</id>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>Links</segments>
+    </dataPath>
+    <titleLocation>None</titleLocation>
+    <extendedTooltip>
+      <name>LinksExtendedTooltip</name>
+      <id>353</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>LinksContextMenu</name>
+      <id>352</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>LabelField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:LabelFieldExtInfo"/>
+  </items>
   <items xsi:type="form:Button">
     <name>UndoPosting</name>
     <id>199</id>
@@ -3509,6 +3609,51 @@
       <representationInContextMenu>Auto</representationInContextMenu>
     </items>
     <items xsi:type="form:Button">
+      <name>PaymentOrder</name>
+      <id>357</id>
+      <title>
+        <key>en</key>
+        <value>Payment Order</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Платежное поручение</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Ordin de plată</value>
+      </title>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>Object.Ссылка</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>PaymentOrderExtendedTooltip</name>
+        <id>358</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <commandName>Document.PaymentOrder.StandardCommand.CreateBasedOn</commandName>
+      <representation>Auto</representation>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <placementArea>UserCmds</placementArea>
+      <representationInContextMenu>Auto</representationInContextMenu>
+    </items>
+    <items xsi:type="form:Button">
       <name>FormClose</name>
       <id>194</id>
       <visible>true</visible>
@@ -3671,6 +3816,14 @@
     <event>OnCreateAtServer</event>
     <name>OnCreateAtServer</name>
   </handlers>
+  <handlers>
+    <event>NewWriteProcessing</event>
+    <name>NewWriteProcessing</name>
+  </handlers>
+  <handlers>
+    <event>NotificationProcessing</event>
+    <name>NotificationProcessing</name>
+  </handlers>
   <autoTitle>true</autoTitle>
   <autoUrl>true</autoUrl>
   <group>Vertical</group>
@@ -3742,6 +3895,45 @@
     <id>5</id>
     <valueType>
       <types>CatalogRef.Currencies</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>Links</name>
+    <id>6</id>
+    <valueType>
+      <types>FormattedString</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>ShowLinks</name>
+    <id>7</id>
+    <valueType>
+      <types>Boolean</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>PaymentOrderExists</name>
+    <id>8</id>
+    <valueType>
+      <types>Boolean</types>
     </valueType>
     <view>
       <common>true</common>
@@ -4025,6 +4217,13 @@
         <command>0:28951c3b-9950-41e9-9e66-b5d22b1423d4</command>
         <group>CommandGroup.Print</group>
         <index>1</index>
+        <userVisible/>
+      </cmiFragmentRecord>
+      <cmiFragmentRecord>
+        <command>Document.PaymentOrder.StandardCommand.CreateBasedOn</command>
+        <commandParameter xsi:type="form:DataPath">
+          <segments>Object.Ref</segments>
+        </commandParameter>
         <userVisible/>
       </cmiFragmentRecord>
     </commandBar>

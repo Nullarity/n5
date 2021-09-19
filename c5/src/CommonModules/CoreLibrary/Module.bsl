@@ -12,6 +12,13 @@ Function module ()
 	
 EndFunction
 
+Function EscapeCSV ( String ) export
+	
+	//@skip-warning
+	return module ().GetLibrary ( "CSV" ).Escape ( SessionParameters.License, String );
+	
+EndFunction
+
 Procedure AdjustQuery ( Query ) export
 	
 	//@skip-warning

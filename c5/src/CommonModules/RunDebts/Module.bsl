@@ -441,7 +441,7 @@ EndProcedure
 Procedure fixAmount ( ContractAmount, Payments )
 	
 	row = Payments [ Payments.Count () - 1 ];
-	row.Amount = row.Amount + ( ContractAmount - row.Amount );
+	row.Amount = row.Amount + ( ContractAmount - Payments.Total ( "Amount" ) );
 	
 EndProcedure
 
