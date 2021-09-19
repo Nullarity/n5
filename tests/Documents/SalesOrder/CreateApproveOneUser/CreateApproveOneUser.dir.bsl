@@ -1,4 +1,4 @@
-// Creates SO and approves it.
+﻿// Creates SO and approves it.
 // Returns SO document number
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document.SalesOrder" );
@@ -109,11 +109,6 @@ endif;
 Set ( "#Memo", _.Memo );
 
 With ( "Sales Order (create) *" );
-Payments = Get ( "#Payments" );
-Click ( "#PaymentsAdd" );
-Put ( "#PaymentsPaymentOption", "Payments" );
-Choose ( "#PaymentsPaymentDate", Payments );
-
 Click ( "#FormWrite" );
 CheckErrors ();
 id = Fetch ( "More / #Number" );

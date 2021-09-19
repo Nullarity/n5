@@ -99,6 +99,7 @@ Function getPrefix ()
 	
 	Commando ( "e1cib/list/Catalog.Companies" );
 	With ( "Companies" );
+	Clear ( "#UnitFilter" );
 	
 	p = Call ( "Common.Find.Params" );
 	p.What = "ABC Distributions";
