@@ -1,12 +1,12 @@
 
-Procedure ChooseLoading ( App, Item ) export
+Procedure ChooseLoadingFile ( App, Item ) export
 	
 	params = new Structure ( "App, Item", App, Item );
-	LocalFiles.Prepare ( new NotifyDescription ( "ContinueChooseLoading", ThisObject, params ) );
+	LocalFiles.Prepare ( new NotifyDescription ( "ContinueChoosingLoadingFile", ThisObject, params ) );
 	
 EndProcedure
 
-Procedure ContinueChooseLoading ( Result, Params ) export
+Procedure ContinueChoosingLoadingFile ( Result, Params ) export
 
 	dialog = new FileDialog ( FileDialogMode.Open );
 	dialog.Multiselect = false;
@@ -49,42 +49,42 @@ Procedure SelectFile ( Files, Item ) export
 	
 EndProcedure
 
-Procedure ChooseUnloading ( App, Item ) export
+Procedure ChooseFile ( App, Item ) export
 	
 	params = new Structure ( "App, Item", App, Item );
-	LocalFiles.Prepare ( new NotifyDescription ( "ContinueChooseUnloading", ThisObject, params ) );
+	LocalFiles.Prepare ( new NotifyDescription ( "ContinueChoosingFile", ThisObject, params ) );
 	
 EndProcedure
 
-Procedure ContinueChooseUnloading ( Result, Params ) export
+Procedure ContinueChoosingFile ( Result, Params ) export
 
 	dialog = new FileDialog ( FileDialogMode.Save );
 	dialog.Multiselect = false;
-	fileSetupUnloading ( Params.App, dialog );
+	setupFile ( Params.App, dialog );
 	dialog.Show ( new NotifyDescription ( "SelectFile", ThisObject, Params.Item ) );
 
 EndProcedure
 
-Procedure fileSetupUnloading ( App, Dialog ) 
+Procedure setupFile ( App, Dialog ) 
 
 	file = "ExportPayments";
 	ext = ".txt";
 	filter = "Text (*.txt)|*.txt";
-	if ( app.IsEmpty() ) then
+	if ( App.IsEmpty() ) then
 		filter = "(*.*)|*.*";
-	elsif ( app = PredefinedValue ( "Enum.Banks.Mobias" ) ) then
+	elsif ( App = PredefinedValue ( "Enum.Banks.Mobias" ) ) then
 		file = "Plat";
 		ext = ".dbf";
 		filter = "DBF (*.dbf)|*.dbf";
-	elsif ( app = PredefinedValue ( "Enum.Banks.MAIB" ) ) then
+	elsif ( App = PredefinedValue ( "Enum.Banks.MAIB" ) ) then
 		file = maibFile ();
 		ext = ".dbf";
 		filter = "DBF (*.dbf)|*.dbf";
-	elsif ( app = PredefinedValue ( "Enum.Banks.FinComPay" )
+	elsif ( App = PredefinedValue ( "Enum.Banks.FinComPay" )
 	 	or app = PredefinedValue ( "Enum.Banks.Comert" ) ) then
 		ext = ".xml";
 		filter = "XML (*.xml)|*.xml";
-	elsif ( app = PredefinedValue ( "Enum.Banks.EuroCreditBank" ) ) then
+	elsif ( App = PredefinedValue ( "Enum.Banks.EuroCreditBank" ) ) then
 		ext = "";
 		filter = "(*.*)|*.*";
 	endif;
@@ -107,3 +107,33 @@ Function maibFile ()
 	return "IDOC" + Format ( date, "DF='dd'" ) + month;
 
 EndFunction
+
+Procedure ChooseSalaryFile ( App, Item ) export
+	
+	params = new Structure ( "App, Item", App, Item );
+	LocalFiles.Prepare ( new NotifyDescription ( "ContinueChoosingSalaryFile", ThisObject, params ) );
+	
+EndProcedure
+
+Procedure ContinueChoosingSalaryFile ( Result, Params ) export
+
+	dialog = new FileDialog ( FileDialogMode.Save );
+	dialog.Multiselect = false;
+	setupSalaryFile ( Params.App, dialog );
+	dialog.Show ( new NotifyDescription ( "SelectFile", ThisObject, Params.Item ) );
+
+EndProcedure
+
+Procedure setupSalaryFile ( App, Dialog ) 
+
+	if ( App = PredefinedValue ( "Enum.Banks.Eximbank" ) ) then
+		file = "salary";
+		ext = ".csv";
+		filter = "CSV (*.csv)|*.csv";
+	else
+		raise Output.SalaryExportNotSupported ();
+	endif;
+	Dialog.Filter = filter;
+	Dialog.FullFileName	= file + ext;
+
+EndProcedure

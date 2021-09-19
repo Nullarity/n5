@@ -20,6 +20,7 @@ Click ( "#FormWriteAndClose" );
 
 Commando ( "e1cib/list/Catalog.Companies" );
 With ( "Companies" );
+Clear ( "#UnitFilter" );
 Click ( "#FormChange" );
 With ( "Наша компания *" );
 Put ( "#CostPrices", prices );

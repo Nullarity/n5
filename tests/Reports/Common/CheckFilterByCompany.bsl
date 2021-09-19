@@ -39,6 +39,7 @@ Procedure changeDeletionMark ()
 
 	Commando ( "e1cib/list/Catalog.Companies" );
 	With ( "Companies" );
+	Clear ( "#UnitFilter" );
 	GotoRow ( "#List", "Description", "SuperX" );
 	Click ( "#FormSetDeletionMark" );
 	Click ( "Yes", "1?:*" );
