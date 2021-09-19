@@ -43,6 +43,7 @@ EndProcedure
 Procedure createBankAccount ( Env )
 
 	Commando("e1cib/list/Catalog.Companies");
+	Clear ( "#UnitFilter" );
 	With ( "Companies" );
 
 	GotoRow ( "#List", "Description", __.Company );
