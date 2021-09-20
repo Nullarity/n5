@@ -107,7 +107,6 @@ Procedure createEnv ( Env )
 	// Complete Company
 	Commando ( "e1cib/list/Catalog.Companies" );
 	With ( "Companies" );
-	Clear ( "#UnitFilter" );
 
 	p = Call ( "Common.Find.Params" );
 	p.Where = "Description";

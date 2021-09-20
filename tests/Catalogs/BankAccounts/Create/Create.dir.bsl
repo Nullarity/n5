@@ -27,7 +27,6 @@ else
 	fromOwner = true;
 	if ( _.Company <> undefined ) then
 		Commando("e1cib/list/Catalog.Companies");
-		Clear ( "#UnitFilter" );
 		list = With ( "Companies" );
 		GotoRow ( "#List", "Description", _.Company );
 		Click ( "#FormChange" );

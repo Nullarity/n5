@@ -64,7 +64,6 @@ Procedure createEnv ( Env )
 	Call ( "Catalogs.Companies.Create", Env.Company );
 	MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Companies" );
 	With ( "Companies" );
-	Clear ( "#UnitFilter" );
 	p = Call ( "Common.Find.Params" );
 	p.Where = "Description";
 	p.What = env.Company;

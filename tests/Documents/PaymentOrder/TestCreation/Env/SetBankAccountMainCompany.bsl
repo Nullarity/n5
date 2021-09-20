@@ -2,7 +2,6 @@ Call ( "Common.Init" );
 CloseAll ();
 
 Commando ( "e1cib/list/Catalog.Companies" );
-Clear ( "#UnitFilter" );
 form = With ( "Companies" );
 list = Activate ( "#List" );
 search = new Map ();
