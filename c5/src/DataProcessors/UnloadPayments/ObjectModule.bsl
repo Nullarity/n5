@@ -6,42 +6,38 @@ var JobKey;
 var ProcessingError;
 var TempFile;
 var Files;
-var FilesSalary;
-var FilesPath;
-var FilesPathSalary;
-var File1;
-var File2;
-var FileSalary;
 var FilesDescriptor;
+var FileAddresses;
+var PaymentsFile;
+var SalaryFile;
 
 Procedure Run(Params) export
 	
 	init(Params);
 	getRows(Params.Orders);
-	app = ThisObject.Application;
-	if (app = Enums.Banks.VictoriaBank) then
+	if (BankingApp = Enums.Banks.VictoriaBank) then
 		runVictoriaBank();
-	elsif (app = Enums.Banks.Energbank) then
+	elsif (BankingApp = Enums.Banks.Energbank) then
 		runEnergBank();
-	elsif (app = Enums.Banks.ProCreditBank) then
+	elsif (BankingApp = Enums.Banks.ProCreditBank) then
 		runProcreditBank();
-	elsif (app = Enums.Banks.Eximbank) then
+	elsif (BankingApp = Enums.Banks.Eximbank) then
 		runEximbank();
-	elsif (app = Enums.Banks.Mobias) then
+	elsif (BankingApp = Enums.Banks.Mobias) then
 		runMobias();
-	elsif (app = Enums.Banks.MAIB) then
+	elsif (BankingApp = Enums.Banks.MAIB) then
 		runMaib();
-	elsif (app = Enums.Banks.FinComPay) then
+	elsif (BankingApp = Enums.Banks.FinComPay) then
 		runFinComPay();
-	elsif (app = Enums.Banks.Comert) then
+	elsif (BankingApp = Enums.Banks.Comert) then
 		runComert();
-	elsif (app = Enums.Banks.EuroCreditBank) then
+	elsif (BankingApp = Enums.Banks.EuroCreditBank) then
 		runEuroCreditBank();
 	endif;
 	if (ProcessingError) then
 		return;
 	endif;
-	PutToTempStorage(new Structure("Payments, Salary", Files, FilesSalary), FilesDescriptor);
+	PutToTempStorage(Files, FilesDescriptor);
 	clean();
 	commitUnloading();
 	
@@ -51,20 +47,19 @@ Procedure init(Params)
 	
 	ProcessingError = false;
 	Files = new Array();
-	FilesSalary = new Array();
 	SQL.Init(Env);
 	PaymentOrder = Documents.PaymentOrder;
-	ThisObject.Application = Params.Application;
+	BankingApp = Params.BankingApp;
 	JobKey = Params.JobKey;
-	File1 = Params.File1;
-	File2 = Params.File2;
-	FileSalary = Params.FileSalary;
+	FileAddresses = new Array();
+	FileAddresses.Add(Params.File1);
+	FileAddresses.Add(Params.File2);
+	FileAddresses.Add(Params.File3);
 	FilesDescriptor = Params.FilesDescriptor;
-	FilesPath = Params.Path;
-	FilesPathSalary = Params.PathSalary;
-	app = ThisObject.Application;
-	if (app = PredefinedValue("Enum.Banks.Mobias")
-			or app = PredefinedValue("Enum.Banks.MAIB")) then
+	PaymentsFile = Params.Path;
+	SalaryFile = Params.PathSalary;
+	if (BankingApp = PredefinedValue("Enum.Banks.Mobias")
+		or BankingApp = PredefinedValue("Enum.Banks.MAIB")) then
 		TempFile = FileSystem.DBFTempFile();
 	else
 		TempFile = GetTempFileName();
@@ -276,13 +271,14 @@ EndProcedure
 Procedure saveData(Text, Suffix = "")
 	
 	try
-		Text.Write(TempFile);
-		data = new BinaryData(TempFile);
+		stream = new MemoryStream();
+		Text.Write(stream);
+		putToStorage(stream.CloseAndGetBinaryData (), SalaryFile);
+		data = stream.CloseAndGetBinaryData ();
 		string64 = Base64String(data);
 		string64 = Right(string64, StrLen(string64) - 4);
 		data = Base64Value(string64);
-		data.Write(TempFile);
-		putToStorage(data, Suffix);
+		putToStorage(data, PaymentsFile + Suffix);
 	except
 		ProcessingError = true;
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
@@ -290,11 +286,11 @@ Procedure saveData(Text, Suffix = "")
 	
 EndProcedure
 
-Procedure putToStorage(Data, Suffix = "")
+Procedure putToStorage(Data, File)
 	
-	count = Files.Count();
-	address = PutToTempStorage(Data, ?(count = 0, File1, File2));
-	Files.Add(new TransferableFileDescription(FilesPath + Suffix, address));
+	Files.Add(File);
+	index = Files.Ubound();
+	PutToTempStorage(Data, FileAddresses[index]);
 	
 EndProcedure
 
@@ -499,7 +495,7 @@ Procedure saveDataExim(Text)
 	
 	try
 		Text.Write(TempFile);
-		putToStorage(new BinaryData(TempFile));
+		putToStorage(new BinaryData(TempFile), PaymentsFile);
 	except
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
@@ -530,14 +526,9 @@ Procedure unloadEximSalary ()
 		text.AddLine ( StrConcat ( list, "," ) );
 		list.Clear ();
 	enddo;
-	putSalaryToStorage(text);
-	
-EndProcedure
-
-Procedure putSalaryToStorage(Data)
-	
-	address = PutToTempStorage(Data, FileSalary);
-	FilesSalary.Add(new TransferableFileDescription(FilesPathSalary, address));
+	stream = new MemoryStream();
+	text.Write(stream);
+	putToStorage(stream.CloseAndGetBinaryData (), SalaryFile);
 	
 EndProcedure
 
@@ -621,7 +612,7 @@ Procedure closeXBase(XBase)
 	
 	try
 		XBase.CloseFile();
-		putToStorage(new BinaryData(TempFile));
+		putToStorage(new BinaryData(TempFile), PaymentsFile);
 	except
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;
@@ -753,7 +744,8 @@ EndFunction
 Procedure runComert()
 	
 	xmlWriter = new XMLWriter();
-	xmlWriter.OpenFile(TempFile, "windows-1251");
+	stream = new MemoryStream ();
+	xmlWriter.OpenStream(stream, "windows-1251");
 	xmlWriter.WriteXMLDeclaration();
 	xmlWriter.WriteStartElement("docs");
 	for each row in Env.Rows do
@@ -790,7 +782,18 @@ Procedure runComert()
 	enddo;
 	xmlWriter.WriteEndElement();
 	xmlWriter.Close();
-	putToStorage(new BinaryData(TempFile));
+	saveStream ( stream, PaymentsFile );
+	
+EndProcedure
+
+Procedure saveStream ( Stream, File )
+	
+	try
+		data = Stream.CloseAndGetBinaryData ();
+		putToStorage(data, File);
+	except
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+	endtry;
 	
 EndProcedure
 
@@ -873,7 +876,7 @@ Procedure saveXml(XML)
 	
 	try
 		XML.Save(TempFile);
-		putToStorage(new BinaryData(TempFile));
+		putToStorage(new BinaryData(TempFile), PaymentsFile);
 	except
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
 	endtry;

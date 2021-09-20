@@ -35,7 +35,7 @@ Procedure loadAccount ()
 	else
 		data = DF.Values ( account, "Application, Unloading, UnloadingSalary" );
 	endif;
-	Object.Application = data.Application;
+	Object.BankingApp = data.Application;
 	Object.Path = data.Unloading;
 	Object.PathSalary = data.UnloadingSalary;
 
@@ -159,7 +159,7 @@ Procedure applyAccount ()
 EndProcedure
 
 &AtClient
-Procedure ApplicationOnChange ( Item )
+Procedure BankingAppOnChange ( Item )
 	
 	resetFiles ();
 	
@@ -177,7 +177,7 @@ EndProcedure
 Procedure PathStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
-	BankingForm.ChooseFile ( Object.Application, Item );
+	BankingForm.ChooseFile ( Object.BankingApp, Item );
 	
 EndProcedure
 
@@ -185,7 +185,7 @@ EndProcedure
 Procedure PathSalaryStartChoice ( Item, ChoiceData, StandardProcessing )
 
 	StandardProcessing = false;
-	BankingForm.ChooseSalaryFile ( Object.Application, Item );
+	BankingForm.ChooseSalaryFile ( Object.BankingApp, Item );
 
 EndProcedure
 
@@ -212,14 +212,14 @@ Function run ()
 		p.Insert ( "Path", Object.Path );
 		p.Insert ( "PathSalary", Object.PathSalary );
 		p.Insert ( "Orders", orders );
-		p.Insert ( "Application", Object.Application );
+		p.Insert ( "BankingApp", Object.BankingApp );
 		p.Insert ( "JobKey", UUID );
 		File1 = PutToTempStorage ( undefined, UUID );
 		p.Insert ( "File1", File1 );
 		File2 = PutToTempStorage ( undefined, UUID );
 		p.Insert ( "File2", File2 );
-		FileSalary = PutToTempStorage ( undefined, UUID );
-		p.Insert ( "FileSalary", FileSalary );
+		File3 = PutToTempStorage ( undefined, UUID );
+		p.Insert ( "File3", File3 );
 		FilesDescriptor = PutToTempStorage ( undefined, UUID );
 		p.Insert ( "FilesDescriptor", FilesDescriptor );
 		args = new Array ();
@@ -250,26 +250,51 @@ Procedure Uploading ( Result, Params ) export
 		return;
 	endif;
 	Notify ( Enum.MessageBankingAppUnloaded () );
-	files = GetFromTempStorage ( FilesDescriptor );
-	BeginGettingFiles ( new NotifyDescription ( "FilesWritten", ThisObject ), files, , false );
+	fetchFiles ();
 
 EndProcedure
 
 &AtClient
-Procedure FilesWritten ( Files, Params ) export 
+Procedure fetchFiles ()
+	
+	list = GetFromTempStorage ( FilesDescriptor );
+	folders = new Map ();
+	i = 1;
+	for each file in list do
+		folder = FileSystem.GetFolder ( file );
+		if ( folders [ folder ] = undefined ) then
+			folders [ folder ] = new Array ();
+		endif;
+		folders [ folder ].Add ( new TransferableFileDescription ( file, ThisObject [ "File" + i ] ) );
+		i = i + 1;
+	enddo;
+	callback = new NotifyDescription ( "FilesWritten", ThisObject, folders );
+	i = folders.Count ();
+	for each location in folders do
+		lastFolder = ( i = 1 );
+		BeginGetFilesFromServer ( ? ( lastFolder, callback, undefined ), location.Value, location.Key );
+		i = i - 1;
+	enddo;
+	
+EndProcedure
 
-	callback = new NotifyDescription ( "SuccessClosed", ThisObject, Files );
+&AtClient
+Procedure FilesWritten ( Files, Folders ) export 
+
+	callback = new NotifyDescription ( "SuccessClosed", ThisObject, Folders );
 	OpenForm ( "DataProcessor.UnloadPayments.Form.Success", , ThisObject, , , , callback );
 
 EndProcedure
 
 &AtClient
-Procedure SuccessClosed ( Result, Files ) export
+Procedure SuccessClosed ( Result, Folders ) export
 	
 	if ( Result = undefined
 		or Result = true ) then
-		for each file in Files do
-			BeginDeletingFiles ( , file.FullName );
+		for each folder in Folders do
+			for each file in folder.Value do
+				BeginDeletingFiles ( , file.Name );
+			enddo;
 		enddo;
 	endif;
 	

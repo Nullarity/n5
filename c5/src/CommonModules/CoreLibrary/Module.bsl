@@ -15,7 +15,7 @@ EndFunction
 Function EscapeCSV ( String ) export
 	
 	//@skip-warning
-	return module ().GetLibrary ( "CSV" ).Escape ( SessionParameters.License, String );
+	return module ().GetLibrary ( "CSV" ).Escape ( String );
 	
 EndFunction
 
