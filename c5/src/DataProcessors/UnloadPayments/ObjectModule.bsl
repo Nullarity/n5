@@ -60,7 +60,7 @@ Procedure init(Params)
 	SalaryFile = Params.PathSalary;
 	if (BankingApp = PredefinedValue("Enum.Banks.Mobias")
 		or BankingApp = PredefinedValue("Enum.Banks.MAIB")) then
-		TempFile = FileSystem.DBFTempFile();
+		TempFile = TempFilesDir() + FileSystem.DBFTempFile();
 	else
 		TempFile = GetTempFileName();
 	endif;
@@ -137,7 +137,7 @@ Procedure runVictoriaBank()
 		text.AddLine(getTRANSACTIONCODE(row));
 		endText(text, row);
 	enddo;
-	saveData(text);
+	saveText(text, PaymentsFile, true);
 	
 EndProcedure
 
@@ -268,17 +268,18 @@ Procedure endText(Text, Row)
 	
 EndProcedure
 
-Procedure saveData(Text, Suffix = "")
+Procedure saveText(Text, File, BOM)
 	
 	try
 		stream = new MemoryStream();
 		Text.Write(stream);
-		putToStorage(stream.CloseAndGetBinaryData (), SalaryFile);
 		data = stream.CloseAndGetBinaryData ();
-		string64 = Base64String(data);
-		string64 = Right(string64, StrLen(string64) - 4);
-		data = Base64Value(string64);
-		putToStorage(data, PaymentsFile + Suffix);
+		if ( BOM ) then
+			string64 = Base64String(data);
+			string64 = Right(string64, StrLen(string64) - 4);
+			data = Base64Value(string64);
+		endif;
+		putToStorage(data, File);
 	except
 		ProcessingError = true;
 		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
@@ -323,7 +324,7 @@ Procedure runEnergBank()
 		text.AddLine(getTRANSACTIONCODE(row));
 		text.AddLine("DocEnd");
 	enddo;
-	saveData(text);
+	saveText(text, PaymentsFile, true);
 	
 EndProcedure
 
@@ -388,7 +389,7 @@ Procedure runProcreditBank()
 		text.AddLine(getTRANSFERTYPE(row));
 		text.AddLine("DocEnd");
 	enddo;
-	saveData(text);
+	saveText(text, PaymentsFile, true);
 	
 EndProcedure
 
@@ -412,7 +413,7 @@ Procedure runEximbank()
 		line.URGENT = row.TransferType;
 		addLine(text, line);
 	enddo;
-	saveDataExim(text);
+	saveText(text, PaymentsFile, false);
 	if ( salaryExists () ) then
 		unloadEximSalary ();
 	endif;
@@ -491,17 +492,6 @@ Procedure addLine(Text, Line)
 	
 EndProcedure
 
-Procedure saveDataExim(Text)
-	
-	try
-		Text.Write(TempFile);
-		putToStorage(new BinaryData(TempFile), PaymentsFile);
-	except
-		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
-	endtry;
-	
-EndProcedure
-
 Function salaryExists ()
 	
 	return Env.Salary.Count () > 0;
@@ -516,19 +506,34 @@ Procedure unloadEximSalary ()
 	list = new Array ();
 	for each row in Env.Salary do
 		list.Add ( CoreLibrary.EscapeCSV ( row.Code ) );
-		name = row.LastName + "/" + row.FirstName + "/";
-		if ( row.Patronymic <> "" ) then
-			name = name + row.Patronymic; 
+		name = "";
+		value = row.LastName;
+		if ( value <> "" ) then
+			name = name + value + "/";
+		endif;
+		name = name + row.FirstName + "/";
+		value = row.Patronymic;
+		if ( value <> "" ) then
+			name = name + value;
 		endif;
 		list.Add ( CoreLibrary.EscapeCSV ( name ) );
-		list.Add ( CoreLibrary.EscapeCSV ( Format ( row.Amount, "NFD=2; NGS=; NZ=" ) ) );
+		list.Add ( CoreLibrary.EscapeCSV ( Format ( row.Amount, "NFD=2; NZ=; NG=;" ) ) );
 		list.Add ( currency );
 		text.AddLine ( StrConcat ( list, "," ) );
 		list.Clear ();
 	enddo;
-	stream = new MemoryStream();
-	text.Write(stream);
-	putToStorage(stream.CloseAndGetBinaryData (), SalaryFile);
+	saveText(text, SalaryFile, false);
+	
+EndProcedure
+
+Procedure saveStream ( Stream, File )
+	
+	try
+		data = Stream.CloseAndGetBinaryData ();
+		putToStorage(data, File);
+	except
+		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
+	endtry;
 	
 EndProcedure
 
@@ -580,7 +585,7 @@ Function getMobiasDbf()
 	fields.Add("NAME_HIS", "S", 105);
 	fields.Add("BANK_HIS", "S", 50);
 	fields.Add("CONTRBEN", "S", 29);
-	try
+	try	
 		xBase.CreateFile(TempFile);
 	except
 		Progress.Put(Output.DBFErrorCreate(new Structure("Error", ErrorDescription())), JobKey, true);
@@ -786,17 +791,6 @@ Procedure runComert()
 	
 EndProcedure
 
-Procedure saveStream ( Stream, File )
-	
-	try
-		data = Stream.CloseAndGetBinaryData ();
-		putToStorage(data, File);
-	except
-		Progress.Put(Output.UnableToSaveData(new Structure("Error", ErrorDescription())), JobKey, true);
-	endtry;
-	
-EndProcedure
-
 Procedure writeXMLElement(Name, Value, XMLWriter)
 	
 	XMLWriter.WriteStartElement(Name);
@@ -807,6 +801,9 @@ EndProcedure
 
 Procedure runFinComPay()
 	
+	if ( Framework.IsLinux () ) then
+		raise Output.LinuxNotSupported ();
+	endif;
 	xml = new COMObject("Microsoft.XMLDOM");
 	xml.async = 0;
 	xml.validateOnParse = 0;
@@ -902,7 +899,7 @@ Procedure runTrezorerialRows(Rows, Code, Suffix)
 	for each row in Rows do
 		text.AddLine(lineEuroCreditBank(row, Code));
 	enddo;
-	saveData(text, Suffix);
+	saveText(text, PaymentsFile + Suffix, true);
 	
 EndProcedure
 

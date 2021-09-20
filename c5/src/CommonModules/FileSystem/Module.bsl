@@ -277,6 +277,8 @@ Function DBFTempFile () export
 	
 	// File name should not exceed 8 characters
 	value = Int ( ( CurrentUniversalDateInMilliseconds () / 1000 ) % 1000000000 );
-	return Conversion.DecToHex ( value ) + ".dbf";
+	// Upper () is mandatory to keep consistency between xnix and windows.
+	// because XBase.CreateFile will capitalize a name of the file anyway.
+	return Upper ( Conversion.DecToHex ( value ) + ".dbf" );
 	
 EndFunction

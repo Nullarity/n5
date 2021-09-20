@@ -1,10 +1,10 @@
-// 1. create payment order
+﻿// 1. create payment order
 // 2. open Bank client, uploading and press fill, test created payment order
 
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "2ADE4DF3");
+id = Call("Common.ScenarioID", "A0CB");
 env = getEnv(id);
 createEnv(env);
 
@@ -40,7 +40,9 @@ testUpload("ProCreditBank");
 testUpload("Eximbank");
 testUpload("Mobias", ".DBF");
 testUpload("MAIB", ".DBF");
-testUpload("FinComPay", ".XML");
+if ( Framework.IsWindows () ) then
+	testUpload("FinComPay", ".XML");
+endif;
 
 // *************************
 // Procedures
@@ -127,6 +129,8 @@ Procedure createEnv(Env)
 	Put("#Description", Env.Account + " 2");
 	Click("#FormWriteAndClose");
 	CheckErrors();
+	With ();
+	Close ();
 	
 	// *************************
 	// Create Division
@@ -163,7 +167,7 @@ EndProcedure
 
 Procedure testUpload(Application, Extension = ".txt")
 	
-	Put("#Application", Application);
+	Put("#BankingApp", Application);
 	dir = this.Dir;
 	path = dir + Application + Extension;
 	Put("#Path", path);

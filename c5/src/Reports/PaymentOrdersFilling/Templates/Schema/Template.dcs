@@ -61,7 +61,7 @@
 			<field>Salary</field>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>select Documents.Ref as PaymentOrder, Documents.Amount as Amount, Documents.Salary as Salary, true as Unload
+		<query>select Documents.Ref as PaymentOrder, Documents.Amount as Amount, Documents.Salary as Salary, Documents.Unload as Unload
 {select PaymentOrder.*, Amount, Salary, Unload}
 from Document.PaymentOrder as Documents
 {where Documents.Unload as Unload, Documents.Date between &amp;DateStart and &amp;DateEnd, Documents.BankAccount as BankAccount,
@@ -176,6 +176,7 @@ where not Documents.DeletionMark
 					<dcsset:userSettingID>fe84d9f6-8eae-4c82-9a3e-cc25a94fbffc</dcsset:userSettingID>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
 					<dcsset:left xsi:type="dcscor:Field">Unload</dcsset:left>
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:right xsi:type="xs:boolean">true</dcsset:right>

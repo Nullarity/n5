@@ -5886,7 +5886,7 @@ EndFunction
 &AtServer
 Function OSNotSupported () export
 
-	text = NStr ( "en='Configuration supports Windows family operating systems. Other systems has not been supported yet'; ro='Configurația suportă sistemul de operare Windows. Alte sisteme la moment nu sunt suportate'; ru='Конфигурация поддерживает работу в операционной системе Windows. Другие режимы работы в настоящий момент не поддерживаются'" );
+	text = NStr ( "en = 'At present, the application is not supported on this operating system';ro = 'În prezent, aplicația nu este suportată pe acest sistem de operare';ru = 'В настоящее время, работа конфигурации в данной операционной системе не поддерживается'" );
 	return text;
 
 EndFunction
@@ -7881,6 +7881,14 @@ EndFunction
 Function BaseNotPosted () export
 
 	text = NStr ( "en = 'Base document should be posted';ro = 'Documentul de bază ar trebui să fie înregistrat';ru = 'Документ-основание должен быть проведен'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function LinuxNotSupported () export
+
+	text = NStr ( "en = 'This operation is not currently supported on the Linux operating system';ro = 'Această operațiune nu este acceptată în prezent pe sistemul de operare Linux';ru = 'В настоящий момент, в операционной системе Linux, эта операция не поддерживается'" );
 	return text;
 
 EndFunction
