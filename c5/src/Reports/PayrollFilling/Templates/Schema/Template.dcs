@@ -659,11 +659,20 @@ group by Previous.DateEnd, Previous.Employee, Previous.Department, Previous.Posi
 index by Employee
 ;
 // LastLocation
-select max ( Location.DateEnd ) as DateEnd, Location.Employee as Employee, Location.Department as Department,
+select LatestLocation.DateEnd as DateEnd, Location.Employee as Employee, Location.Department as Department,
 	Location.Position as Position, Location.Schedule as Schedule, Location.Expenses as Expenses
 into LastLocation
 from Location as Location
-group by Location.Employee, Location.Department, Location.Position, Location.Schedule, Location.Expenses
+	//
+	// LatestLocation
+	//
+	join (
+		select max ( Location.DateEnd ) as DateEnd, Location.Employee as Employee
+	    from Location as Location
+	    group by Location.Employee
+	) as LatestLocation
+	on LatestLocation.Employee = Location.Employee
+	and LatestLocation.DateEnd = Location.DateEnd
 ;
 // Intervals
 select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
