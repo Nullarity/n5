@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 env = getEnv ();
@@ -60,9 +60,11 @@ endif;
 table = Get ( "#ItemsList" );
 
 for i = 1 to 2 do
+	With ();
 	row = Env.Items [ i - 1 ];
 	GoToRow ( table, "Item", row.Item );
 	table.Choose ();
+	Get("#FeaturesList").Choose ();
 	if ( i = 2 ) then // count packages
 		With ( selectionForm );
 		tablePackages = Get ( "#PackagesList" );
@@ -89,7 +91,7 @@ Run ( "PrintForm" );
 
 Function getEnv ()
 
-	id = "#" + Call ( "Common.ScenarioID", "288225FF" );
+	id = "#" + Call ( "Common.ScenarioID", "A0CG" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Date", CurrentDate () );
