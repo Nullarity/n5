@@ -114,7 +114,7 @@ Procedure sqlItems ( Env )
 	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as QuantityPkg,
 	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package,
 	|	case when ( Items.Warehouse = value ( Catalog.Warehouses.EmptyRef ) ) then &Warehouse else Items.Warehouse end as Warehouse,
-	|	Items.Account as Account, &Warehouse as SetWarehouse, &Account as loadAccount, &Set as Set
+	|	Items.Account as Account, &Warehouse as SetWarehouse, &Account as SetAccount, &Set as Set
 	|into Items
 	|from Document.Assembling.Items as Items
 	|where Items.Ref = &Ref
@@ -187,7 +187,7 @@ Procedure sqlItemsAndKeys ( Env )
 	|select Items.LineNumber as LineNumber, Items.Warehouse as Warehouse, Items.Item as Item,
 	|	Items.Package as Package, Items.Unit as Unit, Items.Feature as Feature, Items.Series as Series,
 	|	Items.Account as Account, Items.QuantityPkg as Quantity, Items.Capacity as Capacity, Details.ItemKey as ItemKey,
-	|	Items.SetWarehouse as SetWarehouse, Items.Set as Set, Items.loadAccount as loadAccount
+	|	Items.SetWarehouse as SetWarehouse, Items.Set as Set, Items.SetAccount as SetAccount
 	|from Items as Items
 	|	//
 	|	// Details
@@ -279,7 +279,7 @@ Function getCost ( Env, Items )
 	p.Insert ( "KeyColumn", "Quantity" );
 	p.Insert ( "KeyColumnAvailable", "QuantityBalance" );
 	p.Insert ( "DecreasingColumns", "Cost" );
-	p.Insert ( "AddInTable1FromTable2", "Capacity, Warehouse, Set, SetWarehouse, loadAccount" );
+	p.Insert ( "AddInTable1FromTable2", "Capacity, Warehouse, Set, SetWarehouse, SetAccount" );
 	return CollectionsSrv.Decrease ( cost, Items, p );
 	
 EndFunction 
@@ -381,7 +381,7 @@ Procedure commitCost ( Env, Table )
 	p.DimDr1Type = "Items";
 	p.DimDr2Type = "Warehouses";
 	p.Recordset = Env.Registers.General;
-	Table.GroupBy ( "Warehouse, Item, Capacity, Account, Set, SetWarehouse, loadAccount", "Quantity, Cost" );
+	Table.GroupBy ( "Warehouse, Item, Capacity, Account, Set, SetWarehouse, SetAccount", "Quantity, Cost" );
 	fullQuantity = Table.Total ( "Quantity" );
 	writtenQuantity = 0;
 	rowNumber = 0;
