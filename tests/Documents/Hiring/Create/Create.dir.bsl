@@ -65,7 +65,7 @@ for each row in _.Employees do
 	Put ( "#Expenses", expenses );
 	Put ( "#Rate", row.Rate );
 	if ( row.InHand ) then
-		Click ( "#InHand" );
+		Put ( "#InHand", "Yes" );
 	endif;
 	for each rowAdditional in row.RowsAdditions do
 		Click ( "#ObjectAdditionsAdd" );
