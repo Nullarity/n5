@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0CE" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0CJ" ) );
 getEnv ();
 createEnv ();
 
@@ -22,7 +22,8 @@ Pause ( __.Performance * 4 );
 text = new TextDocument();
 text.Read ( this.SalaryFile );
 Assert(text.GetLine ( 1 )).Equal ("TAB_NO,NAME_EM,TR_AMOUNT,KV");
-Assert(text.GetLine ( 2 )).Equal ("88888A0CF," + this.Employee + "/,10000.00,498");
+Assert(text.GetLine ( 2 )).Contains ("," + this.Employee + "/,10000.00,498");
+Assert(text.GetLine ( 3 )).Equal ("99999,,10000.00,498");
 #endregion
 
 // *************************
