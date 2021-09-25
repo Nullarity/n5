@@ -100,17 +100,15 @@ Procedure sqlRows()
 	|where Documents.Ref in ( &Orders )
 	|;
 	|// #Salary
-	|select sum ( PayEmployees.Amount ) as Amount, PayEmployees.Employee.FirstName as FirstName,
-	|	PayEmployees.Employee.LastName as LastName, PayEmployees.Employee.Patronymic as Patronymic,
-	|	PayEmployees.Employee.Code as Code
-	|from Document.PayEmployees.Compensations as PayEmployees
-	|where PayEmployees.Ref in (
+	|select Totals.Net as Amount, Totals.Employee.FirstName as FirstName, Totals.Employee.LastName as LastName,
+	|	Totals.Employee.Patronymic as Patronymic, Totals.Employee.Code as Code
+	|from Document.PayEmployees.Totals as Totals
+	|where Totals.Ref in (
 	|	select distinct Base
 	|	from Document.PaymentOrder
 	|	where Ref in ( &Orders )
 	|)
-	|group by PayEmployees.Employee
-	|having sum ( PayEmployees.Amount ) > 0
+	|and Totals.Net > 0
 	|";
 	Env.Selection.Add(s);
 	
@@ -503,9 +501,10 @@ Procedure unloadEximSalary ()
 	currency = DF.Pick ( Application.Currency (), "Code" );
 	text = new TextDocument();
 	text.AddLine ( "TAB_NO,NAME_EM,TR_AMOUNT,KV" );
+	total = 0;
 	list = new Array ();
 	for each row in Env.Salary do
-		list.Add ( CoreLibrary.EscapeCSV ( row.Code ) );
+		list.Add ( CoreLibrary.EscapeCSV ( Print.ShortNumber ( row.Code ) ) );
 		name = "";
 		value = row.LastName;
 		if ( value <> "" ) then
@@ -517,11 +516,13 @@ Procedure unloadEximSalary ()
 			name = name + value;
 		endif;
 		list.Add ( CoreLibrary.EscapeCSV ( name ) );
-		list.Add ( CoreLibrary.EscapeCSV ( Format ( row.Amount, "NFD=2; NZ=; NG=;" ) ) );
+		list.Add ( Format ( row.Amount, "NFD=2; NDS=.; NGS=''; NZ=0; NG=0;" ) );
 		list.Add ( currency );
 		text.AddLine ( StrConcat ( list, "," ) );
 		list.Clear ();
+		total = total + row.Amount;
 	enddo;
+	text.AddLine ( "99999,," + Format ( total, "NFD=2; NDS=.; NGS=''; NZ=0; NG=0;" ) + "," + currency );
 	saveText(text, SalaryFile, false);
 	
 EndProcedure
