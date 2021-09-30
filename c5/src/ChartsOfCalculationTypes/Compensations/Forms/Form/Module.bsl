@@ -51,9 +51,9 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|Base enable inlist ( Object.Method, Enum.Calculations.Percent, Enum.Calculations.Vacation, Enum.Calculations.SickDays, Enum.Calculations.SickProduction, Enum.Calculations.SickOnlySocial, Enum.Calculations.SickDaysChild, Enum.Calculations.ExtendedVacation );
+	|Base enable inlist ( Object.Method, Enum.Calculations.Percent, Enum.Calculations.Vacation,
+	|	Enum.Calculations.SickDays, Enum.Calculations.SickProduction, Enum.Calculations.ExtendedVacation );
 	|HourlyRate show Object.Method = Enum.Calculations.MonthlyRate;
-	|Insurance show inlist ( Object.Method, Enum.Calculations.SickDays, Enum.Calculations.SickProduction, Enum.Calculations.SickOnlySocial, Enum.Calculations.SickDaysChild );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

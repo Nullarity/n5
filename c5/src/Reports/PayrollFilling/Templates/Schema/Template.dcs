@@ -294,6 +294,16 @@
 				</v8:item>
 			</title>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OnCompany</dataPath>
+			<field>OnCompany</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>On company</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Time
 select dateadd ( &amp;DateStart, day, 11 * 11 * ( Rate1.Factor ) + 11 * ( Rate2.Factor ) + ( Rate3.Factor ) ) as Day
@@ -385,7 +395,7 @@ from Employees as Employees
 	and Terminated.Period &gt; Employees.Period
 	and not Terminated.Hired
 where Employees.Hired
-	and not &amp;TaxesOnly
+and not &amp;TaxesOnly
 ;
 // Personnel
 select &amp;DateStart as Period, Personnel.Employee as Employee, Personnel.Department as Department,
@@ -1071,7 +1081,10 @@ from (
 					) then Compensations.Days
 				when Compensations.Method in (
 						value ( Enum.Calculations.Vacation ),
-						value ( Enum.Calculations.SickDays )
+						value ( Enum.Calculations.SickDays ),
+						value ( Enum.Calculations.SickDaysChild ),
+						value ( Enum.Calculations.SickOnlySocial ),
+						value ( Enum.Calculations.SickProduction )
 					) then Compensations.ScheduledDays
 				else 0
 			end
@@ -1134,10 +1147,8 @@ index by Employee
 // Illness
 select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee,
 	SickLeaves.DateStart as DateStart, SickLeaves.DateEnd as DateEnd,
-	SickLeaves.SeniorityAmendment as SeniorityAmendment, 
-	SickLeaves.Compensation as Compensation,
-	case when Extended.Ref is null then true else false end as Last,
-	not SickLeaves.Extension as First
+	SickLeaves.Compensation as Compensation, not SickLeaves.Extension as First,
+	Extended.Ref is null as Last
 into Illness
 from Document.SickLeave as SickLeaves
 	//
@@ -1151,7 +1162,6 @@ and SickLeaves.Employee in ( select distinct Employee from Personnel )
 ;
 // Extended
 select ExtendedStart.Ref as Ref, ExtendedStart.Employee as Employee,
-	ExtendedStart.SeniorityAmendment as SeniorityAmendment, 
 	ExtendedStart.Compensation as Compensation, 
 	ExtendedStart.DateStart as DateStart, min ( ExtendedEnd.DateEnd ) as DateEnd
 into Extended
@@ -1166,23 +1176,20 @@ from Illness as ExtendedStart
 	and ExtendedEnd.Last
 where ExtendedStart.First
 and not ExtendedStart.Last  
-group by ExtendedStart.Ref, ExtendedStart.Employee, ExtendedStart.DateStart,
-	ExtendedStart.SeniorityAmendment, ExtendedStart.Compensation
+group by ExtendedStart.Ref, ExtendedStart.Employee, ExtendedStart.DateStart, ExtendedStart.Compensation
 ;
-// SickLeavesToCalculate
+// SickLeavesAll
 select Regular.Ref as Ref, Regular.Employee as Employee,
-	Regular.SeniorityAmendment as SeniorityAmendment, 
 	Regular.Compensation as Compensation,
 	Regular.DateStart as DateStart, Regular.DateEnd as DateEnd,
 	datediff ( Regular.DateStart, Regular.DateEnd, day ) + 1 as Days
-into SickLeavesToCalculate
+into SickLeavesAll
 from Illness as Regular
 where Regular.DateEnd between &amp;DateStart and &amp;DateEnd
 and Regular.First
 and Regular.Last
 union all
-select Extended.Ref, Extended.Employee,
-	Extended.SeniorityAmendment, Extended.Compensation,
+select Extended.Ref, Extended.Employee, Extended.Compensation,
 	Extended.DateStart, Extended.DateEnd,
 	datediff ( Extended.DateStart, Extended.DateEnd, day ) + 1
 from Extended as Extended
@@ -1195,7 +1202,7 @@ into Restrictions
 from (
 	select SickLeaves.Ref as Ref, max ( MaxDaysAtOnce.Period ) as AtOncePeriod, 
 		max ( MaxDaysPerYear.Period ) as PerYearPeriod 
-	from SickLeavesToCalculate as SickLeaves
+	from SickLeavesAll as SickLeaves
 		//
 		// MaxDaysAtOnce
 		//
@@ -1226,21 +1233,21 @@ from (
 // PossibleByCompany
 select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee, 
 	SickLeaves.DateStart as DateStart, SickLeaves.DateEnd as DateEnd, 
-	case when SickLeaves.Compensation.Method in ( value ( Enum.Calculations.SickDays ), value ( Enum.Calculations.SickProduction ) )
-		then
-			case when SickLeaves.Days &gt; Restrictions.MaxDaysAtOnce 
-				then Restrictions.MaxDaysAtOnce 
-				else SickLeaves.Days
-			end
-		else 0 
+	case when SickLeaves.Days &gt; Restrictions.MaxDaysAtOnce 
+		then Restrictions.MaxDaysAtOnce 
+		else SickLeaves.Days
 	end as Days
 into PossibleByCompany
-from SickLeavesToCalculate as SickLeaves
+from SickLeavesAll as SickLeaves
 	//
 	// Restrictions
 	//
 	left join Restrictions as Restrictions
 	on Restrictions.Ref = SickLeaves.Ref
+where SickLeaves.Compensation.Method in (
+	value ( Enum.Calculations.SickDays ),
+	value ( Enum.Calculations.SickProduction )
+)
 ;
 // UsedByCompanyPerMonth
 select SickLeaves.Ref as Ref, sum ( isnull ( Previous.Days, 0 ) ) as Days  
@@ -1257,7 +1264,7 @@ group by SickLeaves.Ref
 // UsedByCompanyPerYear
 select SickLeaves.Ref as Ref, sum ( isnull ( Previous.Days, 0 ) ) as Days
 into UsedByCompanyPerYear
-from SickLeavesToCalculate as SickLeaves
+from SickLeavesAll as SickLeaves
 	//
 	// Previous
 	//
@@ -1284,18 +1291,27 @@ group by SickLeaves.Ref
 select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee,
 	SickLeaves.DateStart as DateStart, SickLeaves.DateEnd as DateEnd,
 	SickLeaves.Compensation as Compensation, Time.Day as Day, Schedules.Minutes as Minutes, 
-	Schedules.Minutes as ScheduledMinutes, Spans.DateStart as SpanStart, Spans.DateEnd as SpanEnd
+	Schedules.Minutes as ScheduledMinutes, Spans.DateStart as SpanStart, Spans.DateEnd as SpanEnd,
+	case
+		when SickLeaves.DaysByCompany is null then false
+		else 1 + datediff ( SickLeaves.DateStart, Time.Day, day ) &lt;= SickLeaves.DaysByCompany
+	end as OnCompany
 into SickLeaves
 from (
 	select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee,
-		SickLeaves.Compensation as Compensation, SickLeaves.SeniorityAmendment as SeniorityAmendment,
-		SickLeaves.DateStart as DateStart, SickLeaves.DateEnd as DateEnd, 
-		SickLeaves.Days as Days,
-		case when PossibleByCompany.Days &gt; Restrictions.MaxDaysPerYear - UsedByCompany.Days 
-			then case when Restrictions.MaxDaysPerYear - UsedByCompany.Days &gt; 0 then Restrictions.MaxDaysPerYear - UsedByCompany.Days else 0 end
-			else PossibleByCompany.Days
-		end as DaysByCompany 
-	from SickLeavesToCalculate as SickLeaves
+		SickLeaves.Compensation as Compensation, SickLeaves.DateStart as DateStart,
+		SickLeaves.DateEnd as DateEnd, SickLeaves.Days as Days,
+		case
+			when PossibleByCompany.Ref is null then
+				null
+			when ( Restrictions.MaxDaysPerYear - UsedByCompany.Days ) &lt;= 0 then
+				0
+			when ( Restrictions.MaxDaysPerYear - UsedByCompany.Days ) &lt;= PossibleByCompany.Days then
+				( Restrictions.MaxDaysPerYear - UsedByCompany.Days )
+			else
+				PossibleByCompany.Days
+		end as DaysByCompany
+	from SickLeavesAll as SickLeaves
 		//
 		// Restrictions
 		//
@@ -1335,7 +1351,6 @@ from (
 	//
 	join Spans as Spans
 	on Time.Day between Spans.DateStart and Spans.DateEnd
-where 1 + datediff ( SickLeaves.DateStart, Time.Day, day ) &lt;= SickLeaves.DaysByCompany
 index by Employee, Day
 ;
 // PreviousCompensationsForSickLeaves
@@ -1345,7 +1360,7 @@ select SickLeaves.Ref as Ref, Compensations.Employee as Employee, Compensations.
 	Compensations.Compensation.Method as Method, Compensations.Days as Days, 
 	Compensations.ScheduledDays as ScheduledDays, Compensations.Schedule.AverageDays as AverageDays
 into PreviousCompensationsForSickLeaves
-from SickLeavesToCalculate as SickLeaves
+from SickLeavesAll as SickLeaves
 	//
 	// Compensations
 	//
@@ -1361,7 +1376,7 @@ select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee,
 	Schedules.Schedule as Schedule, beginofperiod ( Schedules.Day, month ) as Period,
 	count ( Schedules.Minutes ) as Days
 into PreviousSchedulesForSickLeaves
-from SickLeavesToCalculate as SickLeaves
+from SickLeavesAll as SickLeaves
 	//
 	// Schedules
 	//
@@ -1373,7 +1388,7 @@ from SickLeavesToCalculate as SickLeaves
 group by SickLeaves.Ref, SickLeaves.Employee, Schedules.Schedule, beginofperiod ( Schedules.Day, month )
 ;
 // SickLeavesRates
-select Compensations.Ref as Ref, Compensations.Employee as Employee, Compensations.SeniorityAmendment as SeniorityAmendment,
+select Compensations.Ref as Ref, Compensations.Employee as Employee,
 	Compensations.Amount as Amount, Compensations.Days as Days, Compensations.Bonuses as Bonuses, 
 	datediff ( Compensations.DateStart, Compensations.DateEnd, day ) as Period, Holidays.Days as Holidays,
 	Compensations.AnnualBonuses as AnnualBonuses, Compensations.QuarterlyBonuses as QuarterlyBonuses,  Schedules.Days as ScheduledDays,
@@ -1383,8 +1398,7 @@ select Compensations.Ref as Ref, Compensations.Employee as Employee, Compensatio
 	end as Rate
 into SickLeavesRates
 from (
-	select SickLeaves.Ref as Ref, Compensations.Employee as Employee, 
-		Compensations.Schedule, SickLeaves.Ref.SeniorityAmendment as SeniorityAmendment,	
+	select SickLeaves.Ref as Ref, Compensations.Employee as Employee, Compensations.Schedule,
 		sum (
 			case when Compensations.Days &gt; 0
 					and Compensations.Method in (
@@ -1427,7 +1441,10 @@ from (
 					) then Compensations.Days
 				when Compensations.Method in (
 						value ( Enum.Calculations.Vacation ),
-						value ( Enum.Calculations.SickDays )
+						value ( Enum.Calculations.SickDays ),
+						value ( Enum.Calculations.SickDaysChild ),
+						value ( Enum.Calculations.SickOnlySocial ),
+						value ( Enum.Calculations.SickProduction )
 					) then Compensations.ScheduledDays
 				else 0
 			end
@@ -1444,14 +1461,14 @@ from (
 		// SickLeaves
 		//
 		join (
-			select SickLeaves.Ref as Ref, SickLeaves.DateStart as DateStart,
-				SickLeaves.Compensation as Compensation
+			select SickLeaves.Ref as Ref, SickLeaves.DateStart as DateStart, SickLeaves.Compensation as Compensation
 			from SickLeaves as SickLeaves
+			where SickLeaves.OnCompany
 			group by SickLeaves.Ref, SickLeaves.DateStart, SickLeaves.Compensation
 		) as SickLeaves 
 		on SickLeaves.Ref = Compensations.Ref
 		and SickLeaves.Compensation = BaseCompensations.Ref
-	group by SickLeaves.Ref, beginofperiod ( SickLeaves.DateStart, month ), Compensations.Employee, Compensations.Schedule, SickLeaves.Ref.SeniorityAmendment
+	group by SickLeaves.Ref, beginofperiod ( SickLeaves.DateStart, month ), Compensations.Employee, Compensations.Schedule
 	) as Compensations
 	//
 	// Holidays for base period
@@ -1754,7 +1771,10 @@ from ChartOfcalculationTypes.Compensations as Level0
 where Level0.Method not in (
 	value ( Enum.Calculations.Vacation ),
 	value ( Enum.Calculations.ExtendedVacation ),
-	value ( Enum.Calculations.SickDays )
+	value ( Enum.Calculations.SickDays ),
+	value ( Enum.Calculations.SickDaysChild ),
+	value ( Enum.Calculations.SickOnlySocial ),
+	value ( Enum.Calculations.SickProduction )
 )
 and not &amp;TaxesOnly
 group by Level0.Ref
@@ -1764,10 +1784,19 @@ from ChartOfcalculationTypes.Compensations as Level0
 where Level0.Method in (
 	value ( Enum.Calculations.Vacation ),
 	value ( Enum.Calculations.ExtendedVacation ),
-	value ( Enum.Calculations.SickDays )
+	value ( Enum.Calculations.SickDays ),
+	value ( Enum.Calculations.SickDaysChild ),
+	value ( Enum.Calculations.SickOnlySocial ),
+	value ( Enum.Calculations.SickProduction )
 )
 and not &amp;TaxesOnly
 index by Compensation
+;
+// Seniority
+select cast ( Seniority.Value as Number ( 5, 2 ) ) as Value
+into Seniority
+from InformationRegister.Settings.SliceLast ( &amp;DateEnd,
+	Parameter = value ( ChartOfCharacteristicTypes.Settings.SeniorityAmendment ) ) as Seniority
 ;
 // Records
 select Time.Employee as Employee, Time.Department as Department, Time.Position as Position,
@@ -1775,9 +1804,9 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 	Time.InHand as InHand, Time.Currency as Currency, Time.Compensation.Method as Method, Levels.Level as Level,
 	Time.HourlyRate as HourlyRate, Time.Reference, Time.DailyRate as DailyRate, Time.BaseAmount as BaseAmount,
 	Time.BaseDays as BaseDays, Time.Bonuses as Bonuses, Time.BasePeriod as BasePeriod, Time.BaseHolidays as BaseHolidays,
-	Time.SeniorityAmendment as SeniorityAmendment, Time.Compensation.Account as Account, Time.Expenses as Expenses,
+	Time.Compensation.Account as Account, Time.Expenses as Expenses,
 	Time.AnnualBonuses as AnnualBonuses, Time.QuarterlyBonuses as QuarterlyBonuses,
-	Time.BaseScheduledDays as BaseScheduledDays, Time.Holidays as Holidays,  
+	Time.BaseScheduledDays as BaseScheduledDays, Time.Holidays as Holidays, Time.OnCompany as OnCompany,
 	case
 		when Time.Compensation.Method = value ( Enum.Calculations.DayOff )
 			or Time.Compensation.Method = value ( Enum.Calculations.HolidayHours ) then
@@ -1836,7 +1865,9 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 			when value ( Enum.Calculations.Vacation ) then
 				Time.DailyRate * Time.Days
 			when value ( Enum.Calculations.SickDays ) then
-				Time.DailyRate * Time.Days * ( Time.SeniorityAmendment / 100 )
+				Time.DailyRate * Time.Days * ( Seniority.Value / 100 )
+			when value ( Enum.Calculations.SickProduction ) then
+				Time.DailyRate * Time.Days * ( Seniority.Value / 100 )
 			else 0                                        
 		end as Number ( 15, 2 ) ) as Result,
 	cast (
@@ -1857,7 +1888,9 @@ select Time.Employee as Employee, Time.Department as Department, Time.Position a
 			when value ( Enum.Calculations.Vacation ) then
 				Time.DailyRate * Time.Days
 			when value ( Enum.Calculations.SickDays ) then
-				Time.DailyRate * Time.Days * ( Time.SeniorityAmendment / 100 )
+				Time.DailyRate * Time.Days * ( Seniority.Value / 100 )
+			when value ( Enum.Calculations.SickProduction ) then
+				Time.DailyRate * Time.Days * ( Seniority.Value / 100 )
 			else 0
 		end
 		* isnull ( ExchangeRates.Rate, 1 ) / isnull ( ExchangeRates.Factor, 1 ) as Number ( 15, 2 ) ) as AccountingResult
@@ -1873,8 +1906,8 @@ from (
 		Standard.HoursEvening as HoursEvening, Standard.DaysEvening as DaysEvening,
 		Standard.HoursNight as HoursNight, Standard.DaysNight as DaysNight, Standard.HourlyRate as HourlyRate,
 		0 as DailyRate, 0 as BaseAmount, 0 as BaseDays, 0 as Bonuses, 0 as BasePeriod, 0 as BaseHolidays,
-		undefined as Reference, 0 as SeniorityAmendment, 0 as AnnualBonuses, 0 as QuarterlyBonuses,
-		0 as BaseScheduledDays, 0 as Holidays
+		undefined as Reference, 0 as AnnualBonuses, 0 as QuarterlyBonuses,
+		0 as BaseScheduledDays, 0 as Holidays, false as OnCompany
 	from Standard as Standard
 	union all
 	select Vacations.Employee, Vacations.Department, Vacations.Position, Vacations.Expenses, Vacations.Schedule,
@@ -1882,7 +1915,8 @@ from (
 		Vacations.ScheduledHours, Vacations.ScheduledDays,
 		0, 0, 0, 0, 0, Vacations.Days, 0, 0, 0, 0, 0,
 		VacationRates.Rate, VacationRates.Amount, VacationRates.Days, VacationRates.Bonuses, VacationRates.Period, VacationRates.Holidays,
-		Vacations.Ref, 0, VacationRates.AnnualBonuses, VacationRates.QuarterlyBonuses, VacationRates.ScheduledDays, Vacations.Holidays
+		Vacations.Ref, VacationRates.AnnualBonuses, VacationRates.QuarterlyBonuses, VacationRates.ScheduledDays, Vacations.Holidays,
+		false
 	from (
 		select Vacations.Ref as Ref, Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
 			Location.Expenses as Expenses, Location.Schedule as Schedule, Vacations.Compensation as Compensation,
@@ -1917,15 +1951,17 @@ from (
 		SickLeaves.DateStart, SickLeaves.DateEnd, SickLeaves.Compensation, 0, false, Constants.Currency,
 		SickLeaves.ScheduledHours, SickLeaves.ScheduledDays,
 		0, 0, 0, 0, 0, SickLeaves.Days, 0, 0, 0, 0, 0,
-		SickLeavesRates.Rate, SickLeavesRates.Amount, SickLeavesRates.Days, SickLeavesRates.Bonuses, SickLeavesRates.Period, SickLeavesRates.Holidays,
-		SickLeaves.Ref, SickLeavesRates.SeniorityAmendment, SickLeavesRates.AnnualBonuses, SickLeavesRates.QuarterlyBonuses, SickLeavesRates.ScheduledDays, 0
+		SickLeavesRates.Rate * SickLeaves.OnCompany, SickLeavesRates.Amount * SickLeaves.OnCompany, SickLeavesRates.Days,
+		SickLeavesRates.Bonuses * SickLeaves.OnCompany, SickLeavesRates.Period, SickLeavesRates.Holidays,
+		SickLeaves.Ref, SickLeavesRates.AnnualBonuses * SickLeaves.OnCompany,
+		SickLeavesRates.QuarterlyBonuses * SickLeaves.OnCompany, SickLeavesRates.ScheduledDays, 0, SickLeaves.OnCompany = 1
 	from (
 		select SickLeaves.Ref as Ref, Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
 			Location.Expenses as Expenses, Location.Schedule as Schedule, SickLeaves.Compensation as Compensation,
 			min ( SickLeaves.Day ) as DateStart, max ( SickLeaves.Day ) as DateEnd,
 			sum ( SickLeaves.ScheduledMinutes / 60 ) as ScheduledHours,
 			sum ( case when SickLeaves.ScheduledMinutes = 0 then 0 else 1 end ) as ScheduledDays,
-			count ( SickLeaves.Day ) as Days
+			count ( SickLeaves.Day ) as Days, case when SickLeaves.OnCompany then 1 else 0 end as OnCompany
 		from ScheduledLocation as Location
 			//
 			// SickLeaves
@@ -1935,12 +1971,12 @@ from (
 			and SickLeaves.Day between Location.DateStart and Location.DateEnd
 		group by Location.Employee, Location.Department, Location.Position, Location.Expenses, Location.Schedule,
 			Location.DateStart, Location.DateEnd, SickLeaves.SpanStart, SickLeaves.SpanEnd, SickLeaves.Compensation,
-			SickLeaves.Ref
+			SickLeaves.Ref, SickLeaves.OnCompany
 		) as SickLeaves
 		//
 		// SickLeavesRates
 		//
-		join SickLeavesRates as SickLeavesRates
+		left join SickLeavesRates as SickLeavesRates
 		on SickLeavesRates.Employee = SickLeaves.Employee
 		and SickLeavesRates.Ref = SickLeaves.Ref
 		//
@@ -1954,7 +1990,7 @@ from (
 		0, 0, 0, 0, 0, 0,
 		sum ( Deviations.Minutes ) / 60, sum ( case when Deviations.Minutes = 0 then 0 else 1 end ),
 		0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, undefined, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, undefined, 0, 0, 0, 0, false
 	from Standard as Standard
 		//
 		// Deviations
@@ -2025,12 +2061,17 @@ from (
 	and Calculated.Reference = Time.Reference
 	and Calculated.Ref.Posted
 	and Calculated.Ref &lt;&gt; &amp;Ref
+	//
+	// Seniority
+	//
+	left join Seniority as Seniority
+	on true
 where Calculated.Ref is null
 ;
 // BaseCompensations
 select Records.Level as Level, Records.Employee as Employee, Records.Compensation as Compensation,
 	Records.DateStart as DateStart, Records.DateEnd as DateEnd, Records.Rate as Rate, Records.Currency as Currency,
-	Base.CalculationType as BaseCompensation
+	Records.OnCompany as OnCompany, Base.CalculationType as BaseCompensation
 into BaseCompensations
 from Records as Records
 	//
@@ -2040,7 +2081,7 @@ from Records as Records
 	on Base.Ref = Records.Compensation
 union
 select Records.Level, Records.Employee, Records.Compensation, Records.DateStart, Records.DateEnd, Records.Rate, 
-	Records.Currency, Base.Ref
+	Records.Currency, Records.OnCompany, Base.Ref
 from Records as Records
 	//
 	// Base
@@ -2064,8 +2105,9 @@ select Records.Employee as Employee, Records.Department as Department, Records.P
 	Records.Hours as Hours, Records.Days as Days, Records.Account as Account, Records.Priority as Priority,
 	Records.HourlyRate as HourlyRate, Records.Result as Result, Records.AccountingResult as AccountingResult,
 	Records.DailyRate as DailyRate, Records.BaseAmount as BaseAmount, Records.BaseDays as BaseDays, Records.Bonuses as Bonuses,
-	Records.BasePeriod as BasePeriod, Records.BaseHolidays as BaseHolidays, Records.Reference as Reference, Records.SeniorityAmendment as SeniorityAmendment,
-	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays
+	Records.BasePeriod as BasePeriod, Records.BaseHolidays as BaseHolidays, Records.Reference as Reference,
+	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays,
+	Records.OnCompany as OnCompany
 into Calculations0
 from Records as Records
 where Records.Level = 0
@@ -2076,9 +2118,8 @@ select Records.Employee as Employee, Records.Department as Department, Records.P
 	Records.Compensation as Compensation, Records.Rate as Rate, Records.InHand as InHand, Records.Currency as Currency,
 	Records.ScheduledHours as ScheduledHours, Records.ScheduledDays as ScheduledDays,
 	Records.Hours as Hours, Records.Days as Days, Records.Account as Account, Records.Priority as Priority,
-	Records.HourlyRate as HourlyRate, Records.SeniorityAmendment as SeniorityAmendment,
-	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays,
-	Records.BaseScheduledDays as BaseScheduledDays,
+	Records.HourlyRate as HourlyRate, Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses,
+	Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays, Records.OnCompany as OnCompany,
 	cast (
 		case
 			when Records.Method = value ( Enum.Calculations.EveningHours )
@@ -2217,9 +2258,8 @@ select Records.Employee as Employee, Records.Department as Department, Records.P
 	Records.Compensation as Compensation, Records.Rate as Rate, Records.InHand as InHand, Records.Currency as Currency,
 	Records.ScheduledHours as ScheduledHours, Records.ScheduledDays as ScheduledDays,
 	Records.Hours as Hours, Records.Days as Days, Records.Account as Account, Records.Priority as Priority,
-	Records.HourlyRate as HourlyRate, Records.SeniorityAmendment as SeniorityAmendment,
-	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays,
-	Records.BaseScheduledDays as BaseScheduledDays,
+	Records.HourlyRate as HourlyRate, Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses,
+	Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays, Records.OnCompany as OnCompany,
 	cast (
 		case
 			when Records.Method = value ( Enum.Calculations.Percent ) then
@@ -2318,9 +2358,8 @@ select Records.Employee as Employee, Records.Department as Department, Records.P
 	Records.Compensation as Compensation, Records.Rate as Rate, Records.InHand as InHand, Records.Currency as Currency,
 	Records.ScheduledHours as ScheduledHours, Records.ScheduledDays as ScheduledDays,
 	Records.Hours as Hours, Records.Days as Days, Records.Account as Account, Records.Priority as Priority,
-	Records.HourlyRate as HourlyRate, Records.SeniorityAmendment as SeniorityAmendment,
-	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays,
-	Records.BaseScheduledDays as BaseScheduledDays,
+	Records.HourlyRate as HourlyRate, Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses,
+	Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays, Records.OnCompany as OnCompany,
 	cast (
 		case
 			when Records.Method = value ( Enum.Calculations.Percent ) then
@@ -2429,9 +2468,8 @@ select false as Edit, Records.Employee as Employee, Records.Department as Depart
 	cast ( Records.Result * isnull ( ExchangeRates.Rate, 1 ) / isnull ( ExchangeRates.Factor, 1 ) as Number ( 15, 2 ) ) as AccountingResult,
 	Records.DailyRate as DailyRate, Records.BaseAmount as BaseAmount, Records.BaseDays as BaseDays,
 	Records.Bonuses as Bonuses, Records.BasePeriod as BasePeriod, Records.BaseHolidays as BaseHolidays,
-	Records.Reference as Reference, Records.SeniorityAmendment as SeniorityAmendment,
-	Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays,
-	Records.BaseScheduledDays as BaseScheduledDays
+	Records.Reference as Reference, Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses,
+	Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays, Records.OnCompany as OnCompany
 into AllCompensations
 from (
 	select Records.Employee as Employee, Records.Department as Department, Records.Position as Position,
@@ -2442,30 +2480,29 @@ from (
 		Records.Priority as Priority, 0 as Level, Records.Result as Result, Records.HourlyRate as HourlyRate,
 		Records.DailyRate as DailyRate, Records.BaseAmount as BaseAmount, Records.BaseDays as BaseDays,
 		Records.Bonuses as Bonuses, Records.BasePeriod as BasePeriod, Records.BaseHolidays as BaseHolidays,
-		Records.Reference as Reference, Records.SeniorityAmendment as SeniorityAmendment,
-		Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses, Records.Holidays as Holidays,
-		Records.BaseScheduledDays as BaseScheduledDays
+		Records.Reference as Reference, Records.AnnualBonuses as AnnualBonuses, Records.QuarterlyBonuses as QuarterlyBonuses,
+		Records.Holidays as Holidays, Records.BaseScheduledDays as BaseScheduledDays, Records.OnCompany as OnCompany
 	from Calculations0 as Records
 	union all
 	select Records.Employee, Records.Department, Records.Position, Records.Expenses, Records.Schedule, Records.DateStart,
 		Records.DateEnd, Records.Compensation, Records.Rate, Records.InHand, Records.Currency, Records.ScheduledHours,
 		Records.ScheduledDays, Records.Hours, Records.Days, Records.Account, Records.Priority, 1, Records.Result,
-		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.SeniorityAmendment,
-		Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays, Records.BaseScheduledDays
+		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays,
+		Records.BaseScheduledDays, Records.OnCompany
 	from Calculations1 as Records
 	union all
 	select Records.Employee, Records.Department, Records.Position, Records.Expenses, Records.Schedule, Records.DateStart,
 		Records.DateEnd, Records.Compensation, Records.Rate, Records.InHand, Records.Currency, Records.ScheduledHours,
 		Records.ScheduledDays, Records.Hours, Records.Days, Records.Account, Records.Priority, 2, Records.Result,
-		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.SeniorityAmendment,
-		Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays, Records.BaseScheduledDays
+		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays,
+		Records.BaseScheduledDays, Records.OnCompany
 	from Calculations2 as Records
 	union all
 	select Records.Employee, Records.Department, Records.Position, Records.Expenses, Records.Schedule, Records.DateStart,
 		Records.DateEnd, Records.Compensation, Records.Rate, Records.InHand, Records.Currency, Records.ScheduledHours,
 		Records.ScheduledDays, Records.Hours, Records.Days, Records.Account, Records.Priority, 3, Records.Result,
-		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.SeniorityAmendment,
-		Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays, Records.BaseScheduledDays
+		Records.HourlyRate, 0, 0, 0, 0, 0, 0, undefined, Records.AnnualBonuses, Records.QuarterlyBonuses, Records.Holidays,
+		Records.BaseScheduledDays, Records.OnCompany
 	from Calculations3 as Records
 	) as Records
 	//
@@ -2487,7 +2524,8 @@ select true, Payroll.Employee, Payroll.Department, Payroll.Position, Payroll.Exp
 	Levels.Level, isnull ( ExchangeRates.Rate, 1 ), isnull ( ExchangeRates.Factor, 1 ),
 	Payroll.HourlyRate, Payroll.Result, Payroll.AccountingResult, Payroll.DailyRate, Payroll.BaseAmount,
 	Payroll.BaseDays, Payroll.Bonuses, Payroll.BasePeriod, Payroll.BaseHolidays, Payroll.Reference, 
-	Payroll.SeniorityAmendment, Payroll.BaseAnnualBonuses, Payroll.BaseQuarterlyBonuses, Payroll.Holidays, Payroll.BaseScheduledDays
+	Payroll.BaseAnnualBonuses, Payroll.BaseQuarterlyBonuses, Payroll.Holidays, Payroll.BaseScheduledDays,
+	Payroll.OnCompany
 from Document.Payroll.Compensations as Payroll
 	//
 	// Levels
@@ -2516,7 +2554,8 @@ select Payroll.Edit, Payroll.Employee, Payroll.Department, Payroll.Position, Pay
 	Levels.Level, isnull ( ExchangeRates.Rate, 1 ), isnull ( ExchangeRates.Factor, 1 ),
 	Payroll.HourlyRate, Payroll.Result, Payroll.AccountingResult, Payroll.DailyRate, Payroll.BaseAmount,
 	Payroll.BaseDays, Payroll.Bonuses, Payroll.BasePeriod, Payroll.BaseHolidays, Payroll.Reference,
-	Payroll.SeniorityAmendment, Payroll.BaseAnnualBonuses, Payroll.BaseQuarterlyBonuses, Payroll.Holidays, Payroll.BaseScheduledDays
+	Payroll.BaseAnnualBonuses, Payroll.BaseQuarterlyBonuses, Payroll.Holidays, Payroll.BaseScheduledDays,
+	Payroll.OnCompany
 from Document.Payroll.Compensations as Payroll
 	//
 	// Levels
@@ -2543,9 +2582,9 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 	Compensations.HourlyRate as HourlyRate, Compensations.Result as Result, Compensations.AccountingResult as AccountingResult,
 	Compensations.DailyRate as DailyRate, Compensations.BaseAmount as BaseAmount, Compensations.BaseDays as BaseDays,
 	Compensations.Bonuses as Bonuses, Compensations.BasePeriod as BasePeriod, Compensations.BaseHolidays as BaseHolidays,
-	Compensations.Reference as Reference, Compensations.SeniorityAmendment as SeniorityAmendment,
-	Compensations.AnnualBonuses as BaseAnnualBonuses, Compensations.QuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
-	Compensations.BaseScheduledDays as BaseScheduledDays, recordautonumber () as Key
+	Compensations.Reference as Reference, Compensations.AnnualBonuses as BaseAnnualBonuses,
+	Compensations.QuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
+	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.OnCompany as OnCompany, recordautonumber () as Key
 into ActualCompensations
 from AllCompensations as Compensations
 where Edit
@@ -2689,7 +2728,7 @@ from (
 select top 1 *
 {select Edit, Employee.*, Individual.*, Department.*, Position.*, Expenses.*, Schedule.*, DateStart, DateEnd, Result, AccountingResult,
 	Compensation.*, Rate, Currency.*, ScheduledHours, ScheduledDays, Hours, Days, Account.*, Reference.*,
-	ExchangeRate, ExchangeFactor, Priority, Level, HourlyRate, DailyRate, BaseAmount, BaseDays, Bonuses, BasePeriod, BaseHolidays}
+	ExchangeRate, ExchangeFactor, Priority, Level, HourlyRate, DailyRate, BaseAmount, BaseDays, Bonuses, BasePeriod, BaseHolidays, OnCompany}
 from ActualCompensations
 	//
 	// Will force to create a ReverseSalary table
@@ -3517,6 +3556,16 @@ where false
 				</v8:item>
 			</title>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OnCompany</dataPath>
+			<field>OnCompany</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>On company</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Final Payments
 select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensations.Individual as Individual,
@@ -3529,11 +3578,12 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 	Compensations.ExchangeRate as ExchangeRate, Compensations.ExchangeFactor as ExchangeFactor, Compensations.HourlyRate as HourlyRate,
 	Compensations.DailyRate as DailyRate, Compensations.BaseAmount as BaseAmount, Compensations.BaseDays as BaseDays,
 	Compensations.Bonuses as Bonuses, Compensations.BasePeriod as BasePeriod, Compensations.BaseHolidays as BaseHolidays,
-	Compensations.Reference as Reference, Compensations.SeniorityAmendment as SeniorityAmendment,
-	Compensations.BaseAnnualBonuses as BaseAnnualBonuses, Compensations.BaseQuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
-	Compensations.BaseScheduledDays as BaseScheduledDays,
-	case when Reversed.Key is null then Compensations.Result
-	else Reversed.Result / Compensations.ExchangeRate * Compensations.ExchangeFactor
+	Compensations.Reference as Reference, Compensations.BaseAnnualBonuses as BaseAnnualBonuses,
+	Compensations.BaseQuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
+	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.OnCompany as OnCompany,
+	case
+		when Reversed.Key is null then Compensations.Result
+		else Reversed.Result / Compensations.ExchangeRate * Compensations.ExchangeFactor
 	end as Result,
 	isnull ( Reversed.Result, Compensations.AccountingResult ) as AccountingResult
 into FinalPayments
@@ -3619,12 +3669,14 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 	Compensations.ExchangeRate as ExchangeRate, Compensations.ExchangeFactor as ExchangeFactor, Compensations.HourlyRate as HourlyRate,
 	Compensations.DailyRate as DailyRate, Compensations.BaseAmount as BaseAmount, Compensations.BaseDays as BaseDays,
 	Compensations.Bonuses as Bonuses, Compensations.BasePeriod as BasePeriod, Compensations.BaseHolidays as BaseHolidays,
-	Compensations.Reference as Reference, Compensations.SeniorityAmendment as SeniorityAmendment,
-	Compensations.BaseAnnualBonuses as BaseAnnualBonuses, Compensations.BaseQuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
-	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.Result as Result, Compensations.AccountingResult as AccountingResult
+	Compensations.Reference as Reference, Compensations.BaseAnnualBonuses as BaseAnnualBonuses,
+	Compensations.BaseQuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
+	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.Result as Result, Compensations.AccountingResult as AccountingResult,
+	Compensations.OnCompany as OnCompany
 {select Edit, Employee.*, Individual.*, Department.*, Position.*, Expenses.*, Schedule.*, DateStart, DateEnd, Result, AccountingResult,
 	Compensation.*, Rate, Currency.*, ScheduledHours, ScheduledDays, Hours, Days, Account.*, Reference.*,
-	ExchangeRate, ExchangeFactor, Priority, Level, HourlyRate, DailyRate, BaseAmount, BaseDays, Bonuses, BasePeriod, BaseHolidays}
+	ExchangeRate, ExchangeFactor, Priority, Level, HourlyRate, DailyRate, BaseAmount, BaseDays, Bonuses, BasePeriod, BaseHolidays,
+	OnCompany}
 from FinalPayments as Compensations
 	//
 	// Employees
@@ -4086,6 +4138,9 @@ order by Employees.Description, Employees.Code, Compensations.DateStart, Priorit
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Key</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>OnCompany</dcsset:field>
 				</dcsset:item>
 			</dcsset:selection>
 			<dcsset:filter>

@@ -51,7 +51,7 @@ Procedure readAppearance ()
 	|Compensations Taxes Period Date Number Company lock Object.Posted;
 	|PeriodGroup CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
-	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty
+	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -186,6 +186,32 @@ EndProcedure
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure DateOnChange ( Item )
+
+	adjustPeriod ();
+
+EndProcedure
+
+&AtClient
+Procedure adjustPeriod ()
+	
+	date = Object.Date;
+	if ( not Object.Ref.IsEmpty ()
+		or date = Date ( 1, 1, 1 ) ) then
+		return;
+	endif;
+	period = Object.Period;
+	if ( period = PredefinedValue ( "Enum.TimesheetPeriods.Week" )
+		or period = PredefinedValue ( "Enum.TimesheetPeriods.TwoWeeks" ) ) then
+		Object.DateStart = BegOfWeek ( date );
+	else
+		Object.DateStart = BegOfMonth ( date );
+	endif; 
+	Object.DateEnd = EndOfDay ( date );
+
+EndProcedure
 
 &AtClient
 Procedure PreviousPeriod ( Command )

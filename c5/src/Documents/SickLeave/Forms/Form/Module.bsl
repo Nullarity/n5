@@ -53,7 +53,6 @@ Procedure fillNew ()
 	company = settings.Company;
 	Object.Company = company;
 	Object.Compensation = ChartsOfCalculationTypes.Compensations.Default ( Enums.Calculations.SickDays );
-	Object.SeniorityAmendment = InformationRegisters.Settings.GetLast ( , new Structure ( "Parameter", ChartsOfCharacteristicTypes.Settings.SeniorityAmendment ) ).Value;
 	individual = Object.Individual;
 	if ( not individual.IsEmpty () ) then
 		Object.Employee = InformationRegisters.Employees.GetByIndividual ( individual, company );

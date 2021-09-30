@@ -52,8 +52,7 @@ Procedure sqlCompensations ( Env )
 	|select Compensations.Account as Account, Compensations.Compensation as Compensation,
 	|	Compensations.Compensation.Description as Description, Compensations.Individual as Employee,
 	|	Compensations.Department as Department, ExpenseMethods.Account as ExpenseAccount,
-	|	ExpenseMethods.Expense as Expense, sum ( ExpenseMethods.Rate * Compensations.AccountingResult ) as Result,
-	|	Compensations.Insurance.Account as InsuranceAccount
+	|	ExpenseMethods.Expense as Expense, sum ( ExpenseMethods.Rate * Compensations.AccountingResult ) as Result
 	|from Document.Payroll.Compensations as Compensations
 	|	//
 	|	// ExpenseMethods
@@ -62,8 +61,7 @@ Procedure sqlCompensations ( Env )
 	|	on ExpenseMethods.Ref = Compensations.Expenses
 	|where Compensations.Ref = &Ref
 	|group by Compensations.Account, Compensations.Individual, Compensations.Department,
-	|	Compensations.Compensation, ExpenseMethods.Expense, ExpenseMethods.Account,
-	|	Compensations.Insurance.Account
+	|	Compensations.Compensation, ExpenseMethods.Expense, ExpenseMethods.Account
 	|having sum ( ExpenseMethods.Rate * Compensations.AccountingResult ) <> 0
 	|";
 	Env.Selection.Add ( s );
@@ -107,14 +105,9 @@ Procedure commitCompensations ( Env )
 	p.Company = fields.Company;
 	p.Recordset = Env.Buffer;
 	for each row in Env.Compensations do
-		insurance = row.InsuranceAccount;
-		if ( insurance = null ) then
-			p.AccountDr = row.ExpenseAccount;
-			p.DimDr1 = row.Expense;
-			p.DimDr2 = row.Department;
-		else
-			p.AccountDr = insurance;
-		endif;
+		p.AccountDr = row.ExpenseAccount;
+		p.DimDr1 = row.Expense;
+		p.DimDr2 = row.Department;
 		p.AccountCr = row.Account;
 		p.Amount = row.Result;
 		p.DimCr1 = row.Employee;
@@ -232,10 +225,17 @@ Procedure sqlSicknessPrintData ( Env )
 	|	Compensations.BaseDays as WorkedDays, Compensations.BaseHolidays as BaseHolidays, Compensations.BasePeriod as CalendarDays,
 	|	Compensations.BaseQuarterlyBonuses as QuarterlyBonuses, Compensations.BaseScheduledDays as ScheduledDays,
 	|	Compensations.Bonuses as Bonuses, Compensations.DailyRate as DailyRate, Compensations.Schedule.AverageDays as AverageDays,
-	|	Compensations.SeniorityAmendment / 100 as SeniorityAmendment, Compensations.Result as Result, Compensations.Employee as EmployeeRef,
+	|	cast ( Seniority.Value as Number ( 5, 2 ) ) / 100 as SeniorityAmendment, Compensations.Result as Result, Compensations.Employee as EmployeeRef,
 	|	cast ( Compensations.BaseAmount / Compensations.BaseDays + Compensations.Bonuses as Number ( 15, 2 ) ) as AverageDailyIncome,
 	|	Compensations.Employee.Description as Employee
 	|from Document.Payroll.Compensations as Compensations
+	|	//
+	|	// Seniority
+	|	//
+	|	left join InformationRegister.Settings.SliceLast ( &Date,
+	|		Parameter = value ( ChartOfCharacteristicTypes.Settings.SeniorityAmendment )
+	|	) as Seniority
+	|	on true
 	|where Compensations.Ref = &Ref
 	|and Compensations.Compensation.Method = value ( Enum.Calculations.SickDays )
 	|;
