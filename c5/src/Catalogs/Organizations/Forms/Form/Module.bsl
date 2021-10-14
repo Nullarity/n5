@@ -674,7 +674,9 @@ EndProcedure
 &AtClientAtServerNoContext
 Procedure setName ( Object )
 	
-	Object.Description = ContactsForm.FullName ( Object );
+	name = ContactsForm.FullName ( Object );
+	Object.Description = name;
+	Object.FullDescription = name;
 	
 EndProcedure
 
