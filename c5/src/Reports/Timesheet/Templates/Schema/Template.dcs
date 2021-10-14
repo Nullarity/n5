@@ -548,10 +548,48 @@ index by Employee, Schedule
 ;
 // ScheduledIntervals
 select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
-	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd
+	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd,
+	Intervals.Department.Division as Division
 into ScheduledIntervals
 from ScheduledLocation as Intervals
 index by Employee, Schedule
+;
+// HolidaysRawData
+select HolidaysList.Reference as Reference, HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
+	HolidaysList.Division as Division, Schedules.Schedule as Schedule
+into HolidaysRawData
+from InformationRegister.Holidays as HolidaysList
+	//
+	// Schedules
+	//
+	join InformationRegister.Schedules as Schedules
+	on Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Day = HolidaysList.Day
+	and Schedules.Schedule.Holidays = HolidaysList.Reference
+	and Schedules.Minutes &gt; 0
+where HolidaysList.Day between &amp;YearStart and &amp;DateEnd
+;
+// All holidays
+select Holidays.Reference as Reference, Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division,
+	Holidays.Schedule as Schedule
+into AllHolidays
+from HolidaysRawData as Holidays
+union all
+select CommonHolidays.Reference, CommonHolidays.Day, CommonHolidays.Preholiday, LocalHolidays.Division, LocalHolidays.Schedule
+from HolidaysRawData as CommonHolidays
+	//
+	// Impact Local Holidays by Common Holidays
+	//
+	join HolidaysRawData as LocalHolidays
+	on LocalHolidays.Schedule = CommonHolidays.Schedule
+	and LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
+where CommonHolidays.Division = value ( Catalog.Divisions.EmptyRef )
+;
+// Only holidays falling on working days
+select Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division, Holidays.Schedule as Schedule
+into Holidays
+from AllHolidays as Holidays
+where Holidays.Day between &amp;DateStart and &amp;DateEnd
 ;
 // Deviations
 select Hours.Employee as Employee, Hours.Time as Time, Hours.Day as Day, sum ( Hours.Minutes ) as Minutes
@@ -622,9 +660,11 @@ from Document.Vacation.Employees as Vacations
 	//
 	// Holidays
 	//
-	left join InformationRegister.Holidays as HolidaysList
+	left join AllHolidays as HolidaysList
 	on HolidaysList.Reference = Schedules.Schedule.Holidays
+	and HolidaysList.Division = Intervals.Division
 	and HolidaysList.Day = Schedules.Day
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 	//
 	// Spans
@@ -718,21 +758,6 @@ and Hours.Time = value ( Enum.Time.Sickness )
 and SickLeaves.Ref is null
 index by Employee, Day
 ;
-// Only holidays falling on working days
-select distinct HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
-	Schedules.Schedule as Schedule
-into Holidays
-from InformationRegister.Holidays as HolidaysList
-	//
-	// Schedules
-	//
-	join InformationRegister.Schedules as Schedules
-	on Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
-	and Schedules.Day = HolidaysList.Day
-	and Schedules.Schedule.Holidays = HolidaysList.Reference
-	and Schedules.Minutes &gt; 0
-where HolidaysList.Day between &amp;DateStart and &amp;DateEnd
-;
 // SimpleHours
 select Location.Employee as Employee, Calendar.Day as Day,
 	sum ( case
@@ -793,12 +818,14 @@ from Location as Location
 	//
 	left join Holidays as HolidaysList
 	on HolidaysList.Schedule = Schedules.Schedule
+	and HolidaysList.Division = Location.Department.Division
 	and HolidaysList.Day = Schedules.Day
 	//
 	// Preholidays
 	//
 	left join Holidays as Preholidays
 	on Preholidays.Schedule = Schedules.Schedule
+	and Preholidays.Division = Location.Department.Division
 	and Preholidays.Preholiday = Schedules.Day
 	and Schedules.Minutes &gt; 0
 	//
@@ -1367,6 +1394,23 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'A'; ru = 'ПР'; ro = 'A'" )</expression>
+	</parameter>
+	<parameter>
+		<name>YearStart</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Year start</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>Date</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
 	</parameter>
 	<template>
 		<name>Template2</name>

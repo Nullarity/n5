@@ -455,10 +455,16 @@ EndFunction
 &AtServer
 Procedure loadTimeEntries ( Table, Clean )
 	
+	cache = new Map ();
 	company = Object.Company;
 	warehouse = Object.Warehouse;
 	timeEntry = Object.TimeEntry;
 	vatUse = Object.VATUse;
+	date = Object.Date;
+	prices = Object.Prices;
+	customer = Object.Customer;
+	contract = Object.Contract;
+	currency = Object.Currency;
 	warehouseInTable = Options.WarehousesInTable ( Object.Company );
 	itemsTable = Object.Items;
 	if ( Clean ) then
@@ -470,7 +476,7 @@ Procedure loadTimeEntries ( Table, Clean )
 		if ( row.ItemType = Enums.Tables.Items ) then
 			newRow = itemsTable.Add ();
 			FillPropertyValues ( newRow, row );
-			newRow.QuantityPkg = qty / row.Capacity;
+			newRow.QuantityPkg = qty / ? ( row.Capacity = null, 1, row.Capacity );
 			if ( warehouseInTable ) then
 				newRow.Warehouse = ? ( warehouse = row.Warehouse, undefined, row.Warehouse );
 			else
@@ -481,6 +487,8 @@ Procedure loadTimeEntries ( Table, Clean )
 			newRow.SalesCost = accounts.SalesCost;
 			newRow.Income = accounts.Income;
 			newRow.VATAccount = accounts.VAT;
+			package = newRow.Package;
+			rowWarehouse = getWarehouse ( newRow, Object );
 		else
 			newRow = Object.Services.Add ();
 			newRow.Description = row.TaskDescription;
@@ -489,6 +497,8 @@ Procedure loadTimeEntries ( Table, Clean )
 			accounts = AccountsMap.Item ( item, company, warehouse, "Income, VAT" );
 			newRow.Income = accounts.Income;
 			newRow.VATAccount = accounts.VAT;
+			package = undefined;
+			rowWarehouse = warehouse;
 		endif;
 		newRow.Quantity = qty;
 		newRow.Item = item;
@@ -496,6 +506,10 @@ Procedure loadTimeEntries ( Table, Clean )
 		newRow.TimeEntry = ? ( timeEntry = row.TimeEntry, undefined, row.TimeEntry );
 		newRow.VATCode = row.ItemVAT;
 		newRow.VATRate = row.ItemVATRate;
+		if ( newRow.Price = 0 ) then
+			newRow.Price = Goods.Price ( cache, date, prices, item, package, newRow.Feature, customer, contract, ,
+				rowWarehouse, currency );
+		endif;
 		Computations.Amount ( newRow );
 		Computations.Total ( newRow, vatUse );
 	enddo; 

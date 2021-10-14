@@ -19,6 +19,10 @@ for each day in _.Days do
 	With ( "Holidays (cr*" );
 	Set ( "#Day", Format ( day.Day, "DLF=D;L=en_US" ) );
 	Set ( "#Description", day.Title );
+	division = day.Division;
+	if ( division <> undefined ) then
+		Set ( "#Division", division );
+	endif;
 	Click ( "#FormWriteAndClose" );
 	With ( form );
 enddo;

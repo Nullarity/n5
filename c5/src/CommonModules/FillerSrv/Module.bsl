@@ -4,6 +4,7 @@ Function GetData ( Params ) export
 	var composer;
 	loadSchema ( Params, schema, composer );
 	Reporter.ApplyFilters ( composer, Params );
+	FillerSrv.ExtractTables ( composer );
 	return putData ( Params.Report, Params.Variant, composer, schema, Params.Batch );
 	
 EndFunction
@@ -105,12 +106,14 @@ Procedure StartProcess ( val Params, val Caller, ResultAddress ) export
 	args = new Array ();
 	args.Add ( Params.Report );
 	args.Add ( Params.Variant );
-	args.Add ( composer.GetSettings () );
+	settings = composer.GetSettings ();
+	FillerSrv.ExtractTables ( settings );
+	args.Add ( settings );
 	args.Add ( schema );
 	ResultAddress = PutToTempStorage ( new ValueTable (), Caller );
 	args.Add ( ResultAddress );
 	args.Add ( Params.Batch );
-	Jobs.Run ( "FillerSrv.Perform", args, Caller );
+	Jobs.Run ( "FillerSrv.Perform", args, Caller, , TesterCache.Testing () );
 	
 EndProcedure 
 
@@ -134,3 +137,16 @@ Function getComposer ( SettingsSource, Schema )
 	endif;
 	
 EndFunction 
+
+Procedure ExtractTables ( SettingsSource ) export
+	
+	composer = ( TypeOf ( SettingsSource ) = Type ( "DataCompositionSettingsComposer" ) );
+	settings = ? ( composer, SettingsSource.Settings, SettingsSource );
+	for each item in settings.DataParameters.Items do
+		value = item.Value;
+		if ( IsTempStorageURL ( value ) ) then
+			item.Value = GetFromTempStorage ( value );
+		endif;
+	enddo;
+
+EndProcedure

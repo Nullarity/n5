@@ -104,7 +104,6 @@ select distinct Compensations.Employee as Employee
 into CalculatingDocument
 from Document.PayEmployees.Compensations as Compensations
 where Compensations.Ref = &amp;CalculatingDocument
-and not Compensations.Employee in ( select distinct Employee from Document.PayEmployees.Compensations where Compensations.Edit )
 index by Employee
 ;
 // Compensations
@@ -126,17 +125,30 @@ from AccountingRegister.General.Balance ( dateadd ( &amp;PaymentDate, second, 1 
 where not &amp;TaxesOnly
 index by Employee
 ;
+// Manual changes
+select Compensations.Employee as Employee, Compensations.Compensation as Compensation,
+	Compensations.Account as Account, Compensations.Amount as Amount
+into Changes
+from Document.PayEmployees.Compensations as Compensations
+where &amp;Calculating
+and Compensations.Edit
+{where Compensations.Ref = &amp;CalculatingDocument and &amp;CalculatingDocument &lt;&gt; value ( Document.PayEmployees.EmptyRef )}
+;
 // AllCompensations
 select false as Edit, Compensations.Employee as Employee, Compensations.Compensation as Compensation,
 	Compensations.Account as Account, Compensations.Amount * ( &amp;Percent / 100 ) as Amount
 into AllCompensations
 from Compensations as Compensations
+	//
+	// Exclude manually changed records
+	//
+	left join Changes as Changes
+	on Changes.Employee = Compensations.Employee
+	and Changes.Compensation = Compensations.Compensation
+where Changes.Employee is null
 union all
-select true, PayEmployees.Employee, PayEmployees.Compensation, PayEmployees.Account, PayEmployees.Amount
-from Document.PayEmployees.Compensations as PayEmployees
-where &amp;Calculating
-and PayEmployees.Edit
-{where PayEmployees.Ref = &amp;CalculatingDocument and &amp;CalculatingDocument &lt;&gt; value ( Document.PayEmployees.EmptyRef )}
+select true, Changes.Employee, Changes.Compensation, Changes.Account, Changes.Amount
+from Changes as Changes
 union all
 select PayEmployees.Edit, PayEmployees.Employee, PayEmployees.Compensation, PayEmployees.Account, PayEmployees.Amount
 from Document.PayEmployees.Compensations as PayEmployees
@@ -303,13 +315,22 @@ from InformationRegister.PayrollTaxes.SliceLast ( &amp;PaymentDate,
 	) as Rates
 where Rates.Use
 ;
+// ChangedTaxes
+select Changes.Employee as Employee, Changes.Compensation as Compensation, Changes.Tax as Tax,
+	Changes.Account as Account, Changes.Method as Method, Changes.Base as Base, Changes.Result as Result,
+	Changes.Deductions as Deductions
+into ChangedTaxes
+from Document.PayEmployees.Taxes as Changes
+where Changes.Ref = &amp;Ref
+and Changes.Edit
+;
 // Medical
-select Based.Employee as Employee, Based.Compensation as Compensation, Based.Tax as Tax,
+select false as Edit, Based.Employee as Employee, Based.Compensation as Compensation, Based.Tax as Tax,
 	Based.Account as Account, Based.Amount as Base, Based.Amount / 100 * Rates.Rate as Result
 into Medical
 from (
 	select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Taxes.Ref as Tax,
-	Taxes.Ref.Account as Account, sum ( Compensations.Amount ) as Amount
+		Taxes.Ref.Account as Account, sum ( Compensations.Amount ) as Amount
 	from AllCompensations as Compensations
 		//
 		// Taxes
@@ -330,17 +351,19 @@ from (
 	//
 	// Exclude modified records
 	//
-	left join Document.PayEmployees.Taxes as PayEmployees
-	on PayEmployees.Ref = &amp;Ref
-	and PayEmployees.Employee = Based.Employee
-	and PayEmployees.Compensation = Based.Compensation
-	and PayEmployees.Tax = Based.Tax
-	and PayEmployees.Account = Based.Account
-	and PayEmployees.Edit
-where PayEmployees.Ref is null
+	left join ChangedTaxes as Changes
+	on Changes.Employee = Based.Employee
+	and Changes.Compensation = Based.Compensation
+	and Changes.Tax = Based.Tax
+	and Changes.Account = Based.Account
+where Changes.Employee is null
+union all
+select true, Changes.Employee, Changes.Compensation, Changes.Tax, Changes.Account, Changes.Base, Changes.Result
+from ChangedTaxes as Changes
+where Changes.Method = value ( Enum.Calculations.MedicalInsurance )
 ;
 // IncomeTax
-select IncomeTax.Employee as Employee, IncomeTax.Tax as Tax, IncomeTax.Tax.Account as Account,
+select false as Edit, IncomeTax.Employee as Employee, IncomeTax.Tax as Tax, IncomeTax.Tax.Account as Account,
 	IncomeTax.Amount as Base, isnull ( EmployeeDeductions.Amount, 0 ) as Deductions,
 	( IncomeTax.Amount - isnull ( EmployeeDeductions.Amount, 0 ) ) / 100 * IncomeTax.Rate as Result
 into IncomeTax
@@ -375,16 +398,19 @@ from (
 	//
 	// Exclude modified records
 	//
-	left join Document.PayEmployees.Taxes as PayEmployees
-	on PayEmployees.Ref = &amp;Ref
-	and PayEmployees.Employee = IncomeTax.Employee
-	and PayEmployees.Tax = IncomeTax.Tax
-	and PayEmployees.Account = IncomeTax.Tax.Account
-	and PayEmployees.Edit
-where PayEmployees.Ref is null
+	left join ChangedTaxes as Changes
+	on Changes.Employee = IncomeTax.Employee
+	and Changes.Tax = IncomeTax.Tax
+	and Changes.Account = IncomeTax.Tax.Account
+where Changes.Employee is null
+union all
+select true, Changes.Employee, Changes.Tax, Changes.Account, Changes.Base, Changes.Deductions, Changes.Result
+from ChangedTaxes as Changes
+where Changes.Method = value ( Enum.Calculations.IncomeTax )
 ;
 // OtherDeductions
-select Basis.Employee as Employee, Taxes.Ref.Account as Account, Taxes.Ref as Tax, Basis.Amount as Base,
+select false as Edit, Basis.Employee as Employee, Taxes.Ref as Tax, Taxes.Ref.Account as Account,
+	Basis.Amount as Base,
 	case Taxes.Ref.Method when value ( Enum.Calculations.Percent ) then Basis.Amount / 100 * Rates.Rate
 	else Rates.Rate
 	end as Result
@@ -419,37 +445,66 @@ from (
 	//
 	// Exclude modified records
 	//
-	left join Document.PayEmployees.Taxes as PayEmployees
-	on PayEmployees.Ref = &amp;Ref
-	and PayEmployees.Employee = Basis.Employee
-	and PayEmployees.Tax = Taxes.Ref
-	and PayEmployees.Account = Taxes.Ref.Account
-	and PayEmployees.Edit
-where PayEmployees.Ref is null
+	left join ChangedTaxes as Changes
+	on Changes.Employee = Basis.Employee
+	and Changes.Tax = Taxes.Ref
+	and Changes.Account = Taxes.Ref.Account
+where Changes.Employee is null
+union all
+select true, Changes.Employee, Changes.Tax, Changes.Account, Changes.Base, Changes.Result
+from ChangedTaxes as Changes
+where Changes.Tax.Net
+	and Changes.Method in ( value ( Enum.Calculations.Percent ), value ( Enum.Calculations.FixedAmount ) )
 ;
 // Final selection: Taxes
 select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Compensation as Compensation, Taxes.Tax as Tax,
 	Taxes.Account as Account, Taxes.Base as Base, Taxes.Result as Result, Taxes.Deductions as Deductions,
 	Taxes.Tax.Method as Method
 from (
-	select false as Edit, IncomeTax.Employee as Employee, null as Compensation, IncomeTax.Tax as Tax,
+	select IncomeTax.Edit as Edit, IncomeTax.Employee as Employee, null as Compensation, IncomeTax.Tax as Tax,
 		IncomeTax.Account as Account, IncomeTax.Base as Base, IncomeTax.Result as Result,
 		IncomeTax.Deductions as Deductions
 	from IncomeTax as IncomeTax
 	union all
-	select false, Medical.Employee, Medical.Compensation, Medical.Tax, Medical.Account,
+	select Medical.Edit, Medical.Employee, Medical.Compensation, Medical.Tax, Medical.Account,
 		Medical.Base, Medical.Result, 0
 	from Medical as Medical
 	union all
-	select false, OtherDeductions.Employee, null, OtherDeductions.Tax, OtherDeductions.Account,
+	select OtherDeductions.Edit, OtherDeductions.Employee, null, OtherDeductions.Tax, OtherDeductions.Account,
 		OtherDeductions.Base, OtherDeductions.Result, 0
 	from OtherDeductions as OtherDeductions
 	union all
-	select true, PayEmployees.Employee, PayEmployees.Compensation, PayEmployees.Tax, PayEmployees.Account,
-		PayEmployees.Base, PayEmployees.Result, PayEmployees.Deductions
-	from Document.PayEmployees.Taxes as PayEmployees
-	where PayEmployees.Ref = &amp;Ref
-	and PayEmployees.Edit
+	select true, Changes.Employee, Changes.Compensation, Changes.Tax, Changes.Account,
+		Changes.Base, Changes.Result, Changes.Deductions
+	from ChangedTaxes as Changes
+		//
+		// Exculde already included changes in Medical
+		//
+		left join Medical as Medical
+		on Medical.Edit
+		and Medical.Employee = Changes.Employee
+		and Medical.Compensation = Changes.Compensation
+		and Medical.Tax = Changes.Tax
+		and Medical.Account = Changes.Account
+		//
+		// Exculde already included changes in IncomeTax
+		//
+		left join IncomeTax as IncomeTax
+		on IncomeTax.Edit
+		and IncomeTax.Employee = Changes.Employee
+		and IncomeTax.Tax = Changes.Tax
+		and IncomeTax.Account = Changes.Account
+		//
+		// Exculde already included changes in OtherDeductions
+		//
+		left join OtherDeductions as OtherDeductions
+		on OtherDeductions.Edit
+		and OtherDeductions.Employee = Changes.Employee
+		and OtherDeductions.Tax = Changes.Tax
+		and OtherDeductions.Account = Changes.Account
+	where Medical.Edit is null
+	and IncomeTax.Edit is null
+	and OtherDeductions.Edit is null
 	) as Taxes
 order by Taxes.Employee.Description, Taxes.Employee.Code,
 	case Taxes.Tax.Method
@@ -464,7 +519,7 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 {select Edit, Employee.*, Compensation.*, Account.*, Amount}
 from AllCompensations as Compensations
 order by Compensations.Employee.Description, Compensations.Employee.Code,
-	case Compensation.Method
+	case Compensations.Compensation.Method
 	 	when value ( Enum.Calculations.MonthlyRate ) then 0
 		when value ( Enum.Calculations.HourlyRate ) then 1
 		when value ( Enum.Calculations.EveningHours ) then 2

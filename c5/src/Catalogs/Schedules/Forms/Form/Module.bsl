@@ -135,6 +135,7 @@ Function getMonths ()
 	|	left join InformationRegister.Holidays as Holidays
 	|	on Holidays.Reference = &Holidays
 	|	and Holidays.Day = Schedules.Day
+	|	and Holidays.Division = value ( Catalog.Divisions.EmptyRef )
 	|where Schedules.Schedule = &Schedule
 	|group by Schedules.Year, beginofperiod ( Schedules.Day, month )
 	|order by Year desc, Month

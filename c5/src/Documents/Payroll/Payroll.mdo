@@ -411,6 +411,44 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="c0a2c0a9-3621-44b3-9505-d8ccabfce003">
+    <name>Payment</name>
+    <synonym>
+      <key>en</key>
+      <value>Payment</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Выплата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Plata</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payment Date (for reverse calculations)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата выплаты (для расчетов от обратного)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data plății (pentru calculele reversibile)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="1a2ad2b2-a76a-4470-973e-1f36c1459a0a">
     <name>Period</name>
     <synonym>
@@ -491,6 +529,256 @@
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
+  <tabularSections uuid="ea952da6-8419-439b-9766-ec3f1189631e">
+    <producedTypes>
+      <objectType typeId="bebc6381-afe6-4a6b-9b48-e18a65428df3" valueTypeId="7b56a8b5-f936-4585-b7b5-6a2130a0b9de"/>
+      <rowType typeId="3602fc55-0974-4574-a7b7-99ab2c143577" valueTypeId="becba212-f139-4f40-a817-c10979576c70"/>
+    </producedTypes>
+    <name>Additions</name>
+    <synonym>
+      <key>en</key>
+      <value>Additions</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дополнительные начисления</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Calcule salariale suplimentare</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>One-time additional compensations</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Единоразовые дополнительные начисления</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Compensații suplimentare unice</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="c49ed7ca-23dc-4391-8423-598c66266f81">
+      <name>Compensation</name>
+      <synonym>
+        <key>en</key>
+        <value>Compensation</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Начисление</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Calcul</value>
+      </synonym>
+      <type>
+        <types>ChartOfCalculationTypesRef.Compensations</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Additional compensation</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дополнительное начисление</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Calcule salariale suplimentare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.Method</name>
+        <value xsi:type="core:FixedArrayValue">
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.Amount</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.Annual</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.CompensationPercent</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.FixedAmount</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.Percent</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.Quarterly</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.EveningHours</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Calculations.EnumValue.NightHours</value>
+          </values>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6df1051c-4ff5-4065-8dc8-a7f94a66d225">
+      <name>Currency</name>
+      <synonym>
+        <key>en</key>
+        <value>Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Валюта</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Valută</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Currencies</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency of rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Валюта тарифа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valută tarifară</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9e09e243-41ff-4e65-9144-4929e6d27d85">
+      <name>Employee</name>
+      <synonym>
+        <key>en</key>
+        <value>Employee</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сотрудник</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Angajat</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Employees</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Employee</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сотрудник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Angajat</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>Document.Payroll.Attribute.Company</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="328d1678-541c-4611-af14-59111935f2cf">
+      <name>InHand</name>
+      <synonym>
+        <key>en</key>
+        <value>In Hand</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>На руки</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>În mână</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Means that the selected amount is the actual amount which employee receives after various deductions from your salary</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Означает, что выбранная сумма - это фактическая сумма, которую работник получает после различных вычетов из зарплаты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Înseamnă că suma selectată este suma reală pe care o primește angajatul după diferite deduceri din salariu</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f46bfadc-9d80-4a88-84a6-8f5070bf2f43">
+      <name>Rate</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Тариф</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Tarif</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>15</precision>
+          <scale>2</scale>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Hourly rate of monthly salary depends on compensation type</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Тариф или месячный оклад, в зависимости от вида начисления</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Tarif sau salariu lunar, în funcție de tipul metodei de calcul</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
   <tabularSections uuid="d3385d57-3457-44b1-9740-725d7d1c006d">
     <producedTypes>
       <objectType typeId="6a359a16-6235-484d-aafe-cb2af21c69fa" valueTypeId="562a8b8e-d82e-46af-bc2c-a1356338e04f"/>
@@ -511,15 +799,15 @@
     </synonym>
     <toolTip>
       <key>en</key>
-      <value>Base</value>
+      <value>Sick and vacation leaves calculation base</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Основание</value>
+      <value>База расчета больничных и отпускных</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Baza</value>
+      <value>Baza de calcul a concediilor de boală și a concediilor de odihnă</value>
     </toolTip>
     <standardAttributes>
       <dataHistory>Use</dataHistory>
@@ -1776,12 +2064,12 @@
         <value>Company Expense</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Pe cheltuiala companiei</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>За счет компании</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Pe cheltuiala companiei</value>
       </synonym>
       <type>
         <types>Boolean</types>
@@ -1791,12 +2079,12 @@
         <value>Sick leave at the company's expense</value>
       </toolTip>
       <toolTip>
-        <key>ro</key>
-        <value>Indemnizație de boală pe cheltuiala companiei</value>
-      </toolTip>
-      <toolTip>
         <key>ru</key>
         <value>Оплата больничного листа за счет компании</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Indemnizație de boală pe cheltuiala companiei</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>

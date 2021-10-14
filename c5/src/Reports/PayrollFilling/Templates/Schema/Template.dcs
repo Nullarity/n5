@@ -362,7 +362,6 @@ select distinct Compensations.Employee as Employee
 into CalculatingPayroll
 from Document.Payroll.Compensations as Compensations
 where Compensations.Ref = &amp;CalculatingPayroll
-and not Compensations.Employee in ( select distinct Employee from Document.Payroll.Compensations where Compensations.Edit )
 index by Employee
 ;
 // Employees
@@ -433,17 +432,31 @@ from Personnel as Personnel
 		or Personnel.Expenses &lt;&gt; Changes.Expenses )
 group by Personnel.Employee, Personnel.Period
 ;
+// Additions
+select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Currency as Currency,
+	Rates.Rate as Rate, Rates.InHand as InHand
+into Additions
+from &amp;Additions as Rates
+;
 // Rates
 select Rates.Employee as Employee, Rates.Compensation as Compensation, &amp;DateStart as Period,
 	Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
 into Rates
-from InformationRegister.EmployeeRates.SliceLast ( &amp;DateStart, Employee in ( select distinct Employee from Employees ) ) as Rates
-where Rates.Actual
-union
-select Rates.Employee, Rates.Compensation, Rates.Period, Rates.Actual, Rates.Currency, Rates.Rate, Rates.InHand
-from InformationRegister.EmployeeRates as Rates
-where Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
-and Rates.Employee in ( select distinct Employee from Employees )
+from (
+	select Rates.Employee as Employee, Rates.Compensation as Compensation, &amp;DateStart as Period,
+		Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
+	from InformationRegister.EmployeeRates.SliceLast ( &amp;DateStart, Employee in ( select distinct Employee from Employees ) ) as Rates
+	where Rates.Actual
+	union
+	select Rates.Employee, Rates.Compensation, Rates.Period, Rates.Actual, Rates.Currency, Rates.Rate, Rates.InHand
+	from InformationRegister.EmployeeRates as Rates
+	where Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
+	and Rates.Employee in ( select distinct Employee from Employees )
+) as Rates
+union all
+select Additions.Employee, Additions.Compensation, &amp;DateStart, true, Additions.Currency, Additions.Rate,
+	Additions.InHand
+from Additions as Additions
 ;
 // CompensationPeriods
 select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Rate as Rate, Rates.InHand as InHand,
@@ -608,7 +621,7 @@ group by Location.Day, Location.Employee, Location.Department, Location.Position
 having datediff ( Location.Day, min ( NextPeriods.Day ), day ) &gt; 1
 ;
 // Location
-select Bottom.Day as DateStart, min ( isnull ( Gaps.DateStart, Bottom.LastWorkDay ) ) as DateEnd,
+select Bottom.Day as DateStart, min ( endofperiod ( isnull ( Gaps.DateStart, Bottom.LastWorkDay ), day ) ) as DateEnd,
 	Bottom.Employee as Employee, Bottom.Department as Department, Bottom.Position as Position,
 	Bottom.Schedule as Schedule, Bottom.Expenses as Expenses
 into Location
@@ -686,22 +699,22 @@ from Location as Location
 ;
 // Intervals
 select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
-	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd
+	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd, Intervals.Department.Division as Division
 into Intervals
 from Location as Intervals
 index by Employee, Schedule
 ;
 // ScheduledIntervals
 select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
-	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd
+	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd, Intervals.Department.Division as Division
 into ScheduledIntervals
 from ScheduledLocation as Intervals
 index by Employee, Schedule
 ;
-// Only holidays falling on working days
-select distinct HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
-	Schedules.Schedule as Schedule
-into Holidays
+// HolidaysRawData
+select HolidaysList.Reference as Reference, HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
+	HolidaysList.Division as Division, Schedules.Schedule as Schedule
+into HolidaysRawData
 from InformationRegister.Holidays as HolidaysList
 	//
 	// Schedules
@@ -711,15 +724,38 @@ from InformationRegister.Holidays as HolidaysList
 	and Schedules.Day = HolidaysList.Day
 	and Schedules.Schedule.Holidays = HolidaysList.Reference
 	and Schedules.Minutes &gt; 0
-where HolidaysList.Day between &amp;DateStart and &amp;DateEnd
+where HolidaysList.Day between &amp;YearStart and &amp;DateEnd
+;
+// All holidays
+select Holidays.Reference as Reference, Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division,
+	Holidays.Schedule as Schedule
+into AllHolidays
+from HolidaysRawData as Holidays
+union all
+select CommonHolidays.Reference, CommonHolidays.Day, CommonHolidays.Preholiday, LocalHolidays.Division, LocalHolidays.Schedule
+from HolidaysRawData as CommonHolidays
+	//
+	// Impact Local Holidays by Common Holidays
+	//
+	join HolidaysRawData as LocalHolidays
+	on LocalHolidays.Schedule = CommonHolidays.Schedule
+	and LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
+where CommonHolidays.Division = value ( Catalog.Divisions.EmptyRef )
+;
+// Only holidays falling on working days
+select Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division, Holidays.Schedule as Schedule
+into Holidays
+from AllHolidays as Holidays
+where Holidays.Day between &amp;DateStart and &amp;DateEnd
 ;
 // Schedules
-select Schedules.Schedule as Schedule, Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd,
+select Schedules.Schedule as Schedule, Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd, Intervals.Division as Division,
 	sum ( Schedules.Minutes ) / 60 as Hours, sum ( case Schedules.Minutes when 0 then 0 else 1 end ) as Days,
 	sum ( Schedules.MinutesEvening ) / 60 as HoursEvening, sum ( case Schedules.MinutesEvening when 0 then 0 else 1 end ) as DaysEvening,
 	sum ( Schedules.MinutesNight ) / 60 as HoursNight, sum ( case Schedules.MinutesNight when 0 then 0 else 1 end ) as DaysNight,
-	sum ( case when HolidaysList.Day is null then 0 else Schedules.Minutes end ) / 60 + sum ( case when Preholidays.Day is null then 0 else 1 end ) as HolidaysHours,
-	sum ( case when HolidaysList.Day is null then 0 else case Schedules.Minutes when 0 then 0 else 1 end end ) as HolidaysDays
+	sum ( case when CommonHolidays.Day is not null or LocalHolidays.Day is not null then Schedules.Minutes else 0 end / 60 )
+	+ sum ( case when CommonPreholidays.Preholiday is not null or LocalPreholidays.Preholiday is not null then 1 else 0 end ) as HolidaysHours,
+	sum ( case when CommonHolidays.Day is not null or LocalHolidays.Day is not null then 1 else 0 end ) as HolidaysDays
 into Schedules
 from InformationRegister.Schedules as Schedules
 	//
@@ -727,49 +763,89 @@ from InformationRegister.Schedules as Schedules
 	//
 	join (
 		select Intervals.Schedule as Schedule, Intervals.DateStart as DateStart,
-			Intervals.DateEnd as DateEnd
+			Intervals.DateEnd as DateEnd, Intervals.Division as Division
 		from Intervals as Intervals
 		union
-		select Intervals.Schedule, &amp;StartMonth, &amp;EndMonth
+		select Intervals.Schedule, &amp;StartMonth, &amp;EndMonth, Intervals.Division
 		from Intervals as Intervals
 		) as Intervals
 	on Intervals.Schedule = Schedules.Schedule
 	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day between Intervals.DateStart and Intervals.DateEnd
 	//
-	// Holidays
+	// CommonHolidays
 	//
-	left join Holidays as HolidaysList
-	on HolidaysList.Schedule = Schedules.Schedule
-	and HolidaysList.Day = Schedules.Day
+	left join Holidays as CommonHolidays
+	on CommonHolidays.Schedule = Schedules.Schedule
+	and CommonHolidays.Day = Schedules.Day
+	and CommonHolidays.Division = value ( Catalog.Divisions.EmptyRef )
 	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 	//
-	// Preholidays
+	// CommonPreholidays
 	//
-	left join Holidays as Preholidays
-	on Preholidays.Schedule = Schedules.Schedule
-	and Preholidays.Preholiday = Schedules.Day
+	left join Holidays as CommonPreholidays
+	on CommonPreholidays.Schedule = Schedules.Schedule
+	and CommonPreholidays.Preholiday = Schedules.Day
+	and CommonPreholidays.Division = value ( Catalog.Divisions.EmptyRef )
 	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
-group by Schedules.Schedule, Intervals.DateStart, Intervals.DateEnd
+	//
+	// LocalHolidays
+	//
+	left join Holidays as LocalHolidays
+	on LocalHolidays.Schedule = Schedules.Schedule
+	and LocalHolidays.Day = Schedules.Day
+	and LocalHolidays.Division = Intervals.Division
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Minutes &gt; 0
+	//
+	// LocalPreholidays
+	//
+	left join Holidays as LocalPreholidays
+	on LocalPreholidays.Schedule = Schedules.Schedule
+	and LocalPreholidays.Preholiday = Schedules.Day
+	and LocalPreholidays.Division = Intervals.Division
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Minutes &gt; 0
+group by Schedules.Schedule, Intervals.DateStart, Intervals.DateEnd, Intervals.Division
 ;
 // Average
-select Schedules.Schedule as Schedule,
-	cast ( sum ( case when Holidays.Day is null then Schedules.Minutes else 0 end ) / 60 / 12 as Number ( 4 ) ) as Hours
+select Schedules.Schedule as Schedule, Divisions.Division as Division,
+	cast (
+		sum ( case when CommonHolidays.Day is not null or LocalHolidays.Day is not null then 0 else Schedules.Minutes end )
+		/ 60 / 12 as Number ( 4 )
+	) as Hours
 into Average
 from InformationRegister.Schedules as Schedules
 	//
-	// Holidays
+	// Divisions
 	//
-	left join InformationRegister.Holidays as Holidays
-	on Holidays.Reference = Schedules.Schedule.Holidays
-	and Holidays.Day = Schedules.Day
+	join (
+		select distinct Divisions.Schedule as Schedule, Divisions.Division as Division
+		from Intervals as Divisions
+	) as Divisions
+	on Divisions.Schedule = Schedules.Schedule
+	//
+	// CommonHolidays
+	//
+	left join AllHolidays as CommonHolidays
+	on CommonHolidays.Reference = Schedules.Schedule.Holidays
+	and CommonHolidays.Day = Schedules.Day
+	and CommonHolidays.Division = value ( Catalog.Divisions.EmptyRef )
 	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	//
+	// LocalHolidays
+	//
+	left join AllHolidays as LocalHolidays
+	on LocalHolidays.Reference = Schedules.Schedule.Holidays
+	and LocalHolidays.Day = Schedules.Day
+	and LocalHolidays.Division = Divisions.Division
+	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
+	and Schedules.Minutes &gt; 0
 where Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 and Schedules.Minutes &gt; 0
-and Schedules.Schedule in ( select distinct Intervals.Schedule from Intervals )
-group by Schedules.Schedule
+group by Schedules.Schedule, Divisions.Division
 ;
 // Deviations
 select Hours.Employee as Employee, Hours.Time as Time, Hours.Day as Day, sum ( Hours.Minutes ) as Minutes
@@ -908,8 +984,9 @@ from Document.Vacation.Employees as Vacations
 	//
 	// Holidays
 	//
-	left join InformationRegister.Holidays as HolidaysList
+	left join AllHolidays as HolidaysList
 	on HolidaysList.Reference = Schedules.Schedule.Holidays
+	and HolidaysList.Division = Intervals.Division
 	and HolidaysList.Day = Schedules.Day
 	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
@@ -982,8 +1059,9 @@ from Document.Vacation.Employees as Vacations
 	//
 	// Holidays
 	//
-	left join InformationRegister.Holidays as HolidaysList
+	left join AllHolidays as HolidaysList
 	on HolidaysList.Reference = Schedules.Schedule.Holidays
+	and HolidaysList.Division = Location.Department.Division
 	and HolidaysList.Day = Schedules.Day
 	and Schedules.Minutes &gt; 0
 where Vacations.DateStart between &amp;DateStart and &amp;DateEnd
@@ -993,8 +1071,8 @@ and Vacations.Ref.Posted
 group by Vacations.Ref, Vacations.Employee, Vacations.Compensation, Vacations.DateStart, Vacations.DateEnd, Schedules.Schedule
 ;
 // PreviousCompensationsForVacations
-select Vacations.Ref as Ref, Compensations.Employee as Employee, Compensations.Compensation as Compensation,
-	Compensations.Schedule as Schedule, Compensations.DateStart as DateStart, 
+select Vacations.Ref as Ref, Compensations.Employee as Employee, Compensations.Department.Division as Division,
+	Compensations.Compensation as Compensation, Compensations.Schedule as Schedule, Compensations.DateStart as DateStart, 
 	Compensations.DateEnd as DateEnd, Compensations.AccountingResult as Amount, 
 	Compensations.Compensation.Method as Method, Compensations.Days as Days, 
 	Compensations.ScheduledDays as ScheduledDays, Compensations.Schedule.AverageDays as AverageDays
@@ -1122,8 +1200,9 @@ from (
 			//
 			// Holidays
 			//
-			left join InformationRegister.Holidays as HolidaysList
+			left join AllHolidays as HolidaysList
 			on HolidaysList.Reference = Schedules.Schedule.Holidays
+			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
 			and Schedules.Minutes &gt; 0
 		where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
@@ -1354,9 +1433,9 @@ from (
 index by Employee, Day
 ;
 // PreviousCompensationsForSickLeaves
-select SickLeaves.Ref as Ref, Compensations.Employee as Employee, Compensations.Compensation as Compensation, 
-	Compensations.Schedule as Schedule, Compensations.DateStart as DateStart, 
-	Compensations.DateEnd as DateEnd, Compensations.AccountingResult as Amount, 
+select SickLeaves.Ref as Ref, Compensations.Employee as Employee, Compensations.Compensation as Compensation,
+	Compensations.Department.Division as Division, Compensations.Schedule as Schedule,
+	Compensations.DateStart as DateStart, Compensations.DateEnd as DateEnd, Compensations.AccountingResult as Amount, 
 	Compensations.Compensation.Method as Method, Compensations.Days as Days, 
 	Compensations.ScheduledDays as ScheduledDays, Compensations.Schedule.AverageDays as AverageDays
 into PreviousCompensationsForSickLeaves
@@ -1487,8 +1566,9 @@ from (
 			//
 			// Holidays
 			//
-			left join InformationRegister.Holidays as HolidaysList
+			left join AllHolidays as HolidaysList
 			on HolidaysList.Reference = Schedules.Schedule.Holidays
+			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
 			and Schedules.Minutes &gt; 0
 		where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
@@ -1564,13 +1644,15 @@ from Location as Location
 	//
 	left join Holidays as HolidaysList
 	on HolidaysList.Schedule = Schedules.Schedule
+	and HolidaysList.Division = Location.Department.Division
 	and HolidaysList.Day = Schedules.Day
 	//
 	// Preholidays
 	//
 	left join Holidays as Preholidays
 	on Preholidays.Schedule = Schedules.Schedule
-	and dateadd ( Preholidays.Day, day, -1 ) = Schedules.Day
+	and Preholidays.Division = Location.Department.Division
+	and Preholidays.Preholiday = Schedules.Day
 	and Schedules.Minutes &gt; 0
 	//
 	// Absences
@@ -1699,6 +1781,7 @@ from (
 	//
 	left join Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
+	and Schedules.Division = Location.Department.Division
 	and Schedules.DateStart = Location.DateStart
 	and Schedules.DateEnd = Location.DateEnd
 	//
@@ -1706,6 +1789,7 @@ from (
 	//
 	left join Schedules as MonthlySchedules
 	on MonthlySchedules.Schedule = Location.Schedule
+	and MonthlySchedules.Division = Location.Department.Division
 	and MonthlySchedules.DateStart = &amp;StartMonth
 	and MonthlySchedules.DateEnd = &amp;EndMonth
 	//
@@ -1713,6 +1797,7 @@ from (
 	//
 	left join Average as Average
 	on Average.Schedule = Location.Schedule
+	and Average.Division = Location.Department.Division
 index by Employee
 ;
 // ExchangeRates
@@ -2587,11 +2672,24 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.OnCompany as OnCompany, recordautonumber () as Key
 into ActualCompensations
 from AllCompensations as Compensations
-where Edit
-	or Compensations.Result &lt;&gt; 0
-	or Compensations.AccountingResult &lt;&gt; 0
-	or Compensations.Days &lt;&gt; 0
-	or Compensations.Hours &lt;&gt; 0
+	//
+	// Exclude manually changed records
+	//
+	left join AllCompensations as Changes
+	on Changes.Edit
+	and Changes.Employee = Compensations.Employee
+	and Changes.Compensation = Compensations.Compensation
+	and Changes.DateStart = Compensations.DateStart
+	and Changes.DateEnd = Compensations.DateEnd
+where Compensations.Edit
+or ( Changes.Edit is null
+	and (
+		Compensations.Result &lt;&gt; 0
+		or Compensations.AccountingResult &lt;&gt; 0
+		or Compensations.Days &lt;&gt; 0
+		or Compensations.Hours &lt;&gt; 0
+	)
+)
 ;
 // Blank for Reversed Salary
 select null as Key, 0 as Result
@@ -3054,12 +3152,12 @@ from (
 	on Rates.Tax = Taxes.Ref
 group by Base.Employee, Base.Compensation
 ;
-// NetSalary
+// NetWithoutDeductions
 select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, sum ( NetSalary.Amount ) as p,
 	sum ( isnull ( OtherTaxesRates.Rate, 0 ) ) / 100 as k, sum ( isnull ( OtherTaxesAmountRates.Rate, 0 ) ) as s,
-	sum ( isnull ( IncomeTaxRates.Rate, 0 ) ) / 100 as i, sum ( isnull ( Deductions.Amount, 0 ) ) as d,
-	sum ( isnull ( MedicalTaxRates.Rate, 0 ) ) / 100 as m
-into NetSalary
+	sum ( isnull ( IncomeTaxRates.Rate, 0 ) ) / 100 as i, sum ( isnull ( MedicalTaxRates.Rate, 0 ) ) / 100 as m,
+	recordautonumber () as Row
+into NetWithoutDeductions
 from (
 	select Compensations.Individual as Individual, Compensations.Compensation as Compensation, sum ( Compensations.Amount ) as Amount
 	from (
@@ -3115,12 +3213,6 @@ from (
 	//
 	left join TaxRates as IncomeTaxRates
 	on IncomeTaxRates.Tax = IncomeTax.Ref
-	//
-	// Deductions
-	//
-	left join Deductions as Deductions
-	on Deductions.Employee = NetSalary.Individual
-	and IncomeTax.Ref is not null
 	// 
 	// Medical
 	//                                                              
@@ -3134,6 +3226,40 @@ from (
 	left join TaxRates as MedicalTaxRates
 	on MedicalTaxRates.Tax = MedicalTax.Ref
 group by NetSalary.Individual, NetSalary.Compensation
+;
+// NetSalary
+select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, NetSalary.p as p,
+	NetSalary.k as k, NetSalary.s as s, NetSalary.i as i, NetSalary.m as m,
+	isnull ( Deductions.Amount, 0 ) as d
+into NetSalary
+from NetWithoutDeductions as NetSalary
+	//
+	// Max Compensation
+	//
+	left join (
+		select min ( Salary.Row ) as Row
+		from NetWithoutDeductions as Salary
+			//
+			// Max amount
+			//
+			join (
+				select Salary.Individual as Individual, max ( Salary.p ) as p
+				from NetWithoutDeductions as Salary
+				where Salary.i &lt;&gt; 0
+				group by Salary.Individual
+			) MaxAmount
+			on MaxAmount.Individual = Salary.Individual
+			and MaxAmount.p = Salary.p
+		where Salary.i &lt;&gt; 0
+		group by Salary.Individual
+	) as MaxCompensations
+	on MaxCompensations.Row = NetSalary.Row
+	//
+	// Deductions
+	//
+	left join Deductions as Deductions
+	on Deductions.Employee = NetSalary.Individual
+	and MaxCompensations.Row = NetSalary.Row
 ;
 // GrossSalary
 select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation,
@@ -3177,6 +3303,7 @@ from ActualCompensations as Compensations
 	join GrossSalary as GrossSalary
 	on GrossSalary.Individual = Compensations.Individual
 	and GrossSalary.Compensation = Compensations.Compensation
+where not Compensations.Edit
 ;
 drop ReversedSalary
 ;
@@ -3221,14 +3348,17 @@ from (
 								max ( Compensations.AccountingResult ) as Amount
 							from ActualCompensations as Compensations
 							where Compensations.InHand
+							and not Compensations.Edit
 							group by Compensations.Individual, Compensations.Compensation
 						) as MaxCompensations
 						on MaxCompensations.Individual = Compensations.Individual
 						and MaxCompensations.Compensation = Compensations.Compensation
 						and MaxCompensations.Amount = Compensations.AccountingResult
+					where not Compensations.Edit
 					group by Compensations.Individual, Compensations.Compensation
 				) as MaxCompensations
 				on MaxCompensations.Key = Compensations.Key
+			where not Compensations.Edit
 		) as Compensations
 		on Compensations.Individual = Discrepancy.Individual
 		and Compensations.Compensation = Discrepancy.Compensation
@@ -3639,9 +3769,6 @@ from (
 		on Payroll.Ref = &amp;Ref
 		and Payroll.Employee = Based.Employee
 		and Payroll.Tax = Based.Tax
-		and Payroll.Department = Based.Department
-		and Payroll.Expenses = Based.Expenses
-		and Payroll.Account = Based.Account
 		and Payroll.DateStart = Based.DateStart
 		and Payroll.DateEnd = Based.DateEnd
 		and Payroll.Edit
@@ -3753,29 +3880,6 @@ order by Employees.Description, Employees.Code, Compensations.DateStart, Priorit
 		</value>
 		<useRestriction>false</useRestriction>
 		<denyIncompleteValues>true</denyIncompleteValues>
-		<use>Always</use>
-	</parameter>
-	<parameter>
-		<name>PayDay</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Payment Date (for reverse calculations)</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ro</v8:lang>
-				<v8:content>Data plății (pentru calculele reversibile)</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ru</v8:lang>
-				<v8:content>Дата выплаты (для расчетов от обратного)</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Calendar</v8:Type>
-		</valueType>
-		<value xsi:nil="true"/>
-		<useRestriction>false</useRestriction>
 		<use>Always</use>
 	</parameter>
 	<parameter>
@@ -4024,6 +4128,26 @@ order by Employees.Description, Employees.Code, Compensations.DateStart, Priorit
 		</valueType>
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
 		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>Additions</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Additions</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:string</v8:Type>
+			<v8:StringQualifiers>
+				<v8:Length>0</v8:Length>
+				<v8:AllowedLength>Variable</v8:AllowedLength>
+			</v8:StringQualifiers>
+		</valueType>
+		<value xsi:type="xs:string"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<settingsVariant>
 		<dcsset:name>#Fill</dcsset:name>
@@ -4185,17 +4309,9 @@ order by Employees.Description, Employees.Code, Compensations.DateStart, Priorit
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>PayDay</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-					<dcsset:viewMode>Normal</dcsset:viewMode>
-					<dcsset:userSettingID>f349d57f-2b3d-46fd-953f-78a0c3e37084</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>PaymentDate</dcscor:parameter>
 					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
-					<dcsset:userSettingID>c7af1e1c-4951-4a17-bb12-566d9e1a04bd</dcsset:userSettingID>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>

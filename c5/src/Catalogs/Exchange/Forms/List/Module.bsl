@@ -110,6 +110,9 @@ EndProcedure
 &AtServer
 Procedure activateTenant ()
 	
+	if ( TenantFilter = SessionParameters.Tenant ) then
+		return;
+	endif;
 	SessionParameters.Tenant = TenantFilter;
 	SessionParameters.TenantUse = not TenantFilter.IsEmpty ();
 	

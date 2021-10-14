@@ -114,13 +114,13 @@ Procedure runMainScenario () export
 		endif;
 		try
 			connector = Eval ( "new TestedApplication ( ""localhost"", " + port + " )" );
+			connector.Connect ();
+			button = connector.FindObject ( Type ( "TestedFormButton" ), , "FormCatalogScenariosRun", 3 );
+			button.Click ();
+			connector.Disconnect ();
 		except
 			return;
 		endtry;
-		connector.Connect ();
-		button = connector.FindObject ( Type ( "TestedFormButton" ), , "FormCatalogScenariosRun", 3 );
-		button.Click ();
-		connector.Disconnect ();
 	#endif
 	
 EndProcedure

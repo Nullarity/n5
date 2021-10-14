@@ -2,20 +2,60 @@
 &AtClient
 Procedure CommandProcessing ( Individual, Params )
 	
-	openReport ( Params.Source.Employee.Ref, Params );
+	source = Params.Source;
+	form = source.FormName;
+	period = undefined;
+	if ( form = "Catalog.Individuals.Form.Form" ) then
+		employee = Params.Source.Employee.Ref;
+	elsif ( form = "Document.Payroll.Form.Form" ) then
+		object = source.Object;
+		employee = object.Compensations.FindRows ( new Structure ( "Individual", Individual ) ) [ 0 ].Employee;
+		period = new StandardPeriod ( object.DateStart, object.DateEnd );
+	elsif ( form = "Document.PayEmployees.Form.Form" ) then
+		object = source.Object;
+		date = object.Date;
+		employee = findEmployee ( Individual, date );
+		period = new StandardPeriod ( BegOfMonth ( date ), EndOfMonth ( date ) );
+	endif;
+	openReport ( employee, Params, period );
 	
 EndProcedure
 
 &AtClient
-Procedure openReport ( Employee, Params )
+Procedure openReport ( Employee, Params, Period = undefined )
 	
 	p = ReportsSystem.GetParams ( "Timesheet" );
-	p.Filters = new Array ();
-	filter = DC.CreateFilter ( "Employee" );
-	filter.ComparisonType = DataCompositionComparisonType.Equal;
-	filter.RightValue = Employee;
-	p.Filters.Add ( filter );
+	filters = new Array ();
+	item = DC.CreateFilter ( "Employee" );
+	item.ComparisonType = DataCompositionComparisonType.Equal;
+	item.RightValue = Employee;
+	filters.Add ( item );
+	if ( Period <> undefined ) then
+		item = DC.CreateParameter ( "Period", Period );
+		filters.Add ( item );
+	endif;
+	p.Filters = filters;
 	p.GenerateOnOpen = true;
 	OpenForm ( "Report.Common.Form", p, Params.Source, true, Params.Window );
 	
 EndProcedure 
+
+&AtServer
+Function findEmployee ( val Individual, val Date )
+	
+	s = "
+	|select top 1 Employees.Employee as Employee
+	|from InformationRegister.Employees.SliceLast ( &Date, Employee in (
+	|	select List.Ref as Ref
+	|	from Catalog.Employees as List
+	|	where not List.DeletionMark
+	|	and List.Individual = &Individual
+	|) ) Employees
+	|order by case when Employees.Hired then 0 else 1 end";
+	q = new Query ( s );
+	q.SetParameter ( "Individual", Individual );
+	q.SetParameter ( "Date", Date );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Employee );
+
+EndFunction

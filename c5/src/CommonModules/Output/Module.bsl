@@ -7892,3 +7892,11 @@ Function LinuxNotSupported () export
 	return text;
 
 EndFunction
+
+&AtServer
+Procedure AdditionalCompensationBroken ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The additional compensation is not found in the calculations';ro = 'Compensația suplimentară nu se regăsește în calcule';ru = 'Дополнительное начисление не отражено в расчетах'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

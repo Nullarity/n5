@@ -1,14 +1,18 @@
 
 &AtClient
-Procedure DeleteTaxes ( Object, Employee ) export
+Procedure DeleteTaxes ( Object, Employees ) export
 	
 	taxes = Object.Taxes;
-	rows = taxes.FindRows ( new Structure ( "Employee", Employee ) );
-	i = rows.Count ();
-	while ( i > 0 ) do
-		i = i - 1;
-		taxes.Delete ( rows [ i ] );
-	enddo; 
+	search = new Structure ( "Employee" );
+	for each employee in Employees do
+		search.Employee = employee;
+		rows = taxes.FindRows ( search );
+		i = rows.Count ();
+		while ( i > 0 ) do
+			i = i - 1;
+			taxes.Delete ( rows [ i ] );
+		enddo; 
+	enddo;
 	
 EndProcedure 
 
@@ -25,17 +29,27 @@ Function FillTables ( Form, Result ) export
 	endif; 
 	object = Form.Object;
 	if ( Form.CalculationVariant <> 3 ) then
-		object.Compensations.Load ( data.Compensations );
+		loadTable ( data.Compensations, object.Compensations );
 	endif; 
-	object.Taxes.Load ( data.Taxes );
+	loadTable ( data.Taxes, object.Taxes );
 	if ( isPayroll ( object ) ) then
-		object.Base.Load ( data.Base );
+		loadTable ( data.Base, object.Base );
 	endif;
 	fillTotals ( object );
 	Form.Modified = true;
 	return true;
 
 EndFunction
+
+&AtServer
+Procedure loadTable ( Source, Destination )
+	
+	for each row in Source do
+		newRow = Destination.Add ();
+		FillPropertyValues ( newRow, row );
+	enddo;
+
+EndProcedure
 
 Procedure Clean ( Form ) export
 	
@@ -62,9 +76,7 @@ Procedure fillTotals ( Object )
 	
 	Object.Totals.Clear ();
 	employees = allEmployees ( Object );
-	for each employee in employees do
-		PayrollForm.CalcEmployee ( Object, employee );
-	enddo; 
+	PayrollForm.CalcEmployees ( Object, employees );
 	
 EndProcedure 
 
@@ -85,7 +97,7 @@ Function isPayroll ( Object )
 	
 EndFunction 
 
-Procedure CalcEmployee ( Object, Employee ) export
+Procedure CalcEmployees ( Object, Employees ) export
 	
 	if ( isPayroll ( Object ) ) then
 		column = "Individual";
@@ -96,37 +108,40 @@ Procedure CalcEmployee ( Object, Employee ) export
 		amount = "Amount";
 		payroll = false;
 	endif; 
-	search = new Structure ( column, Employee );
-	compensations = Object.Compensations.FindRows ( search );
-	taxes = Object.Taxes.FindRows ( search );
-	row = totalsRow ( Object, Employee );
-	if ( compensations.Count () = 0
-		and taxes.Count () = 0 ) then
-		Object.Totals.Delete ( row );
-		return;
-	endif;
-	for each compensation in compensations do
-		row.Amount = row.Amount + compensation [ amount ];
-	enddo; 
-	for each tax in taxes do
-		method = tax.Method;
-		result = tax.Result;
-		if ( method = PredefinedValue ( "Enum.Calculations.IncomeTax" ) ) then
-			if ( not payroll ) then
-				row.IncomeTax = row.IncomeTax + result;
-			endif;
-		elsif ( method = PredefinedValue ( "Enum.Calculations.MedicalInsurance" ) ) then
-			row.Medical = row.Medical + result;
-		elsif ( method = PredefinedValue ( "Enum.Calculations.SocialInsurance" ) ) then
-			row.Social = row.Social + result;
-		else
-			row.Other = row.Other + result;
+	search = new Structure ( column );
+	for each employee in Employees do
+		search [ column ] = employee;
+		compensations = Object.Compensations.FindRows ( search );
+		taxes = Object.Taxes.FindRows ( search );
+		row = totalsRow ( Object, employee );
+		if ( compensations.Count () = 0
+			and taxes.Count () = 0 ) then
+			Object.Totals.Delete ( row );
+			continue;
+		endif;
+		for each compensation in compensations do
+			row.Amount = row.Amount + compensation [ amount ];
+		enddo; 
+		for each tax in taxes do
+			method = tax.Method;
+			result = tax.Result;
+			if ( method = PredefinedValue ( "Enum.Calculations.IncomeTax" ) ) then
+				if ( not payroll ) then
+					row.IncomeTax = row.IncomeTax + result;
+				endif;
+			elsif ( method = PredefinedValue ( "Enum.Calculations.MedicalInsurance" ) ) then
+				row.Medical = row.Medical + result;
+			elsif ( method = PredefinedValue ( "Enum.Calculations.SocialInsurance" ) ) then
+				row.Social = row.Social + result;
+			else
+				row.Other = row.Other + result;
+			endif; 
+		enddo; 
+		if ( not payroll ) then
+			row.Net = row.Amount - row.IncomeTax - row.Medical - row.Other;
 		endif; 
-	enddo; 
-	if ( not payroll ) then
-		row.Net = row.Amount - row.IncomeTax - row.Medical - row.Other;
-	endif; 
-	
+	enddo;
+
 EndProcedure 
 	
 Function totalsRow ( Object, Employee )
@@ -164,26 +179,31 @@ Procedure LoadRow ( Form, Params ) export
 	else
 		tableRow = Form.TableRow;
 		FillPropertyValues ( tableRow, value );
-		PayrollForm.SyncTaxes ( Form );
 		PayrollForm.MakeDirty ( Form );
-		PayrollForm.CalcEmployee ( object, ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
+		employees = new Array ();
+		employees.Add ( ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
+		PayrollForm.CalcEmployees ( object, employees );
 	endif;
 	
 EndProcedure 
 
 &AtClient
-Procedure SyncTaxes ( Form ) export
+Procedure SyncTables ( Form, Tables ) export
 	
 	tableRow = Form.TableRow;
 	if ( tableRow = undefined ) then
 		return;
 	endif;
 	filter = new Structure ( "Employee", tableRow.Employee );
-	rows = Form.Object.Taxes.FindRows ( filter );
-	if ( rows.Count () = 0 ) then
-		return;
-	endif; 
-	Form.Items.Taxes.CurrentRow = rows [ 0 ].GetID ();
+	object = Form.Object;
+	items = Form.Items;
+	for each table in Conversion.StringToArray ( Tables ) do
+		rows = object [ table ].FindRows ( filter );
+		if ( rows.Count () = 0 ) then
+			return;
+		endif; 
+		items [ table ].CurrentRow = rows [ 0 ].GetID ();
+	enddo;
 	
 EndProcedure 
 
@@ -235,7 +255,9 @@ Procedure LoadTaxRow ( Form, Params ) export
 			PayrollForm.MakeDirty ( Form );
 		endif; 
 		FillPropertyValues ( tableRow, changedRow );
-		PayrollForm.CalcEmployee ( object, ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
+		employees = new Array ();
+		employees.Add ( ? ( isPayroll ( object ), tableRow.Individual, tableRow.Employee ) );
+		PayrollForm.CalcEmployees ( object, employees );
 	endif;
 	
 EndProcedure 

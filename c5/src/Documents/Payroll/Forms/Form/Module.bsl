@@ -5,9 +5,11 @@ var TableTaxRow export;
 &AtClient
 var TableTotalsRow export;
 &AtClient
-var RemovingEmployee;
+var AdditionsRow;
 &AtClient
-var RemovingIndividual;
+var RemovingEmployees;
+&AtClient
+var RemovingIndividuals;
 &AtClient
 var FillDocument; 
 &AtClient
@@ -28,6 +30,7 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 	
+	init ();
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
@@ -40,6 +43,13 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 EndProcedure
 
 &AtServer
+Procedure init ()
+	
+	Currency = Application.Currency ();
+
+EndProcedure
+
+&AtServer
 Procedure readAppearance ()
 
 	rules = new Array ();
@@ -48,7 +58,7 @@ Procedure readAppearance ()
 	|PreviousPeriod NextPeriod show Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateEnd lock Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateStart lock Object.Period <> Enum.TimesheetPeriods.Other;
-	|Compensations Taxes Period Date Number Company lock Object.Posted;
+	|Compensations Taxes Additions Period Date Number Company lock Object.Posted;
 	|PeriodGroup CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
 	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty;
@@ -136,12 +146,20 @@ EndFunction
 &AtClientAtServerNoContext
 Procedure completePeriod ( Object )
 	
+	defineDateEnd ( Object );
+	Object.Date = Min ( Object.DateEnd, Periods.GetDocumentDate ( Object ) );
+
+EndProcedure 
+
+&AtClientAtServerNoContext
+Procedure defineDateEnd ( Object )
+	
+	start = Object.DateStart;
 	if ( Object.Period = PredefinedValue ( "Enum.TimesheetPeriods.Month" ) ) then
-		Object.DateEnd = EndOfMonth ( Object.DateStart );
+		Object.DateEnd = EndOfMonth ( start );
 	else
-		Object.DateEnd = Object.DateStart + getDuration ( Object );
+		Object.DateEnd = start + getDuration ( Object );
 	endif; 
-	Object.Date = Object.DateEnd;
 
 EndProcedure 
 
@@ -151,10 +169,12 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	operation = SelectedValue.Operation;
 	if ( operation = Enum.ChoiceOperationsPayrollRecord () ) then
 		PayrollForm.LoadRow ( ThisObject, SelectedValue );
+		PayrollForm.SyncTables ( ThisObject, "Taxes, Additions" );
 	elsif ( operation = Enum.ChoiceOperationsEmployeesTaxRecord () ) then
 		PayrollForm.LoadTaxRow ( ThisObject, SelectedValue );
 	elsif ( operation = Enum.ChoiceOperationsPayrollRecordSaveAndNew () ) then
 		PayrollForm.LoadRow ( ThisObject, SelectedValue );	
+		PayrollForm.SyncTables ( ThisObject, "Taxes, Additions" );
 		PayrollForm.NewRow ( ThisObject, false );
 	elsif ( operation = Enum.ChoiceOperationsEmployeesTaxRecordSaveAndNew () ) then	
 		PayrollForm.LoadTaxRow ( ThisObject, SelectedValue );
@@ -208,8 +228,8 @@ Procedure adjustPeriod ()
 		Object.DateStart = BegOfWeek ( date );
 	else
 		Object.DateStart = BegOfMonth ( date );
-	endif; 
-	Object.DateEnd = EndOfDay ( date );
+	endif;
+	defineDateEnd ( Object );
 
 EndProcedure
 
@@ -289,6 +309,15 @@ Procedure applyPeriod ()
 EndProcedure 
 
 &AtClient
+Procedure PaymentDateOnChange ( Item )
+	
+	if ( Object.Totals.Count () > 0 ) then
+		PayrollForm.MakeDirty ( ThisObject );
+	endif;
+
+EndProcedure
+
+&AtClient
 Procedure Fill ( Command )
 	
 	runCalculations ( FillDocument );
@@ -298,14 +327,15 @@ EndProcedure
 &AtClient
 Procedure runCalculations ( Variant )
 	
+	if ( not Forms.Check ( ThisObject, "DateStart, DateEnd, Company" ) ) then
+		return;
+	endif;
 	CalculationVariant = Variant;
-	if ( Forms.Check ( ThisObject, "DateStart, DateEnd, Company" ) ) then
-		params = fillingParams ();
-		if ( CalculationVariant = FillDocument ) then
-			Filler.Open ( params, ThisObject );
-		else
-			Filler.ProcessData ( params, ThisObject );
-		endif; 
+	params = fillingParams ();
+	if ( CalculationVariant = FillDocument ) then
+		Filler.Open ( params, ThisObject );
+	else
+		Filler.ProcessData ( params, ThisObject );
 	endif; 
 	
 EndProcedure 
@@ -334,6 +364,8 @@ Function getFilters ()
 		item = DC.CreateParameter ( "CalculatingTaxesPayroll", ref );
 		filters.Add ( item );
 	endif; 
+	item = DC.CreateParameter ( "PaymentDate", Object.Payment );
+	filters.Add ( item );
 	item = DC.CreateParameter ( "CalculationVariant", CalculationVariant );
 	filters.Add ( item );
 	item = DC.CreateParameter ( "Period", new StandardPeriod ( Object.DateStart, Object.DateEnd ) );
@@ -342,8 +374,29 @@ Function getFilters ()
 	filters.Add ( item );
 	item = DC.CreateFilter ( "Company", Object.Company );
 	filters.Add ( item );
+	item = DC.CreateParameter ( "Additions", PutToTempStorage ( getAdditions (), UUID ) );
+	filters.Add ( item );
 	return filters;
 	
+EndFunction
+
+&AtServer
+Function getAdditions ()
+	
+	table = Object.Additions.Unload ();
+	i = table.Count ();
+	while ( i > 0 ) do
+		i = i - 1;
+		row = table [ i ];
+		if ( row.Compensation.IsEmpty ()
+			or row.Currency.IsEmpty ()
+			or row.Employee.IsEmpty ()
+			or row.Rate = 0 ) then
+			table.Delete ( i );
+		endif;
+	enddo;
+	return table;
+
 EndFunction
 
 &AtClient
@@ -353,7 +406,7 @@ Procedure Filling ( Result, Params ) export
 		Output.FillingDataNotFound ();
 	endif;
 	
-EndProcedure 
+EndProcedure
 
 &AtServer
 Function fillTables ( val Result )
@@ -442,7 +495,7 @@ EndProcedure
 Procedure CompensationsOnActivateRow ( Item )
 	
 	TableRow = Item.CurrentData;
-	PayrollForm.SyncTaxes ( ThisObject );
+	PayrollForm.SyncTables ( ThisObject, "Taxes, Additions" );
 	
 EndProcedure
 
@@ -472,24 +525,49 @@ EndProcedure
 &AtClient
 Procedure CompensationsBeforeDeleteRow ( Item, Cancel )
 	
-	trackDeletion ();
+	trackDeletion ( Item );
 	
 EndProcedure
 
 &AtClient
-Procedure trackDeletion ()
+Procedure trackDeletion ( Table )
 	
-	RemovingEmployee = TableRow.Employee;
-	RemovingIndividual = TableRow.Individual;
+	RemovingIndividuals = new Array ();
+	compensations = ( Table = Items.Compensations );
+	if ( compensations ) then
+		RemovingEmployees = new Array ();
+	endif;
+	for each id in Table.SelectedRows do
+		row = Table.RowData ( id );
+		RemovingIndividuals.Add ( row.Individual );
+		if ( compensations ) then
+			RemovingEmployees.Add ( row.Employee );
+		endif;
+	enddo;
+	Collections.Group ( RemovingIndividuals );
+	if ( compensations ) then
+		Collections.Group ( RemovingEmployees );
+	endif;
 	
 EndProcedure
 
 &AtClient
 Procedure CompensationsAfterDeleteRow ( Item )
 	
-	PayrollForm.DeleteTaxes ( Object, RemovingEmployee );
-	PayrollForm.CalcEmployee ( Object, RemovingIndividual );
+	completeDeletion ( Item );
 	
+EndProcedure
+
+&AtClient
+Procedure completeDeletion ( Table )
+	
+	if ( Table = Items.Compensations ) then
+		PayrollForm.DeleteTaxes ( Object, RemovingEmployees );
+		RemovingEmployees.Clear ();
+	endif;
+	PayrollForm.CalcEmployees ( Object, RemovingIndividuals );
+	RemovingIndividuals.Clear ();
+
 EndProcedure
 
 &AtClient
@@ -542,16 +620,67 @@ EndProcedure
 &AtClient
 Procedure TaxesBeforeDeleteRow ( Item, Cancel )
 	
-	trackDeletion ();
+	trackDeletion ( Item );
 	
 EndProcedure
 
 &AtClient
 Procedure TaxesAfterDeleteRow ( Item )
 	
-	PayrollForm.CalcEmployee ( Object, RemovingIndividual );
+	completeDeletion ( Item );
 	
 EndProcedure
+
+// *****************************************
+// *********** Table Additions
+
+&AtClient
+Procedure AdditionsOnActivateRow ( Item )
+	
+	AdditionsRow = Item.CurrentData;
+	
+EndProcedure
+
+&AtClient
+Procedure AdditionsOnStartEdit ( Item, NewRow, Clone )
+	
+	if ( NewRow and not Clone ) then
+		initAddition ();
+	endif; 
+	
+EndProcedure
+
+&AtClient
+Procedure initAddition ()
+	
+	AdditionsRow.Currency = Currency;
+	
+EndProcedure 
+
+&AtClient
+Procedure AdditionsOnChange ( Item )
+
+	PayrollForm.MakeDirty ( ThisObject );
+
+EndProcedure
+
+// *****************************************
+// *********** Table Additions
+
+&AtClient
+Procedure BaseBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+	
+	Cancel = true;
+
+EndProcedure
+
+&AtClient
+Procedure BaseBeforeRowChange ( Item, Cancel )
+	
+	Cancel = true;
+
+EndProcedure
+
 
 // *****************************************
 // *********** Variables Initialization

@@ -55,7 +55,7 @@ EndProcedure
 &AtClient
 Procedure send ()
 	
-	#if ( not WebClient ) then
+	#if ( MobileClient ) then
 		set = getIDs ();
 		if ( set = undefined ) then
 			return;

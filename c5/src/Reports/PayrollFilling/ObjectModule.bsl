@@ -14,13 +14,10 @@ EndProcedure
 Procedure setPeriod ()
 	
 	settings = Params.Settings;
-	paymentDate = DC.GetParameter ( settings, "PayDay" ).Value;
-	if ( paymentDate = undefined ) then
+	date = DC.GetParameter ( settings, "PaymentDate" ).Value;
+	if ( date = Date ( 1, 1, 1 ) ) then
 		date = DC.GetParameter ( settings, "Period" ).Value.EndDate;
-	else
-		date = DF.Pick ( paymentDate, "Date" );
 	endif;
-	DC.SetParameter ( settings, "PaymentDate", BegOfDay ( date ) );
 	DC.SetParameter ( settings, "YearStart", BegOfYear ( date ) );
 	
 EndProcedure 

@@ -87,18 +87,16 @@ EndProcedure
 Procedure perform ()
 	
 	schema = GetFromTempStorage ( SchemaAddress );
-	if ( Background ) then
-		args = new Array ();
-		args.Add ( Report );
-		args.Add ( Variant );
-		args.Add ( Composer.GetSettings () );
-		args.Add ( schema );
-		args.Add ( ResultAddress );
-		args.Add ( Batch );
-		Jobs.Run ( "FillerSrv.Perform", args, UUID, , TesterCache.Testing () );
-	else
-		FillerSrv.Perform ( Report, Variant, Composer, schema, ResultAddress, Batch );
-	endif;
+	args = new Array ();
+	args.Add ( Report );
+	args.Add ( Variant );
+	settings = Composer.GetSettings ();
+	FillerSrv.ExtractTables ( settings );
+	args.Add ( settings );
+	args.Add ( schema );
+	args.Add ( ResultAddress );
+	args.Add ( Batch );
+	Jobs.Run ( "FillerSrv.Perform", args, UUID, , TesterCache.Testing () );
 
 EndProcedure
 

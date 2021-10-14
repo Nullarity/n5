@@ -29,7 +29,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|CompanyFilter enable not Designer;
-	|ProgramCodePage ExporterCodePage TabDoc show Designer;
+	|ProgramCodePage ExporterCodePage TabDoc OpenGenerator show Designer;
 	|ReportField show not Designer;
 	|ListShowList show MasterMode;
 	|ListShowMasters show not MasterMode;
@@ -65,7 +65,14 @@ EndProcedure
 &AtServer
 Procedure filterByCompany ()
 	
-	DC.ChangeFilter ( List, "Company", CompanyFilter, not CompanyFilter.IsEmpty () );
+	if ( CompanyFilter.IsEmpty () ) then
+		DC.DeleteFilter ( List, "Company" );
+	else
+		set = new Array ();
+		set.Add ( Catalogs.Companies.EmptyRef () );
+		set.Add ( CompanyFilter );
+		DC.ChangeFilter ( List, "Company", set, true );
+	endif;
 	
 EndProcedure 
 
@@ -292,6 +299,7 @@ Procedure loadReport ( Form, NewPeriod = undefined, val Rebuild = false )
 	Form.ReportField = data.Report;
 	Form.Areas = data.Areas;
 	Form.HasExport = data.HasExport;
+	Form.FinancialPeriodField = data.FinancialPeriod;
 	Appearance.Apply ( Form, "HasExport" );
 	setTitle ( Form );
 
@@ -317,7 +325,8 @@ Function getReport ( val CurrentReport, val NewPeriod, val Rebuild )
 		obj.Calculated = true;
 		obj.Write ();
 	endif; 
-	return new Structure ( "Report, Areas, HasExport", tabDoc, areas, obj.HasExport );
+	return new Structure ( "Report, Areas, HasExport, FinancialPeriod",
+		tabDoc, areas, obj.HasExport, obj.FinancialPeriod );
 	
 EndFunction
 
@@ -601,6 +610,76 @@ Procedure CancelDesignConfirmation ( Answer, Params ) export
 EndProcedure 
 
 &AtClient
+Procedure OpenGenerator ( Command )
+
+	OpenForm ( "Catalog.Reports.Form.Generator", , ThisObject, , , ,
+		new NotifyDescription ( "GenerateFields", ThisObject ) );
+
+EndProcedure
+
+&AtClient
+Procedure GenerateFields ( Params, Nothing ) export
+	
+	if ( Params = undefined ) then
+		return;
+	endif;
+	templateMode ();
+	enumerate ( Params );
+	
+EndProcedure
+
+&AtServer
+Procedure templateMode ()
+	
+	TabDoc.Template = true;
+	setModified ( ThisObject );	
+	
+EndProcedure
+
+&AtClient
+Procedure enumerate ( Params )
+	
+	areaID = 0;
+	set = TabDoc.SelectedAreas;
+	k = TabDoc.SelectedAreas.Count ();
+	while ( k > 0 ) do
+		k = k - 1;
+		selection = set [ k ];
+		column = selection.Left;
+		i = selection.Top;
+		bottom = selection.Bottom;
+		while ( true ) do
+			area = TabDoc.Area ( i, column );
+			if ( area.Top <> area.Bottom ) then
+				areaBottom = area.Bottom;
+				area = TabDoc.Area ( i, column, i, column );
+				i = areaBottom;
+			endif;
+			setProperties ( area, areaID, Params );
+			if ( i = bottom ) then
+				break;
+			endif;
+			areaID = areaID + 1;
+			i = i + 1;
+		enddo;
+	enddo;
+
+EndProcedure
+
+&AtClient
+Procedure setProperties ( Area, ID, Params )
+	
+	Area.FillType = SpreadsheetDocumentAreaFillType.Parameter;
+	Area.Parameter = Params.Prefix + Format ( Params.StartFrom + ID, "NG=;NZ=" );
+	containsValue = Params.ContainsValue;
+	Area.ContainsValue = containsValue;
+	if ( containsValue ) then
+		Area.ValueType = Params.ValueType;
+	endif;
+	
+EndProcedure
+
+&AtClient
 Procedure TabDocOnChange ( Item )
 	
 	setModified ( ThisObject );
@@ -645,6 +724,9 @@ EndProcedure
 &AtServer
 Procedure clearUserData ()
 	
+	recordset = InformationRegisters.ReportFields.CreateRecordSet ();
+	recordset.Filter.Report.Set ( CurrentReport );
+	recordset.Write ();
 	recordset = InformationRegisters.UserFields.CreateRecordSet ();
 	recordset.Filter.Report.Set ( CurrentReport );
 	recordset.Write ();
@@ -685,7 +767,7 @@ EndProcedure
 &AtClient
 Procedure ProgramCodeOnChange ( Item )
 	
-	Modified = true;
+	setModified ( ThisObject );	
 	
 EndProcedure 
 
@@ -704,7 +786,6 @@ Procedure showMasterRepors ()
 	
 	MasterMode = true;
 	DC.ChangeFilter ( List, "Master", true, true );
-	DC.ChangeFilter ( List, "Company", undefined, false );
 	Items.List.Representation = TableRepresentation.List;
 	Appearance.Apply ( ThisObject, "MasterMode" );
 	
@@ -738,7 +819,7 @@ EndProcedure
 &AtClient
 Procedure createMaster ( Item, Parent )
 	
-	p = new Structure ( "Company, Master", CompanyFilter, true );
+	p = new Structure ( "Master", true );
 	OpenForm ( "Catalog.Reports.Form.Master", new Structure ( "FillingValues", p ), Item );
 	
 EndProcedure 
@@ -919,7 +1000,7 @@ Procedure StartExport ( Result, Params ) export
 	else
 		links = data;
 	endif;
-	BeginGettingFiles ( new NotifyDescription ( "GettingFiles", ThisObject ), links );
+	BeginGettingFiles ( new NotifyDescription ( "GettingFiles", ThisObject, links ), links );
 	
 EndProcedure 
 
@@ -927,6 +1008,7 @@ EndProcedure
 Function exportData ()
 	
 	obj = CurrentReport.GetObject ();
+	obj.FormUUID = UUID;
 	code = DataProcessors.Compiler.Compile ( obj.Exporter.Get () );
 	obj.RunScript ( code );
 	data = obj.ExporterData;
@@ -939,8 +1021,11 @@ Function exportData ()
 EndFunction
 
 &AtClient
-Procedure GettingFiles ( Files, Params ) export
+Procedure GettingFiles ( Files, Links ) export
 	
+	for each item in Links do
+		DeleteFromTempStorage ( item.Location );
+	enddo;
 	if ( Files = undefined ) then
 		return;
 	endif; 

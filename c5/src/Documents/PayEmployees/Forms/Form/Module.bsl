@@ -7,7 +7,7 @@ var TableTaxRow export;
 &AtClient
 var TableTotalsRow export;
 &AtClient
-var RemovingEmployee;
+var RemovingEmployees;
 &AtClient
 var FillDocument; 
 &AtClient
@@ -216,10 +216,12 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	operation = SelectedValue.Operation;
 	if ( operation = Enum.ChoiceOperationsPayEmployeesRecord () ) then
 		PayrollForm.LoadRow ( ThisObject, SelectedValue );
+		PayrollForm.SyncTables ( ThisObject, "Taxes" );
 	elsif ( operation = Enum.ChoiceOperationsEmployeesTaxRecord () ) then
 		PayrollForm.LoadTaxRow ( ThisObject, SelectedValue );
 	elsif ( operation = Enum.ChoiceOperationsPayEmployeesRecordSaveAndNew () ) then
 		PayrollForm.LoadRow ( ThisObject, SelectedValue );	
+		PayrollForm.SyncTables ( ThisObject, "Taxes" );
 		PayrollForm.NewRow ( ThisObject, false );
 	elsif ( operation = Enum.ChoiceOperationsEmployeesTaxRecordSaveAndNew () ) then	
 		PayrollForm.LoadTaxRow ( ThisObject, SelectedValue );
@@ -498,7 +500,7 @@ EndProcedure
 Procedure CompensationsOnActivateRow ( Item )
 	
 	TableRow = Item.CurrentData;
-	PayrollForm.SyncTaxes ( ThisObject );
+	PayrollForm.SyncTables ( ThisObject, "Taxes" );
 	
 EndProcedure
 
@@ -528,16 +530,39 @@ EndProcedure
 &AtClient
 Procedure CompensationsBeforeDeleteRow ( Item, Cancel )
 	
-	RemovingEmployee = TableRow.Employee;
+	trackDeletion ( Item );
+	
+EndProcedure
+
+&AtClient
+Procedure trackDeletion ( Table )
+	
+	RemovingEmployees = new Array ();
+	for each id in Table.SelectedRows do
+		row = Table.RowData ( id );
+		RemovingEmployees.Add ( row.Employee );
+	enddo;
+	Collections.Group ( RemovingEmployees );
 	
 EndProcedure
 
 &AtClient
 Procedure CompensationsAfterDeleteRow ( Item )
 	
-	PayrollForm.DeleteTaxes ( Object, RemovingEmployee );
-	PayrollForm.CalcEmployee ( Object, RemovingEmployee );
+	completeDeletion ( Item );
 	
+EndProcedure
+
+&AtClient
+Procedure completeDeletion ( Table )
+	
+	deleteTax = ( Table = Items.Compensations );
+	if ( deleteTax ) then
+		PayrollForm.DeleteTaxes ( Object, RemovingEmployees );
+	endif;
+	PayrollForm.CalcEmployees ( Object, RemovingEmployees );
+	RemovingEmployees.Clear ();
+
 EndProcedure
 
 &AtClient
@@ -590,14 +615,14 @@ EndProcedure
 &AtClient
 Procedure TaxesBeforeDeleteRow ( Item, Cancel )
 	
-	RemovingEmployee = TableTaxRow.Employee;
+	trackDeletion ( Item );
 	
 EndProcedure
 
 &AtClient
 Procedure TaxesAfterDeleteRow ( Item )
 	
-	PayrollForm.CalcEmployee ( Object, RemovingEmployee );
+	completeDeletion ( Item );
 	
 EndProcedure
 

@@ -16,7 +16,6 @@ var ThisNode;
 var FileExchange;
 var StartUp;
 var FileMask;
-var UniversalTime;
 var CatalogItem;
 
 Procedure Load ( Params ) export
@@ -179,7 +178,7 @@ Procedure loadFromFTP ()
 	else
 		folder = "";
 	endif;
-	FileMask = fileID ( ExchNode.Code, ThisNode.Code, ExchNode.PrefixFileName ) + "_Date_";
+	FileMask = fileID ( ExchNode.Code, ThisNode.Code, ExchNode.PrefixFileName ) + "*";
 	if ( ExchNode.UseStandartFTPClient ) then
 		loadStandartClient ( folder );
 	else
@@ -272,7 +271,7 @@ endprocedure
 
 Function fileID ( From, Target, Prefix )
 	
-	return "Message_from_" + TrimAll ( From ) + "_to_" + TrimAll ( Target ) + "_" + Prefix;
+	return "Message_from_" + TrimAll ( From ) + "_to_" + TrimAll ( Target ) + Prefix;
 	
 EndFunction 
 
@@ -376,8 +375,8 @@ Function getThisNode ( CatalogItem )
 	
 	if ( CatalogItem <> Undefined ) then
 		nameExchangePlan = CatalogItem.Node.Metadata ().Name;
-		thisNode = ExchangePlans [ nameExchangePlan ].ThisNode ();
-		return Catalogs.Exchange.FindByCode ( thisNode.Code );
+		node = ExchangePlans [ nameExchangePlan ].ThisNode ();
+		return Catalogs.Exchange.FindByCode ( node.Code );
 	else
 		return Catalogs.Exchange.EmptyRef (); 
 	endif; 
@@ -567,18 +566,14 @@ Function createFiles ( CatalogItem )
 		if ( item <> thisNode ) then
 			ExchNode = NodesData [ item ];
 			ThisNode = NodesData [ itemNode.ThisNode ];
-			if ( ExchNode.UseWebService ) then
-				postfixDate = "";
-			else
-				setUniversalTime ();
+			if ( not ExchNode.UseWebService ) then
 				cancel = checkFileExist ();
 				if ( cancel ) then
 					mapFiles.Insert ( item, new Structure ( "File, ThisNode, Cancel", "", thisNode, true ) );	
 					continue;
 				endif;
-				postfixDate = "_Date_" + UniversalTime;
 			endif; 
-			file = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName ) + postfixDate;
+			file = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName );
 			FileXML = TempDirectory + file + ".xml";
 			if ( ExchNode.UseRules = Enums.ExchangeRules.Database
 				or ExchNode.UseRules = Enums.ExchangeRules.File ) then
@@ -778,7 +773,8 @@ EndProcedure
 Function getFTPStandartClient ()
 	
 	try
-		FTP = new FTPConnection ( TrimAll ( ExchNode.ServerFTPLoad ), TrimAll ( ExchNode.PortFTPLoad ), TrimAll ( ExchNode.UserFTPLoad ), TrimAll ( ExchNode.PasswordFTPLoad ) );	
+		FTP = new FTPConnection ( ExchNode.ServerFTPLoad, ExchNode.PortFTPLoad ,
+			ExchNode.UserFTPLoad, ExchNode.PasswordFTPLoad, , true );	
 	except
 		FTP = Undefined;
 	endtry; 
@@ -862,15 +858,13 @@ EndFunction
 Function checkFileExist ()
 	
 	Output.CheckPreviousFileExchange ();
-	FileMask = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName ) + "_Date_*";
+	FileMask = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName ) + "*";
 	operation_type = ExchNode.OperationType;
 	cancel = false;
 	if ( operation_type = Enums.ExchangeTypes.Email ) then
 		// code ...
 	elsif ( operation_type = Enums.ExchangeTypes.FTP ) then
 		cancel = checkFileExistFtp ();
-	elsif ( operation_type = Enums.ExchangeTypes.NetworkDisk ) then
-		cancel = checkFileExistNetworkDisk ();
 	endif;
 	return ( cancel ); 
 	
@@ -884,7 +878,7 @@ Function checkFileExistFtp ()
 		catalogUnload = "";
 	endif;
 	cancel = false;
-	FileMask = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName ) + "_Date_";
+	FileMask = fileID ( ThisNode.Code, ExchNode.Code, ExchNode.PrefixFileName );
 	if ( ExchNode.UseStandartFTPClient ) then
 		cancel = checkStandartClient ( catalogUnload );
 	else
@@ -892,35 +886,6 @@ Function checkFileExistFtp ()
 	endif;
 	return cancel; 
 
-EndFunction
-
-Function checkFileExistNetworkDisk ()
-	
-	cancel = false;
-	path = ? ( ScheduledJob, TrimAll ( ExchNode.FolderDiskUnLoadJob ), TrimAll ( ExchNode.FolderDiskUnLoadHandle ) );
-	filesZIP = FindFiles ( path, FileMask + ".zip" );	
-	for each findFile in filesZIP do
-		cancel = checkDateExchange ( findFile.Name );
-		if ( cancel ) then
-			Output.ItWasFoundFileExchange ( new Structure ( "Node, File", ExchNode.Code, findFile.FullName ) );
-		endif; 
-	enddo;
-	arrayXML = FindFiles ( path, FileMask + ".xml" );
-	for each findFile in arrayXML do
-		cancel = checkDateExchange ( findFile.Name );
-		if ( cancel ) then
-			Output.ItWasFoundFileExchange ( new Structure ( "Node, File", ExchNode.Code, findFile.FullName ) );
-		endif;
-	enddo;
-	return cancel;	
-
-EndFunction
-
-Function checkDateExchange ( File )
-	
-	stringDate = Mid ( Right ( File, 18 ), 1, 14 );
-	return ( Date ( stringDate ) < Date ( UniversalTime ) ); 
-	
 EndFunction
 
 Procedure loadStandartClient ( CatalogLoad )
@@ -969,6 +934,7 @@ Function unloadStandartClient ()
 		Output.FTPConnectionError ();
 	else
 		FTP.Put ( TempDirectory + FileExchange, folder + FileExchange );	
+		StatusOperation = 0;
 	endif; 
 	return StatusOperation;
 	
@@ -1033,19 +999,12 @@ EndFunction
 
 Function checkStandartClient ( CatalogLoad )
 	
-	cancel = false;
 	FTP = getFTPStandartClient ();
 	if ( FTP = Undefined ) then
 		Output.FTPConnectionError ();
+		cancel = true;
 	else 
-		FTP.SetCurrentDirectory ( CatalogLoad );
-		arrayFiles = FTP.FindFiles ( FTP.GetCurrentDirectory (), FileMask );
-		for each fileFromFtp  in arrayFiles do
-			cancel = checkDateExchange ( fileFromFtp.Name );
-			if ( cancel ) then
-				Output.ItWasFoundFileExchange ( new Structure ( "Node, File", ExchNode.Code, fileFromFtp ) );
-			endif;
-		enddo;		
+		cancel = false;
 	endif; 
 	return cancel; 
 	
@@ -1053,20 +1012,12 @@ EndFunction
 
 Function checkChilkat ( CatalogUnLoad )
 	
-	cancel = false;
 	FTP = getFTPChilkatClient ();
 	if ( FTP = Undefined ) then
 		Output.FTPConnectionError ();
+		cancel = true;
 	else 
-		FTP.ChangeRemoteDir ( CatalogUnLoad );
-		arrayFiles = findFilesChilkat ();
-		for each fileFromFtp  in arrayFiles do
-			cancel = checkDateExchange ( fileFromFtp );
-			if ( cancel ) then
-				Output.ItWasFoundFileExchange ( new Structure ( "Node, File", ExchNode.Code, fileFromFtp ) );
-			endif;
-		enddo;
-		FTP.Disconnect ();		
+		cancel = false;
 	endif; 
 	return cancel;
 
@@ -1127,11 +1078,5 @@ Function getUUID ()
 	return String ( new UUID () ); 
 	
 EndFunction
-
-Procedure setUniversalTime ()
-	
-	UniversalTime = Format ( ToUniversalTime ( CurrentSessionDate () ), "DF=yyyyMMddHHmmss" );
-	
-EndProcedure
 
 #endif

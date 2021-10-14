@@ -25,6 +25,7 @@ var Parameters;
 var Stack export;
 var CalledBy;
 var ExporterData export;
+var FormUUID export;
 
 Procedure RunScript ( Code ) export
 	
@@ -369,8 +370,13 @@ EndFunction
 
 Procedure exportFile ( File ) export
 	
-	fileName = DF.Pick ( MasterReport, "Name" ) + "-" + Format ( CurrentSessionDate (), "DF=yyyy-MM-dd" ) + ".xml";
-	ExporterData = new TransferableFileDescription ( fileName, PutToTempStorage ( new BinaryData ( File ) ) );
+	if ( MasterReport.IsEmpty () ) then
+		masterName = Name;
+	else
+		masterName = DF.Pick ( MasterReport, "Name" );
+	endif;
+	fileName = masterName + "-" + Format ( CurrentSessionDate (), "DF=yyyy-MM-dd" ) + ".xml";
+	ExporterData = new TransferableFileDescription ( fileName, PutToTempStorage ( new BinaryData ( File ), FormUUID ) );
 	DeleteFiles ( File );
 	
 EndProcedure
@@ -512,6 +518,7 @@ EndProcedure
 
 Procedure checkReport ( CheckedAttributes )
 	
+	CheckedAttributes.Add ( "Company" );
 	CheckedAttributes.Add ( "MasterReport" );
 	
 EndProcedure 

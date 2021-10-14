@@ -1147,7 +1147,7 @@
               </userVisible>
               <dataPath xsi:type="form:MultiLanguageDataPath">
                 <paths xsi:type="form:DataPath">
-                  <segments>Items.List.CurrentData.FinancialPeriod</segments>
+                  <segments>FinancialPeriodField</segments>
                 </paths>
               </dataPath>
               <extendedTooltip>
@@ -1758,6 +1758,36 @@
             <contextMenu>
               <name>TabDocКонтекстноеМеню</name>
               <id>33</id>
+              <items xsi:type="form:Button">
+                <name>OpenGenerator</name>
+                <id>201</id>
+                <visible>true</visible>
+                <enabled>true</enabled>
+                <userVisible>
+                  <common>true</common>
+                </userVisible>
+                <extendedTooltip>
+                  <name>OpenGeneratorExtendedTooltip</name>
+                  <id>202</id>
+                  <visible>true</visible>
+                  <enabled>true</enabled>
+                  <userVisible>
+                    <common>true</common>
+                  </userVisible>
+                  <type>Label</type>
+                  <autoMaxWidth>true</autoMaxWidth>
+                  <autoMaxHeight>true</autoMaxHeight>
+                  <extInfo xsi:type="form:LabelDecorationExtInfo">
+                    <horizontalAlign>Left</horizontalAlign>
+                  </extInfo>
+                </extendedTooltip>
+                <commandName>Form.Command.OpenGenerator</commandName>
+                <representation>Auto</representation>
+                <autoMaxWidth>true</autoMaxWidth>
+                <autoMaxHeight>true</autoMaxHeight>
+                <placementArea>UserCmds</placementArea>
+                <representationInContextMenu>Auto</representationInContextMenu>
+              </items>
               <visible>true</visible>
               <enabled>true</enabled>
               <userVisible>
@@ -2906,6 +2936,34 @@ from Catalog.Reports as Reports</queryText>
       <common>true</common>
     </edit>
   </attributes>
+  <attributes>
+    <name>FinancialPeriodField</name>
+    <title>
+      <key>en</key>
+      <value>Period</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Период</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Perioadă</value>
+    </title>
+    <id>16</id>
+    <valueType>
+      <types>String</types>
+      <stringQualifiers>
+        <length>50</length>
+      </stringQualifiers>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
   <formCommands>
     <name>Reload</name>
     <title>
@@ -3554,6 +3612,43 @@ from Catalog.Reports as Reports</queryText>
     </action>
     <representation>Picture</representation>
     <currentRowUse>DontUse</currentRowUse>
+  </formCommands>
+  <formCommands>
+    <name>OpenGenerator</name>
+    <title>
+      <key>en</key>
+      <value>Generator</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Генератор</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Generator</value>
+    </title>
+    <id>17</id>
+    <toolTip>
+      <key>en</key>
+      <value>Open the fields generator</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Открыть генератор полей</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Deschideți generatorul de câmpuri</value>
+    </toolTip>
+    <use>
+      <common>true</common>
+    </use>
+    <action xsi:type="form:FormCommandHandlerContainer">
+      <handler>
+        <name>OpenGenerator</name>
+      </handler>
+    </action>
+    <currentRowUse>Auto</currentRowUse>
   </formCommands>
   <commandInterface>
     <navigationPanel/>
