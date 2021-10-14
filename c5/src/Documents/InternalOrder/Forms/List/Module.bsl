@@ -94,16 +94,9 @@ EndProcedure
 Function getGoods ( val InternalOrder )
 	
 	s = "
-	|select Balances.RowKey as RowKey, sum ( Balances.Balance ) as Balance
+	|select Balances.RowKey as RowKey, Balances.QuantityBalance as Balance
 	|into Balances
-	|from (
-	|	select Balances.RowKey as RowKey, Balances.QuantityBalance as Balance
-	|	from AccumulationRegister.InternalOrders.Balance ( , InternalOrder = &Ref ) as Balances
-	|	union all
-	|	select Reserves.RowKey, - Reserves.QuantityBalance
-	|	from AccumulationRegister.Reserves.Balance ( , DocumentOrder = &Ref ) as Reserves ) as Balances
-	|group by Balances.RowKey
-	|having sum ( Balances.Balance ) > 0
+	|from AccumulationRegister.InternalOrders.Balance ( , InternalOrder = &Ref ) as Balances
 	|index by RowKey
 	|;
 	|select Goods.Description as Description, Goods.Package as Package, Goods.Quantity / Goods.Capacity as Quantity,
