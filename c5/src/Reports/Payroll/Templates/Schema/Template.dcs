@@ -362,7 +362,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( &amp;DateStart, &amp;DateE
 select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Days as Days,
 	Compensations.AccountingResult as Calculated, Compensations.Employee as PayrollEmployee, Compensations.Hours as Hours,
 	Compensations.ScheduledDays as ScheduledDays, Compensations.ScheduledHours as ScheduledHours
-{select Employee.*, Compensation.*, Calculated, PayrollEmployee, Days, Hours, ScheduledDays, ScheduledHours}
+{select Employee.*, PayrollEmployee.* as PayrollEmployee, Compensation.*, Calculated, PayrollEmployee, Days, Hours, ScheduledDays, ScheduledHours}
 from Document.Payroll.Compensations as Compensations
 {where Compensations.Department = &amp;Department, Compensations.Ref.Company = &amp;Company, Compensations.Individual = &amp;Employee}
 where Compensations.Ref.Date between &amp;DateStart and &amp;DateEnd
@@ -869,11 +869,13 @@ from Company as Company
 	</totalField>
 	<totalField>
 		<dataPath>ScheduledDays</dataPath>
-		<expression>Sum(ScheduledDays)</expression>
+		<expression>Max(ScheduledDays)</expression>
+		<group>Employee</group>
 	</totalField>
 	<totalField>
 		<dataPath>ScheduledHours</dataPath>
-		<expression>Sum(ScheduledHours)</expression>
+		<expression>Max(ScheduledHours)</expression>
+		<group>Employee</group>
 	</totalField>
 	<totalField>
 		<dataPath>Hours</dataPath>
@@ -2898,29 +2900,6 @@ from Company as Company
 			</dcsset:outputParameters>
 			<dcsset:item xsi:type="dcsset:StructureItemTable">
 				<dcsset:column>
-					<dcsset:name>Fact</dcsset:name>
-					<dcsset:groupItems>
-						<dcsset:item xsi:type="dcsset:GroupItemField">
-							<dcsset:field>Fact</dcsset:field>
-							<dcsset:groupType>Items</dcsset:groupType>
-							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
-							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
-							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
-						</dcsset:item>
-					</dcsset:groupItems>
-					<dcsset:order>
-						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
-					</dcsset:order>
-					<dcsset:selection>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Days</dcsset:field>
-						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Hours</dcsset:field>
-						</dcsset:item>
-					</dcsset:selection>
-				</dcsset:column>
-				<dcsset:column>
 					<dcsset:name>Sheduled</dcsset:name>
 					<dcsset:groupItems>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
@@ -2940,6 +2919,29 @@ from Company as Company
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>ScheduledHours</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:name>Fact</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Fact</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Days</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Hours</dcsset:field>
 						</dcsset:item>
 					</dcsset:selection>
 				</dcsset:column>
@@ -3084,6 +3086,13 @@ from Company as Company
 							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>PayrollEmployee</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>Position</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
@@ -3116,7 +3125,21 @@ from Company as Company
 							<dcsset:field>Code</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Employee</dcsset:field>
+							<dcsset:field>PayrollEmployee</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Employee</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Сотрудник</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Angajat</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Position</dcsset:field>

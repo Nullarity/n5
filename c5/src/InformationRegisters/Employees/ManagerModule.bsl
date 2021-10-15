@@ -17,7 +17,7 @@ Function GetByIndividual ( Individual, Company = undefined ) export
 	|	//
 	|	// Employment
 	|	//
-	|	left join InformationRegister.Employment as CurrentEmployment
+	|	left join InformationRegister.Employment.SliceLast ( , Employee.Individual = &Individual ) as CurrentEmployment
 	|	on CurrentEmployment.Employee = List.Ref
 	|where List.Individual = &Individual
 	|order by

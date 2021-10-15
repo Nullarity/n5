@@ -14,7 +14,7 @@ Procedure SetCreator ( Form ) export
 		if ( not object.Employee.IsEmpty () ) then
 			TimesheetForm.SetIndividual ( object );
 		elsif ( not object.Individual.IsEmpty () ) then
-			object.Employee = findEmployee ( object );
+			object.Employee = InformationRegisters.Employees.GetByIndividual ( object.Individual );
 		else
 			object.Employee = DF.Pick ( object.Creator, "Employee" );
 			TimesheetForm.SetIndividual ( object );
@@ -45,39 +45,6 @@ Procedure SetIndividual ( Object ) export
 	Object.Individual = DF.Pick ( Object.Employee, "Individual" );
 	
 EndProcedure 
-
-&AtServer
-Function findEmployee ( Object )
-	
-	s = "
-	|select top 1 List.Ref as Employee
-	|from Catalog.Employees as List
-	|	//
-	|	// Employees
-	|	//
-	|	left join InformationRegister.Employees.SliceLast ( , Employee.Individual = &Individual ) as Employees
-	|	on Employees.Employee = List.Ref
-	|	and Employees.Hired
-	|	//
-	|	// Employment
-	|	//
-	|	left join InformationRegister.Employment as CurrentEmployment
-	|	on CurrentEmployment.Employee = List.Ref
-	|where List.Individual = &Individual
-	|order by
-	|	case when isnull ( Employees.Hired, false ) then 0 else 1 end desc,
-	|	case CurrentEmployment.Employment
-	|		when value ( Enum.Employment.Main ) then 0
-	|		when value ( Enum.Employment.SecondJob ) then 1
-	|		when value ( Enum.Employment.PartTime ) then 2
-	|	end desc
-	|";
-	q = new Query ( s );
-	q.SetParameter ( "Individual", Object.Individual );
-	table = q.Execute ().Unload ();
-	return ? ( table.Count () = 0, undefined, table [ 0 ].Employee );
-	
-EndFunction 
 
 &AtServer
 Function FindPerformer ( Employee ) export

@@ -123,27 +123,31 @@ EndProcedure
 
 Procedure sqlEmployees ()
 	
-	s = "
+	s = "// WorkHere
+	|select Employments.Employee as Employee
+	|into WorkHere
+	|from InformationRegister.Employment.SliceLast ( &DateStart, Employee.Individual = &Individual ) as Employments
+	|where Employments.Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
+	|union
+	|select Employments.Employee
+	|from InformationRegister.Employment as Employments
+	|where Employments.Period between &DateStart and &DateEnd
+	|and Employments.Employee.Individual = &Individual
+	|and Employments.Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
+	|index by Employee
+	|;
 	|// Employment
 	|select Employees.Employee as Employee, &DateStart as Period, Employees.Hired as Hired
 	|into Employment
 	|from InformationRegister.Employees.SliceLast ( &DateStart, Employee.Individual = &Individual ) as Employees
 	|where Employees.Hired
-	|and Employees.Employee in (
-	|	select Employee
-	|	from InformationRegister.Employment
-	|	where Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
-	|)
+	|and Employees.Employee in ( select Employee from WorkHere )
 	|union
 	|select Employees.Employee, Employees.Period, Employees.Hired
 	|from InformationRegister.Employees as Employees
 	|where Employees.Period > &DateStart and Employees.Period <= &DateEnd
 	|and Employees.Employee.Individual = &Individual
-	|and Employees.Employee in (
-	|	select Employee
-	|	from InformationRegister.Employment
-	|	where Employment in ( value ( Enum.Employment.Main ), value ( Enum.Employment.SecondJob ) )
-	|)
+	|and Employees.Employee in ( select Employee from WorkHere )
 	|index by Employee
 	|;
 	|// Employees

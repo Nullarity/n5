@@ -419,6 +419,7 @@ from Personnel as Personnel
 	//
 	join Employment as Employment
 	on Employment.Employee = Personnel.Employee
+	and Personnel.Period between Employment.DateStart and Employment.DateEnd
 	//
 	// Changes
 	//
@@ -439,7 +440,7 @@ into Additions
 from &amp;Additions as Rates
 ;
 // Rates
-select Rates.Employee as Employee, Rates.Compensation as Compensation, &amp;DateStart as Period,
+select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Period as Period,
 	Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
 into Rates
 from (
@@ -460,9 +461,15 @@ from Additions as Additions
 ;
 // CompensationPeriods
 select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Rate as Rate, Rates.InHand as InHand,
-	Rates.Currency as Currency, Rates.Period as DateStart, isnull ( min ( Changes.Period ), min ( Employment.DateEnd ) ) as DateEnd
+	Rates.Currency as Currency, Rates.Period as DateStart, min ( isnull ( Changes.Period, Employment.DateEnd ) ) as DateEnd
 into CompensationPeriods
 from Rates as Rates
+	//
+	// Filter by Employment
+	//
+	join Employment as Employment
+	on Employment.Employee = Rates.Employee
+	and Rates.Period between Employment.DateStart and Employment.DateEnd
 	//
 	// Changes
 	//
@@ -470,13 +477,7 @@ from Rates as Rates
 	on Changes.Employee = Rates.Employee
 	and Changes.Compensation = Rates.Compensation
 	and Changes.Period &gt; Rates.Period
-	//
-	// Filter by Employment
-	//
-	join Employment as Employment
-	on Employment.Employee = Rates.Employee
-	and Employment.DateStart &lt;= Rates.Period
-	and Employment.DateEnd &gt;= isnull ( Changes.Period, Employment.DateEnd )
+	and Changes.Period &lt; Employment.DateEnd
 where Rates.Actual
 group by Rates.Employee, Rates.Compensation, Rates.Rate, Rates.InHand, Rates.Currency, Rates.Period
 index by Employee
@@ -495,18 +496,18 @@ from CompensationPeriods as Compensations
 			isnull ( min ( dateadd ( Changes.Period, day, -1 ) ), min ( Employment.DateEnd ) ) as DateEnd
 		from Rates as Rates
 			//
+			// Filter by Employment
+			//
+			join Employment as Employment
+			on Employment.Employee = Rates.Employee
+			and Rates.Period between Employment.DateStart and Employment.DateEnd
+			//
 			// Changes
 			//
 			left join Rates as Changes
 			on Changes.Employee = Rates.Employee
 			and Changes.Period &gt; Rates.Period
-			//
-			// Filter by Employment
-			//
-			join Employment as Employment
-			on Employment.Employee = Rates.Employee
-			and Employment.DateStart &lt;= Rates.Period
-			and Employment.DateEnd &gt;= isnull ( Changes.Period, Employment.DateEnd )
+			and Changes.Period &lt; Employment.DateEnd
 		group by Rates.Employee, Rates.Period
 	) as AllPeriods
 	on AllPeriods.Employee = Compensations.Employee

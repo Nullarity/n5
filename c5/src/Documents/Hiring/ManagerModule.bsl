@@ -156,6 +156,7 @@ Procedure makeEmployees ( Env )
 		record.Schedule = row.Schedule;
 		record.Expenses = row.Expenses;
 		record = employment.Add ();
+		record.Period = dateStart;
 		record.Employee = employee;
 		record.Employment = row.Employment;
 	enddo; 

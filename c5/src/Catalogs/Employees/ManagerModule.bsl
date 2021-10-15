@@ -43,7 +43,8 @@ EndProcedure
 
 Procedure Update ( Object, Individual ) export
 	
-	FillPropertyValues ( Object, Individual, "Description, Email, FirstName, HomePhone, FirstName, LastName, MobilePhone, Patronymic, Gender, Web" );
+	FillPropertyValues ( Object, Individual, "Email, FirstName, HomePhone, FirstName, LastName, MobilePhone, Patronymic, Gender, Web" );
+	Object.Description = Individual.Description + ? ( Object.Notes = "", "", ", " + Object.Notes );
 	
 EndProcedure 
 
