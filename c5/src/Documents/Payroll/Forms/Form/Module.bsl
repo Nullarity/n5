@@ -364,11 +364,12 @@ Function getFilters ()
 		item = DC.CreateParameter ( "CalculatingTaxesPayroll", ref );
 		filters.Add ( item );
 	endif; 
-	item = DC.CreateParameter ( "PaymentDate", Object.Payment );
+	dateEnd = Object.DateEnd;
+	item = DC.CreateParameter ( "PaymentDate", ? ( Object.Payment = Date ( 1 , 1, 1 ), dateEnd, Object.Payment ) );
 	filters.Add ( item );
 	item = DC.CreateParameter ( "CalculationVariant", CalculationVariant );
 	filters.Add ( item );
-	item = DC.CreateParameter ( "Period", new StandardPeriod ( Object.DateStart, Object.DateEnd ) );
+	item = DC.CreateParameter ( "Period", new StandardPeriod ( Object.DateStart, dateEnd ) );
 	filters.Add ( item );
 	item = DC.CreateParameter ( "Ref", ref );
 	filters.Add ( item );

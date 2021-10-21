@@ -15,9 +15,6 @@ Procedure setPeriod ()
 	
 	settings = Params.Settings;
 	date = DC.GetParameter ( settings, "PaymentDate" ).Value;
-	if ( date = Date ( 1, 1, 1 ) ) then
-		date = DC.GetParameter ( settings, "Period" ).Value.EndDate;
-	endif;
 	DC.SetParameter ( settings, "YearStart", BegOfYear ( date ) );
 	
 EndProcedure 

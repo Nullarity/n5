@@ -164,3 +164,10 @@ Procedure resetReference ()
 	TableRow.Reference = undefined;
 	
 EndProcedure
+
+&AtClient
+Procedure DateEndOnChange ( Item )
+	
+	TableRow.DateEnd = EndOfDay ( TableRow.DateEnd );
+
+EndProcedure

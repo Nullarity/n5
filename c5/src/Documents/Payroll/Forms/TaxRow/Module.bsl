@@ -92,3 +92,10 @@ Procedure TaxOnChange ( Item )
 	PayrollTaxForm.TaxOnChange ( ThisObject );
 	
 EndProcedure
+
+&AtClient
+Procedure DateEndOnChange ( Item )
+	
+	TableRow.DateEnd = EndOfDay ( TableRow.DateEnd );
+
+EndProcedure
