@@ -101,11 +101,11 @@
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>MinimumWidth</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">2.5</dcscor:value>
+					<dcscor:value xsi:type="xs:decimal">2.8</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>MaximumWidth</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">2.5</dcscor:value>
+					<dcscor:value xsi:type="xs:decimal">2.8</dcscor:value>
 				</dcscor:item>
 			</appearance>
 		</field>
@@ -306,14 +306,14 @@ from Personnel as Personnel
 group by Personnel.Employee, Personnel.Period
 ;
 // Rates
-select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Period as Period,
-	Rates.Actual as Actual
+select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Actual as Actual,
+	&amp;DateStart as Period
 into Rates
 from InformationRegister.EmployeeRates.SliceLast ( &amp;DateStart, Employee in ( select distinct Employee from Employees )
 	and Compensation.Method in ( value ( Enum.Calculations.HourlyRate ), value ( Enum.Calculations.MonthlyRate ) ) ) as Rates
 where Rates.Actual
 union
-select Rates.Employee, Rates.Compensation, Rates.Period, Rates.Actual
+select Rates.Employee, Rates.Compensation, Rates.Actual, Rates.Period
 from InformationRegister.EmployeeRates as Rates
 where Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
 and Rates.Employee in ( select distinct Employee from Employees )
@@ -393,20 +393,6 @@ from Personnel as Personnel
 	on Employment.Employee = Changes.Employee
 	and Changes.DateStart between Employment.DateStart and Employment.DateEnd
 	and Changes.DateEnd between Employment.DateStart and Employment.DateEnd
-union all
-select Personnel.Employee, Personnel.Department, Personnel.Position, Personnel.Schedule, Personnel.Expenses,
-	beginofperiod ( dateadd ( &amp;DateEnd, day, 1 ), day ), datetime ( 3999, 12, 31 )
-from Personnel as Personnel
-	//
-	// LastLocation
-	//
-	join (
-		select Personnel.Employee as Employee, max ( Personnel.Period ) as Period
-		from Personnel as Personnel
-		group by Personnel.Employee
-	) as LastLocation
-	on LastLocation.Employee = Personnel.Employee
-	and LastLocation.Period = Personnel.Period
 ;
 // LocationByDays
 select Calendar.Day as Day, Location.Employee as Employee, Location.Department as Department,
