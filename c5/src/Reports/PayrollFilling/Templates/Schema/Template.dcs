@@ -534,6 +534,20 @@ from Personnel as Personnel
 	on Employment.Employee = Changes.Employee
 	and Changes.DateStart between Employment.DateStart and Employment.DateEnd
 	and Changes.DateEnd between Employment.DateStart and Employment.DateEnd
+union all
+select Personnel.Employee, Personnel.Department, Personnel.Position, Personnel.Schedule, Personnel.Expenses,
+	beginofperiod ( dateadd ( &amp;DateEnd, day, 1 ), day ), datetime ( 3999, 12, 31 )
+from Personnel as Personnel
+	//
+	// LastLocation
+	//
+	join (
+		select Personnel.Employee as Employee, max ( Personnel.Period ) as Period
+		from Personnel as Personnel
+		group by Personnel.Employee
+	) as LastLocation
+	on LastLocation.Employee = Personnel.Employee
+	and LastLocation.Period = Personnel.Period
 ;
 // LocationByDays
 select Calendar.Day as Day, Location.Employee as Employee, Location.Department as Department,
@@ -1079,7 +1093,8 @@ select Compensations.Ref as Ref, Compensations.Employee as Employee, Compensatio
 	Schedules.Days - isnull ( Holidays.Days, 0 ) as ScheduledDays,
 	case when Compensations.Days = 0 then 0
 		else ( Compensations.Amount / Compensations.Days + Compensations.Bonuses ) 
-			* Schedules.Days / ( datediff ( Compensations.DateStart, Compensations.DateEnd, day ) - Holidays.Days )
+			* ( Schedules.Days - isnull ( Holidays.Days, 0 ) )
+			/ ( datediff ( Compensations.DateStart, Compensations.DateEnd, day ) + 1 - Holidays.Days )
 	end as Rate
 into VacationRates
 from (
@@ -1442,7 +1457,8 @@ select Compensations.Ref as Ref, Compensations.Employee as Employee,
 	Schedules.Days - isnull ( Holidays.Days, 0 ) as ScheduledDays,
 	case when Compensations.Days = 0 then 0
 		else ( Compensations.Amount / Compensations.Days + Compensations.Bonuses ) 
-			* Schedules.Days / ( datediff ( Compensations.DateStart, Compensations.DateEnd, day ) + 1 - Holidays.Days )
+			* ( Schedules.Days - isnull ( Holidays.Days, 0 ) )
+			/ ( datediff ( Compensations.DateStart, Compensations.DateEnd, day ) + 1 - Holidays.Days )
 	end as Rate
 into SickLeavesRates
 from (
