@@ -5,24 +5,28 @@ Procedure CommandProcessing ( Individual, Params )
 	source = Params.Source;
 	form = source.FormName;
 	period = undefined;
+	company = undefined;
 	if ( form = "Catalog.Individuals.Form.Form" ) then
 		employee = Params.Source.Employee.Ref;
 	elsif ( form = "Document.Payroll.Form.Form" ) then
 		object = source.Object;
+		company = object.Company;
 		employee = object.Compensations.FindRows ( new Structure ( "Individual", Individual ) ) [ 0 ].Employee;
 		period = new StandardPeriod ( object.DateStart, object.DateEnd );
-	elsif ( form = "Document.PayEmployees.Form.Form" ) then
+	elsif ( form = "Document.PayEmployees.Form.Form"
+		or form = "Document.PayAdvances.Form.Form" ) then
 		object = source.Object;
+		company = object.Company;
 		date = object.Date;
 		employee = findEmployee ( Individual, date );
 		period = new StandardPeriod ( BegOfMonth ( date ), EndOfMonth ( date ) );
 	endif;
-	openReport ( employee, Params, period );
+	openReport ( employee, Params, period, company );
 	
 EndProcedure
 
 &AtClient
-Procedure openReport ( Employee, Params, Period = undefined )
+Procedure openReport ( Employee, Params, Period = undefined, Company = undefined )
 	
 	p = ReportsSystem.GetParams ( "Timesheet" );
 	filters = new Array ();
@@ -32,6 +36,10 @@ Procedure openReport ( Employee, Params, Period = undefined )
 	filters.Add ( item );
 	if ( Period <> undefined ) then
 		item = DC.CreateParameter ( "Period", Period );
+		filters.Add ( item );
+	endif;
+	if ( Company <> undefined ) then
+		item = DC.CreateFilter ( "Company", Company );
 		filters.Add ( item );
 	endif;
 	p.Filters = filters;
