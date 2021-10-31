@@ -120,8 +120,10 @@
     <userVisible>
       <common>true</common>
     </userVisible>
-    <dataPath xsi:type="form:DataPath">
-      <segments>Links</segments>
+    <dataPath xsi:type="form:MultiLanguageDataPath">
+      <paths xsi:type="form:DataPath">
+        <segments>Links</segments>
+      </paths>
     </dataPath>
     <titleLocation>None</titleLocation>
     <extendedTooltip>
@@ -1924,7 +1926,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Totals.ТекущиеДанные.Employee</segments>
+              <segments>Items.Totals.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>TotalsContextMenuFilterCriterionEmployeeOpenByValueExtendedTooltip</name>
@@ -1957,7 +1959,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Totals.ТекущиеДанные.Employee</segments>
+              <segments>Items.Totals.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>TotalsContextMenuReportTimesheetCommandShowByIndividualExtendedTooltip</name>
@@ -1990,7 +1992,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Totals.ТекущиеДанные.Employee</segments>
+              <segments>Items.Totals.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>TotalsContextMenuCatalogEmployeesCommandShowExtendedTooltip</name>
@@ -2665,7 +2667,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Compensations.ТекущиеДанные.Employee</segments>
+              <segments>Items.Compensations.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>CompensationsContextMenuFilterCriterionEmployeeOpenByValueExtendedTooltip</name>
@@ -2698,7 +2700,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Compensations.ТекущиеДанные.Employee</segments>
+              <segments>Items.Compensations.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>CompensationsContextMenuReportTimesheetCommandShowByIndividualExtendedTooltip</name>
@@ -2731,7 +2733,7 @@
               <common>true</common>
             </userVisible>
             <dataPath xsi:type="form:DataPath">
-              <segments>Элементы.Compensations.ТекущиеДанные.Employee</segments>
+              <segments>Items.Compensations.CurrentData.Employee</segments>
             </dataPath>
             <extendedTooltip>
               <name>CompensationsContextMenuCatalogEmployeesCommandShowExtendedTooltip</name>
@@ -3828,7 +3830,7 @@
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>Object.Ссылка</segments>
+        <segments>Object.Ref</segments>
       </dataPath>
       <extendedTooltip>
         <name>PaymentOrderExtendedTooltip</name>
@@ -4012,12 +4014,12 @@
     <name>ChoiceProcessing</name>
   </handlers>
   <handlers>
-    <event>OnCreateAtServer</event>
-    <name>OnCreateAtServer</name>
-  </handlers>
-  <handlers>
     <event>NewWriteProcessing</event>
     <name>NewWriteProcessing</name>
+  </handlers>
+  <handlers>
+    <event>OnCreateAtServer</event>
+    <name>OnCreateAtServer</name>
   </handlers>
   <autoTitle>true</autoTitle>
   <autoUrl>true</autoUrl>

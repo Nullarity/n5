@@ -88,7 +88,8 @@ Procedure update ( Object, Reference )
 		obj.Currency = entry.Currency;
 		obj.Amount = entry.Amount;
 		obj.Location = entry.Location;
-	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
+	elsif ( type = Type ( "DocumentRef.PayEmployees" )
+		or type = Type ( "DocumentRef.PayAdvances" ) ) then
 		obj.Currency = Application.Currency ();
 		obj.Amount = Object.Amount;
 		obj.Location = Object.Location;
@@ -113,7 +114,8 @@ Procedure update ( Object, Reference )
 			obj.Giver = presentation ( Object.Customer );
 		elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
 			obj.Receiver = presentation ( Object.Vendor );
-		elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
+		elsif ( type = Type ( "DocumentRef.PayEmployees" )
+			or type = Type ( "DocumentRef.PayAdvances" ) ) then
 			obj.Receiver = Object.Ref;
 		elsif ( type = Type ( "DocumentRef.Entry" ) ) then
 			subject = entry.Subject;
@@ -301,7 +303,8 @@ Function relationMustDie ( Object )
 	type = TypeOf ( Object.Ref );
 	if ( ( type = Type ( "DocumentRef.Payment" )
 		or type = Type ( "DocumentRef.VendorPayment" )
-		or type = Type ( "DocumentRef.PayEmployees" ) )
+		or type = Type ( "DocumentRef.PayEmployees" )
+		or type = Type ( "DocumentRef.PayAdvances" ) )
 		and Object.Method = Enums.PaymentMethods.Cash ) then
 		return false;
 	elsif ( type = Type ( "DocumentRef.Entry" ) ) then

@@ -121,6 +121,7 @@
 |Представление|Идентификатор|
 |---|---|
 |Авансовый отчет|ExpenseReport|
+|Авансы по ЗП|PayAdvances|
 |Акт закупки товаров|ItemsPurchase|
 |Акт закупки услуг|ServicesPurchase|
 |Амортизация ОС и НМА|AssetsCalculation|

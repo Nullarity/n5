@@ -931,6 +931,13 @@ Function ChoiceOperationsPayEmployeesRecord () export
 EndFunction 
 
 &AtClient
+Function ChoiceOperationsPayAdvancesRecord () export
+	
+	return "PayAdvancesRecord";
+	
+EndFunction 
+
+&AtClient
 Function ChoiceOperationsEmployeesTaxRecord () export
 	
 	return "EmployeesTaxRecord";
@@ -948,6 +955,13 @@ EndFunction
 Function ChoiceOperationsPayEmployeesRecordSaveAndNew () export
 	
 	return "PayEmployeesRecordSaveAndNew";
+	
+EndFunction 
+
+&AtClient
+Function ChoiceOperationsPayAdvancesRecordSaveAndNew () export
+	
+	return "PayAdvancesRecordSaveAndNew";
 	
 EndFunction 
 

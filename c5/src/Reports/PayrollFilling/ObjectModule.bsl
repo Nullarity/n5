@@ -43,9 +43,10 @@ EndProcedure
 
 Procedure setResult ()
 
-	result = new Structure ( "Compensations, Taxes, Base" );
+	result = new Structure ( "Compensations, Taxes, Base, Advances" );
 	Data = Params.Result;
 	last = Data.Ubound ();
+	result.Advances = Data [ last - 2 ].Unload ();
 	result.Base = Data [ last - 1 ].Unload ();
 	salaryInHand = not Data [ last ].IsEmpty ();
 	if ( salaryInHand ) then

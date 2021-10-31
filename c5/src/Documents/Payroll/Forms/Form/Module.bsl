@@ -16,6 +16,12 @@ var FillDocument;
 var CalculateAll; 
 &AtClient
 var CalculateTaxes; 
+&AtServer
+var FillDocument; 
+&AtServer
+var CalculateAll; 
+&AtServer
+var CalculateTaxes; 
 
 // *****************************************
 // *********** Form events
@@ -58,7 +64,7 @@ Procedure readAppearance ()
 	|PreviousPeriod NextPeriod show Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateEnd lock Object.Period <> Enum.TimesheetPeriods.Other;
 	|DateStart lock Object.Period <> Enum.TimesheetPeriods.Other;
-	|Compensations Taxes Additions Period Date Number Company lock Object.Posted;
+	|Compensations Taxes Additions Base Advances Period Date Number Company lock Object.Posted;
 	|PeriodGroup CompensationsEdit TaxesEditTax enable not Object.Posted;
 	|Calculate CalculateTaxes show not Object.Dirty;
 	|Calculate1 CalculateTaxes1 Ignore show Object.Dirty;
@@ -357,10 +363,10 @@ Function getFilters ()
 	
 	filters = new Array ();
 	ref = Object.Ref;
-	if ( CalculationVariant = 2 ) then
+	if ( CalculationVariant = CalculateAll ) then
 		item = DC.CreateParameter ( "CalculatingPayroll", ref );
 		filters.Add ( item );
-	elsif ( CalculationVariant = 3 ) then
+	elsif ( CalculationVariant = CalculateTaxes ) then
 		item = DC.CreateParameter ( "CalculatingTaxesPayroll", ref );
 		filters.Add ( item );
 	endif; 
@@ -564,12 +570,38 @@ Procedure completeDeletion ( Table )
 	
 	if ( Table = Items.Compensations ) then
 		PayrollForm.DeleteTaxes ( Object, RemovingEmployees );
+		deleteRecords ( Object.Base, "Employee", "Employee", RemovingEmployees );
+		deleteRecords ( Object.Advances, "Employee", "Individual", RemovingIndividuals );
 		RemovingEmployees.Clear ();
 	endif;
 	PayrollForm.CalcEmployees ( Object, RemovingIndividuals );
 	RemovingIndividuals.Clear ();
 
 EndProcedure
+
+&AtClient
+Procedure deleteRecords ( Table, Column, SyncWith, Employees )
+	
+	compensations = Object.Compensations;
+	searchCompensations = new Structure ( SyncWith );
+	searchRecords = new Structure ( Column );
+	for each employee in Employees do
+		searchCompensations [ SyncWith ] = employee;
+		rows = compensations.FindRows ( searchCompensations );
+		stillExists = rows.Count () > 0;
+		if ( stillExists ) then
+			continue;
+		endif;
+		searchRecords [ Column ] = employee;
+		rows = Table.FindRows ( searchRecords );
+		i = rows.Count ();
+		while ( i > 0 ) do
+			i = i - 1;
+			Table.Delete ( rows [ i ] );
+		enddo; 
+	enddo;
+	
+EndProcedure 
 
 &AtClient
 Procedure CompensationsOnChange ( Item )
@@ -666,7 +698,7 @@ Procedure AdditionsOnChange ( Item )
 EndProcedure
 
 // *****************************************
-// *********** Table Additions
+// *********** Table Base
 
 &AtClient
 Procedure BaseBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
@@ -682,6 +714,15 @@ Procedure BaseBeforeRowChange ( Item, Cancel )
 
 EndProcedure
 
+// *****************************************
+// *********** Table Advances
+
+&AtClient
+Procedure AdvancesBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+	
+	Cancel = true;
+
+EndProcedure
 
 // *****************************************
 // *********** Variables Initialization

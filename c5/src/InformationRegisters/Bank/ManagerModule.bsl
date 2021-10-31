@@ -14,7 +14,8 @@ Procedure Enroll ( Document ) export
 		or type = Type ( "DocumentObject.VendorPayment" )
 		or type = Type ( "DocumentObject.VendorRefund" ) ) then
 		passed = enrollPayment ( r, Document );
-	elsif ( type = Type ( "DocumentObject.PayEmployees" ) ) then
+	elsif ( type = Type ( "DocumentObject.PayEmployees" )
+		or type = Type ( "DocumentObject.PayAdvances" ) ) then
 		passed = enrollPayEmployees ( r, Document );
 	endif; 
 	if ( not passed ) then

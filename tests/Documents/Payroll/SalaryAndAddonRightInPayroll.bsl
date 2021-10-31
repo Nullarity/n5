@@ -123,7 +123,7 @@ Procedure createEnv ()
 	#region tax3
 	p = Call ( "CalculationTypes.Taxes.Create.Params" );
 	p.Description = "Tax3: " + id;
-	p.Method = "Income Tax (fixed percent)";
+	p.Method = "Income Tax";
 	p.RateDate = date;
 	p.Rate = 12;
 	p.Account = "5342";

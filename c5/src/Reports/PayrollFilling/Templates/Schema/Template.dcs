@@ -447,11 +447,13 @@ from (
 	select Rates.Employee as Employee, Rates.Compensation as Compensation, &amp;DateStart as Period,
 		Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
 	from InformationRegister.EmployeeRates.SliceLast ( &amp;DateStart, Employee in ( select distinct Employee from Employees ) ) as Rates
-	where Rates.Actual
+	where Rates.Rate &lt;&gt; 0
+	and Rates.Actual
 	union
 	select Rates.Employee, Rates.Compensation, Rates.Period, Rates.Actual, Rates.Currency, Rates.Rate, Rates.InHand
 	from InformationRegister.EmployeeRates as Rates
-	where Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
+	where Rates.Rate &lt;&gt; 0
+	and Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
 	and Rates.Employee in ( select distinct Employee from Employees )
 ) as Rates
 union all
@@ -2681,6 +2683,25 @@ select null as Key, 0 as Result
 into ReversedSalary
 where false
 ;
+// Advances. We also need them to calculate salary in hand (advances has to be taken away from amount in hand)
+select Balances.Employee as Employee, Balances.Compensation as Compensation,
+	Balances.Account as Account, Balances.Document as Document,
+	Balances.PaidBalance as Paid, Balances.AmountBalance as Amount	
+into Advances
+from AccumulationRegister.PayAdvances.Balance ( dateadd ( &amp;PaymentDate, second, 1 ),
+	( Employee, Compensation, Account ) in (
+		select distinct Compensations.Individual, Compensations.Compensation, Compensations.Account 
+		from ActualCompensations as Compensations
+	)
+) as Balances
+where not &amp;TaxesOnly
+;
+// Advances
+select Advances.Employee as Employee, Advances.Compensation as Compensation,
+	Advances.Account as Account, Advances.Document as Document,
+	Advances.Paid as Paid, Advances.Amount as Amount
+from Advances as Advances
+;
 // Final selection: Base
 select Base.Document as Document, Base.Employee as Employee, Base.Bonuses as Bonuses,
 	Base.Days as Days, Schedules.Days as ScheduledDays, Base.Period as Period,
@@ -3008,6 +3029,15 @@ from (
 	and not &amp;TaxesOnly
 	{where AppliedDeductions.Ref.Company.* as Company}
 	union all
+	select AppliedDeductions.Employee, - AppliedDeductions.Deductions
+	from Document.PayAdvances.Taxes as AppliedDeductions
+	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate
+	and AppliedDeductions.Ref.Posted
+	and AppliedDeductions.Deductions &lt;&gt; 0
+	and AppliedDeductions.Employee in ( select distinct Individual from CompensationsInHand )
+	and not &amp;TaxesOnly
+	{where AppliedDeductions.Ref.Company.* as Company}
+	union all
 	select AppliedDeductions.Individual, - AppliedDeductions.Deductions
 	from Document.PayrollBalances.Employees as AppliedDeductions
 	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate
@@ -3167,8 +3197,15 @@ from (
 		union all
 		select OtherTaxes.Employee, OtherTaxes.Compensation, - OtherTaxes.Result
 		from OtherTaxesGrossSalary as OtherTaxes
+		union all
+		select Advances.Employee, Advances.Compensation, - Advances.Paid
+		from Advances as Advances
+		where ( Advances.Employee, Advances.Compensation ) in (
+			select Compensations.Individual, Compensations.Compensation
+			from CompensationsInHand as Compensations )
 	) as Compensations
 	group by Compensations.Individual, Compensations.Compensation
+	having sum ( Compensations.Amount ) &gt; 0
 ) as NetSalary
 	//
 	// OtherTaxesPercent
@@ -3257,18 +3294,26 @@ from NetWithoutDeductions as NetSalary
 	and MaxCompensations.Row = NetSalary.Row
 ;
 // GrossSalary
-select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation,
-	case when ( -k + 1 ) = 0 or ( -i + 1 ) = 0 or ( -m + 1 ) = 0 then 0
-	else
-		// n = p; // p = initial net amount
-		// n = n + s; // s = tax (fixed amount) from net amount
-		// n = Round ( n / ( -k + 1 ), 2 ); // k = tax (percent) from net amount
-		// n = Round ( ( n - i * d ) / ( -i + 1 ), 2 ); // i = income tax, d = deductions
-		// n = Round ( n / ( -m + 1 ), 2 ); // m = medicine (percent)
-		cast ( ( cast ( ( ( cast ( ( p + s ) / ( -k + 1 ) as Number ( 15, 2 ) ) ) - i * d ) / ( -i + 1 ) as Number ( 15, 2 ) ) ) / ( -m + 1 ) as Number ( 15, 2 ) )
-	end as Amount
+select Salary.Individual as Individual, Salary.Compensation as Compensation,
+	sum ( Salary.Amount ) as Amount
 into GrossSalary
-from NetSalary as NetSalary
+from (
+	select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation,
+		case when ( -k + 1 ) = 0 or ( -i + 1 ) = 0 or ( -m + 1 ) = 0 then 0
+		else
+			// n = p; // p = initial net amount
+			// n = n + s; // s = tax (fixed amount) from net amount
+			// n = Round ( n / ( -k + 1 ), 2 ); // k = tax (percent) from net amount
+			// n = Round ( ( n - i * d ) / ( -i + 1 ), 2 ); // i = income tax, d = deductions
+			// n = Round ( n / ( -m + 1 ), 2 ); // m = medicine (percent)
+			cast ( ( cast ( ( ( cast ( ( p + s ) / ( -k + 1 ) as Number ( 15, 2 ) ) ) - i * d ) / ( -i + 1 ) as Number ( 15, 2 ) ) ) / ( -m + 1 ) as Number ( 15, 2 ) )
+		end as Amount
+	from NetSalary as NetSalary
+	union all
+	select Advances.Employee, Advances.Compensation, Advances.Amount
+	from Advances as Advances
+) as Salary
+group by Salary.Individual, Salary.Compensation
 ;
 // DistributionBase
 select Compensations.Individual as Individual, Compensations.Compensation as Compensation,

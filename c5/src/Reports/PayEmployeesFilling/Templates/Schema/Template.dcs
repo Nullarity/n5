@@ -292,6 +292,14 @@ from (
 	and AppliedDeductions.Employee in ( select Employee from Employees )
 	{where AppliedDeductions.Ref.Company.* as Company}
 	union all
+	select AppliedDeductions.Employee, - AppliedDeductions.Deductions
+	from Document.PayAdvances.Taxes as AppliedDeductions
+	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate
+	and AppliedDeductions.Ref.Posted
+	and AppliedDeductions.Deductions &lt;&gt; 0
+	and AppliedDeductions.Employee in ( select Employee from Employees )
+	{where AppliedDeductions.Ref.Company.* as Company}
+	union all
 	select AppliedDeductions.Individual, - AppliedDeductions.Deductions
 	from Document.PayrollBalances.Employees as AppliedDeductions
 	where AppliedDeductions.Ref.Date between &amp;YearStart and &amp;PaymentDate

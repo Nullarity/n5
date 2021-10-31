@@ -8,7 +8,7 @@ date = BegOfYear ( CurrentDate () );
 
 p = Call ( "CalculationTypes.Taxes.Create.Params" );
 p.Description = "Подоходный налог (фиксированный процент)";
-p.Method = "Income Tax (fixed percent)";
+p.Method = "Income Tax";
 p.Rate = "12";
 p.RateDate = "10/2018";
 p.Account = "5342";

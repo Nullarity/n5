@@ -19,6 +19,7 @@ Function Post ( Env ) export
 	getData ( Env );
 	commitCompensations ( Env );
 	commitTaxes ( Env );
+	makeAdvances ( Env );
 	flagRegisters ( Env );
 	return true;
 	
@@ -28,6 +29,7 @@ Procedure getData ( Env )
 
 	sqlFields ( Env );
 	sqlCompensations ( Env );
+	sqlAdvances ( Env );
 	sqlTaxes ( Env );
 	getFields ( Env );
 	
@@ -63,6 +65,19 @@ Procedure sqlCompensations ( Env )
 	|group by Compensations.Account, Compensations.Individual, Compensations.Department,
 	|	Compensations.Compensation, ExpenseMethods.Expense, ExpenseMethods.Account
 	|having sum ( ExpenseMethods.Rate * Compensations.AccountingResult ) <> 0
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure sqlAdvances ( Env )
+	
+	s = "
+	|// #Advances
+	|select Advances.Document as Document, Advances.Compensation as Compensation, Advances.Amount as Amount,
+	|	Advances.Paid as Paid, Advances.Employee as Employee, Advances.Account as Account
+	|from Document.Payroll.Advances as Advances
+	|where Advances.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );
 	
@@ -137,9 +152,28 @@ Procedure commitTaxes ( Env )
 	
 EndProcedure 
 
+Procedure makeAdvances ( Env )
+	
+	date = Env.Fields.Date;
+	recordset = Env.Registers.PayAdvances;
+	for each row in Env.Advances do
+		record = recordset.AddExpense ();
+		record.Period = date;
+		record.Document = row.Document;
+		record.Employee = row.Employee;
+		record.Compensation = row.Compensation;
+		record.Account = row.Account;
+		record.Amount = row.Amount;
+		record.Paid = row.Paid;
+	enddo;
+
+EndProcedure
+
 Procedure flagRegisters ( Env )
 	
-	general = Env.Registers.General;
+	registers = Env.Registers;
+	registers.PayAdvances.Write = true;
+	general = registers.General;
 	GeneralRecords.Flush ( general, Env.Buffer );
 	general.Write = true;
 	

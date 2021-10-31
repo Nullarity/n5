@@ -34,6 +34,7 @@ Function FillTables ( Form, Result ) export
 	loadTable ( data.Taxes, object.Taxes );
 	if ( isPayroll ( object ) ) then
 		loadTable ( data.Base, object.Base );
+		loadTable ( data.Advances, object.Advances );
 	endif;
 	fillTotals ( object );
 	Form.Modified = true;
@@ -56,11 +57,12 @@ Procedure Clean ( Form ) export
 	object = Form.Object;
 	if ( Form.CalculationVariant <> 3 ) then
 		object.Compensations.Clear ();
+		if ( isPayroll ( object ) ) then
+			object.Base.Clear ();
+			object.Advances.Clear ();
+		endif;
 	endif;
 	object.Taxes.Clear ();
-	if ( isPayroll ( object ) ) then
-		object.Base.Clear ();
-	endif;
 	
 EndProcedure 
 
@@ -83,9 +85,20 @@ EndProcedure
 &AtServer
 Function allEmployees ( Object )
 	
-	column = ? ( isPayroll ( Object ), "Individual", "Employee" );
-	employees = Object.Compensations.Unload ( , column );
-	CollectionsSrv.Join ( employees, Object.Taxes.Unload ( , column ) );
+	type = TypeOf ( Object.Ref );
+	if ( type = Type ( "DocumentRef.Payroll" ) ) then
+		employees = Object.Compensations.Unload ( , "Individual" );
+		taxes = Object.Taxes.Unload ( , "Individual" );
+	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
+		employees = Object.Compensations.Unload ( , "Employee" );
+		taxes = Object.Taxes.Unload ( , "Employee" );
+	else
+		employees = Object.Compensations.Unload ( , "Individual" );
+		taxes = Object.Taxes.Unload ( , "Employee" );
+		taxes.Columns.Employee.Name = "Individual";
+	endif; 
+	CollectionsSrv.Join ( employees, taxes );
+	column = employees.Columns [ 0 ].Name;
 	employees.GroupBy ( column );
 	return employees.UnloadColumn ( column );
 	
@@ -99,20 +112,30 @@ EndFunction
 
 Procedure CalcEmployees ( Object, Employees ) export
 	
-	if ( isPayroll ( Object ) ) then
+	type = TypeOf ( Object.Ref );
+	if ( type = Type ( "DocumentRef.Payroll" ) ) then
 		column = "Individual";
+		taxColumn = "Individual";
 		amount = "AccountingResult";
 		payroll = true;
-	else
+	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
 		column = "Employee";
+		taxColumn = "Employee";
 		amount = "Amount";
+		payroll = false;
+	else
+		column = "Individual";
+		taxColumn = "Employee";
+		amount = "Result";
 		payroll = false;
 	endif; 
 	search = new Structure ( column );
+	taxSearch = new Structure ( taxColumn );
 	for each employee in Employees do
 		search [ column ] = employee;
+		taxSearch [ taxColumn ] = employee;
 		compensations = Object.Compensations.FindRows ( search );
-		taxes = Object.Taxes.FindRows ( search );
+		taxes = Object.Taxes.FindRows ( taxSearch );
 		row = totalsRow ( Object, employee );
 		if ( compensations.Count () = 0
 			and taxes.Count () = 0 ) then
@@ -194,8 +217,13 @@ Procedure SyncTables ( Form, Tables ) export
 	if ( tableRow = undefined ) then
 		return;
 	endif;
-	filter = new Structure ( "Employee", tableRow.Employee );
 	object = Form.Object;
+	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.PayAdvances" ) ) then
+		employee = tableRow.Individual;
+	else
+		employee = tableRow.Employee;
+	endif;
+	filter = new Structure ( "Employee", employee );
 	items = Form.Items;
 	for each table in Conversion.StringToArray ( Tables ) do
 		rows = object [ table ].FindRows ( filter );
@@ -230,10 +258,13 @@ Procedure EditRow ( Form, NewRow = false ) export
 	p.Insert ( "Company", object.Company );
 	p.Insert ( "NewRow", NewRow );
 	p.Insert ( "ReadOnly", object.Posted );
-	if ( isPayroll ( object ) ) then
+	type = TypeOf ( object.Ref );
+	if ( type = Type ( "DocumentRef.Payroll" ) ) then
 		name = "Document.Payroll.Form.Row";
-	else
+	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
 		name = "Document.PayEmployees.Form.Row";
+	else
+		name = "Document.PayAdvances.Form.Row";
 	endif; 
 	OpenForm ( name, p, Form );
 	
@@ -281,10 +312,13 @@ Procedure EditTaxRow ( Form, NewRow = false ) export
 	p.Insert ( "Company", object.Company );
 	p.Insert ( "NewRow", NewRow );
 	p.Insert ( "ReadOnly", object.Posted );
-	if ( isPayroll ( object ) ) then
+	type = TypeOf ( object.Ref );
+	if ( type = Type ( "DocumentRef.Payroll" ) ) then
 		name = "Document.Payroll.Form.TaxRow";
-	else
+	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
 		name = "Document.PayEmployees.Form.TaxRow";
+	else
+		name = "Document.PayAdvances.Form.TaxRow";
 	endif; 
 	OpenForm ( name, p, Form );
 	
@@ -302,7 +336,13 @@ EndProcedure
 Procedure OpenCalculations ( Form ) export
 	
 	object = Form.Object;
-	column = ? ( isPayroll ( object ), "Individual", "Employee" );
+	type = TypeOf ( Object.Ref );
+	if ( type = Type ( "DocumentRef.Payroll" )
+		or type = Type ( "DocumentRef.PayAdvances" ) ) then
+		column = "Individual";
+	else
+		column = "Employee";
+	endif;
 	rows = object.Compensations.FindRows ( new Structure ( column, Form.TableTotalsRow.Employee ) );
 	if ( rows.Count () = 0 ) then
 		return;

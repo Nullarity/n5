@@ -124,6 +124,7 @@
   <realTimePosting>Deny</realTimePosting>
   <registerRecordsDeletion>AutoDelete</registerRecordsDeletion>
   <registerRecordsWritingOnPost>WriteModified</registerRecordsWritingOnPost>
+  <registerRecords>AccumulationRegister.PayAdvances</registerRecords>
   <registerRecords>AccountingRegister.General</registerRecords>
   <postInPrivilegedMode>true</postInPrivilegedMode>
   <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
@@ -776,6 +777,229 @@
       <maxValue xsi:type="core:UndefinedValue"/>
       <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="30919485-5f37-439e-910a-e38b20557238">
+    <producedTypes>
+      <objectType typeId="ef7fb3e5-58c3-40e8-8f14-b32a0c496150" valueTypeId="55d62ff6-149c-419a-b777-45df23e2ad0c"/>
+      <rowType typeId="dda52f71-f9e4-4632-bf1f-6145550b0cb9" valueTypeId="d04dd420-da18-4dc9-96f2-2d748ea94505"/>
+    </producedTypes>
+    <name>Advances</name>
+    <synonym>
+      <key>en</key>
+      <value>Advances</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Авансы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>!!!</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Used for salary in hand calculations</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Используется при обратном расчете заработной платы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>!!!</value>
+    </toolTip>
+    <attributes uuid="9253cc6a-e0e1-48df-b8c5-7ac9ced43677">
+      <name>Account</name>
+      <synonym>
+        <key>en</key>
+        <value>Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Compensation accounting account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета начисления</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul de calcul</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="14db2a59-9137-4942-bb15-29644ed8af5a">
+      <name>Compensation</name>
+      <synonym>
+        <key>en</key>
+        <value>Compensation</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Начисление</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Calcul</value>
+      </synonym>
+      <type>
+        <types>ChartOfCalculationTypesRef.Compensations</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Compensation</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Начисление</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Calcul</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="3e41530f-f468-444c-8ba5-46ec7c4e7fd7">
+      <name>Document</name>
+      <synonym>
+        <key>en</key>
+        <value>Document</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Документ</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>!!!</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.PayAdvances</types>
+      </type>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>Document.Payroll.Attribute.Company</field>
+      </choiceParameterLinks>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="17ba0520-263c-4eb1-98df-39abbc4cc5ce">
+      <name>Employee</name>
+      <synonym>
+        <key>en</key>
+        <value>Employee</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сотрудник</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Angajat</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Individuals</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Employee</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сотрудник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Angajat</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5ec51d5a-2ac0-47cc-b6f5-dd0cf39653df">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>!!!</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payroll amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>!!!</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Начисленная сумма</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c00d1344-93d7-4cca-9c8d-30807c1f494b">
+      <name>Paid</name>
+      <synonym>
+        <key>en</key>
+        <value>Paid</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>!!!</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Выдано</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Paid amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>!!!</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Выплаченная сумма</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
   </tabularSections>

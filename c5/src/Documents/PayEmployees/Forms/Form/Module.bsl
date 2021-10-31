@@ -14,6 +14,12 @@ var FillDocument;
 var CalculateAll; 
 &AtClient
 var CalculateTaxes; 
+&AtServer
+var FillDocument; 
+&AtServer
+var CalculateAll; 
+&AtServer
+var CalculateTaxes; 
 
 // *****************************************
 // *********** Form events
@@ -294,10 +300,10 @@ Function getFilters ()
 	
 	filters = new Array ();
 	ref = Object.Ref;
-	if ( CalculationVariant = 2 ) then
+	if ( CalculationVariant = CalculateAll ) then
 		item = DC.CreateParameter ( "CalculatingDocument", ref );
 		filters.Add ( item );
-	elsif ( CalculationVariant = 3 ) then
+	elsif ( CalculationVariant = CalculateTaxes ) then
 		item = DC.CreateParameter ( "CalculatingTaxesDocument", ref );
 		filters.Add ( item );
 	endif; 
@@ -632,4 +638,3 @@ EndProcedure
 FillDocument = 1; 
 CalculateAll = 2;
 CalculateTaxes = 3;
-PaymentOrderExists = false;
