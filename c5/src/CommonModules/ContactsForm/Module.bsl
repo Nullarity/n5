@@ -14,12 +14,12 @@ EndProcedure
 Function FullName ( Object ) export
 	
 	parts = new Array ();
-	parts.Add ( Object.FirstName );
-	value = Object.Patronymic;
+	value = Object.LastName;
 	if ( not IsBlankString ( value ) ) then
 		parts.Add ( value );
 	endif; 
-	value = Object.LastName;
+	parts.Add ( Object.FirstName );
+	value = Object.Patronymic;
 	if ( not IsBlankString ( value ) ) then
 		parts.Add ( value );
 	endif; 
