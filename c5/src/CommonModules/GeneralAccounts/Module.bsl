@@ -91,3 +91,40 @@ Function Main ( val Account ) export
 	return q.Execute ().Unload ().Count () = 1;
 
 EndFunction 
+
+Function DimensionsByLevel ( Level, AccountData ) export
+	
+	result = new Array ();
+	dims = AccountData.Dims;
+	top = dims.Count ();
+	list = levelToList ( Level );
+	for each deep in list do
+		if ( deep <= top ) then
+			result.Add ( dims [ deep - 1 ].Dim );
+		endif;
+	enddo;
+	return result;
+
+EndFunction
+
+Function levelToList ( Level )
+	
+	list = new Array ();
+	id = Conversion.EnumItemToName ( Level );
+	for i = 2 to StrLen ( id ) do
+		list.Add ( Number ( Mid ( id, i, 1 ) ) );
+	enddo;
+	return list;
+
+EndFunction
+
+Function LevelDeep ( Level ) export
+	
+	if ( Level.IsEmpty () ) then
+		return 0;
+	else
+		id = Conversion.EnumItemToName ( Level );
+		return StrLen ( id ) - 1;
+	endif;
+
+EndFunction
