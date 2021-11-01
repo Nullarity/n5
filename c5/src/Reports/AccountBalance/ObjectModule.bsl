@@ -162,11 +162,17 @@ EndProcedure
 Procedure addDims ()
 	
 	p = DC.GetParameter ( Params.Settings, "ShowDimensions" );
-	ShowDimensions = ( p.Value <> undefined ) and p.Use;
+	deep = p.Value;
+	ShowDimensions = p.Use and ValueIsFilled ( deep );
 	if ( not ShowDimensions ) then
 		return;
 	endif; 
-	level = Min ( p.Value, AccountData.Fields.Level );
+	dims = GeneralAccounts.DimensionsByLevel ( deep, AccountData );
+	level = dims.Count ();
+	if ( level = 0 ) then
+		return;
+	endif;
+	DC.SetParameter ( Params.Settings, "Dims", dims );
 	groupType = ? ( DimsHierarchy, DataCompositionGroupType.Hierarchy, DataCompositionGroupType.Items );
 	fields = Params.Schema.DataSets.DataSet1.Fields;
 	dims = AccountData.Dims;

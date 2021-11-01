@@ -63,11 +63,11 @@ Procedure readParams ()
 	p = DC.GetParameter ( Params.Settings, "DimsHierarchy" );
 	DimsHierarchy = p.Use and p.Value;
 	p = DC.GetParameter ( Params.Settings, "ShowBalancedDimensions" );
-	if ( p.Value = undefined
-		or not p.Use ) then
+	deep = p.Value;
+	if ( not ( p.Use and ValueIsFilled ( deep ) ) ) then
 		BalancedDimsLevel = 0;
 	else
-		BalancedDimsLevel = p.Value;
+		BalancedDimsLevel = GeneralAccounts.LevelDeep ( deep );
 	endif; 
 	
 EndProcedure 
@@ -192,11 +192,16 @@ EndProcedure
 Procedure addDims ()
 	
 	p = DC.GetParameter ( Params.Settings, "ShowDimensions" );
-	if ( p.Value = undefined
-		or not p.Use ) then
+	deep = p.Value;
+	if ( not ( p.Use and ValueIsFilled ( deep ) ) ) then
 		return;
-	endif; 
-	level = Min ( p.Value, AccountData.Fields.Level );
+	endif;
+	dims = GeneralAccounts.DimensionsByLevel ( deep, AccountData );
+	level = dims.Count ();
+	if ( level = 0 ) then
+		return;
+	endif;
+	DC.SetParameter ( Params.Settings, "Dims", dims );
 	groupType = ? ( DimsHierarchy, DataCompositionGroupType.Hierarchy, DataCompositionGroupType.Items );
 	fields = Params.Schema.DataSets.Balances.Fields;
 	dims = AccountData.Dims;

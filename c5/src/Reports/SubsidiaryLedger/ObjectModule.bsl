@@ -1,6 +1,7 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
 var Params export;
+var AccountFilter;
 var AccountGroup;
 var MonthGroup;
 var LastGroup;
@@ -11,6 +12,7 @@ var DimsHierarchy;
 Procedure OnCompose () export
 
 	readParams ();
+	getAccount ();
 	hideParams ();
 	readGroups ();
 	setAccountsHierarchy ();
@@ -31,6 +33,18 @@ Procedure readParams ()
 	ShowQuantity = p.Use and p.Value;
 	p = DC.GetParameter ( Params.Settings, "DimsHierarchy" );
 	DimsHierarchy = p.Use and p.Value;
+	
+EndProcedure 
+
+Procedure getAccount ()
+	
+	filter = DC.FindFilter ( Params.Settings, "Account" );
+	account = filter.RightValue;
+	if ( filter.Use
+		and filter.ComparisonType = DataCompositionComparisonType.Equal
+		and not account.IsEmpty () ) then
+		AccountFilter = account;
+	endif;
 	
 EndProcedure 
 
@@ -120,11 +134,21 @@ EndProcedure
 Procedure addDims ()
 	
 	p = DC.GetParameter ( Params.Settings, "ShowDimensions" );
-	if ( p.Value = undefined
-		or not p.Use ) then
+	deep = p.Value;
+	if ( not ( p.Use and ValueIsFilled ( deep ) ) ) then
 		return;
-	endif; 
-	level = p.Value;
+	endif;
+	if ( AccountFilter = undefined ) then
+		level = GeneralAccounts.LevelDeep ( deep );
+	else
+		data = GeneralAccounts.GetData ( AccountFilter );
+		dims = GeneralAccounts.DimensionsByLevel ( deep, data );
+		level = dims.Count ();
+		if ( level = 0 ) then
+			return;
+		endif;
+		DC.SetParameter ( Params.Settings, "Dims", dims );
+	endif;
 	groupType = ? ( DimsHierarchy, DataCompositionGroupType.Hierarchy, DataCompositionGroupType.Items );
 	fields = Params.Schema.DataSets.DataSet.Fields;
 	for i = 1 to level do

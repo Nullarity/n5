@@ -1195,7 +1195,7 @@
 	QuantityOpeningBalanceDr, QuantityOpeningBalanceCr, QuantityTurnoverDr,
 	QuantityTurnoverCr, QuantityClosingBalanceDr, QuantityClosingBalanceCr}
 from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, ,
-	{Account.*}, , {Company.* as Company, Currency.* as Currency, ExtDimension1.* as Dim1,
+	{Account.*}, &amp;Dims, {Company.* as Company, Currency.* as Currency, ExtDimension1.* as Dim1,
 	ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Balances
 </query>
 			<autoFillFields>false</autoFillFields>
@@ -1358,7 +1358,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 {select Recorder.*, MonthPeriod, Account.*, Currency.*, BalancedAccount.*,
 	AmountTurnoverCr, AmountTurnoverDr, CurrencyAmountTurnoverCr, CurrencyAmountTurnoverDr, QuantityTurnoverDr,
 	QuantityTurnoverCr, Dim1.*, Dim2.*, Dim3.*}
-from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, {Account.*}, ,
+from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, {Account.*}, &amp;Dims,
 	{Company.* as Company, Currency.* as Currency, ExtDimension1.* as Dim1, ExtDimension2.* as Dim2,
 	ExtDimension3.* as Dim3}, {BalancedAccount.*} ) as Turnovers
 {where 	Turnovers.AmountTurnoverCr as AmountTurnoverCr,
@@ -1615,66 +1615,10 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 			</v8:item>
 		</title>
 		<valueType>
-			<v8:Type>xs:decimal</v8:Type>
-			<v8:NumberQualifiers>
-				<v8:Digits>0</v8:Digits>
-				<v8:FractionDigits>0</v8:FractionDigits>
-				<v8:AllowedSign>Any</v8:AllowedSign>
-			</v8:NumberQualifiers>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.Dimensions</v8:Type>
 		</valueType>
 		<value xsi:nil="true"/>
 		<useRestriction>false</useRestriction>
-		<availableValue>
-			<value xsi:type="xs:decimal">1</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">2</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1,2 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">3</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2, 3 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2, 3 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1, 2, 3 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
 	</parameter>
 	<parameter>
 		<name>ShowCurrency</name>
@@ -1763,6 +1707,21 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 		</valueType>
 		<value xsi:type="xs:boolean">false</value>
 		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Dims</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Dims</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfCharacteristicTypesRef.Dimensions</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -2692,7 +2651,7 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>ShowDimensions</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">1</dcscor:value>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Dimensions._1</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>6dde6974-cccf-485c-97c1-46dce89645dd</dcsset:userSettingID>
 				</dcscor:item>

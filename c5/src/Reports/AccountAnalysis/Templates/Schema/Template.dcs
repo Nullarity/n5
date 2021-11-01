@@ -671,7 +671,7 @@
 	CurrencyAmountClosingBalanceCr, AmountClosingSplittedBalanceCr, AmountClosingSplittedBalanceDr,
 	AmountOpeningSplittedBalanceCr, AmountOpeningSplittedBalanceDr}
 from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto, ,
-	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
+	Account = &amp;Account, &amp;Dims, {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Balances
 
 </query>
@@ -890,7 +890,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 	Currency.*, Company.*, AmountDr, AmountCr, CurrencyAmountDr, CurrencyAmountCr,
 	QuantityCr, QuantityDr, Dim1.*, Dim2.*, Dim3.*, BalancedDim1.*, BalancedDim2.*, BalancedDim3.*}
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto,
-	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
+	Account = &amp;Account, &amp;Dims, {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Turnovers
 </query>
 		<autoFillFields>false</autoFillFields>
@@ -1178,66 +1178,10 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 			</v8:item>
 		</title>
 		<valueType>
-			<v8:Type>xs:decimal</v8:Type>
-			<v8:NumberQualifiers>
-				<v8:Digits>0</v8:Digits>
-				<v8:FractionDigits>0</v8:FractionDigits>
-				<v8:AllowedSign>Any</v8:AllowedSign>
-			</v8:NumberQualifiers>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.Dimensions</v8:Type>
 		</valueType>
 		<value xsi:nil="true"/>
 		<useRestriction>false</useRestriction>
-		<availableValue>
-			<value xsi:type="xs:decimal">1</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">2</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1,2 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">3</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2, 3 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2, 3 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1, 2, 3 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
 	</parameter>
 	<parameter>
 		<name>ShowCurrency</name>
@@ -1300,66 +1244,10 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 			</v8:item>
 		</title>
 		<valueType>
-			<v8:Type>xs:decimal</v8:Type>
-			<v8:NumberQualifiers>
-				<v8:Digits>0</v8:Digits>
-				<v8:FractionDigits>0</v8:FractionDigits>
-				<v8:AllowedSign>Any</v8:AllowedSign>
-			</v8:NumberQualifiers>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.Dimensions</v8:Type>
 		</valueType>
 		<value xsi:nil="true"/>
 		<useRestriction>false</useRestriction>
-		<availableValue>
-			<value xsi:type="xs:decimal">1</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">2</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1,2 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
-		<availableValue>
-			<value xsi:type="xs:decimal">3</value>
-			<presentation xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>1, 2, 3 уровня</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>1, 2, 3 level</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>1, 2, 3 nivel</v8:content>
-				</v8:item>
-			</presentation>
-		</availableValue>
 	</parameter>
 	<parameter>
 		<name>AccountsHierarchy</name>
@@ -1404,6 +1292,21 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 		</valueType>
 		<value xsi:type="xs:boolean">false</value>
 		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Dims</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Dims</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfCharacteristicTypesRef.Dimensions</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<settingsVariant>
 		<dcsset:name>Default</dcsset:name>
@@ -1537,12 +1440,12 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Обороты</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Turnovers</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Обороты</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1729,7 +1632,7 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>ShowDimensions</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">1</dcscor:value>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Dimensions._1</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>5055970f-34dd-4335-8240-d76def40373c</dcsset:userSettingID>
 				</dcscor:item>
@@ -1778,7 +1681,7 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>ShowBalancedDimensions</dcscor:parameter>
-					<dcscor:value xsi:type="xs:decimal">1</dcscor:value>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Dimensions._1</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>38471698-c113-49a0-ab6d-24eddf8932a2</dcsset:userSettingID>
 				</dcscor:item>
@@ -1823,6 +1726,11 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 							<v8:content>Afișați detaliile ierarhic</v8:content>
 						</v8:item>
 					</dcsset:userSettingPresentation>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Dims</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
@@ -2009,12 +1917,12 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Обороты</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Turnovers</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Обороты</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
