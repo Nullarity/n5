@@ -68,6 +68,7 @@ Procedure markDeletion ( Flag )
 	for each version in versions do
 		version.GetObject ().SetDeletionMark ( Flag );
 	enddo; 
+	cleanReadingLog ();
 	
 EndProcedure 
 
@@ -84,6 +85,25 @@ Function getVersions ()
 	return q.Execute ().Unload ().UnloadColumn ( "Ref" );
 	
 EndFunction 
+
+Procedure cleanReadingLog ()
+	
+	s = "
+	|select Log.Date as Date, Log.ID as ID
+	|from InformationRegister.ReadingLog as Log
+	|where Log.Document = &Document
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Document", Ref );
+	selection = q.Execute ().Select ();
+	r = InformationRegisters.ReadingLog.CreateRecordManager ();
+	while ( selection.Next () ) do
+		r.Date = selection.Date;
+		r.ID = selection.ID;
+		r.Delete ();
+	enddo;
+	
+EndProcedure
 
 Procedure BeforeDelete ( Cancel )
 	

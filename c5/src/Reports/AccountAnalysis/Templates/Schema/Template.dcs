@@ -890,7 +890,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 	Currency.*, Company.*, AmountDr, AmountCr, CurrencyAmountDr, CurrencyAmountCr,
 	QuantityCr, QuantityDr, Dim1.*, Dim2.*, Dim3.*, BalancedDim1.*, BalancedDim2.*, BalancedDim3.*}
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto,
-	Account = &amp;Account, &amp;Dims, {Company.* as Company, Currency.* as Currency,
+	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Turnovers
 </query>
 		<autoFillFields>false</autoFillFields>
@@ -1726,11 +1726,6 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 							<v8:content>Afișați detaliile ierarhic</v8:content>
 						</v8:item>
 					</dcsset:userSettingPresentation>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Dims</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>

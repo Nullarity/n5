@@ -26,7 +26,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			fillNew ();
 		else
 			baseType = TypeOf ( Parameters.Basis );
-			if ( baseType = Type ( "DocumentRef.PayEmployees" ) ) then
+			if ( baseType = Type ( "DocumentRef.PayEmployees" )
+				or baseType = Type ( "DocumentRef.PayAdvances" ) ) then
 				fillByPayEmployees ();
 			endif; 
 		endif; 
@@ -177,6 +178,7 @@ EndProcedure
 Procedure fillByPayEmployees ()
 	
 	SQL.Init ( Env );
+	Env.Insert ( "BaseName", Metadata.FindByType ( TypeOf ( Parameters.Basis ) ).Name );
 	sqlPayEmployees ();
 	Env.Q.SetParameter ( "Base", Parameters.Basis );
 	SQL.Perform ( Env );
@@ -199,7 +201,7 @@ Procedure sqlPayEmployees ()
 	|select Documents.Amount as Amount, Documents.BankAccount as BankAccount,
 	|	Documents.BankAccount.Bank.Organization as Recipient, Documents.CashFlow as CashFlow,
 	|	Documents.Company as Company, Documents.Posted as Posted
-	|from Document.PayEmployees as Documents
+	|from Document." + Env.BaseName + " as Documents
 	|where Documents.Ref = &Base
 	|";
 	Env.Selection.Add ( s );

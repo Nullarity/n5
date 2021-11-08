@@ -33,3 +33,15 @@ Procedure Constructor ( Object ) export
 	enddo;
 
 EndProcedure
+
+Function IsFolder ( Value ) export
+	
+	meta = Metadata.FindByType ( TypeOf ( value ) );
+	folder = meta <> undefined
+	and Metadata.Catalogs.Contains ( meta )
+	and meta.Hierarchical
+	and meta.HierarchyType = Metadata.ObjectProperties.HierarchyType.HierarchyFoldersAndItems
+	and DF.Pick ( value, "IsFolder", false );
+	return folder;
+
+EndFunction

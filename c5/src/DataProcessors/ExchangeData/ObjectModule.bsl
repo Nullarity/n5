@@ -773,7 +773,7 @@ EndProcedure
 Function getFTPStandartClient ()
 	
 	try
-		FTP = new FTPConnection ( ExchNode.ServerFTPLoad, ExchNode.PortFTPLoad ,
+		FTP = new FTPConnection ( ExchNode.ServerFTPLoad, ExchNode.PortFTPLoad,
 			ExchNode.UserFTPLoad, ExchNode.PasswordFTPLoad, , true );	
 	except
 		FTP = Undefined;

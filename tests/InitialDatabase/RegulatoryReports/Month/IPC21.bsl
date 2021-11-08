@@ -9,27 +9,6 @@
 	|from Catalog.Companies as Companies
 	|where Companies.Ref = &Company
 	|;
-	|// Payroll
-	|select Payroll.Ref as Ref, Payroll.Employee as Employee, Payroll.Individual as Individual,
-	|	Payroll.Position as Position, Payroll.DateStart as DateStart, Payroll.DateEnd as DateEnd,
-	|	Payroll.AccountingResult as Amount, Payroll.OnCompany as OnCompany,
-	|	Payroll.Compensation.Method as Method,
-	|	Payroll.Compensation.Method in (
-	|		value ( Enum.Calculations.SickDays ),
-	|		value ( Enum.Calculations.SickDaysChild ),
-	|		value ( Enum.Calculations.SickOnlySocial ),
-	|		value ( Enum.Calculations.SickProduction )
-	|	) as Sick
-	|into Payroll
-	|from Document.Payroll.Compensations as Payroll
-	|where Payroll.Ref.Posted
-	|and Payroll.Ref.Date between &DateStart and &DateEnd
-	|and Payroll.Ref.Company = &Company
-	|;
-	|// @Salary
-	|select sum ( Payroll.Amount ) as Amount
-	|from Payroll as Payroll
-	|;
 	|// @Taxes
 	|select sum ( case when Taxes.Method in ( value ( Enum.Calculations.IncomeTax ) ) then Taxes.Result else 0 end ) as Income,
 	|	sum ( case when Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ) ) then Taxes.Result else 0 end ) as Medical
@@ -135,10 +114,18 @@
 	|and Employees.Ref.Date between &DateStart and &DateEnd
 	|and Employees.Ref.Company = &Company
 	|;
+	|// Employee
+	|select distinct Payroll.Employee as Employee
+	|into PayrollEmployees
+	|from Document.Payroll.Compensations as Payroll
+	|where Payroll.Ref.Posted
+	|and Payroll.Ref.Date between &DateStart and &DateEnd
+	|and Payroll.Ref.Company = &Company
+	|;
 	|// Insurance
 	|select Insurance.Employee as Employee, Insurance.Category as Category
 	|into Insurance
-	|from InformationRegister.Insurance.SliceLast ( &DateEnd, Employee in ( select distinct Employee from Payroll ) ) as Insurance
+	|from InformationRegister.Insurance.SliceLast ( &DateEnd, Employee in ( select distinct Employee from PayrollEmployees ) ) as Insurance
 	|;
 	|// Categories
 	|select Settings.Parameter as Type, Settings.Value as Category
@@ -158,14 +145,20 @@
 	|	value ( ChartOfCharacteristicTypes.Settings.VacationWithoutPay )
 	|) ) as Settings
 	|;
-	|// #Table3
-	|select Payroll.Employee.Description as Employee, Payroll.Individual.PIN as PIN, Payroll.Individual.SIN as SIN,
-	|	Positions.ClassifierCode as PositionCode, Payroll.DateStart as DateStart, Payroll.DateEnd as DateEnd,
-	|	isnull ( Taxes.Result, 0 ) as SocialInsurance, PayrollTaxes.Rate as Rate,
+	|// Payroll
+	|select Payroll.Ref as Ref, Payroll.Employee as Employee, Payroll.Individual as Individual,
+	|	Payroll.Position as Position, Payroll.DateStart as DateStart, Payroll.DateEnd as DateEnd,
+	|	sum ( Payroll.AccountingResult ) as Amount, Payroll.OnCompany as OnCompany,
 	|	isnull ( Categories.Category.Code, StandardCategory.Category.Code ) as Category,
-	|	case when Payroll.Sick then 0 else Payroll.Amount end as Salary,
-	|	case when Payroll.Sick then Payroll.Amount else 0 end as Disability
-	|from Payroll as Payroll
+	|	Payroll.Compensation as Compensation,
+	|	Payroll.Compensation.Method in (
+	|		value ( Enum.Calculations.SickDays ),
+	|		value ( Enum.Calculations.SickDaysChild ),
+	|		value ( Enum.Calculations.SickOnlySocial ),
+	|		value ( Enum.Calculations.SickProduction )
+	|	) as Sick
+	|into Payroll
+	|from Document.Payroll.Compensations as Payroll
 	|	//
 	|	// StandardCategory
 	|	//
@@ -177,29 +170,48 @@
 	|	left join Categories as Categories
 	|	on Categories.Type =
 	|		case
-	|			when Payroll.Method = value ( Enum.Calculations.ChildCare ) then value ( ChartOfCharacteristicTypes.Settings.ChildCare )
-	|			when Payroll.Method = value ( Enum.Calculations.ExtendedVacation ) then value ( ChartOfCharacteristicTypes.Settings.ExtendedVacation )
-	|			when Payroll.Method = value ( Enum.Calculations.ExtraChildCare ) then value ( ChartOfCharacteristicTypes.Settings.ExtraChildCare )
-	|			when Payroll.Method = value ( Enum.Calculations.PaternityVacation ) then value ( ChartOfCharacteristicTypes.Settings.PaternityVacation )
-	|			when Payroll.Method = value ( Enum.Calculations.SickDays )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.ChildCare ) then value ( ChartOfCharacteristicTypes.Settings.ChildCare )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.ExtendedVacation ) then value ( ChartOfCharacteristicTypes.Settings.ExtendedVacation )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.ExtraChildCare ) then value ( ChartOfCharacteristicTypes.Settings.ExtraChildCare )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.PaternityVacation ) then value ( ChartOfCharacteristicTypes.Settings.PaternityVacation )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickDays )
 	|				and Payroll.OnCompany then value ( ChartOfCharacteristicTypes.Settings.SickDays )
-	|			when Payroll.Method = value ( Enum.Calculations.SickDays )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickDays )
 	|				and not Payroll.OnCompany then value ( ChartOfCharacteristicTypes.Settings.SickDaysSocial )
-	|			when Payroll.Method = value ( Enum.Calculations.Vacation ) then value ( ChartOfCharacteristicTypes.Settings.Vacation )
-	|			when Payroll.Method = value ( Enum.Calculations.SickDaysChild ) then value ( ChartOfCharacteristicTypes.Settings.SickDaysChild )
-	|			when Payroll.Method = value ( Enum.Calculations.SickOnlySocial ) then value ( ChartOfCharacteristicTypes.Settings.SickOnlySocial )
-	|			when Payroll.Method = value ( Enum.Calculations.SickProduction )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.Vacation ) then value ( ChartOfCharacteristicTypes.Settings.Vacation )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickDaysChild ) then value ( ChartOfCharacteristicTypes.Settings.SickDaysChild )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickOnlySocial ) then value ( ChartOfCharacteristicTypes.Settings.SickOnlySocial )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickProduction )
 	|				and Payroll.OnCompany then value ( ChartOfCharacteristicTypes.Settings.SickProduction )
-	|			when Payroll.Method = value ( Enum.Calculations.SickProduction )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.SickProduction )
 	|				and not Payroll.OnCompany then value ( ChartOfCharacteristicTypes.Settings.SickProductionSocial )
-	|			when Payroll.Method = value ( Enum.Calculations.VacationWithoutPay ) then value ( ChartOfCharacteristicTypes.Settings.VacationWithoutPay )
+	|			when Payroll.Compensation.Method = value ( Enum.Calculations.VacationWithoutPay ) then value ( ChartOfCharacteristicTypes.Settings.VacationWithoutPay )
 	|		end
+	|where Payroll.Ref.Posted
+	|and Payroll.Ref.Date between &DateStart and &DateEnd
+	|and Payroll.Ref.Company = &Company
+	|group by Payroll.Ref, Payroll.Employee, Payroll.Individual, Payroll.Position, Payroll.DateStart, Payroll.DateEnd,
+	|	Payroll.OnCompany, isnull ( Categories.Category.Code, StandardCategory.Category.Code ), Payroll.Compensation
+	|;
+	|// @Salary
+	|select sum ( Payroll.Amount ) as Amount
+	|from Payroll as Payroll
+	|;
+	|// #Table3
+	|select Payroll.Employee.FirstName as FirstName, Payroll.Employee.LastName as LastName,
+	|	Payroll.Individual.PIN as PIN, Payroll.Individual.SIN as SIN,
+	|	Positions.ClassifierCode as PositionCode, Payroll.DateStart as DateStart, Payroll.DateEnd as DateEnd,
+	|	sum ( isnull ( Taxes.Result, 0 ) ) as SocialInsurance, PayrollTaxes.Rate as Rate, Payroll.Category as Category,
+	|	sum ( case when Payroll.Sick then 0 else Payroll.Amount end ) as Salary,
+	|	sum ( case when Payroll.Sick then Payroll.Amount else 0 end ) as Disability
+	|from Payroll as Payroll
 	|	//
 	|	// Taxes
 	|	//
 	|	left join Document.Payroll.Taxes as Taxes
 	|	on Taxes.Ref = Payroll.Ref
 	|	and Taxes.Employee = Payroll.Employee
+	|	and Taxes.Compensation = Payroll.Compensation
 	|	and Taxes.DateStart = Payroll.DateStart
 	|	and Taxes.DateEnd = Payroll.DateEnd
 	|	and Taxes.Method = value ( Enum.Calculations.SocialInsurance )
@@ -214,6 +226,10 @@
 	|	//
 	|	left join Catalog.PositionsClassifier as Positions
 	|	on Positions.Code = Payroll.Position.PositionCode
+	|where Payroll.Sick
+	|or not Taxes.Result is null
+	|group by Payroll.Employee, Payroll.Individual, Positions.ClassifierCode, Payroll.DateStart, Payroll.DateEnd,
+	|	PayrollTaxes.Rate, Payroll.Category
 	|order by Payroll.Employee.Description, Payroll.DateStart, Payroll.DateEnd
 	|";
 	Env.Selection.Add ( str );	
@@ -277,11 +293,16 @@
 	// Table3
 	// *********
 	
-	line = 1;
+	line = 0;
 	rowNumber = 191;
+	pin = undefined;
 	for each row in Env.Table3 do
+		if ( pin <> row.PIN ) then
+			line = line + 1;
+			pin = row.PIN;
+		endif;
 		FieldsValues [ "A" + rowNumber ] = line;
-		FieldsValues [ "B" + rowNumber ] = row.Employee;
+		FieldsValues [ "B" + rowNumber ] = Upper ( TrimAll ( row.LastName ) + " " + TrimAll ( row.FirstName ) );
 		FieldsValues [ "C" + rowNumber ] = row.PIN;
 		FieldsValues [ "D" + rowNumber ] = row.SIN;
 		FieldsValues [ "E" + rowNumber ] = row.DateStart;
@@ -293,7 +314,6 @@
 		FieldsValues [ "J" + rowNumber ] = row.Disability;
 		FieldsValues [ "K" + rowNumber ] = row.SocialInsurance;
 		rowNumber = rowNumber + 1;
-		line = line + 1;
 	enddo;
 	
 	~draw:

@@ -113,47 +113,28 @@
 			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>Paid</dataPath>
-			<field>Paid</field>
+			<dataPath>Deposited</dataPath>
+			<field>Deposited</field>
 			<title xsi:type="v8:LocalStringType">
 				<v8:item>
 					<v8:lang>en</v8:lang>
-					<v8:content>Paid</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Выплачено</v8:content>
+					<v8:content>Deposited</v8:content>
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
-					<v8:content>Achitat</v8:content>
+					<v8:content>Depozitat</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Депонировано</v8:content>
 				</v8:item>
 			</title>
-			<appearance>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Format</dcscor:parameter>
-					<dcscor:value xsi:type="v8:LocalStringType">
-						<v8:item>
-							<v8:lang>en</v8:lang>
-							<v8:content>NFD=2; NN=0</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>NFD=2; NN=0</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ro</v8:lang>
-							<v8:content>NFD=2; NN=0</v8:content>
-						</v8:item>
-					</dcscor:value>
-				</dcscor:item>
-			</appearance>
 		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Balances Deposits
 select Balances.ExtDimension1 as Employee, Balances.AmountOpeningBalanceCr as DepositBegin, 
-	AmountClosingBalanceCr as DepositEnd, Balances.AmountTurnoverDr as Paid
-{select	Employee.*, DepositBegin, DepositEnd, Paid}	
+	AmountClosingBalanceCr as DepositEnd, Balances.AmountTurnoverDr as Deposited
+{select	Employee.*, DepositBegin, DepositEnd, Deposited}	
 from AccountingRegister.General.BalanceAndTurnovers ( &amp;DateStart, &amp;DateEnd, , , Account in ( 
 		select Settings.Value as Account
 		from InformationRegister.Settings as Settings
@@ -436,11 +417,39 @@ and Compensations.Ref.Posted
 			<dataPath>Employee</dataPath>
 			<field>Employee</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Advance</dataPath>
+			<field>Advance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Advance</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Inclusiv avansurile</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Из них авансом</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Pay employees totals
-select Totals.Employee as Employee, Totals.Amount as Brutto, Totals.Net as Net
-{select Brutto, Net, Employee.*}
+select Totals.Employee as Employee, Totals.Amount as Brutto,
+	case when Totals.Ref.Method = value ( Enum.PaymentMethods.EmptyRef ) then 0 else Totals.Net end as Net,
+	0 as Advance
+{select Brutto, Net, Advance, Employee.*}
 from Document.PayEmployees.Totals as Totals
+{where Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee}
+where Totals.Ref.Date between &amp;DateStart and &amp;DateEnd
+and Totals.Ref.Posted
+union all
+select Totals.Employee, Totals.Amount,
+	case when Totals.Ref.Method = value ( Enum.PaymentMethods.EmptyRef ) then 0 else Totals.Net end,
+	case when Totals.Ref.Method = value ( Enum.PaymentMethods.EmptyRef ) then 0 else Totals.Net end
+from Document.PayAdvances.Totals as Totals
 {where Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee}
 where Totals.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Totals.Ref.Posted	</query>
@@ -525,6 +534,12 @@ from Document.PayEmployees.Taxes as Taxes
 {where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
 where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Taxes.Ref.Posted
+union all
+select Taxes.Employee, Taxes.Deductions, Taxes.Tax, Taxes.Result
+from Document.PayAdvances.Taxes as Taxes
+{where Taxes.Ref.Company = &amp;Company, Taxes.Employee = &amp;Employee}
+where Taxes.Ref.Date between &amp;DateStart and &amp;DateEnd
+and Taxes.Ref.Posted
 </query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -592,8 +607,19 @@ from Document.Payroll.Compensations as Compensations
 where Compensations.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Compensations.Ref.Posted
 union all
-select distinct Totals.Employee, Personnel.Employee.Code, Personnel.Position as Position, Personnel.Employee
+select distinct Totals.Employee, Personnel.Employee.Code, Personnel.Position, Personnel.Employee
 from Document.PayEmployees.Totals as Totals
+	//
+	//	Personnel
+	//
+	{left join InformationRegister.Personnel.SliceLast ( &amp;DateEnd ) as Personnel
+	on Personnel.Employee.Individual = Totals.Employee}
+{where Personnel.Department = &amp;Department, Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee}
+where Totals.Ref.Date between &amp;DateStart and &amp;DateEnd
+and Totals.Ref.Posted
+union all
+select distinct Totals.Employee, Personnel.Employee.Code, Personnel.Position, Personnel.Employee
+from Document.PayAdvances.Totals as Totals
 	//
 	//	Personnel
 	//
@@ -757,43 +783,6 @@ from Company as Company
 		</title>
 	</calculatedField>
 	<calculatedField>
-		<dataPath>Advance</dataPath>
-		<expression>case when Net &lt; Paid then Paid - Net else 0 end</expression>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Advance</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ru</v8:lang>
-				<v8:content>Из них авансом</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ro</v8:lang>
-				<v8:content>Inclusiv avansurile</v8:content>
-			</v8:item>
-		</title>
-		<appearance>
-			<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-				<dcscor:parameter>Format</dcscor:parameter>
-				<dcscor:value xsi:type="v8:LocalStringType">
-					<v8:item>
-						<v8:lang>en</v8:lang>
-						<v8:content>NFD=2; NN=0</v8:content>
-					</v8:item>
-					<v8:item>
-						<v8:lang>ru</v8:lang>
-						<v8:content>NFD=2; NN=0</v8:content>
-					</v8:item>
-					<v8:item>
-						<v8:lang>ro</v8:lang>
-						<v8:content>NFD=2; NN=0</v8:content>
-					</v8:item>
-				</dcscor:value>
-			</dcscor:item>
-		</appearance>
-	</calculatedField>
-	<calculatedField>
 		<dataPath>Footer</dataPath>
 		<expression>""</expression>
 		<title xsi:type="v8:LocalStringType">
@@ -860,14 +849,6 @@ from Company as Company
 		<expression>Sum(TaxAmount)</expression>
 	</totalField>
 	<totalField>
-		<dataPath>Paid</dataPath>
-		<expression>Sum(Paid)</expression>
-	</totalField>
-	<totalField>
-		<dataPath>Advance</dataPath>
-		<expression>case when sum ( Net ) &lt; sum ( Paid ) then sum ( Paid ) - sum ( Net ) else 0 end</expression>
-	</totalField>
-	<totalField>
 		<dataPath>ScheduledDays</dataPath>
 		<expression>Max(ScheduledDays)</expression>
 		<group>Employee</group>
@@ -884,6 +865,14 @@ from Company as Company
 	<totalField>
 		<dataPath>Days</dataPath>
 		<expression>Sum(Days)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>Deposited</dataPath>
+		<expression>Sum(Deposited)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>Advance</dataPath>
+		<expression>Sum(Advance)</expression>
 	</totalField>
 	<parameter>
 		<name>DateEnd</name>
@@ -982,28 +971,6 @@ from Company as Company
 		</inputParameters>
 	</parameter>
 	<parameter>
-		<name>Company</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Company</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ru</v8:lang>
-				<v8:content>Компания</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ro</v8:lang>
-				<v8:content>Companie</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Companies</v8:Type>
-		</valueType>
-		<value xsi:nil="true"/>
-		<useRestriction>false</useRestriction>
-	</parameter>
-	<parameter>
 		<name>Employee</name>
 		<title xsi:type="v8:LocalStringType">
 			<v8:item>
@@ -1021,6 +988,28 @@ from Company as Company
 		</title>
 		<valueType>
 			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Individuals</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Company</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Company</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Компания</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Companie</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Companies</v8:Type>
 		</valueType>
 		<value xsi:nil="true"/>
 		<useRestriction>false</useRestriction>
@@ -1975,15 +1964,15 @@ from Company as Company
 						<dcsat:value xsi:type="v8:LocalStringType">
 							<v8:item>
 								<v8:lang>en</v8:lang>
-								<v8:content>Net</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>К выплате</v8:content>
+								<v8:content>Deposited</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
-								<v8:content>Plata</v8:content>
+								<v8:content>Depozitat</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Депонировано</v8:content>
 							</v8:item>
 						</dcsat:value>
 					</dcsat:item>
@@ -2799,9 +2788,6 @@ from Company as Company
 					<dcsset:field>Net</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
-					<dcsset:field>Paid</dcsset:field>
-				</dcsset:item>
-				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>PayrollBegin</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
@@ -2852,17 +2838,17 @@ from Company as Company
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Company</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-					<dcsset:viewMode>Normal</dcsset:viewMode>
-					<dcsset:userSettingID>9b829ac9-9742-4779-9fa1-5b23d8ffd8ed</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>Employee</dcscor:parameter>
 					<dcscor:value xsi:nil="true"/>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>34df8a25-8b16-4a2d-9542-4e0f045e7d96</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Company</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>9b829ac9-9742-4779-9fa1-5b23d8ffd8ed</dcsset:userSettingID>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
@@ -3056,10 +3042,10 @@ from Company as Company
 							<dcsset:field>PayrollEnd</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Net</dcsset:field>
+							<dcsset:field>Deposited</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Paid</dcsset:field>
+							<dcsset:field>Net</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Advance</dcsset:field>

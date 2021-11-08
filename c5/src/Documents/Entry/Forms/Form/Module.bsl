@@ -13,6 +13,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	PettyCash.Read ( ThisObject );
 	readOperation ();
+	rememberOperation ();
 	enableWarning ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
@@ -21,10 +22,18 @@ EndProcedure
 &AtServer
 Procedure readOperation ()
 	
-	obj = ? ( Object.Operation.IsEmpty (), Catalogs.Operations.CreateItem (), Object.Operation.GetObject () );
+	value = Object.Operation;
+	obj = ? ( value.IsEmpty (), Catalogs.Operations.CreateItem (), value.GetObject () );
 	ValueToFormAttribute ( obj, "Operation" );
 	
 EndProcedure 
+
+&AtServer
+Procedure rememberOperation ()
+	
+	OldOperation = Object.Operation;
+
+EndProcedure
 
 &AtClientAtServerNoContext
 Procedure enableWarning ( Form )
@@ -34,7 +43,6 @@ Procedure enableWarning ( Form )
 	else
 		Form.Items.Operation.WarningOnEditRepresentation = WarningOnEditRepresentation.Show;
 	endif; 
-	
 
 EndProcedure 
 
@@ -155,9 +163,24 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 EndProcedure
 
 &AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	synchCash ( CurrentObject );
+
+EndProcedure
+
+&AtServer
+Procedure synchCash ( CurrentObject )
+	
+	CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesOldOperation (), OldOperation );
+
+EndProcedure
+
+&AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	PettyCash.Read ( ThisObject );
+	rememberOperation ();
 	Appearance.Apply ( ThisObject, "Voucher" );
 	Appearance.Apply ( ThisObject, "Receipt" );
 	

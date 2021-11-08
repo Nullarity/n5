@@ -154,21 +154,3 @@ Procedure OpenSettings ( Command )
 	Items.UserSettings.ViewMode = ? ( Items.UserSettingsCmdOpenSettings.Check, DataCompositionSettingsViewMode.All, DataCompositionSettingsViewMode.QuickAccess );
 	
 EndProcedure
-
-// *****************************************
-// *********** Group UserSettings
-
-&AtClient
-Procedure UserSettingsOnChange ( Item )
-	
-	applyUserSetting ();
-	
-EndProcedure
-
-&AtClient
-Procedure applyUserSetting ()
-	
-	setting = Composer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow );
-	ReporterForm.ApplySetting ( Report, Composer, setting );
-
-EndProcedure 

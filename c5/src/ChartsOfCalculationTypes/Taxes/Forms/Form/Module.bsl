@@ -56,6 +56,7 @@ Procedure readAppearance ()
 	|ActualRates show ShowCurrentRates;
 	|PayrollTaxes show not ShowCurrentRates;
 	|Net show inlist ( Object.Method, Enum.Calculations.FixedAmount, Enum.Calculations.Percent );
+	|Expense show not Object.Net;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -114,6 +115,23 @@ Procedure ShowRecords ( Command )
 	
 	toggleRates ();
 
+EndProcedure
+
+&AtClient
+Procedure NetOnChange ( Item )
+
+	applyNetFlag ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyNetFlag ()
+	
+	if ( Object.Net ) then
+		Object.Expense = undefined;
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Net" );
+	
 EndProcedure
 
 // *****************************************

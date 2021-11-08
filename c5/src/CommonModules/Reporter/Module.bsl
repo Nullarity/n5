@@ -829,13 +829,7 @@ Procedure fixComparison ( Filter )
 		endif; 
 		value = Filter.RightValue;
 	endif; 
-	meta = Metadata.FindByType ( TypeOf ( value ) );
-	folder = meta <> undefined
-	and Metadata.Catalogs.Contains ( meta )
-	and meta.Hierarchical
-	and meta.HierarchyType = Metadata.ObjectProperties.HierarchyType.HierarchyFoldersAndItems
-	and DF.Pick ( value, "IsFolder", false );
-	if ( folder ) then
+	if ( Metafields.IsFolder ( value ) ) then
 		Filter.ComparisonType = candidate;
 	endif; 
 	

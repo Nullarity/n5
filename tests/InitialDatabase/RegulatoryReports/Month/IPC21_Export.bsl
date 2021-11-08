@@ -21,9 +21,15 @@ EndProcedure
 Procedure setData ( Env, Ref ) 
 
 	s = "
-	|select Fields.Field as Field, Fields.Value as Value
-	|from InformationRegister.ReportFields as Fields
-	|where Fields.Report = &Report
+	|select ReportFields.Field as Field, isnull ( UserFields.Value, ReportFields.Value ) as Value
+	|from InformationRegister.ReportFields as ReportFields
+	|	//
+	|	// UserFields
+	|	//
+	|	left join InformationRegister.UserFields as UserFields
+	|	on UserFields.Field = ReportFields.Field
+	|	and UserFields.Report = ReportFields.Report
+	|where ReportFields.Report = &Report
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Report", Ref );
@@ -237,7 +243,7 @@ Function getDinamicRows ( Env, FirstRow, LastRow, MaxColumns, Columns = undefine
 			value = data [ Columns [ column - 1 ] + i ];
 			if ( column = 8 ) then
 				id = "71";
-				value = ? ( value = undefined, undefined, "" + value + "%" );
+				value = ? ( value = undefined, "0", "" + value + "%" );
 			elsif ( column > 8 ) then
 				id = "" + ( column - 1 );
 			else

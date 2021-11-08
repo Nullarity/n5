@@ -82,10 +82,10 @@ Procedure addDependency ( Body, Object, ProcedureName )
 		report = match.Groups [ 3 ];
 		last = Find ( method, "last" ) > 0;
 		if ( last ) then
-			reportName = ? ( report = undefined, ? ( Object.Master, Object.Name, DF.Pick ( Object.MasterReport, "Name" ) ), report );
+			reportName = ? ( report = "", ? ( Object.Master, Object.Name, DF.Pick ( Object.MasterReport, "Name" ) ), report );
 			mainReport = RegulatoryReports.Search ( Object, reportName, true );
 		else
-			if ( report = undefined ) then
+			if ( report = "" ) then
 				mainReport = ref;
 			else
 				mainReport = RegulatoryReports.Search ( Object, report, false );

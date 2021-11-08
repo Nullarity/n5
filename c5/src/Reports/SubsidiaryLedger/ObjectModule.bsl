@@ -38,13 +38,7 @@ EndProcedure
 
 Procedure getAccount ()
 	
-	filter = DC.FindFilter ( Params.Settings, "Account" );
-	account = filter.RightValue;
-	if ( filter.Use
-		and filter.ComparisonType = DataCompositionComparisonType.Equal
-		and not account.IsEmpty () ) then
-		AccountFilter = account;
-	endif;
+	AccountFilter = DC.FindValue ( Params.Settings, "Account" );
 	
 EndProcedure 
 
@@ -138,20 +132,24 @@ Procedure addDims ()
 	if ( not ( p.Use and ValueIsFilled ( deep ) ) ) then
 		return;
 	endif;
+	set = new Array ();
+	accountDims = undefined;
 	if ( AccountFilter = undefined ) then
-		level = GeneralAccounts.LevelDeep ( deep );
+		set = GeneralAccounts.LevelToList ( deep );
 	else
 		data = GeneralAccounts.GetData ( AccountFilter );
+		accountDims = data.Dims;
 		dims = GeneralAccounts.DimensionsByLevel ( deep, data );
-		level = dims.Count ();
-		if ( level = 0 ) then
+		if ( dims.Count () = 0 ) then
 			return;
 		endif;
-		DC.SetParameter ( Params.Settings, "Dims", dims );
+		for each dim in dims do
+			set.Add ( dim.Position );
+		enddo;
 	endif;
 	groupType = ? ( DimsHierarchy, DataCompositionGroupType.Hierarchy, DataCompositionGroupType.Items );
 	fields = Params.Schema.DataSets.DataSet.Fields;
-	for i = 1 to level do
+	for each i in set do
 		LastGroup = LastGroup.Structure.Add ();
 		field = LastGroup.GroupFields.Items.Add ( Type ( "DataCompositionGroupField" ) );
 		field.Use = true;
@@ -160,6 +158,9 @@ Procedure addDims ()
 		LastGroup.Selection.Items.Add ( Type ( "DataCompositionAutoSelectedField" ) );
 		LastGroup.Order.Items.Add ( Type ( "DataCompositionAutoOrderItem" ) );
 		field = fields.Find ( "Dim" + i );
+		if ( accountDims <> undefined ) then
+			field.Title = "" + accountDims [ i - 1 ].Presentation;
+		endif;
 	enddo; 
 	
 EndProcedure

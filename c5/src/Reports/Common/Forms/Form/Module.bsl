@@ -51,7 +51,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( GenerateOnOpen ) then
 		makeReport ( false );
 	endif; 
-	ReporterForm.SetTitle ( ThisObject );
+	setReportTitle ( ThisObject );
 	setCurrentItem ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -89,13 +89,32 @@ EndFunction
 Procedure init ()
 	
 	WebClient = Environment.WebClient ();
+	OneCompany = oneCompany ();
 	
 EndProcedure 
+
+&AtServer
+Function oneCompany ()
+	
+	s = "
+	|select allowed Companies.Ref
+	|from Catalog.Companies as Companies
+	|where not Companies.DeletionMark
+	|";
+	q = new Query ( s );
+	table = q.Execute ().Unload ();
+	return table.Count () = 1;
+	
+EndFunction 
 
 &AtServer
 Procedure applyParams ()
 	
 	Object.ReportName = Parameters.ReportName;
+	AccountingReport = accountingReport ();
+	SimpleReport = simpleReport ();
+	AccountingFlagsSupported = accountingFlagsSupported ();
+	AdjustAccountHierarchySupported = adjustAccountHierarchySupported ();
 	OnDetailEvent = reportManager ().Events ().OnDetail;
 	meta = Metadata.Reports [ Object.ReportName ];
 	ReportPresentation = ? ( meta.ExtendedPresentation = "", meta.Presentation (), meta.ExtendentPresentation );
@@ -111,6 +130,60 @@ Procedure applyParams ()
 EndProcedure
 
 &AtServer
+Function accountingReport ()
+	
+	report = Object.ReportName;
+	return report = "BalanceSheet"
+		or report = "AccountBalance"
+		or report = "AccountAnalysis"
+		or report = "Transactions"
+		or report = "Entries"
+		or report = "SubsidiaryLedger"
+		or report = "AccountTurnovers";
+	
+EndFunction 
+
+&AtServer
+Function simpleReport ()
+	
+	report = Object.ReportName;
+	return report = "BalanceSheet"
+	or report = "AccountBalance"
+	or report = "AccountAnalysis"
+	or report = "IncomeStatement"
+	or report = "Debts"
+	or report = "Reconciliation"
+	or report = "VendorDebts"
+	or report = "SalesRegister"
+	or report = "Timesheet"
+	or report = "PersonalCard"
+	or report = "PurchasesRegister"
+	or report = "CashBook";
+		
+EndFunction 
+
+&AtServer
+Function accountingFlagsSupported ()
+	
+	report = Object.ReportName;
+	return report = "BalanceSheet"
+		or Report = "AccountAnalysis"
+		or Report = "AccountBalance"
+		or Report = "SubsidiaryLedger"
+		or Report = "AccountTurnovers";
+
+EndFunction
+
+&AtServer
+Function adjustAccountHierarchySupported ()
+	
+	report = Object.ReportName;
+	return report = "BalanceSheet"
+		or report = "SubsidiaryLedger";
+
+EndFunction
+
+&AtServer
 Function reportManager ()
 	
 	return Reports [ Object.ReportName ];
@@ -121,7 +194,7 @@ EndFunction
 Procedure initComposer ()
 	
 	dataSchema = Reporter.GetSchema ( Object.ReportName );
-	SchemaAddress = PutToTempStorage ( dataSchema, SchemaAddress );
+	SchemaAddress = PutToTempStorage ( dataSchema, UUID );
 	Object.SettingsComposer.Initialize ( new DataCompositionAvailableSettingsSource ( SchemaAddress ) );
 	
 EndProcedure 
@@ -273,7 +346,366 @@ EndProcedure
 &AtServer
 Procedure afterLoadSettings ()
 	
-	ReporterForm.AfterLoadSettings ( ThisObject );
+	if ( AccountingReport ) then
+		applyAccount ( DC.FindSetting ( Object.SettingsComposer, "Account" ), true );
+	endif;
+	if ( not ShowSettings ) then
+		buildFilter ();
+	endif; 
+	
+EndProcedure 
+
+&AtServer
+Procedure applyAccount ( Setting, JustAdjust )
+	
+	data = accountData ( Setting );
+	if ( data <> undefined
+		and not JustAdjust ) then
+		setComparison ( data, Setting );
+	endif;
+	adjustDimensions ( data );
+	setFlags ( data, JustAdjust );
+	setDims ( data );
+	setCurrency ( data );
+	
+EndProcedure 
+
+&AtServer
+Function accountData ( Setting )
+	
+	if ( TypeOf ( Setting ) = Type ( "DataCompositionSettingsParameterValue" ) ) then
+		account = ? ( Setting.Use, Setting.Value, undefined );
+	else
+		comparison = Setting.ComparisonType;
+		if ( comparison = DataCompositionComparisonType.Equal
+			or comparison = DataCompositionComparisonType.InHierarchy ) then
+			account = ? ( Setting.Use, Setting.RightValue, undefined );
+		endif
+	endif;
+	return ? ( ValueIsFilled ( account ), GeneralAccounts.GetData ( account ), undefined );
+
+EndFunction 
+
+&AtServer
+Procedure adjustDimensions ( AccountData )
+
+	dataSchema = GetFromTempStorage ( SchemaAddress );	
+	adjustValueTypes ( dataSchema, AccountData );
+	adjustDimsLevel ( dataSchema, AccountData );
+	PutToTempStorage ( dataSchema, SchemaAddress );
+	Object.SettingsComposer.Initialize ( new DataCompositionAvailableSettingsSource ( SchemaAddress ) );
+
+EndProcedure
+
+&AtServer
+Procedure adjustValueTypes ( DataSchema, AccountData )
+	
+	for each dataset in DataSchema.DataSets do
+		fields = dataset.Fields;
+		if ( AccountData = undefined ) then
+			level = 0;
+		else
+			dims = AccountData.Dims;
+			level = AccountData.Fields.Level;
+		endif;
+		for i = 1 to 3 do
+			name = "Dim" + i;
+			field = fields.Find ( name );
+			if ( field <> undefined ) then
+				field.ValueType = ? ( i > level, new TypeDescription (), dims [ i - 1 ].ValueType );
+			endif;
+		enddo;
+	enddo;
+
+EndProcedure
+
+&AtServer
+Procedure adjustDimsLevel ( DataSchema, AccountData )
+	
+	parameter = DataSchema.Parameters.Find ( "ShowDimensions" );
+	if ( parameter = undefined ) then
+		return;
+	endif;
+	list = dimensionVariants ( AccountData );
+	parameter.SetAvailableValues ( list );
+
+EndProcedure
+
+&AtServer
+Function dimensionVariants ( AccountData )
+	
+	variants = new ValueList ();
+	if ( AccountData = undefined ) then
+		return variants;
+	endif;
+	dims = AccountData.Dims;
+	unsupported = AccountData.Fields.Level + 1;
+	for each meta in Metadata.Enums.Dimensions.EnumValues do
+		item = Enums.Dimensions [ meta.Name ];
+		list = GeneralAccounts.LevelToList ( item );
+		fits = true;
+		for i = unsupported to 3 do
+			if ( list.Find ( i ) <> undefined ) then
+				fits = false;
+				break;
+			endif;
+		enddo;
+		if ( fits ) then
+			presentation = new Array ();
+			for each i in list do
+				presentation.Add ( dims [ i - 1 ].Presentation );
+			enddo;
+			variants.Add ( item, StrConcat ( presentation, " / " ) );
+		endif;
+	enddo;
+	if ( variants.Count () = 0 ) then
+		variants.Add ( Enums.Dimensions.EmptyRef (), "<...>" );
+	endif;
+	return variants;
+
+EndFunction
+
+&AtServer
+Procedure setComparison ( Data, Setting )
+	
+	if ( not AdjustAccountHierarchySupported ) then
+		return;
+	endif; 
+	main = Data.Fields.Main;
+	if ( main
+		and Setting.ComparisonType = DataCompositionComparisonType.Equal ) then
+		reference = settingReference ( Setting );
+		reference.ComparisonType = DataCompositionComparisonType.InHierarchy;
+	elsif ( not main
+		and Setting.ComparisonType = DataCompositionComparisonType.InHierarchy ) then
+		reference = settingReference ( Setting );
+		reference.ComparisonType = DataCompositionComparisonType.Equal
+	endif; 
+	
+EndProcedure 
+
+&AtServer
+Function settingReference ( Setting ) 
+	
+	return Object.SettingsComposer.UserSettings.GetObjectByID (
+	Object.SettingsComposer.UserSettings.GetIDByObject ( Setting ) );
+
+EndFunction
+
+&AtServer
+Procedure setFlags ( Data, JustAdjust )
+	
+	if ( not AccountingFlagsSupported ) then
+		return;
+	elsif ( Object.ReportName = "BalanceSheet"
+		and Data = undefined ) then
+		return;
+	endif;
+	composer = Object.SettingsComposer;
+	currency = DC.FindParameter ( composer, "ShowCurrency" );
+	quantity = DC.FindParameter ( composer, "ShowQuantity" );
+	dims = DC.FindParameter ( composer, "ShowDimensions" );
+	hierarchy = DC.FindParameter ( composer, "AccountsHierarchy" );
+	if ( Data = undefined ) then
+		currency.Use = false;
+		quantity.Use = false;
+		dims.Use = false;
+		hierarchy.Use = false;
+		hierarchy.Value = false;
+	else
+		fields = Data.Fields;
+		quantitative = fields.Quantitative;
+		reset = not ( JustAdjust and quantitative );
+		if ( reset ) then
+			quantity.Use = quantitative;
+			quantity.Value = quantitative;
+		endif;
+		main = fields.Main;
+		reset = not ( JustAdjust and main );
+		if ( reset ) then
+			hierarchy.Use = main;
+			hierarchy.Value = main;
+		endif;
+		deep = fields.Level > 0;
+		reset = not ( JustAdjust and deep );
+		if ( reset ) then
+			dims.Use = deep;
+			dims.Value = ? ( deep, Enums.Dimensions._1, Enums.Dimensions.EmptyRef () );
+		endif;
+		isCurrency = fields.Currency;
+		reset = not ( JustAdjust and isCurrency );
+		if ( reset ) then
+			currency.Use = isCurrency;
+			currency.Value = isCurrency;
+		endif;
+	endif; 
+	
+EndProcedure 
+
+&AtServer
+Procedure setDims ( Data )
+	
+	settings = Object.SettingsComposer.Settings;
+	if ( Data = undefined ) then
+		dims = undefined;
+		level = 0;
+	else
+		dims = Data.Dims;
+		level = Data.Fields.Level;
+	endif;
+	for i = 1 to 3 do
+		id = "Dim" + i;
+		dimIndex = i - 1;
+		dim = DC.FindFilter ( settings, id );
+		if ( dim = undefined ) then
+			continue;
+		endif; 
+		if ( level > dimIndex ) then
+			dim.UserSettingPresentation = dims [ dimIndex ].Presentation;
+			if ( dim.UserSettingID = "" ) then
+				toggleSetting ( dim, id );
+			endif; 
+		else
+			toggleSetting ( dim, "" );
+		endif; 
+	enddo; 
+	
+EndProcedure 
+
+&AtServer
+Procedure setCurrency ( Data )
+	
+	currency = DC.FindFilter ( Object.SettingsComposer.Settings, "Currency" );
+	if ( currency = undefined ) then
+		return;
+	endif; 
+	if ( Data = undefined
+		and Object.ReportName <> "BalanceSheet" )
+		or ( Data <> undefined
+		and not Data.Fields.Currency ) then
+		id = "";
+	else
+		id = "Currency";
+	endif;
+	toggleSetting ( currency, id );
+	
+EndProcedure 
+
+&AtServer
+Procedure toggleSetting ( Setting, ID )
+	
+	if ( ID = "" ) then
+		Setting.UserSettingPresentation = "";
+		Setting.UserSettingID = "";
+		Setting.Use = false;
+		Setting.RightValue = undefined;
+	else
+		Setting.UserSettingID = ID;
+	endif; 
+	
+EndProcedure 
+
+&AtClientAtServerNoContext
+Procedure setReportTitle ( Form )
+	
+	object = Form.Object;
+	report = object.ReportName;
+	composer = object.SettingsComposer;
+	parts = new Array ();
+	parts.Add ( Form.ReportPresentation );
+	if ( report = "BalanceSheet"
+		or report = "SubsidiaryLedger" ) then
+		addPeriod ( parts, composer );
+	elsif ( report = "AccountBalance"
+		or report = "AccountAnalysis"
+		or report = "AccountTurnovers"
+		or report = "Entries"
+		or report = "Transactions" ) then
+		addPart ( parts, composer, "Account" );
+		addPeriod ( parts, composer );
+	elsif ( report = "Timesheet"
+		or report = "WorkLog"
+		or report = "Payroll"
+		or report = "Payslips" ) then
+		addPart ( parts, composer, "Employee" );
+		addPeriod ( parts, composer );
+	else
+		addPart ( parts, composer, "Period" );
+	endif;
+	Form.Title = StrConcat ( parts, ", " );
+
+EndProcedure 
+
+&AtClientAtServerNoContext
+Procedure addPeriod ( Parts, Composer )
+	
+	#if ( not MobileClient ) then
+		p = DC.FindParameter ( Composer, "Period" );
+		if ( p.Use ) then
+			period = p.Value;
+			Parts.Add ( PeriodPresentation ( period.StartDate, period.EndDate, "FP=true" ) );
+		endif; 
+	#endif
+	
+EndProcedure 
+
+&AtClientAtServerNoContext
+Procedure addPart ( Parts, Composer, Fields )
+	
+	for each name in StrSplit ( Fields, ", " ) do
+		value = DC.FindValue ( Composer, name );
+		if ( value <> undefined ) then
+			Parts.Add ( value );
+		endif; 
+	enddo;
+	
+EndProcedure 
+
+&AtServer
+Procedure filterByCompany ()
+	
+	setting = DC.FindSetting ( Object.SettingsComposer, "Company" );
+	if ( setting = undefined ) then
+		return;
+	endif; 
+	if ( companyInstalled () ) then
+		return;
+	endif; 
+	if ( OneCompany and not mandatory ( setting ) ) then
+		return;
+	endif; 
+	setValue ( setting, Logins.Settings ( "Company" ).Company );
+
+EndProcedure
+
+&AtServer
+Function companyInstalled ()
+	
+	company = DC.FindValue ( Object.SettingsComposer, "Company" );
+	return company <> undefined;
+
+EndFunction 
+
+&AtServer
+Function mandatory ( Parameter )
+	
+	if ( TypeOf ( Parameter ) <> Type ( "DataCompositionSettingsParameterValue" ) ) then
+		return false;
+	endif;
+	schema = Reporter.GetSchema ( Object.ReportName );
+	return schema.Parameters.Find ( Parameter.Parameter ).DenyIncompleteValues;
+	
+EndFunction
+
+&AtServer
+Procedure setValue ( Setting, Value )
+	
+	Setting.Use = true;
+	if ( TypeOf ( Setting ) = Type ( "DataCompositionSettingsParameterValue" ) ) then
+		Setting.Value = Value;
+	else
+		Setting.RightValue = Value;
+	endif; 
 	
 EndProcedure 
 
@@ -325,12 +757,12 @@ EndProcedure
 &AtClient
 Procedure Make ( Command )
 	
-	BuildReport ( false );
+	buildReport ( false );
 	
 EndProcedure
 
 &AtClient
-Procedure BuildReport ( Quickly ) export
+Procedure buildReport ( Quickly )
 	
 	invalidateSelection ();
 	if ( makeReport ( Quickly ) ) then
@@ -584,6 +1016,7 @@ Procedure loadDefaultSettings ()
 		loadVariantServer ( variantCode, settingsReport.Settings );
 	else
 		loadVariantServer ( "#Default", undefined );
+		filterByCompany ();
 	endif; 
 	
 EndProcedure
@@ -718,7 +1151,7 @@ EndProcedure
 Procedure toggleSettings ()
 	
 	if ( ShowSettings ) then
-		BuildFilter ();
+		buildFilter ();
 		ShowSettings = false;
 	else
 		ShowSettings = true;
@@ -730,7 +1163,7 @@ Procedure toggleSettings ()
 EndProcedure 
 
 &AtServer
-Procedure BuildFilter () export
+Procedure buildFilter ()
 	
 	clearFilter ();
 	settings = Object.SettingsComposer.Settings;
@@ -1005,6 +1438,9 @@ Procedure SelectReportVariant ( Command )
 	
 EndProcedure
 
+// *****************************************
+// *********** UserSettings
+
 &AtClient
 Procedure UserSettingsOnChange ( Item )
 	
@@ -1015,8 +1451,7 @@ EndProcedure
 &AtClient
 Procedure applyUserSetting ( Setting )
 	
-	updated = false;
-	ReporterForm.OnChange ( ThisObject, Setting, updated );
+	updated = onChange ( Setting );
 	#if ( not WebClient ) then
 		if ( not updated ) then
 			disableActualState ( Items.Result );
@@ -1026,11 +1461,130 @@ Procedure applyUserSetting ( Setting )
 EndProcedure 
 
 &AtClient
+Function onChange ( Setting )
+	
+	applySetting ( Setting );
+	setReportTitle ( ThisObject );
+	if ( AccountingReport
+		and isCondition ( "Account", Setting )
+		and not ShowSettings ) then
+		buildFilter ();
+	endif; 
+	if ( SimpleReport ) then
+		buildReport ( true );
+		return true;
+	endif; 
+	return false;
+	
+EndFunction
+
+&AtClient
+Procedure applySetting ( Setting )
+	
+	if ( AccountingReport ) then
+		if ( isCondition ( "Account", Setting, false ) ) then
+			//@skip-warning
+			applyAccount ( Setting, false );
+		endif; 
+	endif;
+	
+EndProcedure
+
+&AtClient
+Function isCondition ( Name, Setting, EqualOrHiearachy = true )
+	
+	type = TypeOf ( Setting );
+	if ( type = Type ( "DataCompositionSettingsParameterValue" ) ) then
+		#if ( WebClient ) then
+			//@skip-warning
+			return Name = settingName ( Setting );
+		#else
+			return Name = String ( Setting.Parameter );
+		#endif
+	else
+		filter = DC.FindFilter ( Object.SettingsComposer, Name, false );
+		if ( filter <> undefined ) then
+			if ( not EqualOrHiearachy
+			 	or ( filter.ComparisonType = DataCompositionComparisonType.Equal
+					or filter.ComparisonType = DataCompositionComparisonType.InHierarchy ) ) then
+				return filter.UserSettingID = Setting.UserSettingID;
+			endif;
+		endif;
+	endif; 
+	return false;
+	
+EndFunction 
+
+&AtServerNoContext
+Function settingName ( val Setting )
+	
+	return String ( Setting.Parameter );
+	
+EndFunction
+
+&AtClient
 Procedure UserSettingsValueStartChoice ( Item, ChoiceData, StandardProcessing )
 	
-	ReporterForm.StartChoice ( ThisObject, Object.SettingsComposer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow ), Item, StandardProcessing );
+	startChoice ( Object.SettingsComposer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow ),
+		Item, StandardProcessing );
 
 EndProcedure
+
+&AtClient
+Procedure startChoice ( Setting, Item, StandardProcessing )
+	
+	if ( AccountingReport ) then
+		if ( isCondition ( "Dim1", Setting ) ) then
+			chooseDimension ( Item, 1, StandardProcessing );
+		elsif ( isCondition ( "Dim2", Setting ) ) then
+			chooseDimension ( Item, 2, StandardProcessing );
+		elsif ( isCondition ( "Dim3", Setting  ) ) then
+			chooseDimension ( Item, 3, StandardProcessing );
+		endif;
+	endif; 
+	
+EndProcedure
+
+&AtClient
+Procedure chooseDimension ( Item, Level, StandardProcessing )
+	
+	composer = Object.SettingsComposer;
+	account = DC.FindValue ( composer, "Account" );
+	if ( account = undefined ) then
+		return;
+	endif; 
+	data = GeneralAccounts.GetData ( account );
+	deep = data.Fields.Level;
+	if ( deep = 0 ) then
+		return;
+	endif; 
+	dims = data.Dims;
+	p = Dimensions.GetParams ();
+	p.Level = Level;
+	if ( deep > 0 ) then
+		p.Dim1 = getDimension ( composer, 1, dims );
+	endif;
+	if ( deep > 1 ) then
+		p.Dim2 = getDimension ( composer, 2, dims );
+	endif; 
+	if ( deep > 2 ) then
+		p.Dim3 = getDimension ( composer, 3, dims );
+	endif; 
+	p.Company = DC.FindValue ( composer, "Company" );
+	Dimensions.Choose ( p, Item, StandardProcessing );
+	
+EndProcedure 
+
+&AtClient
+Function getDimension ( Composer, Level, Dims )
+	
+	value = DC.FindValue ( Composer, "Dim" + Level );
+	if ( value = undefined ) then
+		value = Dims [ Level - 1 ].ValueType.AdjustValue ( undefined );
+	endif; 
+	return value;
+
+EndFunction 
 
 &AtClient
 Procedure FilterOnChange ( Item )
@@ -1057,9 +1611,58 @@ EndFunction
 &AtClient
 Procedure FilterStartChoice ( Item, ChoiceData, StandardProcessing )
 	
-	ReporterForm.StartChoice ( ThisObject, getSetting ( Item ), Item, StandardProcessing );
+	startChoice ( getSetting ( Item ), Item, StandardProcessing );
 	
 EndProcedure
+
+&AtClient
+Procedure UserSettingsValueOnChange ( Item )
+	
+	applyValue ( Object.SettingsComposer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow ) );
+	
+EndProcedure
+
+&AtClient
+Procedure applyValue ( Setting )
+	
+	if ( TypeOf ( Setting ) = Type ( "DataCompositionFilterItem" ) ) then
+		fixComparison ( Setting );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure fixComparison ( Setting )
+	
+	isFolder = isFolder ( Setting.RightValue );
+	comparison = Setting.ComparisonType;
+	if ( isFolder ) then
+		if ( comparison = DataCompositionComparisonType.Equal ) then
+			candidate = DataCompositionComparisonType.InHierarchy;
+		elsif ( comparison = DataCompositionComparisonType.NotEqual ) then
+			candidate = DataCompositionComparisonType.NotInHierarchy;
+		else
+			return;
+		endif; 
+	else
+		if ( comparison = DataCompositionComparisonType.InHierarchy ) then
+			candidate = DataCompositionComparisonType.Equal;
+		elsif ( comparison = DataCompositionComparisonType.NotInHierarchy ) then
+			candidate = DataCompositionComparisonType.NotEqual;
+		else
+			return;
+		endif; 
+	endif;
+	Setting.ComparisonType = candidate;
+
+EndProcedure
+
+&AtServerNoContext
+Function isFolder ( val Value )
+	
+	return Metafields.IsFolder ( Value );
+
+EndFunction
 
 // *****************************************
 // *********** Result

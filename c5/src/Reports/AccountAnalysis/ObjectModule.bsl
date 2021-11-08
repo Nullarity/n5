@@ -201,11 +201,11 @@ Procedure addDims ()
 	if ( level = 0 ) then
 		return;
 	endif;
-	DC.SetParameter ( Params.Settings, "Dims", dims );
 	groupType = ? ( DimsHierarchy, DataCompositionGroupType.Hierarchy, DataCompositionGroupType.Items );
 	fields = Params.Schema.DataSets.Balances.Fields;
-	dims = AccountData.Dims;
-	for i = 1 to level do
+	accountDims = AccountData.Dims;
+	for each dim in dims do
+		i = dim.Position;
 		LastGroup = LastGroup.Structure.Add ( Type ( "DataCompositionGroup" ) );
 		field = LastGroup.GroupFields.Items.Add ( Type ( "DataCompositionGroupField" ) );
 		field.Use = true;
@@ -214,7 +214,7 @@ Procedure addDims ()
 		LastGroup.Selection.Items.Add ( Type ( "DataCompositionAutoSelectedField" ) );
 		LastGroup.Order.Items.Add ( Type ( "DataCompositionAutoOrderItem" ) );
 		field = fields.Find ( "Dim" + i );
-		field.Title = "" + dims [ i - 1 ].Presentation;
+		field.Title = "" + accountDims [ i - 1 ].Presentation;
 	enddo; 
 	
 EndProcedure

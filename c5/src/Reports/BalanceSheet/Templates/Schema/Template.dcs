@@ -742,7 +742,7 @@
 	CurrencyAmountClosingBalanceCr, AmountClosingSplittedBalanceCr, AmountClosingSplittedBalanceDr,
 	AmountOpeningSplittedBalanceCr, AmountOpeningSplittedBalanceDr}
 from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto, ,
-	{Account.*}, &amp;Dims, {Company.* as Company, Currency.* as Currency,
+	{Account.*}, , {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Balances
 
 </query>
@@ -1030,21 +1030,6 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 		</valueType>
 		<value xsi:type="xs:boolean">false</value>
 		<useRestriction>false</useRestriction>
-	</parameter>
-	<parameter>
-		<name>Dims</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Dims</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfCharacteristicTypesRef.Dimensions</v8:Type>
-		</valueType>
-		<value xsi:nil="true"/>
-		<useRestriction>true</useRestriction>
-		<availableAsField>false</availableAsField>
 	</parameter>
 	<settingsVariant>
 		<dcsset:name>Default</dcsset:name>
@@ -1405,11 +1390,6 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>8d1e71b0-94cb-44a2-bde9-6dac97c2bacf</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Dims</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>

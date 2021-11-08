@@ -539,8 +539,41 @@ Procedure RefreshReport ( Command )
 	if ( TableRow = undefined ) then
 		return;
 	endif; 
-	loadReport ( ThisObject, , true );
+	updateReport ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateReport ()
+	
+	clearSystemData ();
+	userInput = fetchUserInput ();
+	clearUserData ();
+	loadReport ( ThisObject, , true );
+	if ( userInput.Count () > 0 ) then
+		userInput.Write ();
+		loadReport ( ThisObject );
+	endif;
+	
+EndProcedure
+
+&AtServer
+Function fetchUserInput ()
+	
+	r = InformationRegisters.UserFields.CreateRecordSet ();
+	r.Filter.Report.Set ( CurrentReport );
+	r.Read ();
+	return r;
+	
+EndFunction
+
+&AtServer
+Procedure clearSystemData ()
+	
+	recordset = InformationRegisters.ReportFields.CreateRecordSet ();
+	recordset.Filter.Report.Set ( CurrentReport );
+	recordset.Write ();
+
 EndProcedure
 
 &AtClient
@@ -717,6 +750,7 @@ EndProcedure
 Procedure rebuildReport ()
 	
 	clearUserData ();
+	clearSystemData ();
 	loadReport ( ThisObject, , true );
 	
 EndProcedure 
@@ -724,9 +758,6 @@ EndProcedure
 &AtServer
 Procedure clearUserData ()
 	
-	recordset = InformationRegisters.ReportFields.CreateRecordSet ();
-	recordset.Filter.Report.Set ( CurrentReport );
-	recordset.Write ();
 	recordset = InformationRegisters.UserFields.CreateRecordSet ();
 	recordset.Filter.Report.Set ( CurrentReport );
 	recordset.Write ();
@@ -749,7 +780,7 @@ Procedure saveAndBuild ()
 	
 	saveTemplate ();
 	disableDesigner ();
-	loadReport ( ThisObject, , true );
+	rebuildReport ();
 	
 EndProcedure 
 

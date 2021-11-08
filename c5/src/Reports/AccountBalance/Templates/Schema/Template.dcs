@@ -709,7 +709,7 @@
 	CurrencyAmountClosingBalanceCr, AmountClosingSplittedBalanceCr, AmountClosingSplittedBalanceDr,
 	AmountOpeningSplittedBalanceCr, AmountOpeningSplittedBalanceDr}
 from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto, ,
-	Account = &amp;Account, &amp;Dims, {Company.* as Company, Currency.* as Currency,
+	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Balances
 {where Recorder.* as Recorder}</query>
 		<autoFillFields>false</autoFillFields>
@@ -1052,21 +1052,6 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 		</valueType>
 		<value xsi:type="xs:boolean">false</value>
 		<useRestriction>false</useRestriction>
-	</parameter>
-	<parameter>
-		<name>Dims</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Dims</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfCharacteristicTypesRef.Dimensions</v8:Type>
-		</valueType>
-		<value xsi:nil="true"/>
-		<useRestriction>true</useRestriction>
-		<availableAsField>false</availableAsField>
 	</parameter>
 	<template>
 		<name>Template1</name>

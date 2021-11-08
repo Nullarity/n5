@@ -136,32 +136,15 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
-Procedure _5_0_19_1 () export
+Procedure _5_0_20_1 () export
 	
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
-		updateOrganizations ();
 		updateReports ();
 	enddo;
 	CommitTransaction ();
 	
-EndProcedure
-
-Procedure updateOrganizations ()
-	
-	selection = Catalogs.Organizations.Select ();
-	while ( selection.Next () ) do
-		if ( selection.IsFolder
-			or not selection.Individual ) then
-			continue;
-		endif;
-		obj = selection.GetObject ();
-		obj.FullDescription = obj.Description;
-		obj.DataExchange.Load = true;
-		obj.Write ();
-	enddo;
-
 EndProcedure
 
 #endregion

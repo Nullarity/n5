@@ -222,3 +222,33 @@ Procedure RemoveOrder ( List, Name ) export
 	deleteOrder ( List.Order.Items, new DataCompositionField ( Name ) );
 	
 EndProcedure 
+
+Function FindValue ( Composer, Name ) export
+	
+	value = undefined;
+	item = DC.FindFilter ( Composer, Name, false );
+	if ( item = undefined ) then
+		item = DC.FindParameter ( Composer, Name );
+		if ( item <> undefined
+			and item.Use ) then
+			value = item.Value;
+		endif; 
+	else
+		if ( item.Use
+			and item.ComparisonType = DataCompositionComparisonType.Equal ) then
+			value = item.RightValue;
+		endif;
+	endif;
+	return ? ( ValueIsFilled ( value ), value, undefined );
+	
+EndFunction 
+
+Function FindSetting ( Composer, Name ) export
+	
+	item = DC.FindFilter ( Composer, Name, false );
+	if ( item = undefined ) then
+		item = DC.FindParameter ( Composer, Name );
+	endif;
+	return item;
+	
+EndFunction 

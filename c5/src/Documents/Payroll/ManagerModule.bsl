@@ -89,7 +89,8 @@ Procedure sqlTaxes ( Env )
 	|// #Taxes
 	|select Taxes.Account as Account, Taxes.Tax.Description as Description,
 	|	Taxes.Department as Department, ExpenseMethods.Account as AccountDr,
-	|	ExpenseMethods.Expense as DimDr1, sum ( ExpenseMethods.Rate * Taxes.Result ) as Result
+	|	case when Taxes.Expense = value ( Catalog.Expenses.EmptyRef ) then ExpenseMethods.Expense else Taxes.Expense end as DimDr1,
+	|	sum ( ExpenseMethods.Rate * Taxes.Result ) as Result
 	|from Document.Payroll.Taxes as Taxes
 	|	//
 	|	// ExpenseMethods
@@ -97,7 +98,8 @@ Procedure sqlTaxes ( Env )
 	|	join Catalog.ExpenseMethods.Expenses as ExpenseMethods
 	|	on ExpenseMethods.Ref = Taxes.Expenses
 	|where Taxes.Ref = &Ref
-	|group by Taxes.Account, Taxes.Tax, Taxes.Department, ExpenseMethods.Account, ExpenseMethods.Expense
+	|group by Taxes.Account, Taxes.Tax, Taxes.Department, ExpenseMethods.Account,
+	|	case when Taxes.Expense = value ( Catalog.Expenses.EmptyRef ) then ExpenseMethods.Expense else Taxes.Expense end
 	|having sum ( ExpenseMethods.Rate * Taxes.Result ) <> 0
 	|";
 	Env.Selection.Add ( s );
@@ -245,7 +247,9 @@ EndProcedure
 Procedure getSicknessPrintData ( Params, Env )
 	
 	sqlSicknessPrintData ( Env );
-	Env.Q.SetParameter ( "Ref", Params.Reference );
+	q = Env.Q;
+	q.SetParameter ( "Ref", Params.Reference );
+	q.SetParameter ( "Date", DF.Pick ( Params.Reference, "Date" ) );
 	SQL.Perform ( Env );
 	
 EndProcedure

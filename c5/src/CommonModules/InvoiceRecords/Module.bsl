@@ -492,7 +492,7 @@ EndProcedure
 Function syncing ( Object )
 	
 	sync = undefined;
-	Object.AdditionalProperties.Property ( "Syncing", sync );
+	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesSyncing (), sync );
 	return sync <> undefined
 	and sync;
 	
@@ -510,7 +510,7 @@ EndProcedure
 &AtServer
 Procedure markSyncing ( Object )
 	
-	Object.AdditionalProperties.Insert ( "Syncing", true );
+	Object.AdditionalProperties.Insert ( Enum.AdditionalPropertiesSyncing (), true );
 	
 EndProcedure 
 

@@ -1288,7 +1288,22 @@ Function AdditionalPropertiesInteractive () export
 	
 EndFunction
 
+&AtServer
+Function AdditionalPropertiesSyncing () export
+	
+	return "AdditionalPropertiesSyncing";
+	
+EndFunction
+
+&AtServer
+Function AdditionalPropertiesOldOperation () export
+	
+	return "AdditionalPropertiesOldOperation";
+	
+EndFunction
+
 #endregion
+
 #region Exceptions
 
 Function ExceptionsUndefinedFilesFolder () export

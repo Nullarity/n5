@@ -97,17 +97,17 @@ Function DimensionsByLevel ( Level, AccountData ) export
 	result = new Array ();
 	dims = AccountData.Dims;
 	top = dims.Count ();
-	list = levelToList ( Level );
+	list = GeneralAccounts.LevelToList ( Level );
 	for each deep in list do
 		if ( deep <= top ) then
-			result.Add ( dims [ deep - 1 ].Dim );
+			result.Add ( new Structure ( "Dim, Position", dims [ deep - 1 ].Dim, deep ) );
 		endif;
 	enddo;
 	return result;
 
 EndFunction
 
-Function levelToList ( Level )
+Function LevelToList ( Level ) export
 	
 	list = new Array ();
 	id = Conversion.EnumItemToName ( Level );

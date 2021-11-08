@@ -3764,22 +3764,24 @@ from ActualCompensations as Compensations
 	left join ReversedSalary as Reversed
 	on Reversed.Key = Compensations.Key
 ;
-// Final selection: Taxes
-select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Employee.Individual as Individual,
-	Taxes.Department as Department, Taxes.Expenses as Expenses, Taxes.Tax as Tax,
-	Taxes.Account as Account, Taxes.Base as Base, Taxes.Result as Result,
-	Taxes.DateStart as DateStart, Taxes.DateEnd as DateEnd, Taxes.Tax.Method as Method
+// Taxes with errors
+select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Department as Department,
+	Taxes.Expenses as Expenses, Taxes.Tax as Tax, Taxes.Account as Account, Taxes.Base as Base,
+	Taxes.Result as AccurateResult, cast ( Taxes.Result as Number ( 15, 2 ) ) as RoundedResult,
+	Taxes.Compensation as Compensation, Taxes.DateStart as DateStart, Taxes.DateEnd as DateEnd,
+	recordautonumber () as Row
+into TaxesWithErrors
 from (
 	select false as Edit, Based.Employee as Employee, Based.Department as Department,
 		Based.Expenses as Expenses, Based.Tax as Tax, Based.Account as Account, Based.Amount as Base,
-		Based.DateStart as DateStart, Based.DateEnd as DateEnd,
+		Based.Compensation as Compensation, Based.DateStart as DateStart, Based.DateEnd as DateEnd,
 		case Rates.Tax.Method
 			when value ( Enum.Calculations.FixedAmount ) then Rates.Rate
 			else Based.Amount / 100 * Rates.Rate
 		end as Result
 	from (
 		select Compensations.Employee as Employee, Compensations.Department as Department, Compensations.Expenses as Expenses,
-			Compensations.DateStart as DateStart, Compensations.DateEnd as DateEnd,
+			Compensations.Compensation as Compensation, Compensations.DateStart as DateStart, Compensations.DateEnd as DateEnd,
 			Taxes.Ref as Tax, Taxes.Ref.Account as Account, sum ( Compensations.AccountingResult ) as Amount
 		from FinalPayments as Compensations
 			//
@@ -3793,8 +3795,8 @@ from (
 				)
 			and not Taxes.Ref.Net
 			and not Taxes.Ref.DeletionMark
-		group by Compensations.Employee, Compensations.Department, Compensations.Expenses, Compensations.DateStart,
-			Compensations.DateEnd, Taxes.Ref
+		group by Compensations.Employee, Compensations.Department, Compensations.Expenses,
+			Compensations.Compensation, Compensations.DateStart, Compensations.DateEnd, Taxes.Ref
 		) as Based
 		//
 		// Rates
@@ -3815,10 +3817,48 @@ from (
 	where Payroll.Ref is null
 	union all
 	select true, Payroll.Employee, Payroll.Department, Payroll.Expenses, Payroll.Tax, Payroll.Account,
-		Payroll.Base, Payroll.DateStart, Payroll.DateEnd, Payroll.Result
+		Payroll.Base, Payroll.Compensation, Payroll.DateStart, Payroll.DateEnd, Payroll.Result
 	from Document.Payroll.Taxes as Payroll
 	where Payroll.Ref = &amp;Ref
 	and Payroll.Edit ) as Taxes
+where Taxes.Edit
+or Taxes.Result &lt;&gt; 0
+;
+// Collect tax errors only
+select Taxes.Employee as Employee, Taxes.Tax as Tax, Taxes.Account as Account,
+	max ( Taxes.AccurateResult ) as MaxResult,
+	cast ( sum ( Taxes.AccurateResult ) as Number ( 15, 2 ) ) - sum ( Taxes.RoundedResult ) as Error
+into TaxErrors
+from TaxesWithErrors as Taxes
+where not Taxes.Edit
+group by Taxes.Employee, Taxes.Tax, Taxes.Account
+having cast ( sum ( Taxes.AccurateResult ) as Number ( 15, 2 ) ) - sum ( Taxes.RoundedResult ) &lt;&gt; 0
+;
+// Final selection: Taxes
+select Taxes.Edit as Edit, Taxes.Employee as Employee, Taxes.Employee.Individual as Individual,
+	Taxes.Department as Department, Taxes.Tax.Expense as Expense, Taxes.Expenses as Expenses, Taxes.Tax as Tax,
+	Taxes.Account as Account, Taxes.Base as Base, Taxes.Compensation as Compensation,
+	Taxes.DateStart as DateStart, Taxes.DateEnd as DateEnd, Taxes.Tax.Method as Method,
+	Taxes.RoundedResult + isnull ( Errors.Error, 0 ) as Result
+from TaxesWithErrors as Taxes
+	//
+	// Fix errors
+	//
+	left join (
+		select min ( Taxes.Row ) as Row, Errors.Error as Error
+		from TaxesWithErrors as Taxes
+			//
+			// Filter by errors
+			//
+			join TaxErrors as Errors
+			on Errors.Employee = Taxes.Employee
+			and Errors.Tax = Taxes.Tax
+			and Errors.Account = Taxes.Account
+			and Errors.MaxResult = Taxes.AccurateResult
+		where not Taxes.Edit
+		group by Taxes.Employee, Taxes.Tax, Taxes.Account, Errors.Error
+	) as Errors
+	on Errors.Row = Taxes.Row
 order by Taxes.Employee.Description, Employee.Code,
 	case Taxes.Tax.Method
 		when value ( Enum.Calculations.SocialInsurance ) then 0

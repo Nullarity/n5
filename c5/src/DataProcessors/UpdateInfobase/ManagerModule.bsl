@@ -38,7 +38,7 @@ EndProcedure
 Function GetReleases () export
 	
 	list = new Array ();
-	list.Add ( entry ( "5.0.19.1", true ) );
+	list.Add ( entry ( "5.0.20.1", true ) );
 	return list;
 	
 EndFunction

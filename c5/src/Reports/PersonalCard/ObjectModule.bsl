@@ -184,21 +184,37 @@ Procedure sqlTaxes ()
 	|	sum ( Taxes.MedicalBase ) as MedicalBase, sum ( Taxes.Medical ) as Medical,
 	|	sum ( Taxes.IncomeTaxBase ) as IncomeTaxBase, sum ( Taxes.IncomeTax ) as IncomeTax
 	|into Taxes	
-	|from ( select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Deductions as Deductions,
+	|from (
+	|	select Taxes.Employee as Employee, Taxes.Ref as Ref, Taxes.Date as Date, Taxes.Deductions as Deductions,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Base else 0 end as MedicalBase,
 	|		case when Taxes.Method = value ( Enum.Calculations.MedicalInsurance ) then Taxes.Result else 0 end as Medical,
 	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) then Taxes.Base else 0 end as IncomeTaxBase,
 	|		case when Taxes.Method = value ( Enum.Calculations.IncomeTax ) then Taxes.Result else 0 end as IncomeTax
-	|	from Employees as Employees
-	|		//
-	|		//	Taxes
-	|		//
-	|		join Document.PayEmployees.Taxes as Taxes
-	|		on Taxes.Ref.Posted
-	|		and Taxes.Ref.Date between Employees.DateStart and Employees.DateEnd
-	|		and Taxes.Employee = &Individual			
-	|		and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), value ( Enum.Calculations.IncomeTax ) )
+	|	from (
+	|		select Employees.Employee as Employee, Taxes.Ref as Ref, Taxes.Ref.Date as Date, Taxes.Deductions as Deductions,
+	|			Taxes.Method as Method, Taxes.Base as Base, Taxes.Result as Result
+	|		from Employees as Employees
+	|			//
+	|			//	Taxes
+	|			//
+	|			join Document.PayEmployees.Taxes as Taxes
+	|			on Taxes.Ref.Posted
+	|			and Taxes.Ref.Date between Employees.DateStart and Employees.DateEnd
+	|			and Taxes.Employee = &Individual			
+	|			and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), value ( Enum.Calculations.IncomeTax ) )
+	|		union all
+	|		select Employees.Employee, Taxes.Ref, Taxes.Ref.Date, Taxes.Deductions, Taxes.Method, Taxes.Base, Taxes.Result
+	|		from Employees as Employees
+	|			//
+	|			//	Taxes
+	|			//
+	|			join Document.PayAdvances.Taxes as Taxes
+	|			on Taxes.Ref.Posted
+	|			and Taxes.Ref.Date between Employees.DateStart and Employees.DateEnd
+	|			and Taxes.Employee = &Individual			
+	|			and Taxes.Method in ( value ( Enum.Calculations.MedicalInsurance ), value ( Enum.Calculations.IncomeTax ) )
 	|	) as Taxes
+	|) as Taxes
 	|group by Taxes.Employee, Taxes.Ref, Taxes.Date
 	|;
 	|// #Taxes
@@ -212,8 +228,14 @@ Procedure sqlTaxes ()
 	|	left join (
 	|		select Compensations.Ref as Ref, sum ( Compensations.Amount ) as Amount
 	|		from Document.PayEmployees.Compensations as Compensations
-	|		where Compensations.Ref in ( select distinct Ref from Taxes )
+	|		where Compensations.Ref in ( select distinct Ref from Taxes where Ref refs Document.PayEmployees )
 	|		and Compensations.Employee = &Individual
+	|		group by Compensations.Ref
+	|		union all
+	|		select Compensations.Ref, sum ( Compensations.Result )
+	|		from Document.PayAdvances.Compensations as Compensations
+	|		where Compensations.Ref in ( select distinct Ref from Taxes where Ref refs Document.PayAdvances )
+	|		and Compensations.Individual = &Individual
 	|		group by Compensations.Ref
 	|	) as Compensations
 	|	on Compensations.Ref = Taxes.Ref

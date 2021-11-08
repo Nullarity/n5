@@ -369,10 +369,22 @@ Function GetHTML ( FolderID, Complete = false ) export
 	
 EndFunction 
 
-Function GetFolder ( FolderID ) export
+Function GetFolder ( FolderID, ShouldExist = true ) export
 	
+	folder = Cloud.GetFolders ();
+	if ( folder = "" ) then
+		if ( ShouldExist ) then
+			if ( Logins.Sysadmin () ) then
+				raise Enum.ExceptionsUndefinedFilesFolder ();
+			else
+				raise Output.UndefinedFilesFolder ();
+			endif;
+		else
+			return undefined;
+		endif;
+	endif;
 	separator = GetPathSeparator ();
-	return Cloud.GetFolders () + separator + Cloud.GetTenantCode () + separator + FolderID;
+	return folder + separator + Cloud.GetTenantCode () + separator + FolderID;
 
 EndFunction 
 
@@ -386,8 +398,10 @@ EndFunction
 
 Procedure Clean ( val FolderID ) export
 	
-	folder = CKEditorSrv.GetFolder ( FolderID );
-	DeleteFiles ( folder );
+	folder = CKEditorSrv.GetFolder ( FolderID, false );
+	if ( folder <> undefined ) then
+		DeleteFiles ( folder );
+	endif;
 	
 EndProcedure 
 

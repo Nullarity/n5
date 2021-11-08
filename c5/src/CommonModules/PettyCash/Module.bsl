@@ -14,7 +14,7 @@ Procedure Open ( Form, NotifyNew ) export
 	
 EndProcedure 
 
-Function Voucher ( Reference ) export
+Function Voucher ( Reference, OldOperation = undefined ) export
 	
 	type = TypeOf ( Reference );
 	if ( type = Type ( "DocumentRef.CashVoucher" ) ) then
@@ -22,7 +22,7 @@ Function Voucher ( Reference ) export
 	elsif ( type = Type ( "DocumentRef.CashReceipt" ) ) then
 		return false;
 	else
-		return PettyCashSrv.Voucher ( Reference );
+		return PettyCashSrv.Voucher ( Reference, OldOperation );
 	endif;
 	
 EndFunction 
@@ -276,14 +276,11 @@ Procedure Sync ( Object ) export
 	if ( syncing ( Object ) ) then
 		return;
 	endif; 
-	reference = PettyCashSrv.Search ( Object.Ref );
-	if ( relationMustDie ( Object ) ) then
-		if ( not reference.IsEmpty () ) then
-			remove ( reference );
-		endif; 
+	if ( TypeOf ( Object ) = Type  ( "DocumentObject.Entry" ) ) then
+		syncEntry ( Object );
 	else
-		update ( Object, reference );
-	endif; 
+		syncObject ( Object );
+	endif;
 	
 EndProcedure 
 
@@ -291,30 +288,37 @@ EndProcedure
 Function syncing ( Object )
 	
 	sync = undefined;
-	Object.AdditionalProperties.Property ( "Syncing", sync );
+	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesSyncing (), sync );
 	return sync <> undefined
 	and sync;
 	
 EndFunction 
 
 &AtServer
-Function relationMustDie ( Object )
+Procedure syncEntry ( Object )
 	
-	type = TypeOf ( Object.Ref );
-	if ( ( type = Type ( "DocumentRef.Payment" )
-		or type = Type ( "DocumentRef.VendorPayment" )
-		or type = Type ( "DocumentRef.PayEmployees" )
-		or type = Type ( "DocumentRef.PayAdvances" ) )
-		and Object.Method = Enums.PaymentMethods.Cash ) then
-		return false;
-	elsif ( type = Type ( "DocumentRef.Entry" ) ) then
-		operation = DF.Pick ( Object.Operation, "Operation" );
-		return operation <> Enums.Operations.CashExpense
-		and operation <> Enums.Operations.CashReceipt;
+	var oldOperation;
+	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesOldOperation (), oldOperation );
+	reference = PettyCashSrv.Search ( Object.Ref, oldOperation );
+	method = DF.Pick ( Object.Operation, "Operation" );
+	if ( not reference.IsEmpty () ) then
+		if ( ValueIsFilled ( oldOperation ) ) then
+			oldMethod = DF.Pick ( OldOperation, "Operation" );
+			clean = oldMethod <> method
+			and ( oldMethod = Enums.Operations.CashExpense
+				or oldMethod = Enums.Operations.CashReceipt );
+			if ( clean ) then
+				remove ( reference );
+			endif;
+		endif;
 	endif;
-	return true;
-	
-EndFunction 
+	if ( method = Enums.Operations.CashExpense
+		or method = Enums.Operations.CashReceipt ) then
+		reference = PettyCashSrv.Search ( Object.Ref );
+		update ( Object, reference );
+	endif;
+
+EndProcedure
 
 &AtServer
 Procedure remove ( Ref )
@@ -326,9 +330,28 @@ Procedure remove ( Ref )
 EndProcedure 
 
 &AtServer
+Procedure syncObject ( Object )
+	
+	reference = PettyCashSrv.Search ( Object.Ref );
+	if ( not reference.IsEmpty () ) then
+		type = TypeOf ( Object.Ref );
+		if ( ( type = Type ( "DocumentRef.Payment" )
+			or type = Type ( "DocumentRef.VendorPayment" )
+			or type = Type ( "DocumentRef.PayEmployees" )
+			or type = Type ( "DocumentRef.PayAdvances" ) )
+			and Object.Method <> Enums.PaymentMethods.Cash ) then
+			remove ( reference );
+			return;
+		endif;
+	endif;
+	update ( Object, reference );
+	
+EndProcedure
+
+&AtServer
 Procedure markSyncing ( Object )
 	
-	Object.AdditionalProperties.Insert ( "Syncing", true );
+	Object.AdditionalProperties.Insert ( Enum.AdditionalPropertiesSyncing (), true );
 	
 EndProcedure 
 
