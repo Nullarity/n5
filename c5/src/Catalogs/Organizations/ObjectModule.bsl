@@ -71,7 +71,7 @@ EndProcedure
 
 Procedure recheckEmail ()
 	
-	if ( Email = "" ) then
+	if ( IsFolder or Email = "" ) then
 		return;
 	endif; 
 	result = Mailboxes.TestAddress ( Email );
