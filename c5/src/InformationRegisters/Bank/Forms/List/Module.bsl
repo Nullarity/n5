@@ -8,7 +8,11 @@ var TableRow;
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
+	readAppearance ();
+	Appearance.Apply ( ThisObject );
 	filterByPeriod ();
+	setTitle ();
+	filterByAccount ();
 	fillAllowedDocuments ();
 	
 EndProcedure
@@ -18,7 +22,7 @@ Procedure init ()
 	
 	value = CommonSettingsStorage.Load ( Enum.SettingsBankPeriod () );
 	if ( value = undefined ) then
-		Period.Variant = StandardPeriodVariant.Last7Days;
+		Period.Variant = StandardPeriodVariant.Month;
 	else
 		Period = value;
 		extendPeriod ( value );
@@ -38,6 +42,17 @@ Procedure extendPeriod ( NewPeriod )
 EndProcedure 
 
 &AtServer
+Procedure readAppearance ()
+	
+	rules = new Array ();
+	rules.Add ( "
+	|DimensionFilter show HasDimensions;
+	|" );
+	Appearance.Read ( ThisObject, rules );
+	
+EndProcedure
+
+&AtServer
 Procedure filterByPeriod ()
 	
 	startDate = Period.StartDate;
@@ -49,6 +64,26 @@ Procedure filterByPeriod ()
 	DC.SetParameter ( Balances, "DateEnd", balance, true );
 	
 EndProcedure 
+
+&AtServer
+Procedure setTitle ()
+	
+	Title = Metadata.InformationRegisters.Bank.Synonym + ", " + Format ( Period.StartDate, "DLF=D" )
+	+ " - "
+	+ Format ( Period.EndDate, "DLF=D" );
+	
+EndProcedure
+
+&AtServer
+Procedure filterByAccount ()
+	
+	clearCurrencyFilter ();
+	set = not AccountFilter.IsEmpty ();
+	DC.ChangeFilter ( List, "AccountCode", AccountFilter, set);
+	DC.ChangeFilter ( Balances, "Account", AccountFilter, set );
+	DC.ChangeFilter ( Balances, "Account.Class", Enums.Accounts.Bank, not set );
+	
+EndProcedure
 
 &AtServer
 Procedure fillAllowedDocuments ()
@@ -167,6 +202,7 @@ Procedure applyPeriod ()
 	
 	extendPeriod ( Period );
 	filterByPeriod ();
+	setTitle ();
 	LoginsSrv.SaveSettings ( Enum.SettingsBankPeriod (), , Period );
 	
 EndProcedure 
@@ -174,17 +210,37 @@ EndProcedure
 &AtClient
 Procedure AccountFilterOnChange ( Item )
 	
-	filterByAccount ();
+	applyAccountFilter ();
 	
 EndProcedure
 
 &AtServer
-Procedure filterByAccount ()
+Procedure applyAccountFilter ()
 	
-	clearCurrencyFilter ();
-	setup = not AccountFilter.IsEmpty ();
-	DC.ChangeFilter ( List, "Account", AccountFilter, setup );
-	DC.ChangeFilter ( Balances, "Dim1", AccountFilter, setup );
+	getDimensions ();
+	if ( not HasDimensions ) then
+		DimensionFilter = undefined;
+		filterByDimension ();
+	endif;
+	filterByAccount ();
+	Appearance.Apply ( ThisObject, "HasDimensions" );
+	
+EndProcedure
+
+&AtServer
+Procedure getDimensions ()
+	
+	if ( AccountFilter.IsEmpty () ) then
+		HasDimensions = false;
+	else
+		s = "
+		|select allowed top 1 1
+		|from ChartOfAccounts.General.ExtDimensionTypes as Dimensions
+		|where Dimensions.Ref = &Account";
+		q = new Query ( s );
+		q.SetParameter ( "Account", AccountFilter );
+		HasDimensions = not q.Execute ().IsEmpty ();
+	endif;
 	
 EndProcedure
 
@@ -193,7 +249,25 @@ Procedure clearCurrencyFilter ()
 
 	CurrencyFilter = undefined;
 	DC.ChangeFilter ( List, "Currency", undefined, false );
+	DC.ChangeFilter ( Balances, "Dim1", undefined, false );
 
+EndProcedure
+
+&AtClient
+Procedure DimensionFilterOnChange ( Item )
+	
+	filterByDimension ();
+
+EndProcedure
+
+&AtServer
+Procedure filterByDimension ()
+	
+	clearCurrencyFilter ();
+	setup = not DimensionFilter.IsEmpty ();
+	DC.ChangeFilter ( List, "Account", DimensionFilter, setup );
+	DC.ChangeFilter ( Balances, "ExtDimension1", DimensionFilter, setup );
+	
 EndProcedure
 
 &AtClient
@@ -263,7 +337,7 @@ Procedure processDocuments ( Action, Keys )
 		NotifyChanged ( item );
 	enddo; 
 	
-EndProcedure 
+EndProcedure
 
 &AtServerNoContext
 Procedure writeDocument ( val Key, val Action )
@@ -328,18 +402,31 @@ EndProcedure
 &AtClient
 Procedure DocumentClosed ( Result, Ref ) export
 	
-	NotifyChanged ( getKey ( Ref ) );
+	#if ( WebClient ) then
+		Items.List.Refresh ();
+	#else
+		for each k in getKeys ( Ref ) do
+			NotifyChanged ( k );
+		enddo;
+	#endif
 	
 EndProcedure 
 
-&AtClient
-Function getKey ( Document )
+&AtServerNoContext
+Function getKeys ( val Document )
 	
-	params = new Array ();
-	params.Add ( new Structure ( "Document", Document ) );
-	return new ( "InformationRegisterRecordKey.Bank", params );
+	s = "select Record from InformationRegister.Bank where Document = &Ref";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", Document );
+	keys = q.Execute ().Unload ().UnloadColumn ( "Record" );
+	set = new Array ();
+	for each id in keys do
+		k = new ( "InformationRegisterRecordKey.Bank", new Structure ( "Document, Record", Document, id ) );
+		set.Add ( k );
+	enddo;
+	return set;
 	
-EndFunction 
+EndFunction
 
 &AtClient
 Procedure ShowRecords ( Command )
@@ -369,9 +456,18 @@ EndProcedure
 &AtClient
 Procedure activateDocument ( Document )
 	
-	k = getKey ( Document );
-	NotifyChanged ( k );
-	Items.List.CurrentRow = k;
+	set = getKeys ( Document );
+	if ( set.Count () = 0 ) then
+		return;
+	endif;
+	#if ( WebClient ) then
+		Items.List.Refresh ();
+	#else
+		for each k in set do
+			NotifyChanged ( k );
+		enddo;
+	#endif
+	Items.List.CurrentRow = set [ 0 ];
 	
 EndProcedure 
 
@@ -497,4 +593,4 @@ Procedure ObjectsDeletion ( Answer, Params ) export
 		processDocuments ( Enum.DocumentActionsDelete (), Params.Keys );
 	endif; 
 	
-EndProcedure
+EndProcedure 

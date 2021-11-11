@@ -25,10 +25,25 @@ EndFunction
 
 Procedure Constructor ( Object ) export
 	
-	for each item in Object.Ref.Metadata ().Attributes do
+	meta = Metadata.FindByType ( TypeOf ( Object.Ref ) );
+	folder = Metadata.Catalogs.Contains ( meta )
+	and meta.Hierarchical
+	and meta.HierarchyType = Metadata.ObjectProperties.HierarchyType.HierarchyFoldersAndItems
+	and Object.IsFolder;
+	for each item in meta.Attributes do
 		value = item.FillValue;			
-		if ( value <> undefined ) then
-			Object [ item.Name ] = value;
+		if ( ValueIsFilled ( value ) ) then
+			use = item.Use;
+			if ( folder ) then
+				fits = use = Metadata.ObjectProperties.AttributeUse.ForFolderAndItem
+					or use = Metadata.ObjectProperties.AttributeUse.ForFolder;
+			else
+				fits = use = Metadata.ObjectProperties.AttributeUse.ForFolderAndItem
+					or use = Metadata.ObjectProperties.AttributeUse.ForItem;
+			endif;
+			if ( fits ) then
+				Object [ item.Name ] = value;
+			endif;
 		endif;
 	enddo;
 

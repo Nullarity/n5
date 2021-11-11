@@ -146,29 +146,29 @@ Function entryData ( Object )
 	s = "
 	|select
 	|	case
-	|		when Records.Ref.Operation.Operation = value ( Enum.Operations.CashExpense )
+	|		when Records.Ref.Method = value ( Enum.Operations.CashExpense )
 	|			and Records.AccountCr.Currency then
 	|			Records.CurrencyCr
-	|		when Records.Ref.Operation.Operation = value ( Enum.Operations.CashReceipt )
+	|		when Records.Ref.Method = value ( Enum.Operations.CashReceipt )
 	|			and Records.AccountDr.Currency then
 	|			Records.CurrencyDr
 	|		else
 	|			Constants.Currency
 	|	end as Currency,
 	|	case
-	|		when Records.Ref.Operation.Operation = value ( Enum.Operations.CashExpense ) then
+	|		when Records.Ref.Method = value ( Enum.Operations.CashExpense ) then
 	|			Records.DimCr1
 	|		else
 	|			Records.DimDr1
 	|	end as Location,
 	|	case
-	|		when Records.Ref.Operation.Operation = value ( Enum.Operations.CashExpense ) then
+	|		when Records.Ref.Method = value ( Enum.Operations.CashExpense ) then
 	|			Records.DimDr1
 	|		else
 	|			Records.DimCr1
 	|	end as Subject,
 	|	case
-	|		when Records.Ref.Operation.Operation = value ( Enum.Operations.CashExpense ) then
+	|		when Records.Ref.Method = value ( Enum.Operations.CashExpense ) then
 	|			case when Records.AccountCr.Currency then Total.CurrencyAmount else Total.Amount end
 	|		else
 	|			case when Records.AccountDr.Currency then Total.CurrencyAmount else Total.Amount end
@@ -181,7 +181,7 @@ Function entryData ( Object )
 	|		select
 	|			sum ( Records.Amount ) as Amount,
 	|			sum ( isnull (
-	|				case when Records.Ref.Operation.Operation = value ( Enum.Operations.CashExpense ) then
+	|				case when Records.Ref.Method = value ( Enum.Operations.CashExpense ) then
 	|					 	Records.CurrencyAmountCr
 	|					else Records.CurrencyAmountDr
 	|				end, 0 )

@@ -4,28 +4,48 @@
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 
-	init ();
-	filterByCompany ();
+	initFilter ();
+	readAppearance ();
+	Appearance.Apply ( ThisObject );
 
 EndProcedure
 
 &AtServer
-Procedure init ()
+Procedure readAppearance ()
+
+	rules = new Array ();
+	rules.Add ( "
+	|UnitFilter show empty ( FixedOwnerFilter );
+	|" );
+	Appearance.Read ( ThisObject, rules );
+
+EndProcedure
+
+&AtServer
+Procedure initFilter ()
 	
-	UnitFilter = Logins.Settings ( "Company" ).Company;
+	if ( Parameters.Filter.Property ( "Owner", FixedOwnerFilter ) ) then
+		UnitFilter = FixedOwnerFilter;
+	else
+		UnitFilter = Logins.Settings ( "Company" ).Company;
+		filterByUnit ();
+	endif;
 	
 EndProcedure
 
 &AtServer
-Procedure filterByCompany ()
+Procedure filterByUnit ()
 	
 	DC.ChangeFilter ( List, "Owner", UnitFilter, ValueIsFilled ( UnitFilter ) );
 	
 EndProcedure
 
+// *****************************************
+// *********** Group Form
+
 &AtClient
 Procedure UnitFilterOnChange ( Item )
 
-	filterByCompany ();
+	filterByUnit ();
 
 EndProcedure

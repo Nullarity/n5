@@ -778,6 +778,42 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="90f6d7d3-f5a0-4615-ab19-a813d7fd846a">
+    <name>Government</name>
+    <synonym>
+      <key>en</key>
+      <value>Government</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Государство</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Guvern</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Government organization</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Государственная организация</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Organizație guvernamentală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:BooleanValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="fe04e7f1-5447-42e9-8755-154a5e260e8c">
     <name>GroupsUsage</name>
     <synonym>
@@ -1632,37 +1668,34 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="925f132d-66a9-4dce-827f-20bae30ef770">
-    <name>VATCode</name>
+  <attributes uuid="44fe32fd-1fa2-49b2-928e-378ab66646b4">
+    <name>TaxGroup</name>
     <synonym>
       <key>en</key>
-      <value>VAT Code</value>
+      <value>Tax Group</value>
     </synonym>
     <synonym>
       <key>ru</key>
-      <value>№ НДС</value>
+      <value>Группа налогов</value>
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>TVA #</value>
+      <value>Grupul de impozitare</value>
     </synonym>
     <type>
-      <types>String</types>
-      <stringQualifiers>
-        <length>20</length>
-      </stringQualifiers>
+      <types>CatalogRef.TaxGroups</types>
     </type>
     <toolTip>
       <key>en</key>
-      <value>Company's VAT code</value>
+      <value>Default Sale Tax Group</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Регистрационный № НДС контрагента</value>
+      <value>Режим учета налогов с продаж. Указанное значение будет использоваться для установки по умолчанию одноименного поля при вводе новых документов</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Număr de înregistrare TVA a întreprinderii</value>
+      <value>Modul de contabilizare a impozitelor pe vânzări. Valoarea specificată va fi utilizată pentru a seta valoarea implicită pentru același câmp atunci când introduceți documente noi</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -1708,6 +1741,44 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="925f132d-66a9-4dce-827f-20bae30ef770">
+    <name>VATCode</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT Code</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>№ НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>TVA #</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>20</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Company's VAT code</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Регистрационный № НДС контрагента</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Număr de înregistrare TVA a întreprinderii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="8bab81b5-0efa-424f-9d66-7164a0ead14b">
     <name>VATUse</name>
     <synonym>
@@ -1739,41 +1810,6 @@
     <toolTip>
       <key>ro</key>
       <value>Aplicarea TVA</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="44fe32fd-1fa2-49b2-928e-378ab66646b4">
-    <name>TaxGroup</name>
-    <synonym>
-      <key>en</key>
-      <value>Tax Group</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Группа налогов</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Grupul de impozitare</value>
-    </synonym>
-    <type>
-      <types>CatalogRef.TaxGroups</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Default Sale Tax Group</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Режим учета налогов с продаж. Указанное значение будет использоваться для установки по умолчанию одноименного поля при вводе новых документов</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Modul de contabilizare a impozitelor pe vânzări. Valoarea specificată va fi utilizată pentru a seta valoarea implicită pentru același câmp atunci când introduceți documente noi</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>

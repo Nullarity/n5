@@ -31,7 +31,7 @@ EndProcedure
 &AtServer
 Procedure rememberOperation ()
 	
-	OldOperation = Object.Operation;
+	OldOperation = Object.Method;
 
 EndProcedure
 
@@ -72,11 +72,11 @@ Procedure readAppearance ()
 	|RecordsPage show not Object.Simple;
 	|AccountDr lock Object.Simple and filled ( Operation.AccountDr );
 	|AccountCr lock Object.Simple and filled ( Operation.AccountCr );
-	|NewReceipt show empty ( Receipt ) and Operation.Operation = Enum.Operations.CashReceipt;
-	|NewVoucher show empty ( Voucher ) and Operation.Operation = Enum.Operations.CashExpense;
-	|Receipt FormReceipt show filled ( Receipt ) and Operation.Operation = Enum.Operations.CashReceipt;
-	|Voucher FormVoucher show filled ( Voucher ) and Operation.Operation = Enum.Operations.CashExpense;
-	|Reference ReferenceDate show inlist ( Operation.Operation, Enum.Operations.BankExpense, Enum.Operations.BankReceipt )
+	|NewReceipt show empty ( Receipt ) and Object.Method = Enum.Operations.CashReceipt;
+	|NewVoucher show empty ( Voucher ) and Object.Method = Enum.Operations.CashExpense;
+	|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.Operations.CashReceipt;
+	|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.Operations.CashExpense;
+	|Reference ReferenceDate show inlist ( Object.Method, Enum.Operations.BankExpense, Enum.Operations.BankReceipt )
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -101,6 +101,7 @@ Procedure uploadOperation ()
 	
 	readOperation ();
 	Object.Simple = Operation.Simple;
+	Object.Method = Operation.Operation;
 	
 EndProcedure
 
@@ -220,7 +221,7 @@ Procedure applyOperationType ()
 	
 	uploadOperation ();
 	resetReference ();
-	Appearance.Apply ( ThisObject, "Operation.Operation" );
+	Appearance.Apply ( ThisObject, "Object.Method" );
 	if ( Object.Operation.IsEmpty () ) then
 		Appearance.Apply ( ThisObject, "Operation.AccountDr" );
 		Appearance.Apply ( ThisObject, "Operation.AccountCr" );
@@ -231,7 +232,7 @@ EndProcedure
 &AtServer
 Procedure resetReference ()
 	
-	type = Object.Operation.Operation;
+	type = Object.Method;
 	if ( type = Enums.Operations.BankExpense
 		or type = Enums.Operations.BankReceipt ) then
 		return;

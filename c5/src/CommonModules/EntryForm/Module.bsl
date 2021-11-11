@@ -141,6 +141,8 @@ Procedure adjustAnalytics ( Form, Side )
 	else
 		tableRow [ dim3 ] = null;
 	endif; 
+	class = Side + "Class";
+	tableRow [ class ] = fields.Class;
 
 EndProcedure 
 

@@ -108,11 +108,12 @@ Procedure readAppearance ()
 	|Description lock PropertiesData.ChangeName;
 	|FullDescription lock PropertiesData.ChangeDescription;
 	|OpenObjectUsage enable inlist ( Object.ObjectUsage, Enum.PropertiesUsage.Inherit, Enum.PropertiesUsage.Special );
-	|EntityGroup ContactPerson PaymentContact ShippingContact hide Object.Individual;
+	|EntityGroup ContactPerson PaymentContact ShippingContact Government hide Object.Individual;
 	|IndividualGroup1 IndividualGroup2 IndividualGroup3 Address Birthplace show Object.Individual;
 	|VATCode show Object.VATUse > 0;
 	|WrongCode show WrongCode;
-	|Fill hide Object.Individual
+	|Fill hide Object.Individual;
+	|Individual hide Object.Government;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -590,6 +591,13 @@ Procedure applyVendor ()
 	Appearance.Apply ( ThisObject, "Object.Vendor" );	
 	
 EndProcedure 
+
+&AtClient
+Procedure GovernmentOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.Government" );
+
+EndProcedure
 
 &AtClient
 Procedure IndividualOnChange ( Item )
