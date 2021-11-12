@@ -11,7 +11,8 @@ Function getAccountData ( Account )
 	
 	s = "
 	|select Accounts.Currency as Currency, Accounts.Quantitative as Quantitative,
-	|	count ( Types.ExtDimensionType ) as Level, isnull ( Children.Exists, false ) as Main
+	|	count ( Types.ExtDimensionType ) as Level, isnull ( Children.Exists, false ) as Main,
+	|	Accounts.Class as Class
 	|from ChartOfAccounts.General as Accounts
 	|	//
 	|	// Types
@@ -41,7 +42,7 @@ EndFunction
 Function getDataFields ( Result )
 	
 	table = Result.Unload ();
-	fields = new Structure ( "Currency, Quantitative, Level, Main", false, false, 0, false );
+	fields = new Structure ( "Currency, Quantitative, Level, Main, Class", false, false, 0, false );
 	if ( table.Count () > 0 ) then
 		FillPropertyValues ( fields, table [ 0 ] );
 	endif; 	

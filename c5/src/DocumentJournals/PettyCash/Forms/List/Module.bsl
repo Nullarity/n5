@@ -7,7 +7,28 @@ var TableRow;
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	init ();
 	fillAllowedDocuments ();
+	readAppearance ();
+	Appearance.Apply ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure init ()
+	
+	CurrencyFilter = Application.Currency ();
+
+EndProcedure
+
+&AtServer
+Procedure readAppearance ()
+	
+	rules = new Array ();
+	rules.Add ( "
+	|Currency show empty ( CurrencyFilter );
+	|" );
+	Appearance.Read ( ThisObject, rules );
 	
 EndProcedure
 
@@ -137,6 +158,14 @@ EndProcedure
 &AtClient
 Procedure CurrencyFilterOnChange ( Item )
 	
+	applyCurrency ();
+	
+EndProcedure
+
+&AtServer
+Procedure applyCurrency ()
+	
+	Appearance.Apply ( ThisObject, "CurrencyFilter" );
 	filterByCurrency ();
 	
 EndProcedure

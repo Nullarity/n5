@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group2</name>
     <id>45</id>
@@ -411,114 +411,32 @@
         <autoMaxHeight>true</autoMaxHeight>
       </extInfo>
     </items>
-    <items xsi:type="form:FormGroup">
-      <name>Group1</name>
-      <id>43</id>
-      <items xsi:type="form:FormField">
-        <name>Amount</name>
-        <id>25</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <dataPath xsi:type="form:MultiLanguageDataPath">
-          <paths xsi:type="form:DataPath">
-            <segments>List.Amount</segments>
-          </paths>
-        </dataPath>
-        <extendedTooltip>
-          <name>AmountExtendedTooltip</name>
-          <id>27</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <type>Label</type>
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-          <extInfo xsi:type="form:LabelDecorationExtInfo">
-            <horizontalAlign>Left</horizontalAlign>
-          </extInfo>
-        </extendedTooltip>
-        <contextMenu>
-          <name>AmountContextMenu</name>
-          <id>26</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <autoFill>true</autoFill>
-        </contextMenu>
-        <type>LabelField</type>
-        <editMode>Enter</editMode>
-        <showInHeader>true</showInHeader>
-        <headerHorizontalAlign>Left</headerHorizontalAlign>
-        <showInFooter>true</showInFooter>
-        <extInfo xsi:type="form:LabelFieldExtInfo">
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-        </extInfo>
-      </items>
-      <items xsi:type="form:FormField">
-        <name>Currency</name>
-        <id>40</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <dataPath xsi:type="form:MultiLanguageDataPath">
-          <paths xsi:type="form:DataPath">
-            <segments>List.Currency</segments>
-          </paths>
-        </dataPath>
-        <titleLocation>None</titleLocation>
-        <extendedTooltip>
-          <name>CurrencyExtendedTooltip</name>
-          <id>42</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <type>Label</type>
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-          <extInfo xsi:type="form:LabelDecorationExtInfo">
-            <horizontalAlign>Left</horizontalAlign>
-          </extInfo>
-        </extendedTooltip>
-        <contextMenu>
-          <name>CurrencyContextMenu</name>
-          <id>41</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <autoFill>true</autoFill>
-        </contextMenu>
-        <type>LabelField</type>
-        <editMode>Enter</editMode>
-        <headerHorizontalAlign>Left</headerHorizontalAlign>
-        <showInFooter>true</showInFooter>
-        <extInfo xsi:type="form:LabelFieldExtInfo">
-          <autoMaxWidth>true</autoMaxWidth>
-          <autoMaxHeight>true</autoMaxHeight>
-        </extInfo>
-      </items>
+    <items xsi:type="form:FormField">
+      <name>Receipt</name>
+      <id>94</id>
+      <title>
+        <key>en</key>
+        <value>Receipt</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Приход</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Chitanță</value>
+      </title>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
-      <width>11</width>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Receipt</segments>
+      </dataPath>
       <extendedTooltip>
-        <name>Group1ExtendedTooltip</name>
-        <id>44</id>
+        <name>ReceiptExtendedTooltip</name>
+        <id>96</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -531,10 +449,143 @@
           <horizontalAlign>Left</horizontalAlign>
         </extInfo>
       </extendedTooltip>
-      <type>ColumnGroup</type>
-      <extInfo xsi:type="form:ColumnGroupExtInfo">
-        <group>InCell</group>
-        <showTitle>true</showTitle>
+      <contextMenu>
+        <name>ReceiptContextMenu</name>
+        <id>95</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>10</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Expense</name>
+      <id>97</id>
+      <title>
+        <key>en</key>
+        <value>Expense</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Расход</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Cheltuieli</value>
+      </title>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Expense</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>ExpenseExtendedTooltip</name>
+        <id>99</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>ExpenseContextMenu</name>
+        <id>98</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>10</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Currency</name>
+      <id>91</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Currency</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>CurrencyExtendedTooltip</name>
+        <id>93</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>CurrencyContextMenu</name>
+        <id>92</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>5</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
@@ -1451,11 +1502,168 @@
     </notDefaultUseAlwaysAttributes>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select List.Ref, List.Date, List.DeletionMark, List.Number, List.Posted, List.Amount, List.Company, 
+	List.Creator, List.Currency, List.Location, List.Memo, List.Name, List.Type,
+	case when List.Ref refs Document.CashReceipt then List.Amount else 0 end as Receipt,
+	case when List.Ref refs Document.CashVoucher then List.Amount else 0 end as Expense
+from DocumentJournal.PettyCash as List</queryText>
       <mainTable>DocumentJournal.PettyCash</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Currency</dataPath>
+        <field>Currency</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Location</dataPath>
+        <field>Location</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Name</dataPath>
+        <field>Name</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Type</dataPath>
+        <field>Type</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Receipt</dataPath>
+        <field>Receipt</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Receipt</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Expense</dataPath>
+        <field>Expense</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Expense</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
     </extInfo>
   </attributes>
   <attributes>
@@ -1523,6 +1731,19 @@
     <extInfo xsi:type="form:ValueListExtInfo">
       <itemValueType/>
     </extInfo>
+  </attributes>
+  <attributes>
+    <name>AppearanceData</name>
+    <id>5</id>
+    <valueType>
+      <types>Arbitrary</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
   </attributes>
   <formCommands>
     <name>CreateDocument</name>

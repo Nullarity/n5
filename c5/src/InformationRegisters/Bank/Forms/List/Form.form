@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group3</name>
     <id>65</id>
@@ -3364,6 +3364,9 @@
     <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
       <segments>List.Status</segments>
     </notDefaultUseAlwaysAttributes>
+    <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
+      <segments>List.Record</segments>
+    </notDefaultUseAlwaysAttributes>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>select allowed Records.Date as Date, Records.Document as Document, Records.Amount as Amount,
@@ -3377,7 +3380,8 @@
 	case Records.Dr when true then 0 else 1 end as Sign,
 	case Records.Dr when true then Records.Amount else 0 end as Received,
 	case Records.Dr when true then 0 else Records.Amount end as Expense,
-	case when Records.Operation = value ( Catalog.Operations.EmptyRef ) then valuetype ( Records.Document ) else Records.Operation end as Operation
+	case when Records.Operation = value ( Catalog.Operations.EmptyRef ) then valuetype ( Records.Document ) else Records.Operation end as Operation,
+	Records.Record as Record
 from InformationRegister.Bank as Records
 {where Records.Date between &amp;DateStart and &amp;DateEnd}</queryText>
       <mainTable>InformationRegister.Bank</mainTable>
@@ -3386,6 +3390,219 @@ from InformationRegister.Bank as Records
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Document</dataPath>
+        <field>Document</field>
+        <role>
+          <dimension>true</dimension>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Analytics</dataPath>
+        <field>Analytics</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Currency</dataPath>
+        <field>Currency</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Account</dataPath>
+        <field>Account</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Reference</dataPath>
+        <field>Reference</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ReferenceDate</dataPath>
+        <field>ReferenceDate</field>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Status</dataPath>
+        <field>Status</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Status</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Sign</dataPath>
+        <field>Sign</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Sign</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Received</dataPath>
+        <field>Received</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Received</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Expense</dataPath>
+        <field>Expense</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Expense</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Operation</dataPath>
+        <field>Operation</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Operation</value>
+            </content>
+          </localValue>
+        </title>
+        <role>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Record</dataPath>
+        <field>Record</field>
+        <role>
+          <dimension>true</dimension>
+          <accountTypeExpression></accountTypeExpression>
+          <balanceGroupName></balanceGroupName>
+          <accountField></accountField>
+        </role>
+      </fields>
     </extInfo>
   </attributes>
   <attributes>
