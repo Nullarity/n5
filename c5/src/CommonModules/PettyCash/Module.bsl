@@ -297,19 +297,16 @@ EndFunction
 &AtServer
 Procedure syncEntry ( Object )
 	
-	var oldOperation;
-	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesOldOperation (), oldOperation );
-	reference = PettyCashSrv.Search ( Object.Ref, oldOperation );
+	var oldMethod;
+	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesOldOperation (), oldMethod );
+	reference = PettyCashSrv.Search ( Object.Ref, oldMethod);
 	method = DF.Pick ( Object.Operation, "Operation" );
 	if ( not reference.IsEmpty () ) then
-		if ( ValueIsFilled ( oldOperation ) ) then
-			oldMethod = DF.Pick ( OldOperation, "Operation" );
-			clean = oldMethod <> method
-			and ( oldMethod = Enums.Operations.CashExpense
-				or oldMethod = Enums.Operations.CashReceipt );
-			if ( clean ) then
-				remove ( reference );
-			endif;
+		clean = oldMethod <> method
+		and ( oldMethod = Enums.Operations.CashExpense
+			or oldMethod = Enums.Operations.CashReceipt );
+		if ( clean ) then
+			remove ( reference );
 		endif;
 	endif;
 	if ( method = Enums.Operations.CashExpense
