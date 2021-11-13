@@ -17,8 +17,10 @@ Procedure fillNew ()
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
 		return;
 	endif; 
-	settings = Logins.Settings ( "Company" );
-	Object.Owner = settings.Company;
+	if ( Object.Owner.IsEmpty () ) then
+		settings = Logins.Settings ( "Company" );
+		Object.Owner = settings.Company;
+	endif;
 	
 EndProcedure 
 

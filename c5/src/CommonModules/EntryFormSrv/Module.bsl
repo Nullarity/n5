@@ -8,21 +8,24 @@ Function AccountsData ( val Dr, val Cr ) export
 	
 EndFunction 
 
-Function GetContract ( val Account, val Organization ) export
+Function GetContract ( val Account, val Organization, val Company ) export
 	
-	data = DF.Values ( Organization, "Customer, Vendor, CustomerContract, VendorContract" );
+	data = DF.Values ( Organization, "Customer, Vendor, CustomerContract, VendorContract,
+	|CustomerContract.Company, VendorContract.Company" );
 	customerRequired = ( DF.Pick ( Account, "Type" ) = AccountType.Active );
+	customerContract = ? ( data.CustomerContractCompany = Company, data.CustomerContract, undefined );
+	vendorContract = ? ( data.VendorContractCompany = Company, data.VendorContract, undefined );
 	if ( customerRequired ) then
 		if ( data.Customer ) then
-			return data.CustomerContract;
+			return customerContract;
 		else
-			return data.VendorContract;
+			return vendorContract;
 		endif; 
 	else
 		if ( data.Vendor ) then
-			return data.VendorContract;
+			return vendorContract;
 		else
-			return data.CustomerContract;
+			return customerContract;
 		endif; 
 	endif; 
 	

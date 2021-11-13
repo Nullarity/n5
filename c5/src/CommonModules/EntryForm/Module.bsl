@@ -100,7 +100,9 @@ Procedure AccountDrOnChange ( Form ) export
 	Form.TableRow.AccountDr = Form.AccountDr;
 	readAccounts ( Form, true, false );
 	adjustAnalytics ( Form, "Dr" );
-	setAmount ( Form.TableRow, Form.TableRow.Amount, true );
+	setDim1 ( Form, "Dr" );
+	row = Form.TableRow;
+	setAmount ( row, row.Amount, true );
 	enableSide ( Form, "Dr" );
 	EntryForm.DisableCurrency ( Form, "Dr" );
 	
@@ -145,6 +147,19 @@ Procedure adjustAnalytics ( Form, Side )
 	tableRow [ class ] = fields.Class;
 
 EndProcedure 
+
+Procedure setDim1 ( Form, Side )
+	
+	dim = "Dim" + Side + "1";
+	row = Form.TableRow;
+	if ( TypeOf ( row [ dim ] ) = Type ( "CatalogRef.PaymentLocations" ) ) then
+		data = Logins.Settings ( "PaymentLocation, PaymentLocation.Owner as Company" );
+		if ( data.Company = Form.Object.Company ) then
+			row [ dim ] = data.PaymentLocation;
+		endif;
+	endif;
+
+EndProcedure
 
 Procedure setAmount ( TableRow, Amount, Corresponding )
 	
@@ -222,13 +237,13 @@ Procedure calcAmount ( Form, Side )
 	factor = tableRow [ "Factor" + Side ];
 	recordAmount = ( amount * rate ) / Max ( factor, 1 );
 	setAmount ( tableRow, recordAmount, Side <> "" );
-	if ( isMain ( Form ) ) then
+	if ( isEntry ( Form ) ) then
 		Form.Object.Amount = recordAmount;
 	endif; 
 	
 EndProcedure 
 
-Function isMain ( Form )
+Function isEntry ( Form )
 	
 	return Form.FormName = "Document.Entry.Form.Form";
 	
@@ -267,8 +282,9 @@ EndProcedure
 Procedure applyOrganization ( Form, Side, Organization )
 	
 	tableRow = Form.TableRow;
-	account = ? ( isOpeningBalances ( Form ), Form.Object.Account, tableRow [ "Account" + Side ] );
-	contract = EntryFormSrv.GetContract ( account, Organization );
+	object = Form.Object;
+	account = ? ( isOpeningBalances ( Form ), object.Account, tableRow [ "Account" + Side ] );
+	contract = EntryFormSrv.GetContract ( account, Organization, object.Company );
 	tableRow [ "Dim" + Side + "2" ] = contract;
 	applyContract ( Form, Side, contract );
 	
@@ -347,7 +363,9 @@ Procedure AccountCrOnChange ( Form ) export
 	Form.TableRow.AccountCr = Form.AccountCr;
 	readAccounts ( Form, false, true );
 	adjustAnalytics ( Form, "Cr" );
-	setAmount ( Form.TableRow, Form.TableRow.Amount, true );
+	setDim1 ( Form, "Cr" );
+	row = Form.TableRow;
+	setAmount ( row, row.Amount, true );
 	enableSide ( Form, "Cr" );
 	EntryForm.DisableCurrency ( Form, "Cr" );
 	
@@ -420,7 +438,7 @@ EndProcedure
 Procedure setTotal ( Form )
 	
 	object = Form.Object;
-	simple = ( isMain ( Form ) and object.Simple )
+	simple = ( isEntry ( Form ) and object.Simple )
 	or ( isOpeningBalances ( Form ) and not Form.DetailsExist );
 	if ( simple ) then
 		object.Amount = Form.TableRow.Amount;
@@ -430,7 +448,7 @@ EndProcedure
 
 Procedure FixAccounts ( Form ) export
 	
-	if ( isMain ( Form ) ) then
+	if ( isEntry ( Form ) ) then
 		operation = Form.Operation;
 	else
 		operation = Form.FormOwner.Operation;
