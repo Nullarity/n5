@@ -1,4 +1,4 @@
-// Test calculation Extra Charge
+﻿// Test calculation Extra Charge
 //
 // 1. Creating VendorInvoice with producer price
 // 2. Creating invoice

@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 fill ( "NBMDMD2X", """Banca Nationala a Moldovei"" Chisinau" );

@@ -1,4 +1,4 @@
-// In progress
+﻿// In progress
 // - Open Worklog report
 // - Load Mobile Chart variant
 // - Generate report

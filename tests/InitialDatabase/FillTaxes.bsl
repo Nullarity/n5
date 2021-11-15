@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Taxes" );
 

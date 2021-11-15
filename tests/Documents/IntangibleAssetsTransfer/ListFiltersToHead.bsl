@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in document list form and create a new document.
 // Checks the automatic header filling process
 

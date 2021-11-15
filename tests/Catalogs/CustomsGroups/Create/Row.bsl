@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 p = new Structure ();
 p.Insert ( "Payment" );

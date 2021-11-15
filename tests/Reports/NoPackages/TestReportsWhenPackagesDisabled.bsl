@@ -1,4 +1,4 @@
-// Some reports depend on Package feature.
+﻿// Some reports depend on Package feature.
 // This test disables Packages and test reports
 
 Call ( "Common.Init" );

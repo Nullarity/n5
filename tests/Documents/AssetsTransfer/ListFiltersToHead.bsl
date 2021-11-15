@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Assets Transfer list form and create a new Assets Inventory.
 // Checks the automatic header filling process
 //

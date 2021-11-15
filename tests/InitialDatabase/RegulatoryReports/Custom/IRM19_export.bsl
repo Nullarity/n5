@@ -1,4 +1,4 @@
-Env = new Structure ();
+﻿Env = new Structure ();
 XMLWriter = new XMLWriter ();
 File = GetTempFileName ( "xml" );
 

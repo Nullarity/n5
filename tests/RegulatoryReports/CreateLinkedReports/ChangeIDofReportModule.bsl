@@ -1,3 +1,3 @@
-id = __.CurrentID;
+﻿id = __.CurrentID;
 s = Output.Sformat ( _, new Structure ( "ID", id ) );
 return s;

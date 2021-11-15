@@ -1,4 +1,4 @@
-// Create Infobase
+﻿// Create Infobase
 // Open List of Infobases
 // Select infobase
 // Check if selection was ok

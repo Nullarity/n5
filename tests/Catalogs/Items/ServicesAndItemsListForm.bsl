@@ -1,4 +1,4 @@
-// Create new Invoice
+﻿// Create new Invoice
 // Add new Item and check Items list caption
 // Add new Service and check Services list caption
 

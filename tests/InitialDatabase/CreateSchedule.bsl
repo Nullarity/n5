@@ -1,4 +1,4 @@
-// - Create standard schedule
+﻿// - Create standard schedule
 
 p = Call ( "Catalogs.Schedules.Create.Params" );
 p.Description = "Пятидневка";

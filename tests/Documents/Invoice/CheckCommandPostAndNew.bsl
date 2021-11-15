@@ -1,4 +1,4 @@
-// Create, fill and post Invoice
+﻿// Create, fill and post Invoice
 // Create another one using Post & New button
 // Open list form again and set filter by customer
 // Open existed document

@@ -1,4 +1,4 @@
-// 1. Create Overpayment ( advance ) 
+﻿// 1. Create Overpayment ( advance ) 
 // 2. Create Invoice ( debt ) by receiver contract
 // 3. Create Adjust debt
 // 4. Check movemnts

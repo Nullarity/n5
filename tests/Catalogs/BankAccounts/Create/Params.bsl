@@ -1,4 +1,4 @@
-p = new Structure ();
+﻿p = new Structure ();
 p.Insert ( "Company" ); // Company or Organization field should be filled
 p.Insert ( "Organization" );
 p.Insert ( "Bank" );

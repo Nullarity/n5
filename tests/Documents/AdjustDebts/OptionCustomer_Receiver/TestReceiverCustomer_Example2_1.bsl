@@ -1,4 +1,4 @@
-// different customers
+﻿// different customers
 // 1. Create Invoice ( debt ) by Customer
 // 1. Create Payment ( advance ) by Receiver
 // 2. Create Adjust debt

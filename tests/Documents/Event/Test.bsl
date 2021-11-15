@@ -1,4 +1,4 @@
-// Create an Event
+﻿// Create an Event
 
 Call ( "Common.Init" );
 CloseAll ();

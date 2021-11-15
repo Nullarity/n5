@@ -1,4 +1,4 @@
-// Create a new Customer
+﻿// Create a new Customer
 // Create a new Payment
 // Fill Payment and post
 // Check records

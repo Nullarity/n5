@@ -1,4 +1,4 @@
-Commando ( "e1cib/command/Catalog.Rooms.Create" );
+﻿Commando ( "e1cib/command/Catalog.Rooms.Create" );
 With();
 description = _.Description;
 Set("#Description", description);

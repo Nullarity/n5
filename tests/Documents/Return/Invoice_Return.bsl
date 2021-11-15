@@ -1,4 +1,4 @@
-// Check filling Return by Invoice and check records:
+﻿// Check filling Return by Invoice and check records:
 // - Create VendorInvoice
 // - Create Invoice
 // - Generate Return

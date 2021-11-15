@@ -1,4 +1,4 @@
-// - Open Bank journal
+﻿// - Open Bank journal
 // - Create, save & close Customer Payment
 // - Check if current row gets focus correctly
 

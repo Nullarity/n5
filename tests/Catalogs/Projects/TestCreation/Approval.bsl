@@ -1,4 +1,4 @@
-form = __.Form;
+﻿form = __.Form;
 //page = Activate ( "Approval", form );
 //With ( page );
 

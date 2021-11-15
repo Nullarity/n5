@@ -1,4 +1,4 @@
-// Create Closing Advances (USD) and check movements
+﻿// Create Closing Advances (USD) and check movements
 // 1. create Payment
 // 2. create closing advances = receipt advance
 // 3. create Invoice

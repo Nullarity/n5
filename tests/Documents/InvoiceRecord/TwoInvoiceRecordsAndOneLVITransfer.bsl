@@ -1,4 +1,4 @@
-// Create a LVITransfer
+﻿// Create a LVITransfer
 // Create an Invoice Record
 // Open LVITransfer and check if New Invoice button is not available
 // Open Invoice Record and cancel it

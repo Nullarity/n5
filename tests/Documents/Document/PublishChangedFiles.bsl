@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Publish Document with chaged files
 //
 // Conditions:

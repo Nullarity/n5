@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Payemnt order list form and create a new Payment order.
 // Checks the automatic header filling process
 //

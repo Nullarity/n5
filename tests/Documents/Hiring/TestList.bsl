@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 Call ( "Common.OpenList", Meta.Documents.Hiring );

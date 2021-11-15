@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Test embedded items gallery
 // Parameters:
 // P1: Document metadata

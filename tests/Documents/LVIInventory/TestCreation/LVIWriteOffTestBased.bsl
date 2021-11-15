@@ -1,4 +1,4 @@
-form = With ( "LVI Write *" );
+﻿form = With ( "LVI Write *" );
 Put ( "#ExpenseAccount", "7141" );
 Put ( "#Dim1", _.Expense );
 Put ( "#AmortizationAccount", "2141" );

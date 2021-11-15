@@ -1,4 +1,4 @@
-// Create a new Account
+﻿// Create a new Account
 //
 // Parameters:
 // ChartsOfAccounts.General.Create.Params

@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Open Journal
 // - Add a new Customer Payment
 // - Open Receipt & Print from Receipt

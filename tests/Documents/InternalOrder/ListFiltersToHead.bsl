@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 form = Call ( "Common.OpenList", Meta.Documents.InternalOrder );
 

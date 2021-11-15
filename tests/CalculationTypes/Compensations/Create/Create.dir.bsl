@@ -1,4 +1,4 @@
-Commando ( "e1cib/data/ChartOfCalculationTypes.Compensations" );
+﻿Commando ( "e1cib/data/ChartOfCalculationTypes.Compensations" );
 With ( "Compensations (cr*" );
 value = _.Method;
 if ( value <> undefined ) then

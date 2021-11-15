@@ -1,4 +1,4 @@
-// Create Closing Advances Given (Given Advances operation) (USD) and check movements
+﻿// Create Closing Advances Given (Given Advances operation) (USD) and check movements
 // 1. create Vendor Payment
 // 2. create closing given advances and check records
 

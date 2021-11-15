@@ -1,4 +1,4 @@
-//	Create LVI Startup then LVI Transfer and test movements
+﻿//	Create LVI Startup then LVI Transfer and test movements
 //	1. Create Vendor Invoice
 //	2. Create Startup based on VendorInvoice
 //	3. Create LVI Transfer

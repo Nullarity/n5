@@ -1,4 +1,4 @@
-CloseAll ();
+﻿CloseAll ();
 
 MainWindow.ExecuteCommand ( "e1cib/list/Document.PaymentOrder" );
 form = With ( "Payment Orders" );

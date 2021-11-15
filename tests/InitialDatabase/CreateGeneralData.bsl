@@ -1,4 +1,4 @@
-// Create Company, Warehouse, Department and other defaults
+﻿// Create Company, Warehouse, Department and other defaults
 
 company = "Наша компания";
 department = "Администрация";

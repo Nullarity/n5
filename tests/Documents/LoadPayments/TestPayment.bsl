@@ -1,4 +1,4 @@
-formDoc = With ( "Customer Payment #*" );
+﻿formDoc = With ( "Customer Payment #*" );
 Click ( "#FormReportRecordsShow" );
 form = With ( "Records: Customer Payment #*" );
 Call ( "Common.CheckLogic", "#TabDoc" );

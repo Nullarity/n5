@@ -1,4 +1,4 @@
-// Create Sales Order with Reservation "Next Receipts"
+﻿// Create Sales Order with Reservation "Next Receipts"
 // Create Vendor Invoice based on Sales Order
 // Create Invoice based on Sales Order
 // Create Return based on Invoice

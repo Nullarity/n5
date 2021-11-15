@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Assemblings list form and create a new Disassembling.
 // Checks the automatic header filling process
 //

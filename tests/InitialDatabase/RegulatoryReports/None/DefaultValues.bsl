@@ -1,4 +1,4 @@
-Procedure Make ()
+﻿Procedure Make ()
 
 	area = getArea ();
 	draw ();

@@ -1,4 +1,4 @@
-// 1. Create Invoice ( debt ) by customer contract
+﻿// 1. Create Invoice ( debt ) by customer contract
 // 2. Create VendorInvoice ( debt ) by vendor contract
 // 3. Create Adjust debt
 // 4. Check movemnts

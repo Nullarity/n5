@@ -1,4 +1,4 @@
-// "Downgrade" application to version 1.0.0.0
+﻿// "Downgrade" application to version 1.0.0.0
 // Restart app and perform update
 // Check if update has been completed
 

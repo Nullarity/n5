@@ -1,4 +1,4 @@
-MainWindow.ExecuteCommand ( "e1cib/data/Document.VendorInvoice" );
+﻿MainWindow.ExecuteCommand ( "e1cib/data/Document.VendorInvoice" );
 
 form = With ( "Vendor Invoice (create)" );
 if ( _.DateBeforeVendor ) then

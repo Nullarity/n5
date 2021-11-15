@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // 1. Hire employee with 1 bonus
 // 2. Create Employee Transfer and try:
 // - change bonus without actual changes

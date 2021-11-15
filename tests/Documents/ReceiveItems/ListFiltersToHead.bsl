@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Receive Items list form and create a new Receive Items.
 // Checks the automatic header filling process
 //

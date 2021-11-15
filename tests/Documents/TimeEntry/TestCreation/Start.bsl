@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 Run ( "Env" );
 __.CurrentCustomer = __.MyCompany;
 

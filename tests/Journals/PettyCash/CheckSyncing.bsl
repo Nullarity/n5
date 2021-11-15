@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Open list of Customer Payments and clean filters
 // - Create & Post a new Customer Payment
 // - Open Petty Cash journal

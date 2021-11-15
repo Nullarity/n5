@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Returns work hours between two dates by selected schedule
 //
 // Parameters:

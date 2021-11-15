@@ -1,4 +1,4 @@
-// Create time entry and change time back and forth with testing
+﻿// Create time entry and change time back and forth with testing
 
 Call ( "Common.Init" );
 CloseAll ();

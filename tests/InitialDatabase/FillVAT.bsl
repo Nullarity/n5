@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 addVAT ( "Standard", "20" );
 addVAT ( "Zero", , "0", "0%" );

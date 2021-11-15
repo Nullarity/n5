@@ -1,4 +1,4 @@
-// Create folder Boots with private property Brand
+﻿// Create folder Boots with private property Brand
 // Create a common property Size with dependency of Brand
 // Check how it works
 

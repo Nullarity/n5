@@ -1,4 +1,4 @@
-// 1. Create Overpayment ( advance ) USD 
+﻿// 1. Create Overpayment ( advance ) USD 
 // 2. Create Invoice ( debt ) by receiver contract CAD
 // 3. Create Adjust debt USD
 // 4. Check movemnts

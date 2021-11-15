@@ -1,4 +1,4 @@
-// Test filling VendorReturn by AddFromInvoice button:
+﻿// Test filling VendorReturn by AddFromInvoice button:
 // - Create VendorInvoice
 // - Create VendorReturn
 // - Select VendorInvoice 

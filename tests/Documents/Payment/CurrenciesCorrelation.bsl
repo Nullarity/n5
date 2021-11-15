@@ -1,4 +1,4 @@
-// Create payments in different currencies and check results
+﻿// Create payments in different currencies and check results
 
 Call("Common.Init");
 CloseAll();

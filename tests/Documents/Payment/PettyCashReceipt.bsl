@@ -1,4 +1,4 @@
-// Create a new Customer Payment
+﻿// Create a new Customer Payment
 // Fill Cash Receipt
 
 Call ( "Common.Init" );

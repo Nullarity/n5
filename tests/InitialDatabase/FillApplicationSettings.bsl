@@ -1,4 +1,4 @@
-CloseAll ();
+﻿CloseAll ();
 
 OpenMenu ( "Settings / Application" );
 form = With ( "Application Settings" );

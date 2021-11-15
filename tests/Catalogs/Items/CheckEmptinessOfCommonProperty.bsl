@@ -1,4 +1,4 @@
-// Create common property and check if it comes to Common Properties register.
+﻿// Create common property and check if it comes to Common Properties register.
 // Then uncheck Common and check if it leaves Common Properties register.
 
 Call ( "Common.Init" );

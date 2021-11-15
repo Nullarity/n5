@@ -1,4 +1,4 @@
-// Set Template and Program code. Scenario should be open and CurrentSource
+﻿// Set Template and Program code. Scenario should be open and CurrentSource
 // should point to the target scenario form (in designer mode)
 // Parameters:
 // RegulatoryReports.Load.Params

@@ -1,4 +1,4 @@
-// Create an Internal Order on Warehouse1 with future reservations
+﻿// Create an Internal Order on Warehouse1 with future reservations
 // Create Vendor Invoice and receive items on Warehouse2
 // Check Items report: Warehouse2 should have reserve
 // Transfer items from Warehouse2 to Warehouse1

@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Open Journal
 // - Add a new Customer Payment
 // - Check DrCr ToolTip

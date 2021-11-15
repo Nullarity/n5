@@ -1,4 +1,4 @@
-// Conditions:
+﻿// Conditions:
 // Project with description "5 files" should exist
 // Files should be inside
 

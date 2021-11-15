@@ -1,4 +1,4 @@
-form = With ( "Cash Flows" );
+﻿form = With ( "Cash Flows" );
 list = Activate ( "#List" );
 search = new Map ();
 search.Insert ( "Description", _ );

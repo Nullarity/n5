@@ -1,4 +1,4 @@
-// Creates IO and approves it.
+﻿// Creates IO and approves it.
 // Returns IO document number
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document.InternalOrder" );

@@ -1,4 +1,4 @@
-p = new Structure ();
+﻿p = new Structure ();
 p.Insert ( "Description" );
 p.Insert ( "Year", Format ( Year ( CurrentDate () ), "NG=" ) );
 p.Insert ( "AverageDays", "21.10" );

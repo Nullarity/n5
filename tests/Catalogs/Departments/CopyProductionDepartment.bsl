@@ -1,4 +1,4 @@
-// Create Department1
+﻿// Create Department1
 // Add products
 // Copy Department1
 // Check if products were copied

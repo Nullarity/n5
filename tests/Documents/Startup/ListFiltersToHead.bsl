@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in LVI Startups list form and create a new Startup.
 // Checks the automatic header filling process
 //

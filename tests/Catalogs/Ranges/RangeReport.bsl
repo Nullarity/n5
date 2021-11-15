@@ -1,4 +1,4 @@
-// Open Range Report
+﻿// Open Range Report
 
 Call ( "Common.Init" );
 CloseAll ();

@@ -1,4 +1,4 @@
-// 1. Create Overpayment (advance)
+﻿// 1. Create Overpayment (advance)
 // 2. Create Invoice (debt)
 // 3. Adjust Invoice (-debt = advance)
 // 4. Adjust debt

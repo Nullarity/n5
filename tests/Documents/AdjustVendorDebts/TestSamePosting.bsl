@@ -1,4 +1,4 @@
-// 1. Create Purchase Order
+﻿// 1. Create Purchase Order
 // 2. Create Vendor Payment
 // 3. Create Adjust vendor debt
 // 4. Check movemnts

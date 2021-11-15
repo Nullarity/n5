@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Depreciation Setup list form and create a new Assets Inventory.
 // Checks the automatic header filling process
 //

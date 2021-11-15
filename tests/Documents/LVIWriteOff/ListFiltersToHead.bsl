@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in LVI Write-off list form and create a new LVI Write-off.
 // Checks the automatic header filling process
 //

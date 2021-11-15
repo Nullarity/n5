@@ -1,4 +1,4 @@
-
+﻿
 MainWindow.ExecuteCommand ( "e1cib/list/Document.LVIWriteOff" );
 form = With ( "LVI Write Offs" );
 Click ( "Create", form.GetCommandBar () );

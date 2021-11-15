@@ -1,1 +1,1 @@
-MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Projects" );
+﻿MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Projects" );

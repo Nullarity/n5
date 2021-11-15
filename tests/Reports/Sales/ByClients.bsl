@@ -1,4 +1,4 @@
-form = With ( "Sales*" );
+﻿form = With ( "Sales*" );
 Click ( "#CmdLoadVariant" );
 With ( "Report variants" );
 table = Activate ( "#SettingsTable" );

@@ -1,4 +1,4 @@
-// Receive payment from individual and check if "Received from" field is correct
+﻿// Receive payment from individual and check if "Received from" field is correct
 
 Call ( "Common.Init" );
 CloseAll ();

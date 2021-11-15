@@ -1,4 +1,4 @@
-p = new Structure ();
+﻿p = new Structure ();
 p.Insert ( "Description", "_Warehouse: " + BegOfDay ( CurrentDate () ) );
 p.Insert ( "Company" );
 p.Insert ( "Production", false );

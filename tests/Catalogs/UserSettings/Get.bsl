@@ -1,4 +1,4 @@
-MainWindow.ExecuteCommand ( "e1cib/data/Catalog.UserSettings" );
+﻿MainWindow.ExecuteCommand ( "e1cib/data/Catalog.UserSettings" );
 With ( "* (User Settings)" );
 
 data = new Structure ();

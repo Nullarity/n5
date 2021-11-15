@@ -1,4 +1,4 @@
-// Create a new Customer
+﻿// Create a new Customer
 // Open Timesheets list
 // Check if list is empty and Customer Filter is hidden
 

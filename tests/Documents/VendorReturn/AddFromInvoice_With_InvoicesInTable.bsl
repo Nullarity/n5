@@ -1,4 +1,4 @@
-// Check the correct working of the AddFromInvoice button with the InvoicesInTable:
+﻿// Check the correct working of the AddFromInvoice button with the InvoicesInTable:
 // - Create VendorInvoice #1
 // - Create VendorInvoice #2
 // - Create VendorReturn

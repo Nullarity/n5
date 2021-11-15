@@ -1,4 +1,4 @@
-// Create credit entry for active account
+﻿// Create credit entry for active account
 // Generate report and check totals
 
 Call ( "Common.Init" );

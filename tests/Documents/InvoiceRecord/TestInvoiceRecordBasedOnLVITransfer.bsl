@@ -1,4 +1,4 @@
-// Creates InvoiceRecord from LVI Transfer and check form InvoiceRecord
+﻿// Creates InvoiceRecord from LVI Transfer and check form InvoiceRecord
 // 1. Create LVI Transfer
 // 2. Generate Invoice Record from LVI Tranfer
 // 3. Check Print form

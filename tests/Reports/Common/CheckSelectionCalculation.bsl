@@ -1,4 +1,4 @@
-// Create Account
+﻿// Create Account
 // Create Entry
 // Open Transactions by that account
 // Select areas in different ways

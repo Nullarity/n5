@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Creates new Prices
 //
 // Returns:

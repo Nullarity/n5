@@ -1,4 +1,4 @@
-// Open Balance Sheet report
+﻿// Open Balance Sheet report
 // Click commands: ShowGroups, ShowGrid
 
 Call ( "Common.Init" );

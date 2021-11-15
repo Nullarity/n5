@@ -1,4 +1,4 @@
-// Create Entry
+﻿// Create Entry
 // Add Record
 // Add new record by pressing Save and New button
 // Check totals

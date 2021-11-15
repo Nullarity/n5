@@ -1,4 +1,4 @@
-// Check advance returning and advance taking with VAT records
+﻿// Check advance returning and advance taking with VAT records
 // Pay to Vendor: 100 lei
 // Vendor Refund: 120 lei (20 lei is advance taken)
 

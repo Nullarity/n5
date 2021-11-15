@@ -1,4 +1,4 @@
-CloseAll ();
+﻿CloseAll ();
 
 // Create User
 p = Call ( "Catalogs.Employees.Create.Params" );

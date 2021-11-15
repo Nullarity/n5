@@ -1,4 +1,4 @@
-Commando ( "e1cib/list/Catalog.IntangibleAssets" );
+﻿Commando ( "e1cib/list/Catalog.IntangibleAssets" );
 With ( "Intangible Assets" );
 p = Call ( "Common.Find.Params" );
 p.Where = "Description";

@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Creates a new Individual
 //
 // Returns:

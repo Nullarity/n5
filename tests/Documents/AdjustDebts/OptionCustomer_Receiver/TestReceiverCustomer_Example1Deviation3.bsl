@@ -1,4 +1,4 @@
-// 1. Create Invoice ( -debt = advance ) 
+﻿// 1. Create Invoice ( -debt = advance ) 
 // 2. Create Invoice ( debt ) by receiver contract
 // 3. Create Adjust debt
 // 4. Check movemnts

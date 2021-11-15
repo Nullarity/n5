@@ -1,4 +1,4 @@
-OpenMenu ( "Settings / Application" );
+﻿OpenMenu ( "Settings / Application" );
 With ( "Application Settings" );
 c = Fetch ( "#Company" );
 Close ();

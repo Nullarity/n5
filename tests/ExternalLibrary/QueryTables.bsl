@@ -1,4 +1,4 @@
-Run ( "Attach" );
+﻿Run ( "Attach" );
 lib = new ( "AddIn.Core.Root" );
 q = "
 |// ^Table

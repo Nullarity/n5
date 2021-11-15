@@ -1,4 +1,4 @@
-
+﻿
 MainWindow.ExecuteCommand ( "e1cib/list/Catalog.AssetTypes" );
 
 fill ( "11000000000", , 1, "Здания" );

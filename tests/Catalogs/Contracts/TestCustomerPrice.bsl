@@ -1,4 +1,4 @@
-// Create: Item, Service, Customer, Contract
+﻿// Create: Item, Service, Customer, Contract
 // Set contract prices
 // Create Invoice
 // Add a new Item and check price

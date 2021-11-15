@@ -1,4 +1,4 @@
-// Check if VI properly closes Vendor Debts register when we buy items by PO and add some non-PO accounts
+﻿// Check if VI properly closes Vendor Debts register when we buy items by PO and add some non-PO accounts
 // Create PO with 1 item
 // Create VI and add a record intp Accounts table
 // Post VI and check records

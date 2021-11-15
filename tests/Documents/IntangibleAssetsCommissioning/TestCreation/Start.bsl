@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 Run ( "Create", Call ( "Common.ScenarioID", "2A6CA186" ) );

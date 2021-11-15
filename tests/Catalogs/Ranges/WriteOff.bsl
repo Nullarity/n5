@@ -1,4 +1,4 @@
-// Purchase forms an register range
+﻿// Purchase forms an register range
 // Create Write Off with range
 // Do some testing: 1) empty range
 // Post and check

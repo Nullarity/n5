@@ -1,4 +1,4 @@
-// Create a new Vendor
+﻿// Create a new Vendor
 // Create a new Vendor Payment
 // Fill Payment and post
 // Check records

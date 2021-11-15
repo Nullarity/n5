@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Invoices list form and create a new Invoice.
 // Checks the automatic header filling process
 //

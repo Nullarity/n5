@@ -1,4 +1,4 @@
-// Check the correct working of the AddFromInvoice button with the InvoicesInTable flag:
+﻿// Check the correct working of the AddFromInvoice button with the InvoicesInTable flag:
 // - Create VendorInvoice
 // - Create Invoice #1
 // - Create Invoice #2

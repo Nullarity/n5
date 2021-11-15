@@ -1,4 +1,4 @@
-// Create a range without registration
+﻿// Create a range without registration
 // Create an Invoice Record and set number manually
 // Check if system raises an error about range activity
 

@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Hire an employee, billing period: one week
 // - Create project
 // - Open timesheets

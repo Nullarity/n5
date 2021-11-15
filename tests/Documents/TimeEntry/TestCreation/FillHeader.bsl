@@ -1,4 +1,4 @@
-form = __.Form;
+﻿form = __.Form;
 myCompany = ( __.CurrentCustomer = __.MyCompany );
 
 With ( form );

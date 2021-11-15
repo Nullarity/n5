@@ -1,4 +1,4 @@
-// Create time entry with services and materials
+﻿// Create time entry with services and materials
 // Generate Invoice
 // Generate Payment
 // Print Invoice

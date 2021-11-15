@@ -1,4 +1,4 @@
-// Test range creation from Vendor Invoice and Item Balances.
+﻿// Test range creation from Vendor Invoice and Item Balances.
 // Will check two cases:
 // - Create a new range through List and "+" button there
 // - Create a new range from "+" button

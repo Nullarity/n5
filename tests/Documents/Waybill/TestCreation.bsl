@@ -1,4 +1,4 @@
-// Test Waybill creation without excess or economy:
+﻿// Test Waybill creation without excess or economy:
 // - Create Waybill without Inventory
 // - Create Waybill with Inventory
 // - Post & CheckLogic 

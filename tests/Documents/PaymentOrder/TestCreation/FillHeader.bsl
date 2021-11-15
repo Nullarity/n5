@@ -1,4 +1,4 @@
-form = __.Form;
+﻿form = __.Form;
 With ( form );
 
 Set ( "Company", __.MainCompany );

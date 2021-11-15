@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 add ( "Customs Procedures, 010", "Плата за таможенные процедуры, 010" );
 add ( "Customs Duty, 020", "Таможенная пошлина, 020" );

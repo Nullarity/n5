@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Sales Order list form and create a new Sales Order.
 // Checks the automatic header filling process
 //

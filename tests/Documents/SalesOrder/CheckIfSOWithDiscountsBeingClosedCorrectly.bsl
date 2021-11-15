@@ -1,4 +1,4 @@
-// Check If SO With Discounts Being Closed Correctly
+﻿// Check If SO With Discounts Being Closed Correctly
 
 Call ( "Common.Init" );
 CloseAll ();

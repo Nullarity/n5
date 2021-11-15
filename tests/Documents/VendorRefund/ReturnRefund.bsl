@@ -1,4 +1,4 @@
-// Check how Vendor Payment returns Vendor Refund
+﻿// Check how Vendor Payment returns Vendor Refund
 // Vendor Refund: 100 lei
 // Pay to Vendor (return): 100 lei
 

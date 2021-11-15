@@ -1,4 +1,4 @@
-Procedure Make ()
+﻿Procedure Make ()
 
 	commonVatFields = "
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 

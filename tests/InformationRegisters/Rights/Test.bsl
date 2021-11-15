@@ -1,4 +1,4 @@
-// - Open access rights
+﻿// - Open access rights
 // - Remove all records
 // - Create a new record
 // - Check controls

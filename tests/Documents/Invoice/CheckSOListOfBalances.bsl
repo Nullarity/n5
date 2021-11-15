@@ -1,4 +1,4 @@
-// Create SO
+﻿// Create SO
 // Create Payment
 // Create Invoice
 // Check Balance field in the list of Goods

@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Set filters in Vendor Invoices list form and create a new Vendor Invoice.
 // Checks the automatic header filling process
 //

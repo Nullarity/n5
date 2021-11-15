@@ -1,4 +1,4 @@
-// Open organization and try to press on Alien checkbox
+﻿// Open organization and try to press on Alien checkbox
 
 Call ( "Common.Init" );
 CloseAll ();

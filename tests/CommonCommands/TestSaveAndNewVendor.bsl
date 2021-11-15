@@ -1,4 +1,4 @@
-Commando ( "e1cib/list/Catalog.Organizations" );
+﻿Commando ( "e1cib/list/Catalog.Organizations" );
 With ( "Organizations" );
 p = Call ( "Common.Find.Params" );
 p.Where = "Name";

@@ -1,4 +1,4 @@
-// - Create bank entry
+﻿// - Create bank entry
 // - Open Bank journal
 // - Open that entry
 // - Change it's amount

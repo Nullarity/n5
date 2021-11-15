@@ -1,4 +1,4 @@
-p = Call("Common.Report.Params");
+﻿p = Call("Common.Report.Params");
 p.Path = "e1cib/app/Report.Items";
 filters = new Array ();
 p.Filters = filters;

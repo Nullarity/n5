@@ -1,4 +1,4 @@
-p = new Structure ();
+﻿p = new Structure ();
 p.Insert ( "Description", "_Customer: " + CurrentDate () );
 p.Insert ( "CodeFiscal" );
 p.Insert ( "Currency", __.LocalCurrency );

@@ -1,4 +1,4 @@
-StandardProcessing = false;
+﻿StandardProcessing = false;
 
 date = _.Date;
 curDate = CurrentDate ();

@@ -1,4 +1,4 @@
-// Create a LVITransfer
+﻿// Create a LVITransfer
 // Create an Invoice Record and print it
 // Check if Transfer is not available for changes anymore
 

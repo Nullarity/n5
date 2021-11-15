@@ -1,4 +1,4 @@
-// Open chart of accounts list
+﻿// Open chart of accounts list
 // Enable view: tree
 // Create ancestor
 // Create subaccount

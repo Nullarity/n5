@@ -1,4 +1,4 @@
-// Create a new Entry
+﻿// Create a new Entry
 // Check if Reference field is invisible
 // Select Operation with Bank Expense type, simple variant
 // Check if Reference field is visible

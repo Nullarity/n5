@@ -1,4 +1,4 @@
-// Create a new virtual range
+﻿// Create a new virtual range
 // Set Type = Invoice Records and check fields
 // Set Type = Invoices Online and check fields again
 

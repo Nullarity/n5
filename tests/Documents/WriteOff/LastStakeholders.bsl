@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Tests copying stackeholders info from last document
 
 Call ( "Common.Init" );

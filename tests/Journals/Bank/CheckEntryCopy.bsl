@@ -1,4 +1,4 @@
-// - Open Bank journal
+﻿// - Open Bank journal
 // - Create, save & close Entry
 // - Copy entry and check memo field
 

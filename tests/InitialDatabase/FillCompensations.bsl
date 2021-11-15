@@ -1,4 +1,4 @@
-// Fill compensations list
+﻿// Fill compensations list
 
 Connect ();
 CloseAll ();

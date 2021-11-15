@@ -1,4 +1,4 @@
-// Create Product
+﻿// Create Product
 // Check Product flag
 // Set description, save and check adding a new department
 // Complete adding

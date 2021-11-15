@@ -1,4 +1,4 @@
-// - Create a new Company
+﻿// - Create a new Company
 // - Create a new Organization & check company's inheritance
 
 Call ( "Common.Init" );

@@ -1,4 +1,4 @@
-// Scenario:
+﻿// Scenario:
 // - Create a new Entry, operation = Cash Expense
 // - Open Petty Cash journal
 // - Find and Copy that Entry

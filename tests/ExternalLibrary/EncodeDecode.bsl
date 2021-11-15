@@ -1,4 +1,4 @@
-// Test Encode and Decode methods
+﻿// Test Encode and Decode methods
 
 Run ( "Attach" );
 lib = new ( "AddIn.Core.Root" );

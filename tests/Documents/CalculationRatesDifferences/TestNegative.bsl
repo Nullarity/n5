@@ -1,4 +1,4 @@
-// *************************
+﻿// *************************
 // Create CalculationRatesDifferences test positive differences
 // *************************
 

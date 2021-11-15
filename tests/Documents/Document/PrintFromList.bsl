@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Opens print form from the List of documents and prints the first document
 //
 // Conditions:

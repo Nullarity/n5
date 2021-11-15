@@ -1,4 +1,4 @@
-form = With ( "Assets Write *" );
+﻿form = With ( "Assets Write *" );
 Set( "#ExpenseAccount", _.ExpenseAccount );
 form.GotoNextItem ();
 Set ( "Expenses", _.Expense );

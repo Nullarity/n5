@@ -1,4 +1,4 @@
-// Purchase forms an register range
+﻿// Purchase forms an register range
 // Transfer range to new location
 // Do some testing: 1) empty range 2) many warehouses
 // Post and check

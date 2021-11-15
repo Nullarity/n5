@@ -1,4 +1,4 @@
-// Create Closing Advance (Receipt USD) and check movemnts
+﻿// Create Closing Advance (Receipt USD) and check movemnts
 // 1. create Payment
 // 2. create closing advances and check records
 

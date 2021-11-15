@@ -1,4 +1,4 @@
-Call ( "Common.Init" );
+﻿Call ( "Common.Init" );
 CloseAll ();
 
 MainWindow.ExecuteCommand ( "e1cib/list/Catalog.Currencies" );

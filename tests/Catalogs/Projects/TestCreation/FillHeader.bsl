@@ -1,4 +1,4 @@
-form = __.Form;
+﻿form = __.Form;
 pricing = __.Pricing;
 projects = __.Projects;
 currentPricing = __.CurrentPricing;

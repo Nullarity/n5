@@ -1,4 +1,4 @@
-// 1. Create document Absence
+﻿// 1. Create document Absence
 // 2. Check movements
 
 StandardProcessing = false;

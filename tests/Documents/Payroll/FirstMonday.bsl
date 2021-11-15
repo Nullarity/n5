@@ -1,4 +1,4 @@
-// Description:
+﻿// Description:
 // Returns first Monday from passed date
 //
 // Parameters:
