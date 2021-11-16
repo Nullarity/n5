@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A07C" );
+id = Call ( "Common.ScenarioID", "A0F2" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -14,7 +14,11 @@ Commando("e1cib/command/Document.Invoice.Create");
 With();
 Set("#Customer", env.Customer);
 Click("#ServicesAdd");
-Set("#ServicesItem", env.Service);
+try
+	Set("#ServicesItem", env.Service);
+except
+	DebugStart ();
+endtry;
 Set("#ServicesQuantity", 1);
 Set("#ServicesPrice", 150);
 Click("#FormPost");

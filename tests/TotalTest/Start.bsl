@@ -87,8 +87,6 @@ if ( not p.TestingOnly ) then
 	Call ( "Tester.Infobase.Deploy", p );
 endif;
 
-return;
-
 if ( p.UpdateOnly ) then
 	return;
 endif;

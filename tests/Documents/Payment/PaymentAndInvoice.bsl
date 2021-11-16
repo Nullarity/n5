@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "A00V"));
+this.Insert("ID", Call("Common.ScenarioID", "A0F3"));
 getEnv();
 createEnv();
 
@@ -27,7 +27,11 @@ Next();
 Click("#FormPost");
 
 // Check Payments Applied
-Assert(0 + Fetch("#PaymentsApplied")).Equal(1000); // Advance payment should be taken right away
+try
+	Assert(0 + Fetch("#PaymentsApplied")).Equal(1000); // Advance payment should be taken right away
+except
+	DebugStart ();
+endtry;
 balanceDue = 0 + Fetch("#BalanceDue");
 Assert(balanceDue).Equal(0);
 

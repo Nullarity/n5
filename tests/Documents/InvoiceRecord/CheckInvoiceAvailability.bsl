@@ -17,7 +17,11 @@ record = With();
 Get ( "#Range" ).Clear ();
 Set ( "#Number", "AA" + Call ( "Common.ScenarioID", "2B6AD803" ) );
 Click("#FormWrite");
-Click("#FormPrint");
+try
+	Click("#FormPrint");
+except
+	DebugStart ();
+endtry;
 Close();
 
 // Check if Invoice is not available for changes anymore

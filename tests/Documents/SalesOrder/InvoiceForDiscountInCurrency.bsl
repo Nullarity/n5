@@ -75,7 +75,11 @@ else
 	Put("#Currency", "MDL");
 	Set("#Memo", id);
 endif;
-Check ( "#Discount", 39.9 );
+try
+	Check ( "#Discount", 39.9 );
+except
+	DebugStart ();
+endtry;
 Check ( "#VAT", -6.72 );
 Check ( "#Amount", -39.9 );
 Check ( "#ContractAmount", -1.9 );

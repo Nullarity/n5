@@ -12,8 +12,11 @@ With ( _.Synonym + " (create)" );
 table = Activate ( "#ItemsTable" ); 
 Click ( "#ItemsTableAdd" );
 Set ( "#ItemsItem", itemName, table );
-Set ( "#ItemsQuantityPkg", "1", table );
-
+try
+	Set ( "#ItemsQuantityPkg", "1", table );
+except
+	DebugStart ();
+endtry;
 f = Get ( "#Resize" );
 if ( f.CurrentVisible () ) then
 	Click ( "#Resize" );
