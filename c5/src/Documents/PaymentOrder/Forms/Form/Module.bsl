@@ -130,7 +130,7 @@ EndFunction
 Procedure setRecipientBankAccount ()
 
 	if ( Object.ToCompany ) then
-		Object.RecipientBankAccount = DF.Pick ( Object.Recipient, "BankAccount", Object.RecipientBankAccount );
+		Object.RecipientBankAccount = DF.Pick ( Object.Recipient, "BankAccount" );
 	else
 		Object.RecipientBankAccount = organizationBank ();
 	endif;

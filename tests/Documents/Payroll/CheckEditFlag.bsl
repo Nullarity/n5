@@ -15,19 +15,6 @@ form = With ( "Payroll (cr*" );
 date = env.Date;
 Put ( "#Date", date );
 
-//dateStart = BegOfMonth ( Fetch ( "#DateStart" ) );
-//begOfMonthDate = BegOfMonth ( date );
-//if ( dateStart <> begOfMonthDate ) then
-//	if ( dateStart > begOfMonthDate ) then
-//		button = "#PreviousPeriod";
-//	else
-//		button = "#NextPeriod";
-//	endif;
-//	while ( BegOfMonth ( Fetch ( "#DateStart" ) ) <> begOfMonthDate ) do
-//		Click ( button );	
-//	enddo;
-//endif;
-
 Click ( "#Fill" );
 
 With ( "Payroll: Setup Filters" );

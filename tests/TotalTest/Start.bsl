@@ -72,8 +72,8 @@ params.Insert ( "Folder", p.Folder );
 params.Insert ( "Exceptions", p.Exceptions );
 list = Call ( "Tester.Scenarios", params );
 
-agents = 20;
-batch = 2;
+agents = 40;
+batch = 1;
 
 StoreScenarios ();
 for i = 1 to agents do
