@@ -105,21 +105,12 @@ Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 		InvoiceRecords.Delete ( ThisObject );
 	endif;
 	setProperties ();
-	resetAction ();
 	
 EndProcedure
 
 Procedure setProperties ()
 	
 	Realtime = Forms.RealtimePosting ( ThisObject );
-	
-EndProcedure 
-
-Procedure resetAction ()
-	
-	if ( not Action.IsEmpty () ) then
-		Action = undefined;
-	endif; 
 	
 EndProcedure 
 

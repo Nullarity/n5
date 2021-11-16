@@ -37,7 +37,6 @@ Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 		Cancel = true;
 		return;
 	endif; 
-	resetAction ();
 	removeReminder ();
 	adjustTimeOfDate ();
 	setReminderDate ();
@@ -91,14 +90,6 @@ Function checkTimesheetPeriod ()
 	return true;
 	
 EndFunction 
-
-Procedure resetAction ()
-	
-	if ( not Action.IsEmpty () ) then
-		Action = undefined;
-	endif; 
-	
-EndProcedure 
 
 Procedure removeReminder ()
 	

@@ -20,23 +20,6 @@ Function checkAmount ()
 	
 EndFunction
 
-Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
-	
-	if ( DataExchange.Load ) then
-		return;
-	endif; 
-	resetAction ();
-	
-EndProcedure
-
-Procedure resetAction ()
-	
-	if ( not Action.IsEmpty () ) then
-		Action = undefined;
-	endif; 
-	
-EndProcedure 
-
 Procedure OnWrite ( Cancel )
 	
 	if ( DataExchange.Load ) then
