@@ -13,7 +13,11 @@ form = With ( "Entry (cr*" );
 // Add Record
 Click ( "#RecordsAdd" );
 With ( "Record" );
-Put ( "#AccountDr", "10300" );
+try
+	Put ( "#AccountDr", "10300" );
+except
+	DebugStart ();
+endtry;
 Put ( "#AccountCr", "0" );
 Set ( "#Amount", 100 );
 

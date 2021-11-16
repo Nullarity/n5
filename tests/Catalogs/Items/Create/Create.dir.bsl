@@ -76,7 +76,11 @@ if ( not service ) then
 			field.OpenDropList ();
 		except
 		endtry;
-		field.Create ();
+		try
+			field.Create ();
+		except
+			DebugStart ();
+		endtry;	
 		With ( "Packages (create)" );
 		
 		Set ( "#Unit", package );

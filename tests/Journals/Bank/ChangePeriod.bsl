@@ -7,11 +7,9 @@ Call ( "Common.Init" );
 CloseAll ();
 
 Commando ( "e1cib/list/InformationRegister.Bank" );
-With ( "Bank" );
 
 Pick ( "#Period", "This year" );
 Close ();
 
 Commando ( "e1cib/list/InformationRegister.Bank" );
-With ( "Bank" );
 Check ( "#Period", "This year" );

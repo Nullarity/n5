@@ -29,7 +29,11 @@ endif;
 
 value = _.AccountCr;
 if ( value <> undefined ) then
-	Put ( "#AccountCr", value );
+	try
+		Put ( "#AccountCr", value );
+	except
+		DebugStart ();
+	endtry;
 endif;
 
 Click ( "#FormWriteAndClose" );

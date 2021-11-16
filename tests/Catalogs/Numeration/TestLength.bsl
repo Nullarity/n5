@@ -2,7 +2,7 @@
 CloseAll ();
 
 Commando ( "e1cib/data/Catalog.Numeration" );
-Set ( "#Description", "111" );
+Set ( "#Description", Right ( Call ( "Common.GetID" ), 3 ) );
 Set ( "#Code", "000000000000" );
 Next ();
 code = Fetch ( "#Code" );
