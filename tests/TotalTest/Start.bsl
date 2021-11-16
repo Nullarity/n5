@@ -66,9 +66,14 @@ exceptions.Add("Reports.RegulatoryReports.SERV_TS_2014" );
 exceptions.Add("Reports.RegulatoryReports.SERV_TS_2014_RO" );
 exceptions.Add("Reports.RegulatoryReports.TVA12" );
 p.Exceptions = exceptions;
+params = new Structure ();
+params.Insert ( "Name", String ( p.Application ) );
+params.Insert ( "Folder", p.Folder );
+params.Insert ( "Exceptions", p.Exceptions );
+list = Call ( "Tester.Scenarios", params );
 
-agents = 40;
-batch = 1;
+agents = 20;
+batch = 2;
 
 StoreScenarios ();
 for i = 1 to agents do
@@ -82,17 +87,10 @@ if ( not p.TestingOnly ) then
 	Call ( "Tester.Infobase.Deploy", p );
 endif;
 
-//return;
-
 if ( p.UpdateOnly ) then
 	return;
 endif;
 
-params = new Structure ();
-params.Insert ( "Name", String ( p.Application ) );
-params.Insert ( "Folder", p.Folder );
-params.Insert ( "Exceptions", p.Exceptions );
-list = Call ( "Tester.Scenarios", params );
 listSize = list.Count () - 1;
 chunk = new Array ();
 job = CurrentDelegatedJob.Job;

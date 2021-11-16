@@ -1295,13 +1295,6 @@ Function AdditionalPropertiesSyncing () export
 	
 EndFunction
 
-&AtServer
-Function AdditionalPropertiesOldOperation () export
-	
-	return "AdditionalPropertiesOldOperation";
-	
-EndFunction
-
 #endregion
 
 #region Exceptions

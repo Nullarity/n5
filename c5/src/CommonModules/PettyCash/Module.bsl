@@ -14,7 +14,7 @@ Procedure Open ( Form, NotifyNew ) export
 	
 EndProcedure 
 
-Function Voucher ( Reference, OldOperation = undefined ) export
+Function Voucher ( Reference ) export
 	
 	type = TypeOf ( Reference );
 	if ( type = Type ( "DocumentRef.CashVoucher" ) ) then
@@ -22,7 +22,7 @@ Function Voucher ( Reference, OldOperation = undefined ) export
 	elsif ( type = Type ( "DocumentRef.CashReceipt" ) ) then
 		return false;
 	else
-		return PettyCashSrv.Voucher ( Reference, OldOperation );
+		return PettyCashSrv.Voucher ( Reference );
 	endif;
 	
 EndFunction 
@@ -81,13 +81,17 @@ Procedure update ( Object, Reference )
 	obj.Company = Object.Company;
 	obj.Memo = Object.Memo;
 	obj.Posted = Object.Posted;
-	obj.DeletionMark = false;
+	disconnected = disconnect ( Object, Reference );
+	deleted = disconnected or Object.DeletionMark;
+	obj.Disconnected = disconnected;
+	obj.DeletionMark = deleted;
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Entry" ) ) then
 		entry = entryData ( Object );
 		obj.Currency = entry.Currency;
 		obj.Amount = entry.Amount;
 		obj.Location = entry.Location;
+		obj.Reason = entry.Content;
 	elsif ( type = Type ( "DocumentRef.PayEmployees" )
 		or type = Type ( "DocumentRef.PayAdvances" ) ) then
 		obj.Currency = Application.Currency ();
@@ -133,12 +137,39 @@ Procedure update ( Object, Reference )
 		endif; 
 	endif; 
 	markSyncing ( obj );
-	obj.Write ();
+	if ( deleted and obj.Posted ) then
+		obj.Write ( DocumentWriteMode.UndoPosting );
+		obj.SetDeletionMark ( true );
+	else
+		obj.Write ();
+	endif;
 	if ( isNew ) then
 		Reference = obj.Ref;
 	endif; 
 	
 EndProcedure
+
+&AtServer
+Function disconnect ( Object, Reference )
+	
+	method = Object.Method;
+	type = TypeOf ( Object.Ref );
+	if ( type = Type ( "DocumentRef.Payment" )
+		or type = Type ( "DocumentRef.VendorPayment" )
+		or type = Type ( "DocumentRef.PayEmployees" )
+		or type = Type ( "DocumentRef.PayAdvances" ) ) then
+		return method <> Enums.PaymentMethods.Cash;
+	elsif ( type = Type ( "DocumentRef.Entry" ) ) then
+		orderType = TypeOf ( Reference );
+		if ( orderType = Type ( "DocumentRef.CashReceipt" ) ) then
+			return method <> Enums.Operations.CashReceipt;
+		elsif ( orderType = Type ( "DocumentRef.CashVoucher" ) ) then
+			return method <> Enums.Operations.CashExpense;
+		endif;
+	endif;
+	return false;
+
+EndFunction
 
 &AtServer
 Function entryData ( Object )
@@ -172,7 +203,8 @@ Function entryData ( Object )
 	|			case when Records.AccountCr.Currency then Total.CurrencyAmount else Total.Amount end
 	|		else
 	|			case when Records.AccountDr.Currency then Total.CurrencyAmount else Total.Amount end
-	|	end as Amount
+	|	end as Amount,
+	|	Records.Content as Content
 	|from Document.Entry.Records as Records
 	|	//
 	|	// Totals
@@ -276,10 +308,22 @@ Procedure Sync ( Object ) export
 	if ( syncing ( Object ) ) then
 		return;
 	endif; 
+	ref = Object.Ref;
 	if ( TypeOf ( Object ) = Type  ( "DocumentObject.Entry" ) ) then
-		syncEntry ( Object );
+		method = Object.Method;
+		voucher = Documents.CashVoucher.FindByAttribute ( "Base", ref );
+		receipt = Documents.CashReceipt.FindByAttribute ( "Base", ref );
+		if ( not voucher.IsEmpty ()
+			or method = Enums.Operations.CashExpense ) then
+			update ( Object, voucher );
+		endif;
+		if ( not receipt.IsEmpty ()
+			or method = Enums.Operations.CashReceipt ) then
+			update ( Object, receipt );
+		endif;
 	else
-		syncObject ( Object );
+		reference = PettyCashSrv.Search ( Object.Ref );
+		update ( Object, reference );
 	endif;
 	
 EndProcedure 
@@ -295,74 +339,10 @@ Function syncing ( Object )
 EndFunction 
 
 &AtServer
-Procedure syncEntry ( Object )
-	
-	var oldMethod;
-	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesOldOperation (), oldMethod );
-	reference = PettyCashSrv.Search ( Object.Ref, oldMethod);
-	method = DF.Pick ( Object.Operation, "Operation" );
-	if ( not reference.IsEmpty () ) then
-		clean = oldMethod <> method
-		and ( oldMethod = Enums.Operations.CashExpense
-			or oldMethod = Enums.Operations.CashReceipt );
-		if ( clean ) then
-			remove ( reference );
-		endif;
-	endif;
-	if ( method = Enums.Operations.CashExpense
-		or method = Enums.Operations.CashReceipt ) then
-		reference = PettyCashSrv.Search ( Object.Ref );
-		update ( Object, reference );
-	endif;
-
-EndProcedure
-
-&AtServer
-Procedure remove ( Ref )
-	
-	obj = Ref.GetObject ();
-	markSyncing ( obj );
-	obj.SetDeletionMark ( true );
-	
-EndProcedure 
-
-&AtServer
-Procedure syncObject ( Object )
-	
-	reference = PettyCashSrv.Search ( Object.Ref );
-	if ( not reference.IsEmpty () ) then
-		type = TypeOf ( Object.Ref );
-		if ( ( type = Type ( "DocumentRef.Payment" )
-			or type = Type ( "DocumentRef.VendorPayment" )
-			or type = Type ( "DocumentRef.PayEmployees" )
-			or type = Type ( "DocumentRef.PayAdvances" ) )
-			and Object.Method <> Enums.PaymentMethods.Cash ) then
-			remove ( reference );
-			return;
-		endif;
-	endif;
-	update ( Object, reference );
-	
-EndProcedure
-
-&AtServer
 Procedure markSyncing ( Object )
 	
 	Object.AdditionalProperties.Insert ( Enum.AdditionalPropertiesSyncing (), true );
 	
-EndProcedure 
-
-&AtServer
-Procedure Delete ( Object ) export
-	
-	if ( syncing ( Object ) ) then
-		return;
-	endif; 
-	reference = PettyCashSrv.Search ( Object.Ref );
-	if ( not reference.IsEmpty () ) then
-		remove ( reference );
-	endif; 
-
 EndProcedure 
 
 &AtServer
@@ -378,10 +358,15 @@ EndProcedure
 &AtServer
 Procedure updateBase ( Object )
 	
+	marked = Object.DeletionMark;
+	if ( Object.Disconnected ) then
+		if ( marked <> Object.PreviousDeletionMark ) then
+			raise Output.ChangeDisconnectedDocumentError ();
+		endif;
+	endif;
 	base = Object.Base;
 	parent = DF.Values ( base, "Posted, DeletionMark" );
 	posted = Object.Posted;
-	marked = Object.DeletionMark;
 	postingChanged = parent.Posted <> posted;
 	markChanged = parent.DeletionMark <> marked;
 	if ( postingChanged ) then
@@ -403,16 +388,6 @@ Procedure updateBase ( Object )
 		obj.SetDeletionMark ( marked );
 	endif;
 	
-EndProcedure 
-
-&AtServer
-Procedure DeleteBase ( Object ) export
-	
-	if ( syncing ( Object ) ) then
-		return;
-	endif; 
-	remove ( Object.Base );
-
 EndProcedure 
 
 &AtClient

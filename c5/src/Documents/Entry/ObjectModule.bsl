@@ -1,24 +1,11 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
-Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
-	
-	if ( DataExchange.Load ) then
-		return;
-	endif; 
-	if ( DeletionMark ) then
-		PettyCash.Delete ( ThisObject );
-	endif; 
-	
-EndProcedure
-
 Procedure OnWrite ( Cancel )
 	
 	if ( DataExchange.Load ) then
 		return;
 	endif;
-	if ( not DeletionMark ) then
-		PettyCash.Sync ( ThisObject );
-	endif; 
+	PettyCash.Sync ( ThisObject );
 	
 EndProcedure
 

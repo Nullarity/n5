@@ -164,20 +164,6 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 EndProcedure
 
 &AtServer
-Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
-	
-	synchCash ( CurrentObject );
-
-EndProcedure
-
-&AtServer
-Procedure synchCash ( CurrentObject )
-	
-	CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesOldOperation (), OldOperation );
-
-EndProcedure
-
-&AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	PettyCash.Read ( ThisObject );

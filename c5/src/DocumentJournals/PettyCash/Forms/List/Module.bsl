@@ -251,7 +251,8 @@ EndProcedure
 &AtServerNoContext
 Function baseParams ( val Ref )
 	
-	base = DF.Pick ( Ref, "Base" );
+	data = DF.Values ( Ref, "Disconnected, Base" );
+	base = ? ( data.Disconnected, Ref, data.Base );
 	name = Metadata.FindByType ( TypeOf ( base ) ).Name;
 	result = new Structure ( "Name, Ref", name, base );
 	return result;

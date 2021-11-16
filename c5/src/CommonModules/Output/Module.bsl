@@ -7900,3 +7900,11 @@ Procedure AdditionalCompensationBroken ( Params = undefined, Field = "", DataKey
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Function ChangeDisconnectedDocumentError () export
+
+	text = NStr ( "en = 'This document is disabled and cannot change its status';ro = 'Acest document este dezactivat și nu își poate schimba statutul';ru = 'Этот документ отключен и не может изменить свой статус'" );
+	return text;
+
+EndFunction

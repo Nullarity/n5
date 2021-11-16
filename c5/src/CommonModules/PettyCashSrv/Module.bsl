@@ -1,6 +1,6 @@
-Function Search ( val Ref, val OldOperation = undefined ) export
+Function Search ( val Ref ) export
 	
-	if ( PettyCash.Voucher ( Ref, OldOperation ) ) then
+	if ( PettyCash.Voucher ( Ref ) ) then
 		return Documents.CashVoucher.FindByAttribute ( "Base", Ref );
 	else
 		return Documents.CashReceipt.FindByAttribute ( "Base", Ref );
@@ -8,15 +8,11 @@ Function Search ( val Ref, val OldOperation = undefined ) export
 	
 EndFunction 
 
-Function Voucher ( val Reference, val OldOperation ) export
+Function Voucher ( val Reference ) export
 	
 	type = TypeOf ( Reference );
 	if ( type = Type ( "DocumentRef.Entry" ) ) then
-		if ( ValueIsFilled ( OldOperation ) ) then
-			return OldOperation = Enums.Operations.CashExpense;
-		else
-			return DF.Pick ( Reference, "Method" ) = Enums.Operations.CashExpense;
-		endif;
+		return DF.Pick ( Reference, "Method" ) = Enums.Operations.CashExpense;
 	else
 		return Metadata.DefinedTypes.CashVoucherBase.Type.ContainsType ( type );
 	endif; 

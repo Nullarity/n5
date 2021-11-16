@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+  <items xsi:type="form:Decoration">
+    <name>DisconnectedWarning</name>
+    <id>56</id>
+    <title>
+      <key>en</key>
+      <value>This record has been disconnected from the base document</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Эта запись была отключена от базового документа</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Această înregistrare a fost deconectată de la documentul de bază</value>
+    </title>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <extendedTooltip>
+      <name>DisconnectedWarningExtendedTooltip</name>
+      <id>58</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>DisconnectedWarningContextMenu</name>
+      <id>57</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>Label</type>
+    <autoMaxHeight>true</autoMaxHeight>
+    <textColor xsi:type="core:ColorDef">
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+    </textColor>
+    <extInfo xsi:type="form:LabelDecorationExtInfo">
+      <horizontalAlign>Left</horizontalAlign>
+      <backColor xsi:type="core:ColorDef">
+        <red>255</red>
+      </backColor>
+    </extInfo>
+  </items>
   <items xsi:type="form:FormField">
     <name>Base</name>
     <id>13</id>
@@ -834,6 +893,32 @@
       <common>true</common>
     </edit>
     <savedData>true</savedData>
+  </attributes>
+  <attributes>
+    <name>AppearanceData</name>
+    <id>11</id>
+    <valueType>
+      <types>Arbitrary</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>Disconnected</name>
+    <id>12</id>
+    <valueType>
+      <types>Boolean</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
   </attributes>
   <formCommands>
     <name>OK</name>

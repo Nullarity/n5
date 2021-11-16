@@ -1,7 +1,7 @@
 ﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "286509D7" );
+id = Call ( "Common.ScenarioID", "A0ES" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -15,18 +15,18 @@ form = With ( "Payroll (cr*" );
 date = env.Date;
 Put ( "#Date", date );
 
-dateStart = BegOfMonth ( Fetch ( "#DateStart" ) );
-begOfMonthDate = BegOfMonth ( date );
-if ( dateStart <> begOfMonthDate ) then
-	if ( dateStart > begOfMonthDate ) then
-		button = "#PreviousPeriod";
-	else
-		button = "#NextPeriod";
-	endif;
-	while ( BegOfMonth ( Fetch ( "#DateStart" ) ) <> begOfMonthDate ) do
-		Click ( button );	
-	enddo;
-endif;
+//dateStart = BegOfMonth ( Fetch ( "#DateStart" ) );
+//begOfMonthDate = BegOfMonth ( date );
+//if ( dateStart <> begOfMonthDate ) then
+//	if ( dateStart > begOfMonthDate ) then
+//		button = "#PreviousPeriod";
+//	else
+//		button = "#NextPeriod";
+//	endif;
+//	while ( BegOfMonth ( Fetch ( "#DateStart" ) ) <> begOfMonthDate ) do
+//		Click ( button );	
+//	enddo;
+//endif;
 
 Click ( "#Fill" );
 
