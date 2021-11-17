@@ -61,9 +61,9 @@ Procedure createEntry ( Env )
 	form = With ( "Entry (cr*" );
 	Click ( "#Simple" );
 	Activate ( "#OneRecordPage" );
-	Put ( "#AccountDr", "10300" );
+	Put ( "#AccountDr", "2421" );
 	Put ( "#DimDr1", Env.CADBankAccount );
-	Put ( "#AccountCr", "10300" );
+	Put ( "#AccountCr", "2421" );
 	Put ( "#DimCr1", Env.LocalBankAccount );
 	Set ( "#Content", "Test Content" );
 	Next ();
@@ -79,7 +79,7 @@ Procedure createEntry ( Env )
 	CheckState ( "#CurrencyCr, #CurrencyAmountCr, #RateCr, #FactorCr", "Enable", false );
 
 	// Set back credit account and test reverse-calculation (Amount -> CurrencyCrAmount)
-	Put ( "#AccountCr", "10300" );
+	Put ( "#AccountCr", "2421" );
 	Put ( "#DimCr1", Env.LocalBankAccount );
 	
 	Set ( "#RecordAmount", "500" );
@@ -110,9 +110,9 @@ Procedure checkRecord ( Env )
 	CheckState ( "#CurrencyCr", "Enable" );
 	CheckState ( "#CurrencyAmountCr, #RateCr, #FactorCr, #CurrencyAmountCr", "Enable", false );
 
-	Check ( "#AccountDr", "10300" );
+	Check ( "#AccountDr", "2421" );
 	Check ( "#DimDr1", Env.CADBankAccount );
-	Check ( "#AccountCr", "10300" );
+	Check ( "#AccountCr", "2421" );
 	Check ( "#DimCr1", Env.LocalBankAccount );
 
 EndProcedure

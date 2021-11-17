@@ -416,12 +416,7 @@ Procedure createEnv ( Env )
 	with ( form );
 	
 	Click ( "#FormPostAndClose" );
-	
-	setParameter ( "Extended Vacation", "155" );
-	setParameter ( "Paternity Vacation", "165" );
-	setParameter ( "Child Care", "157" );
-	setParameter ( "Extra Child Care", "158" );
-	
+		
 	// *************************
 	// DefaultValues
 	// *************************
@@ -536,28 +531,5 @@ Procedure addTax ( Env, Start, End, Amount, Tax )
 	Put ( "#DateEnd", End +"/2019" );
 	Put ( "#Result", Amount );
 	Click ( "#FormOK" );
-	
-EndProcedure
-
-Procedure setParameter ( Parameter, Code )
-	
-	OpenMenu ( "Settings / Application" );
-	form = With ( "Application Settings" );
-	Activate ( "!AccountingPage" );
-	date = Format ( BegOfYear ( CurrentDate () ), "DLF=D" );
-	Put ( "!SetupDate", date );
-	table = Activate ( "!Settings" );
-	search = new Map ();
-	search [ "Parameter" ] = Parameter;
-	table.GotoRow ( search, RowGotoDirection.Down );
-	field = table.GetObject ( , "Parameter", "SettingsDescription" );
-	field.Activate ();
-	table.Choose ();
-	With ( Parameter + ": Setup" );
-	Put ( "!Value", Code );
-	Put ( "#SetupDate", "01/01/2019" );
-	Click ( "!FormOK" );
-	With ( form );
-	Click ( "!FormWriteAndClose" );
 	
 EndProcedure

@@ -14,7 +14,7 @@ form = With ( "Entry (cr*" );
 Click ( "#RecordsAdd" );
 With ( "Record" );
 try
-	Put ( "#AccountDr", "10300" );
+	Put ( "#AccountDr", "2421" );
 except
 	DebugStart ();
 endtry;
@@ -24,7 +24,7 @@ Set ( "#Amount", 100 );
 // Add new record by pressing Save and New button
 Click ( "#FormSaveAndNew" );
 With ( "Record" );
-Put ( "#AccountDr", "10300" );
+Put ( "#AccountDr", "2421" );
 Put ( "#AccountCr", "0" );
 Set ( "#Amount", 50 );
 Click ( "#FormOK" );

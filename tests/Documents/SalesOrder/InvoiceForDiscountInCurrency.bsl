@@ -59,6 +59,7 @@ else
 	Put("#Customer", this.Customer);
 	Set("#Amount", 360); // (400 - 10%)
 	Set("#Memo", id);
+	Set("#Account", "2421");
 endif;
 Click ( "#FormPost" );
 #endregion

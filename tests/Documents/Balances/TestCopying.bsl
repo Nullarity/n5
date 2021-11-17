@@ -11,7 +11,7 @@ Commando ( "e1cib/list/DocumentJournal.Balances" );
 list = With ( "Opening Balances" );
 Click ( "#FormCreateByParameterBalances" );
 With ( "Opening Balances (cr*" );
-account = "10300";
+account = "2421";
 Put ( "#Account", account );
 Click ( "#FormPostAndClose" );
 

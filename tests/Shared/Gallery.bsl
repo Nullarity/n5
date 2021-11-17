@@ -3,7 +3,7 @@
 // Parameters:
 // P1: Document metadata
 
-itemName = "_Item for Gallery#";
+itemName = "_Item for Gallery# " + Call ( "Common.GetID" );
 Call ( "Catalogs.Items.CreateIfNew", itemName );
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document." + _.Name );

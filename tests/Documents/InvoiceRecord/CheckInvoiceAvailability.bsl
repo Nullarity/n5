@@ -15,7 +15,7 @@ Click("#JustSave");
 Click("#NewInvoiceRecord");
 record = With();
 Get ( "#Range" ).Clear ();
-Set ( "#Number", "AA" + Call ( "Common.ScenarioID", "2B6AD803" ) );
+Set ( "#Number", "" + new UUID () );
 Click("#FormWrite");
 try
 	Click("#FormPrint");

@@ -12,7 +12,7 @@ With ( "Opening Balances" );
 Click ( "#FormCreateByParameterBalances" );
 With ( "Opening Balances (cr*" );
 
-Put ( "#Account", "10300" );
+Put ( "#Account", "2421" );
 table = Get ( "#Details" );
 Set ( "#DetailsCurrency", "CAD", table );
 Set ( "#DetailsCurrencyAmount", 100, table );
