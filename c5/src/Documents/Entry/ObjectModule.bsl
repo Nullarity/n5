@@ -28,6 +28,10 @@ EndProcedure
 
 Function getNumerator () 
 	
+	transaction = not TransactionActive ();
+	if ( transaction ) then
+		BeginTransaction ();
+	endif;
 	numerator = DF.Pick ( Operation, "Numerator" );
 	lockNumerator ( numerator );
 	if ( numerator.IsEmpty () ) then
@@ -37,8 +41,11 @@ Function getNumerator ()
 		prefix = DF.Pick ( numerator, "Description" );
 	endif;
 	code = getCode ( numerator );
+	if ( transaction ) then
+		CommitTransaction ();
+	endif;
 	return new Structure ( "Prefix, Code", prefix, code );
-	
+
 EndFunction
 
 Procedure lockNumerator ( Numerator )
