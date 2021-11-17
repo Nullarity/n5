@@ -11,7 +11,8 @@ createEnv ( env );
 // ***********************************
 
 // Open reports
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+Pause(2);
 list = With ( "Regulatory Reports" );
 
 // Create Report
@@ -41,7 +42,8 @@ Check ( "#ReportField [R3C2]", 3 );
 CloseAll ();
 
 // Open reports
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+Pause(2);
 list = With ( "Regulatory Reports" );
 
 // Create Report
@@ -89,7 +91,8 @@ Procedure createEnv ( Env )
 	// *************************
 	
 	// Open reports
-	Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+	Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+	Pause(2);
 	list = With ( "Regulatory Reports" );
 	
 	// Show masters and create a new one

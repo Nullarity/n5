@@ -8,7 +8,7 @@ createEnv ( env );
 // Last Report
 
 // Open reports
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
 Pause (1);
 list = With ();
 Put ( "#CompanyFilter", env.Company );
@@ -123,7 +123,7 @@ Procedure createEnv ( Env )
 	// DefaultValues
 	// *************************
 	
-	Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+	Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
 	Pause (1);
 	list = With ();
 	Put ( "#CompanyFilter", env.Company );

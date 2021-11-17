@@ -9,7 +9,8 @@ App.SetMaxActionExecutionTime ( 30 );
 // *************************
 
 // Open reports
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+Pause(2);
 list = With ();
 Click ( "#ListShowMasters" );
 

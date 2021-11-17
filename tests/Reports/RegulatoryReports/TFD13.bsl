@@ -9,8 +9,9 @@ createEnv ( env );
 // Last Report
 // *************************
 
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
 Pause ( __.Performance * 3 );
+With();
 Put ( "#CompanyFilter", env.Company );
 
 Click ( "#ListCreate" );
@@ -104,8 +105,9 @@ Procedure createEnv ( Env )
 	// DefaultValues
 	// *************************
 	
-	Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+	Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
 	Pause ( __.Performance * 3 );
+	With();
 	Put ( "#CompanyFilter", env.Company );
 	
 	Click ( "#ListCreate" );

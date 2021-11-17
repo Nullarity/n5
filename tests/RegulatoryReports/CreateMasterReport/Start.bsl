@@ -6,7 +6,8 @@ env = getEnv ( id );
 createEnv ( env );
 
 // Open reports
-Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
+Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+Pause(2);
 list = With ( "Regulatory Reports" );
 
 // Create Report
@@ -54,8 +55,8 @@ Procedure createEnv ( Env )
 	// *************************
 	
 	// Open reports
-	Commando ( "e1cib/command/Catalog.Reports.Command.Show" );
-	Pause ( 1 );
+	Commando ( "e1cib/command/Catalog.Reports.Command.Show", false );
+	Pause ( 2 );
 	list = With ();
 	
 	// Show masters and create a new one

@@ -44,7 +44,7 @@ Procedure createEnv ()
 	
 	#region createWarehouse
 	p = Call ( "Catalogs.Warehouses.Create.Params" );
-	p.Description = this.Customer;
+	p.Description = this.Warehouse;
 	Call ( "Catalogs.Warehouses.Create", p );
 	#endregion
 
