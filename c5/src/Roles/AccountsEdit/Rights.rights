@@ -162,6 +162,33 @@
 		</right>
 	</object>
 	<object>
+		<name>Configuration.Contabilizare</name>
+		<right>
+			<name>MainWindowModeNormal</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeEmbeddedWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeFullscreenWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeKiosk</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>AnalyticsSystemClient</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>Document.ProjectsInvoice.Command.Invoice</name>
 		<right>
 			<name>View</name>
@@ -173,6 +200,9 @@
 		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>#NoSalary</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>Insert</name>
@@ -293,6 +323,17 @@ union all
 select #Parameter(1)
 where &amp;CompanyAccess = value ( Enum.Access.Forbid )
 and #Parameter(1) not in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+</condition>
+	</restrictionTemplate>
+	<restrictionTemplate>
+		<name>NoSalary</name>
+		<condition>T where Ref not in (   
+	value ( ChartOfAccounts.General._531 ),
+	value ( ChartOfAccounts.General._5311 ),
+	value ( ChartOfAccounts.General._5312 ),
+	value ( ChartOfAccounts.General._5331 ),
+	value ( ChartOfAccounts.General._5342 )
+)   
 </condition>
 	</restrictionTemplate>
 	<restrictionTemplate>
