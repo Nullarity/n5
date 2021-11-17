@@ -12,7 +12,6 @@ createEnv();
 // Create payment
 Commando("e1cib/command/Document.Payment.Create");
 Set("#Customer", this.Customer);
-DebugStart ();
 Set("#Account", "2421");
 Set("#Amount", 1000);
 Click("#FormPostAndClose");
