@@ -91,6 +91,8 @@ if ( p.UpdateOnly ) then
 	return;
 endif;
 
+return;
+
 listSize = list.Count () - 1;
 chunk = new Array ();
 job = CurrentDelegatedJob.Job;

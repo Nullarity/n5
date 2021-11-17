@@ -26,6 +26,7 @@ Click("#FormPost");
 // Create & Close Payment
 Click("#CreatePayment");
 With();
+Set("#Account", "2421");
 Click("#FormPostAndClose");
 
 // Check if Invoice shows link to the Payment

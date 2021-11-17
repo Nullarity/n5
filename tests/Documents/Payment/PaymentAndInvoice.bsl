@@ -5,13 +5,15 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "A0F3"));
+this.Insert("ID", Call("Common.ScenarioID", "A0F8"));
 getEnv();
 createEnv();
 
 // Create payment
 Commando("e1cib/command/Document.Payment.Create");
 Set("#Customer", this.Customer);
+DebugStart ();
+Set("#Account", "2421");
 Set("#Amount", 1000);
 Click("#FormPostAndClose");
 

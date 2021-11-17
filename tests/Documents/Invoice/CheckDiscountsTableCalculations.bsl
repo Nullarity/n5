@@ -115,6 +115,7 @@ Procedure createEnv ()
 	With ();
 	Click ( "#FormDocumentPaymentCreateBasedOn" );
 	With ();
+	Set("#Account", "2421" );
 	Click ( "!FormPostAndClose" );
 	#endregion
 

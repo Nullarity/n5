@@ -32,6 +32,7 @@ Assert ( Fetch ( "#PaidPercent", List ) ).Empty ();
 Click ( "#FormDocumentPaymentCreateBasedOn" );
 With ();
 Set ( "#Amount", 70 );
+Set("#Account", "2421");
 Click ( "#FormPostAndClose" );
 
 // Check list field
