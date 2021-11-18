@@ -3,8 +3,8 @@
 // be found
 
 // Parameters
-platform = "8.3.18.1363";
-edt = "edt@2021.1.1:x86_64";
+platform = "8.3.20.1613";
+edt = "edt@2021.2.10:x86_64";
 
 // Routine
 p = Call("Tester.Execute.Params");
