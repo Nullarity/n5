@@ -15,6 +15,7 @@ p.Server = "localhost";
 p.ServerIBName = AppName;
 p.IBName = AppName;
 p.IBUser = "root";
+p.PermissionCode = "ConfigurationUpdate";
 p.Restore = "/home/dmitry/testing/" + AppName + "/init.dt";
 p.TestEnvironment = "TotalTest.TestEnvironment";
 p.Project = AppName;
