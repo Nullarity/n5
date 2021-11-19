@@ -7,7 +7,11 @@
 Call ( "Common.Init" );
 
 // Create Entry
-Commando ( "e1cib/data/Document.Entry" );
+try
+	Commando ( "e1cib/data/Document.Entry" );
+except
+	DebugStart ();
+endtry;
 form = With ( "Entry (cr*" );
 
 // Add Record
