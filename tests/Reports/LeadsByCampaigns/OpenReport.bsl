@@ -1,6 +1,4 @@
 ﻿Call ( "Common.Init" );
 CloseAll ();
 
-Commando("e1cib/app/Report.LeadsByCampaigns");
-With();
-Disconnect();
+Commando("e1cib/app/Report.Leads");
