@@ -64,7 +64,7 @@ Procedure applyAppearance ( Form, Value, IsItemUpdate, CanBeDisallowed )
 	enddo;
 	if ( Value = undefined or CanBeDisallowed or dependencyFound ) then
 	else
-		raise "Conditional appearance cannot found dependency by name: " + Value;
+		raise "Conditional appearance cannot find dependency by name: " + Value;
 	endif; 
 	
 EndProcedure 
