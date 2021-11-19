@@ -30,7 +30,6 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	defineEmployee ();
 	embedEmployee ();
 	if ( Object.Ref.IsEmpty () ) then

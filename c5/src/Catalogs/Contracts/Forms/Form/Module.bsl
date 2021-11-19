@@ -13,7 +13,6 @@ EndProcedure
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
 	endif;

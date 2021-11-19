@@ -100,7 +100,6 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		setAccessRightsFlags ();
 		setFlags ( ThisObject );

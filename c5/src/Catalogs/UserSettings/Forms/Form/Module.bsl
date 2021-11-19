@@ -4,7 +4,6 @@
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	MySettings = Object.Owner = SessionParameters.User;
 	StandardButtons.Arrange ( ThisObject );
 	setTitle ();

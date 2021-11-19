@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A077" );
+id = Call ( "Common.ScenarioID", "A0FG" );
 env = getEnv ( id );
 
 // Create Command
@@ -43,7 +43,7 @@ endif;
 p = Call ("Tester.Run.Params");
 p.User = env.Performer;
 p.IBase = env.Infobase;
-p.Parameters = "/Z 0C931F556B";
+p.Parameters = "/Z 0C931F556B /len";
 p.Port = port;
 Call("Tester.Run", p);
 

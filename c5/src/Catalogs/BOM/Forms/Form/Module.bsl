@@ -7,7 +7,6 @@ var ItemsRow;
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
 	endif; 

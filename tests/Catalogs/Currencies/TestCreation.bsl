@@ -33,6 +33,7 @@ MainWindow.ExecuteCommand ( "e1cib/data/Catalog.Prices" );
 With ( "Prices (create)" );
 
 f = Set ( "#Currency", currency );
+Pause ( 1 );
 f.Create ();
 
 With ( "Classifier" );

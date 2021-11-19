@@ -39,7 +39,6 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	Forms.RedefineOpeningModeForLinux ( ThisObject );
 	init ();
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
