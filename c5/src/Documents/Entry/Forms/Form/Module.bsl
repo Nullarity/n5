@@ -53,6 +53,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		enableWarning ( ThisObject );
+		defineCopy ();
 	endif; 
 	LocalCurrency = Application.Currency ();
 	Options.SetAccuracy ( ThisObject, "RecordsQuantityDr, RecordsQuantityCr" );
@@ -103,6 +104,13 @@ Procedure uploadOperation ()
 	Object.Simple = Operation.Simple;
 	Object.Method = Operation.Operation;
 	
+EndProcedure
+
+&AtServer
+Procedure defineCopy ()
+	
+	CopyOf = Parameters.CopyingValue;
+
 EndProcedure
 
 &AtClient
@@ -284,6 +292,22 @@ Procedure NewVoucher ( Command )
 	createVoucher ();
 	PettyCash.Open ( ThisObject, notifyNew );
 	
+EndProcedure
+
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	passCopy ( CurrentObject );
+
+EndProcedure
+
+&AtServer
+Procedure passCopy ( CurrentObject )
+	
+	if ( CurrentObject.IsNew () ) then
+		CurrentObject.AdditionalProperties.Insert ( "CopyOf", CopyOf ); 
+	endif;
+
 EndProcedure
 
 &AtServer

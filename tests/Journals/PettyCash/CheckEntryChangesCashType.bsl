@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0EL" );
+id = Call ( "Common.ScenarioID", "A0FL" );
 env = getEnv ( ID );
 createEnv ( env );
 
@@ -32,18 +32,12 @@ Click ( "#FormPost" );
 // ************
 
 #region checkIfExpenseRemoved
-Call ("Journals.PettyCash.ListByMemo", expenseID);
-With ();
-Assert (Call("Table.Count", Get("#List"))).Equal (1);
-Click ( "#FormSetDeletionMark" );
-Get ( "Clear * deletion *", "1?:*" );
-Click ( "No", "1?:*" );
-#endregion
-
-#region checkIfReceiptIsHere
 Call ("Journals.PettyCash.ListByMemo", receiptID);
 With ();
-Assert (Call("Table.Count", Get("#List"))).Equal (1);
+Assert (Call("Table.Count", Get("#List"))).Equal (2);
+Click ( "#FormSetDeletionMark" );
+Get ( "Do you want to remove the dele*", "1?:*" );
+Click ( "No", "1?:*" );
 #endregion
 
 // *************************

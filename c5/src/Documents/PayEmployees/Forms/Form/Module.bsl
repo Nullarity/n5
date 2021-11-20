@@ -104,6 +104,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 		DocumentForm.Init ( Object );
 		fillNew ();
 		setLinks ();
+		defineCopy ();
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.FilterAccount ( ThisObject );
@@ -197,6 +198,13 @@ Procedure initAccounts ()
 		new Structure ( "Parameter", ChartsOfCharacteristicTypes.Settings.DepositLiabilities ) ).Value;
 	
 EndProcedure 
+
+&AtServer
+Procedure defineCopy ()
+	
+	CopyOf = Parameters.CopyingValue;
+
+EndProcedure
 
 &AtClient
 Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )

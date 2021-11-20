@@ -40,6 +40,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			PaymentForm.Fill ( ThisObject );
 		endif; 
+		defineCopy ();
 		updateInfo ( ThisObject );
 	endif; 
 	PaymentForm.FilterAccount ( ThisObject );
@@ -153,6 +154,13 @@ Procedure refill ()
 	
 EndProcedure 
 
+&AtServer
+Procedure defineCopy ()
+	
+	CopyOf = Parameters.CopyingValue;
+
+EndProcedure
+
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
 	
@@ -163,7 +171,17 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
+	passCopy ( CurrentObject );
 	PaymentForm.Clean ( CurrentObject.Payments );	
+
+EndProcedure
+
+&AtServer
+Procedure passCopy ( CurrentObject )
+	
+	if ( CurrentObject.IsNew () ) then
+		CurrentObject.AdditionalProperties.Insert ( "CopyOf", CopyOf ); 
+	endif;
 
 EndProcedure
 

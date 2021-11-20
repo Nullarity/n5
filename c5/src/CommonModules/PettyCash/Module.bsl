@@ -57,13 +57,13 @@ Procedure NewReference ( Form ) export
 	endif;
 	field = ? ( PettyCash.Voucher ( object.Ref ), "Voucher", "Receipt" );
 	if ( Form [ field ].IsEmpty () ) then
-		update ( object, Form [ field ] );
+		update ( object, Form [ field ], Form.CopyOf );
 	endif; 
 	
 EndProcedure 
 
 &AtServer
-Procedure update ( Object, Reference )
+Procedure update ( Object, Reference, CopyOf = undefined )
 	
 	disconnected = disconnect ( Object, Reference );
 	isVoucher = PettyCash.Voucher ( Reference );
@@ -72,84 +72,95 @@ Procedure update ( Object, Reference )
 			return;
 		endif;
 		if ( isVoucher ) then
-			obj = Documents.CashVoucher.CreateDocument ();
+			target = Documents.CashVoucher.CreateDocument ();
 		else
-			obj = Documents.CashReceipt.CreateDocument ();
-		endif; 
+			target = Documents.CashReceipt.CreateDocument ();
+		endif;
+		if ( ValueIsFilled ( CopyOf ) ) then
+			copy ( Object, CopyOf, target );
+		endif;
 		isNew = true;
 	else
-		obj = Reference.GetObject ();
+		target = Reference.GetObject ();
 		isNew = false;
 	endif;
-	obj.Date = Object.Date;
-	obj.Company = Object.Company;
-	obj.Memo = Object.Memo;
-	obj.Posted = Object.Posted;
+	target.Date = Object.Date;
+	target.Company = Object.Company;
+	target.Memo = Object.Memo;
+	target.Posted = Object.Posted;
 	deleted = disconnected or Object.DeletionMark;
-	obj.Disconnected = disconnected;
-	obj.DeletionMark = deleted;
+	target.Disconnected = disconnected;
+	target.DeletionMark = deleted;
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Entry" ) ) then
 		entry = entryData ( Object );
-		obj.Currency = entry.Currency;
-		obj.Amount = entry.Amount;
-		obj.Location = entry.Location;
-		obj.Reason = entry.Content;
+		target.Currency = entry.Currency;
+		target.Amount = entry.Amount;
+		target.Location = entry.Location;
+		target.Reason = entry.Content;
 	elsif ( type = Type ( "DocumentRef.PayEmployees" )
 		or type = Type ( "DocumentRef.PayAdvances" ) ) then
-		obj.Currency = Application.Currency ();
-		obj.Amount = Object.Amount;
-		obj.Location = Object.Location;
+		target.Currency = Application.Currency ();
+		target.Amount = Object.Amount;
+		target.Location = Object.Location;
 	else
-		obj.Currency = Object.Currency;
-		obj.Location = Object.Location;
+		target.Currency = Object.Currency;
+		target.Location = Object.Location;
 		if ( type = Type ( "DocumentRef.VendorPayment" ) ) then
-			obj.Amount = Object.Total;
+			target.Amount = Object.Total;
 		else
-			obj.Amount = Object.Amount;
+			target.Amount = Object.Amount;
 		endif;
 	endif; 
 	if ( isNew ) then
 		creator = Object.Creator;
-		obj.Creator = creator;
-		obj.Base = Object.Ref;
-		obj.Responsible = DF.Pick ( creator, "Employee.Individual" );
+		target.Creator = creator;
+		target.Base = Object.Ref;
+		target.Responsible = DF.Pick ( creator, "Employee.Individual" );
 		data = Responsibility.Get ( Object.Date, Object.Company, "AccountantChief, GeneralManager" );
-		obj.Accountant = data.AccountantChief;
-		obj.Director = data.GeneralManager;
+		target.Accountant = data.AccountantChief;
+		target.Director = data.GeneralManager;
 		if ( type = Type ( "DocumentRef.Payment" ) ) then
-			obj.Giver = presentation ( Object.Customer );
+			target.Giver = presentation ( Object.Customer );
 		elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-			obj.Giver = presentation ( Object.Vendor );
+			target.Giver = presentation ( Object.Vendor );
 		elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
-			obj.Receiver = presentation ( Object.Vendor );
+			target.Receiver = presentation ( Object.Vendor );
 		elsif ( type = Type ( "DocumentRef.Refund" ) ) then
-			obj.Receiver = presentation ( Object.Customer );
+			target.Receiver = presentation ( Object.Customer );
 		elsif ( type = Type ( "DocumentRef.PayEmployees" )
 			or type = Type ( "DocumentRef.PayAdvances" ) ) then
-			obj.Receiver = Object.Ref;
+			target.Receiver = Object.Ref;
 		elsif ( type = Type ( "DocumentRef.Entry" ) ) then
 			subject = entry.Subject;
 			name = presentation ( subject );
 			if ( isVoucher ) then
-				obj.Receiver = name;
-				obj.ID = subjectID ( subject );
+				target.Receiver = name;
+				target.ID = subjectID ( subject );
 			else
-				obj.Giver = name;
+				target.Giver = name;
 			endif;
 		endif; 
 	endif; 
-	markSyncing ( obj );
-	if ( deleted and obj.Posted ) then
-		obj.Write ( DocumentWriteMode.UndoPosting );
-		obj.SetDeletionMark ( true );
+	markSyncing ( target );
+	if ( deleted and target.Posted ) then
+		target.Write ( DocumentWriteMode.UndoPosting );
+		target.SetDeletionMark ( true );
 	else
-		obj.Write ();
+		target.Write ();
 	endif;
 	if ( isNew ) then
-		Reference = obj.Ref;
+		Reference = target.Ref;
 	endif; 
 	
+EndProcedure
+
+&AtServer
+Procedure copy ( Owner, CopyOf, Destination )
+	
+	source = PettyCashSrv.Search ( CopyOf ).GetObject ();
+	FillPropertyValues ( Destination, source, , "Number" );
+
 EndProcedure
 
 &AtServer
@@ -310,24 +321,26 @@ EndFunction
 &AtServer
 Procedure Sync ( Object ) export
 	
+	var copy;
 	if ( syncing ( Object ) ) then
 		return;
 	endif; 
 	ref = Object.Ref;
+	Object.AdditionalProperties.Property ( "CopyOf", copy );
 	if ( TypeOf ( Object ) = Type  ( "DocumentObject.Entry" ) ) then
 		method = Object.Method;
 		voucher = Documents.CashVoucher.FindByAttribute ( "Base", ref );
 		receipt = Documents.CashReceipt.FindByAttribute ( "Base", ref );
 		if ( not voucher.IsEmpty ()
 			or method = Enums.Operations.CashExpense ) then
-			update ( Object, voucher );
+			update ( Object, voucher, copy );
 		endif;
 		if ( not receipt.IsEmpty ()
 			or method = Enums.Operations.CashReceipt ) then
-			update ( Object, receipt );
+			update ( Object, receipt, copy );
 		endif;
 	else
-		update ( Object, PettyCashSrv.Search ( ref ) );
+		update ( Object, PettyCashSrv.Search ( ref ), copy );
 	endif;
 	
 EndProcedure 
