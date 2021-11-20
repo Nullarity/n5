@@ -305,7 +305,7 @@ EndProcedure
 Procedure passCopy ( CurrentObject )
 	
 	if ( CurrentObject.IsNew () ) then
-		CurrentObject.AdditionalProperties.Insert ( "CopyOf", CopyOf ); 
+		CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesCopyOf (), CopyOf ); 
 	endif;
 
 EndProcedure

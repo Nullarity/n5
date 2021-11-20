@@ -67,22 +67,18 @@ Procedure update ( Object, Reference, CopyOf = undefined )
 	
 	disconnected = disconnect ( Object, Reference );
 	isVoucher = PettyCash.Voucher ( Reference );
-	if ( Reference.IsEmpty () ) then
+	isNew = Reference.IsEmpty ();
+	isCopy = ValueIsFilled ( CopyOf );
+	if ( isNew ) then
 		if ( disconnected ) then
 			return;
 		endif;
-		if ( isVoucher ) then
-			target = Documents.CashVoucher.CreateDocument ();
-		else
-			target = Documents.CashReceipt.CreateDocument ();
-		endif;
-		if ( ValueIsFilled ( CopyOf ) ) then
+		target = ? ( isVoucher, Documents.CashVoucher.CreateDocument (),  Documents.CashReceipt.CreateDocument () );
+		if ( isCopy ) then
 			copy ( Object, CopyOf, target );
 		endif;
-		isNew = true;
 	else
 		target = Reference.GetObject ();
-		isNew = false;
 	endif;
 	target.Date = Object.Date;
 	target.Company = Object.Company;
@@ -116,31 +112,33 @@ Procedure update ( Object, Reference, CopyOf = undefined )
 		creator = Object.Creator;
 		target.Creator = creator;
 		target.Base = Object.Ref;
-		target.Responsible = DF.Pick ( creator, "Employee.Individual" );
-		data = Responsibility.Get ( Object.Date, Object.Company, "AccountantChief, GeneralManager" );
-		target.Accountant = data.AccountantChief;
-		target.Director = data.GeneralManager;
-		if ( type = Type ( "DocumentRef.Payment" ) ) then
-			target.Giver = presentation ( Object.Customer );
-		elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-			target.Giver = presentation ( Object.Vendor );
-		elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
-			target.Receiver = presentation ( Object.Vendor );
-		elsif ( type = Type ( "DocumentRef.Refund" ) ) then
-			target.Receiver = presentation ( Object.Customer );
-		elsif ( type = Type ( "DocumentRef.PayEmployees" )
-			or type = Type ( "DocumentRef.PayAdvances" ) ) then
-			target.Receiver = Object.Ref;
-		elsif ( type = Type ( "DocumentRef.Entry" ) ) then
-			subject = entry.Subject;
-			name = presentation ( subject );
-			if ( isVoucher ) then
-				target.Receiver = name;
-				target.ID = subjectID ( subject );
-			else
-				target.Giver = name;
-			endif;
-		endif; 
+		if ( not isCopy ) then
+			target.Responsible = DF.Pick ( creator, "Employee.Individual" );
+			data = Responsibility.Get ( Object.Date, Object.Company, "AccountantChief, GeneralManager" );
+			target.Accountant = data.AccountantChief;
+			target.Director = data.GeneralManager;
+			if ( type = Type ( "DocumentRef.Payment" ) ) then
+				target.Giver = presentation ( Object.Customer );
+			elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
+				target.Giver = presentation ( Object.Vendor );
+			elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
+				target.Receiver = presentation ( Object.Vendor );
+			elsif ( type = Type ( "DocumentRef.Refund" ) ) then
+				target.Receiver = presentation ( Object.Customer );
+			elsif ( type = Type ( "DocumentRef.PayEmployees" )
+				or type = Type ( "DocumentRef.PayAdvances" ) ) then
+				target.Receiver = Object.Ref;
+			elsif ( type = Type ( "DocumentRef.Entry" ) ) then
+				subject = entry.Subject;
+				name = presentation ( subject );
+				if ( isVoucher ) then
+					target.Receiver = name;
+					target.ID = subjectID ( subject );
+				else
+					target.Giver = name;
+				endif;
+			endif; 
+		endif;
 	endif; 
 	markSyncing ( target );
 	if ( deleted and target.Posted ) then
@@ -326,7 +324,7 @@ Procedure Sync ( Object ) export
 		return;
 	endif; 
 	ref = Object.Ref;
-	Object.AdditionalProperties.Property ( "CopyOf", copy );
+	Object.AdditionalProperties.Property ( Enum.AdditionalPropertiesCopyOf (), copy );
 	if ( TypeOf ( Object ) = Type  ( "DocumentObject.Entry" ) ) then
 		method = Object.Method;
 		voucher = Documents.CashVoucher.FindByAttribute ( "Base", ref );

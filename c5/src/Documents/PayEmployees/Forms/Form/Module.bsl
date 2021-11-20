@@ -254,7 +254,7 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	PayrollForm.BeforeWrite ( CurrentObject, WriteParameters );
+	PayrollForm.BeforeWrite ( CurrentObject, WriteParameters, CopyOf );
 	
 EndProcedure
 

@@ -1295,6 +1295,13 @@ Function AdditionalPropertiesSyncing () export
 	
 EndFunction
 
+&AtServer
+Function AdditionalPropertiesCopyOf () export
+	
+	return "AdditionalPropertiesCopyOf";
+	
+EndFunction
+
 #endregion
 
 #region Exceptions

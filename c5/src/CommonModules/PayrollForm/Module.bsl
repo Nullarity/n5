@@ -355,9 +355,10 @@ Procedure OpenCalculations ( Form ) export
 EndProcedure 
 
 &AtServer
-Procedure BeforeWrite ( CurrentObject, WriteParameters ) export
+Procedure BeforeWrite ( CurrentObject, WriteParameters, CopyOf = undefined ) export
 	
 	resetDirty ( CurrentObject, WriteParameters );
+	passCopy ( CurrentObject, CopyOf );
 	calcTotals ( CurrentObject );
 	
 EndProcedure 
@@ -370,6 +371,15 @@ Procedure resetDirty ( CurrentObject, WriteParameters )
 	endif; 
 	
 EndProcedure 
+
+&AtServer
+Procedure passCopy ( CurrentObject, CopyOf )
+	
+	if ( CurrentObject.IsNew () and ValueIsFilled ( CopyOf ) ) then
+		CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesCopyOf (), CopyOf ); 
+	endif;
+
+EndProcedure
 
 &AtServer
 Procedure calcTotals ( CurrentObject )
