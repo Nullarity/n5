@@ -65,8 +65,12 @@ EndProcedure
 &AtServer
 Procedure update ( Object, Reference )
 	
+	disconnected = disconnect ( Object, Reference );
 	isVoucher = PettyCash.Voucher ( Reference );
 	if ( Reference.IsEmpty () ) then
+		if ( disconnected ) then
+			return;
+		endif;
 		if ( isVoucher ) then
 			obj = Documents.CashVoucher.CreateDocument ();
 		else
@@ -81,7 +85,6 @@ Procedure update ( Object, Reference )
 	obj.Company = Object.Company;
 	obj.Memo = Object.Memo;
 	obj.Posted = Object.Posted;
-	disconnected = disconnect ( Object, Reference );
 	deleted = disconnected or Object.DeletionMark;
 	obj.Disconnected = disconnected;
 	obj.DeletionMark = deleted;
@@ -97,14 +100,14 @@ Procedure update ( Object, Reference )
 		obj.Currency = Application.Currency ();
 		obj.Amount = Object.Amount;
 		obj.Location = Object.Location;
-	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
-		obj.Currency = Object.Currency;
-		obj.Location = Object.Location;
-		obj.Amount = Object.Amount;
 	else
 		obj.Currency = Object.Currency;
 		obj.Location = Object.Location;
-		obj.Amount = ? ( isVoucher, Object.Total, Object.Amount );
+		if ( type = Type ( "DocumentRef.VendorPayment" ) ) then
+			obj.Amount = Object.Total;
+		else
+			obj.Amount = Object.Amount;
+		endif;
 	endif; 
 	if ( isNew ) then
 		creator = Object.Creator;
@@ -116,8 +119,12 @@ Procedure update ( Object, Reference )
 		obj.Director = data.GeneralManager;
 		if ( type = Type ( "DocumentRef.Payment" ) ) then
 			obj.Giver = presentation ( Object.Customer );
+		elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
+			obj.Giver = presentation ( Object.Vendor );
 		elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
 			obj.Receiver = presentation ( Object.Vendor );
+		elsif ( type = Type ( "DocumentRef.Refund" ) ) then
+			obj.Receiver = presentation ( Object.Customer );
 		elsif ( type = Type ( "DocumentRef.PayEmployees" )
 			or type = Type ( "DocumentRef.PayAdvances" ) ) then
 			obj.Receiver = Object.Ref;
@@ -130,10 +137,6 @@ Procedure update ( Object, Reference )
 			else
 				obj.Giver = name;
 			endif;
-		elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-			obj.Giver = presentation ( Object.Vendor );	
-		elsif ( type = Type ( "DocumentRef.Refund" ) ) then
-			obj.Receiver = presentation ( Object.Customer );	
 		endif; 
 	endif; 
 	markSyncing ( obj );
@@ -155,7 +158,9 @@ Function disconnect ( Object, Reference )
 	method = Object.Method;
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" )
+		or type = Type ( "DocumentRef.Refund" )
 		or type = Type ( "DocumentRef.VendorPayment" )
+		or type = Type ( "DocumentRef.VendorRefund" )
 		or type = Type ( "DocumentRef.PayEmployees" )
 		or type = Type ( "DocumentRef.PayAdvances" ) ) then
 		return method <> Enums.PaymentMethods.Cash;
@@ -322,8 +327,7 @@ Procedure Sync ( Object ) export
 			update ( Object, receipt );
 		endif;
 	else
-		reference = PettyCashSrv.Search ( Object.Ref );
-		update ( Object, reference );
+		update ( Object, PettyCashSrv.Search ( ref ) );
 	endif;
 	
 EndProcedure 

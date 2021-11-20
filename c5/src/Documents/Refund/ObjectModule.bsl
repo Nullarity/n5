@@ -6,14 +6,6 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
 EndProcedure
 
-Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
-	
-	if ( DataExchange.Load ) then
-		return;
-	endif; 
-	
-EndProcedure
-
 Procedure OnWrite ( Cancel )
 	
 	if ( DataExchange.Load ) then

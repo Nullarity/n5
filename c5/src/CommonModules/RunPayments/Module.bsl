@@ -611,7 +611,7 @@ Procedure fixCurrencyAmount ( Env )
 	fields = Env.Fields;
 	record = undefined;
 	max = 0;
-	fix = fields.Amount - ? ( Env.Customer, 0, fields.IncomeTaxAmount );
+	fix = fields.Amount - ? ( Env.Customer or Env.Refund, 0, fields.IncomeTaxAmount );
 	cash = "CurrencyAmount" + ? ( Env.Customer, "Dr", "Cr" );
 	for each row in Env.Buffer do
 		currencyAmount = row [ cash ];
