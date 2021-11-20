@@ -29,9 +29,9 @@ form = With ( "Cash Transfer (create)" );
 With ( form );
 
 Set ( "Sender", office );
-Set ( "#Account", "10400" );
+Set ( "#Account", "2411" );
 Set ( "Receiver", branch );
-Set ( "#AccountTo", "10400" );
+Set ( "#AccountTo", "2411" );
 Set ( "Amount", "1500" );
 
 Click ( "Post" );

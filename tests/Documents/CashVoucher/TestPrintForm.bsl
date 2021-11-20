@@ -62,7 +62,7 @@ Procedure createEnv ( Env )
 	Put ( "#Amount", "1000" );
 	Put ( "#Currency", "MDL" );
 	Put ( "#Method", "Cash" );
-	Put ( "#Account", "10400" );
+	Put ( "#Account", "2411" );
 	Click ( "#NewVoucher" );
 	
 	With ( "Cash Voucher" );
@@ -84,7 +84,7 @@ Procedure createEnv ( Env )
 	Put ( "#Operation", "Cash Expense" );
 	Put ( "#Description", Env.OperationExpense );
 	Click ( "#Simple" );
-	Put ( "#AccountCr", "10400" );
+	Put ( "#AccountCr", "2411" );
 	Click ( "#FormWriteAndClose" );
 	
 	// *************************

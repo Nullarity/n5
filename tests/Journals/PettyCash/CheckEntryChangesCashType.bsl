@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0FL" );
+id = Call ( "Common.ScenarioID", "A0FQ" );
 env = getEnv ( ID );
 createEnv ( env );
 
@@ -72,13 +72,13 @@ Procedure createEnv ( Env )
 	p.Description = Env.OperationExpense;
 	p.Simple = true;
 	p.AccountDr = "12800";
-	p.AccountCr = "10400";
+	p.AccountCr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 	p.Operation = "Cash Receipt";
 	p.Description = Env.OperationReceipt;
 	p.Simple = true;
 	p.AccountCr = "12800";
-	p.AccountDr = "10400";
+	p.AccountDr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 
 	RegisterEnvironment ( id );

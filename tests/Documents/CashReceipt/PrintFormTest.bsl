@@ -61,7 +61,7 @@ Procedure createEnv ( Env )
 	Put ( "#Customer", Env.Customer );
 	Put ( "#Amount", "1000" );
 	Put ( "#Method", "Cash" );
-	Put ( "#Account", "10400" );
+	Put ( "#Account", "2411" );
 	Click ( "#NewReceipt" );
 	
 	With ( "Cash Receipt" );
@@ -82,7 +82,7 @@ Procedure createEnv ( Env )
 	Put ( "#Operation", "Cash Receipt" );
 	Put ( "#Description", Env.OperationReceipt );
 	Click ( "#Simple" );
-	Put ( "#AccountDr", "10400" );
+	Put ( "#AccountDr", "2411" );
 	Click ( "#FormWriteAndClose" );
 	
 	// *************************

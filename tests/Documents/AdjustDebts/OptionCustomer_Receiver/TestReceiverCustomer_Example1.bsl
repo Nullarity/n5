@@ -137,7 +137,7 @@ Procedure createEnv ( Env )
 	Put ( "#Customer",  Env.Customer );
 	Pick ( "#Method", "Cash" );
 	Put ( "#Amount", "1000" );
-	Put ( "#Account", "10400" );
+	Put ( "#Account", "2411" );
 	Click ( "#FormPostAndClose" );
 	
 	// *************************

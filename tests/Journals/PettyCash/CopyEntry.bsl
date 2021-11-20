@@ -68,7 +68,7 @@ Procedure createEnv ( Env )
 	p.Description = Env.Operation;
 	p.Simple = true;
 	p.AccountDr = "12800";
-	p.AccountCr = "10400";
+	p.AccountCr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 
 	RegisterEnvironment ( id );
