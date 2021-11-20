@@ -67,7 +67,7 @@ Procedure createEnv ( Env )
 	p.Operation = "Cash Expense";
 	p.Description = Env.Operation;
 	p.Simple = true;
-	p.AccountDr = "12800";
+	p.AccountDr = "2262";
 	p.AccountCr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 

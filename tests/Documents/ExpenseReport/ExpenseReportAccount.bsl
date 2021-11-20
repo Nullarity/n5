@@ -23,7 +23,7 @@
 //		Put ( "!Value", _ );
 //	endif;	
 //else
-//	Put ( "!Value", "12800" );
+//	Put ( "!Value", "2262" );
 //endif;
 //Put ( "#SetupDate", date );
 //Click ( "!FormOK" );

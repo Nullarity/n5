@@ -22,7 +22,7 @@ Close ( DialogsTitle ); // Error message should be seen
 // Open and change parameter
 // ***********************************
 
-setupAccount = "12800";
+setupAccount = "2262";
 setupDate = Format ( BegOfYear ( CurrentDate () ), "DLF=D" );
 
 table = Activate ( "#Settings" );

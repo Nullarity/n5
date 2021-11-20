@@ -71,13 +71,13 @@ Procedure createEnv ( Env )
 	p.Operation = "Cash Expense";
 	p.Description = Env.OperationExpense;
 	p.Simple = true;
-	p.AccountDr = "12800";
+	p.AccountDr = "2262";
 	p.AccountCr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 	p.Operation = "Cash Receipt";
 	p.Description = Env.OperationReceipt;
 	p.Simple = true;
-	p.AccountCr = "12800";
+	p.AccountCr = "2262";
 	p.AccountDr = "2411";
 	Call ( "Catalogs.Operations.Create", p );
 
