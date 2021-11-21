@@ -3506,7 +3506,7 @@ where case when Account.Currency then Balances.CurrencyAmountOpeningBalanceDr el
 	or case when Account.Currency then Balances.CurrencyAmountTurnoverDr else Balances.AmountTurnoverDr end &lt;> 0
 	or case when Account.Currency then Balances.CurrencyAmountTurnoverCr else Balances.AmountTurnoverCr end &lt;> 0
 	or case when Account.Currency then Balances.CurrencyAmountClosingBalanceDr else Balances.AmountClosingBalanceDr end &lt;> 0
-order by Account.Order, Dim1, Currency, Day desc
+order by Day desc, Account.Order, Dim1, Currency
 </queryText>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
