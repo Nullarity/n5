@@ -63,7 +63,7 @@ Procedure readAppearance ()
 	|ContractRate ContractFactor enable Object.ContractCurrency <> LocalCurrency;
 	|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
 	|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
-	|Reference ReferenceDate show Object.Method <> Enum.PaymentMethods.Cash;
+	|Reference ReferenceDate PaymentContent show Object.Method <> Enum.PaymentMethods.Cash;
 	|Warning UndoPosting show Object.Posted;
 	|Header GroupDocuments GroupCurrency GroupMore lock Object.Posted;
 	|GroupFill MarkAll1 UnmarkAll1 enable not Object.Posted

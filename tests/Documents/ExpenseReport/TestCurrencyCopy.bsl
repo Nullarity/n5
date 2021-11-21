@@ -12,7 +12,7 @@ find.Where = "Code";
 find.What = "2262";
 Call ( "Common.Find", find );
 Click ( "#FormChange" );
-form = With ( "12800*" );
+form = With ();
 if ( Fetch ( "#Currency" ) = "No" ) then
 	Click ( "#Currency" );
 	Click ( "#FormWriteAndClose" );

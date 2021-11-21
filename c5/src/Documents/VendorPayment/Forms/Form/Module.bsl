@@ -54,7 +54,7 @@ Procedure readAppearance ()
 	|Location show Object.Method <> Enum.PaymentMethods.ExpenseReport;
 	|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
 	|NewVoucher show empty ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
-	|Reference ReferenceDate show Object.Method <> Enum.PaymentMethods.Cash;
+	|Reference ReferenceDate PaymentContent show Object.Method <> Enum.PaymentMethods.Cash;
 	|Warning UndoPosting show Object.Posted;
 	|Header GroupDocuments GroupCurrency GroupMore lock Object.Posted;
 	|Update Refill enable not Object.Posted;
