@@ -77,7 +77,8 @@ Procedure readAppearance ()
 	|NewVoucher show empty ( Voucher ) and Object.Method = Enum.Operations.CashExpense;
 	|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.Operations.CashReceipt;
 	|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.Operations.CashExpense;
-	|Reference ReferenceDate show inlist ( Object.Method, Enum.Operations.BankExpense, Enum.Operations.BankReceipt )
+	|Reference ReferenceDate PaymentContent show
+	|	inlist ( Object.Method, Enum.Operations.BankExpense, Enum.Operations.BankReceipt );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

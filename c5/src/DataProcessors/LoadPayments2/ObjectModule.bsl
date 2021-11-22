@@ -91,7 +91,7 @@ Procedure sqlReceipts()
 	fields = Env.ReceiptsFields;
 	s = "
 	|// #Receipts
-	|select " + fields + ", Receipts.Operation.Simple as Simple, 
+	|select " + fields + ", Receipts.Operation.Operation as Method, Receipts.Operation.Simple as Simple, 
 	|	case when isnull ( Receipts.Operation.AccountDr, value ( ChartOfAccounts.General.EmptyRef ) )
 	|			= value ( ChartOfAccounts.General.EmptyRef ) then Receipts.Ref.Account
 	|		else Receipts.Operation.AccountDr
@@ -109,7 +109,7 @@ Procedure sqlExpenses()
 	fields = Env.ExpensesFields;
 	s = "
 	|// #Expenses
-	|select " + fields + ", Expenses.Operation.Simple as Simple, 
+	|select " + fields + ", Expenses.Operation.Operation as Method, Expenses.Operation.Simple as Simple, 
 	|	case when isnull ( Expenses.Operation.AccountCr, value ( ChartOfAccounts.General.EmptyRef ) )
 	|			= value ( ChartOfAccounts.General.EmptyRef ) then Expenses.Ref.Account
 	|		else Expenses.Operation.AccountCr
@@ -220,6 +220,7 @@ Procedure headerDocument(Object, Row, RowDetail)
 	Object.Creator = Creator;
 	Object.Reference = TrimAll(RowDetail.OrderNumber);
 	Object.ReferenceDate = RowDetail.OrderDate;
+	Object.PaymentContent = RowDetail.PaymentContent;
 	setContent(Object.Memo, RowDetail);
 	
 EndProcedure
@@ -333,6 +334,7 @@ Procedure createEntry(Row, RowDetail)
 	headerDocument(object, Row, RowDetail);
 	object.Amount = Row.Amount;
 	object.Operation = Row.Operation;
+	object.Method = Row.Method;
 	object.Simple = Row.Simple;
 	rowRecord = object.Records.Add();
 	rowRecord.AccountDr = Row.AccountDr;
