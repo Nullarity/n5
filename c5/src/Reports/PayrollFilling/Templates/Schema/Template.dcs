@@ -1103,11 +1103,7 @@ from (
 	select Vacations.Ref as Ref, Compensations.Employee as Employee, 
 		Compensations.Schedule as Schedule,
 		sum (
-			case when Compensations.Days &gt; 0
-					and Compensations.Method in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent )
-					) then Compensations.Amount / Compensations.Days
+			case
 				when Compensations.Method = value ( Enum.Calculations.Annual )
 					then Compensations.Amount / 12 / case when Compensations.AverageDays = 0 then 1 else Compensations.AverageDays end
 				when Compensations.Method = value ( Enum.Calculations.Quarterly )
@@ -1129,8 +1125,6 @@ from (
 		) as QuarterlyBonuses,
 		sum (
 			case when Compensations.Method not in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount
@@ -1466,11 +1460,7 @@ into SickLeavesRates
 from (
 	select SickLeaves.Ref as Ref, Compensations.Employee as Employee, Compensations.Schedule,
 		sum (
-			case when Compensations.Days &gt; 0
-					and Compensations.Method in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent )
-					) then Compensations.Amount / Compensations.Days
+			case
 				when Compensations.Method = value ( Enum.Calculations.Annual )
 					then Compensations.Amount / 12 / case when Compensations.AverageDays = 0 then 1 else Compensations.AverageDays end
 				when Compensations.Method = value ( Enum.Calculations.Quarterly )
@@ -1492,8 +1482,6 @@ from (
 		) as QuarterlyBonuses,
 		sum (
 			case when Compensations.Method not in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount
@@ -2712,8 +2700,6 @@ from (
 		beginofperiod ( Compensations.DateStart, month ) as Period, Compensations.Schedule as Schedule,
 		sum (
 			case when Compensations.Method in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount
@@ -2730,8 +2716,6 @@ from (
 		) as Days,
 		sum (
 			case when Compensations.Method not in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount
@@ -2762,8 +2746,6 @@ from (
 		beginofperiod ( Compensations.DateStart, month ) as Period, Compensations.Schedule as Schedule,
 		sum (
 			case when Compensations.Method in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount
@@ -2780,8 +2762,6 @@ from (
 		) as Days,
 		sum (
 			case when Compensations.Method not in (
-						value ( Enum.Calculations.FixedAmount ),
-						value ( Enum.Calculations.Percent ),
 						value ( Enum.Calculations.Annual ),
 						value ( Enum.Calculations.Quarterly )
 					) then Compensations.Amount

@@ -462,20 +462,10 @@ EndProcedure
 
 Procedure setContent(Line, Row)
 	
-	content1 = TrimAll(Row.PaymentContent);
-	content2 = "";
-	content3 = "";
-	if (StrLen(content1) > 57) then
-		content1 = Left(content1, 57);
-		content2 = Mid(content1, 57, 57);
-	endif;
-	if (StrLen(content2) > 57) then
-		content2 = Left(content2, 57);
-		content3 = Mid(content2, 57, 96);
-	endif;
-	Line.DE1 = content1;
-	Line.DE2 = content2;
-	Line.DE3 = content3;
+	content = TrimAll(Row.PaymentContent);
+	Line.DE1 = Mid ( content, 1, 57 );
+	Line.DE2 = Mid ( content, 57, 57 );
+	Line.DE3 = Mid ( content, 115, 96 );
 	
 EndProcedure
 

@@ -44,6 +44,7 @@ Procedure delayStart ()
 	job.Parameters = undefined;
 	job.UserName = "";
 	job.Description = "Start";
+	job.Schedule = wait ( 60 );
 	job.Write ();
 	logging ( job, "-", "-" );
 	

@@ -33,7 +33,7 @@ EndFunction
 Function getRegistrationDataMessage ( Env, TempFolder )
 	
 	message = new InternetMailMessage ();
-	message.From = Cloud.Info ();
+	message.From = Cloud.Noreply ();
 	message.To.Add ( Env.Email );
 	fillRegistrationDataMessage ( Env, message );
 	attachFile ( Env, message, TempFolder );

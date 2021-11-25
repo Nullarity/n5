@@ -264,7 +264,10 @@ Procedure sqlSicknessPrintData ( Env )
 	|	Compensations.BaseQuarterlyBonuses as QuarterlyBonuses, Compensations.BaseScheduledDays as ScheduledDays,
 	|	Compensations.Bonuses as Bonuses, Compensations.DailyRate as DailyRate, Compensations.Schedule.AverageDays as AverageDays,
 	|	cast ( Seniority.Value as Number ( 5, 2 ) ) / 100 as SeniorityAmendment, Compensations.Result as Result, Compensations.Employee as EmployeeRef,
-	|	cast ( Compensations.BaseAmount / Compensations.BaseDays + Compensations.Bonuses as Number ( 15, 2 ) ) as AverageDailyIncome,
+	|	case Compensations.BaseDays
+	|		when 0 then 0
+	|		else cast ( Compensations.BaseAmount / Compensations.BaseDays + Compensations.Bonuses as Number ( 15, 2 ) )
+	|	end as AverageDailyIncome,
 	|	Compensations.Employee.Description as Employee
 	|from Document.Payroll.Compensations as Compensations
 	|	//

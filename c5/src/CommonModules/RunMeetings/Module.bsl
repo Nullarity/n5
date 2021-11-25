@@ -116,14 +116,12 @@ EndProcedure
 Procedure sendInvitations ( Env )
 	
 	fields = Env.Fields;
-	creator = fields.Creator;
 	oldMember = 2;
 	unchanged = ( fields.Changed = 0 );
 	messages = new Map ();
 	profile = MailboxesSrv.SystemProfile ();
 	for each row in Env.Members do
-		if ( not row.Send
-			or row.Member = creator ) then
+		if ( not row.Send ) then
 			continue;
 		endif;
 		status = row.Status;
