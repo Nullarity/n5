@@ -71,3 +71,10 @@ Procedure filterByRecipient ()
 	Appearance.Apply ( ThisObject, "RecipientFilter" );
 
 EndProcedure
+
+&AtClient
+Procedure UnloadPayments ( Command )
+	
+	OpenForm ( "DataProcessor.UnloadPayments.Form" );
+
+EndProcedure
