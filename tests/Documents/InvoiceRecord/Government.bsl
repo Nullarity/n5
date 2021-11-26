@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0FS" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0FY" ) );
 getEnv ();
 createEnv ();
 
@@ -14,14 +14,14 @@ Click("#JustSave");
 #endregion
 
 #region generateTaxInvoice
-IgnoreErrors = true;
 Click("#NewInvoiceRecord");
-if ( not Waiting ( "1?:*" ) ) then
-	Stop ("An error message <A tax invoice cannot be issued for a government entity> should appear");
-endif;
 With ();
-Close ();
-IgnoreErrors = false;
+Set ( "#Number", this.ID + this.ID );
+Click ("#FormPrint");
+if ( FindMessages ( "*government organization*").Count () = 0 ) then
+	Stop ( "Error message must be shown" );
+endif;
+CloseAll ();
 #endregion
 
 // *************************
