@@ -113,7 +113,6 @@
   <checkUnique>true</checkUnique>
   <autonumbering>true</autonumbering>
   <defaultObjectForm>Document.LoadPayments.Form.Form</defaultObjectForm>
-  <defaultListForm>Document.LoadPayments.Form.List</defaultListForm>
   <realTimePosting>Deny</realTimePosting>
   <postInPrivilegedMode>true</postInPrivilegedMode>
   <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
@@ -305,6 +304,29 @@
       <key>ro</key>
       <value>Utilizatorul care a creat documentul</value>
     </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3e3a8b4c-8a13-4c1a-a5e7-ac52cdea21ec">
+    <name>Expense</name>
+    <synonym>
+      <key>en</key>
+      <value>Expense</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Списано</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Casat</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
@@ -507,6 +529,29 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="9ad11ab6-516d-4011-a709-59056dcd2243">
+    <name>Received</name>
+    <synonym>
+      <key>en</key>
+      <value>Received</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получено</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primit</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="ee675e2e-eed9-4465-b33c-df807a6b0604">
     <name>Status</name>
     <synonym>
@@ -547,11 +592,6 @@
   </attributes>
   <forms uuid="4b28870a-3148-4dd9-b18b-3b29946ba9db">
     <name>Form</name>
-    <usePurposes>PersonalComputer</usePurposes>
-    <usePurposes>MobileDevice</usePurposes>
-  </forms>
-  <forms uuid="963d10f4-57f4-4832-9eca-fc5b8f2de5a8">
-    <name>List</name>
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
@@ -1856,6 +1896,40 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="4dd5f958-672d-4f12-8232-08aa7d6a4c1f">
+      <name>PaymentContent</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Content</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Содержание платежа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Conținutul plății</value>
+      </synonym>
+      <type>
+        <types>DefinedType.PaymentContent</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment сontent</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Содержание платежа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Conținutul plății</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="058379ca-d2a7-43c3-b550-0b494e573593">
       <name>Receiver</name>
       <synonym>
@@ -2386,35 +2460,39 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="2380ed5f-0df0-4f53-817f-da218a97fe1e">
+      <name>PaymentContent</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Content</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Содержание платежа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Conținutul plății</value>
+      </synonym>
+      <type>
+        <types>DefinedType.PaymentContent</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment сontent</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Содержание платежа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Conținutul plății</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
   </tabularSections>
-  <commands uuid="6418c8e7-7404-4e68-8c90-29c0dd63b9aa">
-    <name>Show</name>
-    <synonym>
-      <key>en</key>
-      <value>Banking, Load</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Загрузка из банка</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Client Bank, încărcare</value>
-    </synonym>
-    <group>ActionsPanelTools</group>
-    <commandParameterType/>
-    <representation>Auto</representation>
-    <toolTip>
-      <key>en</key>
-      <value>Downloading bank statements and creating bank documents</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Загрузка банковских выписок и создание банковских документов</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Încărcarea extraselor de cont și crearea documentelor bancare</value>
-    </toolTip>
-  </commands>
 </mdclass:Document>

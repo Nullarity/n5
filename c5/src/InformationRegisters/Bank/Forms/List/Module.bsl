@@ -20,6 +20,7 @@ EndProcedure
 &AtServer
 Procedure init ()
 	
+	LogAvailable = AccessRight ( "View", Metadata.Documents.LoadPayments );
 	value = CommonSettingsStorage.Load ( Enum.SettingsBankPeriod () );
 	if ( value = undefined ) then
 		Period.Variant = StandardPeriodVariant.Month;
@@ -62,6 +63,9 @@ Procedure filterByPeriod ()
 	DC.SetParameter ( Balances, "DateStart", startDate, true );
 	balance = Min ( endDate, EndOfDay ( CurrentSessionDate () ) );
 	DC.SetParameter ( Balances, "DateEnd", balance, true );
+	if ( LogAvailable ) then
+		Items.Log.Period = new StandardPeriod ( startDate, endDate );
+	endif;
 	
 EndProcedure 
 
@@ -82,6 +86,9 @@ Procedure filterByAccount ()
 	DC.ChangeFilter ( List, "AccountCode", AccountFilter, set);
 	DC.ChangeFilter ( Balances, "Account", AccountFilter, set );
 	DC.ChangeFilter ( Balances, "Account.Class", Enums.Accounts.Bank, not set );
+	if ( LogAvailable ) then
+		DC.ChangeFilter ( Log, "BankAccount", AccountFilter, set );
+	endif;
 	
 EndProcedure
 
@@ -250,6 +257,9 @@ Procedure clearCurrencyFilter ()
 	CurrencyFilter = undefined;
 	DC.ChangeFilter ( List, "Currency", undefined, false );
 	DC.ChangeFilter ( Balances, "Dim1", undefined, false );
+	if ( LogAvailable ) then
+		DC.ChangeFilter ( Log, "BankAccount.Currency", undefined, false );
+	endif;
 
 EndProcedure
 
@@ -288,6 +298,9 @@ Procedure filterByCurrency ()
 	else
 		DC.ChangeFilter ( Balances, "Dim1", undefined, false );
 	endif;
+	if ( LogAvailable ) then
+		DC.ChangeFilter ( Log, "BankAccount.Currency", CurrencyFilter, setup );
+	endif;
 	
 EndProcedure
 
@@ -296,6 +309,9 @@ Procedure clearAccountFilter ()
 
 	AccountFilter = undefined;
 	DC.ChangeFilter ( List, "Account", undefined, false );
+	if ( LogAvailable ) then
+		DC.ChangeFilter ( Log, "BankAccount", undefined, false );
+	endif;
 
 EndProcedure
 
@@ -368,7 +384,7 @@ EndProcedure
 &AtClient
 Procedure CreateDocument ( Command )
 	
-	showMenu ( Items.FormCommandBar );
+	showMenu ( Items.ListCommandBar );
 	
 EndProcedure
 

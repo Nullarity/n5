@@ -1364,6 +1364,7 @@ EndFunction
 
 Procedure fillReceipt(Row, RowDetail)
 	
+	Row.PaymentContent = Row.PaymentContent;
 	rowPayer = Env.Organizations.Find(RowDetail.LineNumber, "LineNumber");
 	if (rowPayer = undefined) then
 		if (findByType(RowDetail)

@@ -334,6 +334,8 @@ Procedure applyFilling()
 		ok = (Object.Receipts.Count() > 0 or Object.Expenses.Count() > 0);
 		Object.Status = ?(ok, 1, 2);
 	endif;
+	Object.Received = Object.Receipts.Total ( "Amount" );
+	Object.Expense = Object.Expenses.Total ( "Amount" );
 	Appearance.Apply(ThisObject, "Object.Status");
 	
 EndProcedure
