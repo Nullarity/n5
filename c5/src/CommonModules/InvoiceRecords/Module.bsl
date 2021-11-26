@@ -93,7 +93,7 @@ Procedure fillByTransfer ( Env, Object, Base )
 
 	headerByBase ( Object, Base );
 	getDataTransfer ( Env, Base );
-	fillHeader ( Env, Object );
+	fillTransferHeader ( Env, Object );
 	fillItems ( Env, Object );
 
 EndProcedure
@@ -195,7 +195,7 @@ Procedure getTables ( Env, Base )
 EndProcedure
 
 &AtServer
-Procedure fillHeader ( Env, Object ) 
+Procedure fillTransferHeader ( Env, Object ) 
 
 	FillPropertyValues ( Object, Env.Fields );
 
@@ -218,7 +218,7 @@ Procedure fillByInvoice ( Env, Object, Base )
 
 	headerByBase ( Object, Base );
 	getDataInvoice ( Env, Base );
-	fillHeader ( Env, Object );
+	fillInvoiceHeader ( Env, Object );
 	fillItems ( Env, Object );
 	fillServices ( Env, Object );
 	fillDiscounts ( Env, Object );
@@ -246,7 +246,8 @@ Procedure sqlFieldsInvoice ( Env )
 	if ( isNew ) then
 		s = s + ",
 		|	Documents.Customer.ShippingAddress as UnloadingAddress, true as ShowServices,
-		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount";
+		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount,
+		|	Documents.Customer.Government as Government";
 	endif;
 	s = s + ",
 	|	Documents.Customer as Customer";
@@ -292,6 +293,17 @@ Procedure sqlDiscounts ( Env )
 EndProcedure
 
 &AtServer
+Procedure fillInvoiceHeader ( Env, Object ) 
+
+	fields = Env.Fields;
+	if ( fields.Government ) then
+		raise Output.GevernmentInvoiceRecord ();
+	endif;
+	FillPropertyValues ( Object, fields );
+
+EndProcedure
+
+&AtServer
 Procedure fillServices ( Env, Object ) 
 
 	services = Object.Services;
@@ -320,7 +332,7 @@ Procedure fillByLVI ( Env, Object, Base )
 
 	headerByLVI ( Object, Base );
 	getDataLVI ( env, Base );
-	fillHeader ( env, Object );
+	fillTransferHeader ( env, Object );
 	fillItems ( env, Object );
 
 EndProcedure
@@ -387,7 +399,7 @@ Procedure fillByReturn ( Env, Object, Base )
 
 	headerByReturn ( Object, Base );
 	getDataReturn ( env, Base );
-	fillHeader ( env, Object );
+	fillInvoiceHeader ( env, Object );
 	fillItems ( env, Object );
 
 EndProcedure
@@ -428,7 +440,7 @@ Procedure sqlFieldsReturn ( Env )
 	if ( isNew ) then
 		s = s + ",
 		|	Documents.Vendor.ShippingAddress as UnloadingAddress, Documents.Contract.VendorBank as CustomerAccount,
-		|	Documents.Warehouse.Address as LoadingAddress";
+		|	Documents.Warehouse.Address as LoadingAddress, Documents.Vendor.Government as Government";
 	endif;
 	s = s + ",
 	|	Documents.Vendor as Customer";

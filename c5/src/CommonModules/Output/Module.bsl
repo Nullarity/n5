@@ -7908,3 +7908,11 @@ Function ChangeDisconnectedDocumentError () export
 	return text;
 
 EndFunction
+
+&AtServer
+Function GevernmentInvoiceRecord () export
+
+	text = NStr ( "en = 'A tax invoice cannot be issued for a government entity';ro = 'Nu se poate emite o factură fiscală pentru o entitate guvernamentală';ru = 'Налоговая накладная не может быть выписана для государственной организации'" );
+	return text;
+
+EndFunction

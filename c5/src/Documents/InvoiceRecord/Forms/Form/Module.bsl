@@ -381,6 +381,15 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	
 EndProcedure
 
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	if ( DF.Pick ( Object.Customer, "Government" ) ) then
+		raise Output.GevernmentInvoiceRecord ();
+	endif;
+
+EndProcedure
+
 &AtClient
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
