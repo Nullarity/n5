@@ -8,6 +8,7 @@ var TableRow;
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
+	adjustPages ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	filterByPeriod ();
@@ -30,6 +31,15 @@ Procedure init ()
 	endif; 
 	
 EndProcedure 
+
+&AtServer
+Procedure adjustPages ()
+
+	if ( not LogAvailable ) then
+		Items.GroupLists.PagesRepresentation = FormPagesRepresentation.None;
+	endif;
+
+EndProcedure
 
 &AtServer
 Procedure extendPeriod ( NewPeriod )
