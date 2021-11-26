@@ -6,6 +6,9 @@ endif;
 if ( Fetch ( "#Customer" ) = "No" ) then
 	Click ( "#Customer" );
 endif;
+if ( _.Government ) then
+	Click ( "#Government" );
+endif;
 if ( _.BankAccount <> undefined ) then
 	Click("#FormWrite");
 	CheckErrors();

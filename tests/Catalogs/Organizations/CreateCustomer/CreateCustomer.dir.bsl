@@ -22,7 +22,9 @@ if (_ = undefined) then
 	codeFiscal = undefined;
 	bankAccount = undefined;
 	paymentAddress = undefined;
+	government = false;
 else
+	government = _.Government;
 	name = _.Description;
 	currency = _.Currency;
 	terms = _.Terms;
@@ -47,6 +49,10 @@ endif;
 
 if (Fetch("#Customer") = "No") then
 	Click("#Customer");
+endif;
+
+if ( government ) then
+	Click ( "#Government" );
 endif;
 
 Click("#FormWrite");
