@@ -346,19 +346,9 @@ EndProcedure
 &AtServer
 Procedure applyAmount () 
 
-	setUrgent ();
 	calcVAT ();
 	calcIncomeTax ();
 	setPrintPaymentContent ();
-
-EndProcedure
-
-&AtServer
-Procedure setUrgent () 
-
-	if ( Object.Amount >= 5000 ) then
-		Object.Urgent = true;
-	endif;
 
 EndProcedure
 
