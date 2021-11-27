@@ -25,7 +25,7 @@ Call ( "Common.Select", params );
 With ( form );
 
 Choose ( "#EmployeeFilter" );
-employeeName = "_Inventory Employee";
+employeeName = "_Inventory Employee1 " + Call ("Common.GetID");
 params = Call ( "Common.Select.Params" );
 params.Object = Meta.Catalogs.Employees;
 params.Search = employeeName;

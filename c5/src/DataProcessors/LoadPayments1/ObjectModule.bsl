@@ -1296,6 +1296,7 @@ Function fillByPaymentOrder(Row, RowDetail)
 	FillPropertyValues(PaymentOrdersFilter, RowDetail);
 	PaymentOrdersFilter.OrderNumber = TrimAll(RowDetail.OrderNumber);
 	orders = Env.PaymentOrders.FindRows(PaymentOrdersFilter);
+	Row.PaymentContent = RowDetail.PaymentContent;
 	if (orders.Count() > 0) then
 		order = orders[0];
 		Row.CashFlow = order.CashFlow;
@@ -1364,7 +1365,7 @@ EndFunction
 
 Procedure fillReceipt(Row, RowDetail)
 	
-	Row.PaymentContent = Row.PaymentContent;
+	Row.PaymentContent = RowDetail.PaymentContent;
 	rowPayer = Env.Organizations.Find(RowDetail.LineNumber, "LineNumber");
 	if (rowPayer = undefined) then
 		if (findByType(RowDetail)
