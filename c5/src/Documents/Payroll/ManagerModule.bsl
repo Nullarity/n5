@@ -342,7 +342,9 @@ Procedure putSicknessFooter ( Table, Params, Env )
 	p = area.Parameters;
 	p.Amount = Table.Total ( "Amount" );
 	p.Bonuses = Table.Total ( "Bonuses" );
-	Params.TabDoc.Put ( area );
+	tabDoc = Params.TabDoc;
+	tabDoc.Put ( area );
+	tabDoc.PutHorizontalPageBreak ();
 	
 EndProcedure
 
@@ -439,7 +441,9 @@ Procedure putVacationsFooter ( Table, Params, Env )
 	p = area.Parameters;
 	p.Amount = Table.Total ( "Amount" );
 	p.Bonuses = Table.Total ( "Bonuses" );
-	Params.TabDoc.Put ( area );
+	tabDoc = Params.TabDoc;
+	tabDoc.Put ( area );
+	tabDoc.PutHorizontalPageBreak ();
 	
 EndProcedure
 
