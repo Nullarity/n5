@@ -170,8 +170,11 @@ Procedure createReceipts()
 		line = row.DetailsLine;
 		rowDetail = Details.Find(line, "LineNumber");
 		processingLine(line);
-		if (row.BankOperation = Enums.BankOperations.Payment) then
+		operation = row.BankOperation;
+		if (operation = Enums.BankOperations.Payment) then
 			createPayment(row, rowDetail);
+		elsif (operation = Enums.BankOperations.ReturnFromVendor) then
+			createVendorRefund(row, rowDetail);
 		else
 			createEntry(row, rowDetail);
 		endif;
@@ -221,7 +224,6 @@ Procedure headerDocument(Object, Row, RowDetail)
 	Object.Reference = TrimAll(RowDetail.OrderNumber);
 	Object.ReferenceDate = RowDetail.OrderDate;
 	Object.PaymentContent = RowDetail.PaymentContent;
-	setContent(Object.Memo, RowDetail);
 	
 EndProcedure
 
@@ -230,12 +232,6 @@ Function noon(Date)
 	return BegOfDay(Date) + 43200;
 	
 EndFunction
-
-Procedure setContent(Content, RowDetail)
-	
-	Content = TrimAll(RowDetail.PaymentContent) + Memo;
-	
-EndProcedure
 
 Procedure loadContract(Object, Row)
 	
@@ -319,6 +315,33 @@ Function postDocument(Object, Row)
 	
 EndFunction
 
+Procedure createVendorRefund(Row, RowDetail)
+	
+	newDocument = false;
+	document = Row.Document;
+	if (ValueIsFilled(document)) then
+		object = document.GetObject();
+		object.Payments.Clear();
+	else
+		object = Documents.VendorRefund.CreateDocument();
+		object.SetNewNumber();
+		newDocument = true;
+	endif;
+	object.Vendor = Row.Payer;
+	object.VendorAccount = Row.Account;
+	object.AdvanceAccount = Row.AdvanceAccount;
+	headerDocument(object, Row, RowDetail);
+	loadContract(object, Row);
+	PaymentForm.SetVATAdvance ( object );
+	PaymentForm.CalcContractAmount(object, 1);
+	PaymentForm.CalcAppliedAmount(object, 1);
+	PaymentForm.FillTable(object);
+	PaymentForm.DistributeAmount(object);
+	clean(object.Payments);
+	writeDocument(object, Row, newDocument);
+	
+EndProcedure
+
 Procedure createEntry(Row, RowDetail)
 	
 	newDocument = false;
@@ -343,7 +366,6 @@ Procedure createEntry(Row, RowDetail)
 	fillDr(rowRecord, Row, data.Dr);
 	fillCr(rowRecord, Row, data.Cr);
 	setAmount(object, rowRecord, Row);
-	setContent(rowRecord.Content, RowDetail);
 	writeDocument(object, Row, newDocument);
 	
 EndProcedure
@@ -437,10 +459,13 @@ Procedure createExpenses()
 		line = row.DetailsLine;
 		rowDetail = Details.Find(line, "LineNumber");
 		processingLine(line);
-		if (row.BankOperation = vendorPayment) then
+		operation = row.BankOperation;
+		if (operation = vendorPayment) then
 			createVendorPayment(row, rowDetail);
+		elsif ( operation = Enums.BankOperations.ReturnToCustomer ) then
+			createRefund (row, rowDetail);
 		else
-			if (row.BankOperation = internal) then
+			if (operation = internal) then
 				row.Internal = true;
 				accountRow = accounts.Find(line, "DetailsLine");
 				if (accountRow <> undefined) then
@@ -474,6 +499,31 @@ Procedure createVendorPayment(Row, RowDetail)
 	PaymentForm.FillTable(object);
 	PaymentForm.DistributeAmount(object);
 	PaymentForm.CalcHandout(object);
+	clean(object.Payments);
+	writeDocument(object, Row, newDocument);
+	
+EndProcedure
+
+Procedure createRefund(Row, RowDetail)
+	
+	newDocument = false;
+	document = Row.Document;
+	if (ValueIsFilled(document)) then
+		object = document.GetObject();
+		object.Payments.Clear();
+	else
+		object = Documents.Refund.CreateDocument();
+		object.SetNewNumber();
+		newDocument = true;
+	endif;
+	object.Customer = Row.Receiver;
+	object.CustomerAccount = Row.Account;
+	object.AdvanceAccount = Row.AdvanceAccount;
+	headerDocument(object, Row, RowDetail);
+	loadContract(object, Row);
+	PaymentForm.CalcContractAmount(object, 1);
+	PaymentForm.FillTable(object);
+	PaymentForm.DistributeAmount(object);
 	clean(object.Payments);
 	writeDocument(object, Row, newDocument);
 	

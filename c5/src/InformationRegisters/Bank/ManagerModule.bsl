@@ -123,12 +123,15 @@ Function enrollPayment ( Record, Document )
 	Record.Amount = Document.Amount;
 	Record.Currency = Document.Currency;
 	Record.Account = Document.BankAccount;
-	if ( TypeOf ( Document ) = Type ( "DocumentObject.Payment" )
-		or TypeOf ( Document ) = Type ( "DocumentObject.Refund" ) ) then
+	type = TypeOf ( Document );
+	if ( type = Type ( "DocumentObject.Payment" )
+		or type = Type ( "DocumentObject.Refund" ) ) then
 		Record.Analytics = Document.Customer;
 	else
 		Record.Analytics = Document.Vendor;
 	endif; 
+	Record.Dr = ( type = Type ( "DocumentObject.Payment" )
+	or type = Type ( "DocumentObject.VendorRefund" ) );
 	return true;
 	
 EndFunction

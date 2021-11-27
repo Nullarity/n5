@@ -1098,7 +1098,7 @@ Procedure sqlOrganizations()
 	|	//
 	|	join Catalog.Organizations as Organizations
 	|	on not Organizations.DeletionMark
-	|	and case when Details.Expense then Organizations.CodeFiscal = Details.ReceiverFiscalCode else Organizations.CodeFiscal = Details.PayerFiscalCode end
+	|	and Organizations.CodeFiscal = case when Details.Expense then Details.ReceiverFiscalCode else Details.PayerFiscalCode end
 	|where not Details.Error
 	|and Organizations.CodeFiscal <> """"
 	|";
