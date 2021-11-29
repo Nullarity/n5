@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "A0G3");
+id = Call("Common.ScenarioID", "A0G6");
 env = getEnv(id);
 createEnv(env);
 
@@ -13,10 +13,6 @@ createEnv(env);
 Commando("e1cib/data/Document.LoadPayments");
 form = With();
 Put("#BankAccount", env.Account);
-Click ( "Default Values" );
-Put("#InternalMovement", env.Internal);
-Put("#OtherExpense", env.OtherExpense);
-Put("#OtherReceipt", env.OtherReceipt);
 Put("#Application", "Comert");
 path = __.Files + "loadpayments\comert_check_refund.xml";
 Set("#Path", path);
@@ -34,15 +30,18 @@ Click("#MarkAllExpenses");
 Click("#FormPost");
 #endregion
 
+#region checking
+Pause(4);
+Assert ( Fetch ( "#Receipts / Document [ 1 ]" ) ).Contains ("Refund from Vendor");
+Assert ( Fetch ( "#Expenses / Document [ 1 ]" ) ).Contains ("Refund to Customer");
+#endregion
+
 Function getEnv(ID)
 	
 	p = new Structure();
 	p.Insert("ID", ID);
 	p.Insert("Customer", "Customer " + ID);
 	p.Insert("Vendor", "Vendor " + ID);
-	p.Insert("Internal", "Internal " + ID);
-	p.Insert("OtherExpense", "Other Expense " + ID);
-	p.Insert("OtherReceipt", "Other Receipt " + ID);
 	p.Insert("Account", "Account " + ID);
 	return p;
 	
@@ -74,57 +73,7 @@ Procedure createEnv(Env)
 	Click("#Customer");
 	Click("#FormWriteAndClose");
 	CheckErrors();
-	
-	// *************************
-	// Operations
-	// *************************
-
-	createOperation("Bank Expense", Env.Internal, "2421", "2421");
-	createOperation("Bank Expense", Env.OtherExpense, "7141", "2421");
-	createOperation("Bank Receipt", Env.OtherReceipt, "2421", "6111");
-
-	// *************************
-	// change company fiscal code
-	// *************************
-
-	Commando("e1cib/list/Catalog.Companies");
-	With("Companies");
-	p = Call("Common.Find.Params");
-	p.Where = "Description";
-	p.What = "ABC Distributions";
-	Call("Common.Find", p);
-	Click("#ListContextMenuChange");
-	With("ABC Distributions (Companies)");
-	Put("#CodeFiscal", "10013003155");
-	Put("#PayrollPeriod", "Month");
-	Click("#FormWrite");
-	CheckErrors();
-	
-	Click("Bank Accounts", GetLinks());
-	With("ABC Distributions (Companies)");
-	Click("#FormCreate");
-	
-	With("Bank Accounts (create)");
-	Put("#Bank", "VICBMD2X");
-	Put("#AccountNumber", "555222");
-	Put("#Account", "2421");
-	Put("#Description", Env.Account);
-	Click("#FormWriteAndClose");
-	CheckErrors();
-	
+		
 	RegisterEnvironment(id);
-	
-EndProcedure
-
-Procedure createOperation(Operation, Description, AccountDr = undefined, AccountCr = undefined)
-	
-	Commando("e1cib/data/Catalog.Operations");
-	With("Operations (create)");
-	Put("#Operation", Operation);
-	Put("#Description", Description);
-	Click("#Simple");
-	Put("#AccountDr", AccountDr);
-	Put("#AccountCr", AccountCr);
-	Click("#FormWriteAndClose");
 	
 EndProcedure
