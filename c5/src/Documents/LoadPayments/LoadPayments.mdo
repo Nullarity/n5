@@ -180,7 +180,7 @@
       <value>Client Bank</value>
     </synonym>
     <type>
-      <types>EnumRef.Banks</types>
+      <types>CatalogRef.BankingApps</types>
     </type>
     <toolTip>
       <key>en</key>
@@ -326,41 +326,6 @@
     <type>
       <types>DefinedType.Amount</types>
     </type>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="8ba643fb-42cd-4eee-9bd7-2dcf22b90cc5">
-    <name>InternalMovement</name>
-    <synonym>
-      <key>en</key>
-      <value>Internal Movement</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Внутреннее перемещение</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Transferul intern</value>
-    </synonym>
-    <type>
-      <types>CatalogRef.Operations</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Internal movement operation</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Операция внутреннее перемещение</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Operațiunea a transferului intern</value>
-    </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
@@ -748,11 +713,7 @@
         <value>Numărul ordinului de plată</value>
       </synonym>
       <type>
-        <types>String</types>
-        <stringQualifiers>
-          <length>10</length>
-          <fixed>true</fixed>
-        </stringQualifiers>
+        <types>DefinedType.PaymentOrderNumber</types>
       </type>
       <toolTip>
         <key>en</key>
@@ -1676,45 +1637,71 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="669ca42b-ed2b-4bce-985c-3b051be76755">
-      <name>Contract</name>
+    <attributes uuid="208b55ee-abe8-4707-b4a7-9c18a25c9d6d">
+      <name>Currency</name>
       <synonym>
         <key>en</key>
-        <value>Contract</value>
+        <value>Currency</value>
       </synonym>
       <synonym>
         <key>ru</key>
-        <value>Договор</value>
+        <value>Валюта</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Contract</value>
+        <value>Valută</value>
       </synonym>
       <type>
-        <types>CatalogRef.Contracts</types>
+        <types>CatalogRef.Currencies</types>
       </type>
       <toolTip>
         <key>en</key>
-        <value>Receiver's contract</value>
+        <value>The currency is indicated exclusively for the accounts on which the currency account is maintained</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Договор получателя</value>
+        <value>Валюта, указывается для счетов, на которых ведется валютный учет</value>
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Contract al beneficiarului</value>
+        <value>Valuta este indicată pentru conturile pe care este menținut contul valutar</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
-      <choiceParameterLinks>
-        <name>Filter.Company</name>
-        <field>Document.LoadPayments.Attribute.Company</field>
-      </choiceParameterLinks>
-      <choiceParameterLinks>
-        <name>Filter.Owner</name>
-        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Receiver</field>
-      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6620a615-2ec8-4f3d-9735-972569374104">
+      <name>CurrencyAmount</name>
+      <synonym>
+        <key>en</key>
+        <value>Currency Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Валютная сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma valutară</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The currency amount is indicated exclusively for the accounts on which the currency account is maintained</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Валютная сумма, указывается для счетов, на которых ведется валютный учет</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valoarea valutei este indicată pentru conturile pe care este menținut contul valutar</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -1792,6 +1779,140 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="51e2fcc8-52c6-4db7-b12f-c54685eac4db">
+      <name>Dim1</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 1</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 1</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 1</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 1</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Первый уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Primul nivel al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>1</linkItem>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f1170292-1062-4905-9e4e-e53f1f5c9ec5">
+      <name>Dim2</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 2</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 2</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 2</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 2</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Второй уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cel de-al doilea nivel al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Dim1</field>
+      </choiceParameterLinks>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>2</linkItem>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="42d7e285-1cfe-4746-81ac-a5bb02da905b">
+      <name>Dim3</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 3</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 3</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 3</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 3</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Третий уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Nivelul al treilea al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Dim2</field>
+      </choiceParameterLinks>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>3</linkItem>
+        <field>Document.LoadPayments.TabularSection.Expenses.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="231d0743-1a8a-405f-9935-6327dc427388">
       <name>Document</name>
       <synonym>
@@ -1862,6 +1983,40 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="cd10c39c-1d43-4f51-a285-b0849938358c">
+      <name>Factor</name>
+      <synonym>
+        <key>en</key>
+        <value>Factor</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кратность</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Multiplicitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Factor</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency factor</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Кратность валюты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Multiplicitatea valutei</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="42913206-5c73-4173-b675-f0223c330511">
       <name>Operation</name>
       <synonym>
@@ -1893,6 +2048,13 @@
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Operation</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Operations.EnumValue.BankExpense</value>
+        </value>
+      </choiceParameters>
+      <quickChoice>Use</quickChoice>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -1930,34 +2092,34 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="058379ca-d2a7-43c3-b550-0b494e573593">
-      <name>Receiver</name>
+    <attributes uuid="092c44c5-46a8-41f0-a53c-26791d3c63d8">
+      <name>Rate</name>
       <synonym>
         <key>en</key>
-        <value>Receiver</value>
+        <value>Rate</value>
       </synonym>
       <synonym>
         <key>ru</key>
-        <value>Получатель</value>
+        <value>Курс</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Beneficiar</value>
+        <value>Curs</value>
       </synonym>
       <type>
-        <types>CatalogRef.Organizations</types>
+        <types>DefinedType.Rate</types>
       </type>
       <toolTip>
         <key>en</key>
-        <value>Receiver</value>
+        <value>Currency rate</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Получатель</value>
+        <value>Курс валюты</value>
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Beneficiar</value>
+        <value>Cursul valutar</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
@@ -2207,45 +2369,71 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="29c65c92-e29b-4cfd-bbc0-089bf91fc793">
-      <name>Contract</name>
+    <attributes uuid="fddd5230-ef0c-459e-b93c-521cfd4ca513">
+      <name>Currency</name>
       <synonym>
         <key>en</key>
-        <value>Contract</value>
+        <value>Currency</value>
       </synonym>
       <synonym>
         <key>ru</key>
-        <value>Договор</value>
+        <value>Валюта</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Contract</value>
+        <value>Valută</value>
       </synonym>
       <type>
-        <types>CatalogRef.Contracts</types>
+        <types>CatalogRef.Currencies</types>
       </type>
       <toolTip>
         <key>en</key>
-        <value>Payer's contract</value>
+        <value>The currency is indicated exclusively for the accounts on which the currency account is maintained</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Договор плательщика</value>
+        <value>Валюта, указывается для счетов, на которых ведется валютный учет</value>
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Contract de plătitor</value>
+        <value>Valuta este indicată pentru conturile pe care este menținut contul valutar</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
-      <choiceParameterLinks>
-        <name>Filter.Company</name>
-        <field>Document.LoadPayments.Attribute.Company</field>
-      </choiceParameterLinks>
-      <choiceParameterLinks>
-        <name>Filter.Owner</name>
-        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Payer</field>
-      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f16b9de3-b218-480c-860b-be562f53d252">
+      <name>CurrencyAmount</name>
+      <synonym>
+        <key>en</key>
+        <value>Currency Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Валютная сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma valutară</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The currency amount is indicated exclusively for the accounts on which the currency account is maintained</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Валютная сумма, указывается для счетов, на которых ведется валютный учет</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valoarea valutei este indicată pentru conturile pe care este menținut contul valutar</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -2323,6 +2511,140 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="041685d2-e7b1-4eee-8bec-1c50102635a4">
+      <name>Dim1</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 1</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 1</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 1</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 1</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Первый уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Primul nivel al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>1</linkItem>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="4c6e8082-0f37-40d6-a5c8-24f0b3d716b4">
+      <name>Dim2</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 2</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 2</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 2</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 2</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Второй уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cel de-al doilea nivel al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Dim1</field>
+      </choiceParameterLinks>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>2</linkItem>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f2c990ec-02c5-4250-8c94-ffbf7756ff3f">
+      <name>Dim3</name>
+      <synonym>
+        <key>en</key>
+        <value>Dimension 3</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Субконто 3</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dimensiune 3</value>
+      </synonym>
+      <type>
+        <types>Characteristic.Dimensions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Account debit Dimension level 3</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Третий уровень аналитики счета дебета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Nivelul al treilea al analizei contului de debit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Dim2</field>
+      </choiceParameterLinks>
+      <choiceParameterLinks>
+        <name>Filter.Account</name>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </choiceParameterLinks>
+      <linkByType>
+        <linkItem>3</linkItem>
+        <field>Document.LoadPayments.TabularSection.Receipts.Attribute.Account</field>
+      </linkByType>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="32945de8-8ec0-4dc3-a369-09153100672d">
       <name>Document</name>
       <synonym>
@@ -2393,6 +2715,40 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="46d852ba-6f81-4de4-8a9b-407012fa87b9">
+      <name>Factor</name>
+      <synonym>
+        <key>en</key>
+        <value>Factor</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кратность</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Multiplicitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Factor</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency factor</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Кратность валюты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Multiplicitatea valutei</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="b53edacf-9510-4793-980d-ef7712491aa9">
       <name>Operation</name>
       <synonym>
@@ -2424,40 +2780,13 @@
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
-    <attributes uuid="cb92ca81-9179-4c4c-bc8a-e984d669d292">
-      <name>Payer</name>
-      <synonym>
-        <key>en</key>
-        <value>Payer</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Плательщик</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Plătitor</value>
-      </synonym>
-      <type>
-        <types>CatalogRef.Organizations</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>Payer</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Плательщик</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Plătitor</value>
-      </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Operation</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Operations.EnumValue.BankReceipt</value>
+        </value>
+      </choiceParameters>
+      <quickChoice>Use</quickChoice>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -2489,6 +2818,40 @@
       <toolTip>
         <key>ro</key>
         <value>Conținutul plății</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a564db1a-d17e-4773-bd51-5fc47e6b6b00">
+      <name>Rate</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Курс</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Curs</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Rate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Курс валюты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cursul valutar</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>

@@ -4,6 +4,8 @@ var ReceiptsRow export;
 var ExpensesRow export;
 &AtClient
 var WritingStarted;
+&AtClient
+var AccountData;
 
 // *****************************************
 // *********** Form events
@@ -41,13 +43,14 @@ Procedure readAppearance()
 	|FormWrite Read hide Object.Posted;
 	|GroupFileInfo show Object.Status = 1;
 	|GroupError show Object.Status = 2;
+	|Receipts Expenses lock Object.Posted;
 	|#c ExpensesBankOperation unlock ExpensesRow <> undefined and empty ( ExpensesRow.Document );
-	|#c ExpensesReceiver ExpensesContract ExpensesAdvanceAccount unlock ExpensesRow <> undefined
+	|#c ExpensesAdvanceAccount unlock ExpensesRow <> undefined
 	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.VendorPayment, Enum.BankOperations.ReturnToCustomer );
 	|#c ExpensesOperation unlock ExpensesRow <> undefined
-	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.InternalMovement, Enum.BankOperations.OtherExpense );
+	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.OtherExpense );
 	|#c ReceiptsBankOperation unlock ReceiptsRow <> undefined and empty ( ReceiptsRow.Document );
-	|#c ReceiptsReceiver ReceiptsContract ReceiptsAdvanceAccount unlock ReceiptsRow <> undefined
+	|#c ReceiptsAdvanceAccount unlock ReceiptsRow <> undefined
 	|	and inlist ( ReceiptsRow.BankOperation, Enum.BankOperations.Payment, Enum.BankOperations.ReturnFromVendor );
 	|#c ReceiptsOperation unlock ReceiptsRow <> undefined and ReceiptsRow.BankOperation = Enum.BankOperations.OtherReceipt;
 	|");
@@ -78,9 +81,9 @@ EndProcedure
 &AtServer
 Procedure applyCompany()
 	
-	data = DF.Values(Object.Company, "BankAccount, BankAccount.Loading");
+	data = DF.Values(Object.Company, "BankAccount, BankAccount.Bank.Application.Loading as Path");
 	Object.BankAccount = data.BankAccount;
-	Object.Path = data.BankAccountLoading;
+	Object.Path = data.Path;
 	applyBankAccount(Object);
 	
 EndProcedure
@@ -88,7 +91,7 @@ EndProcedure
 &AtClientAtServerNoContext
 Procedure applyBankAccount(val Object)
 	
-	data = DF.Values(Object.BankAccount, "Account, Application");
+	data = DF.Values(Object.BankAccount, "Account, Bank.Application as Application");
 	Object.Account = data.Account;
 	Object.Application = data.Application;
 	
@@ -98,13 +101,12 @@ EndProcedure
 Procedure initOperations()
 	
 	s = "
-		|select top 1 Documents.InternalMovement as InternalMovement, Documents.OtherExpense as OtherExpense,
-		|	Documents.OtherReceipt as OtherReceipt
-		|from Document.LoadPayments as Documents
-		|where not Documents.DeletionMark
-		|and Documents.Company = &Company
-		|order by Documents.Date desc
-		|";
+	|select top 1 Documents.OtherExpense as OtherExpense, Documents.OtherReceipt as OtherReceipt
+	|from Document.LoadPayments as Documents
+	|where not Documents.DeletionMark
+	|and Documents.Company = &Company
+	|order by Documents.Date desc
+	|";
 	q = new Query(s);
 	q.SetParameter("Company", Object.Company);
 	table = q.Execute().Unload();
@@ -301,7 +303,6 @@ Procedure runReadFile()
 	ResultAddress = PutToTempStorage(undefined, UUID);
 	p.Address = ResultAddress;
 	p.Account = Object.Account;
-	p.InternalMovement = Object.InternalMovement;
 	p.OtherExpense = Object.OtherExpense;
 	p.OtherReceipt = Object.OtherReceipt;
 	args = new Array();
@@ -430,6 +431,35 @@ Procedure syncDetails(Row)
 EndProcedure
 
 // *****************************************
+// *********** Table Details
+
+&AtClient
+Procedure DetailsSelection(Item, SelectedRow, Field, StandardProcessing)
+	
+	activateRecord ();
+	
+EndProcedure
+
+&AtClient
+Procedure activateRecord ()
+	
+	filter = new Structure("DetailsLine", Items.Details.CurrentData.LineNumber);
+	rows = Object.Receipts.FindRows(filter);
+	if (rows.Count() = 0) then
+		rows = Object.Expenses.FindRows(filter);
+		if (rows.Count() = 0) then
+			return;
+		endif;
+		Items.Pages.CurrentPage = Items.GroupExpenses;
+		Items.Expenses.CurrentRow = rows [ 0 ].GetID ();
+	else
+		Items.Pages.CurrentPage = Items.GroupReceipts;
+		Items.Receipts.CurrentRow = rows [ 0 ].GetID ();
+	endif;
+
+EndProcedure
+
+// *****************************************
 // *********** Table Receipt
 
 &AtClient
@@ -485,9 +515,24 @@ EndProcedure
 &AtClient
 Procedure ReceiptsOnEditEnd(Item, NewRow, CancelEdit)
 	
+	resetDims ( Item );
 	if (not CancelEdit) then
 		enableDownload(Item);
 	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure resetDims ( Item )
+	
+	name = Item.Name;
+	Items [ name + "Currency" ].ReadOnly = false;
+	Items [ name + "CurrencyAmount" ].ReadOnly = false;
+	Items [ name + "Rate" ].ReadOnly = false;
+	Items [ name + "Factor" ].ReadOnly = false;
+	Items [ name + "Dim1" ].ReadOnly = false;
+	Items [ name + "Dim2" ].ReadOnly = false;
+	Items [ name + "Dim3" ].ReadOnly = false;
 	
 EndProcedure
 
@@ -496,7 +541,7 @@ Procedure enableDownload(Item)
 	
 	column = Item.CurrentItem.Name;
 	if (column = "ExpensesDownload"
-			or column = "ReceiptsDownload") then
+		or column = "ReceiptsDownload") then
 		return;
 	else
 		Item.CurrentData.Download = true;
@@ -505,99 +550,202 @@ Procedure enableDownload(Item)
 EndProcedure
 
 &AtClient
+Procedure ReceiptsBeforeRowChange(Item, Cancel)
+
+	readAccount ( Item );
+	enableDims ( Item );
+
+EndProcedure
+
+&AtClient
+Procedure readAccount ( Item )
+	
+	AccountData = GeneralAccounts.GetData ( Item.CurrentData.Account );
+	
+EndProcedure 
+
+&AtClient
+Procedure enableDims ( Item )
+	
+	fields = AccountData.Fields;
+	local = not fields.Currency;
+	name = Item.Name;
+	Items [ name + "Currency" ].ReadOnly = local;
+	Items [ name + "CurrencyAmount" ].ReadOnly = local;
+	Items [ name + "Rate" ].ReadOnly = local;
+	Items [ name + "Factor" ].ReadOnly = local;
+	level = fields.Level;
+	dim = name + "Dim";
+	for i = 1 to 3 do
+		disable = ( level < i );
+		Items [ dim + i ].ReadOnly = disable;
+	enddo; 
+	
+EndProcedure 
+
+&AtClient
 Procedure ReceiptsBankOperationOnChange(Item)
 	
-	applyBankOperation(ReceiptsRow);
+	applyBankOperation(Items.Receipts);
 	
 EndProcedure
 
 &AtClient
-Procedure applyBankOperation(Row)
+Procedure applyBankOperation(Item)
 	
+	row = Item.CurrentData;
 	operation = row.BankOperation;
-	if (operation = PredefinedValue("Enum.BankOperations.InternalMovement")) then
-		row.Receiver = undefined;
-		row.Contract = undefined;
+	if (operation = PredefinedValue("Enum.BankOperations.OtherExpense")) then
 		row.AdvanceAccount = undefined;
-		row.CashFlow = Object.InternalMovement;
-		Appearance.Apply(ThisObject, "ExpensesRow.BankOperation");
-	elsif (operation = PredefinedValue("Enum.BankOperations.OtherExpense")) then
-		row.Receiver = undefined;
-		row.Contract = undefined;
-		row.AdvanceAccount = undefined;
-		row.CashFlow = Object.OtherExpense;
-		Appearance.Apply(ThisObject, "ExpensesRow.BankOperation");
+		row.Operation = Object.OtherExpense;
 	elsif (operation = PredefinedValue("Enum.BankOperations.OtherReceipt")) then
-		row.Payer = undefined;
-		row.Contract = undefined;
 		row.AdvanceAccount = undefined;
-		row.CashFlow = Object.OtherReceipt;
-		Appearance.Apply(ThisObject, "ReceiptsRow.BankOperation");
-	elsif (operation = PredefinedValue("Enum.BankOperations.Payment")
-			or operation = PredefinedValue("Enum.BankOperations.ReturnFromVendor")) then
+		row.Operation = Object.OtherReceipt;
+	else
 		row.Operation = undefined;
-		Appearance.Apply(ThisObject, "ReceiptsRow.BankOperation");
-	elsif (operation = PredefinedValue("Enum.BankOperations.ReturnToCustomer")
-			or operation = PredefinedValue("Enum.BankOperations.VendorPayment")) then
-		row.Operation = undefined;
-		Appearance.Apply(ThisObject, "ExpensesRow.BankOperation");
 	endif;
+	field = ? ( Item = Items.Receipts, "ReceiptsRow.BankOperation", "ExpensesRow.BankOperation" );
+	Appearance.Apply(ThisObject, field);
 	
 EndProcedure
 
 &AtClient
 Procedure ReceiptsOperationOnChange(Item)
 	
-	setAccountCr();
+	setAccount(Items.Receipts);
 	
 EndProcedure
 
 &AtClient
-Procedure setAccountCr()
+Procedure setAccount(Item)
 	
-	ReceiptsRow.Account = DF.Pick(ReceiptsRow.Operation, "AccountCr");
-	
-EndProcedure
-
-&AtClient
-Procedure ReceiptsPayerOnChange(Item)
-	
-	applyPayer();
+	row = Item.CurrentData;
+	side = ? ( Item = Items.Receipts, "AccountCr", "AccountDr" );
+	account = DF.Pick(row.Operation, side );
+	if ( ValueIsFilled ( account ) ) then
+		ReceiptsRow.Account = account;
+	endif;
 	
 EndProcedure
 
 &AtClient
-Procedure applyPayer()
+Procedure ReceiptsAccountOnChange(Item)
+
+	control = Items.Receipts;
+	readAccount ( control );
+	adjustDims ( control );
+	enableDims ( control );
+
+EndProcedure
+
+&AtClient
+Procedure adjustDims ( Item )
 	
-	data = payerData(ReceiptsRow.Payer, ReceiptsRow.BankOperation, Object.Company);
-	FillPropertyValues(ReceiptsRow, data);
+	fields = AccountData.Fields;
+	dims = AccountData.Dims;
+	row = Item.CurrentData;
+	if ( not fields.Currency ) then
+		row.Currency = undefined;
+		row.CurrencyAmount = 0;
+		row.Rate = 0;
+		row.Factor = 0;
+	endif; 
+	level = fields.Level;
+	if ( level = 0 ) then
+		row.Dim1 = undefined;
+		row.Dim2 = undefined;
+		row.Dim3 = undefined;
+	elsif ( level = 1 ) then
+		row.Dim1 = dims [ 0 ].ValueType.AdjustValue ( row.Dim1 );
+		row.Dim2 = undefined;
+		row.Dim3 = undefined;
+	elsif ( level = 2 ) then
+		row.Dim1 = dims [ 0 ].ValueType.AdjustValue ( row.Dim1 );
+		row.Dim2 = dims [ 1 ].ValueType.AdjustValue ( row.Dim2 );
+		row.Dim3 = undefined;
+	else
+		row.Dim1 = dims [ 0 ].ValueType.AdjustValue ( row.Dim1 );
+		row.Dim2 = dims [ 1 ].ValueType.AdjustValue ( row.Dim2 );
+		row.Dim3 = dims [ 2 ].ValueType.AdjustValue ( row.Dim3 );
+	endif; 
+
+EndProcedure
+
+&AtClient
+Procedure ReceiptsDim1StartChoice(Item, ChoiceData, StandardProcessing)
+	
+	chooseDimension ( Items.Receipts, 1, StandardProcessing );
+	
+EndProcedure
+
+&AtClient
+Procedure chooseDimension ( Item, Level, StandardProcessing )
+	
+	p = Dimensions.GetParams ();
+	p.Company = Object.Company;
+	p.Level = Level;
+	row = Item.CurrentData;
+	p.Dim1 = row.Dim1;
+	p.Dim2 = row.Dim2;
+	p.Dim3 = row.Dim3;
+	Dimensions.Choose ( p, Item.CurrentItem, StandardProcessing );
+	
+EndProcedure
+
+&AtClient
+Procedure ReceiptsDim1OnChange ( Item )
+
+	applyDim1 (ReceiptsRow);
+
+EndProcedure
+
+&AtClient
+Procedure applyDim1(Row)
+	
+	organization = Row.Dim1;
+	if ( TypeOf ( organization ) <> Type ( "CatalogRef.Organizations" ) ) then
+		return;
+	endif;
+	data = organizationData(organization, Row.BankOperation, Object.Company);
+	value = data.Contract;
+	if ( ValueIsFilled ( value ) ) then
+		Row.Dim2 = value;
+	endif;
+	value = data.CashFlow;
+	if ( ValueIsFilled ( value ) ) then
+		Row.CashFlow = value;
+	endif;
 	
 EndProcedure
 
 &AtServerNoContext
-Function payerData(val Payer, val Operation, val Company)
+Function organizationData(val Organization, val Operation, val Company)
 	
-	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
+	data = new Structure("Contract, CashFlow");
 	if (Operation = Enums.BankOperations.Payment) then
-		accounts = AccountsMap.Organization(Payer, Company, "CustomerAccount, AdvanceTaken");
-		data.Account = accounts.CustomerAccount;
-		data.AdvanceAccount = accounts.AdvanceTaken;
-		contract = DF.Values(Payer, "CustomerContract, CustomerContract.Company as Company");
+		contract = DF.Values(Organization, "CustomerContract, CustomerContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.CustomerContract;
 		endif;
 	elsif (Operation = Enums.BankOperations.ReturnFromVendor) then
-		accounts = AccountsMap.Organization(Payer, Company, "VendorAccount, AdvanceTaken");
-		data.Account = accounts.VendorAccount;
-		data.AdvanceAccount = accounts.AdvanceTaken;
-		contract = DF.Values(Payer, "VendorContract, VendorContract.Company as Company");
+		contract = DF.Values(Organization, "VendorContract, VendorContract.Company as Company");
 		if (contract.Company = Company) then
 			data.Contract = contract.VendorContract;
+		endif;
+	elsif (Operation = Enums.BankOperations.VendorPayment) then
+		contract = DF.Values(Organization, "VendorContract, VendorContract.Company as Company");
+		if (contract.Company = Company) then
+			data.Contract = contract.VendorContract;
+		endif;
+	elsif (Operation = Enums.BankOperations.ReturnToCustomer) then
+		contract = DF.Values(Organization, "CustomerContract, CustomerContract.Company as Company");
+		if (contract.Company = Company) then
+			data.Contract = contract.CustomerContract;
 		endif;
 	endif;
 	data.CashFlow = contractCashFlow(Operation, data.Contract);
 	return data;
-	
+
 EndFunction
 
 &AtClientAtServerNoContext
@@ -607,28 +755,61 @@ Function contractCashFlow(Operation, Contract)
 		return undefined;
 	endif;
 	if (Operation = PredefinedValue("Enum.BankOperations.Payment")
-			or Operation = PredefinedValue("Enum.BankOperations.ReturnToCustomer")) then
+		or Operation = PredefinedValue("Enum.BankOperations.ReturnToCustomer")) then
 		return DF.Pick(Contract, "CustomerCashFlow");
 	elsif (Operation = PredefinedValue("Enum.BankOperations.ReturnFromVendor")
-			or Operation = PredefinedValue("Enum.BankOperations.VendorPayment")) then
+		or Operation = PredefinedValue("Enum.BankOperations.VendorPayment")) then
 		return DF.Pick(Contract, "VendorCashFlow");
 	endif;
 	
 EndFunction
 
 &AtClient
-Procedure ReceiptsContractOnChange(Item)
+Procedure ReceiptsDim2StartChoice(Item, ChoiceData, StandardProcessing)
 	
+	chooseDimension ( Items.Receipts, 2, StandardProcessing );
+	
+EndProcedure
+
+&AtClient
+Procedure ReceiptsDim2OnChange(Item)
+
 	applyContract(ReceiptsRow);
-	
+
 EndProcedure
 
 &AtClient
 Procedure applyContract(Row)
 	
-	Row.CashFlow = contractCashFlow(Row.BankOperation, Row.Contract);
+	contract = Row.Dim2;
+	if ( TypeOf ( contract ) = Type ( "CatalogRef.Contracts" ) ) then
+		Row.CashFlow = contractCashFlow(Row.BankOperation, contract);
+	endif;
 	
 EndProcedure
+
+&AtClient
+Procedure ReceiptsDim3StartChoice(Item, ChoiceData, StandardProcessing)
+	
+	chooseDimension ( Items.Receipts, 3, StandardProcessing );
+	
+EndProcedure
+
+&AtClient
+Procedure ReceiptsCurrencyOnChange(Item)
+	
+	setCurrency ( ReceiptsRow );
+	
+EndProcedure
+
+&AtClient
+Procedure setCurrency ( Row )
+	
+	info = CurrenciesSrv.Get ( Row.Currency, Object.Date );
+	Row.Rate = info.Rate;
+	Row.Factor = info.Factor;
+	
+EndProcedure 
 
 // *****************************************
 // *********** Table Expenses
@@ -659,10 +840,19 @@ EndProcedure
 &AtClient
 Procedure ExpensesOnEditEnd(Item, NewRow, CancelEdit)
 	
+	resetDims ( Item );
 	if (not CancelEdit) then
 		enableDownload(Item);
 	endif;
 	
+EndProcedure
+
+&AtClient
+Procedure ExpensesBeforeRowChange ( Item, Cancel )
+
+	readAccount ( Item );
+	enableDims ( Item );
+
 EndProcedure
 
 &AtClient
@@ -677,14 +867,7 @@ EndProcedure
 &AtClient
 Procedure ExpensesOperationOnChange(Item)
 	
-	setAccountDr();
-	
-EndProcedure
-
-&AtClient
-Procedure setAccountDr()
-	
-	ExpensesRow.Account = DF.Pick(ExpensesRow.Operation, "AccountDr");
+	setAccount(Items.Expenses);
 	
 EndProcedure
 
@@ -696,69 +879,55 @@ Procedure ExpensesBankOperationOnChange(Item)
 EndProcedure
 
 &AtClient
-Procedure ExpensesReceiverOnChange(Item)
+Procedure ExpensesAccountOnChange ( Item )
 	
-	applyReceiver();
+	control = Items.Expenses;
+	readAccount ( control );
+	adjustDims ( control );
+	enableDims ( control );
+
+EndProcedure
+
+&AtClient
+Procedure ExpensesDim1StartChoice(Item, ChoiceData, StandardProcessing)
+
+	chooseDimension ( Items.Expenses, 1, StandardProcessing );
+
+EndProcedure
+
+&AtClient
+Procedure ExpensesDim1OnChange(Item)
+	
+	applyDim1(ExpensesRow);
 	
 EndProcedure
 
 &AtClient
-Procedure applyReceiver()
+Procedure ExpensesDim2StartChoice(Item, ChoiceData, StandardProcessing)
 	
-	data = receiverData(ExpensesRow.Receiver, ExpensesRow.BankOperation, Object.Company);
-	FillPropertyValues(ExpensesRow, data);
+	chooseDimension ( Items.Expenses, 2, StandardProcessing );
 	
 EndProcedure
 
-&AtServerNoContext
-Function receiverData(val Receiver, val Operation, val Company)
-	
-	data = new Structure("Account, AdvanceAccount, Contract, CashFlow");
-	if (Operation = Enums.BankOperations.VendorPayment) then
-		accounts = AccountsMap.Organization(Receiver, Company, "VendorAccount, AdvanceGiven");
-		data.Account = accounts.VendorAccount;
-		data.AdvanceAccount = accounts.AdvanceGiven;
-		contract = DF.Values(Receiver, "VendorContract, VendorContract.Company as Company");
-		if (contract.Company = Company) then
-			data.Contract = contract.VendorContract;
-		endif;
-	elsif (Operation = Enums.BankOperations.ReturnToCustomer) then
-		accounts = AccountsMap.Organization(Receiver, Company, "CustomerAccount, AdvanceGiven");
-		data.Account = accounts.CustomerAccount;
-		data.AdvanceAccount = accounts.AdvanceGiven;
-		contract = DF.Values(Receiver, "CustomerContract, CustomerContract.Company as Company");
-		if (contract.Company = Company) then
-			data.Contract = contract.CustomerContract;
-		endif;
-	endif;
-	data.CashFlow = contractCashFlow(Operation, data.Contract);
-	return data;
-	
-EndFunction
-
 &AtClient
-Procedure ExpensesContractOnChange(Item)
-	
+Procedure ExpensesDim2OnChange(Item)
+
 	applyContract(ExpensesRow);
+
+EndProcedure
+
+&AtClient
+Procedure ExpensesDim3StartChoice(Item, ChoiceData, StandardProcessing)
+	
+	chooseDimension ( Items.Expenses, 3, StandardProcessing );
 	
 EndProcedure
 
-// *****************************************
-// *********** Table Details
-
 &AtClient
-Procedure DetailsSelection(Item, SelectedRow, Field, StandardProcessing)
-	
-	filter = new Structure("DetailsLine", Items.Details.CurrentData.LineNumber);
-	rows = Object.Receipts.FindRows(filter);
-	if (rows.Count() = 0) then
-		rows = Object.Expenses.FindRows(filter);
-		if (rows.Count() = 0) then
-			return;
-		endif;
-	endif;
-	openDocument(rows[0].Document);
-	
+Procedure ExpensesCurrencyOnChange(Item)
+
+	setCurrency ( ExpensesRow );
+
 EndProcedure
 
 // *****************************************

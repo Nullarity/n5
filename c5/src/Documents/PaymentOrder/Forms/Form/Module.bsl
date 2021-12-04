@@ -2,6 +2,8 @@
 var Env;
 &AtServer
 var Base;
+&AtServer
+var AccountData;
 
 // *****************************************
 // *********** Form events
@@ -9,11 +11,34 @@ var Base;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	if ( Object.Taxes ) then
+		readAccount ();
+		labelDims ();
+	endif;
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	setPrintPaymentContent ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
+
+&AtServer
+Procedure readAccount ()
+	
+	AccountData = GeneralAccounts.GetData ( Object.Account );
+	DimLevel = AccountData.Fields.Level;
+	
+EndProcedure 
+
+&AtServer
+Procedure labelDims ()
+	
+	i = 1;
+	for each dim in AccountData.Dims do
+		Items [ "Dim" + i ].Title = dim.Presentation;
+		i = i + 1;
+	enddo; 
+	
+EndProcedure 
 
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
@@ -43,12 +68,16 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|Base enable filled ( Object.Base );
+	|Base show filled ( Object.Base );
 	|Contract enable Object.Recipient <> Object.Company;
 	|VAT enable filled ( Object.VATRate );
 	|IncomeTax enable Object.IncomeTaxRate > 0;
 	|Amount lock Object.Salary;
-	|VAT VATRate IncomeTax IncomeTaxRate ExcludeTaxes Trezorerial ToCompany hide Object.Salary;
+	|VAT VATRate IncomeTax IncomeTaxRate ExcludeTaxes Taxes ToCompany hide Object.Salary;
+	|Account show Object.Taxes;
+	|Dim1 show DimLevel > 0 and Object.Taxes;
+	|Dim2 show DimLevel > 1 and Object.Taxes;
+	|Dim3 show DimLevel > 2 and Object.Taxes;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -134,6 +163,59 @@ Procedure setRecipientBankAccount ()
 	else
 		Object.RecipientBankAccount = organizationBank ();
 	endif;
+	applyRecipientBankAccount ();
+
+EndProcedure
+
+&AtServer
+Procedure applyRecipientBankAccount ()
+	
+	if ( Object.ToCompany ) then
+		Object.Taxes = false;
+	else
+		fields = DF.Values ( Object.RecipientBankAccount, "Taxes, AccountTax as Account, Dim1, Dim2, Dim3" );
+		FillPropertyValues ( Object, fields );
+		if ( not Object.Account.IsEmpty () ) then
+			applyAccount ();
+		endif;
+	endif;
+	applyTaxes ();				
+
+EndProcedure
+
+&AtServer
+Procedure applyAccount ()
+	
+	readAccount ();
+	adjustDims ( AccountData, Object );
+	labelDims ();
+	Appearance.Apply ( ThisObject, "DimLevel" );
+	      	
+EndProcedure 
+
+&AtServer
+Procedure adjustDims ( Data, Target )
+	
+	fields = Data.Fields;
+	dims = Data.Dims;
+	level = fields.Level;
+	if ( level = 0 ) then
+		Target.Dim1 = null;
+		Target.Dim2 = null;
+		Target.Dim3 = null;
+	elsif ( level = 1 ) then
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = null;
+		Target.Dim3 = null;
+	elsif ( level = 2 ) then
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
+		Target.Dim3 = null;
+	else
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
+		Target.Dim3 = dims [ 2 ].ValueType.AdjustValue ( Target.Dim3 );
+	endif; 
 
 EndProcedure
 
@@ -228,6 +310,13 @@ Procedure RecipientOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure RecipientBankAccountOnChange ( Item )
+	
+	applyRecipientBankAccount ();
+
+EndProcedure
+
+&AtClient
 Procedure ToCompanyOnChange ( Item )
 	
 	applyToCompany ();
@@ -315,6 +404,34 @@ Procedure ContractOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure TaxesOnChange ( Item )
+	
+	applyTaxes ();
+	
+EndProcedure
+
+&AtServer
+Procedure applyTaxes ()
+	
+	if ( not Object.Taxes ) then
+		Object.Account = undefined;
+		Object.Dim1 = undefined;
+		Object.Dim2 = undefined;
+		Object.Dim3 = undefined;
+		DimLevel = 0;
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Taxes" );
+
+EndProcedure
+
+&AtClient
+Procedure AccountOnChange ( Item )
+	
+	applyAccount ();
+	
+EndProcedure
+
+&AtClient
 Procedure PaymentContentOnChange ( Item )
 	
 	setPrintPaymentContent ();
@@ -372,3 +489,5 @@ Procedure ExcludeTaxesOnChange ( Item )
 	setPrintPaymentContent ();
 	
 EndProcedure
+
+

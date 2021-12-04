@@ -31,26 +31,28 @@ Function checkTables ()
 			endif;
 			if ( row.BankOperation.IsEmpty () ) then
 				problems.Add ( "BankOperation" );
+			elsif ( row.Operation.IsEmpty ()
+				and ( row.BankOperation = Enums.BankOperations.OtherExpense
+					or row.BankOperation = Enums.BankOperations.OtherReceipt ) ) then
+				problems.Add ( "Operation" );
+			endif;
+			if ( row.Account.IsEmpty () ) then
+				problems.Add ( "Account" );
 			endif;
 			operation = row.BankOperation;
 			if ( operation = Enums.BankOperations.Payment
 				or operation = Enums.BankOperations.ReturnFromVendor
 				or operation = Enums.BankOperations.VendorPayment
 				or operation = Enums.BankOperations.ReturnToCustomer ) then
-				if ( table = Receipts and row.Payer.IsEmpty () ) then
-					problems.Add ( "Payer" );
-				elsif ( table = Expenses and row.Receiver.IsEmpty () ) then
-					problems.Add ( "Payer" );
+				if ( not ValueIsFilled ( row.Dim1 ) ) then
+					problems.Add ( "Dim1" );
 				endif;
-				if ( row.Contract.IsEmpty () ) then
-					problems.Add ( "Contract" );
+				if ( not ValueIsFilled ( row.Dim2 ) ) then
+					problems.Add ( "Dim2" );
 				endif;
 				if ( row.AdvanceAccount.IsEmpty () ) then
 					problems.Add ( "AdvanceAccount" );
 				endif;
-			endif;
-			if ( row.Account.IsEmpty () ) then
-				problems.Add ( "Account" );
 			endif;
 			if ( problems.Count () > 0 ) then
 				error = true;

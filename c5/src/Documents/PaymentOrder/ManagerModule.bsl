@@ -33,25 +33,6 @@ Function RemoveInadmissibleSymbols ( String ) export
 	
 EndFunction
 
-Function NumberWithoutPrefix ( DocumentNumber, DocumentPrefix ) export
-	
-	number = TrimAll ( DocumentNumber );
-	prefix = "";
-	px = Application.Prefix ();
-	if ( px <> "" ) then
-		prefix = px;
-	endif;
-	prefix = prefix + DocumentPrefix;
-	if ( Find ( number, prefix ) = 1 ) then
-		number = Mid ( number, StrLen ( prefix ) + 1 );
-	endif;
-	while ( Left ( number, 1 ) = "0" ) do 
-		number = Mid ( number, 2 );
-	enddo;
-	return number;
-		
-EndFunction
-
 #if ( Server ) then
 
 #region Printing
@@ -90,13 +71,13 @@ Procedure sqlPrintData ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Date as DocumentDate, Documents.Number as DocumentNumber, Documents.IncomeTaxRate as IncomeTaxRate, Documents.Amount as Sum, Documents.IncomeTax as IncomeTax,
+	|select Documents.Date as DocumentDate, Documents.IncomeTaxRate as IncomeTaxRate, Documents.Amount as Sum, Documents.IncomeTax as IncomeTax,
 	|	Documents.Division as Division, Documents.Division.Cutam as Cutam, Documents.Company.Alien as Alien,
 	|	Documents.Company.CodeFiscal as CodeFiscal, Documents.Recipient.CodeFiscal as RecipientCodeFiscal, Documents.BankAccount.Bank.Description as BankDescription, 
 	|	Documents.RecipientPresentation as RecipientPresentation, Documents.RecipientBankAccount.AccountNumber as RecipientAccountNumber,
-	|	Documents.RecipientBankAccount.Bank.Description as RecipientBankDescription, Documents.BankAccount.Bank.Code as BankCode, Documents.Company.Prefix as Prefix,
+	|	Documents.RecipientBankAccount.Bank.Description as RecipientBankDescription, Documents.BankAccount.Bank.Code as BankCode,
 	|	Documents.RecipientBankAccount.Bank.Code as RecipientBankCode, Documents.BankAccount.AccountNumber as AccountNumber,
-	|	Documents.Company.FullDescription as Company, Documents.Urgent as Urgent, Documents.Trezorerial as Trezorerial
+	|	Documents.Company.FullDescription as Company, Documents.Urgent as Urgent, Documents.Taxes as Taxes, Documents.ID as ID
 	|from Document.PaymentOrder as Documents
 	|where Documents.Ref = &Ref
 	|";
@@ -148,17 +129,15 @@ Procedure fillPrintParameters ( Params, Env )
 	fillRecipientBankPresentation ( printParams, fields, Env );
 	fillPaymentContent ( printParams );
 	printParams.Insert ( "DocumentDate", fields.DocumentDate );
-	printParams.Insert ( "DocumentNumber", NumberWithoutPrefix ( Fields.DocumentNumber, Fields.Prefix ) );
+	printParams.Insert ( "DocumentNumber", fields.ID );
 	printParams.Insert ( "Sum", printParams.sumPayment );
 	printParams.Insert ( "BankCode", fields.BankCode );
 	printParams.Insert ( "BankAccount", Left ( fields.AccountNumber, 24 ) );
-	//parameters.Insert ( "OrganizationTreasuryCode", 	TrimAll ( OrganizationBankAccount.TreasuryCode )); решаем
 	printParams.Insert ( "RecipientCodeFiscal", TrimAll ( fields.RecipientCodeFiscal ) );
 	printParams.Insert ( "RecipientBankCode", TrimAll ( fields.RecipientBankCode ) );
 	printParams.Insert ( "RecipientBankAccount", Left ( TrimAll ( fields.RecipientAccountNumber ), 24 ) );
-	//parameters.Insert ( "ContractorTreasuryCode", TrimAll ( ContractorBankAccount.TreasuryCode )	);
 	printParams.Insert ( "TransferType", ? ( fields.Urgent, "U", "N" ) );
-	printParams.Insert ( "TransferCode", ? ( fields.Trezorerial, "101", "001" ) );
+	printParams.Insert ( "TransferCode", ? ( fields.Taxes, "101", "001" ) );
 
 EndProcedure
 

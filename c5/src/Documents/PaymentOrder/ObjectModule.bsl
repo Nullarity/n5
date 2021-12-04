@@ -111,4 +111,17 @@ Function getStringFromArray ( ItemsArray, Separator )
 	
 EndFunction
 
+Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
+	
+	setID ();
+	
+EndProcedure
 
+Procedure setID ()
+
+	if ( Number = "" ) then
+		SetNewNumber ();
+	endif;
+	ID = Print.NumberWithoutPrefix ( Number, DF.Pick ( Company, "Prefix" ) );
+
+EndProcedure

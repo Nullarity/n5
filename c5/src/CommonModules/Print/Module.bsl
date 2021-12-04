@@ -190,7 +190,27 @@ Function ShortNumber ( Number ) export
 	endtry;
 	return Format ( value, "NG=" );
 	
-EndFunction 
+EndFunction
+
+&AtServer
+Function NumberWithoutPrefix ( DocumentNumber, DocumentPrefix ) export
+	
+	number = TrimAll ( DocumentNumber );
+	prefix = "";
+	px = Application.Prefix ();
+	if ( px <> "" ) then
+		prefix = px;
+	endif;
+	prefix = prefix + DocumentPrefix;
+	if ( Find ( number, prefix ) = 1 ) then
+		number = Mid ( number, StrLen ( prefix ) + 1 );
+	endif;
+	while ( Left ( number, 1 ) = "0" ) do 
+		number = Mid ( number, 2 );
+	enddo;
+	return number;
+		
+EndFunction
 
 &AtServer
 Procedure Entitle ( TabDoc, Title, Keyword = "###" ) export

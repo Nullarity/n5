@@ -1,6 +1,7 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
 var Env;
+var BankingProgram;
 var PaymentOrder;
 var JobKey;
 var ProcessingError;
@@ -15,23 +16,23 @@ Procedure Run(Params) export
 	
 	init(Params);
 	getRows(Params.Orders);
-	if (BankingApp = Enums.Banks.VictoriaBank) then
+	if (BankingProgram = Enums.Banks.VictoriaBank) then
 		runVictoriaBank();
-	elsif (BankingApp = Enums.Banks.Energbank) then
+	elsif (BankingProgram = Enums.Banks.Energbank) then
 		runEnergBank();
-	elsif (BankingApp = Enums.Banks.ProCreditBank) then
+	elsif (BankingProgram = Enums.Banks.ProCreditBank) then
 		runProcreditBank();
-	elsif (BankingApp = Enums.Banks.Eximbank) then
+	elsif (BankingProgram = Enums.Banks.Eximbank) then
 		runEximbank();
-	elsif (BankingApp = Enums.Banks.Mobias) then
+	elsif (BankingProgram = Enums.Banks.Mobias) then
 		runMobias();
-	elsif (BankingApp = Enums.Banks.MAIB) then
+	elsif (BankingProgram = Enums.Banks.MAIB) then
 		runMaib();
-	elsif (BankingApp = Enums.Banks.FinComPay) then
+	elsif (BankingProgram = Enums.Banks.FinComPay) then
 		runFinComPay();
-	elsif (BankingApp = Enums.Banks.Comert) then
+	elsif (BankingProgram = Enums.Banks.Comert) then
 		runComert();
-	elsif (BankingApp = Enums.Banks.EuroCreditBank) then
+	elsif (BankingProgram = Enums.Banks.EuroCreditBank) then
 		runEuroCreditBank();
 	endif;
 	if (ProcessingError) then
@@ -49,7 +50,7 @@ Procedure init(Params)
 	Files = new Array();
 	SQL.Init(Env);
 	PaymentOrder = Documents.PaymentOrder;
-	BankingApp = Params.BankingApp;
+	BankingProgram = DF.Pick ( Params.BankingApp, "Application" );
 	JobKey = Params.JobKey;
 	FileAddresses = new Array();
 	FileAddresses.Add(Params.File1);
@@ -58,8 +59,8 @@ Procedure init(Params)
 	FilesDescriptor = Params.FilesDescriptor;
 	PaymentsFile = Params.Path;
 	SalaryFile = Params.PathSalary;
-	if (BankingApp = PredefinedValue("Enum.Banks.Mobias")
-		or BankingApp = PredefinedValue("Enum.Banks.MAIB")) then
+	if (BankingProgram = PredefinedValue("Enum.Banks.Mobias")
+		or BankingProgram = PredefinedValue("Enum.Banks.MAIB")) then
 		TempFile = TempFilesDir() + FileSystem.DBFTempFile();
 	else
 		TempFile = GetTempFileName();
@@ -80,7 +81,7 @@ Procedure sqlRows()
 	
 	s = "
 	|// #Rows
-	|select Documents.Number as Number, Documents.Company.Prefix as Prefix, Documents.Date as Date, Documents.Company.CodeFiscal as CodeFiscal,
+	|select Documents.ID as ID, Documents.Date as Date, Documents.Company.CodeFiscal as CodeFiscal,
 	|	case when Documents.Division = value ( Catalog.Divisions.EmptyRef ) then false else true end as HasDivision, Documents.Division.Code as DivisionCode,
 	|	Documents.BankAccount.AccountNumber as AccountNumber, Documents.BankAccount.Bank.Code as BankCode, Documents.RecipientPresentation as RecipientPresentation,
 	|	Documents.Recipient.CodeFiscal as RecipientCodeFiscal, Documents.RecipientBankAccount.AccountNumber as RecipientAccountNumber,
@@ -88,8 +89,8 @@ Procedure sqlRows()
 	|	case when Documents.VATRate = value ( Catalog.VAT.EmptyRef ) then false else true end as VATFilled, Documents.VAT as VAT, Documents.Amount as Amount,
 	|	Documents.IncomeTax as IncomeTax, Documents.IncomeTaxRate as IncomeTaxRate, Documents.ExcludeTaxes as ExcludeTaxes,
 	|	case when Documents.IncomeTaxRate = 0 then false else true end as TaxRateFilled, Documents.PaymentContent as PaymentContent,
-	|	case when Documents.Urgent then ""U"" else ""N"" end as TransferType, case when Documents.Trezorerial then ""101"" else ""001"" end as TransactionCode, 
-	|	Documents.Trezorerial as Trezorerial, Documents.Ref as PaymentOrder, Documents.BankAccount.TreasuryCode as TreasuryCode,
+	|	case when Documents.Urgent then ""U"" else ""N"" end as TransferType, case when Documents.Taxes then ""101"" else ""001"" end as TransactionCode, 
+	|	Documents.Taxes as Taxes, Documents.Ref as PaymentOrder, Documents.BankAccount.TreasuryCode as TreasuryCode,
 	|	Documents.Company.FullDescription as CompanyName, Documents.BankAccount.Bank.Description as BankDescription,
 	|	Documents.RecipientBankAccount.Bank.Description as RecipientBankDescription, Documents.RecipientBankAccount.Bank.MFO as RecipientBankMFO,
 	|	Documents.BankAccount.Currency.Code as CurrencyCode, Documents.BankAccount.Currency.Description as CurrencyName,
@@ -156,7 +157,7 @@ EndProcedure
 
 Function getDOCUMENTNUMBER(Row)
 	
-	return "DOCUMENTNUMBER=" + PaymentOrder.NumberWithoutPrefix(Row.Number, Row.Prefix);
+	return "DOCUMENTNUMBER=" + Row.ID;
 	
 EndFunction
 
@@ -345,7 +346,7 @@ Procedure onlyDigits(String)
 	while (i <= StrLen(String)) do
 		code = CharCode(Mid(String, i, 1));
 		if (code < 47
-				or code > 57) then
+			or code > 57) then
 			String = Mid(String, i + 1);
 			i = 1;
 		else
@@ -399,7 +400,7 @@ Procedure runEximbank()
 	text.AddLine(Format(rows.Total("Amount"), "NG=0; NDS=""."""));
 	for each row in rows do
 		line.DATA = Format(row.Date, "DF='yyyyMMdd'");
-		line.NDOC = Left(PaymentOrder.NumberWithoutPrefix(row.Number, row.Prefix), 10);
+		line.NDOC = row.ID;
 		line.CCL = TrimAll(row.AccountNumber);
 		line.CCOR = TrimAll(row.RecipientAccountNumber);
 		line.CFC = TrimAll(row.CodeFiscal);
@@ -464,7 +465,7 @@ Procedure setContent(Line, Row)
 	
 	content = TrimAll(Row.PaymentContent);
 	Line.DE1 = Mid ( content, 1, 57 );
-	Line.DE2 = Mid ( content, 57, 57 );
+	Line.DE2 = Mid ( content, 58, 57 );
 	Line.DE3 = Mid ( content, 115, 96 );
 	
 EndProcedure
@@ -534,8 +535,8 @@ Procedure runMobias()
 	for each row in Env.Rows do
 		dbf.Add();
 		dbf.DATE = row.Date;
-		dbf.N_DOC = PaymentOrder.NumberWithoutPrefix(row.Number, row.Prefix);
-		if (row.Trezorerial) then
+		dbf.N_DOC = row.ID;
+		if (row.Taxes) then
 			dbf.FIS_K_MY = TrimAll(row.CodeFiscal) + "/" + TrimAll(row.DivisionCode);
 		else
 			dbf.FIS_K_MY = TrimAll(row.CodeFiscal);
@@ -629,7 +630,7 @@ Procedure runMaib()
 		contentCount = content.Count();
 		dbf.Add();
 		dbf.DATA = Format(row.Date, "DF='yyyyMMdd'");
-		dbf.NDOC = PaymentOrder.NumberWithoutPrefix(row.Number, row.Prefix);
+		dbf.NDOC = row.ID;
 		dbf.CCL = TrimAll(row.AccountNumber);
 		recipientAccountNumber = TrimAll(row.RecipientAccountNumber);
 		dbf.CCOR = recipientAccountNumber;
@@ -712,7 +713,7 @@ EndFunction
 
 Function getCFC(Row)
 	
-	if (Row.Trezorerial) then
+	if (Row.Taxes) then
 		code = TrimAll(Row.DivisionCode);
 		if (code <> "") then
 			code = "/" + code;
@@ -747,7 +748,7 @@ Procedure runComert()
 	for each row in Env.Rows do
 		xmlWriter.WriteStartElement("doc");
 		writeXMLElement("ID", "", xmlWriter);
-		docNumber = PaymentOrder.NumberWithoutPrefix(row.Number, row.Prefix);
+		docNumber = row.ID;
 		writeXMLElement("ndoc", docNumber, xmlWriter);
 		writeXMLElement("ddoc", Format(row.Date, "DF=dd.MM.yyyy") + " 0:00:00", xmlWriter);
 		writeXMLElement("td", 1, xmlWriter);
@@ -772,7 +773,7 @@ Procedure runComert()
 		writeXMLElement("dest", getContent(row), xmlWriter);
 		writeXMLElement("summ", Format(row.AmountWithoutTax, "NFD=2; NDS=,; NG="), xmlWriter);
 		writeXMLElement("transcourse", "0", xmlWriter);
-		writeXMLElement("trancode", ?(row.Trezorerial, "101", "1"), xmlWriter);
+		writeXMLElement("trancode", ?(row.Taxes, "101", "1"), xmlWriter);
 		writeXMLElement("tt", row.TransferType, xmlWriter);
 		xmlWriter.WriteEndElement();
 	enddo;
@@ -814,7 +815,7 @@ Procedure runFinComPay()
 		xmlRow.setAttribute("IBAN_B", recipientAccount);
 		xmlRow.setAttribute("CORRTREZACCOUNTNO", TrimAll(row.TreasuryCode));
 		xmlRow.setAttribute("TRANSACTIONCODE", row.TransactionCode);
-		xmlRow.setAttribute("DOCUMENTNO", PaymentOrder.NumberWithoutPrefix(row.Number, row.Prefix));
+		xmlRow.setAttribute("DOCUMENTNO", row.ID);
 		xmlRow.setAttribute("DOCUMENTDATE", Format(row.Date, "DF=yyMMdd"));
 		xmlRow.setAttribute("AMOUNT", (row.AmountWithoutTax) * 100);
 		xmlRow.setAttribute("CORRFISCALCODE", TrimAll(row.RecipientCodeFiscal));
@@ -874,14 +875,14 @@ EndProcedure
 Procedure runEuroCreditBank()
 	
 	rows = Env.Rows;
-	filter = new Structure("Trezorerial", true);
-	runTrezorerialRows(rows.Copy(filter), "108", "TREZORIAL.108");
-	filter.Trezorerial = false;
-	runTrezorerialRows(rows.Copy(filter), "107", ".107");
+	filter = new Structure("Taxes", true);
+	runTaxesRows(rows.Copy(filter), "108", "TREZORIAL.108");
+	filter.Taxes = false;
+	runTaxesRows(rows.Copy(filter), "107", ".107");
 	
 EndProcedure
 
-Procedure runTrezorerialRows(Rows, Code, Suffix)
+Procedure runTaxesRows(Rows, Code, Suffix)
 	
 	if (Rows.Count() = 0) then
 		return;
@@ -899,7 +900,7 @@ Function lineEuroCreditBank(Row, Code)
 	content = Mid(getContent(Row), 1, 210);
 	separator = "*";
 	line = Code + separator +
-		PaymentOrder.NumberWithoutPrefix(Row.Number, Row.Prefix) + separator +
+		Row.ID + separator +
 		Format(Row.Date, "DF='yyyyMMdd'") + "*MDL*" +
 		Format(Row.AmountWithoutTax, "NFD=2; NDS=.; NG=") + separator +
 		TrimAll(Row.AccountNumber) + separator +

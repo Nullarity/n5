@@ -62,7 +62,6 @@ Procedure getData()
 	setFields();
 	sqlReceipts();
 	sqlExpenses();
-	sqlInternalAccounts();
 	getTables();
 	
 EndProcedure
@@ -88,15 +87,26 @@ EndFunction
 
 Procedure sqlReceipts()
 	
-	fields = Env.ReceiptsFields;
 	s = "
 	|// #Receipts
-	|select " + fields + ", Receipts.Operation.Operation as Method, Receipts.Operation.Simple as Simple, 
+	|select 
 	|	case when isnull ( Receipts.Operation.AccountDr, value ( ChartOfAccounts.General.EmptyRef ) )
 	|			= value ( ChartOfAccounts.General.EmptyRef ) then Receipts.Ref.Account
 	|		else Receipts.Operation.AccountDr
 	|	end as AccountDr,
-	|	Receipts.Account as AccountCr, Receipts.Payer as Organization, false as Currency, false as Internal
+	|	case when Receipts.BankOperation = value ( Enum.BankOperations.OtherReceipt ) then
+	|		case when isnull ( Receipts.Operation.AccountDr, value ( ChartOfAccounts.General.EmptyRef ) )
+	|			= value ( ChartOfAccounts.General.EmptyRef )
+	|			then Receipts.Ref.Account.Class
+	|			else Receipts.Operation.AccountDr.Class
+	|		end
+	|	end as DrClass,
+	|	case Receipts.BankOperation
+	|		when value ( Enum.BankOperations.OtherReceipt ) then Receipts.Account.Class
+	|	end as CrClass,
+	|	Receipts.Account as AccountCr, Receipts.Operation.Operation as Method,
+	|	isnull ( Receipts.Operation.Simple, true ) as Simple,
+	|" + Env.ReceiptsFields + "
 	|from Document.LoadPayments.Receipts as Receipts
 	|where Receipts.Ref = &Ref
 	|";
@@ -106,43 +116,28 @@ EndProcedure
 
 Procedure sqlExpenses()
 	
-	fields = Env.ExpensesFields;
 	s = "
 	|// #Expenses
-	|select " + fields + ", Expenses.Operation.Operation as Method, Expenses.Operation.Simple as Simple, 
+	|select
 	|	case when isnull ( Expenses.Operation.AccountCr, value ( ChartOfAccounts.General.EmptyRef ) )
 	|			= value ( ChartOfAccounts.General.EmptyRef ) then Expenses.Ref.Account
 	|		else Expenses.Operation.AccountCr
 	|	end as AccountCr,
-	|	Expenses.Account as AccountDr, Expenses.Receiver as Organization, false as Currency, false as Internal, undefined as InternalAccount
+	|	case when Expenses.BankOperation = value ( Enum.BankOperations.OtherExpense ) then
+	|		case when isnull ( Expenses.Operation.AccountCr, value ( ChartOfAccounts.General.EmptyRef ) )
+	|			= value ( ChartOfAccounts.General.EmptyRef )
+	|			then Expenses.Ref.Account.Class
+	|			else Expenses.Operation.AccountCr.Class
+	|		end
+	|	end as CrClass,
+	|	case Expenses.BankOperation
+	|		when value ( Enum.BankOperations.OtherExpense ) then Expenses.Account.Class
+	|	end as DrClass,
+	|	Expenses.Account as AccountDr, Expenses.Operation.Operation as Method,
+	|	isnull ( Expenses.Operation.Simple, true ) as Simple,
+	|" + Env.ExpensesFields + "
 	|from Document.LoadPayments.Expenses as Expenses
 	|where Expenses.Ref = &Ref
-	|";
-	Env.Selection.Add(s);
-	
-EndProcedure
-
-Procedure sqlInternalAccounts()
-	
-	s = "
-	|// #InternalAccounts
-	|select Expenses.DetailsLine as DetailsLine, BankAccounts.Ref as BankAccount
-	|from Document.LoadPayments.Expenses as Expenses
-	|	//
-	|	//	Details
-	|	//
-	|	left join Document.LoadPayments.Details as Details
-	|	on Details.Ref = &Ref
-	|	and Details.LineNumber = Expenses.DetailsLine
-	|	//
-	|	//	Bank Accounts
-	|	//
-	|	inner join Catalog.BankAccounts as BankAccounts
-	|	on BankAccounts.Owner = Details.Ref.Company
-	|	and BankAccounts.AccountNumber = Details.ReceiverAccount
-	|	and not BankAccounts.DeletionMark
-	|where Expenses.BankOperation = value ( Enum.BankOperations.InternalMovement )
-	|and Expenses.Ref = &Ref
 	|";
 	Env.Selection.Add(s);
 	
@@ -176,7 +171,7 @@ Procedure createReceipts()
 		elsif (operation = Enums.BankOperations.ReturnFromVendor) then
 			createVendorRefund(row, rowDetail);
 		else
-			createEntry(row, rowDetail);
+			createEntry(row, rowDetail, true);
 		endif;
 	enddo;
 	
@@ -201,7 +196,7 @@ Procedure createPayment(Row, RowDetail)
 		object.SetNewNumber();
 		newDocument = true;
 	endif;
-	object.Customer = Row.Payer;
+	object.Customer = Row.Dim1;
 	object.CustomerAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
@@ -235,7 +230,7 @@ EndFunction
 
 Procedure loadContract(Object, Row)
 	
-	Object.Contract = Row.Contract;
+	Object.Contract = Row.Dim2;
 	Object.Account = Account;
 	Object.BankAccount = BankAccount;
 	Object.Currency = Currency;
@@ -327,7 +322,7 @@ Procedure createVendorRefund(Row, RowDetail)
 		object.SetNewNumber();
 		newDocument = true;
 	endif;
-	object.Vendor = Row.Payer;
+	object.Vendor = Row.Dim1;
 	object.VendorAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
@@ -342,7 +337,7 @@ Procedure createVendorRefund(Row, RowDetail)
 	
 EndProcedure
 
-Procedure createEntry(Row, RowDetail)
+Procedure createEntry(Row, RowDetail, Debit)
 	
 	newDocument = false;
 	document = Row.Document;
@@ -355,90 +350,36 @@ Procedure createEntry(Row, RowDetail)
 		newDocument = true;
 	endif;
 	headerDocument(object, Row, RowDetail);
-	object.Amount = Row.Amount;
+	amount = Row.Amount;
+	object.Amount = amount;
 	object.Operation = Row.Operation;
 	object.Method = Row.Method;
 	object.Simple = Row.Simple;
 	rowRecord = object.Records.Add();
 	rowRecord.AccountDr = Row.AccountDr;
+	rowRecord.DrClass = Row.DrClass;
 	rowRecord.AccountCr = Row.AccountCr;
-	data = EntryFormSrv.AccountsData(Row.AccountDr, Row.AccountCr);
-	fillDr(rowRecord, Row, data.Dr);
-	fillCr(rowRecord, Row, data.Cr);
-	setAmount(object, rowRecord, Row);
-	writeDocument(object, Row, newDocument);
-	
-EndProcedure
-
-Procedure fillDr(RowRecord, Row, Data)
-	
-	if (Row.Internal) then
-		valueBankAccount = Row.InternalAccount;
+	rowRecord.CrClass = Row.CrClass;
+	if ( Debit ) then
+		bankSide = "Dr";
+		side = "Cr";
 	else
-		valueBankAccount = BankAccount;
+		bankSide = "Cr";
+		side = "Dr";
 	endif;
-	for each item in Data.Dims do
-		value = getDimValue(Row, item.Dim, valueBankAccount);
-		if (value = undefined) then
-			continue;
-		endif;
-		RowRecord["DimDr" + item.LineNumber] = value;
-	enddo;
-	if (Data.Fields.Currency) then
-		fillAccountCurrency(RowRecord, Row, "Dr");
-	endif;
-	
-EndProcedure
-
-Function getDimValue(Row, Dim, ValueBankAccount = undefined)
-	
-	if (Dim = Dims.BankAccounts) then
-		return ?(ValueBankAccount = undefined, BankAccount, ValueBankAccount);
-	elsif (Dim = Dims.CashFlows) then
-		return Row.CashFlow;
-	elsif (Dim = Dims.Organizations) then
-		return Row.Organization;
-	elsif (Dim = Dims.Contracts) then
-		return Row.Contract;
-	endif;
-	return undefined;
-	
-EndFunction
-
-Procedure fillAccountCurrency(RowRecord, Row, Side)
-	
-	amount = Row.Amount;
-	RowRecord["CurrencyAmount" + Side] = amount;
-	RowRecord["Currency" + Side] = Currency;
-	info = CurrenciesSrv.Get(Currency, Row.Date);
-	RowRecord["Rate" + Side] = info.Rate;
-	RowRecord["Factor" + Side] = info.Factor;
-	RowRecord.Amount = (amount * info.rate) / Max(info.Factor, 1);
-	Row.Currency = true;
-	
-EndProcedure
-
-Procedure fillCr(RowRecord, Row, Data)
-	
-	for each item in Data.Dims do
-		value = getDimValue(Row, item.Dim);
-		if (value = undefined) then
-			continue;
-		endif;
-		RowRecord["DimCr" + item.LineNumber] = value;
-	enddo;
-	if (Data.Fields.Currency) then
-		fillAccountCurrency(RowRecord, Row, "Cr");
-	endif;
-	
-EndProcedure
-
-Procedure setAmount(Object, RowRecord, Row)
-	
-	if (not Row.Currency) then
-		RowRecord.Amount = Row.Amount;
-	endif;
-	Object.Amount = RowRecord.Amount;
+	dim = "Dim" + side;
+	rowRecord [ dim + "1" ] = Row.Dim1;
+	rowRecord [ dim + "2" ] = Row.Dim2;
+	rowRecord [ dim + "3" ] = Row.Dim3;
+	rowRecord [ "Currency" + side ] = Row.Currency;
+	rowRecord [ "CurrencyAmount" + side ] = Row.CurrencyAmount;
+	rowRecord [ "Rate" + side ] = Row.Rate;
+	rowRecord [ "Factor" + side ] = Row.Factor;
+	dim = "Dim" + bankSide;
+	rowRecord [ dim + "1" ] = BankAccount;
+	rowRecord [ dim + "2" ] = Row.CashFlow;
+	rowRecord.Amount = amount;
+	writeDocument(object, Row, newDocument);
 	
 EndProcedure
 
@@ -450,8 +391,6 @@ Procedure createExpenses()
 	endif;
 	operations = Enums.BankOperations;
 	vendorPayment = operations.VendorPayment;
-	internal = operations.InternalMovement;
-	accounts = Env.InternalAccounts;
 	for each row in table do
 		if (not row.Download) then
 			continue;
@@ -465,14 +404,7 @@ Procedure createExpenses()
 		elsif ( operation = Enums.BankOperations.ReturnToCustomer ) then
 			createRefund (row, rowDetail);
 		else
-			if (operation = internal) then
-				row.Internal = true;
-				accountRow = accounts.Find(line, "DetailsLine");
-				if (accountRow <> undefined) then
-					row.InternalAccount = accountRow.BankAccount;
-				endif;
-			endif;
-			createEntry(row, rowDetail);
+			createEntry(row, rowDetail, false);
 		endif;
 	enddo;
 	
@@ -490,7 +422,7 @@ Procedure createVendorPayment(Row, RowDetail)
 		object.SetNewNumber();
 		newDocument = true;
 	endif;
-	object.Vendor = Row.Receiver;
+	object.Vendor = Row.Dim1;
 	object.VendorAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
@@ -516,7 +448,7 @@ Procedure createRefund(Row, RowDetail)
 		object.SetNewNumber();
 		newDocument = true;
 	endif;
-	object.Customer = Row.Receiver;
+	object.Customer = Row.Dim1;
 	object.CustomerAccount = Row.Account;
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);

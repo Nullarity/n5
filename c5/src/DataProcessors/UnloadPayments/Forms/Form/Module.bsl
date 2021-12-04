@@ -28,12 +28,15 @@ Procedure loadAccount ()
 	if ( account.IsEmpty () ) then
 		data = DF.Values ( Object.Company, "
 		|BankAccount,
-		|BankAccount.Application as Application,
-		|BankAccount.Unloading as Unloading,
-		|BankAccount.UnloadingSalary as UnloadingSalary" );
+		|BankAccount.Bank.Application as Application,
+		|BankAccount.Bank.Application.Unloading as Unloading,
+		|BankAccount.Bank.Application.UnloadingSalary as UnloadingSalary" );
 		Object.Account = data.BankAccount;
 	else
-		data = DF.Values ( account, "Application, Unloading, UnloadingSalary" );
+		data = DF.Values ( account, "
+		|Bank.Application as Application,
+		|Bank.Application.Unloading as Unloading,
+		|Bank.Application.UnloadingSalary as UnloadingSalary" );
 	endif;
 	Object.BankingApp = data.Application;
 	Object.Path = data.Unloading;

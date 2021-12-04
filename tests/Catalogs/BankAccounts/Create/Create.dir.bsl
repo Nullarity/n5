@@ -65,6 +65,22 @@ else
 	if ( _.Currency <> undefined ) then
 		Set ( "#Currency", _.Currency );
 	endif;
+	if ( _.Taxes  ) then
+		Click ( "#Taxes" );
+	endif;
+	if ( _.AccountTax <> undefined ) then
+		Set ( "#AccountTax", _.AccountTax );
+		Next ();
+	endif;
+	if ( _.Dim1 <> undefined ) then
+		Set ( "#Dim1", _.Dim1 );
+	endif;
+	if ( _.Dim2 <> undefined ) then
+		Set ( "#Dim2", _.Dim2 );
+	endif;
+	if ( _.Dim3 <> undefined ) then
+		Set ( "#Dim3", _.Dim3 );
+	endif;
 
 	Click ( "#FormWrite" );
 	code = Fetch ( "#Code" );
