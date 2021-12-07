@@ -1500,7 +1500,7 @@
           <horizontalAlign>Left</horizontalAlign>
         </extInfo>
       </extendedTooltip>
-      <commandName>DocumentJournal.PettyCash.Command.Print</commandName>
+      <commandName>DocumentJournal.Cash.Command.Print</commandName>
       <representation>Auto</representation>
       <autoMaxWidth>true</autoMaxWidth>
       <autoMaxHeight>true</autoMaxHeight>
@@ -1551,8 +1551,8 @@
 	List.Creator, List.Currency, List.Location, List.Memo, List.Name, List.Type,
 	case when List.Ref refs Document.CashReceipt then List.Amount else 0 end as Receipt,
 	case when List.Ref refs Document.CashVoucher then List.Amount else 0 end as Expense
-from DocumentJournal.PettyCash as List</queryText>
-      <mainTable>DocumentJournal.PettyCash</mainTable>
+from DocumentJournal.Cash as List</queryText>
+      <mainTable>DocumentJournal.Cash</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
