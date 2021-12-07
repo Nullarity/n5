@@ -413,6 +413,8 @@ Procedure read ()
 		endif;		
 		FileXml = Mid ( FileExchange, 1, StrLen ( FileExchange ) - 3 ) + "xml";
 		deleteFile ( FileExchange );
+	else
+		FileXml = FileExchange;
 	endif;
 	if ( FileXml = "" ) then
 		return;
@@ -788,11 +790,9 @@ Procedure handleErrors ( AttachedObjects = Undefined )
 	SendReport = not catObject.SendedEMailError and ( catObject.NumbersOfErrors >= catObject.MaximumErrors );
 	catObject.NumbersOfErrors = catObject.NumbersOfErrors + 1;
 	if ( SendReport and catObject.SendEMailErrors ) then
-		if ( ScheduledJob ) then
-			// send email if scheduled job
-			senErrorReport ( AttachedObjects );
-			catObject.SendedEMailError = true;
-		endif;
+		// send email if scheduled job
+		senErrorReport ( AttachedObjects );
+		catObject.SendedEMailError = true;
 	endif; 
 	catObject.Write ();
 	

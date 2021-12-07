@@ -292,6 +292,7 @@ EndProcedure
 Function getEmailMessage ( User, DataReceiver, Theme, AttachedObjects, TextMessage ) export
 	
 	emailMessage = new InternetMailMessage;
+	emailMessage.From = Cloud.Noreply ();
 	emailMessage.SenderName = User;
 	emailMessage.Subject = Theme;
 	if ( ValueIsFilled ( TextMessage ) ) then
@@ -304,7 +305,8 @@ EndFunction
 
 Procedure addAttachedObjects ( EmailMessage, AttachedObjects )
 	
-	if ( TypeOf ( AttachedObjects ) = Type ( "String" ) ) then
+	if ( TypeOf ( AttachedObjects ) = Type ( "String" )
+		and AttachedObjects <> "" ) then
 		EmailMessage.Attachments.Add ( AttachedObjects );
 	else
 		// code ...
