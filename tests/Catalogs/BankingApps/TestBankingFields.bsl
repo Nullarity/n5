@@ -4,3 +4,5 @@ Call ( "Common.Init" );
 CloseAll ();
 
 Commando("e1cib/command/Catalog.BankingApps.Create");
+Set ( "#Application", "Eximbank" );
+Next ();

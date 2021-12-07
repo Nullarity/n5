@@ -78,3 +78,17 @@ Procedure UnloadPayments ( Command )
 	OpenForm ( "DataProcessor.UnloadPayments.Form" );
 
 EndProcedure
+
+&AtClient
+Procedure TaxesOnlyOnChange ( Item )
+	
+	filterByTaxes ();
+
+EndProcedure
+
+&AtClient
+Procedure filterByTaxes ()
+	
+	DC.ChangeFilter ( List, "Taxes", TaxesOnly, TaxesOnly );
+
+EndProcedure

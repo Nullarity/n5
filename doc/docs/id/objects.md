@@ -8,6 +8,7 @@
 |Адреса|Addresses|
 |Адресная книга|AddressBook|
 |Банки|Banks|
+|Банковские приложения|BankingApps|
 |Банковские счета|BankAccounts|
 |Валюты|Currencies|
 |Варианты оплаты|PaymentOptions|
@@ -292,7 +293,6 @@
 |Выбор цвета|Colors|
 |Выгрузка в банк|UnloadPayments|
 |Выгрузка накладных|UnloadInvoices|
-|Выгрузка описания структуры метаданных конфигурации 8|UnloadMetadata|
 |Генерация промо-кодов|PromoCodes|
 |Загрузка валют|DownloadCurrencies|
 |Загрузка накладных|LoadInvoices|

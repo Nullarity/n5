@@ -91,9 +91,10 @@ EndProcedure
 &AtClientAtServerNoContext
 Procedure applyBankAccount(val Object)
 	
-	data = DF.Values(Object.BankAccount, "Account, Bank.Application as Application");
+	data = DF.Values(Object.BankAccount, "Account, Bank.Application as Application, Bank.Application.Loading as Path");
 	Object.Account = data.Account;
 	Object.Application = data.Application;
+	Object.Path = data.Path;
 	
 EndProcedure
 
@@ -399,9 +400,16 @@ EndProcedure
 &AtClient
 Procedure ApplicationOnChange(Item)
 	
-	Object.Path = "";
+	setPath ();
 	makeDirty();
 	
+EndProcedure
+
+&AtClient
+Procedure setPath ()
+	
+	Object.Path = DF.Pick ( Object.Application, "Loading", "" );
+
 EndProcedure
 
 &AtClient

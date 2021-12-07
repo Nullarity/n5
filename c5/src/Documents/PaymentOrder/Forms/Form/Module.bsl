@@ -87,6 +87,7 @@ EndProcedure
 Procedure fillNew ()
 
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
+		Object.Unload = true;
 		return;
 	endif;
 	settings = Logins.Settings ( "Company" );
