@@ -32,7 +32,7 @@ Click ( "#FormPost" );
 // ************
 
 #region checkIfExpenseRemoved
-Call ("Journals.PettyCash.ListByMemo", receiptID);
+Call ("Journals.Cash.ListByMemo", receiptID);
 With ();
 Assert (Call("Table.Count", Get("#List"))).Equal (2);
 Click ( "#FormSetDeletionMark" );

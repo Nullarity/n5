@@ -544,6 +544,10 @@ Procedure openDocument ( Ref, Copying )
 		name = "VendorPayment";
 	elsif ( type = Type ( "DocumentRef.PayEmployees" ) ) then
 		name = "PayEmployees";
+	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
+		name = "Refund";
+	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
+		name = "VendorRefund";
 	else
 		name = "Entry";
 	endif; 

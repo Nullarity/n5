@@ -19,7 +19,7 @@ Click ( "#FormPost" );
 #endregion
 
 #region checkCopying
-Call ("Journals.PettyCash.ListByMemo", id);
+Call ("Journals.Cash.ListByMemo", id);
 With ();
 Click("#FormCopy");
 With();
