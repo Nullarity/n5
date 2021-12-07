@@ -7912,7 +7912,7 @@ EndFunction
 &AtServer
 Procedure EFacturaForGovernment ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en = 'For a government organization, the tax invoice is uploaded to the E-Factura system';ro = 'Pentru o organizație guvernamentală, factura fiscală este încărcată în sistemul E-Factura';ru = 'Для государственной организации налоговая накладная выгружается в систему E-Factura'" );
+	text = NStr ( "en = 'For the government organization, the tax invoice is uploaded to the E-Factura system';ro = 'Pentru o organizație guvernamentală, factura fiscală este încărcată în sistemul E-Factura';ru = 'Для государственной организации налоговая накладная выгружается в систему E-Factura'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure

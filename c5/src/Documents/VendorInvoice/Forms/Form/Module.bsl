@@ -231,6 +231,8 @@ Procedure readAppearance ()
 	|Warning show
 	|inlist ( ItemsPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted ) 
 	|or inlist ( ServicesPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Unregistered disable Object.Import;
+	|Import disable Object.Unregistered;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -2179,8 +2181,21 @@ EndProcedure
 Procedure applyCurrency ()
 	
 	InvoiceForm.SetRate ( ThisObject );
-//	InvoiceForm.SetPaymentsApplied ( ThisObject );
 	updateTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
+	
+EndProcedure
+
+&AtClient
+Procedure ImportOnChange  (Item )
+	
+	Appearance.Apply ( ThisObject, "Object.Import" );
+
+EndProcedure
+
+&AtClient
+Procedure UnregisteredOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.Unregistered" );
 	
 EndProcedure

@@ -199,6 +199,7 @@ from (
 		Table.Ref.Date as DocumentDate, Table.Ref.Number as DocumentNumber
 	from Document.VendorInvoice.Accounts as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -211,6 +212,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.FixedAssets as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -223,6 +225,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.IntangibleAssets as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -235,6 +238,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Items as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -247,6 +251,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Services as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -259,6 +264,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Discounts as Table
 	where Table.Ref.Posted
+	and Table.Ref.Unregistered = &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -304,6 +310,7 @@ from (
 		on Charges.Ref = Table.Ref
 		and Charges.CustomsGroup = Table.CustomsGroup
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.VAT
@@ -323,6 +330,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Items as Table
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -335,6 +343,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Services as Table
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -347,6 +356,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.FixedAssets as Table
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -359,6 +369,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.IntangibleAssets as Table
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -371,6 +382,7 @@ from (
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Accounts as Table
 	where Table.Ref.Posted
+	and not &amp;Unregistered
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -643,6 +655,21 @@ and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 		<value xsi:nil="true"/>
 		<useRestriction>true</useRestriction>
 		<valueListAllowed>true</valueListAllowed>
+	</parameter>
+	<parameter>
+		<name>Unregistered</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Unregistered</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+		<use>Always</use>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -2033,6 +2060,12 @@ and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>Documents</dcscor:parameter>
 					<dcscor:value xsi:nil="true"/>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Unregistered</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>6958e871-7cc0-4c04-9441-2c151283b225</dcsset:userSettingID>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
