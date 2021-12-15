@@ -889,6 +889,8 @@ Procedure ExpensesSelection(Item, SelectedRow, Field, StandardProcessing)
 	
 	if (Field = Items.ExpensesDocument) then
 		openDocument(ExpensesRow.Document);
+	elsif (Field= Items.ExpensesPaymentOrderID) then
+		openDocument(ExpensesRow.PaymentOrder);
 	endif;
 	
 EndProcedure

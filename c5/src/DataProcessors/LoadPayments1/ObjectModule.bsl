@@ -251,8 +251,8 @@ Function readMobias()
 		row = getDetailsRow(line, false);
 		row.UseExpense = true;
 		row.Type = 1;
-		id = xBase.ID;
-		if (ValueIsFilled(TrimAll(id))) then
+		id = TrimAll(xBase.ID);
+		if (ValueIsFilled(id)) then
 			row.OrderNumber = id;
 			row.OrderDate = dateFromString(xBase.DATAINTROD);
 			row.Date = dateFromString(xBase.DATA);
@@ -270,7 +270,7 @@ Function readMobias()
 			row.ReceiverIBAN = receiverAccount;
 		else
 			row.Expense = true;
-			row.OrderNumber = xBase.ID_D;
+			row.OrderNumber = TrimAll ( xBase.ID_D );
 			date = dateFromString(xBase.DATA_D);
 			row.OrderDate = date;
 			row.Date = date;
@@ -380,7 +380,7 @@ Function readMaib()
 		xBase.GoTo(line);
 		processingLine(line);
 		row = getDetailsRow(line - 1, false);
-		row.OrderNumber = xBase.NDOC;
+		row.OrderNumber = TrimAll ( xBase.NDOC );
 		date = xBase.DATA;
 		row.OrderDate = date;
 		row.Date = date;
@@ -517,7 +517,7 @@ Function readEximbank()
 	if (xBase = undefined) then
 		return false;
 	endif;
-	currency = DF.Pick(BankAccount, "Currency.Description as Currency");
+	currency = DF.Pick(BankAccountCurrency, "Description as Currency");
 	for line = 2 to xBase.RecCount() do
 		xBase.GoTo(line);
 		if (not checkCurrency(xBase, currency)) then
@@ -525,7 +525,7 @@ Function readEximbank()
 		endif;
 		processingLine(line);
 		row = getDetailsRow(line - 1, false);
-		row.OrderNumber = xBase.NDOC;
+		row.OrderNumber = TrimAll ( xBase.DOCUMENT );
 		date = xBase.DATA;
 		row.OrderDate = date;
 		row.Date = date;
@@ -647,7 +647,7 @@ Function readFinComPay()
 		row = getDetailsRow(line);
 		row.Amount = Conversion.StringToNumber ( rowFile.AMOUNT ) / 100;
 		row.UseExpense = true;
-		row.OrderNumber = rowFile.DOCUMENTNO;
+		row.OrderNumber = TrimAll ( rowFile.DOCUMENTNO );
 		row.OrderDate = finComDate ( rowFile.DOCUMENTDATE );
 		row.Date = finComDate ( rowFile.POSTINGDATE );
 		row.PaymentContent = rowFile.DETAILSOFPAYMENT;
@@ -809,7 +809,7 @@ Function readComert()
 	for each row in table do
 		processingLine(line);
 		newRow = getDetailsRow(line);
-		newRow.OrderNumber = row.ndoc;
+		newRow.OrderNumber = TrimAll ( row.ndoc );
 		date = comertDate ( row.ddoc );
 		newRow.OrderDate = date;
 		newRow.Date = date;
@@ -910,7 +910,7 @@ Function readEuroCreditBank()
 			Progress.Put(Output.WrongFileFormat(), JobKey, true);
 			return false;
 		endif;
-		row.OrderNumber = values[12];
+		row.OrderNumber = TrimAll ( values[12] );
 		try
 			date = Date(values[14]);
 		except
@@ -1177,7 +1177,7 @@ Procedure sqlPaymentOrders()
 	|	Documents.Recipient.CodeFiscal as ReceiverFiscalCode, Documents.ID as OrderNumber,
 	|	Documents.Contract as Contract, Documents.Contract.Customer as Customer, Documents.Taxes as Taxes,
 	|	Documents.Account as Account, Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3,
-	|	Documents.RecipientBankAccount as RecipientBankAccount
+	|	Documents.RecipientBankAccount as RecipientBankAccount, Documents.Ref as Ref, Documents.Amount as Amount
 	|from Document.PaymentOrder as Documents
 	|where not Documents.DeletionMark
 	|and Documents.BankAccount = &BankAccount
@@ -1305,6 +1305,9 @@ EndFunction
 Procedure fillExpense(Row, RowDetail)
 	
 	paymentOrder = Env.PaymentOrders.Find ( RowDetail.OrderNumber, "OrderNumber" );
+	if ( paymentOrder <> undefined ) then
+		Row.PaymentOrder = paymentOrder.Ref;
+	endif;
 	commission = ( paymentOrder = undefined and findContent ( RowDetail, "comision plata, deservirea" ) )
 	or ( paymentOrder <> undefined and paymentOrder.Amount > RowDetail.Amount );
 	if ( commission ) then
