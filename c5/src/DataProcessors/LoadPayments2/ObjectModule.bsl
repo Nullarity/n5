@@ -16,6 +16,7 @@ var Memo;
 var Method;
 var LineProcessing;
 var Dims;
+var LocalCurrency;
 
 Procedure Exec() export
 	
@@ -37,6 +38,7 @@ Procedure init()
 	Receipts = SourceObject.Receipts;
 	Creator = SourceObject.Creator;
 	Currency = DF.Pick ( BankAccount, "Currency" );
+	LocalCurrency = Application.Currency ();
 	Memo = Output.DownloadedFromClientBank ();
 	Method = Enums.PaymentMethods.Bank;
 	LineProcessing = new Structure ( "Line" );
@@ -233,20 +235,23 @@ Procedure loadContract(Object, Row)
 	Object.Contract = Row.Dim2;
 	Object.Account = Account;
 	Object.BankAccount = BankAccount;
-	Object.Currency = Currency;
-	setRates(Object);
+	rowCurrency = Row.Currency;
+	if ( ValueIsFilled ( rowCurrency ) ) then
+		Object.Currency = rowCurrency;
+		Object.Rate = Row.Rate;
+		Object.Factor = Row.Factor;
+		Object.Amount = Row.CurrencyAmount;
+		Object.ContractAmount = Row.Amount;
+	else
+		Object.Currency = Currency;
+		info = CurrenciesSrv.Get(Currency, Object.Date);
+		Object.Rate = info.Rate;
+		Object.Factor = info.Factor;
+		Object.Amount = Row.Amount;
+	endif;
 	PaymentForm.LoadContract(Object);
 	Object.CashFlow = Row.CashFlow;
 	Object.Method = Method;
-	Object.Amount = Row.Amount;
-	
-EndProcedure
-
-Procedure setRates(Object)
-	
-	info = CurrenciesSrv.Get(Currency, Object.Date);
-	Object.Rate = info.Rate;
-	Object.Factor = info.Factor;
 	
 EndProcedure
 

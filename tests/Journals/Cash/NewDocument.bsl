@@ -11,7 +11,7 @@ CloseAll ();
 // Open Journal
 // ************
 
-Commando ( "e1cib/list/DocumentJournal.PettyCash" );
+Commando ( "e1cib/list/DocumentJournal.Cash" );
 list = With ( "Petty Cash" );
 
 Activate ( "#List" );

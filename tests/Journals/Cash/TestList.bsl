@@ -15,7 +15,7 @@ createEnv ( env );
 // Open Journal
 // ************
 
-Commando ( "e1cib/list/DocumentJournal.PettyCash" );
+Commando ( "e1cib/list/DocumentJournal.Cash" );
 With ( "Petty Cash" );
 
 // Check filters

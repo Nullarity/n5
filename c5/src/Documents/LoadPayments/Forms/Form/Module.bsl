@@ -13,8 +13,21 @@ var AccountData;
 &AtServer
 Procedure OnReadAtServer(CurrentObject)
 	
+	setCurrency ( ThisObject );
 	Appearance.Apply(ThisObject);
 	
+EndProcedure
+
+&AtClientAtServerNoContext
+Procedure setCurrency ( Form, Currency = undefined )
+	
+	object = Form.Object;
+	if ( Currency = undefined ) then
+		Form.AccountCurrency = DF.Pick ( object.BankAccount, "Currency" );
+	else
+		Form.AccountCurrency = Currency;
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -28,6 +41,7 @@ Procedure OnCreateAtServer(Cancel, StandardProcessing)
 		DocumentForm.Init(Object);
 		fillNew();
 	endif;
+	InvoiceForm.SetLocalCurrency ( ThisObject );
 	readAppearance();
 	Appearance.Apply(ThisObject);
 	
@@ -44,6 +58,7 @@ Procedure readAppearance()
 	|GroupFileInfo show Object.Status = 1;
 	|GroupError show Object.Status = 2;
 	|Receipts Expenses lock Object.Posted;
+	|DetailsCurrencyAmount show AccountCurrency <> LocalCurrency and filled ( AccountCurrency );
 	|#c ExpensesBankOperation unlock ExpensesRow <> undefined and empty ( ExpensesRow.Document );
 	|#c ExpensesAdvanceAccount unlock ExpensesRow <> undefined
 	|	and inlist ( ExpensesRow.BankOperation, Enum.BankOperations.VendorPayment, Enum.BankOperations.ReturnToCustomer );
@@ -84,17 +99,21 @@ Procedure applyCompany()
 	data = DF.Values(Object.Company, "BankAccount, BankAccount.Bank.Application.Loading as Path");
 	Object.BankAccount = data.BankAccount;
 	Object.Path = data.Path;
-	applyBankAccount(Object);
+	applyBankAccount(ThisObject);
 	
 EndProcedure
 
 &AtClientAtServerNoContext
-Procedure applyBankAccount(val Object)
+Procedure applyBankAccount(Form)
 	
-	data = DF.Values(Object.BankAccount, "Account, Bank.Application as Application, Bank.Application.Loading as Path");
-	Object.Account = data.Account;
-	Object.Application = data.Application;
-	Object.Path = data.Path;
+	object = Form.Object;
+	data = DF.Values(object.BankAccount, "
+	|Account, Currency, Bank.Application as Application, Bank.Application.Loading as Path");
+	object.Account = data.Account;
+	object.Application = data.Application;
+	object.Path = data.Path;
+	setCurrency ( Form, data.Currency );
+	Appearance.Apply ( Form, "AccountCurrency" );
 	
 EndProcedure
 
@@ -301,11 +320,13 @@ Procedure runReadFile()
 	p.Application = Object.Application;
 	p.Company = Object.Company;
 	p.BankAccount = Object.BankAccount;
+	p.BankAccountCurrency = AccountCurrency;
 	ResultAddress = PutToTempStorage(undefined, UUID);
 	p.Address = ResultAddress;
 	p.Account = Object.Account;
 	p.OtherExpense = Object.OtherExpense;
 	p.OtherReceipt = Object.OtherReceipt;
+	p.Date = Object.Date;
 	args = new Array();
 	args.Add("LoadPayments1");
 	args.Add(p);
@@ -364,7 +385,7 @@ EndProcedure
 &AtClient
 Procedure BankAccountOnChange(Item)
 	
-	applyBankAccount(Object);
+	applyBankAccount(ThisObject);
 	makeDirty();
 	
 EndProcedure
@@ -806,12 +827,12 @@ EndProcedure
 &AtClient
 Procedure ReceiptsCurrencyOnChange(Item)
 	
-	setCurrency ( ReceiptsRow );
+	setRate ( ReceiptsRow );
 	
 EndProcedure
 
 &AtClient
-Procedure setCurrency ( Row )
+Procedure setRate ( Row )
 	
 	info = CurrenciesSrv.Get ( Row.Currency, Object.Date );
 	Row.Rate = info.Rate;
@@ -882,7 +903,7 @@ EndProcedure
 &AtClient
 Procedure ExpensesBankOperationOnChange(Item)
 	
-	applyBankOperation(ExpensesRow);
+	applyBankOperation(Items.Expenses);
 	
 EndProcedure
 
@@ -934,7 +955,7 @@ EndProcedure
 &AtClient
 Procedure ExpensesCurrencyOnChange(Item)
 
-	setCurrency ( ExpensesRow );
+	setRate( ExpensesRow );
 
 EndProcedure
 

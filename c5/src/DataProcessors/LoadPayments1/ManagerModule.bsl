@@ -7,11 +7,13 @@ Function GetParams () export
 	p.Insert("Application");
 	p.Insert("Company");
 	p.Insert("BankAccount");
+	p.Insert("BankAccountCurrency");
 	p.Insert("Address");
 	p.Insert("Account");
 	p.Insert("InternalMovement");
 	p.Insert("OtherExpense");
 	p.Insert("OtherReceipt");
+	p.Insert("Date");
 	return p;
 	
 EndFunction 

@@ -39,7 +39,7 @@ Click ( "#FormPostAndClose" );
 // Open Petty Chash Journal
 // ************************
 
-Commando ( "e1cib/list/DocumentJournal.PettyCash" );
+Commando ( "e1cib/list/DocumentJournal.Cash" );
 cashList = With ( "Petty Cash" );
 GotoRow ( "#List", "Memo", docID );
 Click ( "#FormUndoPosting" );

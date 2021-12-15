@@ -5,6 +5,9 @@ var JobKey export;
 var App;
 var Company;
 var BankAccount;
+var BankAccountCurrency;
+var LocalCurrency;
+var CurrencyRate;
 var Account;
 var OtherExpense;
 var OtherReceipt;
@@ -53,10 +56,15 @@ Procedure init()
 	ExecuteOnReceipt = ValueIsFilled ( OnReceipt );
 	Company = Parameters.Company;
 	BankAccount = Parameters.BankAccount;
+	BankAccountCurrency = Parameters.BankAccountCurrency;
+	LocalCurrency = Application.Currency ();
 	Account = Parameters.Account;
 	OtherExpense = Parameters.OtherExpense;
 	OtherReceipt = Parameters.OtherReceipt;
 	LineProcessing = new Structure("Line");
+	if ( LocalCurrency <> BankAccountCurrency ) then
+		CurrencyRate = CurrenciesSrv.Get ( BankAccountCurrency, Parameters.Date );
+	endif
 	
 EndProcedure
 
@@ -374,7 +382,8 @@ Function readMaib()
 		date = xBase.DATA;
 		row.OrderDate = date;
 		row.Date = date;
-		row.Amount = xBase.SUMN;
+		row.Amount = xBase.SUML;
+		row.CurrencyAmount = xBase.SUMN;
 		row.PaymentContent = xBase.DE1 + xBase.DE2 + xBase.DE3 + xBase.DE4;
 		row.PayerFiscalCode = xBase.CFC;
 		row.ReceiverFiscalCode = xBase.CFCCOR;
@@ -518,7 +527,8 @@ Function readEximbank()
 		date = xBase.DATA;
 		row.OrderDate = date;
 		row.Date = date;
-		row.Amount = xBase.SUMN;
+		row.Amount = xBase.SUML;
+		row.CurrencyAmount = xBase.SUMN;
 		row.PaymentContent = xBase.DE1 + xBase.DE2 + xBase.DE3 + xBase.DE4;
 		row.TransferType = xBase.URGENT;
 		row.TransactionCode = TrimAll(xBase.COD_TRANZ);
@@ -1017,7 +1027,7 @@ Procedure sqlDetails()
 	|	case when Details.UseExpense then Details.Expense else Details.PayerFiscalCode = &CodeFiscal end as Expense,
 	|	case when Details.UseExpense
 	|		then ( Details.Expense and Details.ReceiverFiscalCode = &CodeFiscal ) or ( not Details.Expense and Details.PayerFiscalCode = &CodeFiscal )
-	|		else Details.PayerFiscalCode = &CodeFiscal and Details.ReceiverFiscalCode = &CodeFiscal or Details.ReceiverFiscalCode = """"
+	|		else Details.PayerFiscalCode = &CodeFiscal and Details.ReceiverFiscalCode = &CodeFiscal
 	|	end as Internal
 	|into Details
 	|from &Details as Details
@@ -1102,18 +1112,55 @@ Procedure sqlOrganizations()
 	
 	s = "
 	|// #Organizations
-	|select Details.LineNumber as LineNumber, Organizations.Ref as Organization, Organizations.Customer as Customer, 
-	|	Organizations.CustomerContract as CustomerContract, Organizations.Vendor as Vendor, Organizations.VendorContract as VendorContract,
-	|	Organizations.CustomerContract.CustomerCashFlow as CustomerCashFlow, Organizations.VendorContract.VendorCashFlow as VendorCashFlow
+	|select Details.LineNumber as LineNumber, Organizations.Ref as Organization, Organizations.Ref.Customer as Customer, 
+	|	Organizations.Ref.CustomerContract as CustomerContract, Organizations.Ref.Vendor as Vendor,
+	|	Organizations.Ref.VendorContract as VendorContract, Organizations.Ref.CustomerContract.CustomerCashFlow as CustomerCashFlow,
+	|	Organizations.Ref.VendorContract.VendorCashFlow as VendorCashFlow
 	|from Details as Details
 	|	//
-	|	//	Organizations
+	|	// Organizations
 	|	//
-	|	join Catalog.Organizations as Organizations
-	|	on not Organizations.DeletionMark
-	|	and Organizations.CodeFiscal = case when Details.Expense then Details.ReceiverFiscalCode else Details.PayerFiscalCode end
-	|where not Details.Error
-	|and Organizations.CodeFiscal <> """"
+	|	join (
+	|		select Details.LineNumber as LineNumber, Organizations.Ref as Ref
+	|		from Details as Details
+	|			//
+	|			//	Organizations
+	|			//
+	|			join Catalog.Organizations as Organizations
+	|			on not Organizations.DeletionMark
+	|			and Organizations.CodeFiscal = case when Details.Expense then Details.ReceiverFiscalCode else Details.PayerFiscalCode end
+	|		where not Details.Error
+	|		and Organizations.CodeFiscal <> """"
+	|		union
+	|		select Details.LineNumber, BankAccounts.Owner
+	|		from Details as Details
+	|			//
+	|			//	BankAccounts
+	|			//
+	|			join Catalog.BankAccounts as BankAccounts
+	|			on not BankAccounts.DeletionMark
+	|			and BankAccounts.AccountNumber = Details.ReceiverAccount
+	|			and BankAccounts.Owner refs Catalog.Organizations
+	|		where not Details.Error
+	|		and Details.Expense
+	|		and Details.ReceiverFiscalCode = """"
+	|		and Details.ReceiverAccount <> """"
+	|		union
+	|		select Details.LineNumber, BankAccounts.Owner
+	|		from Details as Details
+	|			//
+	|			//	BankAccounts
+	|			//
+	|			join Catalog.BankAccounts as BankAccounts
+	|			on not BankAccounts.DeletionMark
+	|			and BankAccounts.AccountNumber = Details.PayerAccount
+	|			and BankAccounts.Owner refs Catalog.Organizations
+	|		where not Details.Error
+	|		and not Details.Expense
+	|		and Details.PayerFiscalCode = """"
+	|		and Details.PayerAccount <> """"
+	|	) as Organizations
+	|	on Organizations.LineNumber = Details.LineNumber
 	|";
 	Env.Selection.Add(s);
 	
@@ -1328,6 +1375,12 @@ Procedure fillExpense(Row, RowDetail)
 		endif;
 	endif;
 	Row.PaymentContent = RowDetail.PaymentContent;
+	if ( BankAccountCurrency <> LocalCurrency ) then
+		Row.CurrencyAmount = RowDetail.CurrencyAmount;
+		Row.Currency = BankAccountCurrency;
+		Row.Rate = CurrencyRate.Rate;
+		Row.Factor = CurrencyRate.Factor;
+	endif;
 	if ( ExecuteOnExpense ) then
 		SetSafeMode ( true );
 		Execute ( OnExpense );
@@ -1385,6 +1438,12 @@ Procedure fillReceipt(Row, RowDetail)
 		endif;
 	endif;
 	Row.PaymentContent = RowDetail.PaymentContent;
+	if ( BankAccountCurrency <> LocalCurrency ) then
+		Row.CurrencyAmount = RowDetail.CurrencyAmount;
+		Row.Currency = BankAccountCurrency;
+		Row.Rate = CurrencyRate.Rate;
+		Row.Factor = CurrencyRate.Factor;
+	endif;
 	if ( ExecuteOnReceipt ) then
 		SetSafeMode ( true );
 		Execute ( OnReceipt );
