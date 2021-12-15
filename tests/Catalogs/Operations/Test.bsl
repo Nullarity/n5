@@ -29,3 +29,7 @@ CheckState ( "#DimCr1", "Enable" );
 CheckState ( "#DimCr2", "Enable" );
 CheckState ( "#DimCr3", "Enable", false );
 #endregion
+
+Set ("#Description", "Operation " + Call("Common.GetID"));
+Click("#FormWrite");
+Click("#FormReread");
