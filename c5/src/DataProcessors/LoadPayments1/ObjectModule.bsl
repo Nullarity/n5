@@ -11,6 +11,8 @@ var CurrencyRate;
 var Account;
 var OtherExpense;
 var OtherReceipt;
+var OtherExpenseData;
+var OtherReceiptData;
 var Details;
 var Expenses;
 var Receipts;
@@ -20,8 +22,6 @@ var PaymentOrdersFilter;
 var LineProcessing;
 var DetailsTable;
 var AccountInternal;
-var AccountOtherExpense;
-var AccountOtherReceipt;
 var Path;
 var OnExpense;
 var OnReceipt;
@@ -84,8 +84,10 @@ EndProcedure
 
 Procedure initAccounts()
 	
-	AccountOtherExpense = DF.Pick(OtherExpense, "AccountDr");
-	AccountOtherReceipt = DF.Pick(OtherReceipt, "AccountCr");
+	OtherExpenseData = DF.Values(OtherExpense, "
+	|AccountDr as Account, DimDr1 as Dim1, DimDr2 as Dim2, DimDr3 as Dim3");
+	OtherReceiptData = DF.Values(OtherReceipt, "
+	|AccountCr as Account, DimCr1 as Dim1, DimCr2 as Dim2, DimCr3 as Dim3");
 	
 EndProcedure
 
@@ -1308,8 +1310,8 @@ Procedure fillExpense(Row, RowDetail)
 	if ( commission ) then
 		Row.BankOperation = Enums.BankOperations.OtherExpense;
 		Row.CashFlow = Env.FlowOtherExpense;
-		Row.Account = AccountOtherExpense;
 		Row.Operation = OtherExpense;
+		setOperation ( Row, OtherExpenseData );
 	else
 		if ( paymentOrder = undefined ) then
 			if (RowDetail.Internal) then
@@ -1388,6 +1390,15 @@ Procedure fillExpense(Row, RowDetail)
 	
 EndProcedure
 
+Procedure setOperation ( Row, Data )
+	
+	Row.Account = Data.Account;
+	Row.Dim1 = Data.Dim1;
+	Row.Dim2 = Data.Dim2;
+	Row.Dim3 = Data.Dim3;
+
+EndProcedure
+
 Procedure setCashFlow(Row, CashFlowContract, EnvCashFlow)
 	
 	if (ValueIsFilled(CashFlowContract)) then
@@ -1416,8 +1427,8 @@ Procedure fillReceipt(Row, RowDetail)
 	if (rowPayer = undefined) then
 		Row.BankOperation = Enums.BankOperations.OtherReceipt;
 		Row.CashFlow = Env.FlowOtherReceipt;
-		Row.Account = AccountOtherReceipt;
 		Row.Operation = OtherReceipt;
+		setOperation ( Row, OtherReceiptData );
 	else
 		payer = rowPayer.Organization;
 		Row.Dim1 = payer;
@@ -1484,8 +1495,8 @@ Procedure findOperations(Row, RowDetail, IsMaib)
 			endif;
 			Row.BankOperation = operation;
 			Row.CashFlow = Env.FlowOtherExpense;
-			Row.Account = AccountOtherExpense;
 			Row.Operation = OtherExpense;
+			setOperation ( Row, OtherExpenseData );
 		else
 			operation = Enums.BankOperations.OtherReceipt;
 			if (Row.BankOperation = operation) then
@@ -1493,8 +1504,8 @@ Procedure findOperations(Row, RowDetail, IsMaib)
 			endif;
 			Row.BankOperation = operation;
 			Row.CashFlow = Env.FlowOtherReceipt;
-			Row.Account = AccountOtherReceipt;
 			Row.Operation = OtherReceipt;
+			setOperation ( Row, OtherReceiptData );
 		endif;
 	endif;
 	

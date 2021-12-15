@@ -460,6 +460,9 @@ Procedure FixAccounts ( Form ) export
 		Form.AccountDr = account;
 		tableRow.AccountDr = account;
 		EntryForm.AccountDrOnChange ( Form );
+		tableRow.DimDr1 = operation.DimDr1;
+		tableRow.DimDr2 = operation.DimDr2;
+		tableRow.DimDr3 = operation.DimDr3;
 	endif;
 	account = Operation.AccountCr;
 	if ( tableRow.AccountCr <> account
@@ -467,6 +470,9 @@ Procedure FixAccounts ( Form ) export
 		Form.AccountCr = account;
 		tableRow.AccountCr = account;
 		EntryForm.AccountCrOnChange ( Form );
+		tableRow.DimCr1 = operation.DimCr1;
+		tableRow.DimCr2 = operation.DimCr2;
+		tableRow.DimCr3 = operation.DimCr3;
 	endif;
 	
 EndProcedure 
