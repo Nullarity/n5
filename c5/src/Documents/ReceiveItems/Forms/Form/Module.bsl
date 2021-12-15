@@ -21,20 +21,13 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	setLocalCurrency ();
+	InvoiceForm.SetLocalCurrency ( ThisObject );
 	readAccount ();
 	labelDims ();
 	setSocial ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
-
-&AtServer
-Procedure setLocalCurrency ()
-	
-	LocalCurrency = Application.Currency ();
-	
-EndProcedure 
 
 &AtServer
 Procedure readAccount ()
@@ -59,7 +52,7 @@ EndProcedure
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
-		setLocalCurrency ();
+		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
 		Base = Parameters.Basis;
 		if ( Base = undefined ) then

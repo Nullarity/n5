@@ -13,7 +13,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	loadParams ();
 	disableAccounts ();
-	LocalCurrency = Application.Currency ();
+	InvoiceForm.SetLocalCurrency ( ThisObject );
 	Options.Company ( ThisObject, Object.Company );
 	
 EndProcedure

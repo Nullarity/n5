@@ -55,7 +55,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		enableWarning ( ThisObject );
 		defineCopy ();
 	endif; 
-	LocalCurrency = Application.Currency ();
+	InvoiceForm.SetLocalCurrency ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "RecordsQuantityDr, RecordsQuantityCr" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
