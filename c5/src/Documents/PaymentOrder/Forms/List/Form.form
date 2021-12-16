@@ -269,6 +269,72 @@
     <defaultItem>true</defaultItem>
     <titleLocation>None</titleLocation>
     <items xsi:type="form:FormField">
+      <name>Paid</name>
+      <id>127</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.ToPay</segments>
+      </dataPath>
+      <titleLocation>None</titleLocation>
+      <toolTip>
+        <key>en</key>
+        <value>To Pay</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>К оплате</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Pentru a plăti</value>
+      </toolTip>
+      <extendedTooltip>
+        <name>PaidExtendedTooltip</name>
+        <id>129</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>PaidContextMenu</name>
+        <id>128</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>PictureField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:ImageFieldExtInfo">
+        <width>1</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <horizontalStretch>true</horizontalStretch>
+        <verticalStretch>true</verticalStretch>
+        <valuesPicture xsi:type="core:PictureRef">
+          <picture>CommonPicture.PaymentOrderStatuses</picture>
+        </valuesPicture>
+        <fileDragMode>AsFileRef</fileDragMode>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>Upload</name>
       <id>90</id>
       <title>
@@ -1053,9 +1119,23 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select PaymentOrder.Ref, PaymentOrder.DeletionMark, PaymentOrder.Number, PaymentOrder.Date, PaymentOrder.Posted, 
+	PaymentOrder.Account, PaymentOrder.Amount, PaymentOrder.BankAccount, PaymentOrder.Base, PaymentOrder.CashFlow, 
+	PaymentOrder.Company, PaymentOrder.Contract, PaymentOrder.Creator, PaymentOrder.Dim1, PaymentOrder.Dim2, 
+	PaymentOrder.Dim3, PaymentOrder.Division, PaymentOrder.ExcludeTaxes, PaymentOrder.ID, PaymentOrder.IncomeTax, 
+	PaymentOrder.IncomeTaxRate, PaymentOrder.Memo, PaymentOrder.PaidBy, PaymentOrder.PaymentContent, 
+	PaymentOrder.Recipient, PaymentOrder.RecipientBankAccount, PaymentOrder.RecipientPresentation, PaymentOrder.Salary, 
+	PaymentOrder.Taxes, PaymentOrder.ToCompany, PaymentOrder.Unload, PaymentOrder.Urgent, PaymentOrder.VAT, 
+	PaymentOrder.VATRate, PaymentOrder.PointInTime,
+	case when PaymentOrder.DeletionMark or PaymentOrder.Paid then 0
+		when PaymentOrder.Unload then 1
+		else 2
+	end as ToPay
+from Document.PaymentOrder as PaymentOrder</queryText>
       <mainTable>Document.PaymentOrder</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
     </extInfo>

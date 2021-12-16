@@ -235,9 +235,8 @@ Procedure loadContract(Object, Row)
 	Object.Contract = Row.Dim2;
 	Object.Account = Account;
 	Object.BankAccount = BankAccount;
-	rowCurrency = Row.Currency;
-	if ( ValueIsFilled ( rowCurrency ) ) then
-		Object.Currency = rowCurrency;
+	if ( ValueIsFilled ( Row.Currency ) ) then
+		Object.Currency = Row.Currency;
 		Object.Rate = Row.Rate;
 		Object.Factor = Row.Factor;
 		Object.Amount = Row.CurrencyAmount;
@@ -411,6 +410,7 @@ Procedure createExpenses()
 		else
 			createEntry(row, rowDetail, false);
 		endif;
+		payPaymentOrder ( row );
 	enddo;
 	
 EndProcedure
@@ -464,6 +464,29 @@ Procedure createRefund(Row, RowDetail)
 	clean(object.Payments);
 	writeDocument(object, Row, newDocument);
 	
+EndProcedure
+
+Procedure payPaymentOrder ( Row )
+	
+	if ( Row.Document = undefined
+		or Row.PaymentOrder.IsEmpty () ) then
+		return;
+	endif;
+	obj = Row.PaymentOrder.GetObject ();
+	if ( obj.DeletionMark
+		or obj.Paid ) then
+		return;
+	endif;
+	obj.Paid = true;
+	obj.PaidBy = Row.Document;
+	SetPrivilegedMode(true);
+	try
+		obj.Write();
+	except
+		Progress.Put(Output.ErrorSavingBankDocument(new Structure("Line, Error", Row.LineNumber, ErrorDescription())), JobKey, true);
+	endtry;
+	SetPrivilegedMode(false);
+
 EndProcedure
 
 Procedure complete()

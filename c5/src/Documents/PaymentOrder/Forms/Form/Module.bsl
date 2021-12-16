@@ -68,16 +68,22 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|PaidWarning show Object.Paid;
 	|Base show filled ( Object.Base );
-	|Contract enable Object.Recipient <> Object.Company;
-	|VAT enable filled ( Object.VATRate );
-	|IncomeTax enable Object.IncomeTaxRate > 0;
-	|Amount lock Object.Salary;
-	|VAT VATRate IncomeTax IncomeTaxRate ExcludeTaxes Taxes ToCompany hide Object.Salary;
+	|Contract enable Object.Recipient <> Object.Company and not Object.Paid;
+	|VAT enable filled ( Object.VATRate ) and not Object.Paid;
+	|IncomeTax enable Object.IncomeTaxRate > 0 and not Object.Paid;
+	|Amount lock Object.Salary or Object.Paid;
+	|VATRate IncomeTaxRate ExcludeTaxes Taxes ToCompany hide Object.Salary;
 	|Account show Object.Taxes;
 	|Dim1 show DimLevel > 0 and Object.Taxes;
 	|Dim2 show DimLevel > 1 and Object.Taxes;
 	|Dim3 show DimLevel > 2 and Object.Taxes;
+	|PaidBy show Object.Paid;
+	|Company BankAccount TerritorialDepartment Recipient ContractorPresentation
+	|RecipientBankAccount CashFlow VATRate IncomeTaxRate Taxes Account Dim1 Dim2 Dim3 PaymentContent
+	|PrintPaymentContent ExcludeTaxes Unload Urgent ToCompany Number Date
+	|	lock Object.Paid;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -491,4 +497,19 @@ Procedure ExcludeTaxesOnChange ( Item )
 	
 EndProcedure
 
+&AtClient
+Procedure PaidOnChange ( Item )
+	
+	applyPaid ();
+	
+EndProcedure
 
+&AtClient
+Procedure applyPaid ()
+	
+	if ( not Object.Paid ) then
+		Object.PaidBy = undefined;
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Paid" );
+
+EndProcedure

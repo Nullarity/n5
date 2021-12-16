@@ -1023,16 +1023,30 @@ Procedure sqlDetails()
 	
 	detailFields = Env.DetailsFieldsAlias;
 	s = "
+	|// RawDetails
+	|select " + detailFields + ",
+	|	Details.UseExpense as UseExpense, Details.Expense as Expense
+	|into RawDetails
+	|from &Details as Details
+	|;
 	|// Details
-	|select " + detailFields + ", 
+	|select " + detailFields + ",
+	|	BankAccounts.Currency as Currency,
 	|	case when Details.UseExpense or Details.PayerFiscalCode = &CodeFiscal or Details.ReceiverFiscalCode = &CodeFiscal then false else true end as Error,
-	|	case when Details.UseExpense then Details.Expense else Details.PayerFiscalCode = &CodeFiscal end as Expense,
+	|	case when Details.UseExpense then Details.Expense
+	|		else Details.PayerFiscalCode = &CodeFiscal and Details.PayerAccount = BankAccounts.AccountNumber
+	|	end as Expense,
 	|	case when Details.UseExpense
 	|		then ( Details.Expense and Details.ReceiverFiscalCode = &CodeFiscal ) or ( not Details.Expense and Details.PayerFiscalCode = &CodeFiscal )
 	|		else Details.PayerFiscalCode = &CodeFiscal and Details.ReceiverFiscalCode = &CodeFiscal
 	|	end as Internal
 	|into Details
-	|from &Details as Details
+	|from RawDetails as Details
+	|	//
+	|	// BankAccounts
+	|	//
+	|	left join Catalog.BankAccounts as BankAccounts
+	|	on BankAccounts.Ref = &BankAccount
 	|;
 	|// #Details
 	|select " + detailFields + ", Details.Error or Details.Amount = 0 or Details.Date = datetime ( 1, 1, 1 ) as Error,
@@ -1045,6 +1059,7 @@ Procedure sqlDetails()
 	|	left join Catalog.BankAccounts as InternalReceivers
 	|	on InternalReceivers.Owner = &Company
 	|	and InternalReceivers.AccountNumber = Details.ReceiverAccount
+	|	and InternalReceivers.Currency = Details.Currency
 	|	and not InternalReceivers.DeletionMark
 	|	and Details.Internal
 	|	and Details.Expense
@@ -1053,7 +1068,8 @@ Procedure sqlDetails()
 	|	//
 	|	left join Catalog.BankAccounts as InternalSenders
 	|	on InternalSenders.Owner = &Company
-	|	and InternalSenders.AccountNumber = Details.ReceiverAccount
+	|	and InternalSenders.AccountNumber = Details.PayerAccount
+	|	and InternalSenders.Currency = Details.Currency
 	|	and not InternalSenders.DeletionMark
 	|	and Details.Internal
 	|	and not Details.Expense
@@ -1319,8 +1335,11 @@ Procedure fillExpense(Row, RowDetail)
 		if ( paymentOrder = undefined ) then
 			if (RowDetail.Internal) then
 				Row.BankOperation = Enums.BankOperations.OtherExpense;
-				Row.CashFlow = Env.FlowInternal;
+				cashFlow = Env.FlowInternal;
+				Row.CashFlow = cashFlow;
 				Row.Account = Account;
+				Row.Dim1 = RowDetail.InternalReceiverAccount;
+				Row.Dim2 = cashFlow;
 				Row.Operation = OtherExpense;
 			else
 				rowReceiver = Env.Organizations.Find(RowDetail.LineNumber, "LineNumber");
@@ -1426,29 +1445,39 @@ EndFunction
 
 Procedure fillReceipt(Row, RowDetail)
 	
-	rowPayer = Env.Organizations.Find(RowDetail.LineNumber, "LineNumber");
-	if (rowPayer = undefined) then
+	if (RowDetail.Internal) then
 		Row.BankOperation = Enums.BankOperations.OtherReceipt;
-		Row.CashFlow = Env.FlowOtherReceipt;
+		cashFlow = Env.FlowInternal;
+		Row.CashFlow = cashFlow;
+		Row.Account = Account;
+		Row.Dim1 = RowDetail.InternalSenderAccount;
+		Row.Dim2 = cashFlow;
 		Row.Operation = OtherReceipt;
-		setOperation ( Row, OtherReceiptData );
 	else
-		payer = rowPayer.Organization;
-		Row.Dim1 = payer;
-		if (rowPayer.Customer) then
-			Row.Dim2 = rowPayer.CustomerContract;
-			Row.BankOperation = Enums.BankOperations.Payment;
-			setCashFlow(Row, rowPayer.CustomerCashFlow, Env.FlowReceipt);
-			accounts = AccountsMap.Organization(payer, Company, "CustomerAccount, AdvanceTaken");
-			Row.Account = accounts.CustomerAccount;
-			Row.AdvanceAccount = accounts.AdvanceTaken;
+		rowPayer = Env.Organizations.Find(RowDetail.LineNumber, "LineNumber");
+		if (rowPayer = undefined) then
+			Row.BankOperation = Enums.BankOperations.OtherReceipt;
+			Row.CashFlow = Env.FlowOtherReceipt;
+			Row.Operation = OtherReceipt;
+			setOperation ( Row, OtherReceiptData );
 		else
-			Row.Dim2 = rowPayer.VendorContract;
-			Row.BankOperation = Enums.BankOperations.ReturnFromVendor;
-			setCashFlow(Row, rowPayer.VendorCashFlow, Env.FlowOtherReceipt);
-			accounts = AccountsMap.Organization(payer, Company, "VendorAccount, AdvanceTaken");
-			Row.Account = accounts.VendorAccount;
-			Row.AdvanceAccount = accounts.AdvanceTaken;
+			payer = rowPayer.Organization;
+			Row.Dim1 = payer;
+			if (rowPayer.Customer) then
+				Row.Dim2 = rowPayer.CustomerContract;
+				Row.BankOperation = Enums.BankOperations.Payment;
+				setCashFlow(Row, rowPayer.CustomerCashFlow, Env.FlowReceipt);
+				accounts = AccountsMap.Organization(payer, Company, "CustomerAccount, AdvanceTaken");
+				Row.Account = accounts.CustomerAccount;
+				Row.AdvanceAccount = accounts.AdvanceTaken;
+			else
+				Row.Dim2 = rowPayer.VendorContract;
+				Row.BankOperation = Enums.BankOperations.ReturnFromVendor;
+				setCashFlow(Row, rowPayer.VendorCashFlow, Env.FlowOtherReceipt);
+				accounts = AccountsMap.Organization(payer, Company, "VendorAccount, AdvanceTaken");
+				Row.Account = accounts.VendorAccount;
+				Row.AdvanceAccount = accounts.AdvanceTaken;
+			endif;
 		endif;
 	endif;
 	Row.PaymentContent = RowDetail.PaymentContent;
