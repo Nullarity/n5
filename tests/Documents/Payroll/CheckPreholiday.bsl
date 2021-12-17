@@ -81,6 +81,8 @@ Procedure createEnv ( Env )
 	form = With ( "Individuals (create)" );
 	employee1Name = Env.Employee;
 	Put ( "#FirstName", employee1Name );
+	Set("#Code", "88888" + TestingID ());
+	Click("Yes", "1?:*");
 	Click ( "#FormWrite" );
 	employee1Main = Fetch ( "#EmployeeCode" );
 	
