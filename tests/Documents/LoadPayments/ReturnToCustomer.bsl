@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-id = Call("Common.ScenarioID", "A0G6");
+id = Call("Common.ScenarioID", "A0GN");
 env = getEnv(id);
 createEnv(env);
 
@@ -42,7 +42,7 @@ Function getEnv(ID)
 	p.Insert("ID", ID);
 	p.Insert("Customer", "Customer " + ID);
 	p.Insert("Vendor", "Vendor " + ID);
-	p.Insert("Account", "Account " + ID);
+	p.Insert("Account", "BC ""Victoriabank"" S.A. Chisinau, MD74VI000000222462047MDL");
 	return p;
 	
 EndFunction
@@ -53,10 +53,6 @@ Procedure createEnv(Env)
 	if (EnvironmentExists(id)) then
 		return;
 	endif;
-	
-	// ***************************
-	// Create Vendor, bank account
-	// ***************************
 	
 	Commando("e1cib/data/Catalog.Organizations");
 	With("Organizations (create)");
@@ -73,7 +69,7 @@ Procedure createEnv(Env)
 	Click("#Customer");
 	Click("#FormWriteAndClose");
 	CheckErrors();
-		
+
 	RegisterEnvironment(id);
 	
 EndProcedure
