@@ -93,6 +93,8 @@ EndProcedure
 Procedure fillNew ()
 
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
+		Object.Paid = false;
+		Object.PaidBy = undefined;
 		Object.Unload = true;
 		return;
 	endif;
