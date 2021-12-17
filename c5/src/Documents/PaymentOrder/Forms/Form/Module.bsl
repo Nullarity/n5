@@ -92,18 +92,18 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 
-	if ( not Parameters.CopyingValue.IsEmpty () ) then
+	if ( Parameters.CopyingValue.IsEmpty () ) then
+		settings = Logins.Settings ( "Company" );
+		Object.Company = settings.Company;
+		Object.BankAccount = DF.Pick ( Object.Company, "BankAccount" );
+		setRecipient ();
+		applyRecipient ();
+		setPrintPaymentContent ();
+	else
 		Object.Paid = false;
 		Object.PaidBy = undefined;
 		Object.Unload = true;
-		return;
 	endif;
-	settings = Logins.Settings ( "Company" );
-	Object.Company = settings.Company;
-	Object.BankAccount = DF.Pick ( Object.Company, "BankAccount" );
-	setRecipient ();
-	applyRecipient ();
-	setPrintPaymentContent ();
 	
 EndProcedure
 
