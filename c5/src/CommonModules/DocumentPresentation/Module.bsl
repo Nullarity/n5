@@ -10,11 +10,18 @@ EndProcedure
 Procedure StandardPresentation ( Synonym, Data, Presentation, StandardProcessing ) export
 	
 	StandardProcessing = false;
+	if ( Metadata.ScriptVariant = Metadata.ObjectProperties.ScriptVariant.Russian ) then
+		number = Data.Номер;
+		date = Data.Дата;
+	else
+		number = Data.Number;
+		date = Data.Date;
+	endif;
 	Presentation = Synonym
 	+ " #"
-	+ Data.Number
+	+ number
 	+ " "
-	+ Format ( Data.Date, "DLF=D" );
+	+ Format ( date, "DLF=D" );
 	
 EndProcedure
 
