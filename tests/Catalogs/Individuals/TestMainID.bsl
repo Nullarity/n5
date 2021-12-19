@@ -12,6 +12,8 @@ Commando ( "e1cib/data/Catalog.Individuals" );
 form = With ( "Individuals (cr*" );
 id = Call ( "Common.GetID" );
 Set ( "#FirstName", id );
+Set("#Code", "88888" + TestingID ());
+Click("Yes", "1?:*");
 Click ( "#FormWrite" );
 
 Click ( "IDs", GetLinks () );

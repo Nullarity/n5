@@ -12,7 +12,7 @@ Set("#Description", "Company " + id);
 CheckState("#Logo", "Visible", false);
 
 // Upload log and save
-App.SetFileDialogResult(true, __.Files + "Files/logo.png");
+App.SetFileDialogResult(true, __.Files + "logo.png");
 Click("#Upload");
 Click("#Write");
 CheckState("#Logo", "Visible");
