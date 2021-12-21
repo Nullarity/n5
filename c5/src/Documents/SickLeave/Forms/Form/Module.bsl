@@ -181,6 +181,7 @@ Procedure setBase ()
 	|where SickLeaves.Employee = &Employee
 	|and SickLeaves.DateEnd < &Date
 	|and SickLeaves.Ref <> &Ref
+	|and not SickLeaves.DeletionMark
 	|order by SickLeaves.DateEnd desc
 	|";
 	q.SetParameter ( "Employee", Object.Employee );
