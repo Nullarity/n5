@@ -55,6 +55,7 @@ Function exception ( Type )
 	or Type = Type ( "CatalogObject.Constants" )
 	or Type = Type ( "CatalogObject.Books" )
 	or Type = Type ( "CatalogObject.Leads" )
+	or Type = Type ( "CatalogObject.Series" )
 	or Type = Type ( "CatalogObject.Sessions" );
 
 EndFunction 

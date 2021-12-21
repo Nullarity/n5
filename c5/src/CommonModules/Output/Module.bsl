@@ -7916,3 +7916,19 @@ Procedure EFacturaForGovernment ( Params = undefined, Field = "", DataKey = unde
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtClient
+Procedure SeriesDisabled ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SeriesNotSupported" ) export
+
+	text = NoSeries ();
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+Function NoSeries () export
+	
+	text = NStr ( "en = 'Accounting by series aren''t enabled for this item';ro = 'Contabilitatea seriilor nu este activată pentru acest articol';ru = 'По этому элементу не ведется учет по сериям'" );
+	return text;
+
+EndFunction

@@ -66,6 +66,30 @@
   <standardAttributes>
     <dataHistory>Use</dataHistory>
     <name>Owner</name>
+    <synonym>
+      <key>en</key>
+      <value>Item</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товар</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Item</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товар</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
     <fillFromFillingValue>true</fillFromFillingValue>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
@@ -86,7 +110,6 @@
     <dataHistory>Use</dataHistory>
     <name>Description</name>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fillChecking>ShowError</fillChecking>
     <fullTextSearch>Use</fullTextSearch>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -128,46 +151,12 @@
   <descriptionLength>25</descriptionLength>
   <codeType>String</codeType>
   <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
   <defaultPresentation>AsDescription</defaultPresentation>
   <editType>InDialog</editType>
   <choiceMode>BothWays</choiceMode>
   <defaultObjectForm>Catalog.Series.Form.Form</defaultObjectForm>
-  <attributes uuid="522312f1-65ac-4b93-a046-9a1823448bc9">
-    <name>BestBefore</name>
-    <synonym>
-      <key>en</key>
-      <value>Best Before</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Годен до</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Valabil până la</value>
-    </synonym>
-    <type>
-      <types>Date</types>
-      <dateQualifiers/>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Best before</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Годен до</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Valabil până la</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="c95b703b-d969-4309-9627-4d7478af13fa">
     <name>Country</name>
     <synonym>
@@ -187,7 +176,7 @@
     </type>
     <toolTip>
       <key>en</key>
-      <value>Country of Origin</value>
+      <value>Country of origin</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
@@ -203,6 +192,173 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="522312f1-65ac-4b93-a046-9a1823448bc9">
+    <name>ExpirationDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Expiration Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Годен до</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Valabil până la</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Expiration date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Годен до</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valabil până la</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="62a6f0a6-0ad4-4062-9758-cfbccba219bd">
+    <name>ExpirationPeriod</name>
+    <synonym>
+      <key>en</key>
+      <value>Expiration Period</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Срок годности</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Perioada de expirare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Expiration period in months</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Срок годности в месяцах</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Perioada de expirare în luni</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="085ea92c-5867-42ea-9ea7-f837cc1da562">
+    <name>Lot</name>
+    <synonym>
+      <key>en</key>
+      <value>Lot #</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Номер партии</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Lotul #</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>25</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Lot number (series)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный номер партии</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul lotului (serie)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d40af234-afca-40bb-a0ce-f44f1acc74f1">
+    <name>Produced</name>
+    <synonym>
+      <key>en</key>
+      <value>Produced</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата выпуска</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data eliberării</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date of issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата выпуска или производства изделия</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data eliberării</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="7f36f57a-217f-4591-8172-9fb183c7a4d0">
+    <name>Balances</name>
+    <synonym>
+      <key>ru</key>
+      <value>Остатки</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
   <forms uuid="af9d6787-3fd0-4755-859e-67b1837146b9">
     <name>Form</name>
     <synonym>
@@ -212,4 +368,41 @@
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
+  <forms uuid="362deb2e-6b16-4d03-a037-aebd34c46ceb">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <commands uuid="5ad03601-58b0-4b42-afec-c2d73ee0988d">
+    <name>Embedded</name>
+    <synonym>
+      <key>en</key>
+      <value>Series</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Serie</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Серии</value>
+    </synonym>
+    <group>FormNavigationPanelGoTo</group>
+    <commandParameterType>
+      <types>CatalogRef.Items</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Open series list</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Vizualizați lista de serii</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Открыть список серий</value>
+    </toolTip>
+  </commands>
 </mdclass:Catalog>

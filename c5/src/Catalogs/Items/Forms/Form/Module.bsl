@@ -43,8 +43,12 @@ Procedure readAppearance ()
 	|FullDescription lock PropertiesData.ChangeDescription;
 	|PropertiesGroup show inlist ( Object.ObjectUsage, Enum.PropertiesUsage.Inherit, Enum.PropertiesUsage.Special );
 	|OpenObjectUsage enable inlist ( Object.ObjectUsage, Enum.PropertiesUsage.Inherit, Enum.PropertiesUsage.Special );
-	|CostMethod Social CustomsGroup OfficialCode Producer Accuracy show not Object.Service and not Object.Form;
-	|Package CountPackages Weight show not Object.Service;
+	|CostMethod Social CustomsGroup OfficialCode Producer Accuracy hide Object.Service or Object.Form;
+	|Package CountPackages Weight hide Object.Service;
+	|ItemForm hide Object.Service or Object.Product or Object.Series;
+	|Product Features hide Object.Form;
+	|Service hide Object.Form or Object.Series;
+	|Series hide Object.Service or Object.Form;
 	|Write show
 	|not Object.Service
 	|and Packages
@@ -57,8 +61,6 @@ Procedure readAppearance ()
 	|DepartmentItems BOM enable Object.Product and filled ( Object.Ref );
 	|CopyInfo show filled ( CopyingObject ) and Object.Product;
 	|WriteProduct show Object.Product and empty ( Object.Ref );
-	|ItemForm show not Object.Service and not Object.Product;
-	|Service Product Features show not Object.Form;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

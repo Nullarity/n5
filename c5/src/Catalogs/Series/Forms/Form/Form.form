@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:form="http://g5.1c.ru/v8/dt/form">
   <items xsi:type="form:FormField">
-    <name>Code</name>
-    <id>1</id>
+    <name>Lot</name>
+    <id>16</id>
     <visible>true</visible>
     <enabled>true</enabled>
     <userVisible>
       <common>true</common>
     </userVisible>
     <dataPath xsi:type="form:DataPath">
-      <segments>Object.Code</segments>
+      <segments>Object.Lot</segments>
     </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>LotOnChange</name>
+    </handlers>
     <extendedTooltip>
-      <name>CodeExtendedTooltip</name>
-      <id>3</id>
+      <name>LotExtendedTooltip</name>
+      <id>18</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -27,8 +31,8 @@
       </extInfo>
     </extendedTooltip>
     <contextMenu>
-      <name>CodeContextMenu</name>
-      <id>2</id>
+      <name>LotContextMenu</name>
+      <id>17</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -37,7 +41,7 @@
       <autoFill>true</autoFill>
     </contextMenu>
     <type>InputField</type>
-    <editMode>EnterOnInput</editMode>
+    <editMode>Enter</editMode>
     <showInHeader>true</showInHeader>
     <headerHorizontalAlign>Left</headerHorizontalAlign>
     <showInFooter>true</showInFooter>
@@ -51,19 +55,23 @@
     </extInfo>
   </items>
   <items xsi:type="form:FormField">
-    <name>Description</name>
-    <id>4</id>
+    <name>Produced</name>
+    <id>22</id>
     <visible>true</visible>
     <enabled>true</enabled>
     <userVisible>
       <common>true</common>
     </userVisible>
     <dataPath xsi:type="form:DataPath">
-      <segments>Object.Description</segments>
+      <segments>Object.Produced</segments>
     </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>ProducedOnChange</name>
+    </handlers>
     <extendedTooltip>
-      <name>DescriptionExtendedTooltip</name>
-      <id>6</id>
+      <name>ProducedРасширеннаяПодсказка</name>
+      <id>24</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -77,8 +85,8 @@
       </extInfo>
     </extendedTooltip>
     <contextMenu>
-      <name>DescriptionContextMenu</name>
-      <id>5</id>
+      <name>ProducedКонтекстноеМеню</name>
+      <id>23</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -87,7 +95,116 @@
       <autoFill>true</autoFill>
     </contextMenu>
     <type>InputField</type>
-    <editMode>EnterOnInput</editMode>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+    </extInfo>
+  </items>
+  <items xsi:type="form:FormField">
+    <name>ExpirationPeriod</name>
+    <id>19</id>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>Object.ExpirationPeriod</segments>
+    </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>ExpirationPeriodOnChange</name>
+    </handlers>
+    <extendedTooltip>
+      <name>ExpirationPeriodРасширеннаяПодсказка</name>
+      <id>21</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>ExpirationPeriodКонтекстноеМеню</name>
+      <id>20</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <spinButton>true</spinButton>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+    </extInfo>
+  </items>
+  <items xsi:type="form:FormField">
+    <name>ExpirationDate</name>
+    <id>13</id>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>Object.ExpirationDate</segments>
+    </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>ExpirationDateOnChange</name>
+    </handlers>
+    <extendedTooltip>
+      <name>ExpirationDateExtendedTooltip</name>
+      <id>15</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>ExpirationDateContextMenu</name>
+      <id>14</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
     <showInHeader>true</showInHeader>
     <headerHorizontalAlign>Left</headerHorizontalAlign>
     <showInFooter>true</showInFooter>
@@ -137,6 +254,7 @@
       <autoFill>true</autoFill>
     </contextMenu>
     <type>InputField</type>
+    <readOnly>true</readOnly>
     <editMode>EnterOnInput</editMode>
     <showInHeader>true</showInHeader>
     <headerHorizontalAlign>Left</headerHorizontalAlign>
@@ -151,19 +269,19 @@
     </extInfo>
   </items>
   <items xsi:type="form:FormField">
-    <name>BestBefore</name>
-    <id>10</id>
+    <name>Code</name>
+    <id>1</id>
     <visible>true</visible>
     <enabled>true</enabled>
     <userVisible>
       <common>true</common>
     </userVisible>
     <dataPath xsi:type="form:DataPath">
-      <segments>Object.BestBefore</segments>
+      <segments>Object.Code</segments>
     </dataPath>
     <extendedTooltip>
-      <name>BestBeforeExtendedTooltip</name>
-      <id>12</id>
+      <name>CodeExtendedTooltip</name>
+      <id>3</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -177,58 +295,8 @@
       </extInfo>
     </extendedTooltip>
     <contextMenu>
-      <name>BestBeforeContextMenu</name>
-      <id>11</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <autoFill>true</autoFill>
-    </contextMenu>
-    <type>InputField</type>
-    <editMode>EnterOnInput</editMode>
-    <showInHeader>true</showInHeader>
-    <headerHorizontalAlign>Left</headerHorizontalAlign>
-    <showInFooter>true</showInFooter>
-    <extInfo xsi:type="form:InputFieldExtInfo">
-      <autoMaxWidth>true</autoMaxWidth>
-      <autoMaxHeight>true</autoMaxHeight>
-      <wrap>true</wrap>
-      <chooseType>true</chooseType>
-      <typeDomainEnabled>true</typeDomainEnabled>
-      <textEdit>true</textEdit>
-    </extInfo>
-  </items>
-  <items xsi:type="form:FormField">
-    <name>Country</name>
-    <id>13</id>
-    <visible>true</visible>
-    <enabled>true</enabled>
-    <userVisible>
-      <common>true</common>
-    </userVisible>
-    <dataPath xsi:type="form:DataPath">
-      <segments>Object.Country</segments>
-    </dataPath>
-    <extendedTooltip>
-      <name>CountryExtendedTooltip</name>
-      <id>15</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <type>Label</type>
-      <autoMaxWidth>true</autoMaxWidth>
-      <autoMaxHeight>true</autoMaxHeight>
-      <extInfo xsi:type="form:LabelDecorationExtInfo">
-        <horizontalAlign>Left</horizontalAlign>
-      </extInfo>
-    </extendedTooltip>
-    <contextMenu>
-      <name>CountryContextMenu</name>
-      <id>14</id>
+      <name>CodeContextMenu</name>
+      <id>2</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>

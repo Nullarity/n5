@@ -625,7 +625,7 @@ Procedure sqlWarehouse ( Env )
 	
 	s = "
 	|// ^Items
-	|select Items.Item as Item, Items.Feature as Feature, Items.Warehouse as Warehouse, Items.Package as Package,
+	|select Items.Item as Item, Items.Feature as Feature, Items.Warehouse as Warehouse, Items.Package as Package, Items.Series as Series,
 	|	sum ( Items.QuantityPkg - case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity else isnull ( Reserves.Quantity, 0 ) end ) as Quantity
 	|from Items as Items
 	|	//
@@ -633,7 +633,7 @@ Procedure sqlWarehouse ( Env )
 	|	//
 	|	left join Reserves as Reserves
 	|	on Reserves.LineNumber = Items.LineNumber
-	|group by Items.Item, Items.Feature, Items.Warehouse, Items.Package
+	|group by Items.Item, Items.Feature, Items.Warehouse, Items.Package, Items.Series
 	|having sum ( Items.QuantityPkg - case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity else isnull ( Reserves.Quantity, 0 ) end ) > 0
 	|";
 	Env.Selection.Add ( s );
@@ -1356,6 +1356,7 @@ Procedure makeItems ( Env )
 		movement.Feature = row.Feature;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
+		movement.Series = row.Series;
 		movement.Quantity = row.Quantity;
 	enddo; 
 	
