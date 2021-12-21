@@ -24,7 +24,7 @@ Function Post ( Env ) export
 		and not RunRanges.Check ( Env ) ) then
 		return false;
 	endif;
-	if ( invalidRows ( Env ) ) then
+	if ( not checkRows ( Env ) ) then
 		return false;
 	endif;
 	if ( not distributeDiscounts ( Env ) ) then
@@ -33,7 +33,7 @@ Function Post ( Env ) export
 	makeValues ( Env );
 	if ( not distributeExpenses ( Env ) ) then
 		return false;
-	endif; 
+	endif;
 	makeItems ( Env );
 	makeFixedAssets ( Env );
 	makeIntangibleAssets ( Env );
@@ -58,7 +58,7 @@ Function Post ( Env ) export
 	endif;
 	if ( not checkBalances ( Env ) ) then
 		return false;
-	endif; 
+	endif;
 	writeDistribution ( Env );
 	completeDelivery ( Env );
 	flagRegisters ( Env );
@@ -88,6 +88,9 @@ Function getData ( Env )
 	sqlVAT ( Env );
 	sqlContractAmount ( Env );
 	sqlInvalidRows ( Env );
+	if ( Options.Series () ) then
+		sqlEmptySeries ( Env );
+	endif;
 	sqlCost ( Env );
 	sqlWarehouse ( Env );
 	sqlInternalOrders ( Env );
@@ -553,6 +556,18 @@ Procedure sqlInvalidRows ( Env )
 	Env.Selection.Add ( s );
 	
 EndProcedure
+
+Procedure sqlEmptySeries ( Env )
+	
+	s = "
+	|// ^EmptySeries
+	|select Items.LineNumber as LineNumber
+	|from Items as Items
+	|where Items.Item.Series and Items.Series = value ( Catalog.Series.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
  
 Procedure sqlCost ( Env )
 	
@@ -625,8 +640,12 @@ Procedure sqlWarehouse ( Env )
 	
 	s = "
 	|// ^Items
-	|select Items.Item as Item, Items.Feature as Feature, Items.Warehouse as Warehouse, Items.Package as Package, Items.Series as Series,
-	|	sum ( Items.QuantityPkg - case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity else isnull ( Reserves.Quantity, 0 ) end ) as Quantity
+	|select Items.Item as Item, Items.Feature as Feature, Items.Warehouse as Warehouse, Items.Package as Package,
+	|	Items.Series as Series,
+	|	sum ( Items.QuantityPkg -
+	|		case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity
+	|			else isnull ( Reserves.Quantity, 0 )
+	|		end ) as Quantity
 	|from Items as Items
 	|	//
 	|	// Reserves
@@ -634,7 +653,10 @@ Procedure sqlWarehouse ( Env )
 	|	left join Reserves as Reserves
 	|	on Reserves.LineNumber = Items.LineNumber
 	|group by Items.Item, Items.Feature, Items.Warehouse, Items.Package, Items.Series
-	|having sum ( Items.QuantityPkg - case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity else isnull ( Reserves.Quantity, 0 ) end ) > 0
+	|having sum ( Items.QuantityPkg -
+	|				case when Items.CountPackages then isnull ( Reserves.Quantity, 0 ) / Items.Capacity
+	|					else isnull ( Reserves.Quantity, 0 )
+	|				end ) > 0
 	|";
 	Env.Selection.Add ( s );
 	
@@ -906,13 +928,20 @@ Procedure getTables ( Env )
 	
 EndProcedure 
 
-Function invalidRows ( Env )
+Function checkRows ( Env )
 	
+	ok = true;
 	table = SQL.Fetch ( Env, "$InvalidRows" );
 	for each row in table do
 		Output.DocumentOrderItemsNotValid ( new Structure ( "DocumentOrder", row.DocumentOrder ), Output.Row ( row.Table, row.LineNumber, "Item" ), Env.Ref );
+		ok = false;
 	enddo; 
-	return table.Count () > 0;
+	table = SQL.Fetch ( Env, "$EmptySeries" );
+	for each row in table do
+		Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+		ok = false;
+	enddo; 
+	return ok;
 	
 EndFunction
 

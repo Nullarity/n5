@@ -7932,3 +7932,11 @@ Function NoSeries () export
 	return text;
 
 EndFunction
+
+&AtServer
+Procedure UndefinedSeries ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Series should be defined';ro = 'Ar trebui să se definească seriile';ru = 'Серия должна быть задана'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

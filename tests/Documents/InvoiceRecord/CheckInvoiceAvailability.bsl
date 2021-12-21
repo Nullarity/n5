@@ -5,10 +5,14 @@
 Call("Common.Init");
 CloseAll();
 
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0HB" ) );
+getEnv ();
+createEnv ();
+
 // Create an Invoice
 invoice = Commando("e1cib/command/Document.Invoice.Create");
 CheckState("#ItemsSelectItems, #ItemsScan, #ItemsApplySalesOrders", "Enable");
-Put ( "#Customer", "Customer" );
+Put ( "#Customer", this.Customer );
 Click("#JustSave");
 
 // Create an Invoice Record and print it
@@ -28,4 +32,30 @@ Close();
 With(invoice, true);
 CheckState("#ItemsSelectItems, #ItemsScan, #ItemsApplySalesOrders", "Enable", false);
 
+// *************************
+// Procedures
+// *************************
 
+Procedure getEnv ()
+
+	id = this.ID;
+	this.Insert ( "Customer", "Customer " + id );
+
+EndProcedure
+
+Procedure createEnv ()
+
+	id = this.ID;
+	if ( EnvironmentExists ( id ) ) then
+		return;
+	endif;
+	
+	#region createCustomer
+	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
+	p.Description = this.Customer;
+	Call ( "Catalogs.Organizations.CreateCustomer", p );
+	#endregion
+
+	RegisterEnvironment ( id );
+
+EndProcedure
