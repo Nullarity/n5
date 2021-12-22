@@ -214,6 +214,7 @@
   <commonPictures>CommonPicture.Info</commonPictures>
   <commonPictures>CommonPicture.Info32</commonPictures>
   <commonPictures>CommonPicture.InternalOrder</commonPictures>
+  <commonPictures>CommonPicture.Inventory</commonPictures>
   <commonPictures>CommonPicture.Invoice</commonPictures>
   <commonPictures>CommonPicture.IOSheet</commonPictures>
   <commonPictures>CommonPicture.Items</commonPictures>
@@ -228,6 +229,7 @@
   <commonPictures>CommonPicture.Meeting</commonPictures>
   <commonPictures>CommonPicture.Memo</commonPictures>
   <commonPictures>CommonPicture.Minus</commonPictures>
+  <commonPictures>CommonPicture.MobileReport</commonPictures>
   <commonPictures>CommonPicture.NewMailbox</commonPictures>
   <commonPictures>CommonPicture.Number</commonPictures>
   <commonPictures>CommonPicture.NumberType</commonPictures>
@@ -248,6 +250,8 @@
   <commonPictures>CommonPicture.Projects16</commonPictures>
   <commonPictures>CommonPicture.Purchases</commonPictures>
   <commonPictures>CommonPicture.Quote</commonPictures>
+  <commonPictures>CommonPicture.Receipt</commonPictures>
+  <commonPictures>CommonPicture.Receipt16</commonPictures>
   <commonPictures>CommonPicture.RedMinus</commonPictures>
   <commonPictures>CommonPicture.RedPin</commonPictures>
   <commonPictures>CommonPicture.Reports</commonPictures>
@@ -258,6 +262,8 @@
   <commonPictures>CommonPicture.ScanBarcode</commonPictures>
   <commonPictures>CommonPicture.ServerPicture</commonPictures>
   <commonPictures>CommonPicture.Settings</commonPictures>
+  <commonPictures>CommonPicture.Shipping</commonPictures>
+  <commonPictures>CommonPicture.Shipping16</commonPictures>
   <commonPictures>CommonPicture.Setup</commonPictures>
   <commonPictures>CommonPicture.StopTimer</commonPictures>
   <commonPictures>CommonPicture.String</commonPictures>
@@ -434,6 +440,8 @@
   <roles>Role.InternalOrdersReport</roles>
   <roles>Role.InternalOrdersView</roles>
   <roles>Role.InventoryEdit</roles>
+  <roles>Role.InventoryStockmanEdit</roles>
+  <roles>Role.InventoryStockmanView</roles>
   <roles>Role.InventoryView</roles>
   <roles>Role.InvoiceRecordEdit</roles>
   <roles>Role.InvoiceRecordView</roles>
@@ -505,6 +513,8 @@
   <roles>Role.QuotesView</roles>
   <roles>Role.RangesEdit</roles>
   <roles>Role.RangesReports</roles>
+  <roles>Role.ReceiptStockmanEdit</roles>
+  <roles>Role.ReceiptStockmanView</roles>
   <roles>Role.ReceiveItemsEdit</roles>
   <roles>Role.ReceiveItemsView</roles>
   <roles>Role.ReconciliationReport</roles>
@@ -527,6 +537,8 @@
   <roles>Role.ServicesPurchasesView</roles>
   <roles>Role.SettingsSubsystem</roles>
   <roles>Role.ShipmentsEdit</roles>
+  <roles>Role.ShipmentStockmanEdit</roles>
+  <roles>Role.ShipmentStockmanView</roles>
   <roles>Role.ShipmentsView</roles>
   <roles>Role.SickLeaveEdit</roles>
   <roles>Role.SickLeaveView</roles>
@@ -1061,6 +1073,7 @@
   <catalogs>Catalog.CashFlows</catalogs>
   <catalogs>Catalog.Cities</catalogs>
   <catalogs>Catalog.Commands</catalogs>
+  <catalogs>Catalog.Series</catalogs>
   <catalogs>Catalog.Companies</catalogs>
   <catalogs>Catalog.Computers</catalogs>
   <catalogs>Catalog.Constants</catalogs>
@@ -1135,7 +1148,6 @@
   <catalogs>Catalog.Salutations</catalogs>
   <catalogs>Catalog.Schedules</catalogs>
   <catalogs>Catalog.Sections</catalogs>
-  <catalogs>Catalog.Series</catalogs>
   <catalogs>Catalog.Sessions</catalogs>
   <catalogs>Catalog.States</catalogs>
   <catalogs>Catalog.Statuses</catalogs>
@@ -1196,6 +1208,7 @@
   <documents>Document.IntangibleAssetsWriteOff</documents>
   <documents>Document.InternalOrder</documents>
   <documents>Document.Inventory</documents>
+  <documents>Document.InventoryStockman</documents>
   <documents>Document.Invoice</documents>
   <documents>Document.InvoiceRecord</documents>
   <documents>Document.IOSheet</documents>
@@ -1221,6 +1234,7 @@
   <documents>Document.ProjectsPayment</documents>
   <documents>Document.PurchaseOrder</documents>
   <documents>Document.Quote</documents>
+  <documents>Document.ReceiptStockman</documents>
   <documents>Document.ReceiveItems</documents>
   <documents>Document.Refund</documents>
   <documents>Document.Return</documents>
@@ -1229,6 +1243,7 @@
   <documents>Document.ServicesPurchase</documents>
   <documents>Document.SetupPrices</documents>
   <documents>Document.Shipment</documents>
+  <documents>Document.ShipmentStockman</documents>
   <documents>Document.SickLeave</documents>
   <documents>Document.SplitRange</documents>
   <documents>Document.Startup</documents>
@@ -1433,7 +1448,7 @@
   <reports>Report.VendorDebtDetails</reports>
   <reports>Report.VendorDebts</reports>
   <reports>Report.WorkLog</reports>
-  <dataProcessors>DataProcessor.AN1</dataProcessors>
+  <dataProcessors>DataProcessor.ExchangeData</dataProcessors>
   <dataProcessors>DataProcessor.ApproveTimesheet</dataProcessors>
   <dataProcessors>DataProcessor.AssetsWriteOff</dataProcessors>
   <dataProcessors>DataProcessor.Calendar</dataProcessors>
@@ -1444,9 +1459,9 @@
   <dataProcessors>DataProcessor.DeleteObjects</dataProcessors>
   <dataProcessors>DataProcessor.DownloadCurrencies</dataProcessors>
   <dataProcessors>DataProcessor.Email</dataProcessors>
+  <dataProcessors>DataProcessor.AN1</dataProcessors>
   <dataProcessors>DataProcessor.EmailClient</dataProcessors>
   <dataProcessors>DataProcessor.Exchange</dataProcessors>
-  <dataProcessors>DataProcessor.ExchangeData</dataProcessors>
   <dataProcessors>DataProcessor.ExpenseReport</dataProcessors>
   <dataProcessors>DataProcessor.IMAP</dataProcessors>
   <dataProcessors>DataProcessor.Inventory</dataProcessors>

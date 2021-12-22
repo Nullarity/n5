@@ -12,6 +12,8 @@ EndProcedure
 Procedure init ()
 	
 	DC.SetParameter ( List, "Item", Parameters.Item );
+	DC.SetParameter ( List, "Feature", Parameters.Feature );
+	DC.SetParameter ( List, "Package", Parameters.Package );
 	DC.SetParameter ( List, "Warehouse", Parameters.Warehouse );
 	
 EndProcedure

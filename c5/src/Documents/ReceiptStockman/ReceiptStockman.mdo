@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="69e20412-805b-4aa5-9aa9-d07a34ff0cff">
+  <producedTypes>
+    <objectType typeId="ff55c07f-5f0d-4fc0-bd39-a4073b83b094" valueTypeId="c7f89986-9ae1-482f-8730-0eb089f439cc"/>
+    <refType typeId="7dca6ee6-3a8e-4ad2-a871-9b8ab69862e1" valueTypeId="d65948a8-8b43-4a2d-8637-9528dd18d700"/>
+    <selectionType typeId="42298ab0-766e-4fae-97b7-9327781ecc46" valueTypeId="79d657f9-baa1-46a2-8283-bd72de5f5ddb"/>
+    <listType typeId="f5aec79a-c1ca-414b-b296-22d62ef455fc" valueTypeId="484fe5b1-93f1-4a86-8369-701ed46ecdb1"/>
+    <managerType typeId="9b6bdad5-b7cb-4f1b-9aff-b1b136b65e7e" valueTypeId="a0004c5a-bf4c-4799-b093-0f8d7b2a0c9d"/>
+  </producedTypes>
+  <name>ReceiptStockman</name>
+  <synonym>
+    <key>en</key>
+    <value>Receipt Stockman</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Chitanță Stockman</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Поступление кладовщика</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Document.ReceiptStockman.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Posted</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Date</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <format>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Number</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <createOnInput>Use</createOnInput>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Receipts Stockman</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Încasări Stockman</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Поступления кладовщика</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>The document for the warehouse operation of receipt of goods from the vendor</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Documentul pentru operațiunea de recepție a mărfurilor de la furnizor</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Документ для оформления складской операции поступления товаров от поставщика</value>
+  </explanation>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.ReceiptStockman.Form.Form</defaultObjectForm>
+  <defaultListForm>Document.ReceiptStockman.Form.List</defaultListForm>
+  <realTimePosting>Deny</realTimePosting>
+  <postInPrivilegedMode>true</postInPrivilegedMode>
+  <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
+  <attributes uuid="1faccd22-beeb-4a1a-99b2-d79846883498">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организация</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea în numele căreia este introdus documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="90b769d6-9457-485c-b155-281b319bffa0">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Creator of the document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="4673493d-72ad-49a8-b77a-b2c3f5d2ee24">
+    <name>Invoiced</name>
+    <synonym>
+      <key>en</key>
+      <value>Invoice Issued</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Factură emisă</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Накладная выписана</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The sign of the executed accounting operation</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Indicator al operațiunii contabile executate</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Признак оформленной бухгалтерской операции</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c1e3b22a-a38a-4e16-8e67-b727c6431c14">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d8c061d2-cf32-4dcc-88b9-6aa3b679f786">
+    <name>Reveived</name>
+    <synonym>
+      <key>en</key>
+      <value>Received From</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primită de la</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получено от</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>150</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Vendor name</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numele furnizorului</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Название поставщика товара</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f4ea4753-1f36-4cc0-a13d-5067ee998abd">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The warehouse that receives the items</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul care primește mărfurile</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, на который поступают товары</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.ReceiptStockman.Attribute.Company</field>
+    </choiceParameterLinks>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="9a01c4e7-3622-40f8-93bd-f19a6fbb5f58">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="425850c9-bbdc-4caa-8b6c-1787e9423596">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <tabularSections uuid="280d5437-bae6-48e7-8695-c14b94b65767">
+    <producedTypes>
+      <objectType typeId="9b4ccdab-3588-4c0d-bd98-eec685af1a1d" valueTypeId="5ce34454-97e2-4a1a-859f-560009159577"/>
+      <rowType typeId="e433501d-5185-4847-96e2-05ebbd642b21" valueTypeId="ec18d6f8-af04-4724-888c-159b5f0d94b8"/>
+    </producedTypes>
+    <name>Items</name>
+    <synonym>
+      <key>en</key>
+      <value>Items</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товары</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Items</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товары</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="2f621a3c-a102-408b-a5e3-20d04c13fb1a">
+      <name>Feature</name>
+      <synonym>
+        <key>en</key>
+        <value>Feature</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Характеристика</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Caracteristică</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Features</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item feature</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Характеристика товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Caracteristica mărfii</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Item</name>
+        <field>Document.ReceiptStockman.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="dbb5e666-f7af-47bf-b92a-94df9a04a70f">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Item</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Товар</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Marfă</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Товар</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Marfă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.Form</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <choiceForm>Catalog.Items.Form.Choice</choiceForm>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="41a8a53d-f7cd-47c1-a44b-570f24b5a166">
+      <name>Package</name>
+      <synonym>
+        <key>ru</key>
+        <value>Уп.</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Packages</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Упаковка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.ReceiptStockman.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="eb6093e8-6254-4394-bc73-e762ce2e8588">
+      <name>Print</name>
+      <synonym>
+        <key>en</key>
+        <value>Labels</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Eticheta</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Этикеток</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>3</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Number of labels to print</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de etichete de imprimat</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество этикеток для печати</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5ee93210-1122-4473-b540-0376903e3cb7">
+      <name>Quantity</name>
+      <synonym>
+        <key>en</key>
+        <value>Units</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Unități</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Единиц</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="e7274915-e8dc-4f76-b58c-c45019c37a84">
+      <name>QuantityPkg</name>
+      <synonym>
+        <key>en</key>
+        <value>Qty</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cant.</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="505173b9-7392-416e-8c76-f7e805b8c5de">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serii</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Series</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Series</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serie</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.ReceiptStockman.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <commands uuid="79fea8b4-0d52-41d2-a098-84ffafbc1915">
+    <name>New</name>
+    <synonym>
+      <key>en</key>
+      <value>Receipt Stockman</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Chitanță Stockman</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поступление кладовщика</value>
+    </synonym>
+    <group>ActionsPanelCreate</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Receipt of goods in the warehouse</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Recepția mărfurilor în depozit</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Новое поступление на склад</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.Receipt</picture>
+    </picture>
+  </commands>
+</mdclass:Document>

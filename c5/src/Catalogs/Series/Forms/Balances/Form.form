@@ -57,7 +57,7 @@
     </toolTip>
     <toolTipRepresentation>ShowBottom</toolTipRepresentation>
     <items xsi:type="form:FormField">
-      <name>Description</name>
+      <name>Series</name>
       <id>16</id>
       <title>
         <key>ru</key>
@@ -69,11 +69,11 @@
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>List.Description</segments>
+        <segments>List.Series</segments>
       </dataPath>
       <defaultItem>true</defaultItem>
       <extendedTooltip>
-        <name>DescriptionРасширеннаяПодсказка</name>
+        <name>SeriesExtendedTooltip</name>
         <id>18</id>
         <visible>true</visible>
         <enabled>true</enabled>
@@ -88,7 +88,7 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>DescriptionКонтекстноеМеню</name>
+        <name>SeriesContextMenu</name>
         <id>17</id>
         <visible>true</visible>
         <enabled>true</enabled>
@@ -111,19 +111,19 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>ExpirationDate</name>
-      <id>19</id>
+      <name>SeriesExpirationDate</name>
+      <id>28</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>List.ExpirationDate</segments>
+        <segments>List.Series.ExpirationDate</segments>
       </dataPath>
       <extendedTooltip>
-        <name>ExpirationDateРасширеннаяПодсказка</name>
-        <id>21</id>
+        <name>SeriesExpirationDateExtendedTooltip</name>
+        <id>30</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -137,8 +137,8 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>ExpirationDateКонтекстноеМеню</name>
-        <id>20</id>
+        <name>SeriesExpirationDateContextMenu</name>
+        <id>29</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -146,18 +146,22 @@
         </userVisible>
         <autoFill>true</autoFill>
       </contextMenu>
-      <type>LabelField</type>
+      <type>InputField</type>
       <editMode>Enter</editMode>
       <showInHeader>true</showInHeader>
       <headerHorizontalAlign>Left</headerHorizontalAlign>
       <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:LabelFieldExtInfo">
+      <extInfo xsi:type="form:InputFieldExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
         <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>Qty</name>
+      <name>Quantity</name>
       <id>25</id>
       <title>
         <key>ru</key>
@@ -169,10 +173,10 @@
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>List.Qty</segments>
+        <segments>List.Quantity</segments>
       </dataPath>
       <extendedTooltip>
-        <name>QtyРасширеннаяПодсказка</name>
+        <name>QuantityExtendedTooltip</name>
         <id>27</id>
         <visible>true</visible>
         <enabled>true</enabled>
@@ -187,7 +191,7 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>QtyКонтекстноеМеню</name>
+        <name>QuantityContextMenu</name>
         <id>26</id>
         <visible>true</visible>
         <enabled>true</enabled>
@@ -203,52 +207,6 @@
       <showInFooter>true</showInFooter>
       <extInfo xsi:type="form:LabelFieldExtInfo">
         <width>11</width>
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-      </extInfo>
-    </items>
-    <items xsi:type="form:FormField">
-      <name>Package</name>
-      <id>22</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <dataPath xsi:type="form:DataPath">
-        <segments>List.Package</segments>
-      </dataPath>
-      <extendedTooltip>
-        <name>PackageРасширеннаяПодсказка</name>
-        <id>24</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <type>Label</type>
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-        <extInfo xsi:type="form:LabelDecorationExtInfo">
-          <horizontalAlign>Left</horizontalAlign>
-        </extInfo>
-      </extendedTooltip>
-      <contextMenu>
-        <name>PackageКонтекстноеМеню</name>
-        <id>23</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <autoFill>true</autoFill>
-      </contextMenu>
-      <type>LabelField</type>
-      <editMode>Enter</editMode>
-      <showInHeader>true</showInHeader>
-      <headerHorizontalAlign>Left</headerHorizontalAlign>
-      <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:LabelFieldExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
         <autoMaxHeight>true</autoMaxHeight>
       </extInfo>
@@ -453,9 +411,7 @@
     <event>OnCreateAtServer</event>
     <name>OnCreateAtServer</name>
   </handlers>
-  <excludedCommands>Copy</excludedCommands>
-  <excludedCommands>Create</excludedCommands>
-  <excludedCommands>SetDeletionMark</excludedCommands>
+  <excludedCommands>OpenFromStandaloneServer</excludedCommands>
   <windowOpeningMode>LockOwnerWindow</windowOpeningMode>
   <autoTitle>true</autoTitle>
   <autoUrl>true</autoUrl>
@@ -479,18 +435,15 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
-      <queryText>select Lots.Ref as Ref, Lots.DeletionMark as DeletionMark, Lots.Owner as Owner, Lots.Code as Code,
-	Lots.Description as Description, Lots.ExpirationDate as ExpirationDate, Lots.Lot as Lot,
-	Balances.Package as Package, Balances.QtyBalance as Qty
-from Catalog.Lots as Lots
-	//
-	// Balances
-	//
-	join AccumulationRegister.Items.Balance ( , Item = &amp;Item and Warehouse = &amp;Warehouse ) as Balances
-	on Balances.Lot = Lots.Ref
-where Balances.QtyBalance > 0
+      <queryText>select Balances.Series as Series, Balances.QuantityBalance as Quantity
+from AccumulationRegister.Items.Balance ( ,
+		Item = &amp;Item
+		and Feature = &amp;Feature
+		and Package = &amp;Package
+		and Warehouse = &amp;Warehouse
+	) as Balances
 </queryText>
-      <mainTable>Catalog.Series</mainTable>
+      <mainTable>AccumulationRegister.Items.Balance</mainTable>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
@@ -500,15 +453,25 @@ where Balances.QtyBalance > 0
   <parameters>
     <name>Item</name>
     <valueType>
-      <types>String</types>
-      <stringQualifiers/>
+      <types>CatalogRef.Items</types>
     </valueType>
   </parameters>
   <parameters>
     <name>Warehouse</name>
     <valueType>
-      <types>String</types>
-      <stringQualifiers/>
+      <types>CatalogRef.Warehouses</types>
+    </valueType>
+  </parameters>
+  <parameters>
+    <name>Package</name>
+    <valueType>
+      <types>CatalogRef.Packages</types>
+    </valueType>
+  </parameters>
+  <parameters>
+    <name>Feature</name>
+    <valueType>
+      <types>CatalogRef.Features</types>
     </valueType>
   </parameters>
   <commandInterface>
