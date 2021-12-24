@@ -4,25 +4,11 @@
 &AtServer
 Procedure FillCheckProcessingAtServer ( Cancel, CheckedAttributes )
 	
-	if ( not checkYearAndDay () ) then
-		Cancel = true;
-	endif; 
 	if ( not checkHours () ) then
 		Cancel = true;
 	endif; 
 	
 EndProcedure
-
-&AtServer
-Function checkYearAndDay ()
-	
-	if ( Record.Year <> Year ( Record.Day ) ) then
-		Output.InvalidScheduleDay ( , "Day", , "Record" );
-		return false;
-	endif; 
-	return true;
-	
-EndFunction 
 
 &AtServer
 Function checkHours ()

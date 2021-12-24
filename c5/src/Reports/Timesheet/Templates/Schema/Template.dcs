@@ -415,7 +415,6 @@ from Calendar as Calendar
 	//
 	left join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 	and Schedules.Minutes &gt; 0
 	//
@@ -550,8 +549,7 @@ from InformationRegister.Holidays as HolidaysList
 	// Schedules
 	//
 	join InformationRegister.Schedules as Schedules
-	on Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
-	and Schedules.Day = HolidaysList.Day
+	on Schedules.Day = HolidaysList.Day
 	and Schedules.Schedule.Holidays = HolidaysList.Reference
 	and Schedules.Minutes &gt; 0
 where HolidaysList.Day between &amp;YearStart and &amp;DateEnd
@@ -642,7 +640,6 @@ from Document.Vacation.Employees as Vacations
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Time.Day
 	//
 	// Holidays
@@ -651,7 +648,6 @@ from Document.Vacation.Employees as Vacations
 	on HolidaysList.Reference = Schedules.Schedule.Holidays
 	and HolidaysList.Division = Intervals.Division
 	and HolidaysList.Day = Schedules.Day
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Minutes &gt; 0
 	//
 	// Spans
@@ -681,7 +677,6 @@ from InformationRegister.Hours as Hours
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Hours.Day
 	//
 	// Spans
@@ -714,7 +709,6 @@ from Document.SickLeave as SickLeaves
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 where SickLeaves.Posted
 union all
@@ -738,7 +732,6 @@ from InformationRegister.Hours as Hours
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Intervals.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Hours.Day
 where Hours.Day between &amp;DateStart and &amp;DateEnd
 and Hours.Time = value ( Enum.Time.Sickness )
@@ -798,7 +791,6 @@ from Location as Location
 	//
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Schedule = Location.Schedule
-	and Schedules.Year in ( Year ( &amp;DateStart ), Year ( &amp;DateEnd ) )
 	and Schedules.Day = Calendar.Day
 	//
 	// Holidays
@@ -1138,8 +1130,6 @@ from Company as Company
 	<totalField>
 		<dataPath>Hours</dataPath>
 		<expression>sum ( Hours )</expression>
-		<group>Employee</group>
-		<group>Time</group>
 	</totalField>
 	<totalField>
 		<dataPath>Hours</dataPath>
@@ -1149,8 +1139,6 @@ from Company as Company
 	<totalField>
 		<dataPath>Days</dataPath>
 		<expression>Sum(Days)</expression>
-		<group>Employee</group>
-		<group>Time</group>
 	</totalField>
 	<totalField>
 		<dataPath>Days</dataPath>
@@ -1160,7 +1148,6 @@ from Company as Company
 	<totalField>
 		<dataPath>WholeDay</dataPath>
 		<expression>WholeDay</expression>
-		<group>Day</group>
 	</totalField>
 	<parameter>
 		<name>DateEnd</name>

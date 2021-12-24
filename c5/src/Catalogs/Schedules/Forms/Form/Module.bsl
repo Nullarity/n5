@@ -9,7 +9,7 @@ var WeekHoursNight;
 &AtClient
 var CurrentYearsRow;
 &AtClient
-var yearsRow;
+var YearsRow;
 &AtClient
 var SchedulesRow;
 
@@ -103,9 +103,13 @@ EndProcedure
 &AtServer
 Procedure filterByYear ()
 	
-	Schedules.Parameters.SetParameterValue ( "Year", Year );
-	Items.Calendar.BeginOfRepresentationPeriod = Date ( Year, 1, 1 );
-	Items.Calendar.EndOfRepresentationPeriod = Date ( Year, 12, 31 );
+	start = Date ( Year, 1, 1 );
+	finish = Date ( Year, 12, 31 );
+	params = Schedules.Parameters;
+	params.SetParameterValue ( "StartYear", start );
+	params.SetParameterValue ( "EndYear", finish );
+	Items.Calendar.BeginOfRepresentationPeriod = start;
+	Items.Calendar.EndOfRepresentationPeriod = finish;
 	
 EndProcedure 
 
@@ -121,7 +125,7 @@ EndProcedure
 Function getMonths ()
 	
 	s = "
-	|select Schedules.Year as Year, beginofperiod ( Schedules.Day, month ) as Month,
+	|select beginofperiod ( Schedules.Day, year ) as Year, beginofperiod ( Schedules.Day, month ) as Month,
 	|	sum ( case when Holidays.Day is null then Schedules.Minutes else 0 end / 60 ) as Hours,
 	|	sum ( case when Holidays.Day is null then Schedules.MinutesEvening else 0 end / 60 ) as EveningHours,
 	|	sum ( case when Holidays.Day is null then Schedules.MinutesNight else 0 end / 60 ) as NightHours,
@@ -136,7 +140,7 @@ Function getMonths ()
 	|	and Holidays.Day = Schedules.Day
 	|	and Holidays.Division = value ( Catalog.Divisions.EmptyRef )
 	|where Schedules.Schedule = &Schedule
-	|group by Schedules.Year, beginofperiod ( Schedules.Day, month )
+	|group by beginofperiod ( Schedules.Day, year ), beginofperiod ( Schedules.Day, month )
 	|order by Year desc, Month
 	|totals by Year
 	|";
@@ -153,13 +157,13 @@ Procedure loadMonths ( Table )
 	currentMonth = BegOfMonth ( CurrentSessionDate () );
 	rows = Months.GetItems ();
 	rows.Clear ();
-	for each yearsRow in Table.Rows do
+	for each row in Table.Rows do
 		newRow = rows.Add ();
-		FillPropertyValues ( newRow, yearsRow );
-		newRow.Current = ( CurrentYear = yearsRow.Year );
-		newRow.Presentation = Format ( yearsRow.Year, "NG=" );
+		FillPropertyValues ( newRow, row );
+		newRow.Current = ( CurrentYear = row.Year );
+		newRow.Presentation = Format ( row.Year, "NG=" );
 		childRows = newRow.GetItems ();
-		for each monthsRow in yearsRow.Rows do
+		for each monthsRow in row.Rows do
 			newRow = childRows.Add ();
 			FillPropertyValues ( newRow, monthsRow );
 			newRow.Presentation = Format ( monthsRow.Month, "DF='MMMM, yyyy'" );
@@ -183,26 +187,26 @@ Function checkHours ()
 	
 	error = false;
 	ref = Object.Ref;
-	for each yearsRow in Object.Years do
-		if ( ( yearsRow.Monday - yearsRow.MondayEvening - yearsRow.MondayNight ) < 0 ) then
+	for each row in Object.Years do
+		if ( ( row.Monday - row.MondayEvening - row.MondayNight ) < 0 ) then
 			column = "Monday";
-		elsif ( ( yearsRow.Tuesday - yearsRow.TuesdayEvening - yearsRow.TuesdayNight ) < 0 ) then
+		elsif ( ( row.Tuesday - row.TuesdayEvening - row.TuesdayNight ) < 0 ) then
 			column = "Tuesday";
-		elsif ( ( yearsRow.Wednesday - yearsRow.WednesdayEvening - yearsRow.WednesdayNight ) < 0 ) then
+		elsif ( ( row.Wednesday - row.WednesdayEvening - row.WednesdayNight ) < 0 ) then
 			column = "Wednesday";
-		elsif ( ( yearsRow.Thursday - yearsRow.ThursdayEvening - yearsRow.ThursdayNight ) < 0 ) then
+		elsif ( ( row.Thursday - row.ThursdayEvening - row.ThursdayNight ) < 0 ) then
 			column = "Thursday";
-		elsif ( ( yearsRow.Friday - yearsRow.FridayEvening - yearsRow.FridayNight ) < 0 ) then
+		elsif ( ( row.Friday - row.FridayEvening - row.FridayNight ) < 0 ) then
 			column = "Friday";
-		elsif ( ( yearsRow.Saturday - yearsRow.SaturdayEvening - yearsRow.SaturdayNight ) < 0 ) then
+		elsif ( ( row.Saturday - row.SaturdayEvening - row.SaturdayNight ) < 0 ) then
 			column = "Saturday";
-		elsif ( ( yearsRow.Sunday - yearsRow.SundayEvening - yearsRow.SundayNight ) < 0 ) then
+		elsif ( ( row.Sunday - row.SundayEvening - row.SundayNight ) < 0 ) then
 			column = "Sunday";
 		else
 			continue;
 		endif; 
 		error = true;
-		Output.WrongTotalHours ( , Output.Row ( "Years", yearsRow.LineNumber, column ), ref );
+		Output.WrongTotalHours ( , Output.Row ( "Years", row.LineNumber, column ), ref );
 	enddo; 
 	return not error;
 	
@@ -356,16 +360,12 @@ EndProcedure
 &AtServer
 Procedure makeSchedule ( ScheduleRow, Ref )
 	
-	recordset = InformationRegisters.Schedules.CreateRecordSet ();
-	recordset.Filter.Schedule.Set ( Ref );
-	recordset.Filter.Year.Set ( ScheduleRow.Year );
 	day = Date ( ScheduleRow.Year, 1, 1 );
 	weekDay = WeekDay ( day );
 	dateEnd = Date ( ScheduleRow.Year, 12, 31 );
 	while ( day <= dateEnd ) do
-		record = recordset.Add ();
+		record = InformationRegisters.Schedules.CreateRecordManager ();
 		record.Schedule = Ref;
-		record.Year = ScheduleRow.Year;
 		record.Day = day;
 		value = WeekHours [ weekDay ];
 		record.Duration = value;
@@ -376,20 +376,25 @@ Procedure makeSchedule ( ScheduleRow, Ref )
 		value = WeekHoursNight [ weekDay ];
 		record.DurationNight = value;
 		record.MinutesNight = Conversion.DurationToMinutes ( value );
+		record.Write ();
 		day = day + 86400;
 		weekDay = ? ( weekDay = 7, 1, weekDay + 1 );
 	enddo; 
-	recordset.Write ();
 	
 EndProcedure 
 
 &AtServer
 Procedure removeSchedule ( ScheduleRow, Ref )
 	
-	recordset = InformationRegisters.Schedules.CreateRecordSet ();
-	recordset.Filter.Schedule.Set ( Ref );
-	recordset.Filter.Year.Set ( ScheduleRow.Year );
-	recordset.Write ();
+	day = Date ( ScheduleRow.Year, 1, 1 );
+	end = EndOfYear ( day );
+	r = InformationRegisters.Schedules.CreateRecordManager ();
+	while ( day < end ) do
+		r.Schedule = Ref;
+		r.Day = day;
+		r.Delete ();
+		day = day + 86400;
+	enddo;
 	
 EndProcedure
 
@@ -474,12 +479,12 @@ EndProcedure
 &AtClient
 Procedure extractYearFields ()
 	
-	if ( yearsRow = undefined ) then
+	if ( YearsRow = undefined ) then
 		Year = 1;
 		ManualChanges = false;
 	else
-		Year = Max ( 1, yearsRow.Year );
-		ManualChanges = yearsRow.ManualChanges;
+		Year = Max ( 1, YearsRow.Year );
+		ManualChanges = YearsRow.ManualChanges;
 	endif; 
 	
 EndProcedure 
@@ -498,7 +503,7 @@ EndProcedure
 &AtClient
 Procedure YearsOnActivateRow ( Item )
 	
-	yearsRow = Item.CurrentData;
+	YearsRow = Item.CurrentData;
 	
 EndProcedure
 
@@ -515,14 +520,14 @@ EndProcedure
 &AtClient
 Procedure fillYearRowByDefault ()
 	
-	yearsRow.Year = getNextYear ();
-	yearsRow.Monday = getWorkingHours ( PredefinedValue ( "Enum.Week.Monday" ) );
-	yearsRow.Tuesday = getWorkingHours ( PredefinedValue ( "Enum.Week.Tuesday" ) );
-	yearsRow.Wednesday = getWorkingHours ( PredefinedValue ( "Enum.Week.Wednesday" ) );
-	yearsRow.Thursday = getWorkingHours ( PredefinedValue ( "Enum.Week.Thursday" ) );
-	yearsRow.Friday = getWorkingHours ( PredefinedValue ( "Enum.Week.Friday" ) );
-	yearsRow.Saturday = getWorkingHours ( PredefinedValue ( "Enum.Week.Saturday" ) );
-	yearsRow.Sunday = getWorkingHours ( PredefinedValue ( "Enum.Week.Sunday" ) );
+	YearsRow.Year = getNextYear ();
+	YearsRow.Monday = getWorkingHours ( PredefinedValue ( "Enum.Week.Monday" ) );
+	YearsRow.Tuesday = getWorkingHours ( PredefinedValue ( "Enum.Week.Tuesday" ) );
+	YearsRow.Wednesday = getWorkingHours ( PredefinedValue ( "Enum.Week.Wednesday" ) );
+	YearsRow.Thursday = getWorkingHours ( PredefinedValue ( "Enum.Week.Thursday" ) );
+	YearsRow.Friday = getWorkingHours ( PredefinedValue ( "Enum.Week.Friday" ) );
+	YearsRow.Saturday = getWorkingHours ( PredefinedValue ( "Enum.Week.Saturday" ) );
+	YearsRow.Sunday = getWorkingHours ( PredefinedValue ( "Enum.Week.Sunday" ) );
 	
 EndProcedure 
 
@@ -542,8 +547,8 @@ EndFunction
 Function getNextYear ()
 	
 	year = 0;
-	for each yearsRow in Object.Years do
-		year = Max ( year, yearsRow.Year );
+	for each YearsRow in Object.Years do
+		year = Max ( year, YearsRow.Year );
 	enddo; 
 	return ? ( year = 0, CurrentYear, year + 1 );
 	
@@ -579,7 +584,7 @@ EndProcedure
 Procedure adjustTime ( Item )
 	
 	column = Mid ( Item.Name, 6 );
-	Conversion.AdjustTime ( yearsRow [ column ] );
+	Conversion.AdjustTime ( YearsRow [ column ] );
 	
 EndProcedure 
 
@@ -633,19 +638,19 @@ Function getHoursByDate ( Day )
 	
 	weekDay = WeekDay ( Day );
 	if ( weekDay = 1 ) then
-		return yearsRow.Monday;
+		return YearsRow.Monday;
 	elsif ( weekDay = 2 ) then
-		return yearsRow.Tuesday;
+		return YearsRow.Tuesday;
 	elsif ( weekDay = 3 ) then
-		return yearsRow.Wednesday;
+		return YearsRow.Wednesday;
 	elsif ( weekDay = 4 ) then
-		return yearsRow.Thursday;
+		return YearsRow.Thursday;
 	elsif ( weekDay = 5 ) then
-		return yearsRow.Friday;
+		return YearsRow.Friday;
 	elsif ( weekDay = 6 ) then
-		return yearsRow.Saturday;
+		return YearsRow.Saturday;
 	else
-		return yearsRow.Sunday;
+		return YearsRow.Sunday;
 	endif; 
 	
 EndFunction 
@@ -690,7 +695,7 @@ EndProcedure
 Procedure setManualChanges ( Value )
 	
 	ManualChanges = Value;
-	yearsRow.ManualChanges = Value;
+	YearsRow.ManualChanges = Value;
 	
 EndProcedure 
 

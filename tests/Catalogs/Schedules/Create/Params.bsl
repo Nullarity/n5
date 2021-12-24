@@ -1,6 +1,6 @@
 ﻿p = new Structure ();
 p.Insert ( "Description" );
-p.Insert ( "Year", Format ( Year ( CurrentDate () ), "NG=" ) );
+p.Insert ( "Year", Format ( Year ( CurrentDate () ), "NG=" ) ); // can be array of years
 p.Insert ( "AverageDays", "21.10" );
 p.Insert ( "TimesheetPeriod", "Month" );
 p.Insert ( "Holidays" );
