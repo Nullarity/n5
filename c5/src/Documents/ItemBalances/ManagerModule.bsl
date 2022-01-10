@@ -17,6 +17,9 @@ EndProcedure
 Function Post ( Env ) export
 	
 	getData ( Env );
+	if ( not checkRows ( Env ) ) then
+		return false;
+	endif;
 	fields = Env.Fields;
 	if ( fields.Forms
 		and not RunRanges.Check ( Env ) ) then
@@ -42,6 +45,9 @@ Procedure getData ( Env )
 	fields = Env.Fields;
 	fields.Insert ( "Timestamp", new PointInTime ( fields.Date, Env.Ref ) );
 	sqlItems ( Env );
+	if ( Options.Series () ) then
+		sqlEmptySeries ( Env );
+	endif;
 	sqlCost ( Env );
 	sqlWarehouse ( Env );
 	if ( fields.Forms ) then
@@ -97,6 +103,19 @@ Procedure sqlItems ( Env )
 	
 EndProcedure
  
+Procedure sqlEmptySeries ( Env )
+	
+	s = "
+	|// #EmptySeries
+	|select Items.LineNumber as LineNumber
+	|from Items as Items
+	|where Items.Item.Series
+	|and Items.Series = value ( Catalog.Series.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
 Procedure sqlCost ( Env )
 	
 	s = "
@@ -129,14 +148,27 @@ Procedure sqlWarehouse ( Env )
 	
 	s = "
 	|// #Items
-	|select Goods.Item as Item, Goods.Feature as Feature, Goods.Warehouse as Warehouse, Goods.Package as Package,
-	|	sum ( Goods.QuantityPkg ) as Quantity
+	|select Goods.Item as Item, Goods.Feature as Feature, Goods.Warehouse as Warehouse,
+	|	Goods.Package as Package, Goods.Series as Series, sum ( Goods.QuantityPkg ) as Quantity
 	|from Items as Goods
-	|group by Goods.Item, Goods.Feature, Goods.Warehouse, Goods.Package
+	|group by Goods.Item, Goods.Feature, Goods.Series, Goods.Warehouse, Goods.Package
 	|";
 	Env.Selection.Add ( s );
 	
 EndProcedure
+
+Function checkRows ( Env )
+	
+	ok = true;
+	if ( Options.Series () ) then
+		for each row in Env.EmptySeries do
+			Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+			ok = false;
+		enddo; 
+	endif;
+	return ok;
+	
+EndFunction
 
 Procedure makeValues ( Env )
 
@@ -213,6 +245,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

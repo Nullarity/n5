@@ -113,6 +113,13 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
+Procedure Scan ( Command )
+	
+	ScanForm.Open ( ThisObject, true );
+	
+EndProcedure
+
+&AtClient
 Procedure Recalculate ( Command )
 	
 	recalc ();
@@ -175,13 +182,6 @@ EndProcedure
 
 // *****************************************
 // *********** Table Items
-
-&AtClient
-Procedure Scan ( Command )
-	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
-	
-EndProcedure
 
 &AtClient
 Procedure ItemsOnActivateRow ( Item )

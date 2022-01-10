@@ -140,9 +140,9 @@ Procedure sqlQuantity ( Env )
 	s = "
 	|// ^Items
 	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature,
-	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
+	|	Items.Package as Package, Items.Series as Series, sum ( Items.QuantityPkg ) as Quantity
 	|from Items as Items
-	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package
+	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
 	Env.Selection.Add ( s );
 	
@@ -466,6 +466,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;
@@ -474,6 +475,7 @@ Procedure makeItems ( Env )
 	movement.Period = date;
 	movement.Item = fields.Set;
 	movement.Feature = fields.Feature;
+	movement.Series = fields.Series;
 	movement.Warehouse = fields.Warehouse;
 	movement.Package = fields.Package;
 	movement.Quantity = fields.QuantityPkg;

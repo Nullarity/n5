@@ -12,11 +12,20 @@ Procedure PresentationGetProcessing ( Data, Presentation, StandardProcessing )
 	
 EndProcedure
 
-Procedure Available ( Ref ) export
+Procedure Post ( Ref ) export
+
+	RunStockman.MakeBarcodes ( Ref );
+
+EndProcedure
+
+Procedure Complete ( Ref ) export
 	
-	if ( Ref.Invoiced ) then
-		raise Output.ReceiptAlreadyInvoiced ( new Structure ( "Receipt", Ref ) );
+	if ( DF.Pick ( Ref, "Invoiced", true ) ) then
+		return;
 	endif;
+	obj = Ref.GetObject ();
+	obj.Invoiced = true;
+	obj.Write ();
 	
 EndProcedure
 

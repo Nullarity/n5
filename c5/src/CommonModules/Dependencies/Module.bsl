@@ -59,14 +59,15 @@ Function SqlDependencies () export
 	
 	s = "
 	|// ^Dependencies
-	|select distinct Cost.Dependency as Dependency
+	|select Cost.Dependency as Dependency
 	|from AccumulationRegister.Cost as Cost
 	|where Cost.Recorder = &Ref
 	|and Cost.Dependency <> undefined
 	|union
-	|select distinct Expenses.Source
+	|select Expenses.Source
 	|from InformationRegister.ItemExpenses as Expenses
 	|where Expenses.Document = &Ref
+	|and Expenses.Recorder <> &Ref
 	|";
 	return s;
 	

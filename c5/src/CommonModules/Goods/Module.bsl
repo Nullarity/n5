@@ -16,7 +16,6 @@ Function PriceParams () export
 	
 EndFunction 
 
-&AtServer
 Function GetTax ( val TaxGroup, val Date ) export
 	
 	s = "
@@ -32,7 +31,6 @@ Function GetTax ( val TaxGroup, val Date ) export
 	
 EndFunction 
 
-&AtServer
 Function Price (
 	Cache = undefined,
 	val Date,
@@ -61,14 +59,12 @@ Function Price (
 	
 EndFunction 
 
-&AtServer
 Function GetPrice ( val Params, Cache = undefined ) export
 	
 	return calcPrice ( Cache, Params, Params.Prices );
 	
 EndFunction
 
-&AtServer
 Function calcPrice ( Cache, Params, Prices )
 	
 	contractDefined = Params.Contract <> undefined;
@@ -99,7 +95,6 @@ Function calcPrice ( Cache, Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getContractPrice ( Cache, Params, Prices )
 	
 	price = fetchContractPrice ( Params );
@@ -113,7 +108,6 @@ Function getContractPrice ( Cache, Params, Prices )
 	
 EndFunction 
 
-&AtServer
 Function fetchContractPrice ( Params )
 	
 	if ( Params.VendorContract ) then
@@ -194,7 +188,6 @@ Function GetCachedPrice ( Cache, Params ) export
 	
 EndFunction
 
-&AtServer
 Function getPriceForPriceGroups ( Cache, Params, Prices )
 
 	basePrice = calcPrice ( Cache, Params, Prices.BasePrices );
@@ -205,7 +198,6 @@ Function getPriceForPriceGroups ( Cache, Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getPercentForPriceGroup ( Params, Prices )
 
 	s = getPercentForPriceGroupSql ( Params, Prices );
@@ -220,7 +212,6 @@ Function getPercentForPriceGroup ( Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getPercentForPriceGroupSql ( Params, Prices )
 
 	if ( Prices.Detail = Enums.PriceDetails.Item ) then
@@ -277,7 +268,6 @@ Function getPercentForPriceGroupSql ( Params, Prices )
 	
 EndFunction
 
-&AtServer
 Procedure finalizePrice ( Price, Params, Prices )
 	
 	convertToCurrency ( Params, Price, Prices );
@@ -285,7 +275,6 @@ Procedure finalizePrice ( Price, Params, Prices )
 	
 EndProcedure 
 
-&AtServer
 Procedure convertToCurrency ( Params, Price, Prices )
 	
 	currency = Params.Currency;
@@ -305,7 +294,6 @@ Procedure convertToCurrency ( Params, Price, Prices )
 	
 EndProcedure 
 
-&AtServer
 Procedure roundPrice ( Price, Prices )
 	
 	if ( Prices.Pricing = Enums.Pricing.Base ) then
@@ -326,7 +314,6 @@ Procedure roundPrice ( Price, Prices )
 	
 EndProcedure 
 
-&AtServer
 Function getRoundMethodFactor ( Prices )
 	
 	method = Prices.RoundMethod;
@@ -352,7 +339,6 @@ Function getRoundMethodFactor ( Prices )
 	
 EndFunction 
 
-&AtServer
 Function getPriceForPercent ( Cache, Params, Prices )
 	
 	basePrice = calcPrice ( Cache, Params, Prices.BasePrices );
@@ -362,7 +348,6 @@ Function getPriceForPercent ( Cache, Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getPriceItemPercent ( Cache, Params, Prices )
 	
 	basePrice = calcPrice ( Cache, Params, Prices.BasePrices );
@@ -373,7 +358,6 @@ Function getPriceItemPercent ( Cache, Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getPriceOrPercentFromPrices ( Params, Prices )
 
 	s = getPriceOrPercentSql ( Params, Prices );
@@ -390,7 +374,6 @@ Function getPriceOrPercentFromPrices ( Params, Prices )
 	
 EndFunction
 
-&AtServer
 Function getPriceOrPercentSql ( Params, Prices )
 	
 	if ( Prices.Pricing = Enums.Pricing.Base ) then
@@ -484,7 +467,6 @@ Function getPriceOrPercentSql ( Params, Prices )
 	
 EndFunction 
 
-&AtServer
 Function getPriceForBase ( Cache, Params, Prices )
 	
 	price = getPriceOrPercentFromPrices ( Params, Prices );
@@ -493,7 +475,6 @@ Function getPriceForBase ( Cache, Params, Prices )
 	
 EndFunction 
 
-&AtServer
 Function GetCustomerPrices ( Contract, Warehouse, Cache = undefined ) export
 	
 	prices = getPrices ( Contract, "CustomerPrices", Cache );
@@ -504,7 +485,6 @@ Function GetCustomerPrices ( Contract, Warehouse, Cache = undefined ) export
 	
 EndFunction 
 
-&AtServer
 Function getPrices ( ContractOrWarehouse, Field, Cache )
 	
 	prices = undefined;
@@ -521,21 +501,18 @@ Function getPrices ( ContractOrWarehouse, Field, Cache )
 	
 EndFunction 
 
-&AtServer
 Function GetVendorPrices ( Contract, Cache = undefined ) export
 	
 	return getPrices ( Contract, "VendorPrices", Cache );
 	
 EndFunction 
 
-&AtServer
 Function GetCostPrices ( Company, Cache = undefined ) export
 	
 	return getPrices ( Company, "CostPrices", Cache );
 	
 EndFunction 
 
-&AtServer
 Function ProducerPrice ( val ItemParams, val Date ) export 
 
 	s = "
@@ -554,5 +531,58 @@ Function ProducerPrice ( val ItemParams, val Date ) export
 	q.SetParameter ( "Date", Date );
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, 0, table [ 0 ].Price );
+
+EndFunction
+
+Function NewEAN13 () export
+	
+	next = Min ( getMax () + 1, 99999999 );
+	return convertToCode ( next );
+
+EndFunction
+
+Function getMax ( UnitPrefix = "0", InternalPrefix = "00" )
+
+	s = "
+	|select max ( substring ( Barcodes.Barcode, 5, 8 ) ) as Code
+	|from InformationRegister.Barcodes as Barcodes
+	|where Barcodes.Barcode like ""2" + UnitPrefix + InternalPrefix + "_________""
+	|";
+	q = new Query ( s );
+	selection = q.Execute ().Select ();
+	selection.Next ();
+	numberType = new TypeDescription ( "Number" );
+	result = numberType.AdjustValue ( selection.Code );
+	return result;
+
+EndFunction
+
+Function convertToCode ( Next, UnitPrefix = "0", InternalPrefix = "00" )
+
+	barcode = "2" + UnitPrefix + InternalPrefix + Format ( Next, "ND=8; NLZ=; NG=");
+	barcode = barcode + symbol ( barcode, 13 );
+	return barcode;
+
+EndFunction
+
+Function symbol ( Barcode, Class )
+
+	even = 0;
+	odd = 0;
+	count = ? ( Class = 13, 6, 4);
+	for i = 1 to count do
+		if ( Class <> 8
+			or i <> count) then
+			even = even + Number ( Mid ( Barcode, 2 * i, 1 ) );
+		endif;
+		odd = odd + Number ( Mid ( Barcode, 2 * i - 1, 1 ) );
+	enddo;
+	if ( Class = 13 ) then
+		even = even * 3;
+	else
+		odd = odd * 3;
+	endif;
+	control = 10 - ( even + odd ) % 10;
+	return ? ( control = 10, "0", String ( control ) );
 
 EndFunction

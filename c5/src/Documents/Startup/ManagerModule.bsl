@@ -142,10 +142,10 @@ Procedure sqlQuantity ( Env )
 	
 	s = "
 	|// ^Items
-	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature,
+	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
 	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity, Items.RowKey as RowKey
 	|from Items as Items
-	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.RowKey
+	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Series, Items.Package, Items.RowKey
 	|";
 	Env.Selection.Add ( s );
 	
@@ -548,6 +548,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

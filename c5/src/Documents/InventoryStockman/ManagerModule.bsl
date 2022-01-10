@@ -12,4 +12,10 @@ Procedure PresentationGetProcessing ( Data, Presentation, StandardProcessing )
 	
 EndProcedure
 
+Procedure Post ( Ref ) export
+
+	RunStockman.MakeBarcodes ( Ref );
+
+EndProcedure
+
 #endif

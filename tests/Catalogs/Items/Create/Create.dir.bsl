@@ -18,6 +18,8 @@ if ( _ = undefined ) then
 	itemType = undefined;
 	package = "PK";
 	capacity = 5;
+	barcode = undefined;
+	series = false;
 else
 	name = _.Description;
 	countPkg = _.CountPackages;
@@ -33,6 +35,8 @@ else
 	itemType = _.ItemType;
 	package = ? ( _.Unit = undefined, "PK", _.Unit );
 	capacity = ? ( _.Capacity = undefined, 5, _.Capacity );
+	barcode = _.Barcode;
+	series = _.Series;
 endif;
 With ();
 Set ( "#Description", name );
@@ -42,6 +46,9 @@ if ( service ) then
 endif;
 if ( product ) then
 	Click ( "#Product" );
+endif;
+if ( series ) then
+	Click ( "#Series" );
 endif;
 if ( itemType <> undefined ) then
 	Set ( "#ItemType", itemType );
@@ -67,6 +74,7 @@ if ( AppName = "c5" ) then
 endif;
 
 Click ( "#FormWrite" );
+
 unit = TrimAll ( Fetch ( "#Unit" ) );
 
 if ( not service ) then
@@ -113,6 +121,16 @@ if ( feature <> undefined ) then
 	Set ( "#Description", feature );
 	Click ( "#FormWriteAndClose" );
 	With ( featuresList );
+endif;
+
+if ( barcode <> undefined ) then
+	Click ( "Barcodes", GetLinks () );
+	barcodeList = With ( "Barcodes" );
+	Click ( "#FormCreate" );
+	With ();
+	Set ( "#Barcode", barcode );
+	Click ( "#FormWriteAndClose" );
+	With ( barcodeList );
 endif;
 
 Close ();

@@ -138,7 +138,7 @@ Procedure sqlFields ( Env )
 	|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 	|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey, Documents.Import as Import,
 	|	isnull ( Distribution.Exist, false ) as DistributionExists, isnull ( Forms.Exists, false ) as Forms, Documents.Department as Department,
-	|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery, isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery	
+	|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery, isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery
 	|from Document.VendorInvoice as Documents
 	|	//
 	|	// Lots
@@ -563,7 +563,8 @@ Procedure sqlEmptySeries ( Env )
 	|// ^EmptySeries
 	|select Items.LineNumber as LineNumber
 	|from Items as Items
-	|where Items.Item.Series and Items.Series = value ( Catalog.Series.EmptyRef )
+	|where Items.Item.Series
+	|and Items.Series = value ( Catalog.Series.EmptyRef )
 	|";
 	Env.Selection.Add ( s );
 
@@ -936,11 +937,13 @@ Function checkRows ( Env )
 		Output.DocumentOrderItemsNotValid ( new Structure ( "DocumentOrder", row.DocumentOrder ), Output.Row ( row.Table, row.LineNumber, "Item" ), Env.Ref );
 		ok = false;
 	enddo; 
-	table = SQL.Fetch ( Env, "$EmptySeries" );
-	for each row in table do
-		Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
-		ok = false;
-	enddo; 
+	if ( Options.Series () ) then
+		table = SQL.Fetch ( Env, "$EmptySeries" );
+		for each row in table do
+			Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+			ok = false;
+		enddo; 
+	endif;
 	return ok;
 	
 EndFunction
@@ -1383,9 +1386,9 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
-		movement.Series = row.Series;
 		movement.Quantity = row.Quantity;
 	enddo; 
 	

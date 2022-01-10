@@ -12,6 +12,8 @@ p.Insert ( "UseCustomsGroup", false );
 p.Insert ( "CustomsGroup" );
 p.Insert ( "Unit" );
 p.Insert ( "Capacity" );
+p.Insert ( "Series", false );
+p.Insert ( "Barcode" );
 if ( AppName = "c5" ) then
 	p.Insert ( "VAT", "20%" );
 	p.Insert ( "Social", false );

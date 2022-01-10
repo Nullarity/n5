@@ -19,6 +19,9 @@ Function Post ( Env ) export
 	getData ( Env );
 	fields = Env.Fields;
 	if ( not Env.RestoreCost ) then
+		if ( not checkRows ( Env ) ) then
+			return false;
+		endif;
 		makeItems ( Env );
 	endif;
 	ItemDetails.Init ( Env );
@@ -50,6 +53,9 @@ Procedure getData ( Env )
 	getFields ( Env );
 	sqlItems ( Env );
 	if ( not Env.RestoreCost ) then
+		if ( Options.Series () ) then
+			sqlEmptySeries ( Env );
+		endif;
 		sqlSequence ( Env );
 		sqlWarehouse ( Env );
 	endif; 
@@ -116,7 +122,20 @@ Procedure sqlItems ( Env )
 	Env.Selection.Add ( s );
 	
 EndProcedure
- 
+
+Procedure sqlEmptySeries ( Env )
+	
+	s = "
+	|// #EmptySeries
+	|select Items.LineNumber as LineNumber
+	|from Items as Items
+	|where Items.Item.Series
+	|and Items.Series = value ( Catalog.Series.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
 Procedure sqlSequence ( Env )
 	
 	s = "
@@ -132,14 +151,15 @@ Procedure sqlWarehouse ( Env )
 	
 	s = "
 	|// ^Set
-	|select Set.Warehouse, Set.Item as Item, Set.Feature as Feature, Set.Package as Package, Set.QuantityPkg as Quantity
+	|select Set.Warehouse, Set.Item as Item, Set.Feature as Feature, Set.Package as Package, Set.Series as Series,
+	|	Set.QuantityPkg as Quantity
 	|from Set as Set
 	|;
 	|// ^Items
-	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature,
+	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
 	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
 	|from Items as Items
-	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package
+	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
 	Env.Selection.Add ( s );
 	
@@ -429,6 +449,19 @@ Procedure attachSequence ( Env )
 	
 EndProcedure
 
+Function checkRows ( Env )
+	
+	ok = true;
+	if ( Options.Series () ) then
+		for each row in Env.EmptySeries do
+			Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+			ok = false;
+		enddo; 
+	endif;
+	return ok;
+	
+EndFunction
+
 Procedure makeItems ( Env )
 
 	recordset = Env.Registers.Items;
@@ -438,6 +471,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;
@@ -447,6 +481,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

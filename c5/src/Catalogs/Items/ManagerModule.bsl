@@ -25,7 +25,8 @@ Procedure getData ( Params, Env )
 	s = "
 	|// #Barcodes
 	|select Barcodes.Barcode as Barcode, Barcodes.Feature.Description as Feature,
-	|	Barcodes.Item.Description as Item, Package.Description as Package
+	|	Barcodes.Item.Description as Item, Package.Description as Package,
+	|	Barcodes.Series.Description as Series
 	|from InformationRegister.Barcodes as Barcodes
 	|where Barcodes.Item = &Item
 	|";
@@ -47,7 +48,7 @@ Procedure put ( Params, Env )
 	for each row in Env.Barcodes do
 		p.Barcode = row.Barcode;
 		area.Drawings.Barcode.Picture = PrintBarcodes.GetPicture ( p );
-		area.Parameters.Description = Print.FormatItem ( row.Item, row.Package, row.Feature ); 
+		area.Parameters.Description = Print.FormatItem ( row.Item, row.Package, row.Feature, row.Series ); 
 		for i = 1 to 7 do
 			for j = 1 to 3 do
 				if ( j = 1 ) then

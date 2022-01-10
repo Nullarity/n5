@@ -13,12 +13,12 @@
     <value>Inventory Stockman</value>
   </synonym>
   <synonym>
-    <key>ro</key>
-    <value>Inventarul depozitarului</value>
-  </synonym>
-  <synonym>
     <key>ru</key>
     <value>Инвентаризация кладовщика</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Inventarul depozitarului</value>
   </synonym>
   <useStandardCommands>true</useStandardCommands>
   <inputByString>Document.InventoryStockman.StandardAttribute.Number</inputByString>
@@ -54,6 +54,10 @@
     <fillChecking>ShowError</fillChecking>
     <fullTextSearch>Use</fullTextSearch>
     <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
       <key>ru</key>
       <value>DLF=D</value>
     </format>
@@ -61,20 +65,16 @@
       <key>ro</key>
       <value>DLF=D</value>
     </format>
-    <format>
-      <key>en</key>
-      <value>DLF=D</value>
-    </format>
     <editFormat>
       <key>en</key>
-      <value>DLF=D</value>
-    </editFormat>
-    <editFormat>
-      <key>ro</key>
       <value>DLF=D</value>
     </editFormat>
     <editFormat>
       <key>ru</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
       <value>DLF=D</value>
     </editFormat>
     <minValue xsi:type="core:UndefinedValue"/>
@@ -92,30 +92,36 @@
   <dataLockControlMode>Managed</dataLockControlMode>
   <fullTextSearch>Use</fullTextSearch>
   <listPresentation>
+    <key>en</key>
+    <value>Inventories Stockman</value>
+  </listPresentation>
+  <listPresentation>
     <key>ru</key>
     <value>Инвентаризации кладовщика</value>
   </listPresentation>
   <listPresentation>
-    <key>en</key>
-    <value>Inventories Stockman</value>
+    <key>ro</key>
+    <value>Inventarierea stockman</value>
   </listPresentation>
   <explanation>
     <key>en</key>
     <value>Document for the registration of goods balances in the warehouse</value>
   </explanation>
   <explanation>
-    <key>ro</key>
-    <value>Document de înregistrare a soldurilor de mărfuri în depozit</value>
-  </explanation>
-  <explanation>
     <key>ru</key>
     <value>Документ для регистрации остатков товаров в складском учете</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Document de înregistrare a soldurilor de mărfuri în depozit</value>
   </explanation>
   <numberType>String</numberType>
   <numberLength>9</numberLength>
   <numberAllowedLength>Variable</numberAllowedLength>
   <checkUnique>true</checkUnique>
   <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.InventoryStockman.Form.Form</defaultObjectForm>
+  <defaultListForm>Document.InventoryStockman.Form.List</defaultListForm>
   <realTimePosting>Deny</realTimePosting>
   <postInPrivilegedMode>true</postInPrivilegedMode>
   <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
@@ -303,12 +309,12 @@
       <value>Items</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Marfă</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Товары</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
     </toolTip>
     <standardAttributes>
       <dataHistory>Use</dataHistory>
@@ -325,12 +331,12 @@
         <value>Bal.</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Sol.</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Ост.</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sol.</value>
       </synonym>
       <type>
         <types>Number</types>
@@ -341,19 +347,54 @@
       </type>
       <toolTip>
         <key>en</key>
-        <value>Quantity</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Cantitate</value>
+        <value>Item balance according to the database</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Остаток</value>
+        <value>Остаток по данным информационной базы</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Soldul mărfurilor în conformitate cu baza de date</value>
       </toolTip>
       <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="8219c33e-b5d1-431a-8170-0d594f09d72d">
+      <name>Capacity</name>
+      <synonym>
+        <key>en</key>
+        <value>Capacity</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вместимость</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Capacitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity of units in package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество единиц товара в упаковке</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de unități din cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -390,7 +431,7 @@
       <maxValue xsi:type="core:UndefinedValue"/>
       <choiceParameterLinks>
         <name>Item</name>
-        <field>0:a0ba09aa-1582-4b3f-81b4-84c4a7fe485e/0:b7cc1cdc-a01b-40cb-821b-76e666b34e40</field>
+        <field>Document.InventoryStockman.TabularSection.Items.Attribute.Item</field>
       </choiceParameterLinks>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
@@ -439,6 +480,44 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="bfbbe2fe-eff5-40df-b364-52551019a5b3">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serie</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Series</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Series</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.InventoryStockman.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="5bf3ec4b-b863-4f34-b973-4876d9551b1d">
       <name>Package</name>
       <synonym>
@@ -446,12 +525,12 @@
         <value>Pkg</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Cut.</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Уп.</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cut.</value>
       </synonym>
       <type>
         <types>CatalogRef.Packages</types>
@@ -461,12 +540,12 @@
         <value>Package</value>
       </toolTip>
       <toolTip>
-        <key>ro</key>
-        <value>Cutie</value>
-      </toolTip>
-      <toolTip>
         <key>ru</key>
         <value>Упаковка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cutie</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
@@ -484,12 +563,12 @@
         <value>Labels</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Eticheta</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Этикеток</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Eticheta</value>
       </synonym>
       <type>
         <types>Number</types>
@@ -503,51 +582,15 @@
         <value>Number of labels to print</value>
       </toolTip>
       <toolTip>
-        <key>ro</key>
-        <value>Numărul de etichete de imprimat</value>
-      </toolTip>
-      <toolTip>
         <key>ru</key>
         <value>Количество этикеток для печати</value>
       </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
-    <attributes uuid="b3a91b58-292b-4632-b2f3-9ced8376b3ad">
-      <name>Quantity</name>
-      <synonym>
-        <key>en</key>
-        <value>Units</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Unități</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Единиц</value>
-      </synonym>
-      <type>
-        <types>DefinedType.Quantity</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>Quantity</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Количество</value>
-      </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Cantitate</value>
+        <value>Numărul de etichete de imprimat</value>
       </toolTip>
-      <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
-      <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -586,33 +629,39 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="bfbbe2fe-eff5-40df-b364-52551019a5b3">
-      <name>Series</name>
+    <attributes uuid="b3a91b58-292b-4632-b2f3-9ced8376b3ad">
+      <name>Quantity</name>
       <synonym>
         <key>en</key>
-        <value>Series</value>
+        <value>Units</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Единиц</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Serie</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Серия</value>
+        <value>Unități</value>
       </synonym>
       <type>
-        <types>CatalogRef.Series</types>
+        <types>DefinedType.Quantity</types>
       </type>
       <toolTip>
-        <key>ru</key>
-        <value>Партия</value>
+        <key>en</key>
+        <value>Quantity</value>
       </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
-      <choiceParameterLinks>
-        <name>Filter.Owner</name>
-        <field>Document.InventoryStockman.TabularSection.Items.Attribute.Item</field>
-      </choiceParameterLinks>
+      <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -624,12 +673,12 @@
       <value>Inventory</value>
     </synonym>
     <synonym>
-      <key>ro</key>
-      <value>Inventarierea</value>
-    </synonym>
-    <synonym>
       <key>ru</key>
       <value>Инвентаризация</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Inventarierea</value>
     </synonym>
     <group>ActionsPanelCreate</group>
     <commandParameterType/>
@@ -639,12 +688,12 @@
       <value>New stockman inventory</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Inventar nou de depozitar</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Новая инвентаризация кладовщика</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Inventar nou de depozitar</value>
     </toolTip>
     <picture xsi:type="core:PictureRef">
       <picture>CommonPicture.Inventory</picture>

@@ -119,14 +119,15 @@ Function barcodeData ( val Code )
 	Code = StrReplace ( Code, Char ( 13 ), "" );
 	s = "
 	|select Barcodes.Item as Item, Barcodes.Package as Package, Barcodes.Feature as Feature,
-	|	Barcodes.Item.Code as Code, isnull ( Barcodes.Package.Capacity, 1 ) as Capacity
+	|	Barcodes.Series as Series, Barcodes.Item.Code as Code,
+	|	isnull ( Barcodes.Package.Capacity, 1 ) as Capacity
 	|from InformationRegister.Barcodes as Barcodes
 	|where Barcodes.Barcode = &Barcode
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Barcode", Code );
 	table = q.Execute ().Unload ();
-	fields = new Structure ( "Barcode, Code, Item, Package, Feature, Capacity, Quantity, QuantityPkg" );
+	fields = new Structure ( "Barcode, Code, Item, Package, Feature, Series, Capacity, Quantity, QuantityPkg" );
 	fields.Barcode = Code;
 	if ( table.Count () = 0 ) then
 		fields.Capacity = 1;

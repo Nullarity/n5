@@ -60,6 +60,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByInventory ();
 			elsif ( baseType = Type ( "DocumentRef.Waybill" ) ) then
 				fillByWaybill ();
+			elsif ( baseType = Type ( "DocumentRef.ShipmentStockman" ) ) then
+				fillByShipmentStockman ();
 			endif;
 			setCurrency ();
 		endif;
@@ -260,7 +262,7 @@ Procedure sqlFields ()
 	
 	s = "
 	|// @Fields
-	|select Document.Ref as Base, Document.Company as Company, Document.Car as Car,
+	|select Document.Company as Company, Document.Car as Car,
 	|	Document.Car.Warehouse as Warehouse, dateadd ( Document.Date, second, 1 ) as InventoryDate
 	|from Document.Waybill as Document
 	|where Document.Ref = &Base
@@ -304,6 +306,8 @@ EndProcedure
 Procedure headerByWaybill ()
 	
 	FillPropertyValues ( Object, Env.Fields );
+	Object.Base = Base;
+	Object.Currency = Application.Currency ();
 	
 EndProcedure 
 
@@ -324,6 +328,66 @@ Procedure itemsByWaybill ()
 		Computations.Packages ( newRow );
 	enddo;
 	
+EndProcedure
+
+&AtServer
+Procedure fillByShipmentStockman ()
+	
+	setEnv ();
+	sqlShipmentStockman ();
+	SQL.Perform ( Env );
+	headerByShipmentStockman ();
+	loadShipmentStockman ();
+	
+EndProcedure
+
+&AtServer
+Procedure sqlShipmentStockman ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Warehouse as Warehouse, Documents.Invoiced as Invoiced
+	|from Document.ShipmentStockman as Documents
+	|where Documents.Ref = &Base
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Package as Package,
+	|	Items.Capacity as Capacity, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.Item.VAT as VATCode, Items.Item.VAT.Rate as VATRate
+	|from Document.ShipmentStockman.Items as Items
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByShipmentStockman ()
+	
+	fields = Env.Fields;
+	if ( fields.Invoiced ) then
+		raise Output.DocumentAlreadyInvoiced ( new Structure ( "Document", Base ) );
+	endif;
+	FillPropertyValues ( Object, fields );
+	Object.Base = Base;
+	Object.Currency = Application.Currency ();
+	
+EndProcedure 
+
+&AtServer
+Procedure loadShipmentStockman ()
+	
+	company = Object.Company;
+	warehouse = Object.Warehouse;
+	itemsTable = Object.Items;
+	for each row in Env.Items do
+		newRow = itemsTable.Add ();
+		FillPropertyValues ( newRow, row );
+		account = AccountsMap.Item ( row.Item, company, warehouse, "Account" ).Account;
+		newRow.Account = account;
+	enddo; 
+
 EndProcedure
 
 &AtServer
@@ -470,6 +534,30 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	
 EndProcedure
 
+&AtServer
+Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	completeShipment ();
+	
+EndProcedure
+
+&AtServer
+Procedure completeShipment ()
+	
+	shipment = Object.Base;
+	if ( TypeOf ( shipment ) = Type ( "DocumentRef.ShipmentStockman" ) ) then
+		Documents.ShipmentStockman.Complete ( shipment );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure AfterWrite ( WriteParameters )
+	
+	Notify ( Enum.MessageWriteOffIsSaved (), Object.Ref );
+	
+EndProcedure
+
 // *****************************************
 // *********** Group Form
 
@@ -596,7 +684,7 @@ EndProcedure
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 
@@ -967,3 +1055,4 @@ Procedure MembersMemberOnChange ( Item )
 	MembersForm.FillPosition ( Items.Members.CurrentData, Object.Date );
 	
 EndProcedure
+

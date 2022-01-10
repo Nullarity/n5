@@ -99,6 +99,7 @@ Procedure makeItems ( Env )
 	movement.Period = fields.Date;
 	movement.Item = fields.Item;
 	movement.Feature = fields.Feature;
+	movement.Series = fields.Series;
 	movement.Warehouse = fields.Warehouse;
 	movement.Quantity = 1;
 	

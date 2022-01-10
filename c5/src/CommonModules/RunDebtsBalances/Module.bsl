@@ -105,8 +105,10 @@ Procedure makeDebts ( Env )
 
 	if ( Env.IsDebts ) then
 		recordset = Env.Registers.Debts;
+		orderType = Type ( "DocumentRef.SalesOrder" );
 	else
 		recordset = Env.Registers.VendorDebts;
+		orderType = Type ( "DocumentRef.PurchaseOrder" );
 	endif;
 	fields = Env.Fields;
 	date = fields.Date;
@@ -118,11 +120,13 @@ Procedure makeDebts ( Env )
 		movement.Contract = row.Contract;
 		movement.PaymentKey = getPaymentKey ( Env, row );
 		document = row.Document;
-		if ( document.IsEmpty () ) then
-			movement.Document = ref;
-		else
+		if ( ValueIsFilled ( document ) ) then
 			movement.Document = document;
-			movement.Detail = ref;
+			if ( TypeOf ( document ) = orderType ) then
+				movement.Detail = ref;
+			endif;
+		else
+			movement.Document = ref;
 		endif;	
 		if ( advances ) then
 			movement.Overpayment = row.ContractAdvance;

@@ -4,7 +4,6 @@ Function Events () export
 	
 	p = Reporter.Events ();
 	p.BeforeOpen = true;
-	p.OnCompose = true;
 	p.OnDetail = true;
 	return p;
 	

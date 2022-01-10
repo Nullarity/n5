@@ -20,7 +20,8 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Department enable Performer = Enum.Performers.Department;
 	|Discount DiscountRate enable DiscountApplicable;
-	|VATCode VAT Total show VATUse > 0
+	|VATCode VAT show VATUse > 0;
+	|Total show VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

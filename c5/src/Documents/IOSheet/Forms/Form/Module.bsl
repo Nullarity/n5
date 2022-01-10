@@ -354,7 +354,7 @@ EndProcedure
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", new Structure ( "JustScan", true ), ThisObject );
+	ScanForm.Scan ( ThisObject );
 	
 EndProcedure
 

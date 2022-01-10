@@ -247,10 +247,26 @@ EndFunction
 Procedure showFormErrors ( Form, Errors )
 	
 	for each field in Errors do
-		Output.FieldIsEmpty ( , field, , "" );
+		Output.FieldIsEmpty ( , field, , "NewPackage" );
 	enddo; 
 	
 EndProcedure 
+
+&AtServer
+Function CheckEmbedded ( Object, Path ) export
+
+	if ( Object.CheckFilling () ) then
+		return true;
+	endif;
+	list = GetUserMessages ();
+	for each msg in list do
+		msg.DataKey = undefined;
+		msg.DataPath = "";
+		msg.Field = Path + "." + msg.Field;
+	enddo;
+	return false;
+
+EndFunction
 
 &AtClient
 Procedure Drag ( Form, Source, Destination, Tree, TreeObject ) export

@@ -28,7 +28,9 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Discount DiscountRate enable DiscountApplicable;
-	|VATCode VAT Total show VATUse > 0
+	|Series show SeriesControl;
+	|VATCode VAT show VATUse > 0;
+	|Total show VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -38,6 +40,7 @@ EndProcedure
 Procedure loadParams ()
 	
 	CountPackages = Parameters.CountPackages;
+	SeriesControl = Parameters.SeriesControl;
 	Source = Parameters.Source;
 	TableRow = Parameters.TableRow;
 	FillPropertyValues ( ThisObject, Source );

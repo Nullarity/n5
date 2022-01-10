@@ -38,8 +38,9 @@ Procedure readAppearance ()
 	|ItemGroup show Source.Type.PurchaseOrder and not Service;
 	|ServiceGroupProduction show Source.Type.ProductionOrder and Service;
 	|ItemGroupProduction show Source.Type.ProductionOrder and not Service;
-	|VATCode VAT Total ServicesVATCode ServicesVAT ServicesTotal show
-	|	Source.Type.PurchaseOrder and PurchaseOrder.VATUse > 0
+	|VATCode VAT ServicesVATCode ServicesVAT show
+	|	Source.Type.PurchaseOrder and PurchaseOrder.VATUse > 0;
+	|Total ServicesTotal show PurchaseOrder.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

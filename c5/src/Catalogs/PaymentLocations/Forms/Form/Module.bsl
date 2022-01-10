@@ -30,18 +30,24 @@ EndProcedure
 &AtClient
 Procedure AccountOnChange ( Item )
 	
-	setClass ();
+	applyAccount ();
 	
 EndProcedure
 
 &AtClient
-Procedure setClass ()
+Procedure applyAccount ()
 	
 	account = Object.Account;
 	if ( account.IsEmpty () ) then
 		Object.Class = undefined;
 	else
-		Object.Class = DF.Pick ( account, "Class" );
-	endif; 
+		class = DF.Pick ( account, "Class" );
+		Object.Class = class;
+		if ( class = PredefinedValue ( "Enum.Accounts.Cash" ) ) then
+			Object.Method = PredefinedValue ( "Enum.PaymentMethods.Cash" );
+		else
+			Object.Method = PredefinedValue ( "Enum.PaymentMethods.Bank" );
+		endif;
+	endif;
 	
 EndProcedure 

@@ -2457,14 +2457,6 @@ Procedure InvalidHolidayDay ( Params = undefined, Field = "", DataKey = undefine
 EndProcedure
 
 &AtServer
-Procedure InvalidScheduleDay ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = NStr ( "en='The selected date must be within the same calendar year as the schedule '; ro='Data selectată trebuie să se afle în același an calendaristic în care creați orarul'; ru='Выбранная дата должна быть в том году, в котором вводится график'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
-&AtServer
 Procedure LabelIsIncorrect ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='The Folder type must correspond to the Label type. Error: Folder type: %ParentType, Label type: %LabelType'; ro='Tipul de grup trebuie să se potrivească cu tipul etichetei. Eroare: Tip grup: %ParentType, tip etichetă: %LabelType'; ru='Тип группы должен соответствовать типу метки. Ошибка: Тип группы: %ParentType, тип метки: %LabelType'" );
@@ -7940,3 +7932,28 @@ Procedure UndefinedSeries ( Params = undefined, Field = "", DataKey = undefined,
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtClient
+Procedure AssignNewBarcode ( Module, CallbackParams = undefined, Params = undefined, ProcName = "AssignNewBarcode" ) export
+
+	text = NStr ( "en = 'This item already has a barcode assigned to it. Would you like to assign a new one?';ro = 'Această marfă are deja un cod de bare atribuit. Doriți să îi atribuiți unul nou?';ru = 'Для этого товара уже назначен штрихкод. Назначить новый? '" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
+
+EndProcedure
+
+&AtServer
+Function DocumentAlreadyInvoiced ( Params ) export
+
+	text = NStr ( "en = '%Document has already been processed previously';ro = '%Document a fost deja procesată anterior';ru = '%Document ранее уже был оформлен'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function UndefinedBarcodeProfile () export
+
+	text = NStr ( "en = 'No label printing profile is set for the current user!';ro = 'Nu este setat niciun profil de imprimare a etichetelor pentru utilizatorul curent!';ru = 'Для текущего пользователя не задан профиль печати этикеток!'" );
+	return text;
+
+EndFunction

@@ -2,6 +2,22 @@
 
 var Realtime;
 
+Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
+	
+	checkSeries ( CheckedAttributes );
+	
+EndProcedure
+
+Procedure checkSeries ( CheckedAttributes )
+	
+	if ( Options.Series ()
+		and Series.IsEmpty ()
+		and DF.Pick ( Set, "Series" ) ) then
+		CheckedAttributes.Add ( "Series" );
+	endif;
+
+EndProcedure
+
 Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 	
 	if ( DataExchange.Load ) then

@@ -223,10 +223,10 @@ Procedure sqlWarehouse ( Env )
 	s = "
 	|// ^Items
 	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature,
-	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
+	|	Items.Package as Package, Items.Series as Series, sum ( Items.QuantityPkg ) as Quantity
 	|from Items as Items
 	|where Items.RowKey not in ( select RowKey from Reserves )
-	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package
+	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
 	Env.Selection.Add ( s );
 	
@@ -671,6 +671,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

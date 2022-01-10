@@ -13,12 +13,12 @@
     <value>Receipt Stockman</value>
   </synonym>
   <synonym>
-    <key>ro</key>
-    <value>Chitanță Stockman</value>
-  </synonym>
-  <synonym>
     <key>ru</key>
     <value>Поступление кладовщика</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Primirea Stockman</value>
   </synonym>
   <useStandardCommands>true</useStandardCommands>
   <inputByString>Document.ReceiptStockman.StandardAttribute.Number</inputByString>
@@ -54,15 +54,15 @@
     <fillChecking>ShowError</fillChecking>
     <fullTextSearch>Use</fullTextSearch>
     <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
       <key>ru</key>
       <value>DLF=D</value>
     </format>
     <format>
       <key>ro</key>
-      <value>DLF=D</value>
-    </format>
-    <format>
-      <key>en</key>
       <value>DLF=D</value>
     </format>
     <minValue xsi:type="core:UndefinedValue"/>
@@ -84,24 +84,24 @@
     <value>Receipts Stockman</value>
   </listPresentation>
   <listPresentation>
-    <key>ro</key>
-    <value>Încasări Stockman</value>
-  </listPresentation>
-  <listPresentation>
     <key>ru</key>
     <value>Поступления кладовщика</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Primire Stockman</value>
   </listPresentation>
   <explanation>
     <key>en</key>
     <value>The document for the warehouse operation of receipt of goods from the vendor</value>
   </explanation>
   <explanation>
-    <key>ro</key>
-    <value>Documentul pentru operațiunea de recepție a mărfurilor de la furnizor</value>
-  </explanation>
-  <explanation>
     <key>ru</key>
     <value>Документ для оформления складской операции поступления товаров от поставщика</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Documentul pentru operațiunea de recepție a mărfurilor de la furnizor</value>
   </explanation>
   <numberType>String</numberType>
   <numberLength>9</numberLength>
@@ -192,12 +192,12 @@
       <value>Invoice Issued</value>
     </synonym>
     <synonym>
-      <key>ro</key>
-      <value>Factură emisă</value>
-    </synonym>
-    <synonym>
       <key>ru</key>
       <value>Накладная выписана</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Factură emisă</value>
     </synonym>
     <type>
       <types>Boolean</types>
@@ -207,12 +207,12 @@
       <value>The sign of the executed accounting operation</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Indicator al operațiunii contabile executate</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Признак оформленной бухгалтерской операции</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Indicator al operațiunii contabile executate</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -258,19 +258,55 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="9835f3cf-4d47-4081-baae-9d78982a7ae7">
+    <name>Organization</name>
+    <synonym>
+      <key>en</key>
+      <value>Organization</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Контрагент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Terț</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Organizations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Sending organization</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Контрагент-отправитель</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Terț-expeditorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="d8c061d2-cf32-4dcc-88b9-6aa3b679f786">
-    <name>Reveived</name>
+    <name>Received</name>
     <synonym>
       <key>en</key>
       <value>Received From</value>
     </synonym>
     <synonym>
-      <key>ro</key>
-      <value>Primită de la</value>
-    </synonym>
-    <synonym>
       <key>ru</key>
       <value>Получено от</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primită de la</value>
     </synonym>
     <type>
       <types>String</types>
@@ -283,12 +319,12 @@
       <value>Vendor name</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Numele furnizorului</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Название поставщика товара</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numele furnizorului</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -321,12 +357,12 @@
       <value>The warehouse that receives the items</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Depozitul care primește mărfurile</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Склад, на который поступают товары</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul care primește mărfurile</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -373,12 +409,12 @@
       <value>Items</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Marfă</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Товары</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
     </toolTip>
     <standardAttributes>
       <dataHistory>Use</dataHistory>
@@ -388,6 +424,41 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
     </standardAttributes>
+    <attributes uuid="0059b978-bb01-4b30-8ecd-f2837e8a25a8">
+      <name>Capacity</name>
+      <synonym>
+        <key>en</key>
+        <value>Capacity</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вместимость</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Capacitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity of units in package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество единиц товара в упаковке</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de unități din cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="2f621a3c-a102-408b-a5e3-20d04c13fb1a">
       <name>Feature</name>
       <synonym>
@@ -473,8 +544,16 @@
     <attributes uuid="41a8a53d-f7cd-47c1-a44b-570f24b5a166">
       <name>Package</name>
       <synonym>
+        <key>en</key>
+        <value>Pkg</value>
+      </synonym>
+      <synonym>
         <key>ru</key>
         <value>Уп.</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cut.</value>
       </synonym>
       <type>
         <types>CatalogRef.Packages</types>
@@ -507,12 +586,12 @@
         <value>Labels</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Eticheta</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Этикеток</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Eticheta</value>
       </synonym>
       <type>
         <types>Number</types>
@@ -526,12 +605,12 @@
         <value>Number of labels to print</value>
       </toolTip>
       <toolTip>
-        <key>ro</key>
-        <value>Numărul de etichete de imprimat</value>
-      </toolTip>
-      <toolTip>
         <key>ru</key>
         <value>Количество этикеток для печати</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de etichete de imprimat</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
@@ -545,12 +624,12 @@
         <value>Units</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Unități</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Единиц</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Unități</value>
       </synonym>
       <type>
         <types>DefinedType.Quantity</types>
@@ -581,12 +660,12 @@
         <value>Qty</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Cant.</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Кол-во</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cant.</value>
       </synonym>
       <type>
         <types>DefinedType.Quantity</types>
@@ -616,12 +695,12 @@
         <value>Series</value>
       </synonym>
       <synonym>
-        <key>ro</key>
-        <value>Serii</value>
-      </synonym>
-      <synonym>
         <key>ru</key>
         <value>Серия</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serii</value>
       </synonym>
       <type>
         <types>CatalogRef.Series</types>
@@ -631,12 +710,12 @@
         <value>Series</value>
       </toolTip>
       <toolTip>
-        <key>ro</key>
-        <value>Serie</value>
-      </toolTip>
-      <toolTip>
         <key>ru</key>
         <value>Серия</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serie</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
@@ -655,12 +734,12 @@
       <value>Receipt Stockman</value>
     </synonym>
     <synonym>
-      <key>ro</key>
-      <value>Chitanță Stockman</value>
-    </synonym>
-    <synonym>
       <key>ru</key>
       <value>Поступление кладовщика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Chitanță Stockman</value>
     </synonym>
     <group>ActionsPanelCreate</group>
     <commandParameterType/>
@@ -670,12 +749,12 @@
       <value>Receipt of goods in the warehouse</value>
     </toolTip>
     <toolTip>
-      <key>ro</key>
-      <value>Recepția mărfurilor în depozit</value>
-    </toolTip>
-    <toolTip>
       <key>ru</key>
       <value>Новое поступление на склад</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Recepția mărfurilor în depozit</value>
     </toolTip>
     <picture xsi:type="core:PictureRef">
       <picture>CommonPicture.Receipt</picture>

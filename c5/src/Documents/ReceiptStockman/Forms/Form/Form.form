@@ -43,10 +43,6 @@
     <headerHorizontalAlign>Left</headerHorizontalAlign>
     <showInFooter>true</showInFooter>
     <extInfo xsi:type="form:LabelFieldExtInfo">
-      <handlers>
-        <event>URLProcessing</event>
-        <name>LinksURLProcessing</name>
-      </handlers>
       <autoMaxHeight>true</autoMaxHeight>
     </extInfo>
   </items>
@@ -54,8 +50,16 @@
     <name>Warning</name>
     <id>273</id>
     <title>
+      <key>en</key>
+      <value>Receipt is complete. The document is not available for modification</value>
+    </title>
+    <title>
       <key>ru</key>
       <value>Поступление завершено. Документ недоступен для изменения</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Primirea este completă. Documentul nu este disponibil pentru modificare</value>
     </title>
     <visible>true</visible>
     <enabled>true</enabled>
@@ -149,7 +153,62 @@
     </extInfo>
   </items>
   <items xsi:type="form:FormField">
-    <name>Reveived</name>
+    <name>Organization</name>
+    <id>289</id>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>Object.Organization</segments>
+    </dataPath>
+    <defaultItem>true</defaultItem>
+    <handlers>
+      <event>OnChange</event>
+      <name>OrganizationOnChange</name>
+    </handlers>
+    <extendedTooltip>
+      <name>OrganizationExtendedTooltip</name>
+      <id>291</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>OrganizationContextMenu</name>
+      <id>290</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+    </extInfo>
+  </items>
+  <items xsi:type="form:FormField">
+    <name>Received</name>
     <id>267</id>
     <visible>true</visible>
     <enabled>true</enabled>
@@ -157,10 +216,10 @@
       <common>true</common>
     </userVisible>
     <dataPath xsi:type="form:DataPath">
-      <segments>Object.Reveived</segments>
+      <segments>Object.Received</segments>
     </dataPath>
     <extendedTooltip>
-      <name>ReveivedExtendedTooltip</name>
+      <name>ReceivedExtendedTooltip</name>
       <id>269</id>
       <visible>true</visible>
       <enabled>true</enabled>
@@ -175,7 +234,7 @@
       </extInfo>
     </extendedTooltip>
     <contextMenu>
-      <name>ReveivedContextMenu</name>
+      <name>ReceivedContextMenu</name>
       <id>268</id>
       <visible>true</visible>
       <enabled>true</enabled>
@@ -269,26 +328,25 @@
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
             <chooseType>true</chooseType>
+            <incompleteChoiceMode>OnActivate</incompleteChoiceMode>
             <typeDomainEnabled>true</typeDomainEnabled>
             <textEdit>true</textEdit>
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>ItemsPackage</name>
-          <id>210</id>
-          <displayImportance>VeryLow</displayImportance>
+          <name>ItemsFeature</name>
+          <id>283</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
             <common>true</common>
           </userVisible>
           <dataPath xsi:type="form:DataPath">
-            <segments>Object.Items.Package</segments>
+            <segments>Object.Items.Feature</segments>
           </dataPath>
-          <skipOnInput>true</skipOnInput>
           <extendedTooltip>
-            <name>ItemsPackageExtendedTooltip</name>
-            <id>212</id>
+            <name>ItemsFeatureExtendedTooltip</name>
+            <id>285</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -302,8 +360,8 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>ItemsPackageContextMenu</name>
-            <id>211</id>
+            <name>ItemsFeatureContextMenu</name>
+            <id>284</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -312,10 +370,10 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>InputField</type>
-          <editMode>EnterOnInput</editMode>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <extInfo xsi:type="form:InputFieldExtInfo">
-            <width>7</width>
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
@@ -326,7 +384,7 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>ItemsLot</name>
+          <name>ItemsSeries</name>
           <id>257</id>
           <visible>true</visible>
           <enabled>true</enabled>
@@ -337,7 +395,7 @@
             <segments>Object.Items.Series</segments>
           </dataPath>
           <extendedTooltip>
-            <name>ItemsLotРасширеннаяПодсказка</name>
+            <name>ItemsSeriesExtendedTooltip</name>
             <id>259</id>
             <visible>true</visible>
             <enabled>true</enabled>
@@ -352,7 +410,7 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>ItemsLotКонтекстноеМеню</name>
+            <name>ItemsSeriesContextMenu</name>
             <id>258</id>
             <visible>true</visible>
             <enabled>true</enabled>
@@ -363,15 +421,17 @@
           </contextMenu>
           <type>InputField</type>
           <editMode>EnterOnInput</editMode>
+          <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <extInfo xsi:type="form:InputFieldExtInfo">
             <handlers>
               <event>StartChoice</event>
-              <name>ItemsLotStartChoice</name>
+              <name>ItemsSeriesStartChoice</name>
             </handlers>
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
+            <openButton>false</openButton>
             <chooseType>true</chooseType>
             <typeDomainEnabled>true</typeDomainEnabled>
           </extInfo>
@@ -386,8 +446,12 @@
             <common>true</common>
           </userVisible>
           <dataPath xsi:type="form:DataPath">
-            <segments>Object.Items.QuantityPkg</segments>
+            <segments>Object.Items.Quantity</segments>
           </dataPath>
+          <handlers>
+            <event>OnChange</event>
+            <name>ItemsQuantityOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>ItemsQuantityExtendedTooltip</name>
             <id>215</id>
@@ -415,6 +479,206 @@
           </contextMenu>
           <type>InputField</type>
           <editMode>EnterOnInput</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:InputFieldExtInfo">
+            <width>7</width>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <spinButton>true</spinButton>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormGroup">
+          <name>ItemsGroup1</name>
+          <id>300</id>
+          <items xsi:type="form:FormField">
+            <name>ItemsPackage</name>
+            <id>210</id>
+            <displayImportance>VeryLow</displayImportance>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <dataPath xsi:type="form:DataPath">
+              <segments>Object.Items.Package</segments>
+            </dataPath>
+            <skipOnInput>true</skipOnInput>
+            <handlers>
+              <event>OnChange</event>
+              <name>ItemsPackageOnChange</name>
+            </handlers>
+            <extendedTooltip>
+              <name>ItemsPackageExtendedTooltip</name>
+              <id>212</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <type>Label</type>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <extInfo xsi:type="form:LabelDecorationExtInfo">
+                <horizontalAlign>Left</horizontalAlign>
+              </extInfo>
+            </extendedTooltip>
+            <contextMenu>
+              <name>ItemsPackageContextMenu</name>
+              <id>211</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <autoFill>true</autoFill>
+            </contextMenu>
+            <type>InputField</type>
+            <editMode>EnterOnInput</editMode>
+            <headerHorizontalAlign>Left</headerHorizontalAlign>
+            <extInfo xsi:type="form:InputFieldExtInfo">
+              <width>3</width>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <wrap>true</wrap>
+              <openButton>false</openButton>
+              <chooseType>true</chooseType>
+              <typeDomainEnabled>true</typeDomainEnabled>
+              <textEdit>true</textEdit>
+            </extInfo>
+          </items>
+          <items xsi:type="form:FormField">
+            <name>ItemsItemUnit</name>
+            <id>302</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <dataPath xsi:type="form:DataPath">
+              <segments>Object.Items.Item.Unit</segments>
+            </dataPath>
+            <extendedTooltip>
+              <name>ItemsItemUnitExtendedTooltip</name>
+              <id>304</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <type>Label</type>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <extInfo xsi:type="form:LabelDecorationExtInfo">
+                <horizontalAlign>Left</horizontalAlign>
+              </extInfo>
+            </extendedTooltip>
+            <contextMenu>
+              <name>ItemsItemUnitContextMenu</name>
+              <id>303</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <autoFill>true</autoFill>
+            </contextMenu>
+            <type>LabelField</type>
+            <editMode>EnterOnInput</editMode>
+            <headerHorizontalAlign>Left</headerHorizontalAlign>
+            <showInFooter>true</showInFooter>
+            <extInfo xsi:type="form:LabelFieldExtInfo">
+              <width>3</width>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+            </extInfo>
+          </items>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <title>
+            <key>en</key>
+            <value>Pkg</value>
+          </title>
+          <title>
+            <key>ru</key>
+            <value>Уп.</value>
+          </title>
+          <title>
+            <key>ro</key>
+            <value>Cut.</value>
+          </title>
+          <extendedTooltip>
+            <name>ItemsGroup1ExtendedTooltip</name>
+            <id>301</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <type>ColumnGroup</type>
+          <extInfo xsi:type="form:ColumnGroupExtInfo">
+            <group>InCell</group>
+            <showTitle>true</showTitle>
+            <showInHeader>true</showInHeader>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>ItemsQuantityPkg</name>
+          <id>286</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Items.QuantityPkg</segments>
+          </dataPath>
+          <handlers>
+            <event>OnChange</event>
+            <name>ItemsQuantityPkgOnChange</name>
+          </handlers>
+          <extendedTooltip>
+            <name>ItemsQuantityPkgExtendedTooltip</name>
+            <id>288</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>ItemsQuantityPkgContextMenu</name>
+            <id>287</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <editMode>Enter</editMode>
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
@@ -485,8 +749,39 @@
           <name>ItemsCommandBar</name>
           <id>181</id>
           <items xsi:type="form:Button">
+            <name>ItemsAdd</name>
+            <id>305</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <extendedTooltip>
+              <name>ItemsAddExtendedTooltip</name>
+              <id>306</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <type>Label</type>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <extInfo xsi:type="form:LabelDecorationExtInfo">
+                <horizontalAlign>Left</horizontalAlign>
+              </extInfo>
+            </extendedTooltip>
+            <commandName>Form.Item.Items.StandardCommand.Add</commandName>
+            <representation>Auto</representation>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <placementArea>UserCmds</placementArea>
+            <toolTipRepresentation>Auto</toolTipRepresentation>
+            <representationInContextMenu>Auto</representationInContextMenu>
+          </items>
+          <items xsi:type="form:Button">
             <name>ItemsScan</name>
-            <id>252</id>
+            <id>279</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -494,7 +789,7 @@
             </userVisible>
             <extendedTooltip>
               <name>ItemsScanExtendedTooltip</name>
-              <id>253</id>
+              <id>280</id>
               <visible>true</visible>
               <enabled>true</enabled>
               <userVisible>
@@ -1004,10 +1299,6 @@
         <key>ro</key>
         <value>Mai mult</value>
       </title>
-      <toolTip>
-        <key>en</key>
-        <value>Group more</value>
-      </toolTip>
       <extendedTooltip>
         <name>GroupMoreExtendedTooltip</name>
         <id>241</id>
@@ -1034,10 +1325,6 @@
     <userVisible>
       <common>true</common>
     </userVisible>
-    <title>
-      <key>en</key>
-      <value>Pages</value>
-    </title>
     <extendedTooltip>
       <name>PagesExtendedTooltip</name>
       <id>62</id>
@@ -1063,8 +1350,8 @@
     <name>FormCommandBar</name>
     <id>-1</id>
     <items xsi:type="form:Button">
-      <name>ФормаОтчетRecordsShow</name>
-      <id>260</id>
+      <name>FormReportRecordsCommandShow</name>
+      <id>281</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -1074,8 +1361,8 @@
         <segments>Object.Ref</segments>
       </dataPath>
       <extendedTooltip>
-        <name>ФормаОтчетRecordsShowРасширеннаяПодсказка</name>
-        <id>261</id>
+        <name>FormReportRecordsCommandShowExtendedTooltip</name>
+        <id>282</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -1127,6 +1414,126 @@
       <toolTipRepresentation>Auto</toolTipRepresentation>
       <representationInContextMenu>Auto</representationInContextMenu>
       <locationInCommandBar>InAdditionalSubmenu</locationInCommandBar>
+    </items>
+    <items xsi:type="form:FormGroup">
+      <name>ExtendedCommands</name>
+      <id>292</id>
+      <items xsi:type="form:Button">
+        <name>PostAndNew</name>
+        <id>294</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <extendedTooltip>
+          <name>PostAndNewExtendedTooltip</name>
+          <id>295</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <commandName>CommonCommand.PostAndNew</commandName>
+        <representation>Auto</representation>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <placementArea>UserCmds</placementArea>
+        <toolTipRepresentation>Auto</toolTipRepresentation>
+        <representationInContextMenu>Auto</representationInContextMenu>
+      </items>
+      <items xsi:type="form:Button">
+        <name>SaveAndNew</name>
+        <id>296</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <extendedTooltip>
+          <name>SaveAndNewExtendedTooltip</name>
+          <id>297</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <commandName>CommonCommand.SaveAndNew</commandName>
+        <representation>Auto</representation>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <placementArea>UserCmds</placementArea>
+        <toolTipRepresentation>Auto</toolTipRepresentation>
+        <representationInContextMenu>Auto</representationInContextMenu>
+      </items>
+      <items xsi:type="form:Button">
+        <name>JustSave</name>
+        <id>298</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <extendedTooltip>
+          <name>JustSaveExtendedTooltip</name>
+          <id>299</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <commandName>CommonCommand.Save</commandName>
+        <representation>Auto</representation>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <placementArea>UserCmds</placementArea>
+        <toolTipRepresentation>Auto</toolTipRepresentation>
+        <representationInContextMenu>Auto</representationInContextMenu>
+      </items>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <extendedTooltip>
+        <name>ExtendedCommandsExtendedTooltip</name>
+        <id>293</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <extInfo xsi:type="form:ButtonGroupExtInfo">
+        <representation>Compact</representation>
+      </extInfo>
     </items>
     <visible>true</visible>
     <enabled>true</enabled>
@@ -1238,11 +1645,16 @@
     <use>
       <common>true</common>
     </use>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.ScanBarcode</picture>
+    </picture>
     <action xsi:type="form:FormCommandHandlerContainer">
       <handler>
         <name>Scan</name>
       </handler>
     </action>
+    <functionalOptions>FunctionalOption.Barcodes</functionalOptions>
+    <representation>TextPicture</representation>
     <modifiesStoredData>true</modifiesStoredData>
     <currentRowUse>DontUse</currentRowUse>
   </formCommands>

@@ -62,6 +62,6 @@ EndProcedure
 &AtClient
 Procedure setDescription ()
 	
-	Object.Description = "" + Object.Unit;
+	Object.Description = TrimR ( "" + Object.Unit );
 	
 EndProcedure 

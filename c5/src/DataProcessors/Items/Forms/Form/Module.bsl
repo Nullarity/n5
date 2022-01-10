@@ -18,8 +18,9 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	initLists ();
 	initFilters ();
 	setPeriod ();
-	Options.SetAccuracy ( ThisObject, "ItemsListQuantity, CharsListQuantity, PackagesListQuantity, ItemWarehousesQuantity, SelectedItemsQuantityPkg,
-	|SelectedItemsQuantity, SelectedServicesQuantity, PackagesListCapacity, WarehousesBalanceReserve, ItemsListReserve", , false );
+	Options.SetAccuracy ( ThisObject, "ItemsListQuantity, CharsListQuantity, PackagesListQuantity, SeriesListQuantity,
+	|ItemWarehousesQuantity, SelectedItemsQuantityPkg, SelectedItemsQuantity, SelectedServicesQuantity,
+	|PackagesListCapacity, WarehousesBalanceReserve, ItemsListReserve", , false );
 	createTables ();
 	Options.Company ( ThisObject, Source.Company );
 	readAppearance ();
@@ -126,6 +127,11 @@ Procedure initLists ()
 	p.SetParameterValue ( "Warehouse", Warehouse );
 	p.SetParameterValue ( "Item", undefined );
 	p.SetParameterValue ( "Feature", undefined );
+	p = SeriesList.Parameters;
+	p.SetParameterValue ( "Warehouse", Warehouse );
+	p.SetParameterValue ( "Item", undefined );
+	p.SetParameterValue ( "Feature", undefined );
+	p.SetParameterValue ( "Package", undefined );
 	
 EndProcedure
 
@@ -145,6 +151,7 @@ Procedure setPeriod ()
 	ItemsList.Parameters.SetParameterValue ( "Period", period );
 	FeaturesList.Parameters.SetParameterValue ( "Period", period );
 	PackagesList.Parameters.SetParameterValue ( "Period", period );
+	SeriesList.Parameters.SetParameterValue ( "Period", period );
 	
 EndProcedure
 
@@ -193,7 +200,9 @@ EndProcedure
 Procedure filterByBalances ( val Setup )
 	
 	filterItems ( Setup );
-	DC.ChangeFilter ( PackagesList, "Quantity", 0, Setup = FilterAvailableOnly, DataCompositionComparisonType.Greater );
+	set = ( Setup = FilterAvailableOnly );
+	DC.ChangeFilter ( PackagesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
+	DC.ChangeFilter ( SeriesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
 	
 EndProcedure 
 
@@ -448,6 +457,8 @@ Function rowUndefined ()
 		return Items.FeaturesList.CurrentData = undefined;
 	elsif ( page = Items.GroupPackages ) then
 		return Items.PackagesList.CurrentData = undefined;
+	elsif ( page = Items.GroupSeries ) then
+		return Items.SeriesList.CurrentData = undefined;
 	else
 		return true;
 	endif; 
@@ -464,18 +475,27 @@ Function formData ()
 		data.Insert ( "Feature" );
 		data.Insert ( "Package" );
 		data.Insert ( "PackagePrice", row.Package );
+		data.Insert ( "Series" );
 	elsif ( page = Items.GroupFeatures ) then
 		row = SelectedRow;
 		featureListRow = Items.FeaturesList.CurrentData;
 		data.Insert ( "Feature", featureListRow.Ref );
 		data.Insert ( "Package" );
 		data.Insert ( "PackagePrice", row.Package );
+		data.Insert ( "Series" );
 	elsif ( page = Items.GroupPackages ) then
 		row = SelectedRow;
 		data.Insert ( "Feature", Feature );
-		package = Items.PackagesList.CurrentData.Ref;
-		data.Insert ( "Package", package );
-		data.Insert ( "PackagePrice", package );
+		box = Items.PackagesList.CurrentData.Ref;
+		data.Insert ( "Package", box );
+		data.Insert ( "PackagePrice", box);
+		data.Insert ( "Series" );
+	elsif ( page = Items.GroupSeries ) then
+		row = SelectedRow;
+		data.Insert ( "Feature", Feature );
+		data.Insert ( "Package", Package );
+		data.Insert ( "PackagePrice", Package );
+		data.Insert ( "Series", Items.SeriesList.CurrentData.Ref );
 	endif; 
 	data.Insert ( "Prices", Prices );
 	data.Insert ( "ShowPrices", ShowPrices );
@@ -484,6 +504,7 @@ Function formData ()
 	data.Insert ( "Item", row.Ref );
 	data.Insert ( "Service", row.Service );
 	data.Insert ( "CountPackages", row.CountPackages );
+	data.Insert ( "SeriesControl", row.Series );
 	data.Insert ( "Warehouse", Warehouse );
 	data.Insert ( "ShowReserves", ShowReserves );
 	data.Insert ( "Filter", Filter );
@@ -694,6 +715,7 @@ Procedure setSelectedRow ()
 	SelectedRow.Insert ( "CountPackages", data.CountPackages );
 	SelectedRow.Insert ( "Package", data.Package );
 	SelectedRow.Insert ( "Features", data.Features );
+	SelectedRow.Insert ( "Series", data.Series );
 	
 EndProcedure 
 
@@ -707,6 +729,8 @@ Procedure nextPage ( Item, StandardProcessing )
 		leaveFeature ( data, StandardProcessing );
 	elsif ( Item = Items.PackagesList ) then
 		leavePackage ( data, StandardProcessing );
+	elsif ( Item = Items.SeriesList ) then
+		leaveSeries ( data, StandardProcessing );
 	endif; 
 	
 EndProcedure
@@ -724,6 +748,8 @@ Procedure leaveItem ( Data, StandardProcessing )
 		activateFeatures ();
 	elsif ( Data.CountPackages ) then
 		activatePackages ();
+	elsif ( Data.Series ) then
+		activateSeries ();
 	else
 		completeSelection ();
 	endif; 
@@ -744,6 +770,8 @@ Procedure leaveFeature ( Data, StandardProcessing )
 	Feature = Data.Ref;
 	if ( SelectedRow.CountPackages ) then
 		activatePackages ();
+	elsif ( SelectedRow.Series ) then
+		activateSeries ();
 	else
 		completeSelection ();
 	endif; 
@@ -755,8 +783,21 @@ Procedure leavePackage ( Data, StandardProcessing )
 	
 	StandardProcessing = false;
 	Package = Data.Ref;
+	if ( SelectedRow.Series ) then
+		activateSeries ();
+	else
+		completeSelection ();
+	endif; 
+
+EndProcedure
+
+&AtClient
+Procedure leaveSeries ( Data, StandardProcessing )
+	
+	StandardProcessing = false;
+	Series = Data.Ref;
 	completeSelection ();
-		
+
 EndProcedure
 
 &AtClient
@@ -793,6 +834,24 @@ Procedure filterPackages ()
 EndProcedure
 
 &AtClient
+Procedure activateSeries ()
+
+	filterSeries ();
+	Items.GroupLists.CurrentPage = Items.GroupSeries;
+
+EndProcedure
+
+&AtClient
+Procedure filterSeries ()
+	
+	p = SeriesList.Parameters;
+	p.SetParameterValue ( "Item", SelectedRow.Ref );
+	p.SetParameterValue ( "Feature", Feature );
+	p.SetParameterValue ( "Package", Package );
+	
+EndProcedure
+
+&AtClient
 Procedure completeSelection ()
 	
 	if ( AskDetails ) then
@@ -818,6 +877,7 @@ Procedure openDetails ()
 	p.Insert ( "Discounts", Discounts );
 	p.Insert ( "CountPackages", ? ( service, false, SelectedRow.CountPackages ) );
 	p.Insert ( "Organization", getOrganization () );
+	p.Insert ( "SeriesControl", SelectedRow.Series );
 	type = Source.Type;
 	if ( type.SalesOrder
 		or type.InternalOrder ) then
@@ -846,33 +906,35 @@ Function getRow ()
 		type = Source.Type;
 		if ( type.SalesOrder
 			or type.InternalOrder ) then
-			row = getOrderRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+			row = getOrderRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		elsif ( type.PurchaseOrder ) then
 			row = getPurchaseOrderRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
 		elsif ( type.ProductionOrder ) then
 			row = getProductionOrderRow ( SelectedRow, Source, Package, Feature );
 		elsif ( type.Production ) then
-			row = getProductionRow ( SelectedRow, Source, Package, Feature );	
+			row = getProductionRow ( SelectedRow, Source, Package, Feature, Series );	
 		elsif ( type.VendorBill
 			or type.Bill
 			or type.Quote ) then
 			row = getBillRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
 		elsif ( type.Invoice )
 			or ( type.InvoiceRecord ) then
-			row = getInvoiceRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+			row = getInvoiceRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		elsif ( type.Transfer
 			or type.WriteOff ) then
-			row = getTransferRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+			row = getTransferRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		elsif ( type.VendorInvoice
 			or type.ExpenseReport ) then
-			row = getVendorInvoiceRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+			row = getVendorInvoiceRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		elsif ( type.Assembling
 			or type.Disassembling ) then
-			row = getAssemblingRow ( SelectedRow, Source, Package, Feature );	
+			row = getAssemblingRow ( SelectedRow, Source, Package, Feature, Series );	
 		elsif ( type.ReceiveItems ) then
-			row = getReceiveItemsRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
+			row = getReceiveItemsRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		elsif ( type.TimeEntry ) then
-			row = getTimeEntryRow ( SelectedRow, Source, Package, Feature );
+			row = getTimeEntryRow ( SelectedRow, Source, Package, Feature, Series );
+		elsif ( type.Sale ) then
+			row = getSaleRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature, Series );
 		endif; 
 		cacheRow ( row );
 	endif; 
@@ -908,13 +970,14 @@ Function getRowKey ()
 EndFunction 
 
 &AtServerNoContext
-Function getOrderRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+Function getOrderRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature, val Series )
 	
 	salesOrder = Source.Type.SalesOrder;
 	row = new Structure ();
 	item = SelectedRow.Ref;
 	row.Insert ( "Item", item );
 	row.Insert ( "Feature", Feature );
+	row.Insert ( "Series", Series );
 	row.Insert ( "DeliveryDate", Source.DeliveryDate );
 	row.Insert ( "Prices", Prices );
 	row.Insert ( "Quantity", 1 );
@@ -1026,10 +1089,11 @@ Function getProductionOrderRow ( val SelectedRow, val Source, val Package, val F
 EndFunction 
 
 &AtServerNoContext
-Function getProductionRow ( val SelectedRow, val Source, val Package, val Feature )
+Function getProductionRow ( val SelectedRow, val Source, val Package, val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
+	row.Insert ( "Series", Series );
 	item = SelectedRow.Ref;
 	row.Insert ( "Item", item );
 	row.Insert ( "Quantity", 1 );
@@ -1089,7 +1153,7 @@ Function getBillRow ( val PricesCache, val SelectedRow, val Source, val Prices, 
 EndFunction 
 
 &AtServerNoContext
-Function getInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+Function getInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
@@ -1109,7 +1173,7 @@ Function getInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Price
 	else
 		augmentPackage ( row, Package );
 		pricePackage = row.Package;
-		row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+		row.Insert ( "Series", Series );
 		row.Insert ( "SalesCost" );
 		row.Insert ( "Account" );
 		accounts = accounts + ", SalesCost, Account";
@@ -1141,7 +1205,7 @@ Function getInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Price
 EndFunction
 
 &AtServerNoContext
-Function getTransferRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+Function getTransferRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
@@ -1151,7 +1215,7 @@ Function getTransferRow ( val PricesCache, val SelectedRow, val Source, val Pric
 	row.Insert ( "Quantity", 1 );
 	augmentPackage ( row, Package );
 	pricePackage = row.Package;
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	row.Insert ( "Series", Series );
 	warehouse = Source.Warehouse;
 	account = AccountsMap.Item ( item, Source.Company, warehouse, "Account" ).Account;
 	row.Insert ( "Account", account );
@@ -1174,7 +1238,8 @@ Function getTransferRow ( val PricesCache, val SelectedRow, val Source, val Pric
 EndFunction 
 
 &AtServerNoContext
-Function getVendorInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+Function getVendorInvoiceRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package,
+	val Feature, val Series )
 	
 	row = new Structure ();
 	item = SelectedRow.Ref;
@@ -1198,7 +1263,7 @@ Function getVendorInvoiceRow ( val PricesCache, val SelectedRow, val Source, val
 	else
 		augmentPackage ( row, Package );
 		pricePackage = row.Package;
-		row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+		row.Insert ( "Series", Series );
 		row.Insert ( "Account" );
 		accounts = accounts + ", Account";
 	endif; 
@@ -1222,7 +1287,7 @@ Function getVendorInvoiceRow ( val PricesCache, val SelectedRow, val Source, val
 EndFunction 
 
 &AtServerNoContext
-Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Feature )
+Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
@@ -1230,7 +1295,7 @@ Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Featur
 	row.Insert ( "Item", item );
 	row.Insert ( "Quantity", 1 );
 	augmentPackage ( row, Package );
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	row.Insert ( "Series", Series );
 	row.Insert ( "Account", AccountsMap.Item ( item, Source.Company, Source.Warehouse, "Account" ).Account );
 	row.Insert ( "Warehouse", Catalogs.Warehouses.EmptyRef () );
 	return row;
@@ -1238,11 +1303,12 @@ Function getAssemblingRow ( val SelectedRow, val Source, val Package, val Featur
 EndFunction 
 
 &AtServerNoContext
-Function getReceiveItemsRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature )
+Function getReceiveItemsRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package,
+	val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	row.Insert ( "Series", Series );
 	item = SelectedRow.Ref;
 	row.Insert ( "Item", item );
 	row.Insert ( "Prices", Prices );
@@ -1270,11 +1336,11 @@ Function getReceiveItemsRow ( val PricesCache, val SelectedRow, val Source, val 
 EndFunction
 
 &AtServerNoContext
-Function getTimeEntryRow ( val SelectedRow, val Source, val Package, val Feature )
+Function getTimeEntryRow ( val SelectedRow, val Source, val Package, val Feature, val Series )
 	
 	row = new Structure ();
 	row.Insert ( "Feature", Feature );
-	row.Insert ( "Series", Catalogs.Series.EmptyRef () );
+	row.Insert ( "Series", Series );
 	item = SelectedRow.Ref;
 	row.Insert ( "Item", item );
 	row.Insert ( "Quantity", 1 );
@@ -1283,6 +1349,33 @@ Function getTimeEntryRow ( val SelectedRow, val Source, val Package, val Feature
 	return row;
 	
 EndFunction 
+
+&AtServerNoContext
+Function getSaleRow ( val PricesCache, val SelectedRow, val Source, val Prices, val Package, val Feature, val Series )
+	
+	row = new Structure ();
+	row.Insert ( "Series", Series );
+	row.Insert ( "Feature", Feature );
+	row.Insert ( "DiscountRate", 0 );
+	row.Insert ( "Discount", 0 );
+	item = SelectedRow.Ref;
+	row.Insert ( "Item", item );
+	row.Insert ( "Quantity", 1 );
+	augmentPackage ( row, Package );
+	pricePackage = row.Package;
+	data = DF.Values ( item, "VAT, VAT.Rate as Rate" );
+	row.Insert ( "VATCode", data.VAT );
+	row.Insert ( "VATRate", data.Rate );
+	row.Insert ( "Total", 0 );
+	row.Insert ( "VAT", 0 );
+	row.Insert ( "Price",
+		Goods.Price ( PricesCache, Source.Date, Prices, item, pricePackage, Feature, , , , Source.Warehouse ) );
+	row.Insert ( "Amount", 0 );
+	Computations.Amount ( row );
+	Computations.Total ( row, Source.VATUse );
+	return row;
+	
+EndFunction
 
 &AtClient
 Procedure cacheRow ( Row )
@@ -1386,6 +1479,7 @@ Function getBalancesTable ( Data )
 	q.SetParameter ( "Item", Data.Item );
 	q.SetParameter ( "Feature", Data.Feature );
 	q.SetParameter ( "Package", Data.Package );
+	q.SetParameter ( "Series", Data.Series );
 	SQL.Prepare ( env );
 	return q.Execute ().Unload ();
 
@@ -1511,7 +1605,8 @@ EndProcedure
 Procedure sqlBalances ( Data, Env )
 
 	s = "
-	|select Balances.Warehouse as Warehouse, presentation ( Balances.Warehouse ) as WarehousePresentation, Balances.QuantityBalance as Quantity
+	|select Balances.Warehouse as Warehouse, presentation ( Balances.Warehouse ) as WarehousePresentation,
+	|	Balances.QuantityBalance as Quantity
 	|";
 	if ( Options.Packages ()
 		and Data.CountPackages ) then
@@ -1576,6 +1671,23 @@ EndProcedure
 
 &AtClient
 Procedure PackagesListSelection ( Item, SelectedRow, Field, StandardProcessing )
+	
+	nextPage ( Item, StandardProcessing );
+	
+EndProcedure
+
+// *****************************************
+// *********** Table SeriesList
+
+&AtClient
+Procedure SeriesListOnActivateRow ( Item )
+	
+	startUpdate ( Item );
+	
+EndProcedure
+
+&AtClient
+Procedure SeriesListSelection ( Item, SelectedRow, Field, StandardProcessing )
 	
 	nextPage ( Item, StandardProcessing );
 	

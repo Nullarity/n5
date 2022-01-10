@@ -342,11 +342,14 @@ Procedure commitOverpayment ( Env, Payments )
 		debtor = true;
 		p.AccountCr = fields.VendorAccount;
 		organization = fields.Vendor;
-	elsif ( type = Type ( "DocumentRef.VendorInvoice" )
-		or type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
+	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		debtor = false;
 		p.AccountDr = fields.VendorAccount;
 		organization = fields.Vendor;
+	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
+		debtor = false;
+		p.AccountDr = fields.CustomsAccount;
+		organization = fields.Customs;
 	endif;
 	p.DimDr1 = organization;
 	p.DimCr1 = organization;

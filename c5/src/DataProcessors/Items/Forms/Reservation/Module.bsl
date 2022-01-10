@@ -26,7 +26,9 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Price Amount Prices show ShowPrice;
 	|ChangeReservation show ShowReservation;
-	|VATCode VAT Total show ( ShowPrice and VATUse > 0 )
+	|Series show SeriesControl;
+	|VATCode VAT show ( ShowPrice and VATUse > 0 );
+	|Total show ( ShowPrice and VATUse = 2 );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -36,6 +38,7 @@ EndProcedure
 Procedure loadParams ()
 	
 	CountPackages = Parameters.CountPackages;
+	SeriesControl = Parameters.SeriesControl;
 	Source = Parameters.Source;
 	TableRow = Parameters.TableRow;
 	FillPropertyValues ( ThisObject, Source );

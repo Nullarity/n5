@@ -152,44 +152,15 @@ Procedure fillNew ()
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
 		return;
 	endif; 
-	settings = Logins.Settings ( "Company, PaymentLocation" );
+	settings = Logins.Settings ( "Company, PaymentLocation, PaymentLocation.Method as Method" );
 	Object.Location = settings.PaymentLocation;
+	Object.Method = settings.Method;
 	Object.Company = settings.Company;
-	initMethod ();
 	initAccounts ();
 	PaymentForm.SetBankAccount ( Object );
 	PaymentForm.SetAccount ( Object );
 	
 EndProcedure 
-
-&AtServer
-Procedure initMethod ()
-	
-	method = lastMethod ();
-	if ( method = undefined ) then
-		Object.Method = Enums.PaymentMethods.Bank;
-	else
-		Object.Method = method;
-	endif; 
-	
-EndProcedure 
-
-&AtServer
-Function lastMethod ()
-	
-	s = "
-	|select allowed top 1 Documents.Method as Method
-	|from Document.PayEmployees as Documents
-	|where Documents.Posted
-	|and Documents.Company = &Company
-	|order by Documents.Date desc
-	|";
-	q = new Query ( s );
-	q.SetParameter ( "Company", Object.Company );
-	table = q.Execute ().Unload ();
-	return ? ( table.Count () = 0, undefined, table [ 0 ].Method );
-
-EndFunction 
 
 &AtServer
 Procedure initAccounts ()

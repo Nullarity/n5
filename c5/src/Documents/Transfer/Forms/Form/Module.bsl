@@ -8,6 +8,8 @@ var ItemsRow;
 var InvoiceRecordExists;
 &AtServer
 var ShipmentExists;
+&AtServer
+var ShipmentMetadata;
 
 // *****************************************
 // *********** Form events
@@ -35,6 +37,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			if ( baseType = Type ( "DocumentRef.SalesOrder" )
 				or baseType = Type ( "DocumentRef.InternalOrder" ) ) then
 				fillByOrder ();
+			elsif ( baseType = Type ( "DocumentRef.ShipmentStockman" ) ) then
+				fillByShipmentStockman ();
 			endif; 
 		endif;
 	endif; 
@@ -105,15 +109,26 @@ EndProcedure
 &AtServer
 Procedure fillByOrder ()
 	
-	SQL.Init ( Env );
+	setEnv ();
 	setContext ();
 	setSender ();
 	sqlFields ();
 	sqlReserves ();
 	sqlItems ();
-	getTables ();
+	SQL.Perform ( Env );
 	headerByOrder ();
 	itemsByOrder ();
+	
+EndProcedure
+
+&AtServer
+Procedure setEnv ()
+	
+	Env = new Structure ();
+	SQL.Init ( Env );
+	q = Env.Q;
+	q.SetParameter ( "Base", Base );
+	q.SetParameter ( "Warehouse", Object.Sender );
 	
 EndProcedure
 
@@ -192,16 +207,6 @@ Procedure sqlItems ()
 EndProcedure
 
 &AtServer
-Procedure getTables () 
-
-	q = Env.Q;
-	q.SetParameter ( "Base", Base );
-	q.SetParameter ( "Warehouse", Object.Sender );
-	SQL.Perform ( Env );
-
-EndProcedure
-
-&AtServer
 Procedure headerByOrder () 
 
 	fields = Env.Fields;
@@ -240,6 +245,68 @@ Procedure itemsByOrder ()
 
 EndProcedure
 
+&AtServer
+Procedure fillByShipmentStockman ()
+	
+	setEnv ();
+	sqlShipmentStockman ();
+	SQL.Perform ( Env );
+	headerByShipmentStockman ();
+	loadShipmentStockman ();
+	
+EndProcedure
+
+&AtServer
+Procedure sqlShipmentStockman ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Warehouse as Sender, Documents.Stock as Receiver,
+	|	Documents.Invoiced as Invoiced
+	|from Document.ShipmentStockman as Documents
+	|where Documents.Ref = &Base
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Package as Package,
+	|	Items.Capacity as Capacity, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.Item.VAT as VATCode, Items.Item.VAT.Rate as VATRate
+	|from Document.ShipmentStockman.Items as Items
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByShipmentStockman ()
+	
+	fields = Env.Fields;
+	if ( fields.Invoiced ) then
+		raise Output.DocumentAlreadyInvoiced ( new Structure ( "Document", Base ) );
+	endif;
+	FillPropertyValues ( Object, fields );
+	Object.Shipment = Base;
+	Object.Currency = Application.Currency ();
+	
+EndProcedure 
+
+&AtServer
+Procedure loadShipmentStockman ()
+	
+	company = Object.Company;
+	sender = Object.Sender;
+	itemsTable = Object.Items;
+	for each row in Env.Items do
+		newRow = itemsTable.Add ();
+		FillPropertyValues ( newRow, row );
+		account = AccountsMap.Item ( row.Item, company, sender, "Account" ).Account;
+		newRow.Account = account;
+		newRow.AccountReceiver = account;
+	enddo; 
+
+EndProcedure
+
 #endregion
 
 &AtServer
@@ -270,15 +337,17 @@ EndProcedure
 &AtServer
 Procedure sqlLinks ()
 	
-	ShipmentExists = not Object.Shipment.IsEmpty ();
+	selection = Env.Selection;
+	ShipmentExists = Object.Shipment <> undefined;
 	if ( ShipmentExists ) then
+		ShipmentMetadata = Metadata.FindByType ( TypeOf ( Object.Shipment ) );
 		s = "
 		|// #Shipments
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-		|from Document.Shipment as Documents
+		|from Document." + ShipmentMetadata.Name + " as Documents
 		|where Documents.Ref = &Shipment
 		|";
-		Env.Selection.Add ( s );
+		selection.Add ( s );
 	endif;
 	if ( isNew () ) then
 		return;
@@ -292,7 +361,7 @@ Procedure sqlLinks ()
 		|where Documents.Base = &Ref
 		|and not Documents.DeletionMark
 		|";
-		Env.Selection.Add ( s );
+		selection.Add ( s );
 	endif;
 	
 EndProcedure 
@@ -303,7 +372,7 @@ Procedure setURLPanel ()
 	parts = new Array ();
 	meta = Metadata.Documents;
 	if ( ShipmentExists ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.Shipments, meta.Shipment ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Shipments, ShipmentMetadata ) );
 	endif;	
 	if ( not isNew () ) then
 		if ( InvoiceRecordExists ) then
@@ -388,7 +457,7 @@ EndProcedure
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Feature" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	itemsTable = Object.Items;
 	rows = itemsTable.FindRows ( search );
@@ -400,6 +469,7 @@ Procedure addItem ( Fields )
 		row.Package = package;
 		feature = Fields.Feature;
 		row.Feature = feature;
+		row.Series = Fields.Series;
 		row.QuantityPkg = Fields.QuantityPkg;
 		row.Capacity = Fields.Capacity;
 		row.Quantity = Fields.Quantity;
@@ -442,11 +512,29 @@ EndProcedure
 &AtServer
 Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
+	completeShipment ();
 	if ( Object.Ref.IsEmpty () ) then
 		return;
 	endif;
 	readPrinted ();
 	Appearance.Apply ( ThisObject, "InvoiceRecord" );
+	
+EndProcedure
+
+&AtServer
+Procedure completeShipment ()
+	
+	shipment = Object.Shipment;
+	if ( TypeOf ( shipment ) = Type ( "DocumentRef.ShipmentStockman" ) ) then
+		Documents.ShipmentStockman.Complete ( shipment );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure AfterWrite ( WriteParameters )
+	
+	Notify ( Enum.MessageTransferIsSaved (), Object.Ref );
 	
 EndProcedure
 
@@ -543,7 +631,7 @@ EndProcedure
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 
@@ -754,3 +842,4 @@ Procedure ItemsRangeStartChoice ( Item, ChoiceData, StandardProcessing )
 	RegulatedRangesForm.Choose ( Item, Object, ItemsRow, getWarehouse ( ItemsRow, Object ) );
 	
 EndProcedure
+

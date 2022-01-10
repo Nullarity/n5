@@ -651,7 +651,7 @@ EndProcedure
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 

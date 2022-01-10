@@ -11,6 +11,8 @@ var SalesOrderExists;
 &AtServer
 var ShipmentExists;
 &AtServer
+var ShipmentMetadata;
+&AtServer
 var TimeEntryExists;
 &AtServer
 var Copy;
@@ -84,6 +86,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillBySaleOrder ();
 			elsif ( baseType = Type ( "DocumentRef.TimeEntry" ) ) then
 				fillByTimeEntry ();
+			elsif ( baseType = Type ( "DocumentRef.ShipmentStockman" ) ) then
+				fillByShipmentStockman ();
 			endif; 
 		endif;
 		updateBalanceDue ();
@@ -130,14 +134,14 @@ Procedure readAppearance ()
 	|CreatePayment show BalanceDue <> 0;
 	|#c ServicesSalesOrder show Items.Services.CurrentData <> undefined
 	|	and filled ( Items.Services.CurrentData.SalesOrder );
-	|VAT ItemsVATAccount ServicesVATAccount DiscountsVATAccount show Object.VATUse > 0;
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
 	|Header GroupItems GroupServices Footer Discounts GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|ItemsSelectItems ServicesSelectItems ItemsScan ItemsApplySalesOrders ServicesApplySalesOrders DiscountsRefreshDiscounts disable inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal
-	|	DiscountsVATCode DiscountsVAT show Object.VATUse > 0;
+	|VAT ItemsVATAccount ServicesVATAccount DiscountsVATAccount ItemsVATCode ItemsVAT
+	|	ServicesVATCode ServicesVAT DiscountsVATCode DiscountsVAT show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|#s DiscountsPage hide Mobile and Form.Object.Discounts.Count () = 0;
 	|#s ItemsApplySalesOrders hide filled ( Object.TimeEntry );
@@ -222,8 +226,10 @@ EndProcedure
 &AtServer
 Procedure updateContent ()
 	
-	reloadTables ();
-	DiscountsTable.Load ( Object );
+	if ( Object.Shipment = undefined ) then
+		reloadTables ();
+		DiscountsTable.Load ( Object );
+	endif;
 	InvoiceForm.SetPayment ( Object );
 	
 EndProcedure 
@@ -529,6 +535,88 @@ Procedure headerByTimeEntry ()
 	
 EndProcedure
 
+&AtServer
+Procedure fillByShipmentStockman ()
+	
+	setEnv ();
+	sqlShipmentStockman ();
+	SQL.Perform ( Env );
+	headerByShipmentStockman ();
+	loadShipmentStockman ();
+	
+EndProcedure
+
+&AtServer
+Procedure sqlShipmentStockman ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Warehouse as Warehouse, Documents.Organization as Organization,
+	|	Documents.Invoiced as Invoiced, Settings.Department as Department
+	|from Document.ShipmentStockman as Documents
+	|	//
+	|	// Settings
+	|	//
+	|	left join Catalog.UserSettings as Settings
+	|	on Settings.Owner = &Me
+	|where Documents.Ref = &Base
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Package as Package,
+	|	Items.Capacity as Capacity, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.Item.Social as Social, Items.Item.VAT as VATCode, Items.Item.VAT.Rate as VATRate
+	|from Document.ShipmentStockman.Items as Items
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByShipmentStockman ()
+	
+	fields = Env.Fields;
+	if ( fields.Invoiced ) then
+		raise Output.DocumentAlreadyInvoiced ( new Structure ( "Document", Base ) );
+	endif;
+	FillPropertyValues ( Object, fields );
+	Object.Shipment = Base;
+	Object.Customer = fields.Organization;
+	applyCustomer ();
+	
+EndProcedure 
+
+&AtServer
+Procedure loadShipmentStockman ()
+	
+	cache = new Map ();
+	company = Object.Company;
+	warehouse = Object.Warehouse;
+	vatUse = Object.VATUse;
+	date = Object.Date;
+	prices = Object.Prices;
+	customer = Object.Customer;
+	contract = Object.Contract;
+	currency = Object.Currency;
+	itemsTable = Object.Items;
+	for each row in Env.Items do
+		newRow = itemsTable.Add ();
+		FillPropertyValues ( newRow, row );
+		item = row.Item;
+		accounts = AccountsMap.Item ( item, company, warehouse, "Account, SalesCost, Income, VAT" );
+		newRow.Account = accounts.Account;
+		newRow.SalesCost = accounts.SalesCost;
+		newRow.Income = accounts.Income;
+		newRow.VATAccount = accounts.VAT;
+		newRow.Price = Goods.Price ( cache, date, prices, item, newRow.Package, newRow.Feature,
+			customer, contract, , warehouse, currency );
+		Computations.Amount ( newRow );
+		Computations.Total ( newRow, vatUse );
+	enddo; 
+
+EndProcedure
+
 #endregion
 
 &AtServer
@@ -566,7 +654,7 @@ Procedure sqlLinks ()
 	selection = Env.Selection;
 	TimeEntryExists = not Object.TimeEntry.IsEmpty ();
 	SalesOrderExists = not Object.SalesOrder.IsEmpty ();
-	ShipmentExists = not Object.Shipment.IsEmpty ();
+	ShipmentExists = Object.Shipment <> undefined;
 	if ( TimeEntryExists ) then
 		s = "
 		|// #TimeEntries
@@ -586,10 +674,11 @@ Procedure sqlLinks ()
 		selection.Add ( s );
 	endif;
 	if ( ShipmentExists ) then
+		ShipmentMetadata = Metadata.FindByType ( TypeOf ( Object.Shipment ) );
 		s = "
 		|// #Shipments
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-		|from Document.Shipment as Documents
+		|from Document." + ShipmentMetadata.Name + " as Documents
 		|where Documents.Ref = &Shipment
 		|";
 		selection.Add ( s );
@@ -644,7 +733,7 @@ Procedure setURLPanel ()
 		parts.Add ( URLPanel.DocumentsToURL ( Env.SalesOrders, meta.SalesOrder ) );
 	endif; 
 	if ( ShipmentExists ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.Shipments, meta.Shipment ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Shipments, ShipmentMetadata ) );
 	endif; 
 	if ( not isNew () ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Payments, meta.Payment ) );
@@ -768,13 +857,14 @@ EndProcedure
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Feature" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	rows = Object.Items.FindRows ( search );
 	if ( rows.Count () = 0 ) then
 		row = Object.Items.Add ();
 		item = Fields.Item;
 		row.Item = item;
+		row.Series = Fields.Series;
 		package = Fields.Package;
 		row.Package = package;
 		feature = Fields.Feature;
@@ -821,12 +911,23 @@ EndProcedure
 &AtServer
 Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
+	completeShipment ();
 	if ( Object.Ref.IsEmpty () ) then
 		return;
 	endif;
 	readPrinted ();
 	Appearance.Apply ( ThisObject, "InvoiceRecord" );
 	
+EndProcedure
+
+&AtServer
+Procedure completeShipment ()
+	
+	shipment = Object.Shipment;
+	if ( TypeOf ( shipment ) = Type ( "DocumentRef.ShipmentStockman" ) ) then
+		Documents.ShipmentStockman.Complete ( shipment );
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -989,7 +1090,7 @@ EndFunction
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 

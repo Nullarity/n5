@@ -89,6 +89,8 @@ Procedure fillNew ()
 	if ( Parameters.FillingText <> "" ) then
 		setFullDescription ( ThisObject );
 	endif; 
+	Object.VAT = Application.ItemsVAT ();
+	Object.CostMethod = Application.ItemsCost ();
 	
 EndProcedure 
 
@@ -188,7 +190,7 @@ Procedure applyService ()
 		Object.Producer = undefined;
 		Object.Accuracy = 0;
 	else
-		Object.CostMethod = PredefinedValue ( "Enum.Cost.Avg" );
+		Object.CostMethod = Application.ItemsCost ();
 	endif; 
 	Appearance.Apply ( ThisObject, "Object.Service" );
 	

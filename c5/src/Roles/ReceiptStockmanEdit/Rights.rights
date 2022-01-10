@@ -4,13 +4,42 @@
 	<setForAttributesByDefault>true</setForAttributesByDefault>
 	<independentRightsOfChildObjects>false</independentRightsOfChildObjects>
 	<object>
+		<name>Configuration.Contabilizare</name>
+		<right>
+			<name>MainWindowModeNormal</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeEmbeddedWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeFullscreenWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeKiosk</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>AnalyticsSystemClient</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>Document.ReceiptStockman</name>
 		<right>
 			<name>Read</name>
 			<value>true</value>
 			<restrictionByCondition>
 				<condition>T where T.Company in ( #Companies ( "Company" ) )
-and T.Warehouse in ( #Warehouses ( "Warehouse" ) )</condition>
+and T.Warehouse in ( #Warehouses ( "Warehouse" ) )
+and T.Organization in ( #Organizations ( "Organization" ) )
+</condition>
 			</restrictionByCondition>
 		</right>
 		<right>
@@ -341,82 +370,6 @@ and &amp;CanViewVendors
 	and #Parameter(1).ShippingAddress
 #endif
 	= value ( Catalog.Addresses.EmptyRef )
-</condition>
-	</restrictionTemplate>
-	<restrictionTemplate>
-		<name>Projects</name>
-		<condition>// #Parameter(1) - Reference Field
-
-select value ( Catalog.Projects.EmptyRef )
-union all
-select #Parameter(1)
-where
-#if "#Parameter(1)" = "Ref" #then
-	Owner in ( #Organizations ( "Owner" ) )
-#else
-	#Parameter(1).Owner in ( #Organizations ( "#Parameter(1).Owner" ) )
-#endif
-and 1 in (
-	select 1
-	where &amp;UserClass = value ( Enum.Users.StandardUser )
-	and
-	#if "#Parameter(1)" = "Ref" #then
-		Manager
-	#else
-		#Parameter(1).Manager
-	#endif
-		= &amp;Employee
-	union all
-	select 1
-	from Catalog.Projects.Tasks as _Tasks
-	where &amp;UserClass = value ( Enum.Users.StandardUser )
-	and _Tasks.Employee = &amp;Employee
-	and
-	#if СтрСодержит ( "#Parameter(1)", "." ) #then
-		_Tasks.Ref = #Parameter(1)
-	#else
-		_Tasks.Ref = T.#Parameter(1)
-	#endif
-	union all
-	select 1
-	from Catalog.Projects.ApprovalList as _ApprovalList
-	where _ApprovalList.User = &amp;User
-	and
-	#if СтрСодержит ( "#Parameter(1)", "." ) #then
-		_ApprovalList.Ref = #Parameter(1)
-	#else
-		_ApprovalList.Ref = T.#Parameter(1)
-	#endif
-	union all
-	select #Parameter(1)
-	where
-	#if "#Parameter(1)" = "Ref" #then
-		IsFolder
-	#else
-		#Parameter(1).IsFolder
-	#endif
-)</condition>
-	</restrictionTemplate>
-	<restrictionTemplate>
-		<name>TimeEntries</name>
-		<condition>// #Parameter(1) - Reference Field
-
-select #Parameter(1)
-where
-#if "#Parameter(1)" = "Ref" #then
-	Creator
-#else
-	#Parameter(1).Creator
-#endif
-	= &amp;User
-union all
-select #Parameter(1)
-where
-#if "#Parameter(1)" = "Ref" #then
-	Project in ( #Projects ( "Project" ) )
-#else
-	#Parameter(1).Project in ( #Projects ( "#Parameter(1).Project" ) )
-#endif
 </condition>
 	</restrictionTemplate>
 	<restrictionTemplate>

@@ -13,7 +13,8 @@ EndProcedure
 &AtServer
 Procedure init ()
 	
-	WarehouseFilter = DF.Pick ( SessionParameters.Пользователь, "ОсновнойСклад" );
+	settings = Logins.Settings ( "Warehouse" );
+	WarehouseFilter = settings.Warehouse;
 	filterByWarehouse ();
 	
 EndProcedure

@@ -123,7 +123,10 @@ Procedure CalcTotals ( Source ) export
 	p = getTotalParams ( Source );
 	object = p.Object;
 	items = object.Items;
-	services = object.Services;
+	calcServices = p.CalcServices;
+	if ( calcServices ) then
+		services = object.Services;
+	endif;
 	vendorInvoice = p.VendorInvoice;
 	paymentDiscounts = p.PaymentDiscounts;
 	if ( vendorInvoice ) then
@@ -150,10 +153,10 @@ Procedure CalcTotals ( Source ) export
 		endif;
 	endif;
 	vat = items.Total ( "VAT" )
-	+ services.Total ( "VAT" )
+	+ ? ( calcServices, services.Total ( "VAT" ), 0 )
 	- discountVAT;
 	amount = items.Total ( "Total" )
-	+ services.Total ( "Total" )
+	+ ? ( calcServices, services.Total ( "Total" ), 0 )
 	- discountAmount;
 	if ( vendorInvoice ) then
 		vat = vat 
@@ -165,7 +168,9 @@ Procedure CalcTotals ( Source ) export
 		+ fixedAssets.Total ( "Total" )
 		+ intangibleAssets.Total ( "Total" );
 	endif;
-	discountTotal = items.Total ( "Discount" ) + services.Total ( "Discount" ) + discountAmount;
+	discountTotal = items.Total ( "Discount" )
+	+ ? ( calcServices, services.Total ( "Discount" ), 0 )
+	+ discountAmount;
 	object.VAT = vat;
 	object.Amount = amount;
 	object.Discount = discountTotal;
@@ -187,14 +192,23 @@ EndProcedure
 
 Function getTotalParams ( Source )
 	
-	params = new Structure ( "Object, CalcContractAmount, LocalCurrency, ContractCurrency, PaymentDiscounts, VendorInvoice" );
+	params = new Structure ( "
+	|Object,
+	|CalcContractAmount,
+	|LocalCurrency,
+	|ContractCurrency,
+	|PaymentDiscounts,
+	|VendorInvoice,
+	|CalcServices" );
 	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
 	object = ? ( clientForm, Source.Object, Source );
 	type = TypeOf ( object.Ref );
 	params.VendorInvoice = type = Type ( "DocumentRef.VendorInvoice" );
 	params.PaymentDiscounts = params.VendorInvoice or ( type = Type ( "DocumentRef.Invoice" ) );
+	params.CalcServices = type <> Type ( "DocumentRef.Sale" );
 	if ( type = Type ( "DocumentRef.ExpenseReport" )
 		or type = Type ( "DocumentRef.Shipment" )
+		or type = Type ( "DocumentRef.Sale" )
 		or type = Type ( "CatalogRef.Leads" ) ) then
 		params.CalcContractAmount = false;
 	else

@@ -23,7 +23,9 @@ Procedure readAppearance ()
 	|DiscountRate Discount show Discounts and ShowPrice;
 	|DeliveryDate show Delivery;
 	|Price Amount Prices show ShowPrice;
-	|VATCode VAT Total show ( ShowPrice and VATUse > 0 );
+	|VATCode VAT show ( ShowPrice and VATUse > 0 );
+	|Total show ( ShowPrice and VATUse = 2 );
+	|Series show SeriesControl;
 	|ProducerPrice show
 	|( ShowPrice
 	|	and Social
@@ -56,6 +58,7 @@ Procedure loadParams ()
 	type = Source.Type;
 	if not ( type.Assembling
 		or type.Disassembling
+		or type.Production
 		or type.TimeEntry ) then
 		VATCode = TableRow.VATCode;
 		VATRate = TableRow.VATRate;
@@ -64,6 +67,7 @@ Procedure loadParams ()
 	endif;
 	ShowExtraCharge = Parameters.ShowExtraCharge;
 	ShowSocial = Parameters.ShowSocial;
+	SeriesControl = Parameters.SeriesControl;
 	
 EndProcedure
 

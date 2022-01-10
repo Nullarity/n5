@@ -3,6 +3,8 @@ var Env;
 &AtServer
 var PurchaseOrderExists;
 &AtServer
+var ReceiptExists;
+&AtServer
 var Base;
 &AtServer
 var BaseType;
@@ -168,6 +170,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			elsif ( BaseType = Type ( "DocumentRef.InternalOrder" )
 				or BaseType = Type ( "DocumentRef.SalesOrder" ) ) then
 				fillByOrder ();
+			elsif ( BaseType = Type ( "DocumentRef.ReceiptStockman" ) ) then
+				fillByReceiptStockman ();
 			endif; 
 		endif;
 		updateBalanceDue ();
@@ -213,8 +217,10 @@ Procedure readAppearance ()
 	|Links show ShowLinks;
 	|CreatePayment show BalanceDue <> 0;
 	|#s DiscountsPage hide Mobile and Form.Object.Discounts.Count () = 0;
-	|VAT ItemsVATAccount ServicesVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal FixedAssetsVATCode FixedAssetsVAT FixedAssetsTotal IntangibleAssetsVATCode IntangibleAssetsVAT IntangibleAssetsTotal AccountsVATCode AccountsVAT AccountsTotal show Object.VATUse > 0;
+	|VAT ItemsVATAccount ServicesVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount
+	|	ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT  FixedAssetsVATCode FixedAssetsVAT IntangibleAssetsVATCode
+	|	IntangibleAssetsVAT AccountsVATCode AccountsVAT show Object.VATUse > 0;
+	|ServicesTotal ItemsTotal FixedAssetsTotal IntangibleAssetsTotal AccountsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice show UseSocial;
 	|FormDocumentItemsPurchaseCreateBasedOn show ItemsPurchaseStatus = Enum.FormStatuses.Canceled or empty ( ItemsPurchaseStatus );
 	|FormDocumentServicesPurchaseCreateBasedOn show ServicesPurchaseStatus = Enum.FormStatuses.Canceled or empty ( ServicesPurchaseStatus );
@@ -231,8 +237,6 @@ Procedure readAppearance ()
 	|Warning show
 	|inlist ( ItemsPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted ) 
 	|or inlist ( ServicesPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|Unregistered disable Object.Import;
-	|Import disable Object.Unregistered;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -319,8 +323,10 @@ EndProcedure
 &AtServer
 Procedure updateContent ()
 	
-	reloadTables ();
-	DiscountsTable.Load ( Object );
+	if ( Object.Receipt.IsEmpty () ) then
+		reloadTables ();
+		DiscountsTable.Load ( Object );
+	endif;
 	InvoiceForm.SetPayment ( Object );
 	
 EndProcedure 
@@ -655,6 +661,81 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	
 EndProcedure
 
+&AtServer
+Procedure fillByReceiptStockman ()
+	
+	setEnv ();
+	sqlReceiptStockman ();
+	SQL.Perform ( Env );
+	headerByReceiptStockman ();
+	loadReceiptStockman ();
+	
+EndProcedure
+
+&AtServer
+Procedure sqlReceiptStockman ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Warehouse as Warehouse, Documents.Organization as Vendor,
+	|	Documents.Invoiced as Invoiced
+	|from Document.ReceiptStockman as Documents
+	|where Documents.Ref = &Base
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Package as Package,
+	|	Items.Capacity as Capacity, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.Item.Social as Social, Items.Item.VAT as VATCode, Items.Item.VAT.Rate as VATRate
+	|from Document.ReceiptStockman.Items as Items
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByReceiptStockman ()
+	
+	fields = Env.Fields;
+	if ( fields.Invoiced ) then
+		raise Output.DocumentAlreadyInvoiced ( new Structure ( "Document", Base ) );
+	endif;
+	FillPropertyValues ( Object, fields );
+	Object.Receipt = Base;
+	Object.Vendor = fields.Vendor;
+	applyVendor ();
+	
+EndProcedure 
+
+&AtServer
+Procedure loadReceiptStockman ()
+	
+	cache = new Map ();
+	company = Object.Company;
+	warehouse = Object.Warehouse;
+	vatUse = Object.VATUse;
+	date = Object.Date;
+	prices = Object.Prices;
+	vendor = Object.Vendor;
+	contract = Object.Contract;
+	currency = Object.Currency;
+	itemsTable = Object.Items;
+	for each row in Env.Items do
+		docRow = itemsTable.Add ();
+		FillPropertyValues ( docRow, row );
+		item = docRow.Item;
+		accounts = AccountsMap.Item ( item, company, warehouse, "Account, VAT" );
+		docRow.Account = accounts.Account;
+		docRow.VATAccount = accounts.VAT;
+		docRow.Price = Goods.Price ( cache, date, prices, item, docRow.Package, docRow.Feature,
+			vendor, contract, true, warehouse, currency );
+		Computations.Amount ( docRow );
+		Computations.Total ( docRow, vatUse );
+	enddo; 
+
+EndProcedure
+
 #endregion
 
 &AtServer
@@ -668,6 +749,7 @@ Procedure setLinks ()
 		q = Env.Q;
 		q.SetParameter ( "Ref", Object.Ref );
 		q.SetParameter ( "PurchaseOrder", Object.PurchaseOrder );
+		q.SetParameter ( "Receipt", Object.Receipt );
 		q.SetParameter ( "Contract", Object.Contract );
 		SQL.Perform ( env );
 		setURLPanel ();
@@ -680,6 +762,7 @@ EndProcedure
 Procedure sqlLinks ()
 	
 	PurchaseOrderExists = not Object.PurchaseOrder.IsEmpty ();
+	ReceiptExists = not Object.Receipt.IsEmpty ();
 	selection = Env.Selection;
 	if ( PurchaseOrderExists ) then
 		s = "
@@ -687,6 +770,15 @@ Procedure sqlLinks ()
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
 		|from Document.PurchaseOrder as Documents
 		|where Documents.Ref = &PurchaseOrder
+		|";
+		selection.Add ( s );
+	endif;
+	if ( ReceiptExists ) then
+		s = "
+		|// #Receipts
+		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+		|from Document.ReceiptStockman as Documents
+		|where Documents.Ref = &Receipt
 		|";
 		selection.Add ( s );
 	endif;
@@ -783,6 +875,9 @@ Procedure setURLPanel ()
 	if ( PurchaseOrderExists ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.PurchaseOrders, meta.PurchaseOrder ) );
 	endif;
+	if ( ReceiptExists ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Receipts, meta.ReceiptStockman ) );
+	endif;
 	if ( not isNew () ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Commissionings, meta.Commissioning ) );
 		parts.Add ( URLPanel.DocumentsToURL ( Env.IntangibleAssetsCommissionings, meta.IntangibleAssetsCommissioning ) );
@@ -862,6 +957,13 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	Forms.DeleteLastRow ( Object.Accounts, "Account" );
 	updateTotals ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+
+	Documents.ReceiptStockman.Complete ( Object.Receipt );
+
 EndProcedure
 
 &AtClient
@@ -1066,6 +1168,49 @@ Procedure ContractOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure ReferenceOnChange ( Item )
+	
+	applyReference ();
+
+EndProcedure
+
+&AtClient
+Procedure applyReference ()
+	
+	notExactlySeriesAndNumber = Object.Import;
+	if ( notExactlySeriesAndNumber ) then
+		return;
+	endif;
+	adjustReference ();
+	extractSeries ();
+
+EndProcedure
+
+&AtClient
+Procedure adjustReference ()
+	
+	Object.Reference = StrConcat ( StrSplit ( Object.Reference, " /:-#" ) );
+
+EndProcedure
+
+&AtClient
+Procedure extractSeries ()
+	
+	series = new Array ();
+	fullNumber = Object.Reference;
+	for i = 1 to StrLen ( fullNumber ) do
+		letter = Mid ( fullNumber, i, 1 );
+		if ( StrFind ( "0123456789", letter ) = 0 ) then
+			series.Add ( letter );
+		else
+			break;
+		endif;
+	enddo;
+	Object.Series = StrConcat ( series );
+
+EndProcedure
+
+&AtClient
 Procedure VATUseOnChange ( Item )
 	
 	applyVATUse ();
@@ -1133,7 +1278,7 @@ EndProcedure
 &AtClient
 Procedure Scan ( Command )
 	
-	OpenForm ( "CommonForm.Scan", , ThisObject );
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 
@@ -2189,13 +2334,6 @@ EndProcedure
 &AtClient
 Procedure ImportOnChange  (Item )
 	
-	Appearance.Apply ( ThisObject, "Object.Import" );
+	applyReference ();
 
-EndProcedure
-
-&AtClient
-Procedure UnregisteredOnChange ( Item )
-	
-	Appearance.Apply ( ThisObject, "Object.Unregistered" );
-	
 EndProcedure

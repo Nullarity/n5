@@ -9,15 +9,7 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	update ();
-	
-EndProcedure
-
-&AtServer
-Procedure update ()
-	
 	Appearance.Apply ( ThisObject );
-	ReadOnly = Object.Invoiced;
 	
 EndProcedure
 
@@ -28,6 +20,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.SetCreator ( Object );
 		initNew ();
 	endif; 
+	setAccuracy ();
 	setLinks ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -44,15 +37,26 @@ EndFunction
 &AtServer
 Procedure initNew ()
 	
-	if ( Object.Warehouse.IsEmpty () ) then
-		data = DF.Values ( Object.Creator, "ОсновнаяФирма, ОсновнойСклад" );
-		Object.Company = data.ОсновнаяФирма;
-		Object.Warehouse = data.ОсновнойСклад;
+	if ( Parameters.CopyingValue.IsEmpty () ) then
+		if ( Object.Warehouse.IsEmpty () ) then
+			settings = Logins.Settings ( "Company, Warehouse" );
+			Object.Company = settings.Company;
+			Object.Warehouse = settings.Warehouse;
+		else
+			Object.Company = DF.Pick ( Object.Warehouse, "Owner" );
+		endif;
 	else
-		Object.Company = DF.Pick ( Object.Creator, "ОсновнаяФирма" );
+		Object.Invoiced = false;
 	endif;
-	
+
 EndProcedure
+
+&AtServer
+Procedure setAccuracy ()
+	
+	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
+	
+EndProcedure 
 
 &AtServer
 Procedure setLinks ()
@@ -80,18 +84,18 @@ Procedure sqlLinks ()
 	s = "
 	|// #Sales
 	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-	|from Document.РеализацияТМЦ as Documents
-	|where Documents.ДокОснование = &Ref
+	|from Document.Invoice as Documents
+	|where Documents.Shipment = &Ref
 	|;
 	|// #Transfers
 	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-	|from Document.ПеремещениеТМЦ as Documents
-	|where Documents.Shipping = &Ref
+	|from Document.Transfer as Documents
+	|where Documents.Shipment = &Ref
 	|;
 	|// #WriteOffs
 	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-	|from Document.СписаниеТМЦ as Documents
-	|where Documents.Shipping = &Ref
+	|from Document.WriteOff as Documents
+	|where Documents.Base = &Ref
 	|";
 	Env.Selection.Add ( s );
 	
@@ -103,9 +107,9 @@ Procedure setURLPanel ()
 	parts = new Array ();
 	meta = Metadata.Documents;
 	if ( not isNew () ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.Sales, meta.РеализацияТМЦ ) );
-		parts.Add ( URLPanel.DocumentsToURL ( Env.Transfers, meta.ПеремещениеТМЦ ) );
-		parts.Add ( URLPanel.DocumentsToURL ( Env.WriteOffs, meta.СписаниеТМЦ ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Sales, meta.Invoice ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Transfers, meta.Transfer ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.WriteOffs, meta.WriteOff ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then
@@ -124,16 +128,10 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Links show ShowLinks;
 	|Warning show Object.Invoiced;
-	|#s ItemsAdd hide Environment.MobileClient ()
+	|#s ItemsAdd hide Environment.MobileClient ();
+	|ThisObject lock Object.Invoiced;
 	|" );
 	Appearance.Read ( ThisObject, rules );
-
-EndProcedure
-
-&AtServer
-Procedure setReadOnly ()
-	
-	ReadOnly = Object.Invoiced;
 
 EndProcedure
 
@@ -148,34 +146,37 @@ EndProcedure
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageBarcodeScanned ()
-		and TypeOf ( Source.FormOwner ) = Type ( "ClientApplicationForm" )
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
-		Modified = true;
 	elsif ( ( EventName = Enum.MessageInvoiceIsSaved ()
-		or EventName = Enum.MessageTransferIsSaved ()
-		or EventName = Enum.MessageWriteOffIsSaved () )
-		and Parameter.Shipping = Object.Ref ) then
+			or EventName = Enum.MessageTransferIsSaved () )
+		and DF.Pick ( Parameter, "Shipment" ) = Object.Ref ) then
+		reread ();
+	elsif ( EventName = Enum.MessageWriteOffIsSaved ()
+		and DF.Pick ( Parameter, "Base" ) = Object.Ref ) then
 		reread ();
 	endif; 
-	
+
 EndProcedure
 
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Lot" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	rows = Object.Items.FindRows ( search );
 	if ( rows.Count () = 0 ) then
 		row = Object.Items.Add ();
 		row.Item = Fields.Item;
 		row.Package = Fields.Package;
-		row.Lot = Fields.Lot;
+		row.Series = Fields.Series;
 		row.Quantity = Fields.Quantity;
+		row.QuantityPkg = Fields.QuantityPkg;
+		row.Capacity = Fields.Capacity;
 	else
 		row = rows [ 0 ];
 		row.Quantity = row.Quantity + Fields.Quantity;
+		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif; 
 	
 EndProcedure 
@@ -186,8 +187,48 @@ Procedure reread ()
 	obj = Object.Ref.GetObject ();
 	ValueToFormAttribute ( obj, "Object" );
 	setLinks ();
-	update ();
+	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure OrganizationOnChange ( Item )
+	
+	applyOrganization ();
+
+EndProcedure
+
+&AtClient
+Procedure applyOrganization ()
+	
+	Object.Stock = undefined;
+	setReceiver ( Object.Organization );
+
+EndProcedure
+
+&AtClient
+Procedure setReceiver ( Value )
+
+	Object.Receiver = Value;
+
+EndProcedure
+
+&AtClient
+Procedure StockOnChange ( Item )
+	
+	applyStock ();
+
+EndProcedure
+
+&AtClient
+Procedure applyStock ()
+	
+	Object.Organization = undefined;
+	setReceiver ( Object.Stock );
+
 EndProcedure
 
 // *****************************************
@@ -195,13 +236,6 @@ EndProcedure
 
 &AtClient
 Procedure Scan ( Command )
-	
-	openScanner ();
-	
-EndProcedure
-
-&AtClient
-Procedure openScanner ()
 	
 	ScanForm.Open ( ThisObject, true );
 	
@@ -224,20 +258,46 @@ EndProcedure
 &AtClient
 Procedure applyItem ()
 	
-	ItemsRow.Package = DF.Pick ( ItemsRow.Item, "ЕдИзм" );
+	data = DF.Values ( ItemsRow.Item, "Package, Package.Capacity as Capacity" );
+	ItemsRow.Package = data.Package;
+	ItemsRow.Capacity = ? ( data.Capacity = 0, 1, data.Capacity );
+	Computations.Units ( ItemsRow );
 	
 EndProcedure 
 
 &AtClient
-Procedure ItemsLotStartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	LotForm.ShowBalances ( Item, ItemsRow.Item, Object.Warehouse, StandardProcessing );
-	
+Procedure ItemsQuantityOnChange ( Item )
+
+	Computations.Packages ( ItemsRow );
+
 EndProcedure
 
 &AtClient
-Procedure LinksURLProcessing ( Item, FormattedStringURL, StandardProcessing )
+Procedure ItemsPackageOnChange ( Item )
+
+	applyPackage ();
+
+EndProcedure
+
+&AtClient
+Procedure applyPackage ()
 	
-	URLPanel.OpenLink ( FormattedStringURL, StandardProcessing );
+	capacity = DF.Pick ( ItemsRow.Package, "Capacity", 1 );
+	ItemsRow.Capacity = capacity;
+	Computations.Units ( ItemsRow );
 	
-EndProcedure                                                                
+EndProcedure 
+
+&AtClient
+Procedure ItemsQuantityPkgOnChange ( Item )
+
+	Computations.Units ( ItemsRow );
+
+EndProcedure
+
+&AtClient
+Procedure ItemsSeriesStartChoice ( Item, ChoiceData, StandardProcessing )
+	
+	SeriesForm.ShowBalances ( Item, ItemsRow.Item, Object.Warehouse, StandardProcessing );
+	
+EndProcedure

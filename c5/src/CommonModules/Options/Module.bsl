@@ -20,6 +20,13 @@ Function Packages () export
 EndFunction
 
 &AtServer
+Function Barcodes () export
+	
+	return GetFunctionalOption ( "Barcodes" );
+	
+EndFunction
+
+&AtServer
 Function Discounts ( Company ) export
 	
 	p = new Structure ( "Company", Company );

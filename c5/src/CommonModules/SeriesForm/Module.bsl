@@ -12,7 +12,7 @@ EndProcedure
 Function checkItem ( Item )
 	
 	if ( TypeOf ( Item ) <> Type ( "CatalogRef.Items" )
-		or not DF.Pick ( Item, "ExpirationControl" ) ) then
+		or not DF.Pick ( Item, "Series" ) ) then
 		Output.SeriesDisabled ();
 		return false;
 	endif;

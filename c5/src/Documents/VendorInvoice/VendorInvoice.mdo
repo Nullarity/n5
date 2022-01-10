@@ -79,6 +79,7 @@
   <basedOn>Document.PurchaseOrder</basedOn>
   <basedOn>Document.InternalOrder</basedOn>
   <basedOn>Document.SalesOrder</basedOn>
+  <basedOn>Document.ReceiptStockman</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -934,6 +935,41 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="3d1f1d55-160f-4863-811f-44dacf1876b8">
+    <name>Receipt</name>
+    <synonym>
+      <key>en</key>
+      <value>Receipt Stockman</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поступление кладовщика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primirea stockman</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.ReceiptStockman</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Receipt stockman</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Поступление кладовщика</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Primirea stockman</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="a344367a-9625-45ba-ae48-c82584b5e615">
     <name>Reference</name>
     <synonym>
@@ -1029,15 +1065,15 @@
     </type>
     <toolTip>
       <key>en</key>
-      <value>Series</value>
+      <value>Series of incoming document</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Серия</value>
+      <value>Серия входящего документа</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Serie</value>
+      <value>Seriile de documente primite</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -1258,41 +1294,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="c4a4efac-346d-4d41-a2d3-04f349683a63">
-    <name>Unregistered</name>
-    <synonym>
-      <key>en</key>
-      <value>Unregistered</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Без НН</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Neînregistrat</value>
-    </synonym>
-    <type>
-      <types>Boolean</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Will not be registered in the Purchase Journal</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Не будет зарегистрирован в журнале покупок</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Nu va fi înregistrat în Jurnal cumparari</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="9c702d82-b23c-4aef-a0c3-f2de4ee8c68c">
     <name>VAT</name>
     <synonym>
@@ -1443,8 +1444,13 @@
     <fillChecking>ShowError</fillChecking>
     <choiceParameters>
       <name>Filter.Class</name>
-      <value xsi:type="core:ReferenceValue">
-        <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </values>
       </value>
     </choiceParameters>
     <choiceParameters>

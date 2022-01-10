@@ -233,8 +233,8 @@ Procedure SqlItems ( Env ) export
 		|select presentation ( Set.Warehouse ) as Warehouse, presentation ( Set.Item ) as Item,
 		|	Set.Unit as Unit, - Balances.QuantityBalance as Quantity,
 		|	sum ( Set.QuantityPkg ) + Balances.QuantityBalance as QuantityBalance
-		|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package )
-		|	in ( select distinct Warehouse, Item, Feature, Package from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
+		|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package, Series )
+		|	in ( select distinct Warehouse, Item, Feature, Package, Series from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
 		|	//
 		|	// Set
 		|	//
@@ -243,6 +243,7 @@ Procedure SqlItems ( Env ) export
 		|	and Set.Feature = Balances.Feature
 		|	and Set.Warehouse = Balances.Warehouse
 		|	and Set.Package = Balances.Package
+		|	and Set.Series = Balances.Series
 		|where Balances.QuantityBalance < 0
 		|group by Set.Warehouse, Set.Item, Set.Unit, Balances.QuantityBalance
 		|";
@@ -252,14 +253,15 @@ Procedure SqlItems ( Env ) export
 		|select presentation ( Documents.Warehouse ) as Warehouse, presentation ( Documents.Item ) as Item,
 		|	Documents.Item.Unit.Code as Unit, - Balances.QuantityBalance as Quantity,
 		|	1 + Balances.QuantityBalance as QuantityBalance
-		|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package )
-		|	in ( select distinct Warehouse, Item, Feature, Package from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
+		|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package, Series )
+		|	in ( select distinct Warehouse, Item, Feature, Package, Series from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
 		|	//
 		|	// Documents
 		|	//
 		|	join Document.WriteOffForm as Documents
 		|	on Documents.Item = Balances.Item
 		|	and Documents.Feature = Balances.Feature
+		|	and Documents.Series = Balances.Series
 		|	and Documents.Warehouse = Balances.Warehouse
 		|	and value ( Catalog.Packages.EmptyRef ) = Balances.Package
 		|where Balances.QuantityBalance < 0
@@ -273,24 +275,25 @@ Procedure SqlItems ( Env ) export
 		else
 			warehouse = "Warehouse";
 		endif; 
-	s = "
-	|// ^ShortageItems
-	|select min ( Items.LineNumber ) as LineNumber, presentation ( Items." + warehouse + " ) as Warehouse, presentation ( Items.Item ) as Item,
-	|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Unit, - Balances.QuantityBalance as Quantity,
-	|	sum ( Items.QuantityPkg ) + Balances.QuantityBalance as QuantityBalance
-	|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package )
-	|	in ( select distinct Warehouse, Item, Feature, Package from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
-	|	//
-	|	// Items
-	|	//
-	|	join Items as Items
-	|	on Items.Item = Balances.Item
-	|	and Items.Feature = Balances.Feature
-	|	and Items." + warehouse + " = Balances.Warehouse
-	|	and Items.Package = Balances.Package
-	|where Balances.QuantityBalance < 0
-	|group by Items." + warehouse + ", Items.Item, Items.Package, Balances.QuantityBalance
-	|";
+		s = "
+		|// ^ShortageItems
+		|select min ( Items.LineNumber ) as LineNumber, presentation ( Items." + warehouse + " ) as Warehouse, presentation ( Items.Item ) as Item,
+		|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Unit, - Balances.QuantityBalance as Quantity,
+		|	sum ( Items.QuantityPkg ) + Balances.QuantityBalance as QuantityBalance
+		|from AccumulationRegister.Items.Balance ( , ( Warehouse, Item, Feature, Package, Series )
+		|	in ( select distinct Warehouse, Item, Feature, Package, Series from AccumulationRegister.Items where Recorder = &Ref ) ) as Balances
+		|	//
+		|	// Items
+		|	//
+		|	join Items as Items
+		|	on Items.Item = Balances.Item
+		|	and Items.Feature = Balances.Feature
+		|	and Items.Series = Balances.Series
+		|	and Items." + warehouse + " = Balances.Warehouse
+		|	and Items.Package = Balances.Package
+		|where Balances.QuantityBalance < 0
+		|group by Items." + warehouse + ", Items.Item, Items.Package, Balances.QuantityBalance
+		|";
 	endif;
 	Env.Selection.Add ( s );
 	

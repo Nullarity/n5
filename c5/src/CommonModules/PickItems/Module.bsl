@@ -57,6 +57,7 @@ Function getType ( Ref )
 	pickers.Add ( "InvoiceRecord" );
 	pickers.Add ( "ExpenseReport" );
 	pickers.Add ( "TimeEntry" );
+	pickers.Add ( "Sale" );
 	for each name in pickers do
 		result.Insert ( name, type = Type ( "DocumentRef." + name ) );
 	enddo; 
@@ -141,7 +142,8 @@ Function getCurrency ( Params, Object )
 		or type.Disassembling
 		or type.TimeEntry
 		or type.ProductionOrder
-		or type.Production ) then
+		or type.Production
+		or type.Sale ) then
 		return undefined;
 	else
 		return Object.Currency;
@@ -186,7 +188,8 @@ Function getDiscounts ( Params, Object )
 	if ( type.SalesOrder
 		or type.Invoice
 		or type.Bill
-		or type.Quote ) then
+		or type.Quote
+		or type.Sale ) then
 		return Options.Discounts ( company );
 	elsif ( type.PurchaseOrder
 		or type.VendorInvoice
@@ -242,7 +245,8 @@ Function getItemsOnly ( Params )
 		or type.ReceiveItems
 		or type.Assembling
 		or type.Disassembling
-		or type.TimeEntry ) then
+		or type.TimeEntry
+		or type.Sale ) then
 		return true;
 	else
 		return false;
@@ -281,6 +285,13 @@ Function getKeys ( Params )
 	elsif ( type.TimeEntry ) then
 		itemKeys = "Feature, Item, Package, Series";
 		serviceKeys = "";
+	elsif ( type.Quote
+		or type.Bill
+		or type.Invoice
+		or type.VendorBill
+		or type.VendorInvoice ) then
+		itemKeys = "Feature, DiscountRate, Item, Package, Price, VATCode";
+		serviceKeys = "";
 	else
 		itemKeys = "Feature, Item, Package, Price, Series";
 		serviceKeys = "";
@@ -296,6 +307,7 @@ Function getVATUse ( Params, Object )
 	if ( type.Assembling
 		or type.ProductionOrder
 		or type.Disassembling
+		or type.Production
 		or type.TimeEntry ) then
 		return 0;
 	else

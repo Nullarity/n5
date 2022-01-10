@@ -9,15 +9,7 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	update ();
-	
-EndProcedure
-
-&AtServer
-Procedure update ()
-	
 	Appearance.Apply ( ThisObject );
-	ReadOnly = Object.Invoiced;
 	
 EndProcedure
 
@@ -28,7 +20,9 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.SetCreator ( Object );
 		initNew ();
 	endif; 
+	setAccuracy ();
 	setLinks ();
+	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -44,15 +38,26 @@ EndFunction
 &AtServer
 Procedure initNew ()
 	
-	if ( Object.Warehouse.IsEmpty () ) then
-		data = DF.Values ( Object.Creator, "ОсновнаяФирма, ОсновнойСклад" );
-		Object.Company = data.ОсновнаяФирма;
-		Object.Warehouse = data.ОсновнойСклад;
+	if ( Parameters.CopyingValue.IsEmpty () ) then
+		if ( Object.Warehouse.IsEmpty () ) then
+			settings = Logins.Settings ( "Company, Warehouse" );
+			Object.Company = settings.Company;
+			Object.Warehouse = settings.Warehouse;
+		else
+			Object.Company = DF.Pick ( Object.Warehouse, "Owner" );
+		endif;
 	else
-		Object.Company = DF.Pick ( Object.Creator, "ОсновнаяФирма" );
+		Object.Invoiced = false;
 	endif;
-	
+
 EndProcedure
+
+&AtServer
+Procedure setAccuracy ()
+	
+	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
+	
+EndProcedure 
 
 &AtServer
 Procedure setLinks ()
@@ -80,7 +85,7 @@ Procedure sqlLinks ()
 	s = "
 	|// #VendorInvoices
 	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-	|from Document.ПоступлениеТМЦ as Documents
+	|from Document.VendorInvoice as Documents
 	|where Documents.Receipt = &Ref
 	|";
 	Env.Selection.Add ( s );
@@ -93,7 +98,7 @@ Procedure setURLPanel ()
 	parts = new Array ();
 	meta = Metadata.Documents;
 	if ( not isNew () ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.VendorInvoices, meta.ПоступлениеТМЦ ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.VendorInvoices, meta.VendorInvoice ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then
@@ -112,6 +117,8 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Links show ShowLinks;
 	|Warning show Object.Invoiced;
+	|#s ItemsAdd hide Environment.MobileClient ();
+	|ThisObject lock Object.Invoiced;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -128,12 +135,10 @@ EndProcedure
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageBarcodeScanned ()
-		and TypeOf ( Source.FormOwner ) = Type ( "ClientApplicationForm" )
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
-		Modified = true;
 	elsif ( EventName = Enum.MessageVendorInvoiceIsSaved ()
-		and Parameter.Receipt = Object.Ref ) then
+		and DF.Pick ( Parameter, "Receipt" ) = Object.Ref ) then
 		reread ();
 	endif; 
 	
@@ -142,27 +147,30 @@ EndProcedure
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Lot" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	rows = Object.Items.FindRows ( search );
 	if ( rows.Count () = 0 ) then
 		row = Object.Items.Add ();
 		row.Item = Fields.Item;
 		row.Package = Fields.Package;
-		row.Lot = Fields.Lot;
+		row.Series = Fields.Series;
 		row.Quantity = Fields.Quantity;
+		row.QuantityPkg = Fields.QuantityPkg;
+		row.Capacity = Fields.Capacity;
 		row.Print = 1;
 	else
 		row = rows [ 0 ];
 		row.Quantity = row.Quantity + Fields.Quantity;
+		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif; 
 	if ( not Fields.BarcodeFound
-		and not row.Lot.IsEmpty () ) then
+		and not row.Series.IsEmpty () ) then
 		row.Print = 1;
 	else
 		row.Print = 0;
 	endif;
-	
+
 EndProcedure 
 
 &AtServer
@@ -171,32 +179,32 @@ Procedure reread ()
 	obj = Object.Ref.GetObject ();
 	ValueToFormAttribute ( obj, "Object" );
 	setLinks ();
-	update ();
+	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
 // *****************************************
-// *********** Form events
+// *********** Group Form
 
 &AtClient
-Procedure LinksURLProcessing ( Item, FormattedStringURL, StandardProcessing )
+Procedure OrganizationOnChange ( Item )
 	
-	URLPanel.OpenLink ( FormattedStringURL, StandardProcessing );
+	setReceived ();
+
+EndProcedure
+
+&AtClient
+Procedure setReceived ()
 	
-EndProcedure                                                                
+	Object.Received = Object.Organization;
+
+EndProcedure
 
 // *****************************************
 // *********** Table Items
 
 &AtClient
 Procedure Scan ( Command )
-	
-	openScanner ();
-	
-EndProcedure
-
-&AtClient
-Procedure openScanner ()
 	
 	ScanForm.Open ( ThisObject, true );
 	
@@ -210,23 +218,9 @@ Procedure ItemsOnActivateRow ( Item )
 EndProcedure
 
 &AtClient
-Procedure ItemsItemOnChange ( Item )
+Procedure ItemsSeriesStartChoice ( Item, ChoiceData, StandardProcessing )
 	
-	applyItem ();
-	
-EndProcedure
-
-&AtClient
-Procedure applyItem ()
-	
-	ItemsRow.Package = DF.Pick ( ItemsRow.Item, "ЕдИзм" );
-	
-EndProcedure 
-
-&AtClient
-Procedure ItemsLotStartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	LotForm.ShowList ( Item, itemsRow.Item, StandardProcessing );
+	SeriesForm.ShowList ( Item, itemsRow.Item, StandardProcessing );
 	                   
 EndProcedure
 
@@ -246,3 +240,51 @@ Procedure initRow ()
 	Items.Items.CurrentData.Print = 1;
 	
 EndProcedure
+
+&AtClient
+Procedure ItemsItemOnChange ( Item )
+
+	applyItem ();
+
+EndProcedure
+
+&AtClient
+Procedure applyItem ()
+	
+	data = DF.Values ( ItemsRow.Item, "Package, Package.Capacity as Capacity" );
+	ItemsRow.Package = data.Package;
+	ItemsRow.Capacity = ? ( data.Capacity = 0, 1, data.Capacity );
+	Computations.Units ( ItemsRow );
+	
+EndProcedure
+
+&AtClient
+Procedure ItemsQuantityOnChange ( Item )
+
+	Computations.Packages ( ItemsRow );
+
+EndProcedure
+
+&AtClient
+Procedure ItemsPackageOnChange ( Item )
+
+	applyPackage ();
+
+EndProcedure
+
+&AtClient
+Procedure applyPackage ()
+	
+	capacity = DF.Pick ( ItemsRow.Package, "Capacity", 1 );
+	ItemsRow.Capacity = capacity;
+	Computations.Units ( ItemsRow );
+	
+EndProcedure 
+
+&AtClient
+Procedure ItemsQuantityPkgOnChange ( Item )
+
+	Computations.Units ( ItemsRow );
+
+EndProcedure
+

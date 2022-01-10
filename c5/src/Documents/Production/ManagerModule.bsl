@@ -19,7 +19,7 @@ Function Post ( Env ) export
 	if ( not getData ( Env ) ) then
 		return false;
 	endif; 
-	if ( invalidRows ( Env ) ) then
+	if ( not checkRows ( Env ) ) then
 		return false;
 	endif; 
 	if ( Env.RestoreCost
@@ -63,6 +63,9 @@ Function getData ( Env )
 	sqlItems ( Env );
 	sqlExpenses ( Env );
 	if ( not Env.RestoreCost ) then
+		if ( Options.Series () ) then
+			sqlEmptySeries ( Env );
+		endif;
 		sqlSequence ( Env );
 	endif; 
 	if ( Env.RestoreCost
@@ -222,6 +225,19 @@ Procedure sqlExpenses ( Env )
 	
 EndProcedure
 
+Procedure sqlEmptySeries ( Env )
+	
+	s = "
+	|// #EmptySeries
+	|select Items.LineNumber as LineNumber
+	|from Items as Items
+	|where Items.Item.Series
+	|and Items.Series = value ( Catalog.Series.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
 Procedure sqlSequence ( Env )
 	
 	s = "
@@ -377,7 +393,7 @@ Procedure sqlWarehouse ( Env )
 	s = "
 	|// ^Items
 	|select Goods.Item as Item, Goods.Feature as Feature, Goods.Warehouse as Warehouse, Goods.Package as Package,
-	|	sum ( Goods.QuantityPkg ) as Quantity
+	|	Goods.Series as Series, sum ( Goods.QuantityPkg ) as Quantity
 	|from Items as Goods
 	|	//
 	|	// InternalOrder
@@ -387,7 +403,7 @@ Procedure sqlWarehouse ( Env )
 	|where InternalOrder.Warehouse = Goods.Warehouse
 	|or InternalOrder.Warehouse = value ( Catalog.Warehouses.EmptyRef )
 	|or Goods.DocumentOrder = undefined
-	|group by Goods.Item, Goods.Feature, Goods.Warehouse, Goods.Package
+	|group by Goods.Item, Goods.Feature, Goods.Warehouse, Goods.Package, Goods.Series
 	|";
 	Env.Selection.Add ( s );
 	
@@ -584,13 +600,22 @@ Procedure getTables ( Env )
 	
 EndProcedure 
 
-Function invalidRows ( Env )
+Function checkRows ( Env )
 	
+	ok = true;
 	table = SQL.Fetch ( Env, "$InvalidRows" );
 	for each row in table do
 		Output.DocumentOrderItemsNotValid ( new Structure ( "DocumentOrder", row.DocumentOrder ), Output.Row ( row.Table, row.LineNumber, "Item" ), Env.Ref );
+		ok = false;
 	enddo; 
-	return table.Count () > 0;
+	if ( Options.Series ()
+		and not Env.RestoreCost ) then
+		for each row in Env.EmptySeries do
+			Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+			ok = false;
+		enddo; 
+	endif;
+	return ok;
 	
 EndFunction
 
@@ -872,6 +897,7 @@ Procedure makeItems ( Env )
 		movement.Period = date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

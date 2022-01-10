@@ -326,6 +326,27 @@ Function MessageEventIsSaved () export
 	
 EndFunction 
 
+&AtClient
+Function MessageAccountingInventoryIsSaved () export
+	
+	return "240";
+	
+EndFunction 
+
+&AtClient
+Function MessageTransferIsSaved () export
+	
+	return "250";
+	
+EndFunction 
+
+&AtClient
+Function MessageWriteOffIsSaved () export
+	
+	return "260";
+	
+EndFunction 
+
 #endregion
 
 #region DocumentCommands
@@ -1299,6 +1320,13 @@ EndFunction
 Function AdditionalPropertiesCopyOf () export
 	
 	return "AdditionalPropertiesCopyOf";
+	
+EndFunction
+
+&AtServer
+Function AdditionalPropertiesDontCheckOwner () export
+	
+	return "AdditionalPropertiesDontCheckOwner";
 	
 EndFunction
 

@@ -51,3 +51,21 @@ Function Discounts () export
 	return Constants.Discounts.Get ();
 	
 EndFunction 
+
+Function ItemsVAT () export
+	
+	return Constants.ItemsVAT.Get ();
+	
+EndFunction 
+
+Function ItemsCost () export
+	
+	return Constants.ItemsCost.Get ();
+	
+EndFunction 
+
+Function NewItems () export
+	
+	return Constants.NewItems.Get ();
+	
+EndFunction 

@@ -22,6 +22,9 @@ Function Post ( Env ) export
 			and not RunRanges.Check ( Env ) ) then
 			return false;
 		endif;
+		if ( not checkRows ( Env ) ) then
+			return false;
+		endif;
 		makeItems ( Env );
 		if ( Env.DocumentOrderExists
 			and not makeReserves ( Env ) ) then
@@ -67,6 +70,9 @@ Procedure getData ( Env )
 		RunRanges.SqlData ( Env );
 	endif;
 	if ( not Env.RestoreCost ) then
+		if ( Options.Series () ) then
+			sqlEmptySeries ( Env );
+		endif;
 		sqlSequence ( Env );
 		if ( Env.DocumentOrderExists ) then
 			sqlReserves ( Env );
@@ -153,6 +159,19 @@ Procedure sqlItems ( Env )
 	
 EndProcedure
  
+Procedure sqlEmptySeries ( Env )
+	
+	s = "
+	|// #EmptySeries
+	|select Items.LineNumber as LineNumber
+	|from Items as Items
+	|where Items.Item.Series
+	|and Items.Series = value ( Catalog.Series.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
 Procedure sqlSequence ( Env )
 	
 	s = "
@@ -212,7 +231,7 @@ Procedure sqlQuantity ( Env )
 	s = "
 	|// ^Items
 	|select Items.Sender as Sender, Items.Receiver as Receiver, Items.Item as Item, Items.Feature as Feature,
-	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
+	|	Items.Series as Series, Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
 	|from Items as Items
 	|";
 	if ( Env.DocumentOrderExists ) then
@@ -220,7 +239,7 @@ Procedure sqlQuantity ( Env )
 		|where Items.RowKey not in ( select RowKey from Reserves )";
 	endif;
 	s = s + "
-	|group by Items.Sender, Items.Receiver, Items.Item, Items.Feature, Items.Package
+	|group by Items.Sender, Items.Receiver, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
 	Env.Selection.Add ( s );
 	
@@ -298,6 +317,19 @@ Procedure getTables ( Env )
 	
 EndProcedure 
 
+Function checkRows ( Env )
+	
+	ok = true;
+	if ( Options.Series () ) then
+		for each row in Env.EmptySeries do
+			Output.UndefinedSeries ( , Output.Row ( "Items", row.LineNumber, "Series" ), Env.Ref );
+			ok = false;
+		enddo; 
+	endif;
+	return ok;
+	
+EndFunction
+
 Procedure makeItems ( Env )
 
 	table = SQL.Fetch ( Env, "$Items" );
@@ -307,6 +339,7 @@ Procedure makeItems ( Env )
 		movement.Period = Env.Fields.Date;
 		movement.Item = row.Item;
 		movement.Feature = row.Feature;
+		movement.Series = row.Series;
 		movement.Warehouse = row.Sender;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;

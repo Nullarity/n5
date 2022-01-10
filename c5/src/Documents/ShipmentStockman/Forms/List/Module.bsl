@@ -14,7 +14,8 @@ EndProcedure
 Procedure init ()
 	
 	Mobile = Environment.MobileClient ();
-	WarehouseFilter = DF.Pick ( SessionParameters.Пользователь, "ОсновнойСклад" );
+	settings = Logins.Settings ( "Warehouse" );
+	WarehouseFilter = settings.Warehouse;
 	filterByWarehouse ();
 	InProgress = true;
 	filterByProgress ();

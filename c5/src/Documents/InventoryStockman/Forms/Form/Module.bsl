@@ -18,16 +18,16 @@ Procedure update ()
 	
 	isApplied ();
 	Appearance.Apply ( ThisObject );
-	ReadOnly = InventoryApplied;
 	
 EndProcedure
 
 &AtServer
 Procedure isApplied ()
 	
-	s = "select top 1 1 from Document.Инвентаризация.Inventories where Inventory = &Ref and Ref.Posted";
+	s = "select top 1 1 from Document.Inventory.Inventories where Inventory = &Ref and Ref.Posted";
 	q = new Query ( s );
 	q.SetParameter ( "Ref", Object.Ref );
+	SetPrivilegedMode ( true );
 	InventoryApplied = not q.Execute ().IsEmpty ();
 	
 EndProcedure
@@ -35,18 +35,28 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	if ( isNew () ) then
+	init ();
+	if ( isNew ( Object ) ) then
 		DocumentForm.SetCreator ( Object );
 		initNew ();
 	endif; 
+	setAccuracy ();
 	setLinks ();
+	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
 &AtServer
-Function isNew ()
+Procedure init ()
+	
+	BarcodesEnabled = Options.Barcodes ();
+
+EndProcedure
+
+&AtClientAtServerNoContext
+Function isNew ( Object )
 	
 	return Object.Ref.IsEmpty ();
 	
@@ -55,15 +65,25 @@ EndFunction
 &AtServer
 Procedure initNew ()
 	
-	if ( Object.Warehouse.IsEmpty () ) then
-		data = DF.Values ( Object.Creator, "ОсновнаяФирма, ОсновнойСклад" );
-		Object.Company = data.ОсновнаяФирма;
-		Object.Warehouse = data.ОсновнойСклад;
-	else
-		Object.Company = DF.Pick ( Object.Creator, "ОсновнаяФирма" );
+	if ( not Parameters.CopyingValue.IsEmpty () ) then
+		return;
 	endif;
-	
+	if ( Object.Warehouse.IsEmpty () ) then
+		settings = Logins.Settings ( "Company, Warehouse" );
+		Object.Company = settings.Company;
+		Object.Warehouse = settings.Warehouse;
+	else
+		Object.Company = DF.Pick ( Object.Warehouse, "Owner" );
+	endif;
+
 EndProcedure
+
+&AtServer
+Procedure setAccuracy ()
+	
+	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
+	
+EndProcedure 
 
 &AtServer
 Procedure setLinks ()
@@ -85,13 +105,13 @@ EndProcedure
 &AtServer
 Procedure sqlLinks ()
 	
-	if ( isNew () ) then
+	if ( isNew ( Object ) ) then
 		return;
 	endif; 
 	s = "
 	|// #Inventories
 	|select Documents.Ref as Document, Documents.Ref.Date as Date, Documents.Ref.Number as Number
-	|from Document.Инвентаризация.Inventories as Documents
+	|from Document.Inventory.Inventories as Documents
 	|where Documents.Inventory = &Ref
 	|";
 	Env.Selection.Add ( s );
@@ -103,8 +123,8 @@ Procedure setURLPanel ()
 	
 	parts = new Array ();
 	meta = Metadata.Documents;
-	if ( not isNew () ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.Inventories, meta.Инвентаризация ) );
+	if ( not isNew ( Object ) ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Inventories, meta.Inventory ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then
@@ -123,6 +143,8 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Links show ShowLinks;
 	|Warning show InventoryApplied;
+	|#s ItemsAdd hide Environment.MobileClient ();
+	|ThisObject lock InventoryApplied;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -131,9 +153,17 @@ EndProcedure
 &AtClient
 Procedure OnOpen ( Cancel )
 	
-	if ( Object.Ref.IsEmpty () ) then
-		AttachIdleHandler ( "openScanner", 0.01, true );
+	if ( isNew ( Object )
+		and BarcodesEnabled ) then
+		AttachIdleHandler ( "openScanner", 0.1, true );
 	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure openScanner ()
+	
+	ScanForm.Open ( ThisObject, true );
 	
 EndProcedure
 
@@ -148,10 +178,8 @@ EndProcedure
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageBarcodeScanned ()
-		and TypeOf ( Source.FormOwner ) = Type ( "ClientApplicationForm" )
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
-		Modified = true;
 	elsif ( EventName = Enum.MessageAccountingInventoryIsSaved () ) then
 		reread ();
 	endif; 
@@ -161,24 +189,31 @@ EndProcedure
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Lot" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	rows = Object.Items.FindRows ( search );
 	if ( rows.Count () = 0 ) then
 		row = Object.Items.Add ();
 		item = Fields.Item;
 		row.Item = item;
-		row.Package = Fields.Package;
-		row.Lot = Fields.Lot;
+		package = Fields.Package;
+		row.Package = package;
+		feature = Fields.Feature;
+		row.Feature = feature;
+		series = Fields.Series;
+		row.Series = series;
 		row.Quantity = Fields.Quantity;
+		row.QuantityPkg = Fields.QuantityPkg;
+		row.Capacity = Fields.Capacity;
 		row.Print = 1;
-		row.Balance = getBalance ( item, Object.Warehouse );
+		row.Balance = getBalance ( item, Object.Warehouse, package, feature, series );
 	else
 		row = rows [ 0 ];
 		row.Quantity = row.Quantity + Fields.Quantity;
+		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif;
 	if ( not Fields.BarcodeFound
-		and not row.Lot.IsEmpty () ) then
+		and not row.Series.IsEmpty () ) then
 		row.Print = 1;
 	else
 		row.Print = 0;
@@ -187,16 +222,24 @@ Procedure addItem ( Fields )
 EndProcedure 
 
 &AtServerNoContext
-Function getBalance ( val Item, val Warehouse )
+Function getBalance ( val Item, val Warehouse, val Package, val Feature, val Series )
 	
 	s = "
-	|select Balances.КоличествоBalance as Balance
-	|from AccountingRegister.Хозрасчетный.Balance ( , Account.Code = ""217.1"", ,
-	|	ExtDimension1 = &Item and ExtDimension2 = &Warehouse ) as Balances
+	|select Balances.QuantityBalance as Balance
+	|from AccumulationRegister.Items.Balance ( ,
+	|	Item = &Item
+	|	and Warehouse = &Warehouse
+	|	and Package = &Package
+	|	and Feature = &Feature
+	|	and Series = &Series
+	|) as Balances
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Item", Item );
 	q.SetParameter ( "Warehouse", Warehouse );
+	q.SetParameter ( "Package", Package );
+	q.SetParameter ( "Feature", Feature );
+	q.SetParameter ( "Series", Series );
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, 0, table [ 0 ].Balance );
 	
@@ -204,7 +247,7 @@ EndFunction
 
 &AtServer
 Procedure reread ()
-	
+	 
 	obj = Object.Ref.GetObject ();
 	ValueToFormAttribute ( obj, "Object" );
 	setLinks ();
@@ -213,27 +256,10 @@ Procedure reread ()
 EndProcedure
 
 // *****************************************
-// *********** Form events
-
-&AtClient
-Procedure LinksURLProcessing ( Item, FormattedStringURL, StandardProcessing )
-	
-	URLPanel.OpenLink ( FormattedStringURL, StandardProcessing );
-	
-EndProcedure                                                                
-
-// *****************************************
 // *********** Table Items
 
 &AtClient
 Procedure Scan ( Command )
-	
-	openScanner ();
-	
-EndProcedure
-
-&AtClient
-Procedure openScanner ()
 	
 	ScanForm.Open ( ThisObject, true );
 	
@@ -247,24 +273,55 @@ Procedure ItemsOnActivateRow ( Item )
 EndProcedure
 
 &AtClient
+Procedure ItemsSeriesStartChoice ( Item, ChoiceData, StandardProcessing )
+	
+	SeriesForm.ShowList ( Item, itemsRow.Item, StandardProcessing );
+	                   
+EndProcedure
+
+&AtClient
 Procedure ItemsItemOnChange ( Item )
-	
+
 	applyItem ();
-	
+
 EndProcedure
 
 &AtClient
 Procedure applyItem ()
 	
-	item = ItemsRow.Item;
-	ItemsRow.Package = DF.Pick ( ItemsRow.Item, "ЕдИзм" );
-	ItemsRow.Balance = getBalance ( item, Object.Warehouse );
+	data = DF.Values ( ItemsRow.Item, "Package, Package.Capacity as Capacity" );
+	ItemsRow.Package = data.Package;
+	ItemsRow.Capacity = ? ( data.Capacity = 0, 1, data.Capacity );
+	Computations.Units ( ItemsRow );
+	
+EndProcedure
+
+&AtClient
+Procedure ItemsQuantityOnChange ( Item )
+
+	Computations.Packages ( ItemsRow );
+
+EndProcedure
+
+&AtClient
+Procedure ItemsPackageOnChange ( Item )
+
+	applyPackage ();
+
+EndProcedure
+
+&AtClient
+Procedure applyPackage ()
+	
+	capacity = DF.Pick ( ItemsRow.Package, "Capacity", 1 );
+	ItemsRow.Capacity = capacity;
+	Computations.Units ( ItemsRow );
 	
 EndProcedure 
 
 &AtClient
-Procedure ItemsLotStartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	LotForm.ShowList ( Item, itemsRow.Item, StandardProcessing );
-	                   
+Procedure ItemsQuantityPkgOnChange ( Item )
+
+	Computations.Units ( ItemsRow );
+
 EndProcedure

@@ -41,6 +41,10 @@
       <use>true</use>
     </functionality>
     <functionality>
+      <functionality>Camera</functionality>
+      <use>true</use>
+    </functionality>
+    <functionality>
       <functionality>OSBackup</functionality>
       <use>true</use>
     </functionality>
@@ -525,11 +529,13 @@
   <roles>Role.RightsView</roles>
   <roles>Role.RolesEdit</roles>
   <roles>Role.RolesView</roles>
+  <roles>Role.SalesEdit</roles>
   <roles>Role.SalesOrderItemsReport</roles>
   <roles>Role.SalesOrdersReport</roles>
   <roles>Role.SalesRegisterReport</roles>
   <roles>Role.SalesReport</roles>
   <roles>Role.SalesSubsystem</roles>
+  <roles>Role.SalesView</roles>
   <roles>Role.SaveSettings</roles>
   <roles>Role.ScheduleReports</roles>
   <roles>Role.SchedulesEdit</roles>
@@ -770,8 +776,10 @@
   <commonModules>CommonModule.RunMeetings</commonModules>
   <commonModules>CommonModule.RunPayments</commonModules>
   <commonModules>CommonModule.RunRanges</commonModules>
+  <commonModules>CommonModule.RunStockman</commonModules>
   <commonModules>CommonModule.Runtime</commonModules>
   <commonModules>CommonModule.SalesOrderMailing</commonModules>
+  <commonModules>CommonModule.ScanForm</commonModules>
   <commonModules>CommonModule.ScheduledReports</commonModules>
   <commonModules>CommonModule.SequenceCost</commonModules>
   <commonModules>CommonModule.SeriesForm</commonModules>
@@ -913,6 +921,7 @@
   <definedTypes>DefinedType.Reference</definedTypes>
   <definedTypes>DefinedType.RoomCapacity</definedTypes>
   <definedTypes>DefinedType.SaleDescription</definedTypes>
+  <definedTypes>DefinedType.Shipment</definedTypes>
   <definedTypes>DefinedType.TaxRate</definedTypes>
   <definedTypes>DefinedType.Twitter</definedTypes>
   <definedTypes>DefinedType.Web</definedTypes>
@@ -975,6 +984,8 @@
   <constants>Constant.HTMLExe</constants>
   <constants>Constant.InfoEmail</constants>
   <constants>Constant.Initdb</constants>
+  <constants>Constant.ItemsCost</constants>
+  <constants>Constant.ItemsVAT</constants>
   <constants>Constant.JobsDisabled</constants>
   <constants>Constant.Key</constants>
   <constants>Constant.License</constants>
@@ -983,6 +994,7 @@
   <constants>Constant.Manual</constants>
   <constants>Constant.MobileRules</constants>
   <constants>Constant.NationalBankHost</constants>
+  <constants>Constant.NewItems</constants>
   <constants>Constant.NewUpdates</constants>
   <constants>Constant.NoPackages</constants>
   <constants>Constant.Noreply</constants>
@@ -1062,6 +1074,7 @@
   <catalogs>Catalog.BankingApps</catalogs>
   <catalogs>Catalog.Banks</catalogs>
   <catalogs>Catalog.BanksClassifier</catalogs>
+  <catalogs>Catalog.BarcodeProfiles</catalogs>
   <catalogs>Catalog.BOM</catalogs>
   <catalogs>Catalog.Books</catalogs>
   <catalogs>Catalog.Calendar</catalogs>
@@ -1239,6 +1252,7 @@
   <documents>Document.Refund</documents>
   <documents>Document.Return</documents>
   <documents>Document.Roles</documents>
+  <documents>Document.Sale</documents>
   <documents>Document.SalesOrder</documents>
   <documents>Document.ServicesPurchase</documents>
   <documents>Document.SetupPrices</documents>
@@ -1480,9 +1494,11 @@
   <dataProcessors>DataProcessor.POP3</dataProcessors>
   <dataProcessors>DataProcessor.Prices</dataProcessors>
   <dataProcessors>DataProcessor.Print</dataProcessors>
+  <dataProcessors>DataProcessor.PrintBarcodes</dataProcessors>
   <dataProcessors>DataProcessor.PrintTest</dataProcessors>
   <dataProcessors>DataProcessor.PromoCodes</dataProcessors>
   <dataProcessors>DataProcessor.Properties</dataProcessors>
+  <dataProcessors>DataProcessor.Scan</dataProcessors>
   <dataProcessors>DataProcessor.ShiftBalances</dataProcessors>
   <dataProcessors>DataProcessor.Signature</dataProcessors>
   <dataProcessors>DataProcessor.SMTP</dataProcessors>

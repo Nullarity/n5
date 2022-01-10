@@ -71,20 +71,20 @@ Procedure sqlItems ( Env )
 	
 	s = "
 	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Feature as Feature, Items.Stock as Stock,
-	|	Items.DocumentOrder as DocumentOrder, Items.DocumentOrderRowKey as DocumentOrderRowKey,
+	|	Items.Series as Series, Items.DocumentOrder as DocumentOrder, Items.DocumentOrderRowKey as DocumentOrderRowKey,
 	|	Items.RowKey as RowKey, Items.Reservation as Reservation, Items.Quantity as Quantity,
 	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as QuantityPkg,
 	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package
 	|into Items
 	|from Document.InternalOrder.Items as Items
 	|where Items.Ref = &Ref
-	|index by Items.Reservation
+	|index by Reservation
 	|;
 	|select Services.LineNumber as LineNumber, Services.RowKey as RowKey, Services.Quantity as Quantity, Services.Performer as Performer
 	|into Services
 	|from Document.InternalOrder.Services as Services
 	|where Services.Ref = &Ref
-	|index by Services.Performer
+	|index by Performer
 	|";
 	Env.Selection.Add ( s );
 	
@@ -147,8 +147,8 @@ Procedure sqlItemReserves ( Env )
 	
 	s = "
 	|// ^Reserves
-	|select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Stock as Stock,
-	|	Items.RowKey as RowKey, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg
+	|select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
+	|	Items.Stock as Stock, Items.RowKey as RowKey, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg
 	|from Items as Items
 	|where Items.Reservation = value ( Enum.Reservation.Warehouse )
 	|";
@@ -231,6 +231,7 @@ Procedure minusItems ( Env, Row )
 	movement.Warehouse = Row.Stock;
 	movement.Item = Row.Item;
 	movement.Feature = Row.Feature;
+	movement.Series = Row.Series;
 	movement.Package = Row.Package;
 	movement.Quantity = Row.QuantityPkg;
 	

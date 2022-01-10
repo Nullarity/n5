@@ -78,6 +78,7 @@
   </standardAttributes>
   <basedOn>Document.SalesOrder</basedOn>
   <basedOn>Document.TimeEntry</basedOn>
+  <basedOn>Document.ShipmentStockman</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -903,46 +904,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="e8b2a771-8660-4d64-ae1b-f29a1b980c06">
-    <name>Series</name>
-    <synonym>
-      <key>en</key>
-      <value>Series</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Серия</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Serie</value>
-    </synonym>
-    <type>
-      <types>String</types>
-      <stringQualifiers>
-        <length>5</length>
-      </stringQualifiers>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Invoice series</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Серия накладной</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Seria facturii</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:StringValue">
-      <value></value>
-    </fillValue>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="0ac3716e-1eb1-404b-a59b-35c6509a3a15">
     <name>Shipment</name>
     <synonym>
@@ -958,7 +919,7 @@
       <value>Expediere</value>
     </synonym>
     <type>
-      <types>DocumentRef.Shipment</types>
+      <types>DefinedType.Shipment</types>
     </type>
     <toolTip>
       <key>en</key>
