@@ -310,6 +310,13 @@
 				</dcscor:item>
 			</appearance>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Series</dataPath>
+			<field>Series</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Reserves
@@ -330,8 +337,8 @@ index by DocumentOrder, RowKey
 //
 // Main Selection
 //
-select Balances.Item as Item, Balances.Feature as Feature, Balances.Package as Package,
-	Balances.Warehouse as Warehouse, Balances.Warehouse.Owner as Company,
+select Balances.Item as Item, Balances.Feature as Feature, Balances.Series as Series,
+	Balances.Package as Package, Balances.Warehouse as Warehouse, Balances.Warehouse.Owner as Company,
 	Balances.DayPeriod as DayPeriod, Balances.MonthPeriod as MonthPeriod,
 	Balances.ReserveClosing as ReserveClosing,
 	( Balances.QuantityClosingBalance - Balances.ReserveClosing ) / Balances.Capacity as Available,
@@ -339,23 +346,24 @@ select Balances.Item as Item, Balances.Feature as Feature, Balances.Package as P
 	Balances.QuantityClosingBalance / Balances.Capacity as QuantityClosingBalance,
 	Balances.QuantityReceipt / Balances.Capacity as QuantityReceipt,
 	Balances.QuantityExpense / Balances.Capacity as QuantityExpense
-{select Item.*, Feature.*, Package.*, Warehouse.*, Company.*, ReserveClosing, QuantityOpeningBalance,
-	QuantityClosingBalance, QuantityExpense, QuantityReceipt, DayPeriod, MonthPeriod, Available}
+{select Item.*, Feature.*, Series.*, Package.*, Warehouse.*, Company.*, ReserveClosing,
+	QuantityOpeningBalance, QuantityClosingBalance, QuantityExpense, QuantityReceipt,
+	DayPeriod, MonthPeriod, Available}
 from (	
-	select Balances.Item as Item, Balances.Feature as Feature, Balances.Package as Package,
-		isnull ( Balances.Package.Capacity, 1 ) as Capacity,
+	select Balances.Item as Item, Balances.Feature as Feature, Balances.Series as Series,
+		Balances.Package as Package, isnull ( Balances.Package.Capacity, 1 ) as Capacity,
 		Balances.Warehouse as Warehouse, Balances.DayPeriod as DayPeriod, Balances.MonthPeriod as MonthPeriod,
 		Balances.QuantityOpeningBalance * isnull ( Balances.Package.Capacity, 1 ) as QuantityOpeningBalance,
 		Balances.QuantityClosingBalance * isnull ( Balances.Package.Capacity, 1 ) as QuantityClosingBalance,
 		Balances.QuantityReceipt * isnull ( Balances.Package.Capacity, 1 ) as QuantityReceipt,
 		Balances.QuantityExpense * isnull ( Balances.Package.Capacity, 1 ) as QuantityExpense,
 		0 as ReserveClosing
-	{select Item, Feature, Package, Warehouse, DayPeriod, MonthPeriod, QuantityReceipt, QuantityExpense,
+	{select Item, Feature, Series, Package, Warehouse, DayPeriod, MonthPeriod, QuantityReceipt, QuantityExpense,
 		ReserveClosing, QuantityOpeningBalance, QuantityClosingBalance}
 	from AccumulationRegister.Items.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, ,
 		Warehouse = &amp;Warehouse ) as Balances
 	union all
-	select Items.Item, Items.Feature,
+	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
 		case when Items.Item.CountPackages then isnull ( Items.Package.Capacity, 1 ) else 1 end,
 		Reserves.Warehouse, Reserves.DayPeriod, Reserves.MonthPeriod,
@@ -370,7 +378,7 @@ from (
 		and Reserves.RowKey = Items.RowKey
 	{where Warehouse = &amp;Warehouse}
 	union all
-	select Items.Item, Items.Feature,
+	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
 		case when Items.Item.CountPackages then isnull ( Items.Package.Capacity, 1 ) else 1 end,
 		Reserves.Warehouse, Reserves.DayPeriod, Reserves.MonthPeriod,
@@ -678,6 +686,7 @@ from (
 					<dcsset:field>Available</dcsset:field>
 				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>7a3ec183-3a7c-4070-8a98-b191218d2afc</dcsset:userSettingID>
 			</dcsset:selection>
 			<dcsset:filter>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -808,20 +817,78 @@ from (
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
 							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
 					</dcsset:groupItems>
 					<dcsset:order>
 						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 					</dcsset:order>
 					<dcsset:selection>
-						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Item.Unit</dcsset:field>
+						<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>Item</dcsset:field>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>Item.Unit</dcsset:field>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>Item.Code</dcsset:field>
+							</dcsset:item>
+							<dcsset:placement>Together</dcsset:placement>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Item.Code</dcsset:field>
+							<dcsset:field>Feature</dcsset:field>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Package</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Series</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Series.ExpirationDate</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityClosingBalance</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Quantity</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Количество</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Cantitate</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>ReserveClosing</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Available</dcsset:field>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>187e1663-d69e-4169-a3ce-a317ec830974</dcsset:userSettingID>
 					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>AttributePlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcsset:DataCompositionAttributesPlacement">Separately</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
 				</dcsset:row>
+				<dcsset:selection>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+				</dcsset:selection>
 				<dcsset:outputParameters>
 					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 						<dcscor:use>false</dcscor:use>
@@ -833,6 +900,8 @@ from (
 						<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
 					</dcscor:item>
 				</dcsset:outputParameters>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:rowsViewMode>Normal</dcsset:rowsViewMode>
 			</dcsset:item>
 			<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
 		</dcsset:settings>
@@ -868,6 +937,7 @@ from (
 					<dcsset:field>QuantityClosingBalance</dcsset:field>
 				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>afb3b4ac-6af0-43db-b3ed-75d36463ad30</dcsset:userSettingID>
 			</dcsset:selection>
 			<dcsset:filter>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -974,6 +1044,13 @@ from (
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
 							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
 					</dcsset:groupItems>
 					<dcsset:order>
 						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
@@ -986,6 +1063,8 @@ from (
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Item.Code</dcsset:field>
 						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>8d8e3086-da11-4a36-8ab9-4d3bc0d7dd9f</dcsset:userSettingID>
 					</dcsset:selection>
 				</dcsset:item>
 			</dcsset:item>
@@ -1116,6 +1195,13 @@ from (
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>Package</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>

@@ -20,6 +20,12 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">15</dcscor:value>
+				</dcscor:item>
+			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Package</dataPath>
@@ -465,6 +471,13 @@
 				</dcscor:item>
 			</appearance>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Series</dataPath>
+			<field>Series</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Reserves
@@ -488,8 +501,9 @@ index by DocumentOrder, RowKey
 //
 // Main Selection
 //
-select allowed Balances.Item as Item, Balances.Feature as Feature, Balances.Package as Package,
-	Balances.Warehouse as Warehouse, Balances.Warehouse.Owner as Company, Balances.SecondPeriod as SecondPeriod,
+select allowed Balances.Item as Item, Balances.Feature as Feature, Balances.Series as Series,
+	Balances.Package as Package, Balances.Warehouse as Warehouse, Balances.Warehouse.Owner as Company,
+	Balances.SecondPeriod as SecondPeriod,
 	case when ( Balances.Recorder = undefined ) then null else Balances.Recorder end as Recorder,
 	Balances.QuantityClosingBalance as QuantityBaseClosingBalance,
 	( Balances.QuantityClosingBalance - Balances.ReserveClosing ) / Balances.Capacity as Available,
@@ -501,13 +515,13 @@ select allowed Balances.Item as Item, Balances.Feature as Feature, Balances.Pack
 	Balances.ReserveClosing / Balances.Capacity as ReserveClosing,
 	Balances.ReserveReceipt / Balances.Capacity as ReserveReceipt,
 	Balances.ReserveExpense / Balances.Capacity as ReserveExpense
-{select Item.*, Feature.*, Package.*, Warehouse.*, Company.*, QuantityOpeningBalance,
+{select Item.*, Feature.*, Series.*, Package.*, Warehouse.*, Company.*, QuantityOpeningBalance,
 	QuantityClosingBalance, QuantityExpense, QuantityReceipt, QuantityBaseClosingBalance,
 	SecondPeriod, Recorder.*, ReserveOpening, ReserveClosing, ReserveReceipt, ReserveExpense,
 	Available}
 from (	
-	select Balances.Item as Item, Balances.Feature as Feature, Balances.Package as Package,
-		isnull ( Balances.Package.Capacity, 1 ) as Capacity,
+	select Balances.Item as Item, Balances.Feature as Feature, Balances.Series as Series,
+		Balances.Package as Package, isnull ( Balances.Package.Capacity, 1 ) as Capacity,
 		Balances.Warehouse as Warehouse, Balances.SecondPeriod as SecondPeriod,
 		case when ( Balances.Recorder = undefined ) then null else Balances.Recorder end as Recorder,
 		Balances.QuantityOpeningBalance * isnull ( Balances.Package.Capacity, 1 ) as QuantityOpeningBalance,
@@ -515,16 +529,16 @@ from (
 		Balances.QuantityReceipt * isnull ( Balances.Package.Capacity, 1 ) as QuantityReceipt,
 		Balances.QuantityExpense * isnull ( Balances.Package.Capacity, 1 ) as QuantityExpense,
 		0 as ReserveOpening, 0 as ReserveClosing, 0 as ReserveReceipt, 0 as ReserveExpense
-	{select Item, Feature, Package, Warehouse, SecondPeriod, Recorder, QuantityOpeningBalance,
+	{select Item, Feature, Series, Package, Warehouse, SecondPeriod, Recorder, QuantityOpeningBalance,
 		QuantityClosingBalance, QuantityReceipt, QuantityExpense, ReserveOpening, ReserveClosing,
 		ReserveReceipt, ReserveExpense}
 	from AccumulationRegister.Items.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, ,
-		{Item.* as Item, Feature.* as Feature, Warehouse.* as Warehouse, Warehouse.Owner.* as Company}
+		{Item.* as Item, Feature.* as Feature, Series.* as Series, Warehouse.* as Warehouse, Warehouse.Owner.* as Company}
 		Warehouse in ( select Ref from Catalog.Warehouses )
 		and Warehouse.Owner in ( select Ref from Catalog.Companies ) ) as Balances
-	{where Balances.Item.* as Item, Balances.Feature.* as Feature}
+	{where Balances.Item.* as Item, Balances.Feature.* as Feature, Balances.Series.* as Series}
 	union all
-	select Items.Item, Items.Feature,
+	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
 		case when Items.Item.CountPackages then isnull ( Items.Package.Capacity, 1 ) else 1 end,
 		Reserves.Warehouse, Reserves.SecondPeriod,
@@ -540,9 +554,9 @@ from (
 		join Reserves as Reserves
 		on Reserves.DocumentOrder = Items.Ref
 		and Reserves.RowKey = Items.RowKey
-	{where Items.Item.* as Item, Items.Feature.* as Feature}
+	{where Items.Item.* as Item, Items.Feature.* as Feature, Items.Series.* as Series}
 	union all
-	select Items.Item, Items.Feature,
+	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
 		case when Items.Item.CountPackages then isnull ( Items.Package.Capacity, 1 ) else 1 end,
 		Reserves.Warehouse, Reserves.SecondPeriod,
@@ -558,7 +572,7 @@ from (
 		join Reserves as Reserves
 		on Reserves.DocumentOrder = Items.Ref
 		and Reserves.RowKey = Items.RowKey
-	{where Items.Item.* as Item, Items.Feature.* as Feature}
+	{where Items.Item.* as Item, Items.Feature.* as Feature, Items.Series.* as Series}
 ) as Balances
 {where Balances.Package.* as Package,
 ( Balances.QuantityClosingBalance - ReserveClosing ) / Balances.Capacity as Available}
@@ -659,12 +673,19 @@ from (
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Series</dataPath>
+			<field>Series</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // ItemKeys
 //
 select Details.ItemKey as ItemKey, Details.Item as Item, Details.Feature as Feature,
-	Details.Package as Package, Details.Warehouse as Warehouse
+	Details.Series as Series, Details.Package as Package, Details.Warehouse as Warehouse
 into Details
 from InformationRegister.ItemDetails as Details
 where Details.Item in ( &amp;Items )
@@ -675,10 +696,10 @@ index by ItemKey
 // Main Selection
 //
 select Details.Item as Item, Details.Package as Package, Details.Feature as Feature,
-	Details.Warehouse as Warehouse, Cost.ItemKey as ItemKey,
+	Details.Series as Series, Details.Warehouse as Warehouse, Cost.ItemKey as ItemKey,
 	Cost.AmountBalance as CostAmount, Cost.QuantityBalance as CostQuantity,
 	Cost.AmountBalance / Cost.QuantityBalance as UnitCost
-{select CostAmount, CostQuantity, Item.*, Package.*, Feature.*, Warehouse.*, UnitCost, ItemKey}
+{select CostAmount, CostQuantity, Item.*, Package.*, Feature.*, Series.*, Warehouse.*, UnitCost, ItemKey}
 from AccumulationRegister.Cost.Balance ( , ItemKey in ( select ItemKey from Details ) ) as Cost
 	//
 	// Details
@@ -719,6 +740,13 @@ where Cost.QuantityBalance &lt;&gt; 0
 		<destinationDataSet>Cost</destinationDataSet>
 		<sourceExpression>Package</sourceExpression>
 		<destinationExpression>Package</destinationExpression>
+		<required>false</required>
+	</dataSetLink>
+	<dataSetLink>
+		<sourceDataSet>Balances</sourceDataSet>
+		<destinationDataSet>Cost</destinationDataSet>
+		<sourceExpression>Series</sourceExpression>
+		<destinationExpression>Series</destinationExpression>
 		<required>false</required>
 	</dataSetLink>
 	<calculatedField>
@@ -1229,6 +1257,13 @@ where Cost.QuantityBalance &lt;&gt; 0
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
 							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
 					</dcsset:groupItems>
 					<dcsset:order>
 						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
@@ -1241,6 +1276,8 @@ where Cost.QuantityBalance &lt;&gt; 0
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Item.Code</dcsset:field>
 						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>40724174-c9b7-4f8a-b0de-fdcee05633c4</dcsset:userSettingID>
 					</dcsset:selection>
 				</dcsset:row>
 				<dcsset:outputParameters>
@@ -1426,6 +1463,13 @@ where Cost.QuantityBalance &lt;&gt; 0
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
 							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
 					</dcsset:groupItems>
 					<dcsset:order>
 						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
@@ -1438,6 +1482,8 @@ where Cost.QuantityBalance &lt;&gt; 0
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Item.Code</dcsset:field>
 						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>6b083844-4dba-493b-b588-5d09aac76cda</dcsset:userSettingID>
 					</dcsset:selection>
 				</dcsset:item>
 			</dcsset:item>
