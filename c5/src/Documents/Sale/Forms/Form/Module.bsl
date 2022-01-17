@@ -42,26 +42,52 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 	
-	if ( Object.Warehouse.IsEmpty () ) then
-		settings = Logins.Settings ( "Company, Warehouse, Warehouse.Prices as Prices,
-		|PaymentLocation, PaymentLocation.Method as Method" );
-		Object.Company = settings.Company;
-		Object.Warehouse = settings.Warehouse;
-		Object.Location = settings.PaymentLocation;
-		method = settings.Method;
-		Object.Prices = settings.Prices;
+	copy = Parameters.CopyingValue;
+	if ( copy.IsEmpty () ) then
+		if ( Object.Warehouse.IsEmpty () ) then
+			settings = Logins.Settings ( "Company, Warehouse, Warehouse.Prices as Prices,
+			|PaymentLocation, PaymentLocation.Method as Method" );
+			Object.Company = settings.Company;
+			Object.Warehouse = settings.Warehouse;
+			Object.Location = settings.PaymentLocation;
+			method = settings.Method;
+			Object.Prices = settings.Prices;
+		else
+			fields = DF.Values ( Object.Warehouse, "Owner, Prices" );
+			Object.Company = fields.Owner;
+			Object.Prices = fields.Prices;
+			settings = Logins.Settings ( "PaymentLocation, PaymentLocation.Method as Method" );
+			Object.Location = settings.PaymentLocation;
+			method = settings.Method;
+		endif;
+		if ( Metadata.Documents.Sale.Attributes.Method.ChoiceParameters [ 0 ].Value.Find ( method ) <> undefined ) then
+			Object.Method = method;
+		endif;
 	else
-		fields = DF.Values ( Object.Warehouse, "Owner, Prices" );
-		Object.Company = fields.Owner;
-		Object.Prices = fields.Prices;
-		settings = Logins.Settings ( "PaymentLocation, PaymentLocation.Method as Method" );
-		Object.Location = settings.PaymentLocation;
-		method = settings.Method;
-	endif;
-	if ( Metadata.Documents.Sale.Attributes.Method.ChoiceParameters [ 0 ].Value.Find ( method ) <> undefined ) then
-		Object.Method = method;
+		returning = not DF.Pick ( copy, "Return" );
+		if ( returning ) then
+			Object.Return = true;
+			revert ( Object );
+		endif;
 	endif;
 	
+EndProcedure
+
+&AtClientAtServerNoContext
+Procedure revert ( Object )
+	
+	for each row in Object.Items do
+		row.Quantity = - row.Quantity;
+		row.QuantityPkg = - row.QuantityPkg;
+		row.VAT = - row.VAT;
+		row.Total = - row.Total;
+		row.Amount = - row.Amount;
+	enddo;
+	Object.Amount = - Object.Amount;
+	Object.Discount = - Object.Discount;
+	Object.GrossAmount = - Object.GrossAmount;
+	Object.VAT = - Object.VAT;
+
 EndProcedure 
 
 &AtClientAtServerNoContext
@@ -168,6 +194,72 @@ Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 EndProcedure
 
+&AtClient
+Procedure AfterWrite ( WriteParameters )
+	
+	if ( WriteParameters.WriteMode = DocumentWriteMode.Posting ) then
+		printBill ();
+	endif;
+	
+EndProcedure
+
+&AtClient
+async Procedure printBill ()
+	
+	if ( not Object.Print ) then
+		return;
+	endif;
+	folder = Application.ReceipsFolder ();
+	if ( folder = "" ) then
+		unpost ();
+		raise Output.ReceipsFolderIsEmpty ();
+	endif;
+	text = new TextDocument ();
+	data = billData ();
+	text.SetText ( data );
+	file = folder + GetPathSeparator () + "export" + TrimAll ( Object.Number ) + ".inp";
+	try
+		await text.WriteAsync ( file );
+	except
+		error = ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+		unpost ();
+		raise Output.BillPrintingError ( new Structure ( "Error", error ) );
+	endtry;
+
+EndProcedure
+
+&AtClient
+Procedure unpost ()
+	
+	Write ( new Structure ( "WriteMode", DocumentWriteMode.UndoPosting ) );
+
+EndProcedure
+
+&AtServer
+Function billData ()
+	
+	data = new Array ();
+	data.Add ();
+	for each row in Object.Items do
+		if ( ServerCache.Pick ( row.VATCode, "Type" ) = Enums.VAT.Standart ) then 
+			tax = 1;
+		else
+			tax = 2;
+		endif;
+		s = "S,1,______,_,__;"
+		+ Left ( StrReplace ( String ( row.Item ), ";", "," ), 22 )
+		+";"+ Format ( row.Price, "ND=15; NFD=2; NDS=.; NG=;" )
+		+";"+ Format ( row.QuantityPkg, "ND=10; NFD=3; NDS=.; NG=;" )
+		+";1;1;"
+		+ tax
+		+";0;0;";
+		data.Add ( s );
+	КонецЦикла;
+	data.Add ( "T,1,______,_,__;;;;;;" );
+	return StrConcat ( data, Chars.LF );
+
+EndFunction
+
 // *****************************************
 // *********** Group Form
 
@@ -178,6 +270,13 @@ Procedure CompanyOnChange ( Item )
 	
 EndProcedure
 
+&AtClient
+Procedure ReturnOnChange ( Item )
+	
+	revert ( Object );
+	
+EndProcedure
+ 
 &AtClient
 Procedure PricesOnChange ( Item )
 	
