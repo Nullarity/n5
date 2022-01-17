@@ -7957,3 +7957,19 @@ Function UndefinedBarcodeProfile () export
 	return text;
 
 EndFunction
+
+&AtClient
+Function ReceipsFolderIsEmpty () export
+
+	text = NStr ( "en = 'To print a receipt, you need to set the path to the folder with the receipts in the user settings';ro = 'Pentru a imprima o chitanță, trebuie să setați calea către dosarul cu chitanțe în setările utilizatorului';ru = 'Для печати чека, в настройках пользователя необходимо задать путь к папке с чеками'" );
+	return text;
+
+EndFunction
+
+&AtClient
+Function BillPrintingError ( Params ) export
+
+	text = NStr ( "en = 'Can''t print the receipt, error: %Error';ro = 'Nu se poate imprima chitanța, eroare: %Error';ru = 'Не удалось распечатать чек, ошибка : %Error'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
