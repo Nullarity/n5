@@ -69,3 +69,9 @@ Function NewItems () export
 	return Constants.NewItems.Get ();
 	
 EndFunction 
+
+Function ReceipsFolder () export
+	
+	return Logins.Settings ( "ReceiptsFolder" ).ReceiptsFolder;
+
+EndFunction
