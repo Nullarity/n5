@@ -493,13 +493,14 @@ EndProcedure
 &AtServer
 Procedure addItem ( Fields )
 	
-	search = new Structure ( "Item, Package, Feature" );
+	search = new Structure ( "Item, Package, Feature, Series" );
 	FillPropertyValues ( search, Fields );
 	rows = Object.Items.FindRows ( search );
 	if ( rows.Count () = 0 ) then
 		row = Object.Items.Add ();
 		item = Fields.Item;
 		row.Item = item;
+		row.Series = Series;
 		package = Fields.Package;
 		row.Package = package;
 		feature = Fields.Feature;
