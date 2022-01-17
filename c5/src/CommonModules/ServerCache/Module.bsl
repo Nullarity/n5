@@ -21,3 +21,9 @@ Function Price ( val Date = undefined, val Prices, val Item, val Package = undef
 	return Goods.Price ( , Date, Prices, Item, Package, Feature, Organization, , , Warehouse );
 	
 EndFunction 
+
+Function Pick ( val Ref, val Field, val Default = undefined ) export
+	
+	return DF.Pick ( Ref, Field, Default );
+	
+EndFunction
