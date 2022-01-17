@@ -31,7 +31,7 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
-Procedure DocumentsFolderStartChoice ( Item, ChoiceData, StandardProcessing )
+Procedure FolderStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
 	LocalFiles.SelectFolder ( Item );

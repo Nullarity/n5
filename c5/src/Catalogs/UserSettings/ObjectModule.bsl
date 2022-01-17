@@ -127,3 +127,24 @@ Function warehouseStateInList ()
 	return User.WarehousesStates.FindRows ( new Structure ( "State", state ) ).Count () > 0;
 	
 EndFunction 
+
+Procedure BeforeWrite ( Cancel )
+
+	if ( DataExchange.Load ) then
+		return;
+	endif;
+	resetCache ();
+
+EndProcedure
+
+Procedure resetCache ()
+	
+	if ( SessionParameters.User <> Owner ) then
+		return;
+	endif;
+	oldValue = ? ( IsNew (), "", DF.Pick ( Ref, "ReceiptsFolder" ) );
+	if ( oldValue <> ReceiptsFolder ) then
+		RefreshReusableValues ();
+	endif;
+
+EndProcedure
