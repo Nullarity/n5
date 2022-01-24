@@ -189,7 +189,11 @@ Procedure sqlAccounts ()
 	|select Accounts.Ref as Account
 	|into Accounts
 	|from ChartOfAccounts.General as Accounts
-	|where Accounts.Class in ( value ( Enum.Accounts.AccountsPayable ), value ( Enum.Accounts.AccountsReceivable ) )
+	|where Accounts.Class in (
+	|	value ( Enum.Accounts.AccountsPayable ),
+	|	value ( Enum.Accounts.AccountsReceivable ),
+	|	value ( Enum.Accounts.OtherCurrentLiability )
+	|)
 	|";
 	Env.Selection.Add ( s );
 		
@@ -223,10 +227,10 @@ Procedure sqlRecords ()
 	endif;
 	s = s + " ) as Records
 	|where not ( Records.BalancedAccount in ( select Account from Accounts )
-	|	and Records.BalancedExtDimension1 = Records.ExtDimension1";
+	|	and isnull ( Records.BalancedExtDimension1, value ( Catalog.Organizations.EmptyRef ) ) = Records.ExtDimension1";
 	if ( ContractDefined ) then
 		s = s + "
-		|and Records.BalancedExtDimension2 = Records.ExtDimension2";
+		|and isnull ( Records.BalancedExtDimension2, value ( Catalog.Contracts.EmptyRef ) ) = Records.ExtDimension2";
 	endif;
 	s = s + " )
 	|group by Records.Recorder";
