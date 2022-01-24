@@ -715,7 +715,8 @@ from ScheduledLocation as Intervals
 index by Employee, Schedule
 ;
 // HolidaysRawData
-select HolidaysList.Reference as Reference, HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
+select HolidaysList.Reference as Reference, HolidaysList.Day as Day,
+    case when PreholidaysInHolidays.Day is null and Preholidays.Minutes &gt; 0 then Preholidays.Day end as Preholiday,
 	HolidaysList.Division as Division, Schedules.Schedule as Schedule
 into HolidaysRawData
 from InformationRegister.Holidays as HolidaysList
@@ -725,6 +726,18 @@ from InformationRegister.Holidays as HolidaysList
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Day = HolidaysList.Day
 	and Schedules.Schedule.Holidays = HolidaysList.Reference
+	//
+	// Preholidays
+	//
+	join InformationRegister.Schedules as Preholidays
+	on Preholidays.Day = dateadd ( HolidaysList.Day, day, -1 )
+	and Preholidays.Schedule.Holidays = HolidaysList.Reference
+    //
+    // PreholidaysInHolidays
+    //
+    left join InformationRegister.Holidays as PreholidaysInHolidays
+    on PreholidaysInHolidays.Day = Preholidays.Day
+	and PreholidaysInHolidays.Reference = Preholidays.Schedule.Holidays
 	//
 	// For the whole period
 	//
@@ -756,7 +769,8 @@ where LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
 select Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division, Holidays.Schedule as Schedule
 into Holidays
 from AllHolidays as Holidays
-where Holidays.Day between &amp;DateStart and &amp;DateEnd
+where Holidays.Day between &amp;DateStart and dateadd ( &amp;DateEnd, day, 1 )
+and Holidays.Preholiday &gt;= &amp;DateStart
 ;
 // Schedules
 select Schedules.Schedule as Schedule, Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd, Intervals.Division as Division,
@@ -2880,7 +2894,7 @@ index by Period
 // DeductionRates
 select &amp;YearStart as Period, Deductions.Deduction as Deduction, Deductions.Rate as Rate
 into DeductionRates
-from InformationRegister.DeductionRates.SliceLast ( &amp;YearStart ) as Deductions
+from InformationRegister.DeductionRates.SliceLast ( dateadd ( &amp;YearStart, second, 1 ) ) as Deductions
 where not &amp;TaxesOnly
 union all
 select Deductions.Period, Deductions.Deduction, Deductions.Rate

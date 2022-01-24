@@ -541,7 +541,8 @@ from ScheduledLocation as Intervals
 index by Employee, Schedule
 ;
 // HolidaysRawData
-select HolidaysList.Reference as Reference, HolidaysList.Day as Day, dateadd ( HolidaysList.Day, day, -1 ) as Preholiday,
+select HolidaysList.Reference as Reference, HolidaysList.Day as Day,
+    case when PreholidaysInHolidays.Day is null and Preholidays.Minutes &gt; 0 then Preholidays.Day end as Preholiday,
 	HolidaysList.Division as Division, Schedules.Schedule as Schedule
 into HolidaysRawData
 from InformationRegister.Holidays as HolidaysList
@@ -551,30 +552,47 @@ from InformationRegister.Holidays as HolidaysList
 	join InformationRegister.Schedules as Schedules
 	on Schedules.Day = HolidaysList.Day
 	and Schedules.Schedule.Holidays = HolidaysList.Reference
-	and Schedules.Minutes &gt; 0
-where HolidaysList.Day between &amp;YearStart and &amp;DateEnd
+	//
+	// Preholidays
+	//
+	join InformationRegister.Schedules as Preholidays
+	on Preholidays.Day = dateadd ( HolidaysList.Day, day, -1 )
+	and Preholidays.Schedule.Holidays = HolidaysList.Reference
+    //
+    // PreholidaysInHolidays
+    //
+    left join InformationRegister.Holidays as PreholidaysInHolidays
+    on PreholidaysInHolidays.Day = Preholidays.Day
+	and PreholidaysInHolidays.Reference = Preholidays.Schedule.Holidays
+where HolidaysList.Day between &amp;DateStart and dateadd ( &amp;DateEnd, day, 1 )
 ;
 // All holidays
-select Holidays.Reference as Reference, Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division,
+select Divisions.Ref as Division, Holidays.Reference as Reference, Holidays.Day as Day, Holidays.Preholiday as Preholiday,
 	Holidays.Schedule as Schedule
 into AllHolidays
-from HolidaysRawData as Holidays
+from (
+	select value ( Catalog.Divisions.EmptyRef ) as Ref
+	union all
+	select Divisions.Ref
+	from Catalog.Divisions as Divisions
+	where not Divisions.DeletionMark
+) as Divisions
+	//
+	// CommonHolidays
+	//
+	join HolidaysRawData as Holidays
+	on Holidays.Division = value ( Catalog.Divisions.EmptyRef )
 union all
-select CommonHolidays.Reference, CommonHolidays.Day, CommonHolidays.Preholiday, LocalHolidays.Division, LocalHolidays.Schedule
-from HolidaysRawData as CommonHolidays
-	//
-	// Impact Local Holidays by Common Holidays
-	//
-	join HolidaysRawData as LocalHolidays
-	on LocalHolidays.Schedule = CommonHolidays.Schedule
-	and LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
-where CommonHolidays.Division = value ( Catalog.Divisions.EmptyRef )
+select LocalHolidays.Division, LocalHolidays.Reference, LocalHolidays.Day, LocalHolidays.Preholiday, LocalHolidays.Schedule
+from HolidaysRawData as LocalHolidays
+where LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
 ;
 // Only holidays falling on working days
 select Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division, Holidays.Schedule as Schedule
 into Holidays
 from AllHolidays as Holidays
-where Holidays.Day between &amp;DateStart and &amp;DateEnd
+where Holidays.Day between &amp;DateStart and dateadd ( &amp;DateEnd, day, 1 )
+and Holidays.Preholiday &gt;= &amp;DateStart
 ;
 // Deviations
 select Hours.Employee as Employee, Hours.Time as Time, Hours.Day as Day, sum ( Hours.Minutes ) as Minutes
@@ -1150,32 +1168,6 @@ from Company as Company
 		<expression>WholeDay</expression>
 	</totalField>
 	<parameter>
-		<name>DateEnd</name>
-		<title xsi:type="xs:string">Date end</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>DateTime</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>true</useRestriction>
-		<expression>&amp;Period.EndDate</expression>
-	</parameter>
-	<parameter>
-		<name>DateStart</name>
-		<title xsi:type="xs:string">Date start</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>DateTime</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>true</useRestriction>
-		<expression>&amp;Period.StartDate</expression>
-	</parameter>
-	<parameter>
 		<name>Period</name>
 		<title xsi:type="v8:LocalStringType">
 			<v8:item>
@@ -1202,6 +1194,36 @@ from Company as Company
 		<use>Always</use>
 	</parameter>
 	<parameter>
+		<name>DateEnd</name>
+		<title xsi:type="xs:string">Date end</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.EndDate</expression>
+		<availableAsField>false</availableAsField>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>DateStart</name>
+		<title xsi:type="xs:string">Date start</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.StartDate</expression>
+		<availableAsField>false</availableAsField>
+		<use>Always</use>
+	</parameter>
+	<parameter>
 		<name>Billable</name>
 		<title xsi:type="xs:string">Billable</title>
 		<valueType>
@@ -1214,6 +1236,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'S'; ru = 'Я'; ro = 'S'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Holiday</name>
@@ -1228,6 +1251,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'H'; ru = 'РП'; ro = 'Sn'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Vacation</name>
@@ -1242,6 +1266,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'V'; ru = 'ОТ'; ro = 'C'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>ExtendedVacation</name>
@@ -1256,6 +1281,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'EV'; ru = 'ОД'; ro = 'Ce'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Sickness</name>
@@ -1270,6 +1296,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'Sn'; ru = 'Б'; ro = 'Cm'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Banked</name>
@@ -1284,6 +1311,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'B+'; ru = 'Р+'; ro = 'B+'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>BankedUse</name>
@@ -1298,6 +1326,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'B-'; ru = 'Р-'; ro = 'B-'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Overtime</name>
@@ -1312,6 +1341,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'O'; ru = 'С'; ro = 'Os'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>DayOff</name>
@@ -1326,6 +1356,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'DO'; ru = 'РП'; ro = 'Ls'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Evening</name>
@@ -1340,6 +1371,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'E'; ru = 'ВЕ'; ro = 'Se'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Night</name>
@@ -1354,6 +1386,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'N'; ru = 'Н'; ro = 'N'" )</expression>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<parameter>
 		<name>Absence</name>
@@ -1368,23 +1401,7 @@ from Company as Company
 		<value xsi:type="xs:string"/>
 		<useRestriction>true</useRestriction>
 		<expression>NStr ( "en = 'A'; ru = 'ПР'; ro = 'A'" )</expression>
-	</parameter>
-	<parameter>
-		<name>YearStart</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Year start</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>Date</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
 	</parameter>
 	<template>
 		<name>Template2</name>
