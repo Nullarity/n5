@@ -65,6 +65,9 @@ Procedure Fill ( Object, Base ) export
 	elsif ( type = Type ( "DocumentRef.Invoice" ) ) then
 		env = getEnv ( Object, "Invoice" );
 		fillByInvoice ( env, Object, Base );
+	elsif ( type = Type ( "DocumentRef.Sale" ) ) then
+		env = getEnv ( Object, "Sale" );
+		fillBySale ( env, Object, Base );
 	elsif ( type = Type ( "DocumentRef.LVITransfer" ) ) then
 		env = getEnv ( Object, "LVITransfer" );
 		fillByLVI ( env, Object, Base );
@@ -165,15 +168,9 @@ Procedure sqlItems ( Env )
 	
 	s = "
 	|// #Items
-	|select Items.Item as Item, Items.Amount as Amount, Items.Capacity as Capacity, Items.Feature as Feature, Items.Package as Package, 
-	|	Items.Price as Price, Items.Prices as Prices, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg, Items.Series as Series, 
-	|	Items.Total as Total, Items.VAT as VAT, Items.VATCode as VATCode, Items.VATRate as VATRate";
+	|select *";
 	if ( Env.Transfer ) then
-		s = s + ", 
-		| Items.Item.Social as Social"; 
-	else
-		s = s + ", 
-		| Items.ProducerPrice as ProducerPrice, Items.Social as Social, Items.ExtraCharge as ExtraCharge"; 
+		s = s + ", Item.Social as Social"; 
 	endif;
 	s = s + "
 	|from Document." + Env.Table + ".Items as Items
@@ -314,6 +311,59 @@ Procedure fillDiscounts ( Env, Object )
 	enddo;
 
 EndProcedure
+
+&AtServer
+Procedure fillBySale ( Env, Object, Base ) 
+
+	headerBySale ( Object, Base );
+	getDataSale ( Env, Base );
+	fillHeader ( Env, Object );
+	fillItems ( Env, Object );
+
+EndProcedure
+
+&AtServer
+Procedure headerBySale ( Object, Base ) 
+
+	Object.Date = Base.Date;
+	Object.Company = Base.Company;
+	Object.Currency = Application.Currency ();
+	Object.Prices = Base.Prices;
+	Object.Amount = Base.Amount;
+	Object.VAT = Base.VAT;
+	Object.VATUse = Base.VATUse;
+	Object.Customer = Catalogs.Organizations.EmptyRef ();
+	fillHeaderCommon ( Object, Base );
+
+EndProcedure
+
+&AtServer
+Procedure getDataSale ( Env, Base ) 
+
+	sqlFieldsSale ( Env );
+	sqlItems ( Env );
+	getTables ( Env, Base );
+
+EndProcedure
+
+&AtServer
+Procedure sqlFieldsSale ( Env )
+	
+	s = "
+	|// @Fields
+	|select Documents.Warehouse as LoadingPoint";
+	isNew = Env.IsNew;
+	if ( isNew ) then
+		s = s + ",
+		|	false as ShowServices, Documents.Warehouse.Address as LoadingAddress, Documents.Date as DeliveryDate";
+	endif;
+	s = s + "
+	|from Document.Sale as Documents
+	|where Documents.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure 
 
 &AtServer
 Procedure fillByLVI ( Env, Object, Base ) 

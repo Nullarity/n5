@@ -45,8 +45,9 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Photo show filled ( Photo );
 	|Upload show empty ( Photo );
-	|VAT ItemsVATAccount ServicesVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0;
+	|VAT ItemsVATAccount ServicesVATAccount ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT
+	|	show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

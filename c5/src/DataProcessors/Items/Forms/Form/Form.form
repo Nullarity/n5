@@ -121,13 +121,58 @@
             </extInfo>
           </items>
           <items xsi:type="form:FormField">
-            <name>ItemsListCode</name>
-            <id>6</id>
+            <name>ItemsListSKU</name>
+            <id>566</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
               <common>true</common>
             </userVisible>
+            <dataPath xsi:type="form:DataPath">
+              <segments>ItemsList.SKU</segments>
+            </dataPath>
+            <extendedTooltip>
+              <name>ItemsListSKUExtendedTooltip</name>
+              <id>568</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <type>Label</type>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+              <extInfo xsi:type="form:LabelDecorationExtInfo">
+                <horizontalAlign>Left</horizontalAlign>
+              </extInfo>
+            </extendedTooltip>
+            <contextMenu>
+              <name>ItemsListSKUContextMenu</name>
+              <id>567</id>
+              <visible>true</visible>
+              <enabled>true</enabled>
+              <userVisible>
+                <common>true</common>
+              </userVisible>
+              <autoFill>true</autoFill>
+            </contextMenu>
+            <type>LabelField</type>
+            <editMode>Enter</editMode>
+            <showInHeader>true</showInHeader>
+            <headerHorizontalAlign>Left</headerHorizontalAlign>
+            <showInFooter>true</showInFooter>
+            <extInfo xsi:type="form:LabelFieldExtInfo">
+              <width>15</width>
+              <autoMaxWidth>true</autoMaxWidth>
+              <autoMaxHeight>true</autoMaxHeight>
+            </extInfo>
+          </items>
+          <items xsi:type="form:FormField">
+            <name>ItemsListCode</name>
+            <id>6</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible/>
             <dataPath xsi:type="form:DataPath">
               <segments>ItemsList.Code</segments>
             </dataPath>
@@ -3665,6 +3710,56 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
+          <name>SelectedItemsSeries</name>
+          <id>563</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.SelectedItems.Series</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>SelectedItemsSeriesExtendedTooltip</name>
+            <id>565</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>SelectedItemsSeriesContextMenu</name>
+            <id>564</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <editMode>EnterOnInput</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:InputFieldExtInfo">
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
           <name>SelectedItemsQuantityPkg</name>
           <id>413</id>
           <visible>true</visible>
@@ -5503,7 +5598,18 @@
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
-          <common>true</common>
+          <for>
+            <value>true</value>
+            <role>Role.Administrator</role>
+          </for>
+          <for>
+            <value>true</value>
+            <role>Role.AdministratorSystem</role>
+          </for>
+          <for>
+            <value>true</value>
+            <role>Role.InvoicesView</role>
+          </for>
         </userVisible>
         <dataPath xsi:type="form:DataPath">
           <segments>ShowReserves</segments>
@@ -5547,7 +5653,7 @@
       </items>
       <items xsi:type="form:FormField">
         <name>Filter</name>
-        <id>450</id>
+        <id>560</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -5562,7 +5668,7 @@
         </handlers>
         <extendedTooltip>
           <name>FilterExtendedTooltip</name>
-          <id>452</id>
+          <id>562</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
@@ -5577,7 +5683,7 @@
         </extendedTooltip>
         <contextMenu>
           <name>FilterContextMenu</name>
-          <id>451</id>
+          <id>561</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
@@ -5600,61 +5706,21 @@
           <autoMaxHeight>true</autoMaxHeight>
           <horizontalStretch>false</horizontalStretch>
           <wrap>true</wrap>
-          <clearButton>false</clearButton>
           <listChoiceMode>true</listChoiceMode>
           <chooseType>true</chooseType>
           <typeDomainEnabled>true</typeDomainEnabled>
+          <textEdit>true</textEdit>
           <choiceList>
-            <presentation>
-              <key>en</key>
-              <value>None</value>
-            </presentation>
-            <presentation>
-              <key>ru</key>
-              <value>Нет</value>
-            </presentation>
-            <presentation>
-              <key>ro</key>
-              <value>Nu</value>
-            </presentation>
-            <value xsi:type="core:NumberValue">
-              <value>0</value>
+            <value xsi:type="core:ReferenceValue">
+              <value>Enum.Filter.EnumValue.None</value>
             </value>
           </choiceList>
           <choiceList>
-            <presentation>
-              <key>en</key>
-              <value>Limited Available Amount</value>
-            </presentation>
-            <presentation>
-              <key>ru</key>
-              <value>Только доступные</value>
-            </presentation>
-            <presentation>
-              <key>ro</key>
-              <value>Doar disponibile</value>
-            </presentation>
-            <value xsi:type="core:NumberValue">
-              <value>1</value>
+            <value xsi:type="core:ReferenceValue">
+              <value>Enum.Filter.EnumValue.Available</value>
             </value>
           </choiceList>
-          <choiceList>
-            <presentation>
-              <key>en</key>
-              <value>Reserve Only</value>
-            </presentation>
-            <presentation>
-              <key>ru</key>
-              <value>Только резерв</value>
-            </presentation>
-            <presentation>
-              <key>ro</key>
-              <value>Numai rezervare</value>
-            </presentation>
-            <value xsi:type="core:NumberValue">
-              <value>2</value>
-            </value>
-          </choiceList>
+          <choiceHistoryOnInput>DontUse</choiceHistoryOnInput>
         </extInfo>
       </items>
       <visible>true</visible>
@@ -5752,6 +5818,38 @@
         <placementArea>UserCmds</placementArea>
         <toolTipRepresentation>Auto</toolTipRepresentation>
         <representationInContextMenu>Auto</representationInContextMenu>
+      </items>
+      <items xsi:type="form:Button">
+        <name>CustomizeForm</name>
+        <id>569</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <extendedTooltip>
+          <name>CustomizeFormExtendedTooltip</name>
+          <id>570</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <commandName>Form.StandardCommand.CustomizeForm</commandName>
+        <representation>Picture</representation>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <placementArea>UserCmds</placementArea>
+        <toolTipRepresentation>Auto</toolTipRepresentation>
+        <representationInContextMenu>Auto</representationInContextMenu>
+        <locationInCommandBar>InCommandBar</locationInCommandBar>
       </items>
       <visible>true</visible>
       <enabled>true</enabled>
@@ -5965,6 +6063,7 @@ index by Items.Item
 select Items.Ref, Items.DeletionMark, Items.Predefined, Items.Parent, Items.IsFolder, Items.Code, Items.Service as Service,
 	Items.Description, Items.CountPackages, Items.CostMethod, Items.FullDescription, Items.Features as Features, Items.Series as Series,
 	Items.ItemType, Items.Package, Items.PriceGroup, Items.Producer, Items.Accuracy, Items.Unit, Items.Weight,
+	Items.SKU as SKU, Items.OfficialCode,
 	Balances.QuantityBalance as Quantity, isnull ( Reserves.IsReserve, false ) as IsReserve, Reserves.Reserve as Reserve
 from Catalog.Items as Items
 	//
@@ -5975,8 +6074,8 @@ from Catalog.Items as Items
 	//
 	// ItemsReservedGrouped
 	//
-	left join ItemsReservedGrouped as Reserves
-	on Reserves.Item = Items.Ref
+	{left join ItemsReservedGrouped as Reserves
+	on Reserves.Item = Items.Ref}
 {where Items.Service = &amp;ItemsOnly}</queryText>
       <mainTable>Catalog.Items</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
@@ -6101,8 +6200,8 @@ from (
 	//
 	// ReservesAmount
 	//
-	left join ReservesAmount as Reserves
-	on Reserves.Feature = Catalog.Ref
+	{left join ReservesAmount as Reserves
+	on Reserves.Feature = Catalog.Ref}
 	//
 	// Service
 	//
@@ -6191,8 +6290,8 @@ from Catalog.Packages as Packages
 	//
 	// ReservesAmount
 	//
-	left join ReservesAmount as Reserves
-	on Reserves.Package = Packages.Ref
+	{left join ReservesAmount as Reserves
+	on Reserves.Package = Packages.Ref}
 where Packages.Owner = &amp;Item
 
 </queryText>
@@ -6570,8 +6669,7 @@ where Packages.Owner = &amp;Item
     </title>
     <id>27</id>
     <valueType>
-      <types>Number</types>
-      <numberQualifiers/>
+      <types>EnumRef.Filter</types>
     </valueType>
     <view>
       <common>true</common>
@@ -6582,57 +6680,6 @@ where Packages.Owner = &amp;Item
     <settingsSavedData xsi:type="form:DataPath">
       <segments>Filter</segments>
     </settingsSavedData>
-  </attributes>
-  <attributes>
-    <name>FilterNone</name>
-    <id>28</id>
-    <valueType>
-      <types>Number</types>
-      <numberQualifiers>
-        <precision>1</precision>
-        <nonNegative>true</nonNegative>
-      </numberQualifiers>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
-  </attributes>
-  <attributes>
-    <name>FilterAvailableOnly</name>
-    <id>29</id>
-    <valueType>
-      <types>Number</types>
-      <numberQualifiers>
-        <precision>1</precision>
-        <nonNegative>true</nonNegative>
-      </numberQualifiers>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
-  </attributes>
-  <attributes>
-    <name>FilterReserveOnly</name>
-    <id>30</id>
-    <valueType>
-      <types>Number</types>
-      <numberQualifiers>
-        <precision>1</precision>
-        <nonNegative>true</nonNegative>
-      </numberQualifiers>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
   </attributes>
   <attributes>
     <name>VATUse</name>
@@ -6746,6 +6793,19 @@ where Catalog.Owner = &amp;Item
     <id>37</id>
     <valueType>
       <types>CatalogRef.Series</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>QuantityAvailable</name>
+    <id>38</id>
+    <valueType>
+      <types>DefinedType.Quantity</types>
     </valueType>
     <view>
       <common>true</common>

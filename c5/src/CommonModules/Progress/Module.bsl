@@ -1,11 +1,10 @@
 &AtClient
-Procedure Open ( JobKey, FormOwner = undefined, Notification = undefined, ShowStatus = false,
-	HighlightMessages = false ) export
+Procedure Open ( JobKey, FormOwner = undefined, Notification = undefined, ShowStatus = false, ShowMessage = 0 ) export
 	
 	p = new Structure ();
 	p.Insert ( "JobKey", JobKey );
 	p.Insert ( "ShowStatus", ShowStatus );
-	p.Insert ( "HighlightMessages", HighlightMessages );
+	p.Insert ( "ShowMessage", ShowMessage );
 	if ( FormOwner = undefined ) then
 		mode = FormWindowOpeningMode.LockWholeInterface;
 		if ( Notification = undefined ) then

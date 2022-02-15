@@ -626,10 +626,6 @@
               <horizontalAlign>Left</horizontalAlign>
             </autoCommandBar>
             <handlers>
-              <event>BeforeAddRow</event>
-              <name>CustomGroupsBeforeAddRow</name>
-            </handlers>
-            <handlers>
               <event>BeforeDeleteRow</event>
               <name>CustomGroupsBeforeDeleteRow</name>
             </handlers>
@@ -638,8 +634,8 @@
               <name>CustomGroupsOnActivateRow</name>
             </handlers>
             <handlers>
-              <event>BeforeRowChange</event>
-              <name>CustomGroupsBeforeRowChange</name>
+              <event>OnStartEdit</event>
+              <name>CustomGroupsOnStartEdit</name>
             </handlers>
             <searchStringAddition>
               <visible>true</visible>
@@ -820,53 +816,6 @@
               <excludedCommands>Copy</excludedCommands>
               <toolTipRepresentation>ShowBottom</toolTipRepresentation>
               <items xsi:type="form:FormField">
-                <name>ItemsLineNumber</name>
-                <id>90</id>
-                <visible>true</visible>
-                <enabled>true</enabled>
-                <userVisible>
-                  <common>true</common>
-                </userVisible>
-                <dataPath xsi:type="form:DataPath">
-                  <segments>Object.Items.LineNumber</segments>
-                </dataPath>
-                <extendedTooltip>
-                  <name>ItemsLineNumberExtendedTooltip</name>
-                  <id>92</id>
-                  <visible>true</visible>
-                  <enabled>true</enabled>
-                  <userVisible>
-                    <common>true</common>
-                  </userVisible>
-                  <type>Label</type>
-                  <autoMaxWidth>true</autoMaxWidth>
-                  <autoMaxHeight>true</autoMaxHeight>
-                  <extInfo xsi:type="form:LabelDecorationExtInfo">
-                    <horizontalAlign>Left</horizontalAlign>
-                  </extInfo>
-                </extendedTooltip>
-                <contextMenu>
-                  <name>ItemsLineNumberContextMenu</name>
-                  <id>91</id>
-                  <visible>true</visible>
-                  <enabled>true</enabled>
-                  <userVisible>
-                    <common>true</common>
-                  </userVisible>
-                  <autoFill>true</autoFill>
-                </contextMenu>
-                <type>LabelField</type>
-                <editMode>EnterOnInput</editMode>
-                <showInHeader>true</showInHeader>
-                <headerHorizontalAlign>Left</headerHorizontalAlign>
-                <showInFooter>true</showInFooter>
-                <extInfo xsi:type="form:LabelFieldExtInfo">
-                  <width>3</width>
-                  <autoMaxWidth>true</autoMaxWidth>
-                  <autoMaxHeight>true</autoMaxHeight>
-                </extInfo>
-              </items>
-              <items xsi:type="form:FormField">
                 <name>ItemsInvoice</name>
                 <id>99</id>
                 <visible>true</visible>
@@ -1020,56 +969,6 @@
                 <showInFooter>true</showInFooter>
                 <extInfo xsi:type="form:InputFieldExtInfo">
                   <width>7</width>
-                  <autoMaxWidth>true</autoMaxWidth>
-                  <autoMaxHeight>true</autoMaxHeight>
-                  <wrap>true</wrap>
-                  <chooseType>true</chooseType>
-                  <typeDomainEnabled>true</typeDomainEnabled>
-                  <textEdit>true</textEdit>
-                </extInfo>
-              </items>
-              <items xsi:type="form:FormField">
-                <name>ItemsCustomsGroup</name>
-                <id>319</id>
-                <visible>true</visible>
-                <enabled>true</enabled>
-                <userVisible>
-                  <common>true</common>
-                </userVisible>
-                <dataPath xsi:type="form:DataPath">
-                  <segments>Object.Items.CustomsGroup</segments>
-                </dataPath>
-                <extendedTooltip>
-                  <name>ItemsCustomsGroupExtendedTooltip</name>
-                  <id>321</id>
-                  <visible>true</visible>
-                  <enabled>true</enabled>
-                  <userVisible>
-                    <common>true</common>
-                  </userVisible>
-                  <type>Label</type>
-                  <autoMaxWidth>true</autoMaxWidth>
-                  <autoMaxHeight>true</autoMaxHeight>
-                  <extInfo xsi:type="form:LabelDecorationExtInfo">
-                    <horizontalAlign>Left</horizontalAlign>
-                  </extInfo>
-                </extendedTooltip>
-                <contextMenu>
-                  <name>ItemsCustomsGroupContextMenu</name>
-                  <id>320</id>
-                  <visible>true</visible>
-                  <enabled>true</enabled>
-                  <userVisible>
-                    <common>true</common>
-                  </userVisible>
-                  <autoFill>true</autoFill>
-                </contextMenu>
-                <type>InputField</type>
-                <editMode>Enter</editMode>
-                <showInHeader>true</showInHeader>
-                <headerHorizontalAlign>Left</headerHorizontalAlign>
-                <showInFooter>true</showInFooter>
-                <extInfo xsi:type="form:InputFieldExtInfo">
                   <autoMaxWidth>true</autoMaxWidth>
                   <autoMaxHeight>true</autoMaxHeight>
                   <wrap>true</wrap>
@@ -1362,6 +1261,10 @@
               <handlers>
                 <event>AfterDeleteRow</event>
                 <name>ItemsAfterDeleteRow</name>
+              </handlers>
+              <handlers>
+                <event>ChoiceProcessing</event>
+                <name>ItemsChoiceProcessing</name>
               </handlers>
               <searchStringAddition>
                 <visible>true</visible>
@@ -1698,7 +1601,7 @@
               <headerHorizontalAlign>Left</headerHorizontalAlign>
               <showInFooter>true</showInFooter>
               <extInfo xsi:type="form:InputFieldExtInfo">
-                <width>3</width>
+                <width>5</width>
                 <autoMaxWidth>true</autoMaxWidth>
                 <autoMaxHeight>true</autoMaxHeight>
                 <wrap>true</wrap>
@@ -1886,6 +1789,10 @@
                 <dataPath xsi:type="form:DataPath">
                   <segments>Object.Charges.Dim1</segments>
                 </dataPath>
+                <handlers>
+                  <event>OnChange</event>
+                  <name>ChargesDimOnChange</name>
+                </handlers>
                 <extendedTooltip>
                   <name>ChargesDim1ExtendedTooltip</name>
                   <id>149</id>
@@ -1916,10 +1823,6 @@
                 <headerHorizontalAlign>Left</headerHorizontalAlign>
                 <showInFooter>true</showInFooter>
                 <extInfo xsi:type="form:InputFieldExtInfo">
-                  <handlers>
-                    <event>StartChoice</event>
-                    <name>ChargesDim1StartChoice</name>
-                  </handlers>
                   <width>11</width>
                   <autoMaxWidth>true</autoMaxWidth>
                   <autoMaxHeight>true</autoMaxHeight>
@@ -1941,6 +1844,10 @@
                 <dataPath xsi:type="form:DataPath">
                   <segments>Object.Charges.Dim2</segments>
                 </dataPath>
+                <handlers>
+                  <event>OnChange</event>
+                  <name>ChargesDimOnChange</name>
+                </handlers>
                 <extendedTooltip>
                   <name>ChargesDim2ExtendedTooltip</name>
                   <id>152</id>
@@ -1971,10 +1878,6 @@
                 <headerHorizontalAlign>Left</headerHorizontalAlign>
                 <showInFooter>true</showInFooter>
                 <extInfo xsi:type="form:InputFieldExtInfo">
-                  <handlers>
-                    <event>StartChoice</event>
-                    <name>ChargesDim2StartChoice</name>
-                  </handlers>
                   <width>11</width>
                   <autoMaxWidth>true</autoMaxWidth>
                   <autoMaxHeight>true</autoMaxHeight>
@@ -1996,6 +1899,10 @@
                 <dataPath xsi:type="form:DataPath">
                   <segments>Object.Charges.Dim3</segments>
                 </dataPath>
+                <handlers>
+                  <event>OnChange</event>
+                  <name>ChargesDimOnChange</name>
+                </handlers>
                 <extendedTooltip>
                   <name>ChargesDim3ExtendedTooltip</name>
                   <id>155</id>
@@ -2026,10 +1933,6 @@
                 <headerHorizontalAlign>Left</headerHorizontalAlign>
                 <showInFooter>true</showInFooter>
                 <extInfo xsi:type="form:InputFieldExtInfo">
-                  <handlers>
-                    <event>StartChoice</event>
-                    <name>ChargesDim3StartChoice</name>
-                  </handlers>
                   <width>11</width>
                   <autoMaxWidth>true</autoMaxWidth>
                   <autoMaxHeight>true</autoMaxHeight>
@@ -2061,6 +1964,7 @@
                 <key>en</key>
                 <value>Charges group1</value>
               </toolTip>
+              <width>11</width>
               <extendedTooltip>
                 <name>ChargesGroup1ExtendedTooltip</name>
                 <id>198</id>
@@ -2263,10 +2167,6 @@
             <handlers>
               <event>OnEditEnd</event>
               <name>ChargesOnEditEnd</name>
-            </handlers>
-            <handlers>
-              <event>BeforeAddRow</event>
-              <name>ChargesBeforeAddRow</name>
             </handlers>
             <handlers>
               <event>OnActivateRow</event>
@@ -3675,10 +3575,6 @@
     <autoFill>true</autoFill>
   </autoCommandBar>
   <handlers>
-    <event>ChoiceProcessing</event>
-    <name>ChoiceProcessing</name>
-  </handlers>
-  <handlers>
     <event>OnCreateAtServer</event>
     <name>OnCreateAtServer</name>
   </handlers>
@@ -3793,6 +3689,23 @@
         <common>true</common>
       </edit>
     </columns>
+  </attributes>
+  <attributes>
+    <name>LastID</name>
+    <id>6</id>
+    <valueType>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>3</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
   </attributes>
   <formCommands>
     <name>ShowDetails</name>

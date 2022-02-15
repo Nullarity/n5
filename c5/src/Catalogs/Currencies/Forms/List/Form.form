@@ -52,6 +52,53 @@
     <defaultItem>true</defaultItem>
     <titleLocation>None</titleLocation>
     <items xsi:type="form:FormField">
+      <name>Code</name>
+      <id>19</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Code</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>CodeExtendedTooltip</name>
+        <id>21</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>CodeContextMenu</name>
+        <id>20</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>LabelField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:LabelFieldExtInfo">
+        <width>6</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>Description</name>
       <id>16</id>
       <visible>true</visible>
@@ -146,19 +193,19 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>Code</name>
-      <id>19</id>
+      <name>Rate</name>
+      <id>27</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>List.Code</segments>
+        <segments>List.Rate</segments>
       </dataPath>
       <extendedTooltip>
-        <name>CodeExtendedTooltip</name>
-        <id>21</id>
+        <name>RateExtendedTooltip</name>
+        <id>29</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -172,8 +219,8 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>CodeContextMenu</name>
-        <id>20</id>
+        <name>RateContextMenu</name>
+        <id>28</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -181,15 +228,19 @@
         </userVisible>
         <autoFill>true</autoFill>
       </contextMenu>
-      <type>LabelField</type>
+      <type>InputField</type>
       <editMode>Enter</editMode>
       <showInHeader>true</showInHeader>
       <headerHorizontalAlign>Left</headerHorizontalAlign>
       <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:LabelFieldExtInfo">
-        <width>6</width>
+      <extInfo xsi:type="form:InputFieldExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
         <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <autoMarkIncomplete>false</autoMarkIncomplete>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
       </extInfo>
     </items>
     <commandBarLocation>None</commandBarLocation>
@@ -439,9 +490,19 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select Currencies.Ref as Ref, Currencies.DeletionMark as DeletionMark, Currencies.Code as Code, Currencies.Description as Description, 
+	Currencies.Predefined as Predefined, Currencies.PredefinedDataName as PredefinedDataName, Currencies.FullDescription as FullDescription,
+	Rates.Rate as Rate
+from Catalog.Currencies as Currencies
+	//
+	// Rates
+	//
+	left join InformationRegister.ExchangeRates.SliceLast as Rates
+	on Rates.Currency = Currencies.Ref</queryText>
       <mainTable>Catalog.Currencies</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
     </extInfo>

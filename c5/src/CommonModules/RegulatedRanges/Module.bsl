@@ -5,7 +5,10 @@ Procedure Enroll ( Object ) export
 	rangeData = DF.Values ( Object.Range, "Real, Online, Finish" );
 	makeWritingOff ( Object, rangeData );
 	makeStatuses ( Object, rangeData );
-	register ( Object );
+	if ( ValueIsFilled ( Object.Base ) ) then
+		registerForm ( Object );
+		registerTaxNumber ( Object );
+	endif;
 	
 EndProcedure
 
@@ -70,12 +73,9 @@ Procedure makeStatuses ( Object, RangeData )
 	
 EndProcedure
 
-Procedure register ( Object )
+Procedure registerForm ( Object )
 	
 	document = Object.Base;
-	if ( not ValueIsFilled ( document ) ) then
-		return;
-	endif;
 	lockForm ( document );
 	change = registrationNeeded ( Object );
 	if ( change = undefined ) then
@@ -125,6 +125,41 @@ Function registrationNeeded ( Object )
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, undefined, table [ 0 ].Change );
 	
+EndFunction
+
+Procedure registerTaxNumber ( Object )
+	
+	if ( TypeOf ( Object.Ref ) <> Type ( "DocumentRef.InvoiceRecord" ) ) then
+		return;
+	endif;
+	document = Object.Base;
+	r = InformationRegisters.TaxInvoices.CreateRecordManager ();
+	r.Document = document;
+	numbers = getNumbers ( document );
+	if ( numbers = "" ) then
+		r.Delete ();
+	else
+		r.Number = numbers;
+		r.Write ();
+	endif;
+	
+EndProcedure
+
+Function getNumbers ( Document )
+	
+	s = "
+	|select Invoices.Number as Number
+	|from Document.InvoiceRecord as Invoices
+	|where not Invoices.DeletionMark
+	|and Invoices.Base = &Base
+	|order by Invoices.Date
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Base", Document );
+	list = q.Execute ().Unload ().UnloadColumn ( "Number" );
+	Collections.Group ( list );
+	return StrConcat ( list, ", " );
+
 EndFunction
 
 Procedure Fill ( Object ) export
@@ -228,14 +263,28 @@ Procedure commit ( Range, Number )
 	
 EndProcedure
 
-Function BuildNumber ( Range = undefined, Series, Number ) export
+Function BuildNumber ( Range = undefined, Series, Number, Next = false ) export
 	
+	prefix = TrimR ( Series );
 	if ( Range = undefined ) then
-		return Series + Number;
+		if ( Next ) then
+			n = 1 + Conversion.StringToNumber ( Number );
+			n = formatNumber ( n, StrLen ( Number ) );
+		else
+			n = Number;
+		endif;
+		return prefix + n;
 	else
-		return TrimR ( Series ) + Format ( Number, "NG=;NLZ=;ND=" + DF.Pick ( Range, "Length" ) );
+		n = ? ( Next, Number + 1, Number );
+		return prefix + formatNumber ( n, DF.Pick ( Range, "Length" ) );
 	endif;
 	
+EndFunction
+
+Function formatNumber ( Number, Lengh )
+
+	return Format ( Number, "NG=;NLZ=;ND=" + Lengh );
+
 EndFunction
 
 Procedure pushNumber ( Range, Series, Number )

@@ -12,8 +12,6 @@ var AccountData;
 var ChargesRow;
 &AtClient
 var CustomsRow;
-&AtClient
-var OldCustomsGroup;
 
 // *****************************************
 // *********** Form events
@@ -21,8 +19,22 @@ var OldCustomsGroup;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	setID ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure setID ()
+	
+	LastID = -1; 
+	for each row in Object.CustomsGroups do
+		if ( row.ID > LastID ) then
+			LastID = row.ID;
+		endif;
+	enddo;
+	LastID = LastID + 1;
+
 EndProcedure
 
 &AtServer
@@ -43,6 +55,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				endif;
 			endif;	
 		endif;
+		setID ();
 	endif;
 	updateTotals ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsWeight", , false );
@@ -139,7 +152,7 @@ Function getData ()
 	sqlCustomGroups ();
 	getTables ();
 	if ( Env.CustomGroups.Count () = 0 ) then
-		Output.FillingDataNotFound ();
+		Output.FillingDataWasNotFound ();
 		return false;
 	endif;
 	return true;
@@ -188,10 +201,20 @@ Procedure sqlItems ()
 	|	) as Items
 	|group by Items.CustomsGroup, Items.Invoice, Items.Item
 	|;
+	|// Groups ID
+	|select distinct recordautonumber () as ID, Items.CustomsGroup as CustomsGroup
+	|into Groups
+	|from Items
+	|;
 	|// #Items
-	|select Items.CustomsGroup as CustomsGroup, Items.Invoice as Invoice, Items.Item as Item, Items.Quantity as Quantity, Items.Amount as Amount,
-	|	Items.Weight as Weight
+	|select Items.Invoice as Invoice, Items.Item as Item, Items.Quantity as Quantity, Items.Amount as Amount,
+	|	Items.Weight as Weight, Groups.ID as ID
 	|from Items as Items
+	|	//
+	|	// Groups ID
+	|	//
+	|	join Groups as Groups
+	|	on Groups.CustomsGroup = Items.CustomsGroup
 	|";
 	Env.Selection.Add ( s );
 	
@@ -202,24 +225,30 @@ Procedure sqlCustomGroups ()
 	
 	s = "
 	|// CustomGroups
-	|select Items.CustomsGroup as CustomsGroup, sum ( Items.Amount ) as Base
+	|select Items.CustomsGroup as CustomsGroup, sum ( Items.Amount ) as Base,
+	|	Groups.ID as ID
 	|into CustomsGroups
 	|from Items as Items
-	|group by Items.CustomsGroup
+	|	//
+	|	// Groups ID
+	|	//
+	|	join Groups as Groups
+	|	on Groups.CustomsGroup = Items.CustomsGroup
+	|group by Items.CustomsGroup, Groups.ID
 	|;
 	|// #CustomGroups
-	|select Items.CustomsGroup as CustomsGroup, Items.Base as Base
-	|from CustomsGroups as Items
+	|select Groups.ID as ID, Groups.CustomsGroup as CustomsGroup, Groups.Base as Base
+	|from CustomsGroups as Groups
 	|;
 	|// #Charges
-	|select Items.CustomsGroup as CustomsGroup, Charges.Charge as Charge, Charges.Percent as Percent, true as Cost,
+	|select Groups.ID as ID, Charges.Charge as Charge, Charges.Percent as Percent, true as Cost,
 	|	case when Charges.Charge.Type = value ( Enum.CustomsCharges.VAT ) then true else false end as VAT
 	|from Catalog.CustomsGroups.Charges as Charges
 	|	//
 	|	// CustomsGroups
 	|	//
-	|	join CustomsGroups as Items
-	|	on Items.CustomsGroup = Charges.Ref
+	|	join CustomsGroups as Groups
+	|	on Groups.CustomsGroup = Charges.Ref
 	|";
 	Env.Selection.Add ( s );
 	
@@ -252,9 +281,9 @@ Procedure tablesByInvoice ()
 	charges.Load ( Env.Charges );
 	tableItems = Object.Items;
 	tableItems.Load ( Env.Items );
-	filter = new Structure ( "CustomsGroup" );
+	filter = new Structure ( "ID" );
 	for each row in customsGroups do
-		filter.CustomsGroup = row.CustomsGroup;
+		filter.ID = row.ID;
 		amount = row.Base;
 		distribute ( tableItems.FindRows ( filter ), "Amount", amount );
 		applyBase ( charges.FindRows ( filter ), amount );
@@ -368,55 +397,6 @@ Procedure updateTotals ( Form )
 EndProcedure
 
 &AtClient
-Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
-	
-	if ( TypeOf ( SelectedValue ) = Type ( "DocumentRef.VendorInvoice" ) ) then 
-		p = new Structure ();
-		p.Insert ( "CustomsGroup", CustomsRow.CustomsGroup );
-		p.Insert ( "Distribution", Object.Distribution );
-		p.Insert ( "VendorInvoice", SelectedValue );
-		p.Insert ( "CustomsDeclaration", Object.Ref );
-		OpenForm ( "Document.CustomsDeclaration.Form.Items", p, ThisObject );
-	elsif ( TypeOf ( SelectedValue ) = Type ( "Structure" ) ) then
-		tableItems = Object.Items;
-		if ( SelectedValue.Clear ) then
-			tableItems.Clear ();
-		endif;
-		for each row in SelectedValue.Items do
-			newRow = tableItems.Add ();
-			FillPropertyValues ( newRow, row );
-		enddo;
-		applyAmount ();
-	endif;
-	
-EndProcedure
-
-&AtClient
-Procedure applyAmount ()
-
-	setBase ();
-	applyBase ( chargesByCustomsGroup (), CustomsRow.Base );
-	calcTotals ( Object );
-	updateTotals ( ThisObject );
-
-EndProcedure
-
-&AtClient
-Procedure setBase () 
-
-	rows = Object.Items.FindRows ( new Structure ( "CustomsGroup", CustomsRow.CustomsGroup ) );
-	CustomsRow.Base = getTotal ( rows, "Amount" );
-
-EndProcedure
-
-&AtClient
-Function chargesByCustomsGroup () 
-
-	return Object.Charges.FindRows ( new Structure ( "CustomsGroup", CustomsRow.CustomsGroup ) );
-
-EndFunction
-
-&AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
 	
 	Forms.DeleteLastRow ( Object.CustomsGroups, "CustomsGroup" );
@@ -432,7 +412,7 @@ Procedure deleteUnusedRows ()
 
 	groups = new Map ();
 	for each row in Object.CustomsGroups do
-		groups.Insert ( row.CustomsGroup, 1 );
+		groups.Insert ( row.ID, 1 );
 	enddo;
 	table = Object.Items;
 	for each row in getUnusedRows ( groups, table ) do
@@ -450,7 +430,7 @@ Function getUnusedRows ( Groups, Table )
 
 	rows = new Array ();
 	for each row in Table do
-		if ( Groups.Get ( row.CustomsGroup ) = undefined ) then
+		if ( Groups.Get ( row.ID ) = undefined ) then
 			rows.Add ( row );
 		endif;
 	enddo;
@@ -486,7 +466,6 @@ Procedure CustomGroupsOnActivateRow ( Item )
 	
 	CustomsRow = Item.CurrentData;
 	filterTables ();
-	filterItems ();
 	
 EndProcedure
 
@@ -497,7 +476,7 @@ Procedure filterTables ()
 		Items.Items.RowFilter = undefined;
 		Items.Charges.RowFilter = undefined;
 	else
-		filter = new FixedStructure ( new Structure ( "CustomsGroup", CustomsRow.CustomsGroup ) );
+		filter = new FixedStructure ( new Structure ( "ID", CustomsRow.ID ) );
 		Items.Items.RowFilter = filter;
 		Items.Charges.RowFilter = filter;
 	endif;
@@ -505,50 +484,33 @@ Procedure filterTables ()
 EndProcedure
 
 &AtClient
-Procedure filterItems () 
-
-	if ( customsGroupEmpty () ) then
-		return;
+Procedure CustomGroupsOnStartEdit ( Item, NewRow, Clone )
+	
+	if ( NewRow ) then
+		newCustomsGroup ();
 	endif;
-	groups = new Array ();
-	groups.Add ( CustomsRow.CustomsGroup );
-	groups.Add ( PredefinedValue ( "Catalog.CustomsGroups.EmptyRef" ) );
-	list = new Array ();
-	list.Add ( new ChoiceParameter ( "Filter.CustomsGroup", new FixedArray ( groups ) ) );
-	list.Add ( new ChoiceParameter ( "Filter.Service", false ) );
-	Items.ItemsItem.ChoiceParameters = new FixedArray ( list );
-
+	
 EndProcedure
 
 &AtClient
-Function customsGroupEmpty () 
-
-	return CustomsRow = undefined or CustomsRow.CustomsGroup.IsEmpty ();
-
-EndFunction
-
-&AtClient
-Procedure CustomGroupsBeforeAddRow ( Item, Cancel, Clone, Parent, Folder, Parameter )
+Procedure newCustomsGroup ()
 	
-	if ( Clone ) then
-		Cancel = true;
-	else
-		OldCustomsGroup = undefined;
-	endif;
-	
+	LastID = LastID + 1;
+	Items.CustomGroups.CurrentData.ID = LastID;
+
 EndProcedure
 
 &AtClient
 Procedure CustomGroupsBeforeDeleteRow ( Item, Cancel )
 	
-	deleteCustomsGroup ( CustomsRow.CustomsGroup )
+	deleteID ( CustomsRow.ID )
 	
 EndProcedure
 
 &AtClient
-Procedure deleteCustomsGroup ( CustomsGroup ) 
+Procedure deleteID ( ID ) 
 
-	filter = new Structure ( "CustomsGroup", CustomsGroup );
+	filter = new Structure ( "ID", ID );
 	deleteRows ( Object.Charges, filter );
 	deleteRows ( Object.Items, filter );
 	calcTotals ( Object );
@@ -567,48 +529,28 @@ Procedure deleteRows ( Table, Filter )
 EndProcedure
 
 &AtClient
-Procedure CustomGroupsBeforeRowChange ( Item, Cancel )
-	
-	OldCustomsGroup = CustomsRow.CustomsGroup;
-	
-EndProcedure
-
-&AtClient
 Procedure CustomGroupsCustomsGroupOnChange ( Item )
 	
-	if ( OldCustomsGroup = CustomsRow.CustomsGroup ) then
-		return;
-	endif;
-	if ( OldCustomsGroup <> undefined ) then
-		deleteCustomsGroup ( OldCustomsGroup );
-	endif;
-	filter = new Structure ( "CustomsGroup", CustomsRow.CustomsGroup );
-	if ( Object.CustomsGroups.FindRows ( filter ).Count () = 1 ) then
-		applyCustomsGroup ();
-		applyAmount ();
-		updateTotals ( ThisObject );
-	else
-		CustomsRow.CustomsGroup = undefined;
-		Output.CustomsGroupAlreadyExists ( filter, Output.Row ( "CustomsGroups", CustomsRow.LineNumber, "CustomsGroup" ) );
-	endif;
+	applyCustomsGroup ();
+	applyAmount ();
+	updateTotals ( ThisObject );
 	filterTables ();
-	filterItems ();
 	
 EndProcedure
 
 &AtClient
 Procedure applyCustomsGroup () 
 
-	customsGroup = CustomsRow.CustomsGroup;
+	id = CustomsRow.ID;
 	charges = Object.Charges;
-	filter = new Structure ( "CustomsGroup, Charge", customsGroup );
-	table = Collections.DeserializeTable ( getCharges ( customsGroup ) );
+	filter = new Structure ( "ID, Charge", id );
+	table = Collections.DeserializeTable ( getCharges ( CustomsRow.CustomsGroup ) );
 	for each row in table do
 		filter.Charge = row.Charge;
 		if ( charges.FindRows ( filter ).Count () = 0 ) then
 			newRow = charges.Add ();
 			FillPropertyValues ( newRow, row );
-			newRow.CustomsGroup = customsGroup;
+			newRow.ID = id;
 			newRow.Cost = true;
 		endif;
 	enddo;
@@ -633,7 +575,7 @@ EndFunction
 &AtClient
 Procedure CustomGroupsBaseOnChange ( Item )
 	
-	applyBase (  chargesByCustomsGroup (), CustomsRow.Base );
+	applyBase (  chargesByID (), CustomsRow.Base );
 	distributeBase ();
 	calcTotals ( Object );
 	updateTotals ( ThisObject );
@@ -647,7 +589,7 @@ Procedure distributeBase ()
 		return;
 	endif;
 	distribution = Object.Distribution;
-	rows = Object.Items.FindRows ( new Structure ( "CustomsGroup", CustomsRow.CustomsGroup ) );
+	rows = Object.Items.FindRows ( new Structure ( "ID", CustomsRow.ID ) );
 	baseAmount = CustomsRow.Base;
 	if ( distribution = PredefinedValue ( "Enum.Distribution.Amount" ) ) then
 		distribute ( rows, "Amount", baseAmount );
@@ -725,6 +667,7 @@ Procedure ChargesBeforeRowChange ( Item, Cancel )
 	
 	readExpenseAccount ();
 	enableDims ();
+	setFilter ();
 	enableExpenseAccount ();
 	
 EndProcedure
@@ -734,7 +677,7 @@ Procedure readExpenseAccount ()
 	
 	AccountData = GeneralAccounts.GetData ( ChargesRow.ExpenseAccount );
 	
-EndProcedure 
+EndProcedure
 
 &AtClient
 Procedure enableDims ()
@@ -746,6 +689,69 @@ Procedure enableDims ()
 	enddo; 
 	
 EndProcedure
+
+&AtClient
+Procedure setFilter ( Level = 1 )
+	
+	table = Items.Charges;
+	path = table.Name + "Dim";
+	for i = Level to 3 do
+		filter = new Array ();
+		control = Items [ path + i ];
+		owner = fetchOwner ( table, i );
+		oldOwners = control.ChoiceParameters;
+		if ( oldOwners.Count () = 0 ) then
+			previousOwner = undefined;
+		else
+			previousOwner = null;
+			ownerType = TypeOf ( owner );
+			for each parameter in oldOwners do
+				parameterValue = parameter.Value;
+				if ( parameter.Name = "Filter.Owner"
+					and TypeOf ( parameterValue ) = ownerType
+					and parameterValue = owner ) then
+					previousOwner = owner;
+					break;
+				endif;
+			enddo;
+		endif;
+		if ( previousOwner <> owner ) then
+			table.CurrentData [ "Dim" + i ] = undefined;
+		endif;
+		if ( owner <> undefined ) then
+			filter.Add ( new ChoiceParameter ( "Filter.Owner", owner ) );
+		endif;
+		control.ChoiceParameters = new FixedArray ( filter );
+	enddo;
+
+EndProcedure
+
+&AtClient
+Function fetchOwner ( Table, Level )
+
+	if ( Level > AccountData.Fields.Level ) then
+		return undefined;
+	endif;
+	levelIndex = Level - 1;
+	dims = AccountData.Dims;
+	owners = dims [ levelIndex ].Owners;
+	company = Type ( "CatalogRef.Companies" );
+	parentIndex = levelIndex - 1;
+	for each owner in owners do
+		j = parentIndex;
+		while ( j >= 0 ) do
+			parentTypes = dims [ j ].ValueType;
+			if ( parentTypes.ContainsType ( owner ) ) then
+				return Table.CurrentData [ "Dim" + ( j + 1 ) ];
+			endif;
+			j = j - 1;
+		enddo;
+		if ( owner = company ) then
+			return Object.Company;
+		endif;
+	enddo;
+
+EndFunction
 
 &AtClient
 Procedure enableExpenseAccount () 
@@ -784,19 +790,10 @@ Procedure resetAnalytics ()
 EndProcedure 
 
 &AtClient
-Procedure ChargesBeforeAddRow ( Item, Cancel, Clone, Parent, Folder, Parameter )
-	
-	if ( customsGroupEmpty () ) then
-		Cancel = true;
-	endif;
-	
-EndProcedure
-
-&AtClient
 Procedure ChargesOnStartEdit ( Item, NewRow, Clone )
 	
 	if ( NewRow ) then
-		ChargesRow.CustomsGroup = CustomsRow.CustomsGroup;
+		ChargesRow.ID = CustomsRow.ID;
 		ChargesRow.Cost = true;
 	endif;
 	
@@ -816,66 +813,26 @@ Procedure ChargesExpenseAccountOnChange ( Item )
 	readExpenseAccount ();
 	adjustDims ();
 	enableDims ();
+	setFilter ();
 	
 EndProcedure
 
 &AtClient
 Procedure adjustDims ()
 	
-	fields = AccountData.Fields;
 	dims = AccountData.Dims;
-	level = fields.Level;
-	if ( level = 0 ) then
-		ChargesRow.Dim1 = null;
-		ChargesRow.Dim2 = null;
-		ChargesRow.Dim3 = null;
-	elsif ( level = 1 ) then
-		ChargesRow.Dim1 = dims [ 0 ].ValueType.AdjustValue ( ChargesRow.Dim1 );
-		ChargesRow.Dim2 = null;
-		ChargesRow.Dim3 = null;
-	elsif ( level = 2 ) then
-		ChargesRow.Dim1 = dims [ 0 ].ValueType.AdjustValue ( ChargesRow.Dim1 );
-		ChargesRow.Dim2 = dims [ 1 ].ValueType.AdjustValue ( ChargesRow.Dim2 );
-		ChargesRow.Dim3 = null;
-	else
-		ChargesRow.Dim1 = dims [ 0 ].ValueType.AdjustValue ( ChargesRow.Dim1 );
-		ChargesRow.Dim2 = dims [ 1 ].ValueType.AdjustValue ( ChargesRow.Dim2 );
-		ChargesRow.Dim3 = dims [ 2 ].ValueType.AdjustValue ( ChargesRow.Dim3 );
-	endif; 
+	top = AccountData.Fields.Level;
+	for i = 1 to 3 do
+		name = "Dim" + i;
+		ChargesRow [ name ] = ? ( i > top, null, dims [ i - 1 ].ValueType.AdjustValue ( ChargesRow [ name ] ) );
+	enddo;
 
 EndProcedure 
 
 &AtClient
-Procedure ChargesDim1StartChoice ( Item, ChoiceData, StandardProcessing )
+Procedure ChargesDimOnChange ( Item )
 	
-	chooseDim ( Item, 1, StandardProcessing );
-	
-EndProcedure
-
-&AtClient
-Procedure chooseDim ( Item, Level, StandardProcessing )
-	
-	p = Dimensions.GetParams ();
-	p.Company = Object.Company;
-	p.Level = Level;
-	p.Dim1 = ChargesRow.Dim1;
-	p.Dim2 = ChargesRow.Dim2;
-	p.Dim3 = ChargesRow.Dim3;
-	Dimensions.Choose ( p, Item, StandardProcessing );
-	
-EndProcedure 
-
-&AtClient
-Procedure ChargesDim2StartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	chooseDim ( Item, 2, StandardProcessing );
-	
-EndProcedure
-
-&AtClient
-Procedure ChargesDim3StartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	chooseDim ( Item, 3, StandardProcessing );
+	setFilter ( 1 + Right ( Item.Name, 1 ) );
 	
 EndProcedure
 
@@ -892,7 +849,7 @@ Procedure applyPercent ()
 	if ( not ChargesRow.VAT ) then
 		ChargesRow.Amount = ( CustomsRow.Base * ChargesRow.Percent ) / 100;
 	endif;
-	calcVAT ( chargesByCustomsGroup (), CustomsRow.Base );
+	calcVAT ( chargesByID (), CustomsRow.Base );
 	calcTotals ( Object );
 
 EndProcedure
@@ -901,13 +858,13 @@ EndProcedure
 Procedure ChargesChargeOnChange ( Item )
 	
 	charge = ChargesRow.Charge;
-	filter = new Structure ( "CustomsGroup, Charge", ChargesRow.CustomsGroup, charge );
+	filter = new Structure ( "ID, Charge", ChargesRow.ID, charge );
 	if ( Object.Charges.FindRows ( filter ).Count () > 1 ) then
 		ChargesRow.Charge = undefined;
 		Output.ChargeAlreadyExist ( filter, Output.Row ( "Charges", ChargesRow.LineNumber, "Charge" ) );
-		return;
+	else
+		ChargesRow.VAT = ( DF.Pick ( charge, "Type" ) = PredefinedValue ( "Enum.CustomsCharges.VAT" ) );
 	endif;
-	ChargesRow.VAT = ( DF.Pick ( charge, "Type" ) = PredefinedValue ( "Enum.CustomsCharges.VAT" ) );
 	
 EndProcedure
 
@@ -927,14 +884,89 @@ EndProcedure
 &AtClient
 Procedure AddFromInvoice ( Command )
 	
-	if ( customsGroupEmpty () ) then
-		return;
-	endif;
 	filter = new Structure ( "Import, Posted", true, true );
 	p = new Structure ( "Filter", filter );
-	OpenForm ( "Document.VendorInvoice.ChoiceForm", p, ThisObject );
+	OpenForm ( "Document.VendorInvoice.ChoiceForm", p, Items.Items );
 	
 EndProcedure
+
+&AtClient
+Procedure ItemsChoiceProcessing ( Item, ValueSelected, StandardProcessing)
+
+	type = TypeOf ( ValueSelected );
+	if ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
+		selectItems ( ValueSelected ); 
+	elsif ( type = Type ( "Structure" ) ) then
+		applyItems ( ValueSelected );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure selectItems ( Invoice )
+	
+	p = new Structure ();
+	p.Insert ( "ID", CustomsRow.ID );
+	p.Insert ( "Distribution", Object.Distribution );
+	p.Insert ( "VendorInvoice", Invoice );
+	p.Insert ( "CustomsDeclaration", Object.Ref );
+	p.Insert ( "AlreadySelected", alreadySelected ( Invoice ) );
+	OpenForm ( "Document.CustomsDeclaration.Form.Items", p, Items.Items );
+
+EndProcedure
+
+&AtClient
+Function alreadySelected ( Invoice )
+	
+	list = new Array ();
+	for each row in Object.Items.FindRows ( new Structure ( "Invoice", Invoice ) ) do
+		list.Add ( row.Item );
+	enddo;
+	return new FixedArray ( list );
+
+EndFunction
+
+&AtClient
+Procedure applyItems ( Data )
+	
+	table = Object.Items;
+	if ( Data.Clear ) then
+		table.Clear ();
+	endif;
+	id = CustomsRow.ID;
+	for each row in Data.Items do
+		newRow = table.Add ();
+		FillPropertyValues ( newRow, row );
+		newRow.ID = id;
+	enddo;
+	applyAmount ();
+
+EndProcedure
+
+&AtClient
+Procedure applyAmount ()
+
+	setBase ();
+	applyBase ( chargesByID (), CustomsRow.Base );
+	calcTotals ( Object );
+	updateTotals ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure setBase () 
+
+	rows = Object.Items.FindRows ( new Structure ( "ID", CustomsRow.ID ) );
+	CustomsRow.Base = getTotal ( rows, "Amount" );
+
+EndProcedure
+
+&AtClient
+Function chargesByID () 
+
+	return Object.Charges.FindRows ( new Structure ( "ID", CustomsRow.ID ) );
+
+EndFunction
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )
@@ -947,7 +979,7 @@ EndProcedure
 Procedure ItemsOnStartEdit ( Item, NewRow, Clone )
 	
 	if ( NewRow ) then
-		Item.CurrentData.CustomsGroup = CustomsRow.CustomsGroup;
+		Item.CurrentData.ID = CustomsRow.ID;
 	endif;
 	
 EndProcedure

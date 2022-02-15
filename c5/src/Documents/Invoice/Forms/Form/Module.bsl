@@ -158,13 +158,14 @@ Procedure fillNew ()
 		return;
 	endif; 
 	if ( Object.Warehouse.IsEmpty () ) then
-		settings = Logins.Settings ( "Company, Warehouse" );
+		settings = Logins.Settings ( "Company, Warehouse, Department" );
 		Object.Company = settings.Company;
 		Object.Warehouse = settings.Warehouse;
+		Object.Department = settings.Department;
 	else
 		Object.Company = DF.Pick ( Object.Warehouse, "Owner" );
+		Object.Department = Logins.Settings ( "Department" ).Department;
 	endif;
-	Object.Department = Logins.Settings ( "Department" ).Department;
 	Object.Currency = Application.Currency ();
 	
 EndProcedure 
@@ -719,6 +720,12 @@ Procedure sqlLinks ()
 	|from Document.InvoiceRecord as Documents
 	|where Documents.Base = &Ref
 	|and not Documents.DeletionMark
+	|;
+	|// #Sales
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.Sale as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
 	|";
 	selection.Add ( s );
 	
@@ -739,6 +746,7 @@ Procedure setURLPanel ()
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Payments, meta.Payment ) );
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Returns, meta.Return ) );
 		parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, meta.InvoiceRecord ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Sales, meta.Sale ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then
@@ -850,6 +858,9 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Parameter.Contract = Object.Contract ) then
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
+	elsif ( EventName = Enum.MessageSaleIsSaved ()
+		and Parameter = Object.Ref) then
+		updateLinks ();
 	endif; 
 	
 EndProcedure

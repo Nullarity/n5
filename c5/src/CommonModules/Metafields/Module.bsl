@@ -60,3 +60,26 @@ Function IsFolder ( Value ) export
 	return folder;
 
 EndFunction
+
+Function ToType ( Meta ) export
+	
+	if ( Metadata.Catalogs.Contains ( Meta ) ) then
+		class = "CatalogRef";
+	elsif (  Metadata.BusinessProcesses.Contains ( Meta ) ) then
+		class = "BusinessProcessRef";
+	elsif ( Metadata.ChartsOfAccounts.Contains ( Meta ) ) then
+		class = "ChartOfAccountsRef";
+	elsif ( Metadata.ChartsOfCalculationTypes.Contains ( Meta ) ) then
+		class = "ChartOfCalculationTypesRef";
+	elsif ( Metadata.ChartsOfCharacteristicTypes.Contains ( Meta ) ) then
+		class = "ChartOfCharacteristicTypesRef";
+	elsif ( Metadata.Documents.Contains ( Meta ) ) then
+		class = "DocumentRef";
+	elsif ( Metadata.Tasks.Contains ( Meta ) ) then
+		class = "TaskRef";
+	elsif ( Metadata.ExchangePlans.Contains ( Meta ) ) then
+		class = "ExchangePlanRef";
+	endif; 
+	return Type ( class + "." + Meta.Name );
+
+EndFunction

@@ -29,6 +29,7 @@ EndFunction
 
 Procedure Exec ( Params, JobKey ) export
 	
+	SetPrivilegedMode ( true );
 	obj = Create ();
 	obj.Parameters = Params;
 	obj.JobKey = JobKey;

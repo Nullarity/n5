@@ -64,9 +64,9 @@ Procedure readAppearance ()
 	|MemoLabel show filled ( Object.Memo );
 	|Items Services lock ( PickupOrderExists or Status <> Enum.ShipmentPoints.Picking );
 	|Warehouse Memo Number lock ( Status = Enum.ShipmentPoints.Finish or PickupOrderExists );
-	|VAT show Object.VATUse > 0;
-	|ItemsPrice ItemsDiscountRate ItemsDiscount ItemsAmount ItemsPrices ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show ShowPrices;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0
+	|VATItemsPrice ItemsDiscountRate ItemsDiscount ItemsAmount ItemsPrices ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show ShowPrices;
+	|VAT ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

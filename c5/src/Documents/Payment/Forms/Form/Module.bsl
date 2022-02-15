@@ -61,7 +61,8 @@ Procedure readAppearance ()
 	|BankAccount show Object.Method <> Enum.PaymentMethods.Cash;
 	|Rate Factor enable Object.Currency <> LocalCurrency and Object.Currency <> Object.ContractCurrency;
 	|ContractRate ContractFactor enable Object.ContractCurrency <> LocalCurrency;
-	|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
+	|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash
+	|	and not field ( Object.Location, ""Register"" );
 	|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
 	|Reference ReferenceDate PaymentContent show Object.Method <> Enum.PaymentMethods.Cash;
 	|Warning UndoPosting show Object.Posted;
@@ -236,6 +237,7 @@ Procedure applyLocation ()
 	
 	PaymentForm.SetAccount ( Object );
 	PaymentForm.FilterAccount ( ThisObject );
+	Appearance.Apply ( ThisObject, "Object.Location" );
 	
 EndProcedure 
 

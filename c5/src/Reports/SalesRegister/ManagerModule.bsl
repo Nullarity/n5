@@ -3,6 +3,7 @@
 Function Events () export
 	
 	p = Reporter.Events ();
+	p.OnCompose = true;
 	p.BeforeOpen = true;
 	p.OnDetail = true;
 	return p;

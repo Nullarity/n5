@@ -28,6 +28,7 @@
 	
 Procedure Exec ( Params, JobKey ) export
 	
+	SetPrivilegedMode ( true );
 	obj = Create ();
 	obj.Parameters = Params;
 	obj.JobKey = JobKey;
@@ -38,7 +39,7 @@ EndProcedure
 Function GetReleases () export
 	
 	list = new Array ();
-	list.Add ( entry ( "5.0.20.1", true ) );
+	list.Add ( entry ( "5.0.23.1", true ) );
 	return list;
 	
 EndFunction

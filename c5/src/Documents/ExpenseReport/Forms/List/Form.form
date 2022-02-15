@@ -350,6 +350,18 @@
       <items xsi:type="form:FormField">
         <name>Amount</name>
         <id>102</id>
+        <title>
+          <key>en</key>
+          <value>Amount</value>
+        </title>
+        <title>
+          <key>ru</key>
+          <value>Сумма</value>
+        </title>
+        <title>
+          <key>ro</key>
+          <value>Suma</value>
+        </title>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -1051,11 +1063,21 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
-      <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number,	Documents.Date,	Documents.Posted, Documents.Amount,	Documents.Company, Documents.Creator, Documents.Currency, Documents.Discount, Documents.Employee,
+      <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number,	Documents.Date,	Documents.Posted,
+	Documents.Amount + isnull ( VendorPayments.Amount, 0 ) as Amount, Documents.Company, Documents.Creator, Documents.Currency, Documents.Discount, Documents.Employee,
 	Documents.EmployeeAccount, Documents.Factor, Documents.GrossAmount,	Documents.Memo, Documents.Prices, Documents.Rate, Documents.Tax, Documents.Taxable,	Documents.TaxableAmount, Documents.TaxAccount, Documents.TaxCode,
 	Documents.TaxGroup,	Documents.TaxRate, Documents.Warehouse,	Documents.Accounts,	Documents.FixedAssets, Documents.IntangibleAssets, Documents.Items,	Documents.Services,	Documents.Taxes, Documents.PointInTime,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
 from Document.ExpenseReport as Documents
+	//
+	// VendorPayments
+	//
+	left join (
+		select Documents.ExpenseReport as Ref, sum ( Documents.Amount ) as Amount
+		from Document.VendorPayment as Documents
+		group by Documents.ExpenseReport
+	) as VendorPayments
+	on VendorPayments.Ref = Documents.Ref
 	//
 	// Tasks
 	//

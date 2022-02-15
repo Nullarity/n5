@@ -40,7 +40,6 @@ Procedure getData(Params, Env)
 	sqlItems(Env);
 	getTables(Env);
 	distributeItems(Env);
-	setFeatures(Env);
 	Env.Insert("IsAttachment", false);
 	
 EndProcedure
@@ -56,7 +55,8 @@ Procedure sqlFields(Env)
 		|	case when Documents.Type = value ( Enum.Print.ElectronicLandscape ) then true else false end as ElectronicLandscape,
 		|	case when Documents.Type = value ( Enum.Print.Landscape ) then true else false end as Landscape,
 		|	isnull ( Documents.Account.AccountNumber, """" ) as Account, Documents.AttachedDocuments as AttachedDocuments, 
-		|	isnull ( Documents.Carrier.FullDescription, """" ) as Carrier, Documents.Currency as Currency, Constants.Currency as LocalCurrency, 
+		|	isnull ( Documents.Carrier.FullDescription, """" ) as Carrier, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
+		|	cast ( Documents.Base as Document.Invoice ).Contract.Currency as ContractCurrency,
 		|	Documents.Delegated as Delegated, isnull ( Documents.Dispatcher.Description, """" ) as Dispatcher, 
 		|	isnull ( Documents.Driver.Description, """" ) as Driver, Documents.Factor as Factor, Documents.FirstPageRows as FirstPageRows, 
 		|	isnull ( Documents.LoadingAddress.Presentation, """" ) as LoadingAddress, Documents.AttachmentRows as AttachmentRows,
@@ -174,21 +174,22 @@ Procedure sqlItems(Env)
 	|		when case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end = 0 then " + amount + "
 	|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
 	|	end as Price, " + amount + " as Amount, 
-	|	case when Items.Item refs Catalog.Items then isnull ( Items.Feature.Description, """" ) else """" end as Feature,
+	|	isnull ( Items.Feature.Description, """" ) as Feature, isnull ( Items.Series.Description, """" ) as Series,
 	|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
-	|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge, Items.Item.OfficialCode as OfficialCode
+	|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge,
+	|	isnull ( Items.Item.SKU, """" ) as SKU
 	|from Document.InvoiceRecord.Items as Items
 	|where Items.Ref = &Ref 
 	|union all
 	|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
 	|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
-	|	" + amount + ", isnull ( Services.Feature.Description, """" ), Services.Description,
+	|	" + amount + ", isnull ( Services.Feature.Description, """" ), """", Services.Description,
 	|	Services.VATRate, false, Services.OtherInfo, false, 0, 0, """"
 	|from Document.InvoiceRecord.Services as Services
 	|where Services.Ref = &Ref 
 	|union all
 	|select """", """", 0, 0, - Discounts.Amount * &Rate / &Factor, - Discounts.VAT * &Rate / &Factor, 0, 
-	|	- ( Discounts.Amount - Discounts.VAT ) * &Rate / &Factor, """", Discounts.Item.FullDescription,
+	|	- ( Discounts.Amount - Discounts.VAT ) * &Rate / &Factor, """", """", Discounts.Item.FullDescription,
 	|	Discounts.VATRate, false, """", false, 0, 0, """"
 	|from Document.InvoiceRecord.Discounts as Discounts
 	|where Discounts.Ref = &Ref 
@@ -251,12 +252,6 @@ Procedure addEmptyRows(Table, Difference)
 	
 EndProcedure
 
-Procedure setFeatures(Env)
-	
-	Env.Insert("Features", Options.Features());
-	
-EndProcedure
-
 Procedure setTemplates(Env)
 	
 	fields = Env.Fields;
@@ -299,6 +294,11 @@ Procedure putHeader(Params, Env)
 	area = Env.T.GetArea("Header");
 	p = area.Parameters;
 	fields = Env.Fields;
+	contractCurrency = fields.ContractCurrency;
+	if ( contractCurrency <> null
+		and contractCurrency <> fields.LocalCurrency ) then
+		p.Currency = Print.CurrencyInfo ( contractCurrency, fields.Rate, fields.Factor );
+	endif;
 	p.WaybillSeries = TrimAll(fields.WaybillSeries);
 	p.WaybillNumber = TrimAll(fields.WaybillNumber);
 	p.WaybillDate = fields.WaybillDate;
@@ -413,20 +413,15 @@ Procedure putRow(Params, Env, Table)
 	emptyRow = t.GetArea("EmptyRow");
 	p = area.Parameters;
 	tabDoc = Params.TabDoc;
-	features = Env.Features;
 	for each row in Table do
 		if (row.Empty) then
 			tabDoc.Put(emptyRow);
 			continue;
 		endif;
 		p.Fill(row);
-		feature = TrimAll(row.Feature);
-		if (features
-				and not IsBlankString(feature)) then
-			p.Item = TrimAll(row.Item) + " (" + feature + ")";
-		else
-			p.Item = TrimAll(row.Item);
-		endif;
+		p.ItemPresentation = Conversion.ValuesToString (
+			row.SKU, row.Item, row.Feature, ? ( row.Series = "", "", "#" + row.Series )
+		);
 		if (row.Social) then
 			p.OtherInfo = "" + row.ProducerPrice + "/" + Format(row.ExtraCharge, "NFD=2; NZ=") + " " + row.OtherInfo;
 		endif;

@@ -60,6 +60,9 @@ EndProcedure
 
 Procedure Group ( A ) export
 
+	if ( A.Count () <= 1 ) then
+		return;
+	endif;
 	groupped = new Array ();
 	for each item in A do
 		if ( groupped.Find ( item ) = undefined ) then

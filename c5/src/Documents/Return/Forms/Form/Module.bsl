@@ -112,8 +112,8 @@ Procedure readAppearance ()
 	|and filled ( ContractCurrency )
 	|and ( Object.Currency <> LocalCurrency or ContractCurrency <> LocalCurrency );
 	|CreatePayment show BalanceDue <> 0;
-	|VAT ItemsVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal show Object.VATUse > 0;
+	|VAT ItemsVATAccount ItemsVATCode show Object.VATUse > 0;
+	|ItemsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|ItemsInvoice show InvoicesInTable;
 	|" );
@@ -483,6 +483,12 @@ Procedure sqlLinks ()
 	|	where &Ref in ( Documents.Detail, Documents.Document )
 	|)
 	|and not Documents.DeletionMark
+	|;
+	|// #Sales
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.Sale as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
 	|";
 	selection.Add ( s );
 	
@@ -498,6 +504,7 @@ Procedure setURLPanel ()
 	endif;
 	if ( not isNew () ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, meta.InvoiceRecord ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Sales, meta.Sale ) );		
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Refunds, meta.Refund ) );		
 	endif; 
 	s = URLPanel.Build ( parts );
@@ -517,6 +524,9 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Parameter.Contract = Object.Contract ) then
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
+	elsif ( EventName = Enum.MessageSaleIsSaved ()
+		and Parameter = Object.Ref) then
+		updateLinks ();
 	endif; 
 	
 EndProcedure

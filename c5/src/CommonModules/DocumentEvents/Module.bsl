@@ -170,6 +170,7 @@ EndFunction
 Procedure CheckInvoice ( Source, Cancel, WriteMode, PostingMode ) export
 	
 	if ( Source.IsNew ()
+		or Source.DataExchange.Load = true
 		or canChange ( Source ) ) then
 		return;
 	endif;

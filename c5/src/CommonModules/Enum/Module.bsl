@@ -347,6 +347,13 @@ Function MessageWriteOffIsSaved () export
 	
 EndFunction 
 
+&AtClient
+Function MessageSaleIsSaved () export
+	
+	return "270";
+	
+EndFunction 
+
 #endregion
 
 #region DocumentCommands
@@ -1338,6 +1345,24 @@ Function ExceptionsUndefinedFilesFolder () export
 	
 	return "ExceptionsUndefinedFilesFolder";
 	
+EndFunction
+
+#endregion
+
+#region ShowMessages
+
+&AtClient
+Function ShowMessagesInParentWindow () export
+	
+	return 0;
+
+EndFunction
+
+&AtClient
+Function ShowMessagesInSeparateWindow () export
+	
+	return 1;
+
 EndFunction
 
 #endregion

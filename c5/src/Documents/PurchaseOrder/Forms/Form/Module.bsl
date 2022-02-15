@@ -92,8 +92,8 @@ Procedure readAppearance ()
 	|CreatePayment show BalanceDue <> 0;
 	|PicturesPanel show PicturesEnabled;
 	|ItemsShowPictures press PicturesEnabled;
-	|VAT show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0;
+	|VAT ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

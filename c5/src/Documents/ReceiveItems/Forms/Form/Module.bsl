@@ -89,8 +89,9 @@ Procedure readAppearance ()
 	|Dim1 show ExpensesLevel > 0;
 	|Dim2 show ExpensesLevel > 1;
 	|Dim3 show ExpensesLevel > 2;
-	|VAT show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal FixedAssetsVATCode FixedAssetsVAT FixedAssetsTotal IntangibleAssetsVATCode IntangibleAssetsVAT IntangibleAssetsTotal show Object.VATUse > 0;
+	|VAT ItemsVATCode ItemsVAT FixedAssetsVATCode FixedAssetsVAT IntangibleAssetsVATCode IntangibleAssetsVAT
+	|	show Object.VATUse > 0;
+	|ItemsTotal FixedAssetsTotal IntangibleAssetsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice show UseSocial
 	|" );
 	Appearance.Read ( ThisObject, rules );

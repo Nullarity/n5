@@ -29,6 +29,7 @@ Function GetParams ( Form ) export
 	p.Insert ( "ItemsOnly", getItemsOnly ( p ) );
 	p.Insert ( "Keys", getKeys ( p ) );
 	p.Insert ( "VATUse", getVATUse ( p, object ) );
+	p.Insert ( "Filter", getFilter ( p, object ) );
 	return p;
 	
 EndFunction 
@@ -276,7 +277,7 @@ Function getKeys ( Params )
 		or type.Invoice
 		or type.VendorBill
 		or type.VendorInvoice ) then
-		itemKeys = "Feature, DiscountRate, Item, Package, Price, Prices, VATCode";
+		itemKeys = "Feature, Series, DiscountRate, Item, Package, Price, Prices, VATCode";
 		serviceKeys = "Feature, DiscountRate, Item, Price, Prices, Description, VATCode";
 	elsif ( type.Transfer
 		or type.WriteOff ) then
@@ -312,6 +313,24 @@ Function getVATUse ( Params, Object )
 		return 0;
 	else
 		return Object.VATUse;
+	endif; 
+	
+EndFunction
+
+&AtServer
+Function getFilter ( Params, Object )
+	
+	type = Params.Type;
+	if ( type.Sale
+		or type.Invoice
+		or type.Transfer
+		or type.WriteOff
+		or type.Assembling
+		or type.Disassembling
+	 ) then
+		return Enums.Filter.Available;
+	else
+		return Enums.Filter.None;
 	endif; 
 	
 EndFunction

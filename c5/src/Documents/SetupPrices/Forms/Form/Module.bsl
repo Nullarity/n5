@@ -159,19 +159,23 @@ EndFunction
 Procedure readItemsTable ()
 	
 	ItemsTable.Clear ();
-	i = 0;
-	count = Object.ItemsPrices.Count ();
+	cache = new Map ();
+	last = -1;
 	for each row in Object.Items do
-		if ( i = 0 ) or ( i > count ) then
-			rowItemsTable = ItemsTable.Add ();
-			i = 1;
-		endif; 
+		item = row.Item;
+		i = cache [ item ];
+		if ( i = undefined ) then
+			ItemsTable.Add ();
+			last = last + 1;
+			cache [ item ] = last;
+			i = last;
+		endif;
 		columnName = columnByRef ( row.Prices );
-		rowItemsTable.Item = row.Item;
-		rowItemsTable.Package = row.Package;
-		rowItemsTable.Feature = row.Feature;
-		rowItemsTable [ columnName ] = row.PriceOrPercent;
-		i = i + 1;
+		tableRow = ItemsTable [ i ];
+		tableRow.Item = item;
+		tableRow.Package = row.Package;
+		tableRow.Feature = row.Feature;
+		tableRow [ columnName ] = row.PriceOrPercent;
 	enddo; 
 	
 EndProcedure 

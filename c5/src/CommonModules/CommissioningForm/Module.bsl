@@ -368,13 +368,15 @@ Procedure FixedAssetAppearance ( Form ) export
 	type = TypeOf ( Form.Object.Ref );
 	if ( type = Type ( "DocumentRef.ExpenseReport" ) ) then
 		rules.Add ( "
-		|VATCode VAT VATAccounting Total show Object.VATUse > 0;
+		|VATCode VAT VATAccounting show Object.VATUse > 0;
+		|Total show Object.VATUse = 2;
 		|VATAccount show Object.VATUse > 0 and TableRow.Type = Enum.DocumentTypes.Invoice;
 		|" );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		rules.Add ( "
 		|CustomsGroup enable Object.Import;
-		|VATCode VAT VATAccounting Total show Object.VATUse > 0;
+		|VATCode VAT VATAccounting show Object.VATUse > 0;
+		|Total show Object.VATUse = 2;
 		|VATAccount show not HideVATAccount and Object.VATUse > 0;
 		|" );
 	endif;
@@ -393,13 +395,15 @@ Procedure IntangibleAssetAppearance ( Form ) export
 	type = TypeOf ( Form.Object.Ref );
 	if ( type = Type ( "DocumentRef.ExpenseReport" ) ) then
 		rules.Add ( "
-		|VATCode VAT VATAccounting Total show Object.VATUse > 0;
+		|VATCode VAT VATAccounting show Object.VATUse > 0;
+		|Total show Object.VATUse = 2;
 		|VATAccount show Object.VATUse > 0 and TableRow.Type = Enum.DocumentTypes.Invoice;
 		|" );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		rules.Add ( "
 		|CustomsGroup enable Object.Import;
-		|VATCode VAT VATAccounting Total show Object.VATUse > 0;
+		|VATCode VAT VATAccounting show Object.VATUse > 0;
+		|Total show Object.VATUse = 2;
 		|VATAccount show not HideVATAccount and Object.VATUse > 0;
 		|" );
 	endif;

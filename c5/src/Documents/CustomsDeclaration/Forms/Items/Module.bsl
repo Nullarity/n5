@@ -39,7 +39,7 @@ Procedure fillItems ()
 	setEnv ();
 	sqlItems ();
 	getItems ();
-	itemsByInvoice ();
+	Object.Items.Load ( Env.Items );
 
 EndProcedure
 
@@ -55,32 +55,25 @@ EndProcedure
 Procedure sqlItems ()
 	
 	s = "
-	|// Items
-	|select Items.CustomsGroup as CustomsGroup, Items.Invoice as Invoice, Items.Item as Item, sum ( Items.Quantity ) as Quantity, 
-	|	sum ( Items.Amount ) as Amount,	sum ( Items.Weight ) as Weight
-	|into Items
-	|from ( 
-	|	select 
-	|		case when Details.Item.CustomsGroup = value ( Catalog.CustomsGroups.EmptyRef ) then &CustomsGroup
-	|			else Details.Item.CustomsGroup
-	|		end as CustomsGroup, Cost.Recorder as Invoice, Details.Item as Item, Cost.Quantity as Quantity, Cost.Amount as Amount, 
-	|		Details.Item.Weight * Cost.Quantity as Weight
-	|	from AccumulationRegister.Cost as Cost
-	|		//
-	|		// Details
-	|		//
-	|		join InformationRegister.ItemDetails as Details
-	|		on Details.ItemKey = Cost.ItemKey
-	|	where Cost.Recorder = &Invoice
-	|	and Details.Item.CustomsGroup in ( &CustomsGroup, value ( Catalog.CustomsGroups.EmptyRef ) )
-	|	and Cost.Dependency <> &Ref
-	|	) as Items
-	|group by Items.CustomsGroup, Items.Invoice, Items.Item
-	|;
 	|// #Items
-	|select Items.CustomsGroup as CustomsGroup, Items.Invoice as Invoice, Items.Item as Item, Items.Quantity as Quantity, Items.Amount as Amount,
-	|	Items.Weight as Weight, true as Select
-	|from Items as Items
+	|select Cost.Recorder as Invoice, Details.Item as Item, Cost.Quantity as Quantity, Cost.Amount as Amount, 
+	|	Details.Item.Weight * Cost.Quantity as Weight, AlreadySelected.Ref is null as Select,
+	|	AlreadySelected.Ref is not null as Added
+	|from AccumulationRegister.Cost as Cost
+	|	//
+	|	// Details
+	|	//
+	|	join InformationRegister.ItemDetails as Details
+	|	on Details.ItemKey = Cost.ItemKey
+	|	//
+	|	// Already Selected
+	|	//
+	|	left join Catalog.Items as AlreadySelected
+	|	on AlreadySelected.Ref in ( &AlreadySelected )
+	|	and AlreadySelected.Ref = Details.Item
+	|where Cost.Recorder = &Invoice
+	|and Cost.Dependency <> &Ref
+	|order by Select desc, Details.Item.Description
 	|";
 	Env.Selection.Add ( s );
 	
@@ -93,23 +86,9 @@ Procedure getItems ()
 	q.SetParameter ( "Invoice", Parameters.VendorInvoice );
 	q.SetParameter ( "CustomsGroup", Parameters.CustomsGroup );
 	q.SetParameter ( "Ref", Parameters.CustomsDeclaration );
+	q.SetParameter ( "AlreadySelected", Parameters.AlreadySelected );
 	SQL.Perform ( Env );
 
-EndProcedure
-
-&AtServer
-Procedure itemsByInvoice ()
-	
-	table = Env.Items;
-	if ( table.Count () = 0 ) then
-		raise Output.ItemsNotFoundByCustomsGroup ( new Structure ( "CustomsGroup, Invoice", Parameters.CustomsGroup, Parameters.VendorInvoice ) );
-	endif;
-	tableItems = Object.Items;
-	for each row in table do
-		newRow = tableItems.Add ();
-		FillPropertyValues ( newRow, row );
-	enddo;
-	
 EndProcedure
 
 // *****************************************

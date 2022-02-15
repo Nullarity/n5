@@ -55,11 +55,22 @@ Function getDims ( Result )
 	dims = new Array ();
 	table = Result.Unload ();
 	for each row in table do
-		p = new Structure ( "LineNumber, Dim, ValueType, Presentation" );
+		p = new Structure ( "LineNumber, Dim, ValueType, Presentation, Owners" );
 		p.LineNumber = row.LineNumber;
 		p.Dim = row.ExtDimensionType;
-		p.ValueType = row.ValueType;
 		p.Presentation = row.Presentation;
+		valueType = row.ValueType;
+		p.ValueType = valueType;
+		owners = new Array ();
+		type = TypeOf ( valueType.AdjustValue () );
+		meta = Metadata.FindByType ( type );
+		if ( meta <> undefined
+			and Metadata.Catalogs.Contains ( meta ) ) then
+			for each owner in meta.Owners do
+				owners.Add ( Metafields.ToType ( owner ) );
+			enddo;
+		endif;
+		p.Owners = owners;
 		dims.Add ( p );
 	enddo; 
 	return dims;

@@ -41,7 +41,7 @@ Procedure sqlFields ( Env )
 	|	Documents.Employee.Description as Employee, Documents.Currency.Description as Currency, Contacts.Name as Accountant,
 	|	Documents.Employee as EmployeeRef, isnull ( LastReport.Date, undefined ) as LastDate, 
 	|	Documents.EmployeeAccount as EmployeeAccount, Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
-	|	Documents.Company as CompanyRef
+	|	Documents.Company as CompanyRef, Documents.Description as Purpose
 	|from Document.ExpenseReport as Documents
 	|	//
 	|	// Contacts
@@ -152,7 +152,10 @@ Procedure sqlItems ( Env )
 	|where Items.Ref = &Ref
 	|;
 	|// Payments
-	|select Documents.Vendor as Vendor, Documents.Contract as Contract, Documents.VendorAccount as Account,
+	|select Documents.Vendor.FullDescription + case Documents.PaymentContent when """" then """" else "", "" + Documents.PaymentContent end as Item,
+	|	Documents.VendorAccount.Code as Account,
+	|	case when Documents.Reference = """" then Documents.Number else Documents.Reference end as Number,
+	|	case when Documents.ReferenceDate = datetime ( 1, 1, 1 ) then Documents.Date else Documents.ReferenceDate end as Date,
 	|	case when Documents.Currency = &LocalCurrency then Documents.Total else Documents.Total * Documents.Rate / Documents.Factor end as Amount,
 	|	case when Documents.Currency = &Currency then 
 	|			Documents.Total
@@ -160,22 +163,22 @@ Procedure sqlItems ( Env )
 	|				   		Documents.Total 
 	|				   else Documents.Total * Documents.Rate / Documents.Factor 
 	|			  end / &Rate * &Factor
-	|	end as CurrencyAmount, Documents.Date as Date, Documents.Number as Number
+	|	end as CurrencyAmount
 	|into Payments
 	|from Document.VendorPayment as Documents
 	|where Documents.Posted
 	|and Documents.ExpenseReport = &Ref
 	|;
 	|// #Items
-	|select false as Payment, Items.Item.Description as Item, Items.Amount as Amount, Items.Account.Code as Account, Items.Date as Date, 
-	|	Items.Number as Number, case when &Currency = &LocalCurrency then 0 else Items.CurrencyAmount end as CurrencyAmount, """" as Vendor, """" as Contract,
+	|select Items.Item.Description as Item, Items.Amount as Amount, Items.Account.Code as Account, Items.Date as Date, 
+	|	Items.Number as Number, case when &Currency = &LocalCurrency then 0 else Items.CurrencyAmount end as CurrencyAmount,
 	|	Items.VAT as VAT
 	|from Items as Items
 	|union all
-	|select true, """", Items.Amount, Items.Account.Code, Items.Date, Items.Number, case when &Currency = &LocalCurrency then 0 else Items.CurrencyAmount end,
-	|	Items.Vendor.Description, Items.Contract.Description, 0
+	|select Items.Item, Items.Amount, Items.Account, Items.Date, Items.Number,
+	|	case when &Currency = &LocalCurrency then 0 else Items.CurrencyAmount end, 0
 	|from Payments as Items
-	|order by Account, Date, Number, Item, Vendor, Contract
+	|order by Account, Date, Number, Item
 	|";
 	Env.Selection.Add ( s );
 	
@@ -227,7 +230,6 @@ Procedure putHeader ( Params, Env )
 	endif;
 	tabDoc = Params.TabDoc;
 	tabDoc.Put ( area );
-	tabDoc.PutHorizontalPageBreak ();
 	Env.Insert ( "Amount", amount );
 	
 EndProcedure
@@ -277,33 +279,24 @@ Procedure putHeaderTable ( Params, Env )
 
 	fields = Env.Fields;
 	t = Env.T;
-	if ( fields.CurrencyRef = fields.LocalCurrency ) then
-		area = t.GetArea ( "HeaderTable" );
-	else
-		area = t.GetArea ( "HeaderTableCurrency" );
+	area = t.GetArea ( "Table" );
+	if ( fields.CurrencyRef <> fields.LocalCurrency ) then
 		area.Parameters.Currency = fields.Currency;
 	endif;
-	Params.TabDoc.Put ( area );
+	tabDoc = Params.TabDoc;
+	tabDoc.Put ( area );
+	Print.Repeat ( tabDoc, 4 );
 	
 EndProcedure
 
 Procedure putTable ( Params, Env ) 
 
 	t = Env.T;
-	areaItem = t.GetArea ( "RowItem" );
-	pItem = areaItem.Parameters;
-	areaPayment = t.GetArea ( "RowPayment" );
-	pPayment = areaPayment.Parameters;
+	area = t.GetArea ( "Row" );
+	p = area.Parameters;
 	tabdoc = Params.TabDoc;
 	table = Env.Items;
 	for each row in table do
-		if ( row.Payment ) then
-			area = areaPayment;
-			p = pPayment;
-		else
-			area = areaItem;
-			p = pItem;
-		endif;
 		p.Fill ( row );
 		tabdoc.Put ( area );
 	enddo;

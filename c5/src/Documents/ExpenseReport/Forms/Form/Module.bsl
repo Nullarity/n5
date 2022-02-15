@@ -26,16 +26,48 @@ var PaymentsRow;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	updateTotal ( ThisObject );
 	setSocial ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
+&AtClientAtServerNoContext
+Procedure updateTotal ( Form )
+	
+	object = Form.Object;
+	Form.TotalAmount = object.Amount + ? ( isNew ( Object ), 0, vendorPayments ( Object.Ref ) );
+
+EndProcedure
+
+&AtClientAtServerNoContext
+Function isNew ( Object )
+	
+	return Object.Ref.IsEmpty ();
+	
+EndFunction
+
+&AtServerNoContext
+Function vendorPayments ( val Ref )
+	
+	s = "
+	|select sum ( Documents.Amount ) as Amount
+	|from Document.VendorPayment as Documents
+	|where Documents.ExpenseReport = &Ref
+	|and not Documents.DeletionMark
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", Ref );
+	amount = q.Execute ().Unload () [ 0 ].Amount;
+	return ? ( amount = null, 0, amount );
+
+EndFunction
+
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	ref = Object.Ref;
-	if ( isNew () ) then
+	if ( isNew ( Object ) ) then
 		Base = Parameters.Basis;
 		сopy = not Parameters.CopyingValue.IsEmpty ();
 		InvoiceForm.SetLocalCurrency ( ThisObject );
@@ -54,10 +86,11 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( not сopy ) then
 			setAccount ();
 		endif;
+		updateTotal ( ThisObject );
 	endif;
 	setLinks ();
 	filterPayments ( ref );
-	if ( not isNew () ) then
+	if ( not isNew ( Object ) ) then
 		setPaymentsCount ( PaymentsCount, ref );
 	endif;
 	setAccuracy ();
@@ -71,13 +104,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 EndProcedure
 
 &AtServer
-Function isNew ()
-	
-	return Object.Ref.IsEmpty ();
-	
-EndFunction
-
-&AtServer
 Procedure readAppearance ()
 
 	rules = new Array ();
@@ -88,8 +114,11 @@ Procedure readAppearance ()
 	|Write show empty ( Object.Ref );
 	|Payments enable filled ( Object.Ref );
 	|Links show ShowLinks;
-	|VAT ItemsVATAccount ServicesVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal FixedAssetsVATCode FixedAssetsVAT FixedAssetsTotal IntangibleAssetsVATCode IntangibleAssetsVAT IntangibleAssetsTotal AccountsVATCode AccountsVAT AccountsTotal show Object.VATUse > 0;
+	|VAT ItemsVATAccount ServicesVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount
+	|ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT FixedAssetsVATCode FixedAssetsVAT IntangibleAssetsVATCode
+	|IntangibleAssetsVAT AccountsVATCode AccountsVAT
+	|	show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal FixedAssetsTotal IntangibleAssetsTotal AccountsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice show UseSocial
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -315,7 +344,7 @@ EndProcedure
 &AtServer
 Procedure sqlLinks ()
 	
-	if ( isNew () ) then
+	if ( isNew ( Object ) ) then
 		return;
 	endif; 
 	selection = Env.Selection;
@@ -350,7 +379,7 @@ Procedure setURLPanel ()
 	
 	parts = new Array ();
 	meta = Metadata.Documents;
-	if ( not isNew () ) then
+	if ( not isNew ( Object ) ) then
 		if ( ViewCommissionings ) then
 			parts.Add ( URLPanel.DocumentsToURL ( Env.Commissionings, meta.Commissioning ) );
 		endif; 
@@ -414,18 +443,19 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	Forms.DeleteLastRow ( Object.FixedAssets, "Item" );
 	Forms.DeleteLastRow ( Object.IntangibleAssets, "Item" );
 	Forms.DeleteLastRow ( Object.Accounts, "Account" );
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClientAtServerNoContext
-Procedure calcTotals ( Object )
+Procedure calcTotals ( Form )
 	
-	items = Object.Items;
-	services = Object.Services;
-	accounts = Object.Accounts;
-	fixedAssets = Object.FixedAssets;
-	intangibleAssets = Object.IntangibleAssets;
+	object = Form.Object;
+	items = object.Items;
+	services = object.Services;
+	accounts = object.Accounts;
+	fixedAssets = object.FixedAssets;
+	intangibleAssets = object.IntangibleAssets;
 	vat = items.Total ( "VAT" )
 	+ services.Total ( "VAT" )
 	+ accounts.Total ( "VAT" )
@@ -436,10 +466,11 @@ Procedure calcTotals ( Object )
 	+ accounts.Total ( "Total" )
 	+ fixedAssets.Total ( "Total" )
 	+ intangibleAssets.Total ( "Total" );
-	Object.VAT = vat;
-	Object.Amount = amount;
-	Object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
-	Object.GrossAmount = amount - ? ( Object.VATUse = 2, vat, 0 ) + Object.Discount;
+	object.VAT = vat;
+	object.Amount = amount;
+	object.Discount = items.Total ( "Discount" ) + services.Total ( "Discount" );
+	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
+	updateTotal ( Form );
 	
 EndProcedure 
 
@@ -466,6 +497,10 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
 		applySocial ();
+	elsif ( EventName = Enum.MessageVendorPaymentIsSaved ()
+		and Parameter.ExpenseReport = Object.Ref
+		and not isNew ( Object ) ) then
+		calcTotals ( ThisObject );
 	endif; 
 	
 EndProcedure
@@ -502,7 +537,7 @@ Procedure addItem ( Fields )
 	endif; 
 	Computations.Amount ( row );
 	Computations.Total ( row, Object.VATUse );
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -521,7 +556,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	elsif ( operation = Enum.ChoiceOperationsPickItems () ) then
 		addSelectedItems ( SelectedValue );
 		addSelectedServices ( SelectedValue );
-		calcTotals ( Object );
+		calcTotals ( ThisObject );
 		applySocial ();
 	endif;
 	
@@ -538,7 +573,7 @@ Procedure loadRow ( Params, Table )
 	else
 		data = Table.CurrentData;
 		FillPropertyValues ( data, value );
-		calcTotals ( Object );
+		calcTotals ( ThisObject );
 	endif;
 	
 EndProcedure
@@ -640,7 +675,7 @@ Procedure applyPrices ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure 
 
@@ -680,7 +715,7 @@ Function fillTables ( val Result, val Report )
 	elsif ( Report = meta.SalesOrderItems.Name ) then
 		loadSalesOrders ( table );
 	endif; 
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	return true;
 	
 EndFunction
@@ -724,14 +759,14 @@ EndProcedure
 &AtClient
 Procedure ItemsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	applySocial ();
 	
 EndProcedure
@@ -924,14 +959,14 @@ EndProcedure
 &AtClient
 Procedure ServicesOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesAfterDeleteRow ( Item )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1088,7 +1123,7 @@ EndProcedure
 &AtClient
 Procedure FixedAssetsAfterDeleteRow ( Item )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1121,7 +1156,7 @@ EndProcedure
 &AtClient
 Procedure IntangibleAssetsAfterDeleteRow ( Item )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1139,7 +1174,7 @@ EndProcedure
 Procedure AccountsOnEditEnd ( Item, NewRow, CancelEdit )
 	
 	resetDims ();
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1160,7 +1195,7 @@ EndProcedure
 &AtClient
 Procedure AccountsAfterDeleteRow ( Item )
 	
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1322,7 +1357,7 @@ EndProcedure
 Procedure CurrencyOnChange ( Item )
 	
 	setRates ( Object, Object.Currency );
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	
 EndProcedure
@@ -1436,7 +1471,7 @@ Procedure applyVATUse ()
 	for each row in Object.Accounts do
 		Computations.Total ( row, vatUse );
 	enddo;
-	calcTotals ( Object );
+	calcTotals ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure

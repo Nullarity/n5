@@ -158,7 +158,8 @@ Function simpleReport ()
 	or report = "Timesheet"
 	or report = "PersonalCard"
 	or report = "PurchasesRegister"
-	or report = "CashBook";
+	or report = "CashBook"
+	or report = "RetailSalesDaily";
 		
 EndFunction 
 
@@ -1435,6 +1436,13 @@ EndProcedure
 Procedure SelectReportVariant ( Command )
 	
 	loadReportVariant ();
+	
+EndProcedure
+
+&AtClient
+Procedure Help ( Command )
+	
+	OpenHelp ( "Report." + Object.ReportName );
 	
 EndProcedure
 

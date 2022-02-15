@@ -19,6 +19,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	setSocial ();
+	setRetail ();
 	setWarning ( ThisObject );
 	initStatuses ( ThisObject );
 	Appearance.Apply ( ThisObject );
@@ -29,6 +30,13 @@ EndProcedure
 Procedure setSocial () 
 
 	UseSocial = findSocial ( Object.Items );
+
+EndProcedure
+
+&AtServer
+Procedure setRetail ()
+
+	Retail = TypeOf ( Object.Base ) = Type ( "DocumentRef.Sale" );
 
 EndProcedure
 
@@ -94,15 +102,19 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			InvoiceRecords.Fill ( Object, base );
 		endif;
+		setDefaultValues ();
 		setSocial ();
-		setRange ();
+		setRetail ();
 		setType ( Object );
 		setWarning ( ThisObject );
 		initStatuses ( ThisObject );
 	endif;
+	adjustCustomerControl ( ThisObject );
 	setAccuracy ();
 	setLinks ();
-	Forms.ActivatePage ( ThisObject, "Items,Services,Discounts" );
+	if ( ValueIsFilled ( Object.Customer ) ) then
+		Forms.ActivatePage ( ThisObject, "Items,Services,Discounts" );
+	endif;
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
@@ -132,8 +144,9 @@ Procedure readAppearance ()
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Base show filled ( Object.Base );
 	|PageServices show Object.ShowServices;
-	|Company Customer Currency Rate Factor VATUse Items Services Discounts Prices Date LoadingPoint UnloadingPoint
+	|Company Currency Rate Factor VATUse Items Services Discounts Prices Date LoadingPoint UnloadingPoint
 	|lock filled ( Object.Base );
+	|Customer unlock empty ( Object.Base ) or Retail;
 	|GroupHeader PageMain PageMore Footer unlock Object.Status = Enum.FormStatuses.Saved;
 	|Warning hide Object.Status = Enum.FormStatuses.Saved;
 	|LoadingAddress enable filled ( Object.LoadingPoint );
@@ -143,8 +156,9 @@ Procedure readAppearance ()
 	|Links show ShowLinks;
 	|Series FormNumber show filled ( Object.Range );
 	|Number show empty ( Object.Range );
-	|ItemsVAT ItemsVATCode ItemsTotal ServicesVAT ServicesVATCode ServicesTotal DiscountsVATCode
+	|ItemsVAT ItemsVATCode ServicesVAT ServicesVATCode DiscountsVATCode
 	|show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|FormUnloadInvoices FormLoadInvoices show RangeOnline;
 	|" );
@@ -208,6 +222,15 @@ Procedure setCustomerAccount ( Object )
 
 EndProcedure
 
+&AtClientAtServerNoContext
+Procedure adjustCustomerControl ( Form )
+	
+	if ( Form.Object.Customer <> undefined ) then
+		Form.Items.Customer.ChooseType = false;
+	endif;
+
+EndProcedure
+
 &AtServer
 Procedure setAccuracy ()
 	
@@ -217,23 +240,56 @@ Procedure setAccuracy ()
 EndProcedure 
 
 &AtServer
-Procedure setRange ()
+Procedure setDefaultValues ()
+	
+	data = getDefaultValues ();
+	range = data.Range;
+	if ( range <> undefined ) then
+		Object.Range = range.Range;
+	endif;
+	fields = data.Fields;
+	if ( fields <> undefined ) then
+		Object.Storekeeper = fields.Storekeeper;
+		Object.Carrier = fields.Carrier;
+		Object.Dispatcher = fields.Dispatcher;
+		data = CoreLibrary.SeriesAndNumber ( fields.Number );
+		series = data.Series;
+		Object.Series = series;
+		Object.Number = RegulatedRanges.BuildNumber ( , series, data.Number, true );
+	endif;
+
+EndProcedure
+
+&AtServer
+Function getDefaultValues ()
 	
 	s = "
-	|select allowed top 1 Documents.Range as Range
+	|// @Range
+	|select allowed top 1 Ranges.Range as Range
+	|from Document.InvoiceRecord as Ranges
+	|where Ranges.Company = &Company
+	|and Ranges.Creator = &Creator
+	|and not Ranges.DeletionMark
+	|order by Ranges.Date desc
+	|;
+	|// @Fields
+	|select allowed top 1 Documents.Number as Number, Documents.Storekeeper as Storekeeper, Documents.Carrier as Carrier,
+	|	Documents.Dispatcher as Dispatcher
 	|from Document.InvoiceRecord as Documents
 	|where Documents.Company = &Company
-	|and Documents.Creator = &Creator
+	|and Documents.LoadingPoint = &WarehouseOrNothing
 	|and not Documents.DeletionMark
 	|order by Documents.Date desc
 	|";
-	q = new Query ( s );
+	data = SQL.Create ( s );
+	q = data.Q;
 	q.SetParameter ( "Company", Object.Company );
 	q.SetParameter ( "Creator", Object.Creator );
-	table = q.Execute ().Unload ();
-	Object.Range = ? ( table.Count () = 0, undefined, table [ 0 ].Range );
-	
-EndProcedure
+	q.SetParameter ( "WarehouseOrNothing", Object.LoadingPoint );
+	SQL.Perform ( data );
+	return data;
+
+EndFunction
 
 &AtClientAtServerNoContext
 Procedure setType ( Object )
@@ -627,9 +683,19 @@ Procedure RangeOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure CustomerClearing ( Item, StandardProcessing )
+	
+	Items.Customer.ChooseType = true;
+	
+EndProcedure
+
+&AtClient
 Procedure CustomerOnChange ( Item )
 	
-	setCustomerAccount ( Object );
+	if ( ValueIsFilled ( Object.Customer ) ) then
+		setCustomerAccount ( Object );
+	endif;
+	adjustCustomerControl ( ThisObject );
 	
 EndProcedure
 

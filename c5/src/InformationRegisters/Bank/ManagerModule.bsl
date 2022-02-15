@@ -144,7 +144,8 @@ Function bankPayment ( Method )
 	or method = Enums.PaymentMethods.EFT
 	or method = Enums.PaymentMethods.Mastercard
 	or method = Enums.PaymentMethods.PayPal
-	or method = Enums.PaymentMethods.Visa;
+	or method = Enums.PaymentMethods.Visa
+	or method = Enums.PaymentMethods.Card;
 	
 EndFunction 
 

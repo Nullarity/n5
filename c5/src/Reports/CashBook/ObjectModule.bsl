@@ -229,38 +229,50 @@ Procedure sqlCash ()
 	
 	s = "
 	|// Cash
-	|select allowed Receipt.Giver as GiverReceiver, Receipt.Base as Base, Receipt.Number as Number, true as Receipt
+	|select allowed Receipt.Giver as GiverReceiver, Receipt.Base as Base, Receipt.Number as Number, true as Receipt,
+	|	Receipt.Amount as Amount
 	|into Cash
 	|from Document.CashReceipt as Receipt
 	|where Receipt.Posted
 	|and Receipt.Date between &DateStart and &DateEnd
 	|and Receipt.Company = &Company
 	|union all
-	|select Voucher.Receiver, Voucher.Base, Voucher.Number, false
+	|select Voucher.Receiver, Voucher.Base, Voucher.Number, false, Voucher.Amount
 	|from Document.CashVoucher as Voucher
 	|where Voucher.Posted
 	|and Voucher.Date between &DateStart and &DateEnd
 	|and Voucher.Company = &Company
 	|;
 	|// #Cash
-	|select allowed General.DayPeriod as Day, Cash.Base.Date as Date, Cash.Base as Base, General.AmountTurnoverDr as Receipt, 
-	|	General.AmountTurnoverCr as Expense, General.MonthPeriod as Month, Cash.Number as Number, General.CurrencyAmountTurnoverDr as ReceiptCurrency, 
-	|	General.CurrencyAmountTurnoverCr as ExpenseCurrency, Cash.GiverReceiver as GiverReceiver, Cash.Receipt as IsReceipt,
+	|select allowed General.DayPeriod as Day, isnull ( Cash.Base.Date, General.Recorder.Date ) as Date,
+	|	isnull ( Cash.Base, General.Recorder ) as Base,
+	|	case valuetype ( General.Recorder )
+	|		when type ( Document.RetailSales ) then Cash.Amount
+	|		else General.AmountTurnoverDr
+	|	end as Receipt,
+	|	General.AmountTurnoverCr as Expense, General.MonthPeriod as Month,
+	|	isnull ( Cash.Number, General.Recorder.Number ) as Number, General.CurrencyAmountTurnoverDr as ReceiptCurrency, 
+	|	General.CurrencyAmountTurnoverCr as ExpenseCurrency, Cash.GiverReceiver as GiverReceiver,
+	|	isnull ( Cash.Receipt, General.AmountTurnoverDr > 0 ) as IsReceipt,
 	|	isnull ( General.Currency.Description, Constants.Currency.Description ) as Currency,
 	|	isnull ( General.Currency.FullDescription, Constants.Currency.FullDescription ) as FullCurrency
 	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, auto, Account.Class = value ( Enum.Accounts.Cash ), , 
-	|	Company = &Company ) as General
+	|	ExtDimension1 in (
+	|		select Ref from Catalog.PaymentLocations where not Remote and Owner = &Company
+	|		union all select value ( Catalog.PaymentLocations.EmptyRef )
+	|	)
+	|	and Company = &Company ) as General
 	|	//
-	| 	// Cash
-	| 	//
-	| 	join Cash as Cash
-	| 	on Cash.Base = General.Recorder
-	| 	//
-	| 	// Constants
-	| 	//
-	| 	left join Constants as Constants
-	| 	on true
-	|order by General.DayPeriod, Cash.Number
+	|	// Cash
+	|	//
+	|	join Cash as Cash
+	|	on Cash.Base = General.Recorder
+	|	//
+	|	// Constants
+	|	//
+	|	left join Constants as Constants
+	|	on true
+	|order by General.SecondPeriod, isnull ( Cash.Number, Recorder.Number )
 	|";
 	Env.Selection.Add ( s );    
 	
@@ -301,12 +313,18 @@ Procedure sqlBalances ()
 	|from (
 	|	select General.AmountBalanceDr as BalanceBegin, General.CurrencyAmountBalanceDr as BalanceBeginCurrency,	
 	|		isnull ( General.Currency, Constants.Currency ) as Currency
-	|	from AccountingRegister.General.Balance ( &DateStart, Account.Class = value ( Enum.Accounts.Cash ), , Company = &Company ) as General
-	| 		//
-	| 		// Constants
-	| 		//
-	| 		left join Constants as Constants
-	| 		on true ) as General
+	|	from AccountingRegister.General.Balance ( &DateStart, Account.Class = value ( Enum.Accounts.Cash ), ,
+	|		ExtDimension1 in (
+	|			select Ref from Catalog.PaymentLocations where not Remote and Owner = &Company
+	|			union all select value ( Catalog.PaymentLocations.EmptyRef )
+	|		)
+	|		and Company = &Company
+	|	) as General
+	|		//
+	|		// Constants
+	|		//
+	|		left join Constants as Constants
+	|		on true ) as General
 	|group by General.Currency
 	|";
 	Env.Selection.Add ( s );    
@@ -344,7 +362,7 @@ Procedure putPages ()
 		return;
 	endif;
 	filter = new Structure ( "Month" );
-	lastDay = getLastDay ();
+	lastDay = Cash [ Cash.Count () - 1 ].Day;
 	for each month in getMonths () do
 		filter.Month = month;
 		days = getDays ( filter );
@@ -378,14 +396,6 @@ Procedure initPagesData ()
 	Balances = Env.Balances;
 
 EndProcedure
-
-Function getLastDay () 
-
-	days = Cash.Copy ( , "Day" );
-	days.Sort ( "Day desc" );
-	return days [ 0 ].Day;
-
-EndFunction
 
 Function getMonths () 
 

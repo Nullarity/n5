@@ -8,9 +8,10 @@ Procedure FillNew ( Form ) export
 		return;
 	endif; 
 	object = Form.Object;
-	settings = Logins.Settings ( "Company, PaymentLocation" );
+	settings = Logins.Settings ( "Company, PaymentLocation, PaymentLocation.CashFlow as CashFlow" );
 	object.Company = settings.Company;
 	object.Location = settings.PaymentLocation;
+	object.CashFlow = settings.CashFlow;
 	type = TypeOf ( object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" )
 		or type = Type ( "DocumentRef.VendorRefund" ) ) then
@@ -120,9 +121,10 @@ EndProcedure
 &AtServer
 Procedure fillHeader ( Env )
 	
-	settings = Logins.Settings ( "PaymentLocation" );
+	settings = Logins.Settings ( "PaymentLocation, PaymentLocation.CashFlow as CashFlow" );
 	object = Env.Object;
 	object.Location = settings.PaymentLocation;
+	object.CashFlow = settings.CashFlow;
 	object.Base = Env.Base;
 	FillPropertyValues ( object, Env.Fields );
 	type = TypeOf ( object.Ref );
@@ -530,7 +532,10 @@ EndProcedure
 Procedure LoadContract ( Object ) export
 	
 	data = contractData ( Object );
-	FillPropertyValues ( Object, data );
+	FillPropertyValues ( Object, data, , "CashFlow" );
+	if ( Object.CashFlow.IsEmpty () ) then
+		Object.CashFlow = data.CashFlow;
+	endif;
 	currency = contractCurrency ( Object, data );
 	Object.ContractRate = currency.Rate;
 	Object.ContractFactor = currency.Factor;

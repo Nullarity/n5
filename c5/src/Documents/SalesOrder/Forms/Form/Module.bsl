@@ -133,8 +133,8 @@ Procedure readAppearance ()
 	|PicturesPanel show PicturesEnabled;
 	|ItemsShowPictures press PicturesEnabled;
 	|FormPrintSalesOrder show not Editing;
-	|VAT ItemsVATAccount ServicesVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0
+	|VAT ItemsVATAccount ServicesVATAccount ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

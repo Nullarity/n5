@@ -156,13 +156,58 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>Code</name>
-      <id>25</id>
+      <name>SKU</name>
+      <id>86</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.SKU</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>SKUExtendedTooltip</name>
+        <id>88</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>SKUContextMenu</name>
+        <id>87</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>LabelField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:LabelFieldExtInfo">
+        <width>15</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Code</name>
+      <id>25</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible/>
       <dataPath xsi:type="form:DataPath">
         <segments>List.Code</segments>
       </dataPath>
@@ -1301,7 +1346,7 @@
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>select Items.Ref, Items.DeletionMark, Items.Parent, Items.IsFolder, Items.Code, Items.Description,
-	Items.Accuracy, Items.CostMethod, Items.CountPackages, Items.FullDescription,
+	Items.Accuracy, Items.CostMethod, Items.CountPackages, Items.FullDescription, Items.SKU,
 	Items.ItemType, Items.Memo, Items.Package, Items.PriceGroup, Items.Producer, Items.Service,
 	Items.TaxCode, Items.Unit, Items.Weight, Items.Predefined, Items.PredefinedDataName,
 	Balances.QuantityBalance as Quantity, Balances.Warehouse as Warehouse,

@@ -4,12 +4,16 @@ Function GetCopies () export
 	if ( IsDemo () ) then
 		return undefined;
 	endif;
-	sessions = new Array ();
-	copies = getSessions ( "Copies" );
-	for each session in copies do
-		sessions.Add ( presentation ( session ) );
-	enddo; 
-	return ? ( sessions.Count () = 0, undefined, sessions );
+	if ( Environment.LinuxClient () ) then
+		return undefined;
+	else
+		sessions = new Array ();
+		copies = getSessions ( "Copies" );
+		for each session in copies do
+			sessions.Add ( presentation ( session ) );
+		enddo; 
+		return ? ( sessions.Count () = 0, undefined, sessions );
+	endif;
 	
 EndFunction 
 

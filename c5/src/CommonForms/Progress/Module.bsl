@@ -81,7 +81,7 @@ Function jobIsActive ( val JobKey, Messages )
 	elsif ( job.State = BackgroundJobState.Active ) then
 		return true;
 	else
-		scope = job.GetUserMessages ();
+		scope = job.GetUserMessages ( true );
 		if ( scope.Count () > 0 ) then
 			Messages = scope;
 		endif; 
@@ -93,25 +93,45 @@ EndFunction
 &AtClient
 Procedure showMessages ( Error )
 	
-	if ( Error ) then
-		Title = Output.ErrorTitle ();
-	elsif ( Messages = undefined ) then
+	havingMessages = Messages <> undefined;
+	if ( not ( Error or havingMessages ) ) then
 		Completed = true;
 		closeProgress ();
 		return;
+	endif;
+	target = Parameters.MessageReceiver;
+	noTarget = ( target = undefined );
+	showHere = noTarget or ( Parameters.ShowMessages = Enum.ShowMessagesInSeparateWindow () );
+	if ( showHere ) then
+		if ( havingMessages ) then
+			for each msg in Messages do
+				MessagesList.Add ( , msg.Text );
+			enddo;
+		endif;
+		if ( Error ) then
+			Title = Output.ErrorTitle ();
+			MessagesList.Add ( , Status );
+		else
+			Title = Output.InfoDetected ();
+		endif;
+		Items.CloseMessages.DefaultButton = true;
+		Items.Progress.Visible = false;
+		Items.Messages.Visible = true;
 	else
-		Title = Output.InfoDetected ();
-	endif;
-	outputMessages ();
-	if ( Error ) then
-		MessagesList.Add ( Status );
-	elsif ( MessagesList.Count () = 0 ) then
+		if ( havingMessages ) then
+			for each msg in Messages do
+				msg.TargetID = target; 
+				msg.Message ();
+			enddo;
+		endif;
+		if ( Error ) then
+			msg = new UserMessage ();
+			msg.TargetID = target;
+			msg.Text = Status;
+			msg.Message ();
+		endif;
 		closeProgress ();
-		return;
 	endif;
-	Items.CloseMessages.DefaultButton = true;
-	Items.Progress.Visible = false;
-	Items.Messages.Visible = true;
 	
 EndProcedure 
 
@@ -122,27 +142,6 @@ Procedure closeProgress ()
 	Close ( Completed );
 	
 EndProcedure 
-
-&AtClient
-Procedure outputMessages ()
-	
-	if ( Messages = undefined ) then
-		return;
-	endif;
-	target = Parameters.MessageReceiver;
-	if ( target = undefined
-		or Parameters.HighlightMessages ) then
-		for each msg in Messages do
-			MessagesList.Add ( , msg.Text );
-		enddo;
-	else
-		for each msg in Messages do
-			msg.TargetID = target; 
-			msg.Message ();
-		enddo;
-	endif;
-
-EndProcedure
 
 &AtClient
 Procedure checkFinish () export

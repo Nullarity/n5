@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="28a4bff3-9638-4d85-8049-0f54ba18bab1">
+  <producedTypes>
+    <objectType typeId="da02ec77-230c-48b9-878e-f2fc45072891" valueTypeId="e86aa9dc-7182-40df-9b26-1bd1bd981142"/>
+    <managerType typeId="14a8af2b-3a01-4c70-82f9-70d7534dd937" valueTypeId="25c237d6-b0ff-4941-913f-9975067710b6"/>
+  </producedTypes>
+  <name>RetailSales</name>
+  <synonym>
+    <key>en</key>
+    <value>Retail sales</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <defaultForm>DataProcessor.RetailSales.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+    <pages>
+      <lang>ro</lang>
+    </pages>
+    <pages>
+      <lang>en</lang>
+    </pages>
+  </help>
+  <attributes uuid="2161f50c-e3fd-4a2c-8bac-e7c2c5ac0ecc">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea în numele căreia este introdus documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="f26cb83c-117c-452f-b669-76f752aa56db">
+    <name>Day</name>
+    <synonym>
+      <key>en</key>
+      <value>Day</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>День</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ziua</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Day</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>День</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Ziua</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="5450f77e-f108-4079-830a-4bcae90b0743">
+    <name>Department</name>
+    <synonym>
+      <key>en</key>
+      <value>Department</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Departments</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Department</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>DataProcessor.RetailSales.Attribute.Company</field>
+    </choiceParameterLinks>
+  </attributes>
+  <attributes uuid="ee934f53-c2c6-4d99-8a08-74d28fb8705f">
+    <name>Location</name>
+    <synonym>
+      <key>en</key>
+      <value>Location</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Место</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Locație</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.PaymentLocations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payment location</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Место оплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Locul de plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>DataProcessor.RetailSales.Attribute.Company</field>
+    </choiceParameterLinks>
+  </attributes>
+  <attributes uuid="37c4ce2b-8617-411d-9041-d06366240fdc">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <attributes uuid="849d45f8-3db9-45fa-866d-d88368a05a14">
+    <name>Method</name>
+    <synonym>
+      <key>en</key>
+      <value>Payment</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Оплата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Plata</value>
+    </synonym>
+    <type>
+      <types>EnumRef.PaymentMethods</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payment method</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Способ оплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Modalitate de plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Ref</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.PaymentMethods.EnumValue.Cash</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.PaymentMethods.EnumValue.Card</value>
+        </values>
+      </value>
+    </choiceParameters>
+  </attributes>
+  <attributes uuid="2f856e3b-594b-4f10-9f3f-3bd529398e86">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Warehouse, store or retail outlet</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, магазин или торговая точка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozit, magazin sau punct de vânzare cu amănuntul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>DataProcessor.RetailSales.Attribute.Company</field>
+    </choiceParameterLinks>
+  </attributes>
+  <forms uuid="81699941-a55b-42f4-be91-b67796aa91ee">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

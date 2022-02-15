@@ -10,15 +10,15 @@
   <name>Sale</name>
   <synonym>
     <key>en</key>
-    <value>Sale</value>
+    <value>Bill</value>
   </synonym>
   <synonym>
     <key>ru</key>
-    <value>Продажа</value>
+    <value>Чек ККМ</value>
   </synonym>
   <synonym>
     <key>ro</key>
-    <value>Vânzare</value>
+    <value>Bon Fiscal</value>
   </synonym>
   <useStandardCommands>true</useStandardCommands>
   <inputByString>Document.Sale.StandardAttribute.Number</inputByString>
@@ -64,6 +64,8 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
   </standardAttributes>
+  <basedOn>Document.Invoice</basedOn>
+  <basedOn>Document.Return</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -98,6 +100,7 @@
     <key>ro</key>
     <value>Document care înregistrează vânzările cu amănuntul</value>
   </explanation>
+  <dataHistory>Use</dataHistory>
   <numberType>String</numberType>
   <numberLength>9</numberLength>
   <numberAllowedLength>Variable</numberAllowedLength>
@@ -129,20 +132,56 @@
     </type>
     <toolTip>
       <key>en</key>
-      <value>Quote amount</value>
+      <value>Total amount</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Сумма заказа</value>
+      <value>Итоговая сумма продажи</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Suma comenzii</value>
+      <value>Suma totală</value>
     </toolTip>
     <markNegatives>true</markNegatives>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f1e374fc-8051-46e4-8456-fd6fb0a6226b">
+    <name>Base</name>
+    <synonym>
+      <key>en</key>
+      <value>Base</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Основание</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Baza</value>
+    </synonym>
+    <type>
+      <types>DefinedType.SaleBase</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Linked base document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Связанный документ-основание</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Document de bază legat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -405,20 +444,13 @@
           <value>Enum.PaymentMethods.EnumValue.Cash</value>
         </values>
         <values xsi:type="core:ReferenceValue">
-          <value>Enum.PaymentMethods.EnumValue.Check</value>
-        </values>
-        <values xsi:type="core:ReferenceValue">
-          <value>Enum.PaymentMethods.EnumValue.Visa</value>
-        </values>
-        <values xsi:type="core:ReferenceValue">
-          <value>Enum.PaymentMethods.EnumValue.Mastercard</value>
-        </values>
-        <values xsi:type="core:ReferenceValue">
-          <value>Enum.PaymentMethods.EnumValue.AmericanExpress</value>
+          <value>Enum.PaymentMethods.EnumValue.Card</value>
         </values>
       </value>
     </choiceParameters>
-    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.PaymentMethods.EnumValue.Cash</value>
+    </fillValue>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -461,79 +493,6 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="ca57133d-94fb-4218-8e3f-0d660e8ebae0">
-    <name>Print</name>
-    <synonym>
-      <key>en</key>
-      <value>Print</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Печать</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Imprimă</value>
-    </synonym>
-    <type>
-      <types>Boolean</types>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Print cash register receipt (dxprint driver needs to be installed)</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Печать чека кассового аппарата (требуется наличие драйвера dxprint)</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Imprimă chitanța de casă de marcat (este necesar să fie instalat driverul dxprint)</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="9ede1329-9a68-45f5-9dd6-b3a82e6e60a1">
-    <name>Receipt</name>
-    <synonym>
-      <key>en</key>
-      <value>Receipt</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Чек</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Chitanță</value>
-    </synonym>
-    <type>
-      <types>String</types>
-      <stringQualifiers>
-        <length>15</length>
-      </stringQualifiers>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Cash register receipt number</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Номер чека кассового аппарата</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Numărul chitanței de casă de marcat</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
   <attributes uuid="9efe3bd2-8ea9-418a-b63c-c29480f0aede">
     <name>Return</name>
     <synonym>
@@ -551,6 +510,42 @@
     <type>
       <types>Boolean</types>
     </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c15a7605-78ca-456f-9212-f076a1c51534">
+    <name>Taken</name>
+    <synonym>
+      <key>en</key>
+      <value>Taken</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Получено</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Luat</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount taken</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Полученная сумма</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma luată</value>
+    </toolTip>
+    <markNegatives>true</markNegatives>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>

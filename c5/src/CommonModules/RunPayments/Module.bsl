@@ -86,9 +86,10 @@ Procedure sqlFields ( Env )
 		if ( Env.Refund ) then
 			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount";
 		else
-			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount, Documents.Employee as Employee,
-			|Documents.IncomeTaxRate as IncomeTaxRate, Documents.IncomeTaxAmount as IncomeTaxAmount,
-			|Documents.IncomeTax as IncomeTax, Documents.IncomeTaxAccount as IncomeTaxAccount";
+			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount,
+			|Documents.ExpenseReport.Employee as Employee, Documents.IncomeTaxRate as IncomeTaxRate,
+			|Documents.IncomeTaxAmount as IncomeTaxAmount, Documents.IncomeTax as IncomeTax,
+			|Documents.IncomeTaxAccount as IncomeTaxAccount";
 		endif;
 	endif;
 	if ( Env.IncomingPayment ) then

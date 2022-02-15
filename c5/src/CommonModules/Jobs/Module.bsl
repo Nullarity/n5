@@ -47,7 +47,6 @@ EndFunction
 
 Function Run ( EntryPoint, val Params = undefined, Key = undefined, Description = undefined, TestingMode = false ) export
 	
-	SetPrivilegedMode ( true );
 	if ( Key <> undefined ) then
 		cleanLog ( Key );
 	endif;
@@ -108,7 +107,6 @@ EndProcedure
 
 Procedure ExecProcessor ( DataProcessor, Params = undefined, Key = undefined ) export
 	
-	SetPrivilegedMode ( true );
 	DataProcessors [ DataProcessor ].Exec ( Params, Key );
 	
 EndProcedure 

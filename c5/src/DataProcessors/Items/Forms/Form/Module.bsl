@@ -16,11 +16,9 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	loadParams ();
 	initOptions ();
 	initLists ();
-	initFilters ();
 	setPeriod ();
-	Options.SetAccuracy ( ThisObject, "ItemsListQuantity, CharsListQuantity, PackagesListQuantity, SeriesListQuantity,
-	|ItemWarehousesQuantity, SelectedItemsQuantityPkg, SelectedItemsQuantity, SelectedServicesQuantity,
-	|PackagesListCapacity, WarehousesBalanceReserve, ItemsListReserve", , false );
+	setAccuracy ();
+	adjustReservesFilter ();
 	createTables ();
 	Options.Company ( ThisObject, Source.Company );
 	readAppearance ();
@@ -37,7 +35,7 @@ Procedure readAppearance ()
 	|GroupSelectedServices show ShowItems and not ItemsOnly;
 	|ShowPrices show ShowAmount;
 	|ItemsListReserve PackagesListReserve FeaturesListReserve show ShowReserves;
-	|ShowReserves enable ( Filter = FilterNone or Filter = FilterAvailableOnly );
+	|ShowReserves enable inlist ( Filter, Enum.Filter.None, Enum.Filter.Available );
 	|SelectedItemsDiscountRate SelectedItemsDiscount SelectedServicesDiscountRate SelectedServicesDiscount show Discounts;
 	|SelectedItemsPrice SelectedItemsAmount SelectedServicesPrice SelectedServicesAmount show ShowAmount;
 	|WarehousesBalanceReserve show ShowReserves;
@@ -66,9 +64,81 @@ Procedure loadParams ()
 	ItemsOnly = Source.ItemsOnly;
 	ShowAmount = Source.ShowAmount;
 	VATUse = Source.VATUse;
+	Filter = Source.Filter;
+	applyFilter ();
 	setSocial ();
 	
 EndProcedure
+
+&AtServer
+Procedure applyFilter () 
+
+	if ( Filter = Enums.Filter.Reserves ) then
+		ShowReserves = true;
+		applyShowReserves ();
+	endif;
+	filterByBalances ( Filter );
+	Appearance.Apply ( ThisObject, "Filter" );
+
+EndProcedure
+
+&AtServer
+Procedure filterByBalances ( val Setup )
+	
+	filterItems ( Setup );
+	set = ( Setup = Enums.Filter.Available );
+	DC.ChangeFilter ( PackagesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
+	DC.ChangeFilter ( SeriesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
+	
+EndProcedure 
+
+&AtServer
+Procedure filterItems ( Setup )
+	
+	DC.DeleteFilter ( ItemsList, "Quantity" );
+	DC.DeleteFilter ( ItemsList, "IsReserve" );
+	DC.DeleteFilter ( ItemsList, "Service" );
+	DC.DeleteFilter ( FeaturesList, "Quantity" );
+	DC.DeleteFilter ( FeaturesList, "Service" );
+	if ( Setup = Enums.Filter.None ) then
+		return;
+	elsif ( Setup = Enums.Filter.Available ) then
+		set = getFilterGroup ( ItemsList );
+		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
+		item.Use = true;
+		item.LeftValue = new DataCompositionField ( "Quantity" );
+		item.ComparisonType = DataCompositionComparisonType.Greater;
+		item.RightValue = 0;
+		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
+		item.Use = true;
+		item.LeftValue = new DataCompositionField ( "Service" );
+		item.RightValue = true;
+		set = getFilterGroup ( FeaturesList );
+		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
+		item.Use = true;
+		item.LeftValue = new DataCompositionField ( "Quantity" );
+		item.ComparisonType = DataCompositionComparisonType.Greater;
+		item.RightValue = 0;
+		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
+		item.Use = true;
+		item.LeftValue = new DataCompositionField ( "Service" );
+		item.RightValue = true;
+	elsif ( Setup = Enums.Filter.Reserves ) then
+		DC.AddFilter ( ItemsList, "IsReserve", true );
+	endif; 
+	
+EndProcedure
+
+&AtServer
+Function getFilterGroup ( Source ) 
+
+	set = Source.Filter.Items.Add ( Type ( "DataCompositionFilterItemGroup" ) );
+	set.Use = true;
+	set.GroupType = DataCompositionFilterItemsGroupType.OrGroup;
+	set.ViewMode = DataCompositionSettingsItemViewMode.Inaccessible;
+	return set;
+
+EndFunction
 
 &AtServer
 Procedure setSocial () 
@@ -136,15 +206,6 @@ Procedure initLists ()
 EndProcedure
 
 &AtServer
-Procedure initFilters () 
-
-	FilterNone = 0;
-	FilterAvailableOnly = 1;
-	FilterReserveOnly = 2;
-
-EndProcedure
-
-&AtServer
 Procedure setPeriod ()
 	
 	period = ? ( Date = Date ( 1, 1, 1 ), undefined, Date );
@@ -152,6 +213,41 @@ Procedure setPeriod ()
 	FeaturesList.Parameters.SetParameterValue ( "Period", period );
 	PackagesList.Parameters.SetParameterValue ( "Period", period );
 	SeriesList.Parameters.SetParameterValue ( "Period", period );
+	
+EndProcedure
+
+&AtServer
+Procedure setAccuracy ()
+
+	list = new Array ();
+	list.Add ( "ItemsListQuantity, CharsListQuantity, PackagesListQuantity, SeriesListQuantity,
+		|ItemWarehousesQuantity, SelectedItemsQuantityPkg, SelectedItemsQuantity, SelectedServicesQuantity,
+		|PackagesListCapacity" );
+	if ( viewReserves () ) then
+		list.Add ( "WarehousesBalanceReserve, ItemsListReserve" );
+	endif;
+	Options.SetAccuracy ( ThisObject, StrConcat ( list, "," ), , false );
+
+EndProcedure
+
+&AtServer
+Function viewReserves ()
+	
+	return IsInRole ( Metadata.Roles.InvoicesView );
+	
+EndFunction
+
+&AtServer
+Procedure adjustReservesFilter ()
+	
+	if ( viewReserves () ) then
+		Items.Filter.ChoiceList.Add ( Enums.Filter.Reserves );
+	else
+		ShowReserves = false;
+		if ( Filter = Enums.Filter.Reserves ) then
+			Filter = Enums.Filter.Available;
+		endif;
+	endif;
 	
 EndProcedure
 
@@ -192,67 +288,20 @@ EndProcedure
 &AtServer
 Procedure OnLoadDataFromSettingsAtServer ( Settings )
 	
+	adjustFilter ();
+	adjustReservesFilter ();
 	filterByBalances ( Filter );
 	
 EndProcedure
 
 &AtServer
-Procedure filterByBalances ( val Setup )
+Procedure adjustFilter ()
 	
-	filterItems ( Setup );
-	set = ( Setup = FilterAvailableOnly );
-	DC.ChangeFilter ( PackagesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
-	DC.ChangeFilter ( SeriesList, "Quantity", 0, set, DataCompositionComparisonType.Greater );
-	
-EndProcedure 
+	if ( Filter.IsEmpty () ) then
+		Filter = Source.Filter;
+	endif;
 
-&AtServer
-Procedure filterItems ( Setup )
-	
-	DC.DeleteFilter ( ItemsList, "Quantity" );
-	DC.DeleteFilter ( ItemsList, "IsReserve" );
-	DC.DeleteFilter ( ItemsList, "Service" );
-	DC.DeleteFilter ( FeaturesList, "Quantity" );
-	DC.DeleteFilter ( FeaturesList, "Service" );
-	if ( Setup = FilterNone ) then
-		return;
-	elsif ( Setup = FilterAvailableOnly ) then
-		set = getFilterGroup ( ItemsList );
-		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
-		item.Use = true;
-		item.LeftValue = new DataCompositionField ( "Quantity" );
-		item.ComparisonType = DataCompositionComparisonType.Greater;
-		item.RightValue = 0;
-		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
-		item.Use = true;
-		item.LeftValue = new DataCompositionField ( "Service" );
-		item.RightValue = true;
-		set = getFilterGroup ( FeaturesList );
-		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
-		item.Use = true;
-		item.LeftValue = new DataCompositionField ( "Quantity" );
-		item.ComparisonType = DataCompositionComparisonType.Greater;
-		item.RightValue = 0;
-		item = set.Items.Add ( Type ( "DataCompositionFilterItem" ) );
-		item.Use = true;
-		item.LeftValue = new DataCompositionField ( "Service" );
-		item.RightValue = true;
-	elsif ( Setup = FilterReserveOnly ) then
-		DC.AddFilter ( ItemsList, "IsReserve", true );
-	endif; 
-	
 EndProcedure
-
-&AtServer
-Function getFilterGroup ( Source ) 
-
-	set = Source.Filter.Items.Add ( Type ( "DataCompositionFilterItemGroup" ) );
-	set.Use = true;
-	set.GroupType = DataCompositionFilterItemsGroupType.OrGroup;
-	set.ViewMode = DataCompositionSettingsItemViewMode.Inaccessible;
-	return set;
-
-EndFunction
 
 &AtClient
 Procedure OnOpen ( Cancel )
@@ -298,7 +347,7 @@ Procedure addRows ( Rows )
 	else
 		table = OwnerItems;
 		commonTable = Object.SelectedItems;
-		commonKeys = "Feature, DiscountRate, Item, Package, Price, VATCode";
+		commonKeys = "Feature, Series, DiscountRate, Item, Package, Price, VATCode";
 		keys = Source.Keys.ItemKeys;
 	endif;
 	set = getArray ( Rows );
@@ -335,6 +384,10 @@ Procedure completeTable ( Table, Rows, Keys )
 			if ( not SelectedRow.Service ) then
 				tableRow.QuantityPkg = tableRow.QuantityPkg + row.QuantityPkg;
 			endif; 
+			tableRow.Discount = tableRow.Discount + row.Discount;
+			tableRow.Amount = tableRow.Amount + row.Amount;
+			tableRow.Total = tableRow.Total + row.Total;
+			tableRow.VAT = tableRow.VAT + row.VAT;
 		endif;
 		setUseSocial ( row );
 	enddo; 
@@ -508,9 +561,6 @@ Function formData ()
 	data.Insert ( "Warehouse", Warehouse );
 	data.Insert ( "ShowReserves", ShowReserves );
 	data.Insert ( "Filter", Filter );
-	data.Insert ( "FilterNone", FilterNone );
-	data.Insert ( "FilterReserveOnly", FilterReserveOnly );
-	data.Insert ( "FilterAvailableOnly", FilterAvailableOnly );
 	data.Insert ( "Organization", getOrganization () );
 	data.Insert ( "Contract", Source.Contract );
 	data.Insert ( "VendorContract", isVendor () );
@@ -607,18 +657,6 @@ Procedure FilterOnChange ( Item )
 	applyFilter ();
 	startUpdate ( Items.ItemsList );
 	
-EndProcedure
-
-&AtServer
-Procedure applyFilter () 
-
-	if ( Filter = FilterReserveOnly ) then
-		ShowReserves = true;
-		applyShowReserves ();
-	endif;
-	filterByBalances ( Filter );
-	Appearance.Apply ( ThisObject, "Filter" );
-
 EndProcedure
 
 &AtClient
@@ -744,6 +782,7 @@ Procedure leaveItem ( Data, StandardProcessing )
 	StandardProcessing = false;
 	Feature = undefined;
 	Package = undefined;
+	QuantityAvailable = Data.Quantity;
 	if ( featureExists () ) then
 		activateFeatures ();
 	elsif ( Data.CountPackages ) then
@@ -768,6 +807,7 @@ Procedure leaveFeature ( Data, StandardProcessing )
 	
 	StandardProcessing = false;
 	Feature = Data.Ref;
+	QuantityAvailable = Data.Quantity;
 	if ( SelectedRow.CountPackages ) then
 		activatePackages ();
 	elsif ( SelectedRow.Series ) then
@@ -783,6 +823,7 @@ Procedure leavePackage ( Data, StandardProcessing )
 	
 	StandardProcessing = false;
 	Package = Data.Ref;
+	QuantityAvailable = Data.Quantity;
 	if ( SelectedRow.Series ) then
 		activateSeries ();
 	else
@@ -795,6 +836,7 @@ EndProcedure
 Procedure leaveSeries ( Data, StandardProcessing )
 	
 	StandardProcessing = false;
+	QuantityAvailable = Data.Quantity;
 	Series = Data.Ref;
 	completeSelection ();
 
@@ -872,6 +914,7 @@ Procedure openDetails ()
 	p = new Structure ();
 	p.Insert ( "Command", Enum.PickItemsCommandsSelect () );
 	p.Insert ( "Source", Source );
+	p.Insert ( "QuantityAvailable", QuantityAvailable );
 	p.Insert ( "Service", service );
 	p.Insert ( "TableRow", getRow () );
 	p.Insert ( "Discounts", Discounts );
@@ -950,7 +993,8 @@ Function getCachedRow ()
 		k = item.Key;
 		if ( k.Item = rowKey.Item
 			and k.Package = rowKey.Package
-			and k.Feature = rowKey.Feature ) then
+			and k.Feature = rowKey.Feature
+			and k.Series = rowKey.Series ) then
 			return item.Value;
 		endif; 
 	enddo; 
@@ -965,6 +1009,7 @@ Function getRowKey ()
 	p.Insert ( "Item", SelectedRow.Ref );
 	p.Insert ( "Package", Package );
 	p.Insert ( "Feature", Feature );
+	p.Insert ( "Series", Series );
 	return p;
 	
 EndFunction 
@@ -1569,10 +1614,10 @@ Procedure sqlItemsReserves ( Data, Env )
 	|	from Reserves as Reserves ) as Items
 	|group by Items.Warehouse, Items.Item, Items.Package";
 	filter = Data.Filter;
-	if ( filter = Data.FilterReserveOnly ) then
+	if ( filter = Enums.Filter.Reserves ) then
 		s = s + "
 		|	having sum ( Items.Reserve ) > 0";
-	elsif ( filter = Data.FilterAvailableOnly ) then
+	elsif ( filter = Enums.Filter.Available ) then
 		s = s + "
 		|	having sum ( Items.Quantity ) > 0";
 	endif;
@@ -1605,7 +1650,7 @@ EndProcedure
 Procedure sqlBalances ( Data, Env )
 
 	s = "
-	|select Balances.Warehouse as Warehouse, presentation ( Balances.Warehouse ) as WarehousePresentation,
+	|select allowed Balances.Warehouse as Warehouse, presentation ( Balances.Warehouse ) as WarehousePresentation,
 	|	Balances.QuantityBalance as Quantity
 	|";
 	if ( Options.Packages ()

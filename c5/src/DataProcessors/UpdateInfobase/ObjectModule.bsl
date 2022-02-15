@@ -136,16 +136,77 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
-Procedure _5_0_20_1 () export
+Procedure _5_0_23_1 () export
 	
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
-		updateReports ();
+		updateCustomsDeclarations ();
+		setTaxNumbers ();
 	enddo;
 	CommitTransaction ();
 	
 EndProcedure
+
+Procedure updateCustomsDeclarations ()
+	
+	selection = Documents.CustomsDeclaration.Select ();
+	while ( selection.Next () ) do
+		obj = selection.GetObject ();
+		id = 1;
+		for each groupsRow in obj.CustomsGroups do
+			groupsRow.ID = id;
+			value = groupsRow.CustomsGroup;
+			search = new Structure ( "CustomsGroup", value );
+			for each row in obj.Items.FindRows ( search ) do
+				row.ID = id;
+			enddo;
+			for each row in obj.Charges.FindRows ( search ) do
+				row.ID = id;
+			enddo;
+			id = id + 1;
+		enddo;
+		obj.DataExchange.Load = true;
+		obj.Write ();
+	enddo;
+
+EndProcedure
+
+Procedure setTaxNumbers ()
+	
+	q = new Query ( "select distinct Base from Document.InvoiceRecord where not DeletionMark and Base <> undefined" );
+	selection = q.Execute ().Select ();
+	while ( selection.Next () ) do
+		document = selection.Base;
+		r = InformationRegisters.TaxInvoices.CreateRecordManager ();
+		r.Document = document;
+		numbers = getNumbers ( document );
+		if ( numbers = "" ) then
+			r.Delete ();
+		else
+			r.Number = numbers;
+			r.Write ();
+		endif;
+	enddo;
+
+EndProcedure
+
+Function getNumbers ( Document )
+	
+	s = "
+	|select Invoices.Number as Number
+	|from Document.InvoiceRecord as Invoices
+	|where not Invoices.DeletionMark
+	|and Invoices.Base = &Base
+	|order by Invoices.Date
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Base", Document );
+	list = q.Execute ().Unload ().UnloadColumn ( "Number" );
+	Collections.Group ( list );
+	return StrConcat ( list, ", " );
+
+EndFunction
 
 #endregion
 

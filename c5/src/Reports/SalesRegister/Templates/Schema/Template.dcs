@@ -354,6 +354,22 @@ from (
 	and Advances.VATAmount &lt;&gt; 0
 	and Advances.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Advances.Ref.Company = &amp;Company
+	union all
+	select sum ( Table.VAT ), sum ( Table.Total - Table.VAT ), Table.VATCode, Table.Ref.Number,
+		Table.Ref.Date, undefined, Table.Ref.Warehouse.Description + ", " +
+			cast ( case Table.Ref.Method
+				when value ( Enum.PaymentMethods.Cash ) then &amp;MethodCash
+				when value ( Enum.PaymentMethods.Card ) then &amp;MethodCard
+				else &amp;MethodOther
+			end as string ( 25 ) )
+		, Table.Ref, null, undefined
+	from Document.RetailSales.Items as Table
+	where not Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+	group by Table.Ref, Table.VATCode
 ) as Sales
 </query>
 		<autoFillFields>false</autoFillFields>
@@ -426,6 +442,11 @@ and Table.Ref in ( &amp;Documents )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.InvoiceRecord.Services as Table
+where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+and Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.RetailSales.Items as Table
 where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 and Table.Ref in ( &amp;Documents )
 </query>
@@ -574,10 +595,55 @@ and Table.Ref in ( &amp;Documents )
 		</title>
 		<valueType>
 			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:DocumentRef.InvoiceRecord</v8:Type>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:DocumentRef.RetailSales</v8:Type>
 		</valueType>
 		<value xsi:nil="true"/>
 		<useRestriction>true</useRestriction>
-		<valueListAllowed>true</valueListAllowed>
+	</parameter>
+	<parameter>
+		<name>MethodCash</name>
+		<title xsi:type="xs:string">Method cash</title>
+		<valueType>
+			<v8:Type>xs:string</v8:Type>
+			<v8:StringQualifiers>
+				<v8:Length>0</v8:Length>
+				<v8:AllowedLength>Variable</v8:AllowedLength>
+			</v8:StringQualifiers>
+		</valueType>
+		<value xsi:type="xs:string"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>MethodCard</name>
+		<title xsi:type="xs:string">Method card</title>
+		<valueType>
+			<v8:Type>xs:string</v8:Type>
+			<v8:StringQualifiers>
+				<v8:Length>0</v8:Length>
+				<v8:AllowedLength>Variable</v8:AllowedLength>
+			</v8:StringQualifiers>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>MethodOther</name>
+		<title xsi:type="xs:string">Method other</title>
+		<valueType>
+			<v8:Type>xs:string</v8:Type>
+			<v8:StringQualifiers>
+				<v8:Length>0</v8:Length>
+				<v8:AllowedLength>Variable</v8:AllowedLength>
+			</v8:StringQualifiers>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+		<use>Always</use>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -1989,11 +2055,6 @@ and Table.Ref in ( &amp;Documents )
 					<dcscor:value xsi:nil="true"/>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>4785e747-692c-475a-b792-339d73561cf5</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Documents</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>

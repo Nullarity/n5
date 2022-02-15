@@ -17,7 +17,9 @@ EndProcedure
 Function Post ( Env ) export
 	
 	getData ( Env );
-	makeItems ( Env );
+	if ( Env.Fields.Sale ) then
+		makeItems ( Env );
+	endif;
 	flagRegisters ( Env );
 	return true;
 	
@@ -36,7 +38,7 @@ Procedure sqlFields ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Date as Date, Documents.Warehouse as Warehouse
+	|select Documents.Date as Date, Documents.Warehouse as Warehouse, Documents.Base = undefined as Sale
 	|from Document.Sale as Documents
 	|where Documents.Ref = &Ref
 	|";

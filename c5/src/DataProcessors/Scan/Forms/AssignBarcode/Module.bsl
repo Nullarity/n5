@@ -73,7 +73,6 @@ EndProcedure
 &AtServer
 Function checkPackage ()
 	
-	
 	if ( usePackages () ) then
 		return true;
 	endif;

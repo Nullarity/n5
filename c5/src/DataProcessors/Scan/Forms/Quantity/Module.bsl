@@ -13,13 +13,14 @@ EndProcedure
 Procedure loadParams ()
 	
 	FillPropertyValues ( ThisObject, Parameters.ScanResult );
+	Capacity = DF.Pick ( Package, "Capacity", 1 );
 	
-EndProcedure 
+EndProcedure
 
 &AtServer
 Procedure setAccuracy ()
 	
-	Options.SetAccuracy ( ThisObject, "Quantity" );
+	Options.SetAccuracy ( ThisObject, "Quantity, QuantityPkg" );
 	
 EndProcedure 
 
@@ -42,8 +43,24 @@ Function getParams ()
 	p.Insert ( "Series", Series );
 	p.Insert ( "Package", Package );
 	p.Insert ( "Quantity", Quantity );
+	p.Insert ( "Capacity", Capacity );
+	p.Insert ( "QuantityPkg", QuantityPkg );
 	p.Insert ( "Code", Code );
 	p.Insert ( "Barcode", Barcode );
 	return p;
 	
 EndFunction 
+
+&AtClient
+Procedure QuantityPkgOnChange ( Item )
+
+	Computations.Units ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure QuantityOnChange ( Item )
+
+	Computations.Packages ( ThisObject );
+
+EndProcedure

@@ -118,11 +118,8 @@ EndProcedure
 &AtServer
 Procedure resetExpenseReport () 
 	
-	if ( Object.Method = Enums.PaymentMethods.ExpenseReport ) then
-		return;
-	else
+	if ( Object.Method <> Enums.PaymentMethods.ExpenseReport ) then
 		Object.ExpenseReport = undefined;
-		Object.Employee = undefined;
 	endif;
 	
 EndProcedure
@@ -147,8 +144,7 @@ EndProcedure
 &AtServer
 Procedure applyExpenseReport () 
 	
-	data = DF.Values ( Object.ExpenseReport, "Employee, EmployeeAccount, Currency" );
-	Object.Employee = data.Employee;
+	data = DF.Values ( Object.ExpenseReport, "EmployeeAccount, Currency" );
 	Object.Account = data.EmployeeAccount;
 	Object.Currency = data.Currency;
 	applyCurrency ();

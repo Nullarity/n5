@@ -217,6 +217,61 @@
     </extInfo>
   </items>
   <items xsi:type="form:FormField">
+    <name>QuantityPkg</name>
+    <id>23</id>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>QuantityPkg</segments>
+    </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>QuantityPkgOnChange</name>
+    </handlers>
+    <extendedTooltip>
+      <name>QuantityPkgExtendedTooltip</name>
+      <id>25</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>QuantityPkgContextMenu</name>
+      <id>24</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <spinButton>true</spinButton>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+    </extInfo>
+  </items>
+  <items xsi:type="form:FormField">
     <name>Quantity</name>
     <id>13</id>
     <visible>true</visible>
@@ -227,6 +282,10 @@
     <dataPath xsi:type="form:DataPath">
       <segments>Quantity</segments>
     </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>QuantityOnChange</name>
+    </handlers>
     <extendedTooltip>
       <name>QuantityExtendedTooltip</name>
       <id>15</id>
@@ -409,23 +468,19 @@
     <name>Quantity</name>
     <title>
       <key>en</key>
-      <value>Quantity</value>
+      <value>Units</value>
     </title>
     <title>
       <key>ru</key>
-      <value>Количество</value>
+      <value>Единиц</value>
     </title>
     <title>
       <key>ro</key>
-      <value>Cantitate</value>
+      <value>Unități</value>
     </title>
     <id>4</id>
     <valueType>
-      <types>Number</types>
-      <numberQualifiers>
-        <precision>10</precision>
-        <scale>3</scale>
-      </numberQualifiers>
+      <types>DefinedType.Quantity</types>
     </valueType>
     <view>
       <common>true</common>
@@ -433,6 +488,8 @@
     <edit>
       <common>true</common>
     </edit>
+    <functionalOptions>FunctionalOption.NoPackages</functionalOptions>
+    <functionalOptions>FunctionalOption.Quantity</functionalOptions>
   </attributes>
   <attributes>
     <name>Series</name>
@@ -513,6 +570,48 @@
       <common>true</common>
     </edit>
     <functionalOptions>FunctionalOption.Features</functionalOptions>
+  </attributes>
+  <attributes>
+    <name>QuantityPkg</name>
+    <title>
+      <key>en</key>
+      <value>Qty</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Кол-во</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Cant.</value>
+    </title>
+    <id>11</id>
+    <valueType>
+      <types>DefinedType.Quantity</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+    <functionalOptions>FunctionalOption.Packages</functionalOptions>
+  </attributes>
+  <attributes>
+    <name>Capacity</name>
+    <id>12</id>
+    <valueType>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+      </numberQualifiers>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
   </attributes>
   <formCommands>
     <name>OK</name>

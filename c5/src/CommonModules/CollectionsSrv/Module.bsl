@@ -51,7 +51,7 @@ Procedure doTableRowExpense ( Table1, Table1Row, Table1Counter, Table2Row, Table
 	if ( Table1Row [ Parameters.KeyColumn ] = 0 ) then
 		Table1.Delete ( Table1Counter );
 	endif;
-	ToExpense = ToExpense - keyColumnValue;
+	ToExpense = ToExpense - ? ( ToExpense > 0, keyColumnValue, - keyColumnValue );
 	
 EndProcedure
  

@@ -1,30 +1,33 @@
-﻿Call ( "Common.Init" );
+﻿// Create Vendor Invoice and Customs Declaration
+
+Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A03Y" );
-env = getEnv ( id );
-createEnv ( env );
+id = Call ( "Common.ScenarioID", "A0LB" );
+getEnv ( id );
+createEnv ();
 
-MainWindow.ExecuteCommand ( "e1cib/list/Document.VendorInvoice" );
-With ( "Vendor Invoices" );
-p = Call ( "Common.Find.Params" );
-p.Where = "Vendor";
-p.What = env.Vendor;
-Call ( "Common.Find", p );
+Call ("Documents.VendorInvoice.ListByMemo", id);
 Click ( "#FormDocumentCustomsDeclarationCreateBasedOn" );
-
-// ***********************************
-// Create Customs Declaration
-// ***********************************
-
-form = With ( "Customs Declaration*" );
-Put ( "#Customs", Env.Customs );
+With ();
+Put ( "#Customs", this.Customs );
 Put ( "#VATAccount", "5344" );
 
+// Delete an item from group1
 table = Activate ( "#CustomGroups" );
-Set ( "#CustomGroupsCustomsGroup", env.CustomsGroup, table );
+Click ( "#ItemsContextMenuDelete" );
 
-With ( form );
+// Add group2 and assign that item
+Click ( "#Add" );
+table.EndEditRow ();
+Set ( "#CustomGroupsCustomsGroup", this.CustomsGroup, table );
+Click ( "#ItemsAddFromInvoice" );
+With ();
+Click ( "#FormChoose" ); // Should be second invoice by default
+With ();
+Click ( "#FormSelect" );
+With ();
+
 Click ( "#ShowDetails" );
 table = Activate ( "#Charges" );
 search = new Map ();
@@ -34,8 +37,8 @@ table.GotoRow ( search, RowGotoDirection.Down );
 Activate ( "#ChargesCost", table );
 Put ( "#ChargesCost", "Expense", table );
 Put ( "#ChargesExpenseAccount", "7141", table );
-Put ( "#ChargesDim1", env.Expense, table );
-Put ( "#ChargesDim2", env.Department, table );
+Put ( "#ChargesDim1", this.Expense, table );
+Set ( "#ChargesDim2", this.Department, table );
 Click ( "#FormPost" );
 
 Click ( "#FormCopy" );
@@ -43,51 +46,42 @@ copy = "Customs Declaration (create)";
 if ( not Waiting ( copy ) ) then
 	Stop ( "The copy of document shoul be appeared" );
 endif;
+
 Close ( copy );
 
 Run ( "Logic" );
-Run ( "LogicImport", env );
-With ( form );
+Run ( "LogicImport", this );
 
-Click ( "#FormUndoPosting" );
+Procedure getEnv ( ID )
 
-
-// ***********************************
-// Procedures
-// ***********************************
-
-Function getEnv ( ID )
-
-	env = new Structure ();
-	env.Insert ( "ID", ID );
+	this.Insert ( "ID", ID );
 	date = BegOfDay ( CurrentDate () );
-	env.Insert ( "Date", date );
-	env.Insert ( "CurDate", CurrentDate () );
-	env.Insert ( "Warehouse", "Warehouse: " + ID );
-	env.Insert ( "Expense", "Expense: " + ID );
-	env.Insert ( "Department", "Department: " + ID );
-	env.Insert ( "Vendor", "Vendor: " + ID );
-	env.Insert ( "Customs", "Customs: " + ID );
-	env.Insert ( "CustomsGroup", "CustomsGroup: " + ID );
-	env.Insert ( "Payments", getPayments () );
-	env.Insert ( "Item1", "Item1: " + ID );
-	env.Insert ( "Item2", "Item2: " + ID );
-	env.Insert ( "Goods", getGoods ( Env ) );
-	return env;
+	this.Insert ( "Date", date );
+	this.Insert ( "CurDate", CurrentDate () );
+	this.Insert ( "Warehouse", "Warehouse: " + ID );
+	this.Insert ( "Expense", "Expense: " + ID );
+	this.Insert ( "Department", "Department: " + ID );
+	this.Insert ( "Vendor", "Vendor: " + ID );
+	this.Insert ( "Customs", "Customs: " + ID );
+	this.Insert ( "CustomsGroup", "CustomsGroup: " + ID );
+	this.Insert ( "Payments", getPayments () );
+	this.Insert ( "Item1", "Item1: " + ID );
+	this.Insert ( "Item2", "Item2: " + ID );
+	this.Insert ( "Goods", getGoods () );
 
 EndFunction
 
-Function getGoods ( Env );
+Function getGoods ();
 
 	goods = new Array ();
  	row = Call ( "Documents.VendorInvoice.Buy.ItemsRow" );
- 	row.Item = Env.Item1;
+ 	row.Item = this.Item1;
 	row.Quantity = "1";
 	row.Price = "1000";
 	goods.Add ( row );
 
 	row = Call ( "Documents.VendorInvoice.Buy.ItemsRow" );
-	row.Item = Env.Item2;
+	row.Item = this.Item2;
 	row.Quantity = "1";
 	row.Price = "100";
 	goods.Add ( row );
@@ -117,88 +111,71 @@ Function getPayments ();
 
 EndFunction
 
-Procedure createEnv ( Env )
+Procedure createEnv ()
 
-	id = Env.ID;
+	id = this.ID;
 	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
 	
-	// ***********************************
-	// Create Warehouse
-	// ***********************************
+	#region newWarehouse
+	Call ( "Catalogs.Warehouses.Create", this.Warehouse );
+	#endregion
 	
-	Call ( "Catalogs.Warehouses.Create", Env.Warehouse );
-	
-	// ***********************************
-	// Create Department
-	// ***********************************
-	
+	#region newDepartment
 	p = Call ( "Catalogs.Departments.Create.Params" );
-	p.Description = Env.Department;
+	p.Description = this.Department;
 	Call ( "Catalogs.Departments.Create", p );
+	#endregion
 	
-	// ***********************************
-	// Create Expense
-	// ***********************************
+	#region newExpense
+	Call ( "Catalogs.Expenses.Create", this.Expense );
+	#endregion
 	
-	Call ( "Catalogs.Expenses.Create", Env.Expense );
-	
-	// ***********************************
-	// Create Vendor
-	// ***********************************
-	
+	#region newVendor
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
-	p.Description = Env.Vendor;
+	p.Description = this.Vendor;
 	p.Currency = "CAD";
 	Call ( "Catalogs.Organizations.CreateVendor", p );
+	#endregion
 	
-	// ***********************************
-	// Create Customs
-	// ***********************************
-	
+	#region newCustoms
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
-	p.Description = Env.Customs;
+	p.Description = this.Customs;
 	Call ( "Catalogs.Organizations.CreateVendor", p );
+	#endregion
 	
-	// ***********************************
-	// Create Customs groups
-	// ***********************************
-	
+	#region newCustomsGroup
 	p = Call ( "Catalogs.CustomsGroups.Create.Params" );
-	p.Description = Env.CustomsGroup;
-	p.Payments = Env.Payments;
+	p.Description = this.CustomsGroup;
+	p.Payments = this.Payments;
 	Call ( "Catalogs.CustomsGroups.Create", p );
+	#endregion
 	
-	// ***********************************
-	// Create Items
-	// ***********************************
-	
+	#region newItems
 	p = Call ( "Catalogs.Items.Create.Params" );
-	p.Description = Env.Item1;
+	p.Description = this.Item1;
     p.UseCustomsGroup = true;
-    p.CustomsGroup = Env.CustomsGroup;
+    p.CustomsGroup = this.CustomsGroup;
     p.CountPackages = false;
 	p.CostMethod = "FIFO";
 	Call ( "Catalogs.Items.Create", p );
 	
 	p = Call ( "Catalogs.Items.Create.Params" );
-	p.Description = Env.Item2;
+	p.Description = this.Item2;
     p.UseCustomsGroup = true;
-    p.CustomsGroup = Env.CustomsGroup;
+    p.CustomsGroup = this.CustomsGroup;
     p.CountPackages = true;
 	p.CostMethod = "FIFO";
 	Call ( "Catalogs.Items.Create", p );
+	#endregion
 
- 	// ***********************************
-	// Create Vendor Invoice
-	// ***********************************
-	
+	#region newVendorInvoice
 	p = Call ( "Documents.VendorInvoice.Buy.Params" );
-	p.Date = Env.Date - 86400;
-	p.Vendor = Env.Vendor;
-	p.Warehouse = Env.Warehouse;
-	p.Items = Env.Goods;
+	p.Date = this.Date - 86400;
+	p.Vendor = this.Vendor;
+	p.Warehouse = this.Warehouse;
+	p.Items = this.Goods;
 	p.Import = true;
 	p.ID = id;
 	Call ( "Documents.VendorInvoice.Buy", p );
@@ -207,6 +184,8 @@ Procedure createEnv ( Env )
 	Put ( "#Memo", id );
 	Put ( "#Rate", "15.1779" );
 	Click ( "#FormPost" );
+	#endregion
+
 	CloseAll ();
 	
 	RegisterEnvironment ( id );

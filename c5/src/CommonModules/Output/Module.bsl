@@ -41,7 +41,7 @@ Function FormatStr ( Str, Params ) export
 
 EndFunction
 
-Procedure PutMessage ( Text, Params, Field, DataKey, DataPath ) export
+Procedure PutMessage ( Text, Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	msg = new UserMessage ();
 	s = Output.FormatStr ( Text, Params );
@@ -2784,6 +2784,14 @@ Function Meeting () export
 EndFunction
 
 &AtServer
+Function Event () export
+
+	text = NStr ("en = 'Event'; ro = 'Eveniment'; ru = 'Событие'" );
+	return text;
+
+EndFunction
+
+&AtServer
 Function TimeEntryRow ( Params ) export
 
 	text = NStr ( "en='%LineNumber) %TimeStart - %TimeEnd = %Duration, %Description, task: %TaskDescription'; ro='%LineNumber) %TimeStart - %TimeEnd = %Duration, %Description, sarcina: %TaskDescription'; ru='%LineNumber) %TimeStart - %TimeEnd = %Duration, %Description, задача: %TaskDescription'" );
@@ -5013,6 +5021,14 @@ Procedure ReplaceBarcode ( Module, CallbackParams = undefined, Params = undefine
 
 EndProcedure
 
+&AtClient
+Function FocusCamera () export
+	
+	text = NStr ( "en = 'Focus camera on barcode';ro = 'Focalizați camera pe codul de bare';ru = 'Наведите камеру на штрихкод'" );
+	return text;
+	
+EndFunction
+
 &AtServer
 Procedure InteractiveCreationRestricted ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
@@ -6156,14 +6172,6 @@ Function RemoteActionApplied () export
 EndFunction
 
 &AtClient
-Function Meeting () export
-
-	text = NStr ( "en='Meeting'; ro='Întâlnire'; ru='Встреча'" );
-	return text;
-
-EndFunction
-
-&AtClient
 Function Room () export
 
 	text = NStr ( "en='Room'; ro='Cameră'; ru='Помещение'" );
@@ -6954,14 +6962,6 @@ Procedure PrintFormsTabularSectionIsEmpty ( Params = undefined, Field = "", Data
 EndProcedure
 
 &AtClient
-Procedure CustomsGroupAlreadyExists ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = NStr ( "en='It is forbidden to duplicate customs groups, customs group: %CustomsGroup, was deleted'; ro='Duplicarea grupurilor vamale nu este permisă, grupul vamal introdus: %CustomsGroup a fost șters.'; ru='Не допускается дублирование таможенных групп, введенная таможенная группа: %CustomsGroup была удалена.'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
-&AtClient
 Procedure ChargeAlreadyExist ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='It is forbidden to duplicate customs charges, customs charge: %Charge, was deleted'; ro='Dublarea plăților vamale nu este permisă, plata vamală introdusă: %Charge a fost eliminată.'; ru='Не допускается дублирование таможенных выплат, введенная таможенная выплата: %Charge была удалена.'" );
@@ -6986,7 +6986,7 @@ Procedure OnlyImportAllowed ( Params = undefined, Field = "", DataKey = undefine
 EndProcedure
 
 &AtServer
-Procedure FillingDataNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+Procedure FillingDataWasNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='Filling data was not found'; ro='Nu au fost găsite date pentru completare'; ru='Данные для заполнения не найдены'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
@@ -7263,14 +7263,6 @@ Function FormationEmployeeDebts () export
 
 	text = NStr ( "en='Formation employee debts'; ro='Formarea obligațiilor față de persoanele responsabile'; ru='Формирование обязательства подотчетным лицам'" );
 	return text;
-
-EndFunction
-
-&AtServer
-Function ItemsNotFoundByCustomsGroup ( Params ) export
-
-	s = NStr ( "en='By customs group: %CustomsGroup and vendor invoice: %Invoice, filling data are not found'; ro='În funcție de grupul vamal: %CustomsGroup și intrare: %Invoice, nu au fost găsite date pentru completare'; ru='По таможенной группе: %CustomsGroup и поступлению: %Invoice, данные для заполнения не найдены'" );
-	return Output.FormatStr ( s, Params );
 
 EndFunction
 
@@ -7592,7 +7584,7 @@ EndFunction
 &AtServer
 Function DailyRate ( Params = undefined ) export
 	
-	s = NStr ("en='%AverageDailyIncome ( Average daily income ) * %ScheduledDays ( Scheduled working days ) / ( %CalendarDays ( Calendar days ) - %BaseHolidays ( Holidays ) ) = %DailyRate';ro='%AverageDailyIncome ( Venitul mediu zilnic ) * %ScheduledDays ( Zile lucrate programate ) / ( %CalendarDays ( Zile calendaristice ) - %BaseHolidays ( Sărbătoare ) ) = %DailyRate';ru='%AverageDailyIncome ( Средний доход в день ) * %ScheduledDays ( Рабочие дни по графику ) / ( %CalendarDays ( Календарные дни ) - %BaseHolidays ( Праздничные дни ) ) = %DailyRate'" );
+	s = NStr ("en = '%AverageDailyIncome ( Average daily income ) * %ScheduledDays ( Scheduled working days ) / ( %CalendarDays ( Calendar days ) - %BaseHolidays ( Calendar holidays ) ) = %DailyRate'; ro = '%AverageDailyIncome ( Venitul mediu zilnic ) * %ScheduledDays ( Zile lucrate programate ) / ( %CalendarDays ( Zile calendaristice ) - %BaseHolidays ( Calendaristice Sărbătoare ) ) = %DailyRate'; ru = '%AverageDailyIncome ( Средний доход в день ) * %ScheduledDays ( Рабочие дни по графику ) / ( %CalendarDays ( Календарные дни ) - %BaseHolidays ( Календарные праздничные дни ) ) = %DailyRate'" );
 	return Output.FormatStr ( s, Params );	
 	
 EndFunction
@@ -7973,3 +7965,76 @@ Function BillPrintingError ( Params ) export
 	return Output.FormatStr ( text, Params );
 
 EndFunction
+
+&AtServer
+Function ErrorCheckingRetailSales ( Params = undefined ) export
+
+	text = NStr ( "en = 'Check filling errors %Document: %Error';ro = 'Verificați erorile de umplere %Document: %Error';ru = 'Обнаружены ошибки заполнения %Document: %Error'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ErrorPostingRetailSales ( Params = undefined ) export
+
+	text = NStr ( "en = 'Could not post %Document, error description: %Error';ro = 'Nu s-a putut posta %Document, descrierea erorii: %Error';ru = 'Не удалось провести %Document, описание ошибки: %Error'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ErrorUnpostingRetailSales ( Params = undefined ) export
+
+	text = NStr ( "en = 'Could not undo posting %Document, error description: %Error';ro = 'Nu s-a putut anula postarea %Document, descrierea erorii: %Error';ru = 'Не удалось отменить проведение %Document, описание ошибки: %Error'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ErrorSavingRetailSales ( Params = undefined ) export
+
+	text = NStr ( "en = 'Could not save %Document, error description: %Error';ro = 'Nu s-a putut salva %Document, descrierea erorii: %Error';ru = 'Не удалось записать %Document, описание ошибки: %Error'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtClient
+Procedure ProcessCompleted ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "ProcessCompleted" ) export
+
+	text = NStr ( "en='Operation completed'; ro='Operația este finalizată!'; ru='Операция завершена!'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtServer
+Procedure RetailSalesNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'No retail sales for the selected day found!';ro = 'Nu s-au găsit vânzări cu amănuntul pentru ziua selectată!';ru = 'Розничные продажи за выбранный день не найдены!'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure RetailSalesPosted ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Changes are not allowed, %Document has been posted';ro = 'Modificările nu sunt permise, %Document a fost postat';ru = 'Изменения не допускаются, %Document уже был проведен'" );
+	putMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure RetailSalesRecalculationRequired ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The document needs to be recalculated before it can be processed';ro = 'Documentul trebuie recalculat înainte de a putea fi prelucrat';ru = 'Перед проведением документа требуется его перерасчет'" );
+	putMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure RetailSalesInteractiveCreationError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The operation is formed in the menu Sales / Retail Sales / Accounting';ro = 'Operațiunea se formează în meniul Vânzări / Vânzări cu amănuntul / Contabilitate';ru = 'Формирование операции производится в меню Продажи / Продажи в розницу / Отражение в учете'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

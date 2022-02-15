@@ -2,12 +2,21 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Appearance.Apply ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
 	endif;
 	StandardButtons.Arrange ( ThisObject );
+	readAppearance ();
+	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
@@ -23,6 +32,17 @@ Procedure fillNew ()
 	endif;
 	
 EndProcedure 
+
+&AtServer
+Procedure readAppearance ()
+
+	rules = new Array ();
+	rules.Add ( "
+	|Remote enable Object.Register
+	|" );
+	Appearance.Read ( ThisObject, rules );
+
+EndProcedure
 
 // *****************************************
 // *********** Group form
@@ -51,3 +71,20 @@ Procedure applyAccount ()
 	endif;
 	
 EndProcedure 
+
+&AtClient
+Procedure RegisterOnChange ( Item )
+	
+	applyRegister ();
+
+EndProcedure
+
+&AtClient
+Procedure applyRegister ()
+	
+	if ( not Object.Register ) then
+		Object.Remote = false;
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Register" );
+
+EndProcedure

@@ -93,8 +93,10 @@ Procedure readAppearance ()
 	|and ( Object.Currency <> LocalCurrency or ContractCurrency <> LocalCurrency );
 	|Links show ShowLinks;
 	|CreatePayment show BalanceDue <> 0;
-	|VAT ItemsVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal FixedAssetsVATCode FixedAssetsVAT FixedAssetsTotal IntangibleAssetsVATCode IntangibleAssetsVAT IntangibleAssetsTotal AccountsVATCode AccountsVAT AccountsTotal show Object.VATUse > 0;
+	|VAT ItemsVATAccount FixedAssetsVATAccount IntangibleAssetsVATAccount AccountsVATAccount
+	|	ItemsVATCode ItemsVAT FixedAssetsVATCode FixedAssetsVAT IntangibleAssetsVATCode IntangibleAssetsVAT
+	|	AccountsVATCode AccountsVAT show Object.VATUse > 0;
+	|ItemsTotal FixedAssetsTotal IntangibleAssetsTotal AccountsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice show UseSocial;
 	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|FormInvoice show filled ( InvoiceRecord );

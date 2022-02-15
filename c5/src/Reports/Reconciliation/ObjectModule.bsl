@@ -17,6 +17,8 @@ var CurrencyDefined;
 var CurrencyPresentation;
 var Ready;
 var Dictionary;
+var DocumentsPresentation;
+var EnumsPresentation;
 
 Procedure OnCheck ( Cancel ) export
 	
@@ -57,7 +59,6 @@ EndFunction
 Procedure AfterOutput () export
 
 	init ();
-	fillDictionary ();
 	print ();
 
 EndProcedure
@@ -72,22 +73,9 @@ Procedure init ()
 	SQL.Init ( Env );
 	Env.Insert ( "T", GetTemplate ( "Reconciliation" + LanguageCode ) );	
 	TabDoc = Params.Result;
-	
-EndProcedure
-
-Procedure fillDictionary ()
-	
 	Dictionary = new Map ();
-	t = GetCommonTemplate ( "Documents" );
-	suffix = "|" + LanguageCode;
-	for each area in t.Areas do
-		if ( area.AreaType = SpreadsheetDocumentCellAreaType.Columns ) then
-			continue;
-		endif;
-		name = area.Name;
-		type = Type ( "DocumentRef." + name );
-		Dictionary [ type ] = t.Area ( name + suffix ).Text;
-	enddo;
+	DocumentsPresentation = GetCommonTemplate ( "Documents" );
+	EnumsPresentation = GetCommonTemplate ( "Enums" );
 	
 EndProcedure
 
@@ -124,7 +112,8 @@ EndProcedure
 
 Procedure sqlFields ()
 	
-	s = "// Roles
+	s = "
+	|// Roles
 	|select Roles.Responsible as Responsible, Roles.Role as Role
 	|into Roles
 	|from (
@@ -202,7 +191,23 @@ EndProcedure
 Procedure sqlRecords ()
 	
 	s = "
-	|select Records.Recorder as Document, valuetype ( Records.Recorder ) as Operation, max ( Records.Period ) as Date,
+	|select Invoices.Base as Document, cast ( Invoices.Base as Document.Sale ).Method as Method,
+	|	cast ( Invoices.Base as Document.Sale ).Date as Date, Invoices.Date as ReferenceDate,
+	|	Invoices.Number as Number, Invoices.Number as Reference, Invoices.Amount as Dr, Invoices.Amount as Cr";
+	if ( Detailed ) then
+		s = s + ", cast ( Invoices.Customer as Catalog.Organizations ).CustomerContract as Contract";
+	endif;
+	s = s + "
+	|into Invoices
+	|from Document.InvoiceRecord as Invoices
+	|where not Invoices.DeletionMark
+	|and Invoices.Customer = &Organization
+	|and Invoices.Company = &Company
+	|and Invoices.Status = value ( Enum.FormStatuses.Printed )
+	|and Invoices.Base refs Document.Sale
+	|and cast ( Invoices.Base as Document.Sale ).Date between &DateStart and &DateEnd
+	|;
+	|select Records.Recorder as Document, max ( Records.Period ) as Date,
 	|	Records.Recorder.ReferenceDate as ReferenceDate, Records.Recorder.Number as Number,
 	|	Records.Recorder.Reference as Reference
 	|";
@@ -245,14 +250,22 @@ Procedure sqlRecords ()
 	s = s + "
 	|;
 	|// #Records
-	|select Records.Document as Document, Records.Operation as Operation, Records.Date as Date,
-	|	Records.ReferenceDate as ReferenceDate, Records.Number as Number, Records.Reference as Reference,
-	|	Records.Dr as Dr, Records.Cr as Cr";
+	|select Records.Document as Document, Records.Document.Method as Method,
+	|	Records.Date as Date, Records.ReferenceDate as ReferenceDate, Records.Number as Number,
+	|	Records.Reference as Reference, Records.Dr as Dr, Records.Cr as Cr";
 	if ( Detailed ) then
 		s = s + ", Records.Contract as Contract";
 	endif;
 	s = s + "
 	|from Records as Records
+	|union all
+	|select Invoices.Document, Invoices.Method, Invoices.Date, Invoices.ReferenceDate,
+	|	Invoices.Number, Invoices.Reference, Invoices.Dr, Invoices.Cr";
+	if ( Detailed ) then
+		s = s + ", Invoices.Contract";
+	endif;
+	s = s + "
+	|from Invoices as Invoices
 	|order by Date
 	|";
 	Env.Selection.Add ( s );	
@@ -303,6 +316,13 @@ Procedure sqlContracts ()
 	endif;
 	s = s + "
 	|	from Records as Records
+	|	union all
+	|	select Invoices.Dr, Invoices.Cr, 0, 0, 0, 0";
+	if ( Detailed ) then
+		s = s + ", Invoices.Contract";
+	endif;
+	s = s + "
+	|	from Invoices as Invoices
 	|) as Records
 	|";
 	if ( Detailed ) then
@@ -432,23 +452,25 @@ Procedure putDocuments ( ContractRow )
 	area = Env.T.GetArea ( "Row");
 	p = area.Parameters;
 	line = 1;
+	description = new Array ();
 	for each row in table do
 		p.Fill ( row );
 		p.Line = line;
 		p.Number = ? ( ValueIsFilled ( row.Reference ), row.Reference, row.Number );
 		p.Date = Conversion.DateToString ( row.Date );
-		operationType = row.Operation;
-		operation = Dictionary [ operationType ];
-		if ( operation = undefined ) then
-			operation = String ( operationType );
-		endif;
-		referenceDate = row.ReferenceDate;
+		operation = translateDocument ( row.Document );
+		referenceDate = BegOfDay ( row.ReferenceDate );
+		description.Clear ();
+		description.Add ( operation );
 		if ( ValueIsFilled ( referenceDate )
 			and referenceDate <> BegOfDay ( row.Date ) ) then
-			p.Operation = operation + " - " + Format ( referenceDate, "DLF=D" );
-		else
-			p.Operation = operation;
+			description.Add ( " - " + Format ( referenceDate, "DLF=D" ) );
 		endif;
+		method = row.Method;
+		if ( method <> null ) then
+			description.Add ( ", " + translateEnum ( method ) );
+		endif;
+		p.Operation = StrConcat ( description );
 		if ( Ready ) then
 			p.DrThey = row.Cr;
 			p.CrThey = row.Dr;
@@ -458,6 +480,39 @@ Procedure putDocuments ( ContractRow )
 	enddo;
 	
 EndProcedure
+
+Function translateDocument ( Document )
+
+	type = TypeOf ( Document );
+	result = Dictionary [ type ];
+	if ( result = undefined ) then
+		name = Metadata.FindByType ( type ).Name;
+		try
+			result = DocumentsPresentation.Area ( name + "|" + LanguageCode ).Text;
+		except
+			result = String ( type );
+		endtry;
+		Dictionary [ type ] = result;
+	endif;
+	return result;
+
+EndFunction
+
+Function translateEnum ( Item )
+
+	result = Dictionary [ Item ];
+	if ( result = undefined ) then
+		name = Metadata.FindByType ( TypeOf ( Item ) ).Name + Conversion.EnumItemToName ( Item );
+		try
+			result = EnumsPresentation.Area ( name + "|" + LanguageCode ).Text;
+		except
+			result = String ( Item );
+		endtry;
+		Dictionary [ Item ] = result;
+	endif;
+	return result;
+
+EndFunction
 
 Procedure putFooter ()
 

@@ -23,6 +23,7 @@
   <useStandardCommands>true</useStandardCommands>
   <inputByString>Catalog.PaymentLocations.StandardAttribute.Description</inputByString>
   <inputByString>Catalog.PaymentLocations.StandardAttribute.Code</inputByString>
+  <searchStringModeOnInputByString>AnyPart</searchStringModeOnInputByString>
   <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
   <standardAttributes>
     <dataHistory>Use</dataHistory>
@@ -206,6 +207,41 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="96746048-0bad-4f82-b7e2-2fb507ea5670">
+    <name>CashFlow</name>
+    <synonym>
+      <key>en</key>
+      <value>Cash Flow</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>ДДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Fluxul de numerar</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.CashFlows</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Cash flow</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Статья движений денежных средств</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Articolul fluxurilor de trezorerie</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="95ddd083-e9ca-4d72-8a8f-94fcdcaca8c1">
     <name>Class</name>
     <synonym>
@@ -275,6 +311,125 @@
     <fillValue xsi:type="core:ReferenceValue">
       <value>Enum.PaymentMethods.EmptyRef</value>
     </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d77d7aca-a780-4d4d-9321-684e36f74543">
+    <name>Register</name>
+    <synonym>
+      <key>en</key>
+      <value>A cash register is used</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Используется кассовый аппарат</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Se utilizează o casă de marcat</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>When selling goods and services, a cash register is used</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Используется кассовый аппарат при реализации товаров и услуг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>La vânzarea de bunuri și servicii, se utilizează o casă de marcat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b638afa8-33b3-4418-af49-68297b29b184">
+    <name>Remote</name>
+    <synonym>
+      <key>en</key>
+      <value>Remote</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Удаленное</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Non-locală</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>A remote store, department, or retail outlet</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Удаленный магазин, отдел или торговая точка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Un magazin, un departament sau un punct de vânzare cu amănuntul la distanță</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="8a613bf3-ac02-4fa0-933b-f3eda51962b0">
+    <name>TransitAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Transit Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Cash in transit</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Деньги в пути</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numerar în tranzit</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.CreditCard</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>

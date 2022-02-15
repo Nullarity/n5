@@ -95,7 +95,8 @@ Procedure update ( Object, Reference, CopyOf = undefined )
 		target.Location = entry.Location;
 		target.Reason = entry.Content;
 	elsif ( type = Type ( "DocumentRef.PayEmployees" )
-		or type = Type ( "DocumentRef.PayAdvances" ) ) then
+		or type = Type ( "DocumentRef.PayAdvances" )
+		or type = Type ( "DocumentRef.RetailSales" ) ) then
 		target.Currency = Application.Currency ();
 		target.Amount = Object.Amount;
 		target.Location = Object.Location;
@@ -128,6 +129,8 @@ Procedure update ( Object, Reference, CopyOf = undefined )
 			elsif ( type = Type ( "DocumentRef.PayEmployees" )
 				or type = Type ( "DocumentRef.PayAdvances" ) ) then
 				target.Receiver = Object.Ref;
+			elsif ( type = Type ( "DocumentRef.RetailSales" ) ) then
+				target.Giver = presentation ( DF.Pick ( Object.Creator, "Employee" ) );
 			elsif ( type = Type ( "DocumentRef.Entry" ) ) then
 				subject = entry.Subject;
 				name = presentation ( subject );
@@ -167,12 +170,17 @@ Function disconnect ( Object, Reference )
 	method = Object.Method;
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" )
-		or type = Type ( "DocumentRef.Refund" )
-		or type = Type ( "DocumentRef.VendorPayment" )
+		or type = Type ( "DocumentRef.Refund" ) ) then
+		return method <> Enums.PaymentMethods.Cash
+			or DF.Pick ( Object.Location, "Register" );
+	elsif ( type = Type ( "DocumentRef.VendorPayment" )
 		or type = Type ( "DocumentRef.VendorRefund" )
 		or type = Type ( "DocumentRef.PayEmployees" )
 		or type = Type ( "DocumentRef.PayAdvances" ) ) then
 		return method <> Enums.PaymentMethods.Cash;
+	elsif ( type = Type ( "DocumentRef.RetailSales" ) ) then
+		return method <> Enums.PaymentMethods.Cash
+			or DF.Pick ( Object.Location, "Remote" );
 	elsif ( type = Type ( "DocumentRef.Entry" ) ) then
 		orderType = TypeOf ( Reference );
 		if ( orderType = Type ( "DocumentRef.CashReceipt" ) ) then

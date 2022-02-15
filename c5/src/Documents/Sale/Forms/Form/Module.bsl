@@ -1,3 +1,15 @@
+&AtServer
+var Env;
+&AtServer
+var Copying;
+&AtServer
+var Base;
+&AtServer
+var BaseExists;
+&AtServer
+var BaseMetadata;
+&AtServer
+var BaseMetadataName;
 &AtClient
 var ItemsRow;
 
@@ -7,33 +19,303 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	InvoiceRecords.Read ( ThisObject );
+	findRetailSales ();
+	calcChange ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
 &AtServer
+Procedure findRetailSales ()
+	
+	ref = Documents.RetailSales.Fetch ( Object.Date, Object.Warehouse, Object.Location, Object.Method );
+	RetailSalesPosted = ref <> undefined;
+
+EndProcedure
+
+&AtClientAtServerNoContext
+Procedure calcChange ( Form )
+	
+	object = Form.Object;
+	Form.Change = Max ( 0, object.Taken - object.Amount );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	if ( Object.Ref.IsEmpty () ) then
+	init ();
+	if ( isNew () ) then
 		DocumentForm.Init ( Object );
-		fillNew ();
+		if ( BaseExists and not Copying ) then
+			if ( BaseMetadata = Metadata.Documents.Invoice ) then
+				fillByInvoice ();
+			elsif ( BaseMetadata = Metadata.Documents.Return ) then
+				fillByReturn ();
+			endif;
+		else
+			fillNew ();
+		endif;
 	endif; 
 	setAccuracy ();
+	setLinks ();
 	Options.Company ( ThisObject, Object.Company );
-	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
 
 &AtServer
+Procedure init ()
+	
+	Copying = not Parameters.CopyingValue.IsEmpty ();
+	getBase ();
+
+EndProcedure
+
+&AtServer
+Procedure changeBase ( Value )
+	
+	Object.Base = Value;
+	Base = undefined;
+	getBase ();
+
+EndProcedure
+
+&AtServer
+Procedure getBase ()
+	
+	if ( Base <> undefined ) then
+		return;
+	endif;
+	basis = undefined;
+	Parameters.Property ( "Basis", basis );
+	Base = ? ( Object.Base = undefined, basis, Object.Base );
+	BaseExists = Base <> undefined;
+	if ( BaseExists ) then
+		BaseMetadata = Metadata.FindByType ( TypeOf ( Base ) );
+		BaseMetadataName = BaseMetadata.Name;
+	else
+		BaseMetadata = undefined;
+		BaseMetadataName = undefined;
+	endif;
+
+EndProcedure
+
+&AtServer
+Function isNew ()
+	
+	return Object.Ref.IsEmpty ();
+	
+EndFunction
+
+#region Filling
+
+&AtServer
+Procedure fillByInvoice ()
+	
+	Object.Base = Base;
+	setEnv ();
+	sqlInvoiceFields ();
+	sqlInvoiceItems ();
+	SQL.Perform ( Env );
+	FillPropertyValues ( Object, Env.Fields );
+	Object.Items.Load ( Env.Items );
+	InvoiceForm.CalcTotals ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure setEnv ()
+	
+	Env = new Structure ();
+	SQL.Init ( Env );
+	Env.Q.SetParameter ( "Base", Base );
+	Env.Q.SetParameter ( "Me", SessionParameters.User );
+	
+EndProcedure
+
+&AtServer
+Procedure sqlInvoiceFields ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Prices as Prices, Documents.VATUse as VATUse,
+	|	Documents.Warehouse as Warehouse,
+	|	Settings.PaymentLocation as Location, Settings.PaymentLocation.Method as Method
+	|from Document.Invoice as Documents
+	|	//
+	|	// Settings
+	|	//
+	|	left join Catalog.UserSettings as Settings
+	|	on Settings.Owner = &Me
+	|	and Settings.Company = Documents.Company
+	|where Documents.Ref = &Base
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
+&AtServer
+Procedure sqlInvoiceItems ()
+	
+	s = "
+	|// #Items
+	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Package as Package, Items.Capacity as Capacity,
+	|	Items.DiscountRate as DiscountRate, Items.Feature as Feature, Items.Quantity as Quantity,
+	|	Items.QuantityPkg as QuantityPkg, Items.VATCode as VATCode, Items.VATRate as VATRate,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Discount
+	|		else cast ( Items.Discount * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Discount,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Price
+	|		else cast ( Items.Price * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Price,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.VAT
+	|		else cast ( Items.VAT * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as VAT,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Total
+	|		else cast ( Items.Total * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Total,
+	|	case when Items.Ref.VATUse = 2 then
+	|			case Items.Ref.Currency
+	|				when Constants.Currency then Items.Amount
+	|				else cast ( Items.Total * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|					- cast ( Items.VAT * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|			end
+	|		else
+	|			case Items.Ref.Currency
+	|				when Constants.Currency then Items.Amount
+	|				else cast ( Items.Amount * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|			end
+	|	end as Amount
+	|from Document.Invoice.Items as Items
+	|	//
+	|	// Constants
+	|	//
+	|	join Constants
+	|	on true
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
+&AtServer
+Procedure fillByReturn ()
+	
+	Object.Base = Base;
+	setEnv ();
+	sqlReturnFields ();
+	sqlReturnItems ();
+	SQL.Perform ( Env );
+	FillPropertyValues ( Object, Env.Fields );
+	Object.Items.Load ( Env.Items );
+	InvoiceForm.CalcTotals ( ThisObject );
+	Object.Return = true;
+	revert ( Object );
+
+EndProcedure
+
+&AtServer
+Procedure sqlReturnFields ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.VATUse as VATUse,
+	|	Documents.Warehouse as Warehouse, Invoices.Invoice.Prices as Prices,
+	|	Settings.PaymentLocation as Location, Settings.PaymentLocation.Method as Method
+	|from Document.Return as Documents
+	|	//
+	|	// Settings
+	|	//
+	|	left join Catalog.UserSettings as Settings
+	|	on Settings.Owner = &Me
+	|	and Settings.Company = Documents.Company
+	|	//
+	|	// First Invoice
+	|	//
+	|	left join Document.Return.Items as Invoices
+	|	on Invoices.Ref = &Base
+	|	and Invoices.LineNumber = 1
+	|where Documents.Ref = &Base
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
+&AtServer
+Procedure sqlReturnItems ()
+	
+	s = "
+	|// #Items
+	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Package as Package, Items.Capacity as Capacity,
+	|	Items.DiscountRate as DiscountRate, Items.Feature as Feature, Items.Quantity as Quantity,
+	|	Items.QuantityPkg as QuantityPkg, Items.VATCode as VATCode, Items.VATRate as VATRate,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Discount
+	|		else cast ( Items.Discount * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Discount,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Price
+	|		else cast ( Items.Price * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Price,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.VAT
+	|		else cast ( Items.VAT * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as VAT,
+	|	case Items.Ref.Currency
+	|		when Constants.Currency then Items.Total
+	|		else cast ( Items.Total * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|	end as Total,
+	|	case when Items.Ref.VATUse = 2 then
+	|			case Items.Ref.Currency
+	|				when Constants.Currency then Items.Amount
+	|				else cast ( Items.Total * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|					- cast ( Items.VAT * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|			end
+	|		else
+	|			case Items.Ref.Currency
+	|				when Constants.Currency then Items.Amount
+	|				else cast ( Items.Amount * Items.Ref.Rate / Items.Ref.Factor as Number ( 15, 2 ) )
+	|			end
+	|	end as Amount
+	|from Document.Return.Items as Items
+	|	//
+	|	// Constants
+	|	//
+	|	join Constants
+	|	on true
+	|where Items.Ref = &Base
+	|order by Items.LineNumber
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure
+
+#endregion
+
+&AtServer
 Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|Links show ShowLinks;
 	|ThisObject lock Object.Posted;
+	|Warning show RetailSalesPosted;
+	|WarningTaxInvoice show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|VAT ItemsVATCode ItemsVAT show Object.VATUse > 0;
 	|ItemsTotal show Object.VATUse = 2;
+	|Taken Change show not ( Object.Posted or Object.Return ) and Object.Method = Enum.PaymentMethods.Cash;
+	|FormInvoice show filled ( InvoiceRecord );
+	|NewInvoiceRecord show Object.Base = undefined and ( FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus ) );
+	|FormInvoice show filled ( InvoiceRecord );
+	|GroupItems GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -42,8 +324,18 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 	
-	copy = Parameters.CopyingValue;
-	if ( copy.IsEmpty () ) then
+	Object.Taken = 0;
+	if ( Copying ) then
+		if ( BaseExists ) then
+			changeBase ( undefined );
+		else
+			returning = not DF.Pick ( Parameters.CopyingValue, "Return" );
+			if ( returning ) then
+				Object.Return = true;
+				revert ( Object );
+			endif;
+		endif;
+	else
 		if ( Object.Warehouse.IsEmpty () ) then
 			settings = Logins.Settings ( "Company, Warehouse, Warehouse.Prices as Prices,
 			|PaymentLocation, PaymentLocation.Method as Method" );
@@ -62,12 +354,6 @@ Procedure fillNew ()
 		endif;
 		if ( Metadata.Documents.Sale.Attributes.Method.ChoiceParameters [ 0 ].Value.Find ( method ) <> undefined ) then
 			Object.Method = method;
-		endif;
-	else
-		returning = not DF.Pick ( copy, "Return" );
-		if ( returning ) then
-			Object.Return = true;
-			revert ( Object );
 		endif;
 	endif;
 	
@@ -98,6 +384,7 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 		Computations.Total ( Row, object.VATUse, CalcVAT );
 	endif;
 	InvoiceForm.CalcTotals ( Form );
+	calcChange ( Form );
 
 EndProcedure 
 
@@ -105,7 +392,87 @@ EndProcedure
 Procedure setAccuracy ()
 	
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
-	Options.SetAccuracy ( ThisObject, "ItemsTotalQuantityPkg, ItemsTotalQuantity", false );
+	
+EndProcedure 
+
+&AtServer
+Procedure setLinks ()
+	
+	SQL.Init ( Env );
+	sqlLinks ();
+	if ( Env.Selection.Count () = 0 ) then
+		ShowLinks = false;
+	else
+		q = Env.Q;
+		q.SetParameter ( "Ref", Object.Ref );
+		q.SetParameter ( "Base", Object.Base );
+		SQL.Perform ( Env, false );
+		setURLPanel ();
+	endif;
+	Appearance.Apply ( ThisObject, "ShowLinks" );
+
+EndProcedure 
+
+&AtServer
+Procedure sqlLinks ()
+
+	getBase ();
+	if ( BaseExists ) then
+		s = "
+		|// #Base
+		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+		|from Document." + BaseMetadataName + " as Documents
+		|where Documents.Ref = &Base
+		|";
+		Env.Selection.Add ( s );
+	endif;
+	if ( isNew () ) then
+		return;
+	endif; 
+	s = "
+	|// #RetailSales
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.RetailSales as Documents
+	|	//
+	|	// Sale
+	|	//
+	|	join Document.Sale as Sales
+	|	on Sales.Ref = &Ref
+	|	and Sales.Warehouse = Documents.Warehouse
+	|	and Sales.Location = Documents.Location
+	|	and Sales.Method = Documents.Method
+	|where Documents.Date between beginofperiod ( Sales.Date, day ) and endofperiod ( Sales.Date, day )
+	|and not Documents.DeletionMark
+	|;
+	|// #InvoiceRecords
+	|select Documents.Ref as Document, Documents.DeliveryDate as Date, Documents.Number as Number
+	|from Document.InvoiceRecord as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure setURLPanel ()
+	
+	meta = Metadata.Documents;
+	parts = new Array ();
+	if ( BaseExists ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Base, BaseMetadata ) );
+	endif; 
+	if ( not isNew () ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.RetailSales, meta.RetailSales ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, meta.InvoiceRecord ) );
+	endif; 
+	s = URLPanel.Build ( parts );
+	if ( s = undefined ) then
+		ShowLinks = false;
+	else
+		ShowLinks = true;
+		Links = s;
+	endif; 
 	
 EndProcedure 
 
@@ -115,8 +482,16 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	if ( SelectedValue.Operation = Enum.ChoiceOperationsPickItems () ) then
 		addSelectedItems ( SelectedValue );
 		updateTotals ( ThisObject );
+		activateTaken ();
 	endif; 
 	
+EndProcedure
+
+&AtClient
+Procedure activateTaken ()
+	
+	CurrentItem = Items.Taken;
+
 EndProcedure
 
 &AtClient
@@ -136,6 +511,9 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	if ( EventName = Enum.MessageBarcodeScanned ()
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
+	elsif ( EventName = Enum.InvoiceRecordsWrite ()
+		and Source.Ref = InvoiceRecord ) then
+		readPrinted ();
 	endif; 
 	
 EndProcedure
@@ -173,6 +551,33 @@ Procedure addItem ( Fields )
 EndProcedure 
 
 &AtClient
+Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
+	
+	readNewInvoices ( NewObject );
+	setLinks ();
+	
+EndProcedure
+
+&AtServer
+Procedure readNewInvoices ( NewObject ) 
+
+	type = TypeOf ( NewObject );
+	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
+		InvoiceRecords.Read ( ThisObject );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus" );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure readPrinted ()
+	
+	InvoiceRecords.Read ( ThisObject );
+	Appearance.Apply ( ThisObject, "FormStatus" );
+	
+EndProcedure 
+
+&AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
 	
 	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
@@ -188,6 +593,17 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 EndProcedure
 
 &AtServer
+Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	if ( Object.Ref.IsEmpty () ) then
+		return;
+	endif;
+	readPrinted ();
+	Appearance.Apply ( ThisObject, "InvoiceRecord" );
+	
+EndProcedure
+
+&AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	Appearance.Apply ( ThisObject, "Object.Posted" );	
@@ -200,13 +616,15 @@ Procedure AfterWrite ( WriteParameters )
 	if ( WriteParameters.WriteMode = DocumentWriteMode.Posting ) then
 		printBill ();
 	endif;
+	Notify ( Enum.MessageSaleIsSaved (), Object.Ref );
+	
 	
 EndProcedure
 
 &AtClient
 async Procedure printBill ()
 	
-	if ( not Object.Print ) then
+	if ( not Object.Posted ) then
 		return;
 	endif;
 	folder = Application.ReceipsFolder ();
@@ -221,7 +639,9 @@ async Procedure printBill ()
 	try
 		await text.WriteAsync ( file );
 	except
-		error = ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+		// 8.3.20.1674 Bug workaroud: BriefErrorDescription doesn't exists as a method
+		// Will use russian method:
+		error = ErrorProcessing.КраткоеПредставлениеОшибки ( ErrorInfo () );
 		unpost ();
 		raise Output.BillPrintingError ( new Structure ( "Error", error ) );
 	endtry;
@@ -254,14 +674,39 @@ Function billData ()
 		+ tax
 		+";0;0;";
 		data.Add ( s );
-	КонецЦикла;
-	data.Add ( "T,1,______,_,__;;;;;;" );
+	enddo;
+	method = Object.Method;
+	if ( method = Enums.PaymentMethods.Cash
+		or method = Enums.PaymentMethods.Check ) then
+		data.Add ( "T,1,______,_,__;;;;;;" );
+	else
+		data.Add ( "T,1,______,_,__;3;" + Format ( Object.Amount,"ND=15; NFD=2; NDS=.; NG=;" ) + ";;;;" );
+	endif;
 	return StrConcat ( data, Chars.LF );
 
 EndFunction
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure WarehouseOnChange ( Item )
+	
+	applyWarehouse ();
+	
+EndProcedure
+
+&AtServer
+Procedure applyWarehouse ()
+	
+	prices = DF.Pick ( Object.Warehouse, "Prices", Object.Prices );
+	if ( prices = Object.Prices ) then
+		return;
+	endif;
+	Object.Prices = prices;
+	applyPrices ();
+
+EndProcedure
 
 &AtClient
 Procedure CompanyOnChange ( Item )
@@ -274,9 +719,61 @@ EndProcedure
 Procedure ReturnOnChange ( Item )
 	
 	revert ( Object );
+	Appearance.Apply ( ThisObject, "Object.Return" );
 	
 EndProcedure
  
+&AtClient
+Procedure MethodOnChange ( Item )
+	
+	applyMethod ();
+
+EndProcedure
+
+&AtClient
+Procedure applyMethod ()
+	
+	cash = ( Object.Method = PredefinedValue ( "Enum.PaymentMethods.Cash" ) );
+	if ( not cash ) then
+		Object.Taken = 0;
+		calcChange ( ThisObject );
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Method" );
+	if ( cash ) then
+		CurrentItem = Items.Taken;
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure AmountClearing ( Item, StandardProcessing )
+	
+	StandardProcessing = false;
+	
+EndProcedure
+
+&AtClient
+Procedure TakenOnChange ( Item )
+	
+	calcChange ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure ChangeOnChange ( Item )
+	
+	calcTaken ();
+	activateTaken ();
+
+EndProcedure
+
+&AtClient
+Procedure calcTaken ()
+	
+	Object.Taken = Object.Amount + Change;
+
+EndProcedure
+
 &AtClient
 Procedure PricesOnChange ( Item )
 	
@@ -300,7 +797,7 @@ Procedure applyPrices ()
 		Computations.Total ( row, vatUse );
 	enddo; 
 	
-EndProcedure 
+EndProcedure
 
 &AtClient
 Procedure VATUseOnChange ( Item )
@@ -326,20 +823,6 @@ EndProcedure
 // *********** Table Items
 
 &AtClient
-Procedure SelectItems ( Command )
-	
-	PickItems.Open ( ThisObject, pickParams () );
-	
-EndProcedure
-
-&AtServer
-Function pickParams ()
-	
-	return PickItems.GetParams ( ThisObject );
-	
-EndFunction 
-
-&AtClient
 Procedure Scan ( Command )
 	
 	ScanForm.Open ( ThisObject, true );
@@ -352,6 +835,21 @@ Procedure ItemsOnActivateRow ( Item )
 	ItemsRow = Item.CurrentData;
 	
 EndProcedure
+
+&AtClient
+Procedure ItemsTableBeforeAddRow ( Item, Cancel, Clone, Parent, IsFolder, Parameter )
+	
+	Cancel = true;
+	PickItems.Open ( ThisObject, pickParams () );
+	
+EndProcedure
+
+&AtServer
+Function pickParams ()
+	
+	return PickItems.GetParams ( ThisObject );
+	
+EndFunction 
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )

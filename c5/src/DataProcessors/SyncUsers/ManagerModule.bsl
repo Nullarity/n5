@@ -17,6 +17,7 @@ EndProcedure
 
 Function Perform ( Params, JobKey ) export
 	
+	SetPrivilegedMode ( true );
 	obj = Create ();
 	obj.Parameters = Params;
 	obj.JobKey = JobKey;

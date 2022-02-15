@@ -3,6 +3,7 @@
 &AtServer
 Procedure Check ( FirstTime ) export
 	
+	SetPrivilegedMode ( true );
 	if ( not FirstTime and noneed () ) then
 		return;
 	endif;

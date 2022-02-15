@@ -244,8 +244,9 @@ Procedure resetAttempts ()
 	
 EndProcedure 
 
-Procedure exchange ( Node, Update ) export
+Procedure Exchange ( Node, Update ) export
 	
+	SetPrivilegedMode ( true );
 	p = new Structure;
 	p.Insert ( "Node", Node );
 	p.Insert ( "StartUp", true );

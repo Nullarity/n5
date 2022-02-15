@@ -351,6 +351,81 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
+      <name>TaxInvoice</name>
+      <id>150</id>
+      <title>
+        <key>en</key>
+        <value>Tax #</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>НН</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>FF</value>
+      </title>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.TaxInvoice</segments>
+      </dataPath>
+      <toolTip>
+        <key>en</key>
+        <value>Tax invoice number</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Номер налоговой накладной</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul facturii fiscale</value>
+      </toolTip>
+      <extendedTooltip>
+        <name>TaxInvoiceExtendedTooltip</name>
+        <id>152</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>TaxInvoiceContextMenu</name>
+        <id>151</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>15</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>Customer</name>
       <id>43</id>
       <displayImportance>VeryHigh</displayImportance>
@@ -2316,7 +2391,7 @@
 	Documents.GrossAmount as GrossAmount, Documents.Memo as Memo, Documents.PaymentDate as PaymentDate,	Documents.PaymentOption as PaymentOption, Documents.PO as PO, Documents.Prices as Prices, Documents.Rate as Rate,
 	Documents.SalesOrder as SalesOrder,	Documents.Shipment as Shipment,	Documents.ShipmentNumber as ShipmentNumber,	
 	Documents.Warehouse as Warehouse, Documents.Items as Items, Documents.Services as Services,
-	Documents.Taxes as Taxes, Documents.PointInTime as PointInTime, Forms.Form as Form,
+	Documents.Taxes as Taxes, Documents.PointInTime as PointInTime, TaxInvoices.Number as TaxInvoice, Forms.Form as Form,
 	case Forms.Status
 		when value ( Enum.FormStatuses.Saved ) then 1
 		when value ( Enum.FormStatuses.Printed ) then 2
@@ -2334,6 +2409,11 @@
 	end as PaidPercent,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
 from Document.Invoice as Documents
+	//
+	// TaxNumbers
+	//
+	{left join InformationRegister.TaxInvoices as TaxInvoices
+	on TaxInvoices.Document = Documents.Ref}
 	//
 	// Forms
 	//

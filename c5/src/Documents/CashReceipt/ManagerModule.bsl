@@ -13,6 +13,7 @@ EndProcedure
 
 Function Print ( Params, Env ) export
 	
+	allowAccountingData ();
 	Print.SetFooter ( Params.TabDoc );
 	setPageSettings ( Params );
 	getData ( Params, Env );
@@ -20,6 +21,12 @@ Function Print ( Params, Env ) export
 	return true;
 	
 EndFunction
+
+Procedure allowAccountingData ()
+	
+	SetPrivilegedMode ( true );
+	
+EndProcedure
  
 Procedure setPageSettings ( Params )
 	
@@ -34,10 +41,13 @@ Procedure getData ( Params, Env )
 	sqlFields ( Env );
 	Env.Q.SetParameter ( "Ref", Params.Reference );
 	SQL.Perform ( Env );
-	if ( Env.Fields.Entry ) then
+	fields = Env.Fields;
+	if ( fields.Entry ) then
 		sqlEntry ( Env );
-	elsif ( Env.Fields.VendorRefund ) then
+	elsif ( fields.VendorRefund ) then
 		sqlVendorRefund ( Env );
+	elsif ( fields.RetailSales ) then
+		sqlRetailSales ( Env );
 	else
 		sqlPayment ( Env );
 	endif;
@@ -52,8 +62,9 @@ Procedure sqlFields ( Env )
 	|select Documents.Number as Number, Documents.Date as Date, Documents.Company.FullDescription as Company, Documents.Company.CodeFiscal as CodeFiscal,
 	|	Documents.Amount as Amount, Documents.Currency as Currency,
 	|	Documents.Giver as Giver, Documents.Reason as Reason, Documents.Reference as Reference, Documents.Base as Base,
-	|	case when Documents.Base refs Document.Entry then true else false end as Entry,
-	|	case when Documents.Base refs Document.VendorRefund then true else false end as VendorRefund
+	|	Documents.Base refs Document.Entry as Entry,
+	|	Documents.Base refs Document.VendorRefund as VendorRefund,
+	|	Documents.Base refs Document.RetailSales as RetailSales
 	|from Document.CashReceipt as Documents
 	|where Documents.Ref = &Ref 
 	|";
@@ -93,6 +104,24 @@ Procedure sqlPayment ( Env )
 	
 EndProcedure
 
+Procedure sqlRetailSales ( Env )
+	
+	s = "
+	|// @Details
+	|select Documents.Company.CodeFiscal as GiverCodeFiscal
+	|from Document.RetailSales as Documents
+	|where Documents.Ref = &Base 
+	|;
+	|// #Accounts
+	|select distinct Records.AccountCr.Code as Account
+	|from AccountingRegister.General as Records
+	|where Records.Recorder = &Base 
+	|and Records.AccountDr in ( select Account from Document.RetailSales where Ref = &Base )
+	|";
+	Env.Selection.Add ( s );    
+	
+EndProcedure
+
 Procedure getTables ( Env )
 	
 	q = Env.Q;
@@ -111,7 +140,8 @@ Procedure put ( Params, Env )
 	p.Fill ( fields );
 	details = Env.Details;
 	p.Fill ( details );
-	if ( fields.Entry ) then
+	if ( fields.Entry
+		or fields.RetailSales ) then
 		p.Account = StrConcat ( Env.Accounts.UnloadColumn ( "Account" ), ", " );
 	endif;
 	p.AmountInWords = Conversion.AmountToWords ( fields.amount, fields.Currency );

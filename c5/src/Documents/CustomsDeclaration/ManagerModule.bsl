@@ -145,7 +145,7 @@ EndFunction
 Procedure sqlItems ( Env )
 	
 	s = "
-	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Invoice as Invoice, Items.CustomsGroup as CustomsGroup
+	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Invoice as Invoice, Items.ID as ID
 	|into Items
 	|from Document.CustomsDeclaration.Items as Items
 	|where Items.Ref = &Ref
@@ -176,13 +176,13 @@ EndProcedure
 Procedure sqlCharges ( Env )
 	
 	s = "
-	|select Charges.LineNumber as LineNumber, Charges.Charge as Charge, Charges.CustomsGroup as CustomsGroup, Charges.Amount as Amount, Charges.VAT as VAT,
+	|select Charges.LineNumber as LineNumber, Charges.Charge as Charge, Charges.ID as ID, Charges.Amount as Amount, Charges.VAT as VAT,
 	|	Charges.ExpenseAccount as ExpenseAccount, Charges.Dim1 as Dim1,	Charges.Dim2 as Dim2, Charges.Dim3 as Dim3,	Charges.Product as Product, 
 	|	Charges.Cost as Cost, Charges.ProductFeature as ProductFeature
 	|into Charges
 	|from Document.CustomsDeclaration.Charges as Charges
 	|where Charges.Ref = &Ref
-	|index by Charges.CustomsGroup
+	|index by Charges.ID
 	|";
 	Env.Selection.Add ( s );
 	
@@ -216,7 +216,7 @@ Procedure sqlDistributingExpenses ( Env )
 	
 	s = "
 	|// ^DistributingExpenses
-	|select Charges.LineNumber as ChargesLineNumber, Charges.Amount as Amount, Charges.CustomsGroup as CustomsGroup, 
+	|select Charges.LineNumber as ChargesLineNumber, Charges.Amount as Amount, Charges.ID as ID, 
 	|	case when &Distribution = value ( Enum.Distribution.Quantity ) then ""Quantity""
 	|		when &Distribution = value ( Enum.Distribution.Amount ) then ""Amount""
 	|		when &Distribution = value ( Enum.Distribution.Weight ) then ""Weight""
@@ -227,7 +227,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|;
 	|// Accepters
 	|select distinct Items.Invoice as Document, isnull ( ExchangeRates.Rate, 1 ) as Rate, isnull ( ExchangeRates.Factor, 1 ) as Factor, Items.Item as Item,
-	|	Items.CustomsGroup as CustomsGroup
+	|	Items.ID as ID
 	|into Accepters
 	|from Items as Items
 	|	//
@@ -244,7 +244,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|	Goods.Package as Package, Goods.Feature as Feature, Goods.Series as Series,
 	|	case when Goods.Warehouse = value ( Catalog.Warehouses.EmptyRef ) then Goods.Ref.Warehouse else Goods.Warehouse end as Warehouse,
 	|	case when Goods.Item.CostMethod = value ( Enum.Cost.Avg ) then value ( Catalog.Lots.EmptyRef ) else Lots.Ref end as Lot,
-	|	Details.ItemKey as ItemKey, Accepters.CustomsGroup as CustomsGroup
+	|	Details.ItemKey as ItemKey, Accepters.ID as ID
 	|from Document.VendorInvoice.Items as Goods
 	|	//
 	|	// Details
@@ -455,7 +455,7 @@ EndFunction
 Function getDistributingParams ( Env )
 	
 	p = new Structure ();
-	p.Insert ( "FilterColumns", "CustomsGroup" );
+	p.Insert ( "FilterColumns", "ID" );
 	p.Insert ( "DistribColumnsTable1", "Amount" );
 	p.Insert ( "DistributeTables" );
 	p.Insert ( "AssignСоlumnsTаble1", "Charge, ChargePresentation, ChargesLineNumber" );

@@ -117,7 +117,7 @@ select Employees.Employee as Employee
 into Employees
 from InformationRegister.Employees.SliceLast ( &amp;PaymentDate,
 	not ( &amp;Calculating or &amp;TaxesOnly )
-	{Employee.* as Employee, Employee.Company.* as Company} ) as Employees
+	{Employee.Individual.* as Employee, Employee.Company.* as Company} ) as Employees
 where Employees.Hired
 and not ( &amp;Calculating or &amp;TaxesOnly )
 index by Employee
@@ -158,23 +158,24 @@ from (
 		//
 		left join InformationRegister.ExchangeRates.SliceLast ( &amp;PaymentDate ) as ExchangeRates
 		on ExchangeRates.Currency = Rates.Currency
-	where Rates.Actual
+	where Rates.Rate &lt;&gt; 0
+	and Rates.Actual
 ) as Compensations
 ;
 // ActualCompensations
 select Compensations.Employee as Employee, Compensations.Individual as Individual,
 	Compensations.Compensation as Compensation, Compensations.InHand as InHand,
-	sum ( Compensations.Amount ) as Amount
+	Compensations.Edit as Edit, sum ( Compensations.Amount ) as Amount
 into CompensationsInHand
 from ActualCompensations as Compensations
-where not Compensations.Edit
-and Compensations.Employee in (
+where Compensations.Employee in (
 	select distinct Compensations.Employee
 	from ActualCompensations as Compensations
 	where Compensations.InHand
 )
 and not &amp;TaxesOnly
-group by Compensations.Employee, Compensations.Individual, Compensations.Compensation, Compensations.InHand
+group by Compensations.Employee, Compensations.Individual, Compensations.Compensation,
+	Compensations.InHand, Compensations.Edit
 ;
 // SelectedEmployees
 select distinct Compensations.Employee as Employee
@@ -343,7 +344,7 @@ from InformationRegister.PayrollTaxes.SliceLast ( &amp;PaymentDate,
 where Rates.Use
 ;
 // MedicalGrossSalary
-select Compensations.Individual as Employee, Compensations.Compensation as Compensation,
+select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
 	Compensations.Amount / 100 * Rates.Rate as Result
 into MedicalGrossSalary
 from CompensationsInHand as Compensations
@@ -362,20 +363,21 @@ from CompensationsInHand as Compensations
 where not Compensations.InHand
 ;
 // IncomeTaxCompensations
-select Base.Employee as Employee, Base.Compensation as Compensation,
+select Base.Employee as Employee, Base.Compensation as Compensation, Base.Edit as Edit,
 	sum ( Base.Amount ) as Amount, max ( Rates.Rate ) as Rate, recordautonumber () as Key
 into IncomeTaxCompensations
 from (
-	select Base.Employee as Employee, Base.Compensation as Compensation, sum ( Base.Amount ) as Amount
+	select Base.Employee as Employee, Base.Compensation as Compensation, Base.Edit as Edit, sum ( Base.Amount ) as Amount
 	from (
-		select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Amount as Amount
+		select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
+			Compensations.Amount as Amount
 		from CompensationsInHand as Compensations
 		where not Compensations.InHand
 		union all
-		select Medical.Employee, Medical.Compensation, - Medical.Result
+		select Medical.Employee, Medical.Compensation, Medical.Edit, - Medical.Result
 		from MedicalGrossSalary as Medical
 	) as Base
-	group by Base.Employee, Base.Compensation
+	group by Base.Employee, Base.Compensation, Base.Edit
 ) as Base
 	//
 	// Taxes
@@ -389,7 +391,7 @@ from (
 	//
 	join TaxRates as Rates
 	on Rates.Tax = Taxes.Ref
-group by Base.Employee, Base.Compensation
+group by Base.Employee, Base.Compensation, Base.Edit
 ;
 // BiggestCompensations
 select Base.Employee as Employee, max ( Base.Key ) as Key
@@ -407,7 +409,7 @@ from IncomeTaxCompensations as Base
 group by Base.Employee
 ;
 // IncomeTaxGrossSalary
-select Compensations.Employee as Employee, Compensations.Compensation as Compensation,
+select Compensations.Employee as Employee, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
 	( Compensations.Amount - isnull ( Deductions.Amount, 0 ) ) / 100 * Compensations.Rate as Result
 into IncomeTaxGrossSalary
 from IncomeTaxCompensations as Compensations
@@ -424,23 +426,24 @@ from IncomeTaxCompensations as Compensations
 	and BiggestCompensations.Key is not null
 ;
 // OtherTaxesGrossSalary
-select Base.Employee as Employee, Base.Compensation as Compensation,
+select Base.Employee as Employee, Base.Compensation as Compensation, Base.Edit as Edit,
 	sum ( Base.Amount / 100 * Rates.Rate ) as Result
 into OtherTaxesGrossSalary
 from (                                                                                         
-	select Base.Employee as Employee, Base.Compensation as Compensation, sum ( Base.Amount ) as Amount
+	select Base.Employee as Employee, Base.Compensation as Compensation, Base.Edit as Edit, sum ( Base.Amount ) as Amount
 	from (
-		select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Amount as Amount
+		select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
+			Compensations.Amount as Amount
 		from CompensationsInHand as Compensations
 		where not Compensations.InHand
 		union all
-		select Medical.Employee, Medical.Compensation, - Medical.Result
+		select Medical.Employee, Medical.Compensation, Medical.Edit, - Medical.Result
 		from MedicalGrossSalary as Medical
 		union all
-		select IncomeTax.Employee, IncomeTax.Compensation, - IncomeTax.Result
+		select IncomeTax.Employee, IncomeTax.Compensation, IncomeTax.Edit, - IncomeTax.Result
 		from IncomeTaxGrossSalary as IncomeTax
 	) as Base
-	group by Base.Employee, Base.Compensation
+	group by Base.Employee, Base.Compensation, Base.Edit
 ) as Base
 	//
 	// Taxes
@@ -455,30 +458,33 @@ from (
 	//
 	join TaxRates as Rates
 	on Rates.Tax = Taxes.Ref
-group by Base.Employee, Base.Compensation
+group by Base.Employee, Base.Compensation, Base.Edit
 ;
 // NetWithoutDeductions
-select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, sum ( NetSalary.Amount ) as p,
+select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, NetSalary.Edit as Edit, sum ( NetSalary.Amount ) as p,
 	sum ( isnull ( OtherTaxesRates.Rate, 0 ) ) / 100 as k, sum ( isnull ( OtherTaxesAmountRates.Rate, 0 ) ) as s,
-	sum ( isnull ( IncomeTaxRates.Rate, 0 ) ) / 100 as i, sum ( isnull ( MedicalTaxRates.Rate, 0 ) ) / 100 as m,
-	recordautonumber () as Row
+	sum ( isnull ( IncomeTaxRates.Rate, 0 ) ) / 100 as i, sum ( isnull ( MedicalTaxRates.Rate, 0 ) ) / 100 as m
+	, recordautonumber () as Row
 into NetWithoutDeductions
 from (
-	select Compensations.Individual as Individual, Compensations.Compensation as Compensation, sum ( Compensations.Amount ) as Amount
+	select Compensations.Individual as Individual, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
+		sum ( Compensations.Amount ) as Amount
 	from (
-		select Compensations.Individual as Individual, Compensations.Compensation as Compensation, Compensations.Amount as Amount
+		select Compensations.Individual as Individual, Compensations.Compensation as Compensation, Compensations.Edit as Edit,
+			Compensations.Amount as Amount
 		from CompensationsInHand as Compensations
 		union all
-		select Medical.Employee, Medical.Compensation, - Medical.Result
+		select Medical.Employee, Medical.Compensation, Medical.Edit, - Medical.Result
 		from MedicalGrossSalary as Medical
 		union all
-		select IncomeTax.Employee, IncomeTax.Compensation, - IncomeTax.Result
+		select IncomeTax.Employee, IncomeTax.Compensation, IncomeTax.Edit, - IncomeTax.Result
 		from IncomeTaxGrossSalary as IncomeTax
 		union all
-		select OtherTaxes.Employee, OtherTaxes.Compensation, - OtherTaxes.Result
+		select OtherTaxes.Employee, OtherTaxes.Compensation, OtherTaxes.Edit, - OtherTaxes.Result
 		from OtherTaxesGrossSalary as OtherTaxes
 	) as Compensations
-	group by Compensations.Individual, Compensations.Compensation
+	group by Compensations.Individual, Compensations.Compensation, Compensations.Edit
+	having sum ( Compensations.Amount ) &gt; 0
 ) as NetSalary
 	//
 	// OtherTaxesPercent
@@ -530,11 +536,11 @@ from (
 	//
 	left join TaxRates as MedicalTaxRates
 	on MedicalTaxRates.Tax = MedicalTax.Ref
-group by NetSalary.Individual, NetSalary.Compensation
+group by NetSalary.Individual, NetSalary.Compensation, NetSalary.Edit
 ;
 // NetSalary
-select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, NetSalary.p as p,
-	NetSalary.k as k, NetSalary.s as s, NetSalary.i as i, NetSalary.m as m,
+select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation, NetSalary.Edit as Edit,
+	NetSalary.p as p, NetSalary.k as k, NetSalary.s as s, NetSalary.i as i, NetSalary.m as m,
 	isnull ( Deductions.Amount, 0 ) as d
 into NetSalary
 from NetWithoutDeductions as NetSalary
@@ -568,6 +574,7 @@ from NetWithoutDeductions as NetSalary
 ;
 // GrossSalary
 select NetSalary.Individual as Individual, NetSalary.Compensation as Compensation,
+	NetSalary.Edit as Edit,
 	case when ( -k + 1 ) = 0 or ( -i + 1 ) = 0 or ( -m + 1 ) = 0 then 0
 	else
 		// n = p; // p = initial net amount
@@ -623,6 +630,7 @@ from (
 		from (                                          	
 			select GrossSalary.Individual as Individual, GrossSalary.Compensation as Compensation, GrossSalary.Amount as Amount
 			from GrossSalary as GrossSalary
+			where not GrossSalary.Edit
 			union all
 			select Distributed.Individual, Distributed.Compensation, - sum ( Distributed.AccountingResult )
 			from Distributed as Distributed

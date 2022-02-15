@@ -500,7 +500,7 @@ Procedure addItem ( Fields )
 		row = Object.Items.Add ();
 		item = Fields.Item;
 		row.Item = item;
-		row.Series = Series;
+		row.Series = Fields.Series;
 		package = Fields.Package;
 		row.Package = package;
 		feature = Fields.Feature;

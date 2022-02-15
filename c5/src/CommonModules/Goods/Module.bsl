@@ -48,13 +48,27 @@ Function Price (
 	p.Date = Date;
 	p.Prices = Prices;
 	p.Item = Item;
-	p.Package = Package;
-	p.Feature = Feature;
-	p.Organization = Organization;
-	p.Contract = Contract;
-	p.VendorContract = VendorContract;
-	p.Warehouse = Warehouse;
-	p.Currency = Currency;
+	if ( ValueIsFilled ( Package ) ) then
+		p.Package = Package;
+	endif;
+	if ( ValueIsFilled ( Feature ) ) then
+		p.Feature = Feature;
+	endif;
+	if ( ValueIsFilled ( Organization ) ) then
+		p.Organization = Organization;
+	endif;
+	if ( ValueIsFilled ( Contract ) ) then
+		p.Contract = Contract;
+	endif;
+	if ( ValueIsFilled ( VendorContract ) ) then
+		p.VendorContract = VendorContract;
+	endif;
+	if ( ValueIsFilled ( Warehouse ) ) then
+		p.Warehouse = Warehouse;
+	endif;
+	if ( ValueIsFilled ( Currency ) ) then
+		p.Currency = Currency;
+	endif;
 	return Goods.GetPrice ( p, Cache );
 	
 EndFunction 

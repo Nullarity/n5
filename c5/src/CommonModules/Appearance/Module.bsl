@@ -203,4 +203,16 @@ Function всписке ( Value, _1, _2 = undefined, _3 = undefined, _4 = undefi
 	
 EndFunction
 
+Function field ( Value, Name ) export
+	
+	return DF.Pick ( Value, Name );
+
+EndFunction
+
+Function поле ( Value, Name ) export
+	
+	return field ( Value, Name );
+
+EndFunction
+
 #endregion

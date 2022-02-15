@@ -788,7 +788,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|	//
 	|	left join InformationRegister.ItemDetails as Details
 	|	on Details.Item = Goods.Item
-	|	and Details.Package = case when Goods.Item.CountPackages then Goods.Package else null end
+	|	and Details.Package = case when Goods.Item.CountPackages then Goods.Package else value ( Catalog.Packages.EmptyRef ) end
 	|	and Details.Feature = Goods.Feature
 	|	and Details.Warehouse = ( case when Goods.Warehouse = value ( Catalog.Warehouses.EmptyRef ) then Goods.Ref.Warehouse else Goods.Warehouse end )
 	|	and Details.Series = Goods.Series

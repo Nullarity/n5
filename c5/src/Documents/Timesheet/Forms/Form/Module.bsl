@@ -83,7 +83,6 @@ Function getDaysOff ()
 	|from InformationRegister.Schedules as Schedules
 	|where Schedules.Minutes = 0
 	|and Schedules.Schedule = &Schedule
-	|and Schedules.Year in ( &Years )
 	|and Schedules.Day between &DateStart and &DateEnd
 	|";
 	q = new Query ( s );

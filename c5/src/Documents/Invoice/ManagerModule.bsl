@@ -1145,9 +1145,6 @@ Function checkBalances ( Env )
 		return true;
 	endif;
 	SQL.Perform ( Env );
-	if ( not Env.CheckBalances ) then
-		return true;
-	endif; 
 	if ( Env.ItemsExist ) then
 		table = SQL.Fetch ( Env, "$ShortageItems" );
 		if ( table.Count () > 0 ) then

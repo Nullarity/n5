@@ -83,8 +83,8 @@ Procedure readAppearance ()
 	|and ( Object.Currency <> LocalCurrency or ContractCurrency <> LocalCurrency );
 	|Rejection show filled ( RejectionCause );
 	|FormDocumentQuoteCancel show empty ( RejectionCause );
-	|VAT show Object.VATUse > 0;
-	|ItemsVATCode ItemsVAT ItemsTotal ServicesVATCode ServicesVAT ServicesTotal show Object.VATUse > 0
+	|VAT ItemsVATCode ItemsVAT ServicesVATCode ServicesVAT show Object.VATUse > 0;
+	|ItemsTotal ServicesTotal show Object.VATUse = 2;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

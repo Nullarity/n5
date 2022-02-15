@@ -67,7 +67,7 @@ Procedure initMobileMenu ()
 			MobileMenu.Add ( Enum.CalendarMenuNewTask (), Output.UserTask () );
 		endif;
 		if ( AccessRight ( "Insert", Metadata.Documents.Event ) ) then
-			MobileMenu.Add ( Enum.CalendarMenuNewEvent (), Output.Meeting () );
+			MobileMenu.Add ( Enum.CalendarMenuNewEvent (), Output.Event () );
 		endif;
 		if ( AccessRight ( "Insert", Metadata.BusinessProcesses.Command ) ) then
 			MobileMenu.Add ( Enum.CalendarMenuNewCommand (), Output.Command () );

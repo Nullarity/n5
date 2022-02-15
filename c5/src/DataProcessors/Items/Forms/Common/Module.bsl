@@ -6,7 +6,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	loadParams ();
 	setCurrentItem ();
-	Options.SetAccuracy ( ThisObject, "Quantity, QuantityPkg", false );
+	Options.SetAccuracy ( ThisObject, "Quantity, QuantityPkg, QuantityAvailable", false );
 	Options.Company ( ThisObject, Company );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -33,7 +33,9 @@ Procedure readAppearance ()
 	|ExtraCharge show
 	|( ShowPrice
 	|	and Social
-	|	and ShowExtraCharge )
+	|	and ShowExtraCharge );
+	|Warning show Leaving and ( ( QuantityAvailable < Quantity and not CountPackages )
+	|	or ( QuantityAvailable < QuantityPkg and CountPackages ) )
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -45,6 +47,8 @@ Procedure loadParams ()
 	TableRow = Parameters.TableRow;
 	FillPropertyValues ( ThisObject, TableRow );
 	Source = Parameters.Source;
+	QuantityAvailable = Parameters.QuantityAvailable;
+	CountPackages = Parameters.CountPackages;
 	Discounts = Parameters.Discounts;
 	Delivery = Parameters.Delivery;
 	Service = Parameters.Service;
@@ -54,6 +58,9 @@ Procedure loadParams ()
 	Product = TableRow.Item;
 	Company = Source.Company;
 	ShowPrice = Source.ShowPrice;
+	if ( ShowPrice ) then
+		Prices = Source.Prices;
+	endif;
 	VATUse = Source.VATUse;
 	type = Source.Type;
 	if not ( type.Assembling
@@ -65,6 +72,10 @@ Procedure loadParams ()
 		VAT = TableRow.VAT;
 		Total = TableRow.Total;
 	endif;
+	Leaving = type.Sale
+		or type.Invoice
+		or type.Assembling
+		or type.Disassembling;
 	ShowExtraCharge = Parameters.ShowExtraCharge;
 	ShowSocial = Parameters.ShowSocial;
 	SeriesControl = Parameters.SeriesControl;
@@ -110,7 +121,15 @@ Procedure QuantityPkgOnChange ( Item )
 	Computations.Amount ( ThisObject );
 	Computations.Total ( ThisObject, VATUse );
 	Computations.ExtraCharge ( ThisObject );
+	updateWarning ();
 	
+EndProcedure
+
+&AtClient
+Procedure updateWarning ()
+	
+	Appearance.Apply ( ThisObject, "Quantity" );
+
 EndProcedure
 
 &AtClient
@@ -143,6 +162,7 @@ Procedure applyPackage ()
 	Computations.Amount ( ThisObject );
 	Computations.Total ( ThisObject, VATUse );
 	Computations.ExtraCharge ( ThisObject );
+	updateWarning ();
 	
 EndProcedure 
 
@@ -168,7 +188,8 @@ Procedure QuantityOnChange ( Item )
 	Computations.Amount ( ThisObject );
 	Computations.Total ( ThisObject, VATUse );
 	Computations.ExtraCharge ( ThisObject );
-	
+	updateWarning ();
+		
 EndProcedure
 
 &AtClient
