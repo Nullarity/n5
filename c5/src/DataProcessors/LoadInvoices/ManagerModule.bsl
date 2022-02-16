@@ -3,6 +3,7 @@
 Function GetParams () export
 	
 	p = new Structure ();
+	p.Insert ( "File" );
 	p.Insert ( "Address" );
 	return p;
 	

@@ -141,6 +141,7 @@ Procedure _5_0_23_1 () export
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
+		Constants.ItemsCost.Set ( Enums.Cost.Avg );
 		updateCustomsDeclarations ();
 		setTaxNumbers ();
 	enddo;

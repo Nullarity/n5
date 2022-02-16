@@ -54,7 +54,7 @@ EndProcedure
 Procedure StartLoadingFile ( Result, Params ) export
 	
 	callback = new NotifyDescription ( "FileLoaded", ThisObject );
-	BeginPutFile ( callback, Address, Object.Path, false, UUID );
+	BeginPutFile ( callback, , Object.Path, false );
 	
 EndProcedure 
 
@@ -64,17 +64,18 @@ Procedure FileLoaded ( Result, FileAddress, FileName, Params ) export
 	if ( not Result ) then
 		return;
 	endif;
-	Address = FileAddress;
-	extractFile ();
+	extractFile ( FileAddress );
 	Progress.Open ( UUID, ThisObject, new NotifyDescription ( "Loading", ThisObject ), true );
 
 EndProcedure
 
 &AtServer
-Procedure extractFile ()
+Procedure extractFile ( val Location )
 
 	p = DataProcessors.LoadInvoices.GetParams ();
-	p.Address = Address;
+	p.File = GetFromTempStorage ( Location );
+	ResultAddress = PutToTempStorage ( undefined, UUID );
+	p.Address = ResultAddress;
 	args = new Array ();
 	args.Add ( "LoadInvoices" );
 	args.Add ( p );
@@ -95,7 +96,7 @@ EndProcedure
 &AtServer
 Procedure loadTable ()
 	
-	table = GetFromTempStorage ( Address );
+	table = GetFromTempStorage ( ResultAddress );
 	Object.Invoices.Load ( table );
 	
 EndProcedure

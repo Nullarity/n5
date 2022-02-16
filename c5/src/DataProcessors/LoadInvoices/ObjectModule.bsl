@@ -30,7 +30,7 @@ Procedure read ()
 	
 	SetPrivilegedMode ( true );
 	xml = new XMLReader ();
-	xml.SetString ( GetStringFromBinaryData ( GetFromTempStorage ( Parameters.Address ) ) );
+	xml.SetString ( GetStringFromBinaryData ( Parameters.File ) );
 	lastNode = undefined;	
 	while ( xml.Read () ) do
 		node = xml.Name;
