@@ -61,6 +61,61 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
+      <name>ItemFilter</name>
+      <id>155</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>ItemFilter</segments>
+      </dataPath>
+      <skipOnInput>true</skipOnInput>
+      <handlers>
+        <event>OnChange</event>
+        <name>ItemFilterOnChange</name>
+      </handlers>
+      <extendedTooltip>
+        <name>ItemFilterExtendedTooltip</name>
+        <id>157</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>ItemFilterContextMenu</name>
+        <id>156</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>CreatorFilter</name>
       <id>43</id>
       <visible>true</visible>
@@ -1970,6 +2025,31 @@ from Document.RetailSales as Documents
     <valueType>
       <types>String</types>
       <stringQualifiers/>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>ItemFilter</name>
+    <title>
+      <key>en</key>
+      <value>Item</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Marfă</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Товар</value>
+    </title>
+    <id>7</id>
+    <valueType>
+      <types>CatalogRef.Items</types>
     </valueType>
     <view>
       <common>true</common>

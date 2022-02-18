@@ -159,6 +159,7 @@ Procedure getData ()
 	|group by Items.Ref.Base, Items.Ref.Warehouse, Items.Ref.Location, Items.Ref.Method, Items.Ref.VATUse,
 	|	Items.Item, Items.Feature, Items.Series, Items.Package, Items.Price, Items.Capacity,
 	|	Items.VATCode, Items.VATRate
+	|having sum ( Items.Quantity ) <> 0
 	|";
 	Data.Selection.Add ( s );
 	q = Data.Q;

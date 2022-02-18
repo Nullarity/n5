@@ -53,6 +53,22 @@ Procedure WarehouseFilterOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure ItemFilterOnChange ( Item )
+	
+	filterByItem ();
+	
+EndProcedure
+
+&AtServer
+Procedure filterByItem ()
+	
+	set = not ItemFilter.IsEmpty ();
+	DC.ChangeFilter ( List, "Items.Item", ItemFilter, set );
+	DC.ChangeFilter ( Accounting, "Items.Item", ItemFilter, set );
+	
+EndProcedure
+
+&AtClient
 Procedure CreatorFilterOnChange ( Item )
 	
 	filterByCreator ();
