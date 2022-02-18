@@ -207,9 +207,7 @@ Procedure sqlRecords ()
 	|and Invoices.Base refs Document.Sale
 	|and cast ( Invoices.Base as Document.Sale ).Date between &DateStart and &DateEnd
 	|;
-	|select Records.Recorder as Document, max ( Records.Period ) as Date,
-	|	Records.Recorder.ReferenceDate as ReferenceDate, Records.Recorder.Number as Number,
-	|	Records.Recorder.Reference as Reference
+	|select Records.Recorder as Document, max ( Records.Period ) as Date
 	|";
 	if ( Detailed ) then
 		s = s + ", Records.ExtDimension2 as Contract";
@@ -251,16 +249,21 @@ Procedure sqlRecords ()
 	|;
 	|// #Records
 	|select Records.Document as Document, Records.Document.Method as Method,
-	|	Records.Date as Date, Records.ReferenceDate as ReferenceDate, Records.Number as Number,
-	|	Records.Reference as Reference, Records.Dr as Dr, Records.Cr as Cr";
+	|	Records.Date as Date, Records.Document.Number as Number, Records.Document.ReferenceDate as ReferenceDate,
+	|	isnull ( TaxInvoices.Number, Records.Document.Reference ) as Reference, Records.Dr as Dr, Records.Cr as Cr";
 	if ( Detailed ) then
 		s = s + ", Records.Contract as Contract";
 	endif;
 	s = s + "
 	|from Records as Records
+	|	//
+	|	// TaxInvoices
+	|	//
+	|	left join InformationRegister.TaxInvoices as TaxInvoices
+	|	on TaxInvoices.Document = Records.Document
 	|union all
-	|select Invoices.Document, Invoices.Method, Invoices.Date, Invoices.ReferenceDate,
-	|	Invoices.Number, Invoices.Reference, Invoices.Dr, Invoices.Cr";
+	|select Invoices.Document, Invoices.Method, Invoices.Date, Invoices.Number,
+	|	Invoices.ReferenceDate, Invoices.Reference, Invoices.Dr, Invoices.Cr";
 	if ( Detailed ) then
 		s = s + ", Invoices.Contract";
 	endif;
@@ -459,11 +462,10 @@ Procedure putDocuments ( ContractRow )
 		p.Number = ? ( ValueIsFilled ( row.Reference ), row.Reference, row.Number );
 		p.Date = Conversion.DateToString ( row.Date );
 		operation = translateDocument ( row.Document );
-		referenceDate = BegOfDay ( row.ReferenceDate );
 		description.Clear ();
 		description.Add ( operation );
-		if ( ValueIsFilled ( referenceDate )
-			and referenceDate <> BegOfDay ( row.Date ) ) then
+		referenceDate = BegOfDay ( ? ( ValueIsFilled ( row.ReferenceDate ), row.ReferenceDate, row.Date ) );
+		if ( referenceDate <> BegOfDay ( row.Date ) ) then
 			description.Add ( " - " + Format ( referenceDate, "DLF=D" ) );
 		endif;
 		method = row.Method;
