@@ -4,6 +4,6 @@
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	FeaturesForm.SetFilter ( ThisObjecT );
+	FeaturesForm.SetFilter ( ThisObject );
 	
 EndProcedure
