@@ -55,7 +55,7 @@ Procedure SetRate ( Form ) export
 		else
 			currency = Form.ContractCurrency;
 		endif; 
-		currencyRate = CurrenciesSrv.Get ( currency );
+		currencyRate = CurrenciesSrv.Get ( currency, object.Date );
 	endif;
 	object.Rate = currencyRate.Rate;
 	object.Factor = currencyRate.Factor;
