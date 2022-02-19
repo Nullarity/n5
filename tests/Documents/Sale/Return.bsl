@@ -3,30 +3,41 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0L1" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0MT" ) );
 getEnv ();
 createEnv ();
 
 #region saleItem
 Commando("e1cib/list/Document.Sale");
-Click("#FormCreate");
+Set ("#WarehouseFilter", this.Warehouse);
+Next ();
+Click("#ListCreate");
 With();
 ItemsTable = Get ( "#ItemsTable" );
 Click ( "#ItemsTableAdd" );
-ItemsTable.EndEditRow ();
-Set ( "#ItemsItem", this.Item, ItemsTable );
-Set ( "#ItemsQuantityPkg", 10, ItemsTable );
-Set ( "#ItemsPrice", 25, ItemsTable );
-Click("#FormPost");
+With ( "Items Selection" );
+items = Get ( "#ItemsList" );
+GotoRow ( items, "Item", this.Item );
+items.Choose ();
+Pause ( 1 );
+Get ( "#FeaturesList" ).Choose ();
+With ( "Details" );
+Set ( "#QuantityPkg", 10 );
+Set ( "#Price", 25 );
+Click ( "#FormOK" );
+With ( "Items Selection" );
+Click ( "#FormOK" );
+With ();
 amount = Number ( Fetch("#Amount") );
+Click("#PostAndClose");
 #endregion
 
 #region returnItem
-Click("#FormCopy");
+With ();
+Click("#ListCopy");
 With();
 Check("#Return", "Yes");
 Check("#ItemsTable / #ItemsQuantityPkg [ 1 ]", -10);
-Click("#FormPost");
 reverseAmount = Number ( Fetch("#Amount") );
 Assert(amount + reverseAmount, "Sale and Reverse amount should be opposite").Equal(0);
 #endregion
@@ -35,7 +46,7 @@ Procedure getEnv ()
 
 	id = this.ID;
 	this.Insert ( "Date", CurrentDate ()  );
-	this.Insert ( "Warehouse", "Main" );
+	this.Insert ( "Warehouse", "Warehouse " + id );
 	this.Insert ( "Item", "Item " + id );
 	this.Insert ( "Account", "7141" );
 
@@ -47,6 +58,12 @@ Procedure createEnv ()
 	if ( EnvironmentExists ( id ) ) then
 		return;
 	endif;
+
+	#region newWarehouse
+	p = Call ( "Catalogs.Warehouses.Create.Params" );
+	p.Description = this.Warehouse;
+	Call ( "Catalogs.Warehouses.Create", p );
+	#endregion
 	
 	#region newReceiveItems
 	p = Call ( "Documents.ReceiveItems.Receive.Params" );
