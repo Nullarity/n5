@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0LR" );
+id = Call ( "Common.ScenarioID", "A0NZ" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -81,6 +81,9 @@ Procedure createEnv ()
 	ItemsTable = Get ( "#ItemsTable" );
 	Click ( "#ItemsTableAdd" );
 	With ( "Items Selection" );
+	if ( Fetch ( "#AskDetails" ) = "No" ) then
+		Click ( "#AskDetails" );
+	endif;
 	items = Get ( "#ItemsList" );
 	GotoRow ( items, "Item", this.Item );
 	items.Choose ();

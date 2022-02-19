@@ -27,13 +27,13 @@ Check ( "#VAT", 16.67 );
 Put ( "#VATUse", "Excluded from Price" );
 Check ( "#AccountsVAT", 20, table );
 Check ( "#VAT", 20 );
-Check ( "#Amount", 120 );
+Check ( "#TotalAmount", 120 );
 
 Set ( "#AccountsAmount", 200, table );
 Check ( "#VAT", 40 );
-Check ( "#Amount", 240 );
+Check ( "#TotalAmount", 240 );
 
 Set ( "#AccountsCurrencyAmount", "5", table );
 Check ( "#VAT", 10 );
-Check ( "#Amount", 60 );
+Check ( "#TotalAmount", 60 );
 

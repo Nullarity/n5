@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0JO" );
+id = Call ( "Common.ScenarioID", "A0N4" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -15,12 +15,12 @@ With ();
 
 Click ( "#FormAdd" );
 items = Get ( "#Items" );
-items.EndEditRow ();
-Set ( "#ItemsItem", this.Item, items );
+Close ( "Items" );
+Put ( "#ItemsItem", this.Item, items );
 Check("#ItemsPackage", "PK", items);
-Set ( "#ItemsQuantityPkg", 2, items );
+Put ( "#ItemsQuantityPkg", 2, items );
 Check("#ItemsQuantity", 10, items);
-Set ( "#ItemsQuantity", 15, items );
+Put ( "#ItemsQuantity", 15, items );
 Check("#ItemsQuantityPkg", 3, items);
 
 // *************************

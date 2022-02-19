@@ -12,7 +12,7 @@ if ( Fetch ( "#Transfer" ) = "No" ) then
 endif;
 
 Click ( "#FormPrint" );
+CheckErrors ();
 form = With ( "Invoice: Print" );
-Call ( "Common.CheckLogic", "#TabDoc" );
 Close ( form );
 

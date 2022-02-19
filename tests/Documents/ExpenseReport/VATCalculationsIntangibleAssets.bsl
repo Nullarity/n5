@@ -2,7 +2,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A3E31A9" );
+id = Call ( "Common.ScenarioID", "A0N3" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -31,7 +31,7 @@ Click ( "#FormOK" );
 With ( form );
 
 Check ( "#VAT", 50 );
-Check ( "#Amount", 150 );
+Check ( "#TotalAmount", 150 );
 
 // *************************
 // Procedures

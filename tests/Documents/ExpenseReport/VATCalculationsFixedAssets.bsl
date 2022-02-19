@@ -15,7 +15,7 @@ Click ( "#FixedAssetsAdd" );
 With ( "Fixed Asset" );
 
 Put ( "#Item", env.Item );
-Put ( "#Amount", "100" );
+Put ( "#Amount", 100 );
 
 Next ();
 
@@ -31,7 +31,7 @@ Click ( "#FormOK" );
 With ( form );
 
 Check ( "#VAT", 50 );
-Check ( "#Amount", 150 );
+Check ( "#TotalAmount", 150 );
 
 // *************************
 // Procedures

@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A05W" );
+id = Call ( "Common.ScenarioID", "A0NP" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -42,7 +42,7 @@ Pause(3 * __.Performance);
 With();
 Activate("#Compensations");
 Check("#Compensations / #CompensationsResult [1]", 10000); // Amount should not be changed
-Check("#Compensations / #CompensationsHours [1]", 167); // 168-1 preholiday hour
+Check("#Compensations / #CompensationsHours [1]", 166); // 168-2 preholiday hour, even though one of them on Saturday
 
 // *************************
 // Procedures

@@ -136,6 +136,9 @@ Procedure createEnv ()
 	ItemsTable = Get ( "#ItemsTable" );
 	Click ( "#ItemsTableAdd" );
 	With ( "Items Selection" );
+	if ( Fetch ( "#AskDetails" ) = "No" ) then
+		Click ( "#AskDetails" );
+	endif;
 	items = Get ( "#ItemsList" );
 	GotoRow ( items, "Item", this.Item );
 	items.Choose ();

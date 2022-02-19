@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0DS" );
+id = Call ( "Common.ScenarioID", "A0NU" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -20,7 +20,7 @@ else
 	Commando ( "e1cib/command/Document.Payroll.Create" );
 	Put ("#Company", this.Company);
 	Click("#Button0", "1?:*"); // Yes
-	Set ( "#Date", Format (EndOfMonth(this.Date), "DLF=D") );
+	Set ( "#Date", EndOfMonth(this.Date) );
 	Set("#Memo", id);
 	Click("#JustSave");
 endif;

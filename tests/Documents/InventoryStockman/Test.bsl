@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0KS" );
+id = Call ( "Common.ScenarioID", "A0NH" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -11,6 +11,12 @@ createEnv ();
 MainWindow.ExecuteCommand("e1cib/command/Document.InventoryStockman.Create");
 Pause(1);
 With("Scan"); // Will appear automatically after document creation
+if ( Fetch ( "#Autoclose" ) = "Yes" ) then
+	Click ("#Autoclose");
+endif;
+if ( Fetch ( "#AskQuantity" ) = "Yes" ) then
+	Click ("#AskQuantity");
+endif;
 
 #region assignNewBarcode
 barcode = TestingID ();
@@ -19,8 +25,6 @@ Pause ( 1 );
 With ();
 Set ( "#Description", "Item " + barcode );
 Click ( "#SeriesControl" );
-Connect ();
-
 With ( "Item is not found" );
 Set ( "#LotNumber", barcode );
 Set ( "#ExpirationPeriod", 13 );
@@ -34,8 +38,7 @@ Click ( "#FormOK" );
 #endregion
 
 #region checkPackage
-With();
-Close();
+Close ( "Scan" );
 With();
 Check ( "#Items / #ItemsPackage [ 1 ]", "BX" );
 Click("#ItemsScan");
@@ -94,7 +97,7 @@ Procedure getEnv ()
 	id = this.ID;
 	this.Insert ( "Item", "Item " + id );
 	this.Insert ( "ItemWithBarcodeCode", id + id );
-	this.Insert ( "ItemWithBarcodeName", "ItemWB " + id );
+	this.Insert ( "ItemWithBarcodeName", "Nobarcode " + id );
 
 EndProcedure
 
