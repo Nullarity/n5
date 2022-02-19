@@ -230,7 +230,7 @@ Procedure sqlQuantity ( Env )
 		|where Items.RowKey not in ( select RowKey from Reserves )";
 	endif;
 	s = s + "
-	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series as Series
+	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
 	Env.Selection.Add ( s );
 	
