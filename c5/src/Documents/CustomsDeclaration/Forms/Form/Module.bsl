@@ -215,6 +215,17 @@ Procedure sqlItems ()
 	|	//
 	|	join Groups as Groups
 	|	on Groups.CustomsGroup = Items.CustomsGroup
+	|	//
+	|	// Rows
+	|	//
+	|	join (
+	|		select min ( Items.LineNumber ) as Row, Items.Item as Item
+	|		from Document.VendorInvoice.Items as Items
+	|		where Items.Ref = &Base
+	|		group by Items.Item
+	|	) as Rows
+	|	on Rows.Item = Items.Item
+	|order by Rows.Row
 	|";
 	Env.Selection.Add ( s );
 	
