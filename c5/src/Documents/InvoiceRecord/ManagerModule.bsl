@@ -415,7 +415,6 @@ Procedure putRow(Params, Env, Table)
 	emptyRow = t.GetArea("EmptyRow");
 	p = area.Parameters;
 	tabDoc = Params.TabDoc;
-	noVAT = Output.NoVAT ();
 	for each row in Table do
 		if (row.Empty) then
 			tabDoc.Put(emptyRow);
@@ -428,11 +427,7 @@ Procedure putRow(Params, Env, Table)
 		if (row.Social) then
 			p.OtherInfo = "" + row.ProducerPrice + "/" + Format(row.ExtraCharge, "NFD=2; NZ=") + " " + row.OtherInfo;
 		endif;
-		if ( row.NoVAT ) then
-			p.VATRate = noVAT;
-		else
-			p.VATRate = Format ( row.VATRate, "NZ=0" ) + "%";
-		endif;
+		p.VATRate = ? ( row.NoVAT, "-", Format ( row.VATRate, "NZ=0" ) + "%" );
 		tabDoc.Put(area);
 	enddo;
 	

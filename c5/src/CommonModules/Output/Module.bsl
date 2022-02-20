@@ -8038,11 +8038,3 @@ Procedure RetailSalesInteractiveCreationError ( Params = undefined, Field = "", 
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
-
-&AtServer
-Function NoVAT () export
-
-	text = NStr ( "en = 'Fără TVA';ro = 'Fără TVA';ru = 'Fără TVA'" );
-	return text;
-
-EndFunction
