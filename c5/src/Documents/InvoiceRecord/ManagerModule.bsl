@@ -175,7 +175,8 @@ Procedure sqlItems(Env)
 	|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
 	|	end as Price, " + amount + " as Amount, 
 	|	isnull ( Items.Feature.Description, """" ) as Feature, isnull ( Items.Series.Description, """" ) as Series,
-	|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
+	|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATCode.Type = value ( Enum.VAT.None ) as NoVAT,
+	|	Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
 	|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge,
 	|	isnull ( Items.Item.SKU, """" ) as SKU
 	|from Document.InvoiceRecord.Items as Items
@@ -184,13 +185,14 @@ Procedure sqlItems(Env)
 	|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
 	|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
 	|	" + amount + ", isnull ( Services.Feature.Description, """" ), """", Services.Description,
-	|	Services.VATRate, false, Services.OtherInfo, false, 0, 0, """"
+	|	Services.VATCode.Type = value ( Enum.VAT.None ), Services.VATRate, false, Services.OtherInfo,
+	|	false, 0, 0, """"
 	|from Document.InvoiceRecord.Services as Services
 	|where Services.Ref = &Ref 
 	|union all
 	|select """", """", 0, 0, - Discounts.Amount * &Rate / &Factor, - Discounts.VAT * &Rate / &Factor, 0, 
 	|	- ( Discounts.Amount - Discounts.VAT ) * &Rate / &Factor, """", """", Discounts.Item.FullDescription,
-	|	Discounts.VATRate, false, """", false, 0, 0, """"
+	|	Discounts.VATCode.Type = value ( Enum.VAT.None ), Discounts.VATRate, false, """", false, 0, 0, """"
 	|from Document.InvoiceRecord.Discounts as Discounts
 	|where Discounts.Ref = &Ref 
 	|";
@@ -413,6 +415,7 @@ Procedure putRow(Params, Env, Table)
 	emptyRow = t.GetArea("EmptyRow");
 	p = area.Parameters;
 	tabDoc = Params.TabDoc;
+	noVAT = Output.NoVAT ();
 	for each row in Table do
 		if (row.Empty) then
 			tabDoc.Put(emptyRow);
@@ -424,6 +427,11 @@ Procedure putRow(Params, Env, Table)
 		);
 		if (row.Social) then
 			p.OtherInfo = "" + row.ProducerPrice + "/" + Format(row.ExtraCharge, "NFD=2; NZ=") + " " + row.OtherInfo;
+		endif;
+		if ( row.NoVAT ) then
+			p.VATRate = noVAT;
+		else
+			p.VATRate = Format ( row.VATRate, "NZ=0" ) + "%";
 		endif;
 		tabDoc.Put(area);
 	enddo;
