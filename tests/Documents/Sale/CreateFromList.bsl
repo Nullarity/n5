@@ -5,6 +5,6 @@ CloseAll ();
 
 Commando("e1cib/list/Document.Sale");
 Check("#WarehouseFilter", "Main");
-Click("#FormCreate");
+Click("#ListCreate");
 With();
 Check("#Method", "Cash");

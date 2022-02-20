@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-id = Call ( "Common.ScenarioID", "2B8A8920" );
+id = Call ( "Common.ScenarioID", "A0O0" );
 
 // Create an Invoice
 invoice = Commando("e1cib/command/Document.Invoice.Create");

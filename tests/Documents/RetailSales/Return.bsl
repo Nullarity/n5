@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0M3" );
+id = Call ( "Common.ScenarioID", "A0O5" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -26,6 +26,7 @@ CheckErrors ();
 With ();
 Close ();
 With ();
+Get ( "#Accounting" ).GotoLastRow ();
 Click ( "#AccountingReportRecordsShow" );
 With ();
 CheckTemplate ( "#TabDoc" );
