@@ -1837,6 +1837,7 @@ Procedure makeDiscounts ( Env )
 	date = fields.Date;
 	ref = Env.Ref;
 	department = fields.Department;
+	vendor = fields.Vendor;
 	discounts = Env.Registers.VendorDiscounts;
 	sales = Env.Registers.Sales;
 	for each row in Env.Discounts do
@@ -1854,10 +1855,12 @@ Procedure makeDiscounts ( Env )
 			movement.Detail = row.Detail;
 			movement = sales.Add ();
 			movement.Period = date;
+			movement.Customer = vendor;
 			movement.ItemKey = row.ItemKey;
 			movement.Department = department;
 			movement.Account = row.Income;
 			movement.Amount = row.Amount;
+			movement.VAT = row.VAT;
 			rowSales = salesTable ( Env ).Add ();
 			rowSales.Income = row.Income;
 			rowSales.Amount = row.Amount;
@@ -1961,6 +1964,22 @@ Procedure makeProducerPrices ( Env )
 	enddo;
 
 EndProcedure
+
+#endregion
+
+#region Printing
+
+Function Print ( Params, Env ) export
+	
+	tabDoc = Params.TabDoc;
+	tabDoc.FitToPage = true;
+	Print.SetFooter ( tabDoc );
+	t = Env.T;
+	DC.SetFilter ( t.DefaultSettings, "Ref", Params.Reference );
+	Print.OutputSchema ( t, tabDoc );
+	return true;
+	
+EndFunction
 
 #endregion
 

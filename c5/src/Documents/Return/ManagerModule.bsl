@@ -599,18 +599,22 @@ Procedure makeSales ( Env, Table )
 	recordset = Env.Registers.Sales;
 	items = Table.Copy ( , "ItemKey, Income, Item, SalesOrder, Quantity, Amount, Cost, AmountGeneral, ContractAmount" );
 	items.GroupBy ( "ItemKey, Income, Item, SalesOrder", "Quantity, Amount, Cost, AmountGeneral, ContractAmount" );
-	date = Env.Fields.Date;
-	department = Env.Fields.Department;
+	fields = Env.Fields;
+	date = fields.Date;
+	department = fields.Department;
+	customer = fields.Customer;
 	sales = Env.SalesTable;
 	usual = not Env.RestoreCost;
 	for each row in items do
 		movement = recordset.Add ();
 		movement.Period = date;
+		movement.Customer = customer;
 		movement.ItemKey = row.ItemKey;
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = - row.Quantity;
 		movement.Amount = - row.Amount;
+		movement.VAT = - ( row.Amount - row.AmountGeneral );
 		movement.Cost = - row.Cost;
 		movement.SalesOrder = row.SalesOrder;
 		if ( usual ) then

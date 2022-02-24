@@ -149,6 +149,32 @@ Procedure _5_0_23_1 () export
 	
 EndProcedure
 
+Procedure _5_0_24_1 () export
+	
+	BeginTransaction ();
+	for each tenant in Tenants do
+		activateTenant ( tenant );
+		s = "
+		|select distinct Recorder as Ref, Recorder.Customer as Customer from AccumulationRegister.Sales
+		|";
+		q = new Query ( s );
+		selection = q.Execute ().Select ();
+		r = AccumulationRegisters.Sales.CreateRecordSet ();
+		while ( selection.Next () ) do
+			r.Filter.Recorder.Set ( selection.Ref );
+			r.Read ();
+			customer = selection.Customer;
+			for each row in r do
+				row.Customer = customer;
+			enddo;
+			r.DataExchange.Load = true;
+			r.Write ();
+		enddo;
+	enddo;
+	CommitTransaction ();
+	
+EndProcedure
+
 Procedure updateCustomsDeclarations ()
 	
 	selection = Documents.CustomsDeclaration.Select ();

@@ -202,7 +202,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -214,7 +213,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -226,7 +224,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -238,7 +235,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -250,7 +246,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -262,7 +257,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
 	union all
 	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT, Table.Ref.Number, Table.Ref.Date, 
@@ -307,7 +301,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.VAT
-	and Table.Charge.VAT.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Number, Table.Date, 
 		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref, null, null
@@ -315,7 +308,6 @@ from (
 	where not Table.Ref.DeletionMark
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -326,7 +318,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -338,7 +329,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -350,7 +340,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -362,7 +351,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -374,7 +362,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 ) as VATPurchase</query>
 		<autoFillFields>false</autoFillFields>
@@ -436,57 +423,46 @@ where Company.Ref = &amp;Company</query>
 		<query>select Table.Ref as DescriptionsRef, Table.Content as Content
 from Document.VendorInvoice.Accounts as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union                                                     
 select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
 from Document.VendorInvoice.FixedAssets as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
 from Document.VendorInvoice.IntangibleAssets as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.VendorInvoice.Items as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.VendorInvoice.Services as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref as DescriptionsRef, Table.Content as Content
 from Document.ExpenseReport.Accounts as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union                                                     
 select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
 from Document.ExpenseReport.FixedAssets as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
 from Document.ExpenseReport.IntangibleAssets as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.ExpenseReport.Items as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.ExpenseReport.Services as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.VendorInvoice.Discounts as Table
 where Table.Ref in ( &amp;Documents )
-and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 </query>
 	</dataSet>
 	<dataSetLink>

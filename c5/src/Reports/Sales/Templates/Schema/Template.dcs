@@ -330,13 +330,13 @@ index by Customer
 //
 select Turnovers.Department as Department, Details.Item as Item,  Details.Warehouse as Warehouse, 
 	Turnovers.AmountTurnover as Amount, Turnovers.CostTurnover as Cost, Turnovers.AmountTurnover - Turnovers.CostTurnover as Profit, 
-	Turnovers.QuantityTurnover as Quantity, Details.ItemKey as ItemKey, Turnovers.SalesOrder.Customer as Customer,
+	Turnovers.QuantityTurnover as Quantity, Details.ItemKey as ItemKey, Turnovers.Customer as Customer,
 	case when Turnovers.CostTurnover = 0 then 100 else ( Turnovers.AmountTurnover - Turnovers.CostTurnover ) * 100 / Turnovers.CostTurnover end as PercentProfit,
 	Turnovers.MonthPeriod AS MonthPeriod, Turnovers.Department.Owner as Company, Turnovers.Recorder as Recorder
 {select Department.*, Item.*, Warehouse.*, Company, Amount, Cost, Quantity, ItemKey, PercentProfit,	Customer.*, Profit, 
 	MonthPeriod, Recorder.* }
 from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, { Department.* as Department, 
-	Department.Owner.* as Company, SalesOrder.Customer.* as Customer } ) as Turnovers
+	Department.Owner.* as Company, Customer.* as Customer } ) as Turnovers
 	//
 	// Details
 	//
@@ -346,9 +346,9 @@ from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 	// Filter by Customers
 	//
 	{join Customers as Customers
-	on Customers.Customer = Turnovers.SalesOrder.Customer}
+	on Customers.Customer = Turnovers.Customer}
 {where Customers.Customer.* as Customer}
-	</query>
+</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
 	<totalField>

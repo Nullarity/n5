@@ -150,7 +150,7 @@ Procedure sqlSales ( Env )
 	s = "
 	|// ^Sales
 	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Account as Account, Items.Income as Income, Items.Quantity as Quantity, Items.Amount as Amount,
+	|	Items.Account as Account, Items.Income as Income, Items.Quantity as Quantity,
 	|	Items.Amount as Amount, Items.Total as Total, Details.ItemKey
 	|from Items as Items
 	|	//
@@ -526,6 +526,7 @@ Procedure makeItemsSales ( Env, Table )
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
 		movement.Amount = row.Total;
+		movement.VAT = row.Total - row.Amount;
 		movement.Cost = row.Cost;
 		if ( usual ) then
 			rowSales = sales.Add ();
@@ -568,12 +569,12 @@ Procedure makeSales ( Env )
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount;
+		movement.Amount = row.Total;
+		movement.VAT = row.Total - row.Amount;
 		if ( not Env.RestoreCost ) then
 			rowSales = sales.Add ();
 			rowSales.Income = row.Income;
 			rowSales.Amount = row.Amount;
-			rowSales.ContractAmount = row.Total;
 		endif; 
 	enddo; 
 	

@@ -836,18 +836,22 @@ EndProcedure
 Procedure makeItemsSales ( Env, Table )
 	
 	recordset = Env.Registers.Sales;
-	date = Env.Fields.Date;
-	department = Env.Fields.Department;
+	fields = Env.Fields;
+	date = fields.Date;
+	department = fields.Department;
+	customer = fields.Customer;
 	sales = Env.SalesTable;
 	usual = not Env.RestoreCost;
 	for each row in Table do
 		movement = recordset.Add ();
 		movement.Period = date;
+		movement.Customer = customer;
 		movement.ItemKey = row.ItemKey;
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
 		movement.Amount = row.Amount;
+		movement.VAT = row.Amount - row.AmountGeneral;
 		movement.Cost = row.Cost;
 		movement.SalesOrder = row.SalesOrder;
 		if ( usual ) then
@@ -882,6 +886,7 @@ Procedure makeSales ( Env )
 	fields = Env.Fields;
 	date = fields.Date;
 	department = fields.Department;
+	customer = fields.Customer;
 	sales = Env.SalesTable;
 	for each row in table do
 		if ( row.ItemKey = null ) then
@@ -889,11 +894,13 @@ Procedure makeSales ( Env )
 		endif; 
 		movement = recordset.Add ();
 		movement.Period = date;
+		movement.Customer = customer;
 		movement.ItemKey = row.ItemKey;
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
 		movement.Amount = row.Amount;
+		movement.VAT = row.Amount - row.AmountGeneral;
 		movement.SalesOrder = row.SalesOrder;
 		if ( not Env.RestoreCost ) then
 			rowSales = sales.Add ();
@@ -916,6 +923,7 @@ Procedure makeDiscounts ( Env )
 	ref = Env.Ref;
 	discounts = Env.Registers.Discounts;
 	department = fields.Department;
+	customer = fields.Customer;
 	sales = Env.Registers.Sales;
 	salesTable = Env.SalesTable;
 	for each row in Env.Discounts do
@@ -934,10 +942,12 @@ Procedure makeDiscounts ( Env )
 		endif;
 		movement = sales.Add ();
 		movement.Period = date;
+		movement.Customer = customer;
 		movement.ItemKey = row.ItemKey;
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Amount = - row.Amount;
+		movement.VAT = - row.VAT;
 		movement.SalesOrder = row.Document;
 		rowSales = salesTable.Add ();
 		rowSales.Operation = Enums.Operations.SalesDiscount;
