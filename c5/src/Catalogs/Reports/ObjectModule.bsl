@@ -123,12 +123,12 @@ Procedure readTemplateParameters ()
 	right = T.TableWidth;
 	for i = 1 to top do
 		for j = 1 to right do
-			area = T.Area ( i, j, i, j );
-			if ( area.DetailsParameter = "" ) then
+			range = T.Area ( i, j, i, j );
+			if ( range.DetailsParameter = "" ) then
 				continue;
 			endif;
-			TemplateParameters.Insert ( area.DetailsParameter, area.Parameter );
-			FieldProcedures [ area.Parameter ] = true;
+			TemplateParameters.Insert ( range.DetailsParameter, range.Parameter );
+			FieldProcedures [ range.Parameter ] = true;
 		enddo; 
 	enddo; 
 	
@@ -157,14 +157,14 @@ Procedure readLocations ()
 	right = TabDoc.TableWidth;
 	for i = 1 to top do
 		for j = 1 to right do
-			area = TabDoc.Area ( i, j, i, j );
-			if ( area.Details = undefined ) then
+			range = TabDoc.Area ( i, j, i, j );
+			if ( range.Details = undefined ) then
 				continue;
 			endif;
-			if ( not Areas.Property ( area.Details ) ) then
-				Areas.Insert ( area.Details, new Array () );
+			if ( not Areas.Property ( range.Details ) ) then
+				Areas.Insert ( range.Details, new Array () );
 			endif; 
-			parameterAreas = Areas [ area.Details ];
+			parameterAreas = Areas [ range.Details ];
 			parameterAreas.Add ( TabDoc.Area ( i, j ).Name );
 		enddo; 
 	enddo; 
@@ -190,15 +190,18 @@ EndProcedure
 
 Procedure drawValue ( Parameter, Value )
 	
+	var set;
 	if ( MakeComplete ) then
-		for each areaName in Areas [ Parameter ] do
-			Area = TabDoc.Area ( areaName );
-			if ( Area.ContainsValue ) then
-				Area.Value = Value;
-			else
-				Area.Text = Value;
-			endif; 
-		enddo; 
+		if ( Areas.Property ( Parameter, set ) ) then
+			for each areaName in set do
+				Area = TabDoc.Area ( areaName );
+				if ( Area.ContainsValue ) then
+					Area.Value = Value;
+				else
+					Area.Text = Value;
+				endif; 
+			enddo; 
+		endif;
 	else
 		Area.Parameters [ Parameter ] = Value;
 	endif; 

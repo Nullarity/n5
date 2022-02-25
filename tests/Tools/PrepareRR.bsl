@@ -13,12 +13,8 @@
 // Warning! For new reports don't forget to check Memo field in the
 // target report. Memo field is responsible for report ID
 p = Call ( "Tools.BuildRRPackage.Params" );
-p.Release = "5_0_20_1";
+p.Release = "5_0_24_1";
 p.Path = "/home/dmitry/Desktop";
 list = p.Update;
-list.Add ( "InitialDatabase.RegulatoryReports.Month.IPC21" );
-list = p.Remove;
-list.Add ( "IPC18" );
-list.Add ( "IPC18_042019" );
-list.Add ( "IPC18_20200713" );
+list.Add ( "InitialDatabase.RegulatoryReports.Month.TVA12" );
 Call ( "Tools.BuildRRPackage", p );

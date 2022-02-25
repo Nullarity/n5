@@ -30,6 +30,7 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|CompanyFilter enable not Designer;
 	|ProgramCodePage ExporterCodePage TabDoc OpenGenerator show Designer;
+	|TotalInfo CalcTotals hide Designer;
 	|ReportField show not Designer;
 	|ListShowList show MasterMode;
 	|ListShowMasters show not MasterMode;

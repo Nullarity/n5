@@ -170,6 +170,7 @@ Procedure _5_0_24_1 () export
 			r.DataExchange.Load = true;
 			r.Write ();
 		enddo;
+		updateReports ();
 	enddo;
 	CommitTransaction ();
 	

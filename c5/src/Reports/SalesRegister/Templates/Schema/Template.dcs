@@ -252,7 +252,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
@@ -269,7 +268,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
@@ -286,7 +284,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
@@ -299,7 +296,6 @@ from (
 	where not Table.Ref.DeletionMark
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		CustomerPayments.Number, CustomerPayments.Date, CustomerPayments.Customer.CodeFiscal,
@@ -368,7 +364,6 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
-	and Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 	group by Table.Ref, Table.VATCode
 ) as Sales
 </query>
