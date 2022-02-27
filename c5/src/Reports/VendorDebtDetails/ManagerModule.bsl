@@ -1,5 +1,4 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
-
 	
 Function Events () export
 	

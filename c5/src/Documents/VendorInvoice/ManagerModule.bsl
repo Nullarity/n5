@@ -1967,20 +1967,4 @@ EndProcedure
 
 #endregion
 
-#region Printing
-
-Function Print ( Params, Env ) export
-	
-	tabDoc = Params.TabDoc;
-	tabDoc.FitToPage = true;
-	Print.SetFooter ( tabDoc );
-	t = Env.T;
-	DC.SetFilter ( t.DefaultSettings, "Ref", Params.Reference );
-	Print.OutputSchema ( t, tabDoc );
-	return true;
-	
-EndFunction
-
-#endregion
-
 #endif

@@ -3,7 +3,7 @@
 	commonVatFields = "
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
-	|	Table.VATCode.Rate as Rate, Table.VATCode.Type as Type, Table.Ref.VATUse <> 0 as VATUse
+	|	Table.VATCode.Rate as Rate, Table.VATCode.Type as Type
 	|";
 	invoiceRecordsFields = commonVatFields + ", Table.Ref.Series as Series, Table.Ref.FormNumber as Number";
 	vendorInvoiceFields = commonVatFields + ", Table.Ref.Series as Series, Table.Ref.Reference as Number,
@@ -57,6 +57,7 @@
 	|from Document.InvoiceRecord.Items as Table
 	|" + conditions + "
 	|and not Table.Ref.DeletionMark
+	|and Table.Ref.VATUse <> 0
 	|and not Table.Ref.Base refs Document.Transfer
 	|and not Table.Ref.Base refs Document.LVITransfer
 	|and Table.Ref.Status in (
@@ -68,6 +69,7 @@
 	|" + invoiceRecordsFields + ", Table.Ref.DeliveryDate as Date, 0, Table.Ref.Customer.CodeFiscal as CodeFiscal
 	|from Document.InvoiceRecord.Services as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and not Table.Ref.DeletionMark
 	|and not Table.Ref.Base refs Document.Transfer
 	|and not Table.Ref.Base refs Document.LVITransfer
@@ -80,34 +82,39 @@
 	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Accounts as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and Table.Ref.Posted
 	|and not Table.Ref.Import
 	|union all
 	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.FixedAssets as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and Table.Ref.Posted
 	|and not Table.Ref.Import
 	|union all
 	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.IntangibleAssets as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and Table.Ref.Posted
 	|and not Table.Ref.Import
 	|union all
 	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Items as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and Table.Ref.Posted
 	|and not Table.Ref.Import
 	|union all
 	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Services as Table
 	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
 	|and Table.Ref.Posted
 	|and not Table.Ref.Import
 	|union all
-	|select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT.Rate, Table.Charge.VAT.Type, true,
+	|select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT.Rate, Table.Charge.VAT.Type,
 	|	"""", """", """", 2, """"
 	|from Document.CustomsDeclaration.Charges as Table
 	|	//
@@ -133,75 +140,82 @@
 	|and Table.VAT
 	|and Table.Ref.Posted
 	|union all
-	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type, Table.VATUse <> 0,
+	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.Series, Table.FormNumber, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.VATPurchases as Table
 	|where not Table.Ref.DeletionMark
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
+	|and Table.Ref.VATUse <> 0
 	|union all
-	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type, Table.VATUse <> 0,
+	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.Series, Table.FormNumber, Table.Date, 0, Table.Customer.CodeFiscal
 	|from Document.VATSales as Table
 	|where not Table.Ref.DeletionMark
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
+	|and Table.Ref.VATUse <> 0
 	|union all
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.VATUse <> 0,
+	|	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.DocumentSeries, Table.Number, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.ExpenseReport.Items as Table
 	|where Table.Ref.Posted
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	|and Table.Ref.VATUse <> 0
 	|union all
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.VATUse <> 0,
+	|	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.DocumentSeries, Table.Number, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.ExpenseReport.Services as Table
 	|where Table.Ref.Posted
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	|and Table.Ref.VATUse <> 0
 	|union all
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.VATUse <> 0,
+	|	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.DocumentSeries, Table.Number, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.ExpenseReport.FixedAssets as Table
 	|where Table.Ref.Posted
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	|and Table.Ref.VATUse <> 0
 	|union all
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.VATUse <> 0,
+	|	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.DocumentSeries, Table.Number, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.ExpenseReport.IntangibleAssets as Table
 	|where Table.Ref.Posted
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	|and Table.Ref.VATUse <> 0
 	|union all
 	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.VATUse <> 0,
+	|	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.DocumentSeries, Table.Number, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.ExpenseReport.Accounts as Table
 	|where Table.Ref.Posted
 	|and Table.Ref.Date between &DateStart and &DateEnd
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	|and Table.Ref.VATUse <> 0
 	|;
 	|// #VATs
-	|select sum ( VATs.Amount ), sum ( VATs.VAT ) as VAT, VATs.Rate as Rate, VATs.Type as Type, VATs.VATUse as VATUse, VATs.Operation as Operation,
+	|select sum ( VATs.Amount ), sum ( VATs.VAT ) as VAT, VATs.Rate as Rate, VATs.Type as Type, VATs.Operation as Operation,
 	|	VATs.Series as Series, VATs.Number as Number, VATs.Date as Date, VATs.CodeFiscal as CodeFiscal
 	|from VATs as VATs
-	|group by VATs.Rate, VATs.Type, VATs.VATUse, VATs.Operation, VATs.Date, VATs.Number, VATs.Series, VATs.CodeFiscal
+	|group by VATs.Rate, VATs.Type, VATs.Operation, VATs.Date, VATs.Number, VATs.Series, VATs.CodeFiscal
 	|order by VATs.Date
 	|;
 	|// @Advances
@@ -225,25 +239,24 @@
 	//*********** standard rate
 	//*************************
 	vats = Env.VATs;
-	vat = Enums.VAT;
-	table = vats.Copy ( new Structure ( "Type, Operation, VATUse", vat.Standart, 0, true ) );
+	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.Standart, 0 ) );
 	FieldsValues [ "A21" ] = table.Total ( "Amount" );
 	FieldsValues [ "B21" ] = table.Total ( "VAT" );
 	
 	//************ reduced rate
 	//*************************
-	table = vats.Copy ( new Structure ( "Type, Operation, VATUse", vat.Reduced, 0, true ) );
+	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.Reduced, 0 ) );
 	FieldsValues [ "A23" ] = table.Total ( "Amount" );
 	FieldsValues [ "B23" ] = table.Total ( "VAT" );
 	
 	//******************** zero
 	//*************************
-	table = vats.Copy ( new Structure ( "Type, Operation, VATUse", vat.Zero, 0, true ) );
+	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.Zero, 0 ) );
 	FieldsValues [ "A24" ] = table.Total ( "Amount" );
 	
 	//****************** no VAT
 	//*************************
-	table = vats.Copy ( new Structure ( "VATUse, Operation", false, 0 ) );
+	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.None, 0 ) );
 	FieldsValues [ "A25" ] = table.Total ( "Amount" );
 	
 	//****************** Advances
@@ -252,13 +265,13 @@
 	
 	//****************** Receipt
 	//*************************
-	receipt = vats.Copy ( new Structure ( "VATUse, Operation", true, 1 ) );
+	receipt = vats.Copy ( new Structure ( "Operation", 1 ) );
 	FieldsValues [ "A30" ] = receipt.Total ( "Amount" );
 	FieldsValues [ "B30" ] = receipt.Total ( "VAT" );
 	
 	//****************** Import
 	//*************************
-	table = vats.Copy ( new Structure ( "VATUse, Operation", true, 2 ) );
+	table = vats.Copy ( new Structure ( "Operation", 2 ) );
 	FieldsValues [ "A31" ] = table.Total ( "Amount" );
 	FieldsValues [ "B31" ] = table.Total ( "VAT" );
 	
@@ -348,7 +361,7 @@
 	
 	//****************** Annex2
 	//*************************
-	sales = vats.Copy ( new Structure ( "VATUse, Operation", true, 0 ) );
+	sales = vats.Copy ( new Structure ( "Operation", 0 ) );
 	sales.GroupBy ( "CodeFiscal, Date, Series, Number", "Amount, VAT" );
 	
 	i = 100; // data index
