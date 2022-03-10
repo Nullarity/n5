@@ -308,14 +308,15 @@ Procedure readAppearance ()
 	|Links show ShowLinks;
 	|ThisObject lock Object.Posted;
 	|Warning show RetailSalesPosted;
-	|WarningTaxInvoice show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|WarningTaxInvoice show ChangesDisallowed;
 	|VAT ItemsVATCode ItemsVAT show Object.VATUse > 0;
 	|ItemsTotal show Object.VATUse = 2;
 	|Taken Change show not ( Object.Posted or Object.Return ) and Object.Method = Enum.PaymentMethods.Cash;
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show Object.Base = undefined and ( FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus ) );
 	|FormInvoice show filled ( InvoiceRecord );
-	|GroupItems GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|GroupItems GroupMore lock ChangesDisallowed;
+	|ItemsTableCommandBar disable ChangesDisallowed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -337,17 +338,16 @@ Procedure fillNew ()
 		endif;
 	else
 		if ( Object.Warehouse.IsEmpty () ) then
-			settings = Logins.Settings ( "Company, Warehouse, Warehouse.Prices as Prices,
-			|PaymentLocation, PaymentLocation.Method as Method" );
+			settings = Logins.Settings ( "Company, Warehouse, Warehouse.Prices as Prices" );
 			Object.Company = settings.Company;
 			Object.Warehouse = settings.Warehouse;
-			Object.Location = settings.PaymentLocation;
-			method = settings.Method;
 			Object.Prices = settings.Prices;
 		else
 			fields = DF.Values ( Object.Warehouse, "Owner, Prices" );
 			Object.Company = fields.Owner;
 			Object.Prices = fields.Prices;
+		endif;
+		if ( Object.Location.IsEmpty () ) then
 			settings = Logins.Settings ( "PaymentLocation, PaymentLocation.Method as Method" );
 			Object.Location = settings.PaymentLocation;
 			method = settings.Method;
@@ -564,7 +564,7 @@ Procedure readNewInvoices ( NewObject )
 	type = TypeOf ( NewObject );
 	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
 		InvoiceRecords.Read ( ThisObject );
-		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus" );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
 	endif;
 
 EndProcedure
@@ -573,7 +573,7 @@ EndProcedure
 Procedure readPrinted ()
 	
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure 
 

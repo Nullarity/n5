@@ -25,14 +25,15 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 	
-	if ( not Parameters.CopyingValue.IsEmpty () ) then
-		return;
+	if ( Parameters.CopyingValue.IsEmpty () ) then
+		Object.Signed = false;
+	else
+		setFlags ();
+		setCurrency ();
+		setCompany ();
+		setTerms ();
+		setVATAdvance ();
 	endif;
-	setFlags ();
-	setCurrency ();
-	setCompany ();
-	setTerms ();
-	setVATAdvance ();
 	
 EndProcedure
 
@@ -262,6 +263,7 @@ Procedure applyCustomer ()
 		Object.CustomerTerms = undefined;
 		Object.CustomerDelivery = 0;
 		Object.Export = false;
+		Object.Signed = false;
 		Object.CustomerVATAdvance = undefined;
 	endif; 
 	Appearance.Apply ( ThisObject, "Object.Customer" );
@@ -354,7 +356,6 @@ Procedure applyVendorRateType ()
 	Appearance.Apply ( ThisObject, "Object.VendorRateType" );
 	
 EndProcedure
-
 
 // *****************************************
 // *********** Table Items

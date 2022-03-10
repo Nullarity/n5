@@ -27,6 +27,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceRecords.Read ( ThisObject );
 	initCurrency ();
 	setSocial ();
+	SalesRestriction.Show ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -98,6 +99,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	Forms.ActivatePage ( ThisObject, "ItemsTable,Services,Discounts" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
+	DocumentForm.CheckDate ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -136,9 +138,9 @@ Procedure readAppearance ()
 	|	and filled ( Items.Services.CurrentData.SalesOrder );
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
-	|Header GroupItems GroupServices Footer Discounts GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsSelectItems ServicesSelectItems ItemsScan ItemsApplySalesOrders ServicesApplySalesOrders DiscountsRefreshDiscounts disable inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Warning show ChangesDisallowed;
+	|Header GroupItems GroupServices Footer Discounts GroupMore lock ChangesDisallowed;
+	|ItemsTableCommandBar ServicesCommandBar DiscountsCommandBar disable ChangesDisallowed;
 	|VAT ItemsVATAccount ServicesVATAccount DiscountsVATAccount ItemsVATCode ItemsVAT
 	|	ServicesVATCode ServicesVAT DiscountsVATCode DiscountsVAT show Object.VATUse > 0;
 	|ItemsTotal ServicesTotal show Object.VATUse = 2;
@@ -220,6 +222,7 @@ Procedure applyContract ()
 	updateContent ();
 	updateTotals ( ThisObject );
 	updateBalanceDue ();
+	SalesRestriction.Show ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 
 EndProcedure
@@ -831,7 +834,7 @@ Procedure readNewInvoices ( NewObject )
 	type = TypeOf ( NewObject );
 	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
 		InvoiceRecords.Read ( ThisObject );
-		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus" );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
 	endif;
 
 EndProcedure
@@ -859,8 +862,11 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
 	elsif ( EventName = Enum.MessageSaleIsSaved ()
-		and Parameter = Object.Ref) then
+		and Parameter = Object.Ref ) then
 		updateLinks ();
+	elsif ( EventName = Enum.MessagePermissionIsSaved ()
+		and Parameter = Object.Ref ) then
+		updatePermissions ();
 	endif; 
 	
 EndProcedure
@@ -902,6 +908,13 @@ Procedure addItem ( Fields )
 	updateTotals ( ThisObject, row );
 	
 EndProcedure 
+
+&AtServer
+Procedure updatePermissions ()
+
+	SalesRestriction.Show ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
@@ -945,7 +958,7 @@ EndProcedure
 Procedure readPrinted ()
 	
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure 
 
@@ -1051,6 +1064,7 @@ EndProcedure
 &AtClient
 Procedure DateOnChange ( Item )
 	
+	DocumentForm.CheckDate ( ThisObject );
 	updateContent ();
 	
 EndProcedure

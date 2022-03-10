@@ -354,6 +354,13 @@ Function MessageSaleIsSaved () export
 	
 EndFunction 
 
+&AtClient
+Function MessagePermissionIsSaved () export
+	
+	return "280";
+	
+EndFunction 
+
 #endregion
 
 #region DocumentCommands
@@ -1362,6 +1369,17 @@ EndFunction
 Function ShowMessagesInSeparateWindow () export
 	
 	return 1;
+
+EndFunction
+
+#endregion
+
+#region WriteParameters
+
+&AtClient
+Function WriteParametersJustSave () export
+	
+	return "JustSave";
 
 EndFunction
 

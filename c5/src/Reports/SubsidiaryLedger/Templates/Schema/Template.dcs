@@ -1165,7 +1165,7 @@
 				</role>
 			</field>
 			<dataSource>DataSource1</dataSource>
-			<query>select case when Balances.Recorder = undefined then null else Balances.Recorder end as Recorder,
+			<query>select allowed case when Balances.Recorder = undefined then null else Balances.Recorder end as Recorder,
 	Balances.MonthPeriod as MonthPeriod, Balances.Account as Account, Balances.Currency as Currency,
 	Balances.ExtDimension1 as Dim1, Balances.ExtDimension2 as Dim2,
 	Balances.ExtDimension3 as Dim3,
@@ -1343,7 +1343,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 				<field>QuantityTurnoverDr</field>
 			</field>
 			<dataSource>DataSource1</dataSource>
-			<query>select case when Turnovers.Recorder = undefined then null else Turnovers.Recorder end as Recorder,
+			<query>select allowed case when Turnovers.Recorder = undefined then null else Turnovers.Recorder end as Recorder,
 	Turnovers.MonthPeriod as MonthPeriod, Turnovers.Account as Account, Turnovers.Currency as Currency,
 	Turnovers.BalancedAccount as BalancedAccount,
 	Turnovers.AmountTurnoverCr as AmountTurnoverCr,

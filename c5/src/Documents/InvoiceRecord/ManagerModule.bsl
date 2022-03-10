@@ -18,7 +18,8 @@ Function Print(Params, Env) export
 	
 	Print.SetFooter(Params.TabDoc);
 	getData(Params, Env);
-	if (not FormsPrint.Check(Params.Reference, Env.Fields.Status)) then
+	fields = Env.Fields;
+	if (not FormsPrint.Check(Params.Reference, fields.Status)) then
 		return false;
 	endif;
 	setTemplates(Env);
@@ -47,80 +48,80 @@ EndProcedure
 Procedure sqlFields(Env)
 	
 	s = "
-		|// @Fields
-		|select top 1 Documents.Number as Number, Documents.Company.FullDescription as Company,
-		|	Documents.Company.CodeFiscal as CodeFiscal, Documents.Status as Status,
-		|	case when Documents.Type = value ( Enum.Print.Portrait ) then true else false end as Portrait,
-		|	case when Documents.Type = value ( Enum.Print.ElectronicPortrait ) then true else false end as ElectronicPortrait,
-		|	case when Documents.Type = value ( Enum.Print.ElectronicLandscape ) then true else false end as ElectronicLandscape,
-		|	case when Documents.Type = value ( Enum.Print.Landscape ) then true else false end as Landscape,
-		|	isnull ( Documents.Account.AccountNumber, """" ) as Account, Documents.AttachedDocuments as AttachedDocuments, 
-		|	isnull ( Documents.Carrier.FullDescription, """" ) as Carrier, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
-		|	cast ( Documents.Base as Document.Invoice ).Contract.Currency as ContractCurrency,
-		|	Documents.Delegated as Delegated, isnull ( Documents.Dispatcher.Description, """" ) as Dispatcher, 
-		|	isnull ( Documents.Driver.Description, """" ) as Driver, Documents.Factor as Factor, Documents.FirstPageRows as FirstPageRows, 
-		|	isnull ( Documents.LoadingAddress.Presentation, """" ) as LoadingAddress, Documents.AttachmentRows as AttachmentRows,
-		|	Documents.PowerAttorneyDate as PowerAttorneyDate, Documents.PowerAttorneyNumber as PowerAttorneyNumber, 
-		|	Documents.PowerAttorneySeries as PowerAttorneySeries, Documents.Rate as Rate, isnull ( Documents.Customer.FullDescription, """" ) as Customer,
-		|	isnull ( Documents.CustomerAccount.AccountNumber, """" ) as CustomerAccount, Documents.Redirects as Redirects,
-		|	isnull ( Documents.Storekeeper.Description, """" ) as Storekeeper, isnull ( Documents.Customer.VATCode, """" ) as CustomerVATCode,
-		|	isnull ( Documents.UnloadingAddress.Presentation, """" ) as UnloadingAddress, 	Documents.WaybillDate as WaybillDate, 
-		|	Documents.WaybillNumber as WaybillNumber, Documents.WaybillSeries as WaybillSeries,
-		|	isnull ( Documents.Account.Bank.Description, """" ) as Bank, isnull ( Documents.Company.PaymentAddress.Presentation, """" ) as CompanyAddress, 
-		|	Contacts.BusinessPhone as BusinessPhone, ContactsCustomer.BusinessPhone as CustomerBusinessPhone,
-		|	isnull ( Documents.Customer.PaymentAddress.Presentation, """" ) as CustomerAddress, Documents.Date as Date,
-		|	isnull ( Documents.CustomerAccount.Bank.Description, """" ) as CustomerBank, isnull ( Documents.Customer.CodeFiscal, """" ) as CustomerCodeFiscal,
-		|	isnull ( Documents.CustomerAccount.Bank.Code, """" ) as CustomerBankCode, isnull ( Documents.Account.Bank.Code, """" ) as BankCode,
-		|	Documents.DeliveryDate as DeliveryDate, isnull ( Documents.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal,
-		|	isnull ( Documents.Carrier.VATCode, """" ) as CarrierVATCode, isnull ( Documents.Company.VATCode, """" ) as VATCode,
-		|	isnull ( PersonnelDispatcher.Position.Description, """" ) as DispatcherPosition, isnull ( PersonnelDriver.Position.Description, """" ) as DriverPosition,
-		|	isnull ( PersonnelStorekeeper.Position.Description, """" ) as StorekeeperPosition, Documents.PrintBack as PrintBack,
-		|	case when Logos.Logo is null then false else true end as LogoLoaded,  Logos.Logo as Logo
-		|from Document.InvoiceRecord as Documents
-		|	//
-		|	// Constants
-		|	//
-		|	join Constants as Constants
-		|	on true
-		|	//
-		|	// Contacts
-		|	//
-		|	left join Catalog.Contacts as Contacts
-		|	on Contacts.Owner = Documents.Company
-		|	and not Contacts.DeletionMark
-		|	and Contacts.ContactType = value ( Catalog.ContactTypes.Director )
-		|	//
-		|	// Contacts Customer
-		|	//
-		|	left join Catalog.Contacts as ContactsCustomer
-		|	on ContactsCustomer.Owner = Documents.Customer
-		|	and not ContactsCustomer.DeletionMark
-		|	and ContactsCustomer.ContactType = value ( Catalog.ContactTypes.Director )
-		|	//
-		|	// Personnel Dispatcher
-		|	//
-		|	left join InformationRegister.Personnel as PersonnelDispatcher
-		|	on PersonnelDispatcher.Employee = Documents.Dispatcher
-		|	and Documents.Dispatcher <> value ( Catalog.Employees.EmptyRef )
-		|	//
-		|	// Personnel Driver
-		|	//
-		|	left join InformationRegister.Personnel as PersonnelDriver
-		|	on PersonnelDriver.Employee = Documents.Driver
-		|	and Documents.Driver <> value ( Catalog.Employees.EmptyRef )
-		|	//
-		|	// Personnel Storekeeper
-		|	//
-		|	left join InformationRegister.Personnel as PersonnelStorekeeper
-		|	on PersonnelStorekeeper.Employee = Documents.Storekeeper
-		|	and Documents.Storekeeper <> value ( Catalog.Employees.EmptyRef )
-		|	//
-		|	// Logos
-		|	//
-		|	left join InformationRegister.Logos as Logos
-		|	on Logos.Company = Documents.Company
-		|where Documents.Ref = &Ref 
-		|";
+	|// @Fields
+	|select top 1 Documents.Number as Number, Documents.Company.FullDescription as Company,
+	|	Documents.Company.CodeFiscal as CodeFiscal, Documents.Status as Status,
+	|	case when Documents.Type = value ( Enum.Print.Portrait ) then true else false end as Portrait,
+	|	case when Documents.Type = value ( Enum.Print.ElectronicPortrait ) then true else false end as ElectronicPortrait,
+	|	case when Documents.Type = value ( Enum.Print.ElectronicLandscape ) then true else false end as ElectronicLandscape,
+	|	case when Documents.Type = value ( Enum.Print.Landscape ) then true else false end as Landscape,
+	|	isnull ( Documents.Account.AccountNumber, """" ) as Account, Documents.AttachedDocuments as AttachedDocuments, 
+	|	isnull ( Documents.Carrier.FullDescription, """" ) as Carrier, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
+	|	cast ( Documents.Base as Document.Invoice ).Contract.Currency as ContractCurrency,
+	|	Documents.Delegated as Delegated, isnull ( Documents.Dispatcher.Description, """" ) as Dispatcher, 
+	|	isnull ( Documents.Driver.Description, """" ) as Driver, Documents.Factor as Factor, Documents.FirstPageRows as FirstPageRows, 
+	|	isnull ( Documents.LoadingAddress.Presentation, """" ) as LoadingAddress, Documents.AttachmentRows as AttachmentRows,
+	|	Documents.PowerAttorneyDate as PowerAttorneyDate, Documents.PowerAttorneyNumber as PowerAttorneyNumber, 
+	|	Documents.PowerAttorneySeries as PowerAttorneySeries, Documents.Rate as Rate, isnull ( Documents.Customer.FullDescription, """" ) as Customer,
+	|	isnull ( Documents.CustomerAccount.AccountNumber, """" ) as CustomerAccount, Documents.Redirects as Redirects,
+	|	isnull ( Documents.Storekeeper.Description, """" ) as Storekeeper, isnull ( Documents.Customer.VATCode, """" ) as CustomerVATCode,
+	|	isnull ( Documents.UnloadingAddress.Presentation, """" ) as UnloadingAddress, 	Documents.WaybillDate as WaybillDate, 
+	|	Documents.WaybillNumber as WaybillNumber, Documents.WaybillSeries as WaybillSeries,
+	|	isnull ( Documents.Account.Bank.Description, """" ) as Bank, isnull ( Documents.Company.PaymentAddress.Presentation, """" ) as CompanyAddress, 
+	|	Contacts.BusinessPhone as BusinessPhone, ContactsCustomer.BusinessPhone as CustomerBusinessPhone,
+	|	isnull ( Documents.Customer.PaymentAddress.Presentation, """" ) as CustomerAddress, Documents.Date as Date,
+	|	isnull ( Documents.CustomerAccount.Bank.Description, """" ) as CustomerBank, isnull ( Documents.Customer.CodeFiscal, """" ) as CustomerCodeFiscal,
+	|	isnull ( Documents.CustomerAccount.Bank.Code, """" ) as CustomerBankCode, isnull ( Documents.Account.Bank.Code, """" ) as BankCode,
+	|	Documents.DeliveryDate as DeliveryDate, isnull ( Documents.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal,
+	|	isnull ( Documents.Carrier.VATCode, """" ) as CarrierVATCode, isnull ( Documents.Company.VATCode, """" ) as VATCode,
+	|	isnull ( PersonnelDispatcher.Position.Description, """" ) as DispatcherPosition, isnull ( PersonnelDriver.Position.Description, """" ) as DriverPosition,
+	|	isnull ( PersonnelStorekeeper.Position.Description, """" ) as StorekeeperPosition, Documents.PrintBack as PrintBack,
+	|	case when Logos.Logo is null then false else true end as LogoLoaded,  Logos.Logo as Logo
+	|from Document.InvoiceRecord as Documents
+	|	//
+	|	// Constants
+	|	//
+	|	join Constants as Constants
+	|	on true
+	|	//
+	|	// Contacts
+	|	//
+	|	left join Catalog.Contacts as Contacts
+	|	on Contacts.Owner = Documents.Company
+	|	and not Contacts.DeletionMark
+	|	and Contacts.ContactType = value ( Catalog.ContactTypes.Director )
+	|	//
+	|	// Contacts Customer
+	|	//
+	|	left join Catalog.Contacts as ContactsCustomer
+	|	on ContactsCustomer.Owner = Documents.Customer
+	|	and not ContactsCustomer.DeletionMark
+	|	and ContactsCustomer.ContactType = value ( Catalog.ContactTypes.Director )
+	|	//
+	|	// Personnel Dispatcher
+	|	//
+	|	left join InformationRegister.Personnel as PersonnelDispatcher
+	|	on PersonnelDispatcher.Employee = Documents.Dispatcher
+	|	and Documents.Dispatcher <> value ( Catalog.Employees.EmptyRef )
+	|	//
+	|	// Personnel Driver
+	|	//
+	|	left join InformationRegister.Personnel as PersonnelDriver
+	|	on PersonnelDriver.Employee = Documents.Driver
+	|	and Documents.Driver <> value ( Catalog.Employees.EmptyRef )
+	|	//
+	|	// Personnel Storekeeper
+	|	//
+	|	left join InformationRegister.Personnel as PersonnelStorekeeper
+	|	on PersonnelStorekeeper.Employee = Documents.Storekeeper
+	|	and Documents.Storekeeper <> value ( Catalog.Employees.EmptyRef )
+	|	//
+	|	// Logos
+	|	//
+	|	left join InformationRegister.Logos as Logos
+	|	on Logos.Company = Documents.Company
+	|where Documents.Ref = &Ref 
+	|";
 	Env.Selection.Add(s);
 	
 EndProcedure

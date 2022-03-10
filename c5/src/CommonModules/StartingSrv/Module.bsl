@@ -196,9 +196,3 @@ Procedure UnlockDB () export
 	Connections.Unlock ();
 	
 EndProcedure
-
-Function GetUser () export
-
-	return SessionParameters.User;
-
-EndFunction

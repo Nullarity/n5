@@ -7,6 +7,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
 	filterByWarehouse ();
+	filterByLocation ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -15,8 +16,9 @@ EndProcedure
 &AtServer
 Procedure init ()
 	
-	settings = Logins.Settings ( "Warehouse" );
+	settings = Logins.Settings ( "Warehouse, PaymentLocation" );
 	WarehouseFilter = settings.Warehouse;
+	LocationFilter = settings.PaymentLocation;
 	
 EndProcedure
 
@@ -28,6 +30,15 @@ Procedure filterByWarehouse ()
 	DC.ChangeFilter ( Accounting, "Warehouse", WarehouseFilter, set );
 	Appearance.Apply ( ThisObject, "WarehouseFilter" );
 	
+EndProcedure
+
+&AtServer
+Procedure filterByLocation ()
+	
+	set = not LocationFilter.IsEmpty ();
+	DC.ChangeFilter ( List, "Location", LocationFilter, set );
+	DC.ChangeFilter ( Accounting, "Location", LocationFilter, set );
+
 EndProcedure
 
 &AtServer
@@ -66,6 +77,13 @@ Procedure filterByItem ()
 	DC.ChangeFilter ( List, "Items.Item", ItemFilter, set );
 	DC.ChangeFilter ( Accounting, "Items.Item", ItemFilter, set );
 	
+EndProcedure
+
+&AtClient
+Procedure LocationFilterOnChange ( Item )
+	
+	filterByLocation ();
+
 EndProcedure
 
 &AtClient

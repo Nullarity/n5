@@ -202,7 +202,7 @@ Function save ( Form, Post )
 		if ( Post or alreadyPosted ) then
 			action = new Structure ( "WriteMode", DocumentWriteMode.Posting );
 		else
-			action = new Structure ( "JustSave", true );
+			action = new Structure ( Enum.WriteParametersJustSave (), true );
 		endif;
 		return form.Write ( action );
 	endif;
@@ -259,7 +259,7 @@ EndProcedure
 &AtClient
 Procedure AdjustSaving ( Form, WriteParameters ) export
 	
-	if ( WriteParameters.Property ( "JustSave" ) ) then
+	if ( WriteParameters.Property ( Enum.WriteParametersJustSave () ) ) then
 		WriteParameters.WriteMode = DocumentWriteMode.Write;
 	elsif ( WriteParameters.WriteMode = DocumentWriteMode.Write ) then
 		WriteParameters.WriteMode = DocumentWriteMode.Posting;

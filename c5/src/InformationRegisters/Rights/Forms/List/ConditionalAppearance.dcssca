@@ -47,18 +47,29 @@
 			</item>
 		</selection>
 		<filter>
-			<item xsi:type="FilterItemComparison">
-				<left xsi:type="dcscor:Field">List.Expiration</left>
-				<comparisonType>NotEqual</comparisonType>
-				<right xsi:type="v8:StandardBeginningDate">
-					<v8:variant xsi:type="v8:StandardBeginningDateVariant">Custom</v8:variant>
-					<v8:date>0001-01-01T00:00:00</v8:date>
-				</right>
-			</item>
-			<item xsi:type="FilterItemComparison">
-				<left xsi:type="dcscor:Field">List.Expiration</left>
-				<comparisonType>Less</comparisonType>
-				<right xsi:type="dcscor:Field">CurrentDate</right>
+			<item xsi:type="FilterItemGroup">
+				<groupType>OrGroup</groupType>
+				<item xsi:type="FilterItemGroup">
+					<groupType>AndGroup</groupType>
+					<item xsi:type="FilterItemComparison">
+						<left xsi:type="dcscor:Field">List.Expiration</left>
+						<comparisonType>NotEqual</comparisonType>
+						<right xsi:type="v8:StandardBeginningDate">
+							<v8:variant xsi:type="v8:StandardBeginningDateVariant">Custom</v8:variant>
+							<v8:date>0001-01-01T00:00:00</v8:date>
+						</right>
+					</item>
+					<item xsi:type="FilterItemComparison">
+						<left xsi:type="dcscor:Field">List.Expiration</left>
+						<comparisonType>Less</comparisonType>
+						<right xsi:type="dcscor:Field">CurrentDate</right>
+					</item>
+				</item>
+				<item xsi:type="FilterItemComparison">
+					<left xsi:type="dcscor:Field">List.Disabled</left>
+					<comparisonType>Equal</comparisonType>
+					<right xsi:type="xs:boolean">true</right>
+				</item>
 			</item>
 		</filter>
 		<appearance>
@@ -98,8 +109,8 @@
 						<v8:content>Все</v8:content>
 					</v8:item>
 					<v8:item>
-						<v8:lang>ro</v8:lang>
-						<v8:content>Toate</v8:content>
+						<v8:lang>fr</v8:lang>
+						<v8:content>Tout</v8:content>
 					</v8:item>
 				</dcscor:value>
 			</dcscor:item>
@@ -135,8 +146,8 @@
 						<v8:content>Все</v8:content>
 					</v8:item>
 					<v8:item>
-						<v8:lang>ro</v8:lang>
-						<v8:content>Toate</v8:content>
+						<v8:lang>fr</v8:lang>
+						<v8:content>Tout</v8:content>
 					</v8:item>
 				</dcscor:value>
 			</dcscor:item>

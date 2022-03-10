@@ -82,6 +82,20 @@
 		<field xsi:type="DataSetFieldField">
 			<dataPath>BalancedAccount</dataPath>
 			<field>BalancedAccount</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Balanced Account</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Cont corespondent</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Корр. счет</v8:content>
+				</v8:item>
+			</title>
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
@@ -302,6 +316,12 @@
 				<dcscom:dimension>true</dcscom:dimension>
 				<dcscom:parentDimension>Account</dcscom:parentDimension>
 			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">30</dcscor:value>
+				</dcscor:item>
+			</appearance>
 			<inputParameters>
 				<dcscor:item>
 					<dcscor:parameter>TypeLink</dcscor:parameter>
@@ -805,6 +825,60 @@
 				</dcscor:item>
 			</appearance>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>BalancedDim1</dataPath>
+			<field>BalancedDim1</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Balanced Dimension 1</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Dimensiune corespondent 1</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Корр. сбк. 1</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>BalancedDim2</dataPath>
+			<field>BalancedDim2</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Balanced Dimension 2</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Dimensiune corespondent 2</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Корр. сбк. 2</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>BalancedDim3</dataPath>
+			<field>BalancedDim3</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Balanced Dimension 3</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Dimensiune corespondent 3</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Корр. сбк. 3</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<item xsi:type="DataSetQuery">
 			<name>Balances</name>
 			<field xsi:type="DataSetFieldField">
@@ -1109,7 +1183,7 @@
 				</role>
 			</field>
 			<dataSource>DataSource1</dataSource>
-			<query>select case when Balances.Recorder = undefined then null else Balances.Recorder end as Recorder,
+			<query>select allowed case when Balances.Recorder = undefined then null else Balances.Recorder end as Recorder,
 	Balances.Account as Account, Balances.Currency as Currency,
 	Balances.ExtDimension1 as Dim1, Balances.ExtDimension2 as Dim2,
 	Balances.ExtDimension3 as Dim3,
@@ -1272,8 +1346,38 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 				<dataPath>QuantityTurnoverDr</dataPath>
 				<field>QuantityTurnoverDr</field>
 			</field>
+			<field xsi:type="DataSetFieldField">
+				<dataPath>BalancedDim1</dataPath>
+				<field>BalancedDim1</field>
+				<title xsi:type="v8:LocalStringType">
+					<v8:item>
+						<v8:lang>en</v8:lang>
+						<v8:content>Balanced dim1</v8:content>
+					</v8:item>
+				</title>
+			</field>
+			<field xsi:type="DataSetFieldField">
+				<dataPath>BalancedDim2</dataPath>
+				<field>BalancedDim2</field>
+				<title xsi:type="v8:LocalStringType">
+					<v8:item>
+						<v8:lang>en</v8:lang>
+						<v8:content>Balanced dim2</v8:content>
+					</v8:item>
+				</title>
+			</field>
+			<field xsi:type="DataSetFieldField">
+				<dataPath>BalancedDim3</dataPath>
+				<field>BalancedDim3</field>
+				<title xsi:type="v8:LocalStringType">
+					<v8:item>
+						<v8:lang>en</v8:lang>
+						<v8:content>Balanced dim3</v8:content>
+					</v8:item>
+				</title>
+			</field>
 			<dataSource>DataSource1</dataSource>
-			<query>select case when Turnovers.Recorder = undefined then null else Turnovers.Recorder end as Recorder,
+			<query>select allowed case when Turnovers.Recorder = undefined then null else Turnovers.Recorder end as Recorder,
 	Turnovers.Account as Account, Turnovers.Currency as Currency,
 	Turnovers.BalancedAccount as BalancedAccount,
 	Turnovers.AmountTurnoverCr as AmountTurnoverCr,
@@ -1290,13 +1394,15 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 	QuantityTurnoverCr, Dim1.*, Dim2.*, Dim3.*}
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, Account = &amp;Account, ,
 	{Company.* as Company, Currency.* as Currency, ExtDimension1.* as Dim1, ExtDimension2.* as Dim2,
-	ExtDimension3.* as Dim3}, {BalancedAccount.*} ) as Turnovers
-{where 	Turnovers.AmountTurnoverCr as AmountTurnoverCr,
+	ExtDimension3.* as Dim3}, {BalancedAccount.* as BalancedAccount} ) as Turnovers
+{where Turnovers.AmountTurnoverCr as AmountTurnoverCr,
 	Turnovers.AmountTurnoverDr as AmountTurnoverDr,
 	Turnovers.CurrencyAmountTurnoverCr as CurrencyAmountTurnoverCr,
 	Turnovers.CurrencyAmountTurnoverDr as CurrencyAmountTurnoverDr,
 	Turnovers.QuantityTurnoverDr as QuantityTurnoverDr,
-	Turnovers.QuantityTurnoverCr as QuantityTurnoverCr}
+	Turnovers.QuantityTurnoverCr as QuantityTurnoverCr,
+	BalancedExtDimension1.* as BalancedDim1, BalancedExtDimension2.* as BalancedDim2,
+	BalancedExtDimension3.* as BalancedDim3}
 </query>
 			<autoFillFields>false</autoFillFields>
 		</item>
@@ -2533,6 +2639,34 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:FilterItemComparison">
 					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedAccount</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>f37ca806-ad01-4abf-905d-b28b6c27ceb8</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim1</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>71f158ef-ace6-46b6-a2f7-2e50e7fb3066</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim2</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>b584c4d8-e1ea-43f5-a72b-f5728ed11d6e</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim3</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>0e6682ad-9590-45fb-b5eb-47ad373990b3</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
 					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -2547,6 +2681,7 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 					<dcsset:userSettingID>788e5e5d-2b3f-4ae8-9051-c156b68016d6</dcsset:userSettingID>
 				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>8573f27e-9bb2-4e8f-a1de-5a4ea79aef15</dcsset:userSettingID>
 			</dcsset:filter>
 			<dcsset:dataParameters>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">

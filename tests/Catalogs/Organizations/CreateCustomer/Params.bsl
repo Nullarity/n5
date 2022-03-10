@@ -16,4 +16,7 @@ p.Insert ( "CloseAdvances", true );
 p.Insert ( "Items", new Array () ); // Array of Catalogs.Organizations.CreateCustomer.ContractItem
 p.Insert ( "Services", new Array () ); // Array of Catalogs.Organizations.CreateCustomer.ContractService
 p.Insert ( "SkipAddress", false );
+p.Insert ( "ContractSigned", false );
+p.Insert ( "ContractDateStart", undefined );
+p.Insert ( "ContractDateEnd", undefined );
 return p;

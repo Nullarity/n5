@@ -1552,7 +1552,7 @@
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number,	Documents.Date,	Documents.Posted, Documents.Action,	Documents.Amount, Documents.Company, Documents.Creator,	Documents.Currency,	Documents.DocumentOrder,
 	Documents.Factor, Documents.GrossAmount, Documents.Memo, Documents.Prices, Documents.Rate, Documents.Receiver, Documents.Sender, Documents.Shipment, Documents.ShowPrices, 
-	Documents.Items,	Documents.Taxes, Documents.PointInTime, Forms.Form as Form,
+	Documents.Items, Documents.Taxes, Documents.PointInTime, Forms.Form as Form,
 	case Forms.Status
 		when value ( Enum.FormStatuses.Saved ) then 1
 		when value ( Enum.FormStatuses.Printed ) then 2
@@ -1560,6 +1560,7 @@
 		when value ( Enum.FormStatuses.Submitted ) then 4
 		when value ( Enum.FormStatuses.Waiting ) then 5
 		when value ( Enum.FormStatuses.Unloaded ) then 6
+		when value ( Enum.FormStatuses.Returned ) then 6
 		else 0
 	end as Status,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation

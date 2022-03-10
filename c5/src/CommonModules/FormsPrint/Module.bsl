@@ -17,7 +17,8 @@ Function Check ( Reference, Status ) export
 		return false;
 	else
 		if ( Status = PredefinedValue ( "Enum.FormStatuses.Printed" )
-			or Status = PredefinedValue ( "Enum.FormStatuses.Submitted" ) ) then
+			or Status = PredefinedValue ( "Enum.FormStatuses.Submitted" )
+			or Status = PredefinedValue ( "Enum.FormStatuses.Returned" ) ) then
 			return true;
 		else
 			Output.FormNotReady ( new Structure ( "Ref", Reference ), "Status", Reference );

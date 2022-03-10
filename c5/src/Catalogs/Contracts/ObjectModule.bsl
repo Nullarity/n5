@@ -3,6 +3,7 @@
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
 	checkRates ( CheckedAttributes );
+	checkPeriod ( CheckedAttributes );
 	
 EndProcedure
 
@@ -16,6 +17,15 @@ Procedure checkRates ( Attributes )
 	endif;
 	if ( Vendor ) then
 		Attributes.Add ( "VendorRateType" );
+	endif;
+	
+EndProcedure
+
+Procedure checkPeriod ( Attributes )
+	
+	if ( Signed ) then
+		Attributes.Add ( "DateStart" );
+		Attributes.Add ( "DateEnd" );
 	endif;
 	
 EndProcedure

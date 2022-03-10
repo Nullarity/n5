@@ -80,7 +80,7 @@ EndFunction
 Function DimsCount ( val Account ) export
 	
 	s = "
-	|select count ( Types.ExtDimensionType ) as Count
+	|select allowed count ( Types.ExtDimensionType ) as Count
 	|from ChartOfAccounts.General.ExtDimensionTypes as Types
 	|where Types.Ref = &Account
 	|";

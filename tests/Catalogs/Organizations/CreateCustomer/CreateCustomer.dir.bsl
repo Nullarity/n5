@@ -23,6 +23,9 @@ if (_ = undefined) then
 	bankAccount = undefined;
 	paymentAddress = undefined;
 	government = false;
+	signed = false;
+	contractDateStart = undefined;
+	contractDateEnd = undefined;
 else
 	government = _.Government;
 	name = _.Description;
@@ -38,6 +41,9 @@ else
 	paymentAddress = _.PaymentAddress;
 	rateType = _.RateType;
 	rate = _.Rate;
+	signed = _.ContractSigned;
+	contractDateStart = _.ContractDateStart;
+	contractDateEnd = _.ContractDateEnd;
 endif;
 //
 // Fill general
@@ -78,6 +84,15 @@ endif;
 Activate("#CustomerPage");
 Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");
+if ( signed ) then
+	Click("#Signed");
+endif;
+if ( contractDateStart <> undefined ) then
+	Set ( "#DateStart", Format ( contractDateStart, "DLF=D" ) );
+endif;
+if ( contractDateEnd <> undefined ) then
+	Set ( "#DateEnd", Format ( contractDateEnd, "DLF=D" ) );
+endif;
 Set("#Currency", currency);
 CurrentSource.GotoNextItem();
 if ( rateType <> undefined ) then

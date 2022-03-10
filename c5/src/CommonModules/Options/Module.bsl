@@ -173,3 +173,24 @@ Function Russian () export
 	return GetFunctionalOption ( "Russian", p );
 	
 EndFunction
+
+&AtServer
+Function ControlCredit () export
+	
+	return GetFunctionalOption ( "ControlCredit" );
+	
+EndFunction
+
+&AtServer
+Function ControlContracts () export
+	
+	return GetFunctionalOption ( "ControlContracts" );
+	
+EndFunction
+
+&AtServer
+Function ControlTaxInvoices () export
+	
+	return GetFunctionalOption ( "ControlTaxInvoices" );
+	
+EndFunction

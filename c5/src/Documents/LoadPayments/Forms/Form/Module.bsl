@@ -652,7 +652,7 @@ Procedure setAccount(Item)
 	side = ? ( Item = Items.Receipts, "AccountCr", "AccountDr" );
 	account = DF.Pick(row.Operation, side );
 	if ( ValueIsFilled ( account ) ) then
-		ReceiptsRow.Account = account;
+		row.Account = account;
 	endif;
 	
 EndProcedure
@@ -870,8 +870,8 @@ EndProcedure
 Procedure ExpensesOnEditEnd(Item, NewRow, CancelEdit)
 	
 	resetDims ( Item );
-	if (not CancelEdit) then
-		enableDownload(Item);
+	if ( not CancelEdit ) then
+		enableDownload ( Item );
 	endif;
 	
 EndProcedure

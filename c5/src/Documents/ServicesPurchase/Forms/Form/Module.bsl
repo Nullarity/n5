@@ -230,8 +230,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Company Date Amount lock filled ( Object.Base );
-	|GroupHeader PageMain PageMore lock inlist ( Object.Status, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted, Enum.FormStatuses.Canceled );
-	|Warning show inlist ( Object.Status, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted, Enum.FormStatuses.Canceled );
+	|GroupHeader PageMain PageMore unlock Object.Status = Enum.FormStatuses.Saved;
+	|Warning hide Object.Status = Enum.FormStatuses.Saved;
 	|Links show ShowLinks;
 	|Series FormNumber show filled ( Object.Range );
 	|Number show empty ( Object.Range );

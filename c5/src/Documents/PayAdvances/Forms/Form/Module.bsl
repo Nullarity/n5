@@ -366,7 +366,7 @@ EndProcedure
 &AtClient
 Function save ()
 	
-	return Write ( new Structure ( "JustSave", true ) );
+	return Write ( new Structure ( Enum.WriteParametersJustSave (), true ) );
 	
 EndFunction
 

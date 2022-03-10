@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormField">
     <name>EmployeeFilter</name>
     <id>34</id>
@@ -843,12 +843,271 @@ from Document.PayEmployees as Documents
 	{left join InformationRegister.Tasks as TasksList
 	on TasksList.Source = Documents.Ref
 	and TasksList.User = &amp;Performer}</queryText>
-      <mainTable>Document.PayAdvances</mainTable>
+      <mainTable>Document.PayEmployees</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Account</dataPath>
+        <field>Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>BankAccount</dataPath>
+        <field>BankAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>CashFlow</dataPath>
+        <field>CashFlow</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DepositLiabilities</dataPath>
+        <field>DepositLiabilities</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dirty</dataPath>
+        <field>Dirty</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Location</dataPath>
+        <field>Location</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Method</dataPath>
+        <field>Method</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Reference</dataPath>
+        <field>Reference</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ReferenceDate</dataPath>
+        <field>ReferenceDate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Ref</dataPath>
+        <field>Compensations.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.LineNumber</dataPath>
+        <field>Compensations.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Account</dataPath>
+        <field>Compensations.Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Amount</dataPath>
+        <field>Compensations.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Compensation</dataPath>
+        <field>Compensations.Compensation</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Edit</dataPath>
+        <field>Compensations.Edit</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Employee</dataPath>
+        <field>Compensations.Employee</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Compensations</dataPath>
+        <field>Compensations</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Ref</dataPath>
+        <field>Taxes.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.LineNumber</dataPath>
+        <field>Taxes.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Account</dataPath>
+        <field>Taxes.Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Base</dataPath>
+        <field>Taxes.Base</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Compensation</dataPath>
+        <field>Taxes.Compensation</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Deductions</dataPath>
+        <field>Taxes.Deductions</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Edit</dataPath>
+        <field>Taxes.Edit</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Employee</dataPath>
+        <field>Taxes.Employee</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Method</dataPath>
+        <field>Taxes.Method</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Result</dataPath>
+        <field>Taxes.Result</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Tax</dataPath>
+        <field>Taxes.Tax</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Taxes</dataPath>
+        <field>Taxes</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Ref</dataPath>
+        <field>Totals.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.LineNumber</dataPath>
+        <field>Totals.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Amount</dataPath>
+        <field>Totals.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Employee</dataPath>
+        <field>Totals.Employee</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.IncomeTax</dataPath>
+        <field>Totals.IncomeTax</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Medical</dataPath>
+        <field>Totals.Medical</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Net</dataPath>
+        <field>Totals.Net</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Totals.Other</dataPath>
+        <field>Totals.Other</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Totals</dataPath>
+        <field>Totals</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PointInTime</dataPath>
+        <field>PointInTime</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskProgress</dataPath>
+        <field>TaskProgress</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task progress</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskCompleted</dataPath>
+        <field>TaskCompleted</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task completed</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskStatus</dataPath>
+        <field>TaskStatus</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task status</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskRef</dataPath>
+        <field>TaskRef</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task ref</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Observation</dataPath>
+        <field>Observation</field>
+      </fields>
+      <parameters>
+        <name>Performer</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Performer</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>CatalogRef.Users</types>
+        </valueType>
+        <useRestriction>true</useRestriction>
+      </parameters>
     </extInfo>
   </attributes>
   <attributes>

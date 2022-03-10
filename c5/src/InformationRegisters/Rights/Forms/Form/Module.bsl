@@ -1,3 +1,4 @@
+
 // *****************************************
 // *********** Form events
 
@@ -18,9 +19,20 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			Cancel = true;
 			return;
 		endif; 
-	endif; 
+	endif;
+	initTarget ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure initTarget ()
+	
+	if ( not ValueIsFilled ( Record.Target ) ) then
+		Record.Target = Catalogs.Users.EmptyRef ();
+		Modified = false;
+	endif;
 	
 EndProcedure
 
@@ -30,7 +42,9 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|DateStart DateEnd enable Record.Method = Enum.RestrictionMethods.Period;
-	|Duration enable Record.Method = Enum.RestrictionMethods.Duration
+	|Duration enable Record.Method = Enum.RestrictionMethods.Duration;
+	|DurationSpan enable Record.Method = Enum.RestrictionMethods.Span;
+	|AccessGroup Expiration disable Record.Disabled;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -64,6 +78,13 @@ EndProcedure
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure DisabledOnChange ( Item )
+
+	Appearance.Apply ( ThisObject, "Record.Disabled" );
+
+EndProcedure
 
 &AtClient
 Procedure MethodOnChange ( Item )

@@ -84,10 +84,21 @@ Procedure initStatuses ( Form )
 		list.Add ( PredefinedValue ( "Enum.FormStatuses.Saved" ) );
 		list.Add ( PredefinedValue ( "Enum.FormStatuses.Printed" ) );
 		list.Add ( PredefinedValue ( "Enum.FormStatuses.Submitted" ) );
+		if ( canAcceptInvoices ()  ) then
+			list.Add ( PredefinedValue ( "Enum.FormStatuses.Returned" ) );
+		endif;
 		list.Add ( PredefinedValue ( "Enum.FormStatuses.Canceled" ) );
 	endif;
 	
 EndProcedure
+
+&AtServerNoContext
+Function canAcceptInvoices ()
+	
+	return IsInRole ( Metadata.Roles.AcceptTaxInvoice )
+	or Logins.Admin ();
+
+EndFunction
 
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )

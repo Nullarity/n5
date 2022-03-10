@@ -348,7 +348,8 @@ EndProcedure
 Procedure afterLoadSettings ()
 	
 	if ( AccountingReport ) then
-		applyAccount ( DC.FindSetting ( Object.SettingsComposer, "Account" ), true );
+		applyAccount ( DC.FindSetting ( Object.SettingsComposer, "Account" ), true, "" );
+		applyAccount ( DC.FindSetting ( Object.SettingsComposer, "BalancedAccount" ), true, "Balanced" );
 	endif;
 	if ( not ShowSettings ) then
 		buildFilter ();
@@ -357,17 +358,20 @@ Procedure afterLoadSettings ()
 EndProcedure 
 
 &AtServer
-Procedure applyAccount ( Setting, JustAdjust )
+Procedure applyAccount ( Setting, JustAdjust, Prefix )
 	
+	if ( Setting = undefined ) then
+		return;
+	endif;
 	data = accountData ( Setting );
 	if ( data <> undefined
 		and not JustAdjust ) then
 		setComparison ( data, Setting );
 	endif;
-	adjustDimensions ( data );
-	setFlags ( data, JustAdjust );
-	setDims ( data );
-	setCurrency ( data );
+	adjustDimensions ( data, Prefix );
+	setFlags ( data, JustAdjust, Prefix );
+	setDims ( data, Prefix );
+	setCurrency ( data, Prefix );
 	
 EndProcedure 
 
@@ -388,18 +392,18 @@ Function accountData ( Setting )
 EndFunction 
 
 &AtServer
-Procedure adjustDimensions ( AccountData )
+Procedure adjustDimensions ( AccountData, Prefix )
 
 	dataSchema = GetFromTempStorage ( SchemaAddress );	
-	adjustValueTypes ( dataSchema, AccountData );
-	adjustDimsLevel ( dataSchema, AccountData );
+	adjustValueTypes ( dataSchema, AccountData, Prefix );
+	adjustDimsLevel ( dataSchema, AccountData, Prefix );
 	PutToTempStorage ( dataSchema, SchemaAddress );
 	Object.SettingsComposer.Initialize ( new DataCompositionAvailableSettingsSource ( SchemaAddress ) );
 
 EndProcedure
 
 &AtServer
-Procedure adjustValueTypes ( DataSchema, AccountData )
+Procedure adjustValueTypes ( DataSchema, AccountData, Prefix )
 	
 	for each dataset in DataSchema.DataSets do
 		fields = dataset.Fields;
@@ -410,7 +414,7 @@ Procedure adjustValueTypes ( DataSchema, AccountData )
 			level = AccountData.Fields.Level;
 		endif;
 		for i = 1 to 3 do
-			name = "Dim" + i;
+			name = ( Prefix + "Dim" ) + i;
 			field = fields.Find ( name );
 			if ( field <> undefined ) then
 				field.ValueType = ? ( i > level, new TypeDescription (), dims [ i - 1 ].ValueType );
@@ -421,9 +425,9 @@ Procedure adjustValueTypes ( DataSchema, AccountData )
 EndProcedure
 
 &AtServer
-Procedure adjustDimsLevel ( DataSchema, AccountData )
+Procedure adjustDimsLevel ( DataSchema, AccountData, Prefix )
 	
-	parameter = DataSchema.Parameters.Find ( "ShowDimensions" );
+	parameter = DataSchema.Parameters.Find ( "Show" + Prefix + "Dimensions" );
 	if ( parameter = undefined ) then
 		return;
 	endif;
@@ -494,7 +498,7 @@ Function settingReference ( Setting )
 EndFunction
 
 &AtServer
-Procedure setFlags ( Data, JustAdjust )
+Procedure setFlags ( Data, JustAdjust, Prefix )
 	
 	if ( not AccountingFlagsSupported ) then
 		return;
@@ -503,48 +507,64 @@ Procedure setFlags ( Data, JustAdjust )
 		return;
 	endif;
 	composer = Object.SettingsComposer;
-	currency = DC.FindParameter ( composer, "ShowCurrency" );
-	quantity = DC.FindParameter ( composer, "ShowQuantity" );
-	dims = DC.FindParameter ( composer, "ShowDimensions" );
-	hierarchy = DC.FindParameter ( composer, "AccountsHierarchy" );
+	currency = DC.FindParameter ( composer, "Show" + Prefix + "Currency" );
+	quantity = DC.FindParameter ( composer, "Show" + Prefix + "Quantity" );
+	dims = DC.FindParameter ( composer, "Show" + Prefix + "Dimensions" );
+	hierarchy = DC.FindParameter ( composer, Prefix + "AccountsHierarchy" );
 	if ( Data = undefined ) then
-		currency.Use = false;
-		quantity.Use = false;
-		dims.Use = false;
-		hierarchy.Use = false;
-		hierarchy.Value = false;
+		if ( currency <> undefined ) then
+			currency.Use = false;
+		endif;
+		if ( quantity <> undefined ) then
+			quantity.Use = false;
+		endif;
+		if ( dims <> undefined ) then
+			dims.Use = false;
+		endif;
+		if ( hierarchy <> undefined ) then
+			hierarchy.Use = false;
+			hierarchy.Value = false;
+		endif;
 	else
 		fields = Data.Fields;
-		quantitative = fields.Quantitative;
-		reset = not ( JustAdjust and quantitative );
-		if ( reset ) then
-			quantity.Use = quantitative;
-			quantity.Value = quantitative;
+		if ( quantity <> undefined ) then
+			quantitative = fields.Quantitative;
+			reset = not ( JustAdjust and quantitative );
+			if ( reset ) then
+				quantity.Use = quantitative;
+				quantity.Value = quantitative;
+			endif;
 		endif;
-		main = fields.Main;
-		reset = not ( JustAdjust and main );
-		if ( reset ) then
-			hierarchy.Use = main;
-			hierarchy.Value = main;
+		if ( hierarchy <> undefined ) then
+			main = fields.Main;
+			reset = not ( JustAdjust and main );
+			if ( reset ) then
+				hierarchy.Use = main;
+				hierarchy.Value = main;
+			endif;
 		endif;
-		deep = fields.Level > 0;
-		reset = not ( JustAdjust and deep );
-		if ( reset ) then
-			dims.Use = deep;
-			dims.Value = ? ( deep, Enums.Dimensions._1, Enums.Dimensions.EmptyRef () );
+		if ( dims <> undefined ) then
+			deep = fields.Level > 0;
+			reset = not ( JustAdjust and deep );
+			if ( reset ) then
+				dims.Use = deep;
+				dims.Value = ? ( deep, Enums.Dimensions._1, Enums.Dimensions.EmptyRef () );
+			endif;
 		endif;
-		isCurrency = fields.Currency;
-		reset = not ( JustAdjust and isCurrency );
-		if ( reset ) then
-			currency.Use = isCurrency;
-			currency.Value = isCurrency;
+		if ( currency <> undefined ) then
+			isCurrency = fields.Currency;
+			reset = not ( JustAdjust and isCurrency );
+			if ( reset ) then
+				currency.Use = isCurrency;
+				currency.Value = isCurrency;
+			endif;
 		endif;
 	endif; 
 	
 EndProcedure 
 
 &AtServer
-Procedure setDims ( Data )
+Procedure setDims ( Data, Prefix )
 	
 	settings = Object.SettingsComposer.Settings;
 	if ( Data = undefined ) then
@@ -555,7 +575,7 @@ Procedure setDims ( Data )
 		level = Data.Fields.Level;
 	endif;
 	for i = 1 to 3 do
-		id = "Dim" + i;
+		id = ( Prefix + "Dim" ) + i;
 		dimIndex = i - 1;
 		dim = DC.FindFilter ( settings, id );
 		if ( dim = undefined ) then
@@ -574,9 +594,10 @@ Procedure setDims ( Data )
 EndProcedure 
 
 &AtServer
-Procedure setCurrency ( Data )
+Procedure setCurrency ( Data, Prefix )
 	
-	currency = DC.FindFilter ( Object.SettingsComposer.Settings, "Currency" );
+	path = Prefix + "Currency";
+	currency = DC.FindFilter ( Object.SettingsComposer.Settings, path );
 	if ( currency = undefined ) then
 		return;
 	endif; 
@@ -586,7 +607,7 @@ Procedure setCurrency ( Data )
 		and not Data.Fields.Currency ) then
 		id = "";
 	else
-		id = "Currency";
+		id = path;
 	endif;
 	toggleSetting ( currency, id );
 	
@@ -1492,7 +1513,10 @@ Procedure applySetting ( Setting )
 	if ( AccountingReport ) then
 		if ( isCondition ( "Account", Setting, false ) ) then
 			//@skip-warning
-			applyAccount ( Setting, false );
+			applyAccount ( Setting, false, "" );
+		elsif ( isCondition ( "BalancedAccount", Setting, false ) ) then
+			//@skip-warning
+			applyAccount ( Setting, false, "Balanced" );
 		endif; 
 	endif;
 	

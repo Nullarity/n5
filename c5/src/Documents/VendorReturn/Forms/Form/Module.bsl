@@ -98,11 +98,11 @@ Procedure readAppearance ()
 	|	AccountsVATCode AccountsVAT show Object.VATUse > 0;
 	|ItemsTotal FixedAssetsTotal IntangibleAssetsTotal AccountsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice show UseSocial;
-	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Warning show ChangesDisallowed;
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show empty ( InvoiceRecord );
-	|Header GroupItems GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupAdditional Footer lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsAddGroup FixedAssetsAddGroup IntangibleAssetsAddGroup AccountsAddGroup hide inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Header GroupItems GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupAdditional Footer lock ChangesDisallowed;
+	|ItemsAddGroup FixedAssetsAddGroup IntangibleAssetsAddGroup AccountsAddGroup hide ChangesDisallowed;
 	|ItemsVendorInvoice FixedAssetsVendorInvoice IntangibleAssetsVendorInvoice AccountsVendorInvoice show InvoicesInTable;
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -737,8 +737,7 @@ Procedure readNewInvoices ( NewObject )
 		return;
 	endif;
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "InvoiceRecord" );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
 
 EndProcedure
 
@@ -768,7 +767,7 @@ EndProcedure
 Procedure readPrinted ()
 	
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure
 

@@ -47,11 +47,19 @@ Procedure fillInvoice ( Form, Fields )
 
 	if ( Fields = undefined ) then
 		Form.InvoiceRecord = undefined;
-		Form.FormStatus = undefined;
+		status = undefined;
 	else
 		Form.InvoiceRecord = Fields.Ref;
-		Form.FormStatus = Fields.Status;
+		status = Fields.Status;
 	endif;
+	Form.FormStatus = status;
+	Form.ChangesDisallowed = not IsInRole ( Metadata.Roles.ModifyIssuedInvoices )
+	and ( status = Enums.FormStatuses.Waiting
+	or status = Enums.FormStatuses.Unloaded
+	or status = Enums.FormStatuses.Printed
+	or status = Enums.FormStatuses.Submitted
+	or status = Enums.FormStatuses.Returned
+	);
 
 EndProcedure
 
@@ -332,7 +340,9 @@ Procedure headerBySale ( Object, Base )
 	Object.Amount = Base.Amount;
 	Object.VAT = Base.VAT;
 	Object.VATUse = Base.VATUse;
-	Object.Customer = Catalogs.Organizations.EmptyRef ();
+	if ( Object.Ref.IsEmpty () ) then
+		Object.Customer = Catalogs.Organizations.EmptyRef ();
+	endif;
 	fillHeaderCommon ( Object, Base );
 
 EndProcedure

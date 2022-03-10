@@ -21,8 +21,8 @@ Function hasAccess ( Target )
 	|	select &Target
 	|	union all
 	|	select User
-	|	from InformationRegister.UsersAndGroups
-	|	where UserGroup = &Target
+	|	from InformationRegister.Membership
+	|	where Membership = &Target
 	|)
 	|";
 	q = new Query ( s );

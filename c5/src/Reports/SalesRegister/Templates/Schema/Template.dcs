@@ -255,7 +255,8 @@ from (
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
-		value ( Enum.FormStatuses.Submitted )
+		value ( Enum.FormStatuses.Submitted ),
+		value ( Enum.FormStatuses.Returned )
 	)
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -271,7 +272,8 @@ from (
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
-		value ( Enum.FormStatuses.Submitted )
+		value ( Enum.FormStatuses.Submitted ),
+		value ( Enum.FormStatuses.Returned )
 	)
 	union all
 	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -287,7 +289,8 @@ from (
 	and Table.Ref.Status in (
 		value ( Enum.FormStatuses.Unloaded ),
 		value ( Enum.FormStatuses.Printed ),
-		value ( Enum.FormStatuses.Submitted )
+		value ( Enum.FormStatuses.Submitted ),
+		value ( Enum.FormStatuses.Returned )
 	)
 	union all
 	select Table.VAT, Table.Total - Table.VAT,	Table.VATCode, Table.Number, Table.Date, 

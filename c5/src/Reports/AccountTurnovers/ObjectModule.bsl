@@ -107,7 +107,11 @@ Procedure setAccountsHierarchy ()
 		and p.Value ) then
 		group.GroupType = DataCompositionGroupType.Hierarchy;
 	else
-		group.GroupType = DataCompositionGroupType.Items;
+		if ( AccountData.Fields.Main ) then
+			group.GroupType = DataCompositionGroupType.HierarchyOnly;
+		else
+			group.GroupType = DataCompositionGroupType.Items;
+		endif;
 	endif; 
 
 EndProcedure

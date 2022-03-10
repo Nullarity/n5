@@ -52,11 +52,18 @@ EndProcedure
 Function IsFolder ( Value ) export
 	
 	meta = Metadata.FindByType ( TypeOf ( value ) );
-	folder = meta <> undefined
-	and Metadata.Catalogs.Contains ( meta )
-	and meta.Hierarchical
-	and meta.HierarchyType = Metadata.ObjectProperties.HierarchyType.HierarchyFoldersAndItems
-	and DF.Pick ( value, "IsFolder", false );
+	if ( meta = undefined ) then
+		return false;
+	endif;
+	if ( Metadata.Catalogs.Contains ( meta ) ) then
+		folder = meta.Hierarchical
+		and meta.HierarchyType = Metadata.ObjectProperties.HierarchyType.HierarchyFoldersAndItems
+		and DF.Pick ( value, "IsFolder", false );
+	elsif ( Metadata.ChartsOfAccounts.Contains ( meta ) ) then
+		folder = DF.Pick ( value, "Folder", false );
+	else
+		folder = false;
+	endif;
 	return folder;
 
 EndFunction

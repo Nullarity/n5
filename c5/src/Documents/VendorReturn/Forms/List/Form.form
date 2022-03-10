@@ -1705,6 +1705,7 @@
 		when value ( Enum.FormStatuses.Submitted ) then 4
 		when value ( Enum.FormStatuses.Waiting ) then 5
 		when value ( Enum.FormStatuses.Unloaded ) then 6
+		when value ( Enum.FormStatuses.Returned ) then 6
 		else 0
 	end as Status,
 	Documents.Posted and isnull ( Debts.AmountBalance, 0 ) = 0 and Documents.ContractAmount &lt;> 0 as Paid,
@@ -1743,6 +1744,7 @@ from Document.VendorReturn as Documents
 	on PaymentDiscounts.Document = Documents.Ref
 	</queryText>
       <mainTable>Document.VendorReturn</mainTable>
+      <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>

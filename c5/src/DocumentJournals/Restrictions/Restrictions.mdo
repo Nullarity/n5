@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DocumentJournal xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="3ab1a553-c639-46fb-b2bb-681f25ab667b">
+  <producedTypes>
+    <selectionType typeId="90e6d604-1ec2-4784-8047-bc727fd4cf36" valueTypeId="62fc8fda-9dad-43d1-ab2f-1363482a96aa"/>
+    <listType typeId="c5456bed-4f92-42ce-983e-4dcf5941a32d" valueTypeId="3dcf0249-33d2-48d8-b7b8-e6c99c2cb01c"/>
+    <managerType typeId="11903719-d151-4328-8ea5-9690649b90d2" valueTypeId="3eea6642-64f1-4db3-a131-440f316e3344"/>
+  </producedTypes>
+  <name>Restrictions</name>
+  <synonym>
+    <key>en</key>
+    <value>Restrictions</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Ограничения</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Restricții</value>
+  </synonym>
+  <defaultForm>DocumentJournal.Restrictions.Form.List</defaultForm>
+  <useStandardCommands>true</useStandardCommands>
+  <registeredDocuments>Document.InvoicesReturn</registeredDocuments>
+  <registeredDocuments>Document.CreditLimit</registeredDocuments>
+  <registeredDocuments>Document.SalesRestriction</registeredDocuments>
+  <registeredDocuments>Document.Permission</registeredDocuments>
+  <explanation>
+    <key>en</key>
+    <value>Customer restrictions</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Ограничения клиентов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Restricțiile clienților</value>
+  </explanation>
+  <columns uuid="36fc5329-49dd-4e38-94b8-f1fcdc397e9b">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <references>Document.CreditLimit.Attribute.Amount</references>
+    <references>Document.SalesRestriction.Attribute.Ban</references>
+    <references>Document.InvoicesReturn.Attribute.Days</references>
+  </columns>
+  <columns uuid="eb0dfbdd-ab85-41b9-89d6-8b1b7542478f">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <references>Document.InvoicesReturn.Attribute.Company</references>
+    <references>Document.CreditLimit.Attribute.Company</references>
+    <references>Document.SalesRestriction.Attribute.Company</references>
+    <references>Document.Permission.Attribute.Company</references>
+  </columns>
+  <columns uuid="c0993726-68f6-446b-89ec-01b15370d918">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <references>Document.InvoicesReturn.Attribute.Creator</references>
+    <references>Document.CreditLimit.Attribute.Creator</references>
+    <references>Document.SalesRestriction.Attribute.Creator</references>
+    <references>Document.Permission.Attribute.Creator</references>
+  </columns>
+  <columns uuid="87b5a8fd-1b28-41a0-996d-33d02cf563a5">
+    <name>Customer</name>
+    <synonym>
+      <key>en</key>
+      <value>Customer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Покупатель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cumpãrãtor</value>
+    </synonym>
+    <references>Document.InvoicesReturn.Attribute.Customer</references>
+    <references>Document.CreditLimit.Attribute.Customer</references>
+    <references>Document.SalesRestriction.Attribute.Customer</references>
+    <references>Document.Permission.Attribute.Customer</references>
+  </columns>
+  <columns uuid="15a4ba0e-327f-4e3e-ba82-a1b44eb2718f">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <references>Document.InvoicesReturn.Attribute.Memo</references>
+    <references>Document.CreditLimit.Attribute.Memo</references>
+    <references>Document.SalesRestriction.Attribute.Memo</references>
+    <references>Document.Permission.Attribute.Memo</references>
+  </columns>
+  <forms uuid="bbbbb1b7-050d-4d67-b346-41ad4eedac9a">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <commands uuid="c46250b9-6c22-409c-9261-3451370bd9fe">
+    <name>Embedded</name>
+    <synonym>
+      <key>en</key>
+      <value>Restrictions</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ограничения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Restricții</value>
+    </synonym>
+    <group>FormNavigationPanelGoTo</group>
+    <commandParameterType>
+      <types>CatalogRef.Organizations</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Open list of restrictions</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Открыть список ограничений</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Deschide lista restricții</value>
+    </toolTip>
+  </commands>
+</mdclass:DocumentJournal>

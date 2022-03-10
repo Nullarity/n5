@@ -231,6 +231,6 @@ EndFunction
 
 Function RemoteActionsService () export
 	
-	return Constants.RemoteActionsService.Get () + "/" + GetTenantCode ();
+	return Constants.RemoteActionsService.Get ();
 	
 EndFunction 

@@ -28,6 +28,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	updateBalanceDue ();
 	readItemsPurchase ();
 	readServicesPurchase ();
+	changeAvailability ();
 	initCurrency ();
 	setSocial ();
 	Appearance.Apply ( ThisObject );
@@ -120,6 +121,25 @@ Procedure fillServicesPurchase ( Fields )
 		ServicesPurchase = Fields.Ref;
 		ServicesPurchaseStatus = Fields.Status;
 	endif;
+
+EndProcedure
+
+&AtServer
+Procedure changeAvailability ()
+	
+	ChangesDisallowed = not IsInRole ( Metadata.Roles.ModifyIssuedInvoices )
+	and (
+	ItemsPurchaseStatus = Enums.FormStatuses.Waiting
+	or ItemsPurchaseStatus = Enums.FormStatuses.Unloaded
+	or ItemsPurchaseStatus = Enums.FormStatuses.Printed
+	or ItemsPurchaseStatus = Enums.FormStatuses.Submitted
+	or ItemsPurchaseStatus = Enums.FormStatuses.Returned
+	or ServicesPurchaseStatus = Enums.FormStatuses.Waiting
+	or ServicesPurchaseStatus = Enums.FormStatuses.Unloaded
+	or ServicesPurchaseStatus = Enums.FormStatuses.Printed
+	or ServicesPurchaseStatus = Enums.FormStatuses.Submitted
+	or ServicesPurchaseStatus = Enums.FormStatuses.Returned
+	);
 
 EndProcedure
 
@@ -226,17 +246,10 @@ Procedure readAppearance ()
 	|FormDocumentServicesPurchaseCreateBasedOn show ServicesPurchaseStatus = Enum.FormStatuses.Canceled or empty ( ServicesPurchaseStatus );
 	|FormItemsPurchase show filled ( ItemsPurchase );
 	|FormServicesPurchase show filled ( ServicesPurchase );
-	|Header GroupItems GroupServices GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupDiscounts GroupAdditional Footer lock 
-	|inlist ( ItemsPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted ) 
-	|or inlist ( ServicesPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsSelectItems ItemsScan ItemsApplyPurchaseOrders ItemsTableApplySalesOrders ItemsTableApplyInternalOrders
-	|ServicesSelectItems ServicesApplyPurchaseOrders ServicesApplySalesOrders ServicesApplyInternalOrders 
-	|FixedAssetsEdit FixedAssetsContextMenuEdit IntangibleAssetsEdit IntangibleAssetsContextMenuEdit DiscountsRefreshDiscounts disable 
-	|inlist ( ItemsPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted ) 
-	|or inlist ( ServicesPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|Warning show
-	|inlist ( ItemsPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted ) 
-	|or inlist ( ServicesPurchaseStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Warning show ChangesDisallowed;
+	|Header GroupItems GroupServices GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupDiscounts GroupAdditional Footer lock ChangesDisallowed; 
+	|ItemsTableCommandBar ServicesCommandBar FixedAssetsCommandBar IntangibleItemsCommandBar AccountsCommandBar DiscountsCommandBar
+	|	disable ChangesDisallowed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -926,7 +939,8 @@ EndProcedure
 Procedure applyItemsPurchase ()
 
 	readItemsPurchase ();
-	Appearance.Apply ( ThisObject, "ItemsPurchase, ItemsPurchaseStatus" );
+	changeAvailability ();
+	Appearance.Apply ( ThisObject, "ItemsPurchase, ItemsPurchaseStatus, ChangesDisallowed" );
 
 EndProcedure
 
@@ -934,7 +948,8 @@ EndProcedure
 Procedure applyServicesPurchase ()
 
 	readServicesPurchase ();	
-	Appearance.Apply ( ThisObject, "ServicesPurchase, ServicesPurchaseStatus" );
+	changeAvailability ();
+	Appearance.Apply ( ThisObject, "ServicesPurchase, ServicesPurchaseStatus, ChangesDisallowed" );
 	
 EndProcedure
 

@@ -253,6 +253,57 @@
     <defaultItem>true</defaultItem>
     <titleLocation>None</titleLocation>
     <items xsi:type="form:FormField">
+      <name>Status</name>
+      <id>62</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Status</segments>
+      </dataPath>
+      <titleLocation>None</titleLocation>
+      <extendedTooltip>
+        <name>StatusExtendedTooltip</name>
+        <id>64</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>StatusContextMenu</name>
+        <id>63</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>PictureField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:ImageFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <valuesPicture xsi:type="core:PictureRef">
+          <picture>CommonPicture.FormStatuses</picture>
+        </valuesPicture>
+        <fileDragMode>AsFileRef</fileDragMode>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>Date</name>
       <id>16</id>
       <visible>true</visible>
@@ -1037,9 +1088,33 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number, Documents.Date, Documents.Posted,
+	Documents.Account, Documents.Amount, Documents.AttachedDocuments, Documents.AttachmentRows,
+	Documents.Base, Documents.Carrier, Documents.Company, Documents.Creator, Documents.Currency, 
+	Documents.Customer, Documents.CustomerAccount, Documents.Delegated, Documents.DeliveryDate, 
+	Documents.Description, Documents.Dispatcher, Documents.Driver, Documents.Factor, Documents.FirstPageRows, 
+	Documents.FormNumber, Documents.LoadingAddress, Documents.LoadingPoint, Documents.Memo,
+	Documents.PowerAttorneyDate, Documents.PowerAttorneyNumber, Documents.PowerAttorneySeries, Documents.Prices, 
+	Documents.PrintBack, Documents.Range, Documents.Rate, Documents.Redirects, Documents.Series,
+	Documents.ShowServices, Documents.Storekeeper, Documents.Transfer, Documents.Type, 
+	Documents.UnloadingAddress, Documents.UnloadingPoint, Documents.VAT, Documents.VATUse, Documents.WaybillDate, 
+	Documents.WaybillNumber, Documents.WaybillSeries, Documents.Discounts.*, Documents.Items.*,
+	Documents.Services.*, Documents.PointInTime,
+	case Documents.Status
+		when value ( Enum.FormStatuses.Saved ) then 1
+		when value ( Enum.FormStatuses.Printed ) then 2
+		when value ( Enum.FormStatuses.Canceled ) then 3
+		when value ( Enum.FormStatuses.Submitted ) then 4
+		when value ( Enum.FormStatuses.Waiting ) then 5
+		when value ( Enum.FormStatuses.Unloaded ) then 6
+		when value ( Enum.FormStatuses.Returned ) then 6
+		else 0
+	end as Status
+from Document.InvoiceRecord as Documents</queryText>
       <mainTable>Document.InvoiceRecord</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
     </extInfo>

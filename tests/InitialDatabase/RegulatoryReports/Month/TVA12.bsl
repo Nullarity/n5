@@ -221,6 +221,14 @@
 	|// @Advances
 	|select General.AmountTurnoverDr as Amount
 	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account.Code in hierarchy ( ""2252"" ), , Company = &Company, , ) as General
+	|;
+	|// @AdvancesTaken
+	|select General.AmountTurnoverCr as Amount
+	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account in hierarchy ( value ( ChartOfAccounts.General._523 ) ), , Company = &Company, , ) as General
+	|;
+	|// @VATTaken
+	|select General.AmountTurnoverDr as Amount
+	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account = value ( ChartOfAccounts.General._2252 ), , Company = &Company, , ) as General
 	|";
 	Env.Selection.Add ( str );	
 	Env.Q.SetParameter ( "Currency", Constants.Currency.Get () );
@@ -240,8 +248,8 @@
 	//*************************
 	vats = Env.VATs;
 	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.Standart, 0 ) );
-	FieldsValues [ "A21" ] = table.Total ( "Amount" );
-	FieldsValues [ "B21" ] = table.Total ( "VAT" );
+	FieldsValues [ "A21" ] = table.Total ( "Amount" ) + Env.AdvancesTaken.Amount;
+	FieldsValues [ "B21" ] = table.Total ( "VAT" ) + Env.VATTaken.Amount;;
 	
 	//************ reduced rate
 	//*************************

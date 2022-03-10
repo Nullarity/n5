@@ -92,8 +92,11 @@ Function Fetch ( Env, Name ) export
 	
 EndFunction 
 
-Function Exec ( Q ) export
+Function Exec ( Q, CheckAccess = true ) export
 	
+	if ( not CheckAccess ) then
+		SetPrivilegedMode ( true );
+	endif;
 	SQL.DefineTempManager ( Q );
 	env = new Structure ();
 	extractData ( Q, env, Q.ExecuteBatch () );

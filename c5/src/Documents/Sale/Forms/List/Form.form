@@ -118,6 +118,63 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
+      <name>LocationFilter</name>
+      <id>158</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>LocationFilter</segments>
+      </dataPath>
+      <skipOnInput>true</skipOnInput>
+      <handlers>
+        <event>OnChange</event>
+        <name>LocationFilterOnChange</name>
+      </handlers>
+      <extendedTooltip>
+        <name>LocationFilterExtendedTooltip</name>
+        <id>160</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>LocationFilterContextMenu</name>
+        <id>159</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <clearButton>true</clearButton>
+        <openButton>false</openButton>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>CreatorFilter</name>
       <id>43</id>
       <visible>true</visible>
@@ -1915,6 +1972,7 @@
 		when value ( Enum.FormStatuses.Submitted ) then 4
 		when value ( Enum.FormStatuses.Waiting ) then 5
 		when value ( Enum.FormStatuses.Unloaded ) then 6
+		when value ( Enum.FormStatuses.Returned ) then 6
 		else 0
 	end as Status
 from Document.Sale as Documents
@@ -2052,6 +2110,31 @@ from Document.RetailSales as Documents
     <id>7</id>
     <valueType>
       <types>CatalogRef.Items</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>LocationFilter</name>
+    <title>
+      <key>en</key>
+      <value>Location</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Место</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Locație</value>
+    </title>
+    <id>8</id>
+    <valueType>
+      <types>CatalogRef.PaymentLocations</types>
     </valueType>
     <view>
       <common>true</common>

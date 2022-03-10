@@ -60,7 +60,9 @@ Procedure loadInvoices ()
 	|and Invoices.Company = &Company
 	|and Invoices.Range.Online
 	|and Invoices.Status in ( &Statuses )
-	|";
+	|and ( Invoices.Base = undefined
+	|	or not Invoices.Base refs Document.Invoice
+	|	or cast ( Invoices.Base as Document.Invoice ).Posted )";
 	warehouse = Object.Warehouse;
 	if ( not warehouse.IsEmpty () ) then
 		s = s + "

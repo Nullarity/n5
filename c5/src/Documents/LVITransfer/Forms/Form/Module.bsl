@@ -52,8 +52,9 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
-	|GroupItems Date Company Memo Number lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Warning show ChangesDisallowed;
+	|GroupItems Date Company Memo Number lock ChangesDisallowed;
+	|ItemsCommandBar disable ChangesDisallowed;
 	|Links show ShowLinks
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -154,7 +155,7 @@ EndProcedure
 Procedure readPrinted ()
 	
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure
 
@@ -183,7 +184,7 @@ Procedure readNewInvoice ( NewObject )
 	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
 		InvoiceRecords.Read ( ThisObject );
 		setLinks ();
-		Appearance.Apply ( ThisObject, "InvoiceRecord, ShowLinks, FormStatus" );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, ShowLinks, FormStatus, ChangesDisallowed" );
 	endif;
 
 EndProcedure

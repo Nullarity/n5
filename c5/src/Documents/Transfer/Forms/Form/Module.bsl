@@ -69,9 +69,9 @@ Procedure readAppearance ()
 	|VAT show ( Object.ShowPrices and Object.VATUse > 0 );
 	|FormInvoice show filled ( InvoiceRecord );
 	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
-	|Header GroupItems Footer GroupMore lock inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|Warning show inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
-	|ItemsSelectItems ItemsScan disable inlist ( FormStatus, Enum.FormStatuses.Waiting, Enum.FormStatuses.Unloaded, Enum.FormStatuses.Printed, Enum.FormStatuses.Submitted );
+	|Warning show ChangesDisallowed;
+	|Header GroupItems Footer GroupMore lock ChangesDisallowed;
+	|ItemsTableCommandBar disable ChangesDisallowed;
 	|ItemsPrice ItemsAmount ItemsPrices show Object.ShowPrices;
 	|ItemsVAT ItemsVATCode ItemsTotal show ( Object.ShowPrices and Object.VATUse > 0 )
 	|" );
@@ -436,7 +436,7 @@ Procedure readNewInvoice ( NewObject )
 	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
 		InvoiceRecords.Read ( ThisObject );
 		setLinks ();
-		Appearance.Apply ( ThisObject, "InvoiceRecord, ShowLinks, FormStatus" );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, ShowLinks, FormStatus, ChangesDisallowed" );
 	endif;
 
 EndProcedure
@@ -496,7 +496,7 @@ EndProcedure
 Procedure readPrinted ()
 	
 	InvoiceRecords.Read ( ThisObject );
-	Appearance.Apply ( ThisObject, "FormStatus" );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure 
 

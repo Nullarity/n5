@@ -47,7 +47,7 @@ EndProcedure
 Function analyticsProperties ()
 	
 	s = "
-	|select isnull ( max ( Dimensions.Ref.Currency ), false ) as Currency,
+	|select allowed isnull ( max ( Dimensions.Ref.Currency ), false ) as Currency,
 	|	isnull ( max ( Dimensions.Ref.Quantitative ), false ) as Quantitative
 	|from ChartOfAccounts.General.ExtDimensionTypes as Dimensions
 	|";

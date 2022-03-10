@@ -36,3 +36,9 @@ Function Settings ( val Fields, val User = undefined ) export
 	return result;
 	
 EndFunction 
+
+Function User () export
+	
+	return SessionParameters.User;
+	
+EndFunction

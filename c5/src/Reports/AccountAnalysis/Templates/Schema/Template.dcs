@@ -51,6 +51,12 @@
 				<dcscom:dimension>true</dcscom:dimension>
 				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
 			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">30</dcscor:value>
+				</dcscor:item>
+			</appearance>
 			<inputParameters>
 				<dcscor:item>
 					<dcscor:parameter>TypeLink</dcscor:parameter>
@@ -791,7 +797,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
-					<v8:content>Analitica contului corespondent 1</v8:content>
+					<v8:content>Dimensiune corespondent 1</v8:content>
 				</v8:item>
 			</title>
 			<role>
@@ -813,7 +819,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
-					<v8:content>Analitica contului corespondent 2</v8:content>
+					<v8:content>Dimensiune corespondent 2</v8:content>
 				</v8:item>
 			</title>
 			<role>
@@ -842,7 +848,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
-					<v8:content>Analitica contului corespondent 3</v8:content>
+					<v8:content>Dimensiune corespondent 3</v8:content>
 				</v8:item>
 			</title>
 			<role>
@@ -891,7 +897,10 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 	QuantityCr, QuantityDr, Dim1.*, Dim2.*, Dim3.*, BalancedDim1.*, BalancedDim2.*, BalancedDim3.*}
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto,
 	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
-	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Turnovers
+	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3},
+	{BalancedAccount.* as BalancedAccount} ) as Turnovers
+{where BalancedExtDimension1.* as BalancedDim1, BalancedExtDimension2.* as BalancedDim2,
+	BalancedExtDimension3.* as BalancedDim3}
 </query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -1599,6 +1608,34 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:FilterItemComparison">
 					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedAccount</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>08851592-856f-4f23-a463-1a5815c1ff85</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim1</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>cb439f64-d8fb-4bb3-9ffa-f2b91ee56406</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim2</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>3b561df5-b8ab-49de-9642-f0759b295189</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">BalancedDim3</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>99dddd05-888c-45ad-94ab-96cf14ee8a64</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
 					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Currencies.EmptyRef</dcsset:right>
@@ -1733,7 +1770,6 @@ from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Au
 			</dcsset:order>
 			<dcsset:conditionalAppearance>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
-				<dcsset:userSettingID>1fb04083-d051-42df-b38e-e7e048e70311</dcsset:userSettingID>
 			</dcsset:conditionalAppearance>
 			<dcsset:outputParameters>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">

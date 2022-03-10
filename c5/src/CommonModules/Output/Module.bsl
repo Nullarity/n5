@@ -5511,21 +5511,124 @@ Procedure DocumentRightsPermissionError ( Params = undefined, Field = "", DataKe
 
 EndProcedure
 
+#if ( Server ) then
+
 &AtServer
 Procedure DocumentRightsUndefined ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='Access rights for ""%User"" are undefined. User cannot change or create documents'; ro='Pentru utilizator ""%User"" nu sunt setate drepturi de creare / editare a documentelor'; ru='Для пользователя ""%User"" не заданы права на создание/изменение документов'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	text = Output.RightsUndefined ( Params );
+	Output.PutMessage ( text, undefined, Field, DataKey, DataPath );
 
 EndProcedure
 
 &AtServer
 Procedure DocumentModificationIsNotAllowed ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='""%User"" does not have sufficient access to perform the ""%Action"" action. Please contact your administrator to resolve this issue.'; ro='Utilizatorul ""%User"" nu are drepturi suficiente pentru a efectua operația ""%Action"". Contactați administratorul rolurilor pentru a rezolva situația.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
+	text = Output.ModificationIsNotAllowed ( Params );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Procedure DocumentAnyModificationIsNotAllowed ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = Output.AnyModificationIsNotAllowed ( Params );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+#else
+
+&AtClient
+Procedure DocumentRightsUndefined ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentRightsUndefined" ) export
+
+	text = Output.RightsUndefined ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+	
+&AtClient
+Procedure DocumentModificationIsNotAllowed ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotAllowed" ) export
+
+	text = Output.ModificationIsNotAllowed ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtClient
+Procedure DocumentAnyModificationIsNotAllowed ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotAllowed" ) export
+
+	text = Output.AnyModificationIsNotAllowed ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+#endif
+
+Function RightsUndefined ( Params ) export
+
+	text = NStr ( "en='Access rights for ""%User"" are undefined. User cannot change or create documents'; ro='Pentru utilizator ""%User"" nu sunt setate drepturi de creare / editare a documentelor'; ru='Для пользователя ""%User"" не заданы права на создание/изменение документов'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+Function ModificationIsNotAllowed ( Params ) export
+
+	text = NStr ( "en='""%User"" does not have sufficient access to perform the ""%Action"" action. Please contact your administrator to resolve this issue.'; ro='Utilizatorul ""%User"" nu are drepturi suficiente pentru a efectua operația ""%Action"". Contactați administratorul rolurilor pentru a rezolva situația.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+Function AnyModificationIsNotAllowed ( Params ) export
+
+	text = NStr ( "en='Dear %User, you haven''t access to change the data in the selected period. Please contact your administrator to resolve this issue.'; ro='« %User » ne dispose pas d''un accès suffisant pour effectuer le « %Action » action. S''il vous plaît contacter votre administrateur pour résoudre ce problème.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtClient
+Procedure DocumentRightsUndefinedWarning ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentRightsUndefinedWarning" ) export
+
+	text = Output.RightsUndefined ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+	
+&AtClient
+Procedure DocumentModificationIsNotRecommended ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotRecommended" ) export
+
+	text = Output.ModificationIsNotRecommended ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtClient
+Procedure DocumentAnyModificationIsNotRecommended ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotRecommended" ) export
+
+	text = Output.AnyModificationIsNotRecommended ( Params );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+Function AnyModificationIsNotRecommended ( Params  ) export
+
+	text = NStr ( "en = 'Dear %User, it is not recommended to make any changes in the selected period';ro = 'Stimate %User, nu este recomandat să faceți modificări în perioada selectată';ru = 'Уважаемый %User, не рекомендуется проводить какие-либо изменения в выбранном периоде'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+Function ModificationIsNotRecommended ( Params  ) export
+
+	text = NStr ( "en = 'Dear %User, it is not recommended to make the ""%Action"" action in the selected period';ro = 'Stimate %User, nu este recomandat să efectuați acțiunea ""%Action"" în perioada selectată';ru = 'Уважаемый %User, не рекомендуется производить ""%Action"" в выбранном периоде'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
 
 &AtServer
 Procedure ObjectNotOriginal ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
@@ -8035,6 +8138,181 @@ EndProcedure
 Procedure RetailSalesInteractiveCreationError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en = 'The operation is formed in the menu Sales / Retail Sales / Accounting';ro = 'Operațiunea se formează în meniul Vânzări / Vânzări cu amănuntul / Contabilitate';ru = 'Формирование операции производится в меню Продажи / Продажи в розницу / Отражение в учете'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtClient
+Procedure MarkInvoiceAsReturned ( Module, CallbackParams = undefined, Params = undefined, ProcName = "MarkInvoiceAsReturned" ) export
+
+	text = NStr ( "en = 'Would you like to mark invoice(s) as returned?';ro = 'Doriți să marcați factura(ele) ca fiind returnată(e)?';ru = 'Вы хотите отметить счет(а) как возвращенный(ые)?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
+
+EndProcedure
+
+&AtServer
+Procedure CantMarkTaxInvoice ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The %Invoice hasn''t been printed yet';ro = '%Invoice nu a fost încă imprimată';ru = '%Invoice еще небыла распечатана'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure RequestDenied ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Request denied';ro = 'Cerere refuzată';ru = 'Запрос отклонен'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Function RequestAlreadySent () export
+
+	text = NStr ( "en = 'Request sent, await resolution';ro = 'Cerere trimisă, se așteaptă rezolvarea';ru = 'Запрос выслан, ожидайте резолюции'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function SalesRequestSubject ( Params ) export
+
+	text = NStr ( "en = 'User requests one-time removal of the restriction ""%Reason"" for %Customer';ro = 'Utilizatorul solicită eliminarea o singură dată a restricției ""%Reason"" pentru %Customer';ru = '%User просит единоразово снять ограничение  ""%Reason"" для %Customer'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function SalesRequestBody ( Params ) export
+
+	text = NStr ( "en = '<p>%Receiver, please approve my transaction <b>%Document</b> for <b>%Customer.</b></p>
+				  |You can open my request in the application, through the <b>Quick Menu / Permissions to Operate</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
+				  |<p>
+				  |<a href=""%Yes"">Approve |</a> <a href=""%No""> Reject</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Note: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '<p>%Receiver, vă rog să aprobați tranzacția mea <b>%Document</b> pentru <b>%Customer.</b></p>
+				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Permisiuni de operare</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
+				  |<p>
+				  |<a href=""%Yes"">Aprobă |</a> <a href=""%No""> Respingeți</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Notă: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = '<p>%Receiver, утвердите пожалуйста мою операцию <b>%Document</b> для покупателя <b>%Customer.</b></p>
+				  |Мою заявку, Вы можете открыть в приложении, через меню <b>Главное / Запросы на разрешение продаж</b>, либо выдать свою резолюцию прямо здесь, по нажатию на одну из ссылок ниже:</p>
+				  |<p>
+				  |<a href=""%Yes"">&nbsp;&nbsp;&nbsp; Одобрить &nbsp;&nbsp;&nbsp;</a> | <a href=""%No"">&nbsp;&nbsp;&nbsp; Отклонить &nbsp;&nbsp;&nbsp;</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function SalesNotifyUserSubject1 ( Params ) export
+
+	text = NStr ( "en = 'The responsible person approved the %Customer operation';ro = 'Persoana responsabilă a aprobat operațiunea pentru %Customer';ru = '%Responsible одобрил операцию для %Customer'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function SalesNotifyUserSubject2 ( Params ) export
+
+	text = NStr ( "en = 'The responsible person DENIED the operation for the %Customer';ro = 'Persoana responsabilă a REFUZAT operațiunea pentru %Customer';ru = '%Responsible ОТКЛОНИЛ операцию для %Customer'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function SalesNotifyUserBody1 ( Params ) export
+
+	text = NStr ( "en = 'Your request has been <b>approved</b>, document: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Attention: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = 'Cererea dvs. a fost <b>aprobată</b>, document: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Atenție: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = 'Ваш запрос был <b>одобрен</b>, документ: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function SalesNotifyUserBody2 ( Params ) export
+
+	text = NStr ( "en = 'Your request has been <b>DENIED</b>, document: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Attention: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = 'Cererea dvs. a fost <b>REFUZATĂ</b>, document: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Atenție: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = 'Ваш запрос был <b>ОТКЛОНЕН</b>, документ: <b>%Document</b>.
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionNoContract () export
+
+	text = NStr ( "en = 'The customer is in debt and does not have a signed contract';ro = 'Clientul are datorii și nu are un contract semnat';ru = 'У покупателя долг и нет подписанного договора'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function RestrictionCreditExceeded ( Params ) export
+
+	text = NStr ( "en = 'Exceeded the credit limit of %Amount';ro = 'A depășit limita de credit de %Amount';ru = 'Превышен лимит кредита на %Amount'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionInvoiceRequired ( Params ) export
+
+	text = NStr ( "en = 'The %Invoice was not returned';ro = '%Invoice nu a fost returnată';ru = 'Не была возвращена %Invoice'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionSalesBanned () export
+
+	text = NStr ( "en = 'This customer is not allowed to sell';ro = 'Acest client nu are voie să vândă';ru = 'Этому покупателю продажи запрещены'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function RestrictionRequestApproved ( Params ) export
+
+	text = NStr ( "en = 'The restriction ""%Reason"" has been temporarily removed';ro = 'A fost eliminată temporar restricția ""%Reason""';ru = 'Ограничение ""%Reason"" было временно снято'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionRequestDenied ( Params ) export
+
+	text = NStr ( "en = 'Request to remove ""%Reason"" restriction denied';ro = 'Cerere de eliminare a restricției ""%Reason"" respinsă';ru = 'Запрос на снятие ограничения ""%Reason"" отклонен'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionSendRequest () export
+
+	text = NStr ( "en = 'Apply for authorization of the operation';ro = 'Cerere de autorizare a operațiunii';ru = 'Оформить заявку на разрешение операции'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Procedure CantPrintUnpostedInvoice ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'It is forbidden to print an unposted invoice.';ro = 'Este interzisă imprimarea unei facturi neînregistrate';ru = 'Печать непроведенной расходной накладной запрещена'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
