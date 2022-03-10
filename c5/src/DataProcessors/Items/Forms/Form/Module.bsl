@@ -241,7 +241,10 @@ EndFunction
 Procedure adjustReservesFilter ()
 	
 	if ( viewReserves () ) then
-		Items.Filter.ChoiceList.Add ( Enums.Filter.Reserves );
+		list = Items.Filter.ChoiceList;
+		if ( list.FindByValue ( Enums.Filter.Reserves ) = undefined ) then
+			list.Add ( Enums.Filter.Reserves );
+		endif;
 	else
 		ShowReserves = false;
 		if ( Filter = Enums.Filter.Reserves ) then

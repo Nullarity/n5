@@ -265,15 +265,7 @@ EndFunction
 
 Function actionID ( Action, Row, Env )
 	
-	r = InformationRegisters.RemoteActions.CreateRecordManager ();
-	id = new UUID ();
-	r.ID = id;
-	r.Action = Action;
-	r.Expire = Env.Fields.Start;
-	r.Parameter1 = Env.Ref;
-	r.Parameter2 = Row.Member;
-	r.Write ();
-	return id;
+	return InformationRegisters.RemoteActions.Create ( Action, Env.Ref, Row.Member, Env.Fields.Start );
 	
 EndFunction
 

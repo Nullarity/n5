@@ -8316,3 +8316,11 @@ Procedure CantPrintUnpostedInvoice ( Params = undefined, Field = "", DataKey = u
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Function PermissionComplete () export
+
+	text = NStr ( "en = 'The approval process has already been completed'; ro = 'Procesul de aprobare a fost deja finalizat'; ru = 'Процесс утверждения уже завершен'" );
+	return text;
+
+EndFunction

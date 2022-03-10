@@ -7,11 +7,9 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		raise Output.InteractiveCreationForbidden ();
 	endif;
-	completed = not ( Object.Responsible.IsEmpty ()
-		or Object.Resolution.IsEmpty () );
-	if ( not completed
+	if ( not PermissionForm.Completed ( Object )
 		and SalesRestriction.CanApprove () ) then
-		init ();
+		PermissionForm.Init ( Object );
 	endif;
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -30,27 +28,9 @@ Procedure readAppearance ()
 EndProcedure
 
 &AtServer
-Procedure init ()
-	
-	Object.Responsible = SessionParameters.User;
-
-EndProcedure
-
-&AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
-	notifyUser ();
-	
-EndProcedure
-
-&AtServer
-Procedure notifyUser ()
-	
-	p = new Structure ( "Creator, Document, Resolution, Responsible" );
-	FillPropertyValues ( p, Object );
-	params = new Array ();
-	params.Add ( p );
-	Jobs.Run ( "PermissionsMailing.NotifyUser", params, , , TesterCache.Testing () );
+	PermissionForm.NotifyUser ( Object );
 	
 EndProcedure
 
@@ -62,23 +42,12 @@ Procedure AfterWrite ( WriteParameters )
 EndProcedure
 
 // *****************************************
-// *********** Form events
+// *********** Group Form
 
 &AtClient
 Procedure ResolutionOnChange ( Item )
 	
-	setExpiration ();
+	PermissionForm.ApplyResolution ( Object );
 	Appearance.Apply ( ThisObject, "Object.Resolution" );
-
-EndProcedure
-
-&AtClient
-Procedure setExpiration ()
-	
-	if ( Object.Resolution = PredefinedValue ( "Enum.AllowDeny.Deny" ) ) then
-		Object.Expired = undefined;
-	else
-		Object.Expired = SessionDate () + 86400;
-	endif;
 
 EndProcedure

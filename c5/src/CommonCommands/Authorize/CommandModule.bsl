@@ -70,7 +70,7 @@ Procedure makeRequest ( val Document, val Reason )
 		row.Reason = Reason;
 	endif;
 	doc.Write ();
-	send ( Document, Reason );
+	send ( doc.Ref, Reason );
 
 EndProcedure
 

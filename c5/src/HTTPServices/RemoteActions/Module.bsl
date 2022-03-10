@@ -1,6 +1,7 @@
 
 Function DoGet ( Request )
 	
+	SetPrivilegedMode ( true );
 	p = getParams ();
 	fetchParams ( p, Request );
 	error = false;
@@ -39,6 +40,9 @@ Function perform ( Params, Error )
 		or action = Enums.RemoteActions.MeetingMaybe
 		or action = Enums.RemoteActions.MeetingNo ) then
 		aboutMeeting ( result );
+	elsif ( action = Enums.RemoteActions.PermissionAllow
+		or action = Enums.RemoteActions.PermissionDeny ) then
+		aboutPermission ( result );
 	endif;
 	
 EndFunction
@@ -94,6 +98,10 @@ Function fail ( Error )
 	html = "
 	|<!DOCTYPE html>
 	|<html>
+	|<head>
+	|<meta content=""text/html;charset=utf-8"" http-equiv=""Content-Type"">
+	|<meta content=""utf-8"" http-equiv=""encoding"">
+	|</head>
 	|<body>
 	|<p>" + Error + "</p>
 	|</body>
@@ -110,10 +118,14 @@ Function success ()
 	html = "
 	|<!DOCTYPE html>
 	|<html>
+	|<head>
+	|<meta content=""text/html;charset=utf-8"" http-equiv=""Content-Type"">
+	|<meta content=""utf-8"" http-equiv=""encoding"">
+	|</head>
 	|<body>
 	|<p>" + Output.RemoteActionApplied () + "
 	|</p>
-	|<button onclick='window.close();'>Close</button>
+	|<button onclick='window.close();'>OK</button>
 	|</body>
 	|</html>
 	|";
@@ -122,3 +134,41 @@ Function success ()
 	return response;
 
 EndFunction
+
+Procedure aboutPermission ( Data )
+	
+	obj = Data.Parameter1.GetObject ();
+	responsible = Data.Parameter2;
+	SessionParameters.User = responsible;
+	if ( PermissionForm.Completed ( obj )
+		and obj.Responsible <> responsible ) then
+		raise Output.PermissionComplete ();
+	endif;                                    
+	PermissionForm.Init ( obj, responsible );
+	if ( Data.Action = Enums.RemoteActions.PermissionAllow ) then
+		obj.Resolution = Enums.AllowDeny.Allow;
+	else
+		obj.Resolution = Enums.AllowDeny.Deny;
+	endif;
+	PermissionForm.ApplyResolution ( obj );
+	checkObject ( obj );
+	obj.Write ();
+	PermissionForm.NotifyUser ( obj );
+	
+EndProcedure
+
+Procedure checkObject ( Object )
+	
+	if ( Object.CheckFilling () ) then
+		return;
+	endif;
+	list = GetUserMessages ();
+	text = new Array ();
+	for each msg in list do
+		text.Add ( msg.Text );
+	enddo;
+	if ( text.Count () > 0 ) then
+		raise StrConcat ( text, "; " );
+	endif;
+	
+EndProcedure

@@ -19,30 +19,32 @@ Function createMessage ( Document, Reason, Receiver )
 	message.To.Add ( Receiver.Email );
 	info = new Structure ( "User, Receiver, Document, Customer, Reason, Yes, No" );
 	info.User = TrimAll ( "" + SessionParameters.User );
-	info.Customer = DF.Pick ( Document, "Customer.Description" );
+	data = DF.Values ( Document, "Document as Source, Customer.Description as Customer" );
+	info.Customer = data.Customer;
 	info.Reason = Reason;
 	login = TrimAll ( Receiver.Login );
 	info.Receiver = login;
-	info.Document = "" + Document;
-	service = Cloud.RemoteActionsService () + "/hs/RemoteActions?ID=" + Document.UUID () + "&User=" + login + "&Action=";
-	info.Yes = service + Conversion.EnumItemToName ( Enums.AllowDeny.Allow );
-	info.No = service + Conversion.EnumItemToName ( Enums.AllowDeny.Deny );
+	info.Document = "" + data.Source;
+	responsible = Receiver.Ref;
+	actions = InformationRegisters.RemoteActions;
+	info.Yes = actions.Create ( Enums.RemoteActions.PermissionAllow, Document, responsible );
+	info.No = actions.Create ( Enums.RemoteActions.PermissionDeny, Document, responsible );
 	message.Subject = Output.SalesRequestSubject ( info );
 	body = Output.SalesRequestBody ( info );
 	message.Texts.Add ( body, InternetMailTextType.HTML );
 	return message;
-	
+
 EndFunction
 
 Function getReceivers ()
 	
 	s = "
-	|select Users.Email as Email, Users.Code as Login
+	|select Users.Ref as Ref, Users.Email as Email, Users.Code as Login
 	|from Catalog.Users as Users
 	|where not Users.DeletionMark
 	|and not Users.AccessDenied
 	|and not Users.AccessRevoked
-	|and Users.Rights.RoleName = ""ApproveSales""
+	|and Users.Rights.RoleName = """ + Metadata.Roles.ApproveSales.Name + """
 	|";
 	q = new Query ( s );
 	return q.Execute ().Unload ();
