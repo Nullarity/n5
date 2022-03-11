@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group1</name>
     <id>37</id>
@@ -201,9 +201,7 @@
       <id>19</id>
       <visible>true</visible>
       <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
+      <userVisible/>
       <dataPath xsi:type="form:DataPath">
         <segments>List.Number</segments>
       </dataPath>
@@ -225,52 +223,6 @@
       <contextMenu>
         <name>NumberContextMenu</name>
         <id>20</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <autoFill>true</autoFill>
-      </contextMenu>
-      <type>LabelField</type>
-      <editMode>Enter</editMode>
-      <showInHeader>true</showInHeader>
-      <headerHorizontalAlign>Left</headerHorizontalAlign>
-      <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:LabelFieldExtInfo">
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-      </extInfo>
-    </items>
-    <items xsi:type="form:FormField">
-      <name>Type</name>
-      <id>22</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <dataPath xsi:type="form:DataPath">
-        <segments>List.Type</segments>
-      </dataPath>
-      <extendedTooltip>
-        <name>TypeExtendedTooltip</name>
-        <id>24</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <type>Label</type>
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-        <extInfo xsi:type="form:LabelDecorationExtInfo">
-          <horizontalAlign>Left</horizontalAlign>
-        </extInfo>
-      </extendedTooltip>
-      <contextMenu>
-        <name>TypeContextMenu</name>
-        <id>23</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -335,13 +287,117 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>Amount</name>
-      <id>48</id>
+      <name>Type</name>
+      <id>22</id>
+      <title>
+        <key>en</key>
+        <value>Permission</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Permisiune</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Разрешение</value>
+      </title>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Type</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>TypeExtendedTooltip</name>
+        <id>24</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>TypeContextMenu</name>
+        <id>23</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>LabelField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:LabelFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Info</name>
+      <id>51</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Info</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>InfoExtendedTooltip</name>
+        <id>53</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>InfoContextMenu</name>
+        <id>52</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>LabelField</type>
+      <horizontalAlign>Right</horizontalAlign>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:LabelFieldExtInfo">
+        <width>10</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Amount</name>
+      <id>48</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible/>
       <dataPath xsi:type="form:DataPath">
         <segments>List.Amount</segments>
       </dataPath>
@@ -481,9 +537,7 @@
       <id>25</id>
       <visible>true</visible>
       <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
+      <userVisible/>
       <dataPath xsi:type="form:DataPath">
         <segments>List.Company</segments>
       </dataPath>
@@ -566,7 +620,6 @@
         </userVisible>
         <autoFill>true</autoFill>
       </contextMenu>
-      <source>ListSearchString</source>
       <extInfo xsi:type="form:SearchStringAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>
@@ -605,7 +658,6 @@
         <autoFill>true</autoFill>
       </contextMenu>
       <type>ViewStatusAddition</type>
-      <source>ListViewStatus</source>
       <extInfo xsi:type="form:ViewStatusAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>
@@ -644,7 +696,6 @@
         <autoFill>true</autoFill>
       </contextMenu>
       <type>SearchControlAddition</type>
-      <source>List</source>
       <extInfo xsi:type="form:SearchControlAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>
@@ -687,7 +738,6 @@
     <verticalScrollBar>AutoUse</verticalScrollBar>
     <horizontalLines>true</horizontalLines>
     <verticalLines>true</verticalLines>
-    <useAlternationRowColor>true</useAlternationRowColor>
     <searchOnInput>Auto</searchOnInput>
     <initialListView>Auto</initialListView>
     <initialTreeView>ExpandTopLevel</initialTreeView>
@@ -747,11 +797,203 @@
     </edit>
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select Journal.Ref as Ref, Journal.Date as Date, Journal.DeletionMark as DeletionMark,
+	Journal.Number as Number, Journal.Posted as Posted, Journal.Amount as Amount,
+	Journal.Company as Company, Journal.Creator as Creator, Journal.Customer as Customer,
+	Journal.Memo as Memo, Journal.Type as Type,
+	cast ( Journal.Ref as Document.Permission ).Resolution as Resolution,
+	Journal.Type =  type ( Document.Permission )
+		and cast ( Journal.Ref as Document.Permission ).Resolution = value ( Enum.AllowDeny.EmptyRef ) as Waiting,
+	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = true as Ban,
+	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = false as CanSale
+from DocumentJournal.Restrictions as Journal
+</queryText>
       <mainTable>DocumentJournal.Restrictions</mainTable>
-      <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Type</dataPath>
+        <field>Type</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Customer</dataPath>
+        <field>Customer</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Resolution</dataPath>
+        <field>Resolution</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Resolution</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>CanSale</dataPath>
+        <field>CanSale</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Can sale</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ban</dataPath>
+        <field>Ban</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Ban</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Waiting</dataPath>
+        <field>Waiting</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Waiting</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <calculatedFields>
+        <dataPath>Info</dataPath>
+        <expression>case Type
+	when type ( &quot;Document.InvoicesReturn&quot; ) then format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Days
+	when type ( &quot;Document.CreditLimit&quot; ) then format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Currency
+	when type ( &quot;Document.SalesRestriction&quot; ) then
+		case Amount when true then value ( Enum.AllowDeny.Deny ) else value ( Enum.AllowDeny.Allow ) end
+	when type ( &quot;Document.Permission&quot; ) then
+		case when Waiting then &amp;Waiting else Resolution end
+end
+</expression>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Info</value>
+            </content>
+            <content>
+              <key>ro</key>
+              <value>Info</value>
+            </content>
+            <content>
+              <key>ru</key>
+              <value>Инфо</value>
+            </content>
+          </localValue>
+        </title>
+        <useRestriction>
+          <condition>true</condition>
+          <group>true</group>
+          <order>true</order>
+        </useRestriction>
+        <valueType>
+          <types>String</types>
+          <stringQualifiers/>
+        </valueType>
+      </calculatedFields>
+      <parameters>
+        <name>Days</name>
+        <title>
+          <value>Days</value>
+        </title>
+        <valueType>
+          <types>String</types>
+          <stringQualifiers/>
+        </valueType>
+        <values xsi:type="core:StringValue">
+          <value></value>
+        </values>
+        <expression>Output.Days ()</expression>
+      </parameters>
+      <parameters>
+        <name>Currency</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Currency</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>String</types>
+          <stringQualifiers/>
+        </valueType>
+        <values xsi:type="core:StringValue">
+          <value></value>
+        </values>
+        <expression>String ( Application.Currency () )</expression>
+      </parameters>
+      <parameters>
+        <name>Waiting</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Waiting</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>String</types>
+          <stringQualifiers/>
+        </valueType>
+        <values xsi:type="core:StringValue">
+          <value></value>
+        </values>
+        <expression>Output.Waiting ()</expression>
+      </parameters>
     </extInfo>
   </attributes>
   <attributes>

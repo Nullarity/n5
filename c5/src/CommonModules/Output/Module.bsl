@@ -8187,19 +8187,19 @@ EndFunction
 Function SalesRequestBody ( Params ) export
 
 	text = NStr ( "en = '<p>%Receiver, please approve my transaction <b>%Document</b> for <b>%Customer.</b></p>
-				  |You can open my request in the application, through the <b>Quick Menu / Permissions to Operate</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
+				  |You can open my request in the application, through the <b>Quick Menu / Restrictions</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
 				  |<p>
 				  |<a href=""%Yes"">Approve |</a> <a href=""%No""> Reject</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Note: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '<p>%Receiver, vă rog să aprobați tranzacția mea <b>%Document</b> pentru <b>%Customer.</b></p>
-				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Permisiuni de operare</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
+				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Restricții</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
 				  |<p>
 				  |<a href=""%Yes"">Aprobă |</a> <a href=""%No""> Respingeți</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Notă: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = '<p>%Receiver, утвердите пожалуйста мою операцию <b>%Document</b> для покупателя <b>%Customer.</b></p>
-				  |Мою заявку, Вы можете открыть в приложении, через меню <b>Главное / Запросы на разрешение продаж</b>, либо выдать свою резолюцию прямо здесь, по нажатию на одну из ссылок ниже:</p>
+				  |Мою заявку, Вы можете открыть в приложении, через меню <b>Главное / Ограничения</b>, либо выдать свою резолюцию прямо здесь, по нажатию на одну из ссылок ниже:</p>
 				  |<p>
 				  |<a href=""%Yes"">&nbsp;&nbsp;&nbsp; Одобрить &nbsp;&nbsp;&nbsp;</a> | <a href=""%No"">&nbsp;&nbsp;&nbsp; Отклонить &nbsp;&nbsp;&nbsp;</a>
 				  |</p>
@@ -8321,6 +8321,22 @@ EndProcedure
 Function PermissionComplete () export
 
 	text = NStr ( "en = 'The approval process has already been completed'; ro = 'Procesul de aprobare a fost deja finalizat'; ru = 'Процесс утверждения уже завершен'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function Days () export
+
+	text = NStr ( "en = 'Days'; ro = 'Zile'; ru = 'Дней'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function Waiting () export
+
+	text = NStr ( "en='Awaiting'; ro='În așteptare'; ru='В ожидании'" );
 	return text;
 
 EndFunction
