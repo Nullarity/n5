@@ -34,6 +34,7 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Autoclose AskQuantity show not JustScan;
 	|Scan CodeType CameraOnly FormScan show ScannerSupported;
+	|FormOK show ScannerSendsLF;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -61,6 +62,7 @@ EndProcedure
 Procedure OnOpen ( Cancel )
 	
 	initFields ();
+	setOKbehaviour ();
 	resetScanResult ();
 	defineScan ();
 	Appearance.Apply ( ThisObject );
@@ -79,6 +81,17 @@ Procedure initFields ()
 	CameraActive = false;
 	CameraWasActive = false;
 	
+EndProcedure
+
+&AtClient
+Procedure setOKbehaviour ()
+	
+	if ( ScannerSendsLF ) then
+		EnterKeyBehavior = EnterKeyBehaviorType.DefaultButton;
+	else
+		EnterKeyBehavior = EnterKeyBehaviorType.ControlNavigation;
+	endif;
+
 EndProcedure
 
 &AtClient
@@ -306,7 +319,9 @@ EndProcedure
 &AtClient
 Procedure OK ( Command )
 	
-	proceed ( Barcode );
+	if ( ScannerSendsLF ) then
+		proceed ( Barcode );
+	endif;
 	
 EndProcedure
 
@@ -330,8 +345,18 @@ EndProcedure
 &AtClient
 Procedure BarcodeAutoComplete ( Item, Text, ChoiceData, DataGetParameters, Wait, StandardProcessing )
 	
-	proceed ( Text );
+	if ( not ScannerSendsLF ) then
+		proceed ( Text );
+	endif;
 
+EndProcedure
+
+&AtClient
+Procedure ScannerSendsLFOnChange ( Item )
+	
+	setOKbehaviour ();
+	Appearance.Apply ( ThisObject, "ScannerSendsLF" );
+	
 EndProcedure
 
 &AtClient
