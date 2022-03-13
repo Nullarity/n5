@@ -804,7 +804,8 @@
 	Journal.Type =  type ( Document.Permission )
 		and cast ( Journal.Ref as Document.Permission ).Resolution = value ( Enum.AllowDeny.EmptyRef ) as Waiting,
 	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = true as Ban,
-	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = false as CanSale
+	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = false as CanSale,
+	cast ( Journal.Ref as Document.CreditLimit ).Disable as Disable
 from DocumentJournal.Restrictions as Journal
 </queryText>
       <mainTable>DocumentJournal.Restrictions</mainTable>
@@ -904,17 +905,29 @@ from DocumentJournal.Restrictions as Journal
           </localValue>
         </title>
       </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Disable</dataPath>
+        <field>Disable</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Disable</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
       <calculatedFields>
         <dataPath>Info</dataPath>
         <expression>case Type
-	when type ( &quot;Document.InvoicesReturn&quot; ) then format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Days
-	when type ( &quot;Document.CreditLimit&quot; ) then format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Currency
-	when type ( &quot;Document.SalesRestriction&quot; ) then
-		case Amount when true then value ( Enum.AllowDeny.Deny ) else value ( Enum.AllowDeny.Allow ) end
-	when type ( &quot;Document.Permission&quot; ) then
-		case when Waiting then &amp;Waiting else Resolution end
-end
-</expression>
+    when type ( &quot;Document.InvoicesReturn&quot; ) then format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Days
+    when type ( &quot;Document.CreditLimit&quot; ) then
+		case when Disable then &amp;DontControl else format ( Amount, &quot;NZ=0&quot; ) + &quot; &quot; + &amp;Currency end
+    when type ( &quot;Document.SalesRestriction&quot; ) then
+        case Amount when true then value ( Enum.AllowDeny.Deny ) else value ( Enum.AllowDeny.Allow ) end
+    when type ( &quot;Document.Permission&quot; ) then
+        case when Waiting then &amp;Waiting else Resolution end
+end</expression>
         <title>
           <localValue>
             <content>
@@ -992,6 +1005,25 @@ end
           <value></value>
         </values>
         <expression>Output.Waiting ()</expression>
+      </parameters>
+      <parameters>
+        <name>DontControl</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Dont control</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>String</types>
+          <stringQualifiers/>
+        </valueType>
+        <values xsi:type="core:StringValue">
+          <value></value>
+        </values>
+        <expression>Output.DontControl ()</expression>
       </parameters>
     </extInfo>
   </attributes>

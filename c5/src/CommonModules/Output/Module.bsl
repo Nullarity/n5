@@ -5511,8 +5511,6 @@ Procedure DocumentRightsPermissionError ( Params = undefined, Field = "", DataKe
 
 EndProcedure
 
-#if ( Server ) then
-
 &AtServer
 Procedure DocumentRightsUndefined ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
@@ -5536,37 +5534,6 @@ Procedure DocumentAnyModificationIsNotAllowed ( Params = undefined, Field = "", 
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
-
-#else
-
-&AtClient
-Procedure DocumentRightsUndefined ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentRightsUndefined" ) export
-
-	text = Output.RightsUndefined ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-	
-&AtClient
-Procedure DocumentModificationIsNotAllowed ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotAllowed" ) export
-
-	text = Output.ModificationIsNotAllowed ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-
-&AtClient
-Procedure DocumentAnyModificationIsNotAllowed ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotAllowed" ) export
-
-	text = Output.AnyModificationIsNotAllowed ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-
-#endif
 
 Function RightsUndefined ( Params ) export
 
@@ -5598,24 +5565,6 @@ Procedure DocumentRightsUndefinedWarning ( Module = undefined, CallbackParams = 
 
 EndProcedure
 	
-&AtClient
-Procedure DocumentModificationIsNotRecommended ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotRecommended" ) export
-
-	text = Output.ModificationIsNotRecommended ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-
-&AtClient
-Procedure DocumentAnyModificationIsNotRecommended ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentModificationIsNotRecommended" ) export
-
-	text = Output.AnyModificationIsNotRecommended ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-
 Function AnyModificationIsNotRecommended ( Params  ) export
 
 	text = NStr ( "en = 'Dear %User, it is not recommended to make any changes in the selected period';ro = 'Stimate %User, nu este recomandat să faceți modificări în perioada selectată';ru = 'Уважаемый %User, не рекомендуется проводить какие-либо изменения в выбранном периоде'" );
@@ -8337,6 +8286,14 @@ EndFunction
 Function Waiting () export
 
 	text = NStr ( "en='Awaiting'; ro='În așteptare'; ru='В ожидании'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function DontControl () export
+
+	text = NStr ( "en = 'Don''t control'; ro = 'Nu controlați'; ru = 'Не контролировать'" );
 	return text;
 
 EndFunction

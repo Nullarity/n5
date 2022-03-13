@@ -8,7 +8,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		raise Output.InteractiveCreationForbidden ();
 	endif;
 	if ( not PermissionForm.Completed ( Object )
-		and SalesRestriction.CanApprove () ) then
+		and Constraints.CanApprove () ) then
 		PermissionForm.Init ( Object );
 	endif;
 	readAppearance ();

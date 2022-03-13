@@ -23,11 +23,12 @@ var Copy;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
+	Constraints.ShowSales ( ThisObject );
 	updateBalanceDue ();
 	InvoiceRecords.Read ( ThisObject );
 	initCurrency ();
 	setSocial ();
-	SalesRestriction.Show ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -92,6 +93,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif; 
 		endif;
 		updateBalanceDue ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();
@@ -99,7 +101,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	Forms.ActivatePage ( ThisObject, "ItemsTable,Services,Discounts" );
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
-	DocumentForm.CheckDate ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -222,7 +223,7 @@ Procedure applyContract ()
 	updateContent ();
 	updateTotals ( ThisObject );
 	updateBalanceDue ();
-	SalesRestriction.Show ( ThisObject );
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 
 EndProcedure
@@ -262,6 +263,7 @@ Procedure fillBySaleOrder ()
 	DiscountsTable.Load ( Object );
 	updateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
+	Constraints.ShowSales ( ThisObject );
 	
 EndProcedure 
 
@@ -912,7 +914,8 @@ EndProcedure
 &AtServer
 Procedure updatePermissions ()
 
-	SalesRestriction.Show ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
+	Constraints.ShowSales ( ThisObject );
 
 EndProcedure
 
@@ -1063,10 +1066,17 @@ EndProcedure
 
 &AtClient
 Procedure DateOnChange ( Item )
+
+	applyDate ();
 	
-	DocumentForm.CheckDate ( ThisObject );
+EndProcedure
+
+&AtServer
+Procedure applyDate ()
+	
 	updateContent ();
-	
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtClient

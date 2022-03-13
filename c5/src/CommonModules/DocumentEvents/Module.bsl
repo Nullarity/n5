@@ -57,9 +57,7 @@ Procedure CheckAccess ( Source, Cancel, WriteMode, PostingMode ) export
 		or Source.DataExchange.Load ) then
 		return;
 	endif; 
-	access = DocumentFormSrv.GetAccess ( Source.Ref, Source.Date );
-	if ( not access.Allowed and not access.Warning ) then
-		DocumentForm.OutputRestrictions ( access );
+	if ( not Constraints.CheckAccess ( Source ) ) then
 		Cancel = true;
 	endif; 
 
@@ -96,4 +94,18 @@ Function changesAllowed ( Status )
 	or IsInRole ( Metadata.Roles.ModifyIssuedInvoices );
 	
 EndFunction
- 
+
+Procedure CheckSales ( Source, Cancel, WriteMode, PostingMode ) export
+	
+	dont = Cancel
+	or Source.DataExchange.Load
+	or WriteMode = DocumentWriteMode.UndoPosting
+	or ( WriteMode = DocumentWriteMode.Write and not Source.Posted );
+	if ( dont ) then
+		return;
+	endif;
+	if ( not Constraints.CheckSales ( Source ) ) then
+		Cancel = true;
+	endif; 
+
+EndProcedure

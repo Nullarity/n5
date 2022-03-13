@@ -116,10 +116,6 @@ EndProcedure
 
 Procedure Posting ( Cancel, PostingMode )
 	
-	if ( not SalesRestriction.Check ( ThisObject ) ) then
-		Cancel = true;
-		return;
-	endif;
 	env = Posting.GetParams ( Ref, RegisterRecords );
 	env.Realtime = Realtime;
 	env.Interactive = Posting.Interactive ( ThisObject );

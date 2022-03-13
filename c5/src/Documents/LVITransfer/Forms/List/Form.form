@@ -700,7 +700,7 @@
     <main>true</main>
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>select Documents.Number as Number, Documents.Date as Date, Documents.Company as Company, Documents.Creator as Creator,
-	Documents.Memo as Memo, TaxInvoices.Number as TaxInvoice, Forms.Form as Form,
+	Documents.Memo as Memo, Forms.Number as TaxInvoice, Forms.Form as Form,
 	case Forms.Status
 		when value ( Enum.FormStatuses.Saved ) then 1
 		when value ( Enum.FormStatuses.Printed ) then 2
@@ -712,11 +712,6 @@
 		else 0
 	end as Status
 from Document.LVITransfer as Documents
-	//
-	// TaxNumbers
-	//
-	{left join InformationRegister.TaxInvoices as TaxInvoices
-	on TaxInvoices.Document = Documents.Ref}
 	//
 	// Forms
 	//

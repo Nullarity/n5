@@ -2472,7 +2472,7 @@
 	Documents.GrossAmount as GrossAmount, Documents.Memo as Memo, Documents.PaymentDate as PaymentDate,	Documents.PaymentOption as PaymentOption, Documents.PO as PO, Documents.Prices as Prices, Documents.Rate as Rate,
 	Documents.SalesOrder as SalesOrder,	Documents.Shipment as Shipment,	Documents.ShipmentNumber as ShipmentNumber,	
 	Documents.Warehouse as Warehouse, Documents.Items as Items, Documents.Services as Services,
-	Documents.Taxes as Taxes, Documents.PointInTime as PointInTime, TaxInvoices.Number as TaxInvoice, Forms.Form as Form,
+	Documents.Taxes as Taxes, Documents.PointInTime as PointInTime, Forms.Number as TaxInvoice, Forms.Form as Form,
 	case Forms.Status
 		when value ( Enum.FormStatuses.Saved ) then 1
 		when value ( Enum.FormStatuses.Printed ) then 2
@@ -2497,11 +2497,6 @@
 	end as PermissionPicture,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
 from Document.Invoice as Documents
-	//
-	// TaxNumbers
-	//
-	{left join InformationRegister.TaxInvoices as TaxInvoices
-	on TaxInvoices.Document = Documents.Ref}
 	//
 	// Forms
 	//

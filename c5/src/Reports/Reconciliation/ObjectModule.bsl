@@ -259,7 +259,7 @@ Procedure sqlRecords ()
 	|	//
 	|	// TaxInvoices
 	|	//
-	|	left join InformationRegister.TaxInvoices as TaxInvoices
+	|	left join InformationRegister.Forms as TaxInvoices
 	|	on TaxInvoices.Document = Records.Document
 	|union all
 	|select Invoices.Document, Invoices.Method, Invoices.Date, Invoices.Number,
