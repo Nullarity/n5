@@ -529,8 +529,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	elsif ( EventName = Enum.MessageSaleIsSaved ()
 		and Parameter = Object.Ref) then
 		updateLinks ();
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtClient
@@ -544,7 +548,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 		else
 			Output.WrongVATUse ();
 		endif; 
-	elsif ( type = Type ( "Structure" ) ) then
+		elsif ( type = Type ( "Structure" ) ) then
 		fillItems ( SelectedValue.Items );
 		applyInvoices ();
 		updateTotals ( ThisObject );
@@ -591,6 +595,13 @@ Procedure applyInvoices ()
 	setLinks ();			
 	Appearance.Apply ( ThisObject, "InvoicesInTable" );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtClient

@@ -503,8 +503,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Parameter.ExpenseReport = Object.Ref
 		and not isNew ( Object ) ) then
 		calcTotals ( ThisObject );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -542,6 +546,13 @@ Procedure addItem ( Fields )
 	calcTotals ( ThisObject );
 	
 EndProcedure 
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

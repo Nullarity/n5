@@ -184,8 +184,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		addItem ( Parameter );
 	elsif ( EventName = Enum.MessageAccountingInventoryIsSaved () ) then
 		reread ();
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -249,12 +253,19 @@ EndFunction
 
 &AtServer
 Procedure reread ()
-	 
+	
 	obj = Object.Ref.GetObject ();
 	ValueToFormAttribute ( obj, "Object" );
 	setLinks ();
 	update ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 // *****************************************

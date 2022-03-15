@@ -564,8 +564,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Parameter.Contract = Object.Contract ) then
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -603,6 +607,13 @@ Procedure updateLinks ()
 	
 	setLinks ();
 	updateBalanceDue ();
+	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

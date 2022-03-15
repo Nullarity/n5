@@ -74,8 +74,19 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	if ( EventName = Enum.MessageBarcodeScanned ()
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
 	endif; 
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer

@@ -36,7 +36,7 @@ Procedure fillNew ()
 EndProcedure 
 
 &AtClient
-Procedure NotificationProcessing(EventName, Parameter, Source)
+Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
 		and ( Parameter = Object.Ref

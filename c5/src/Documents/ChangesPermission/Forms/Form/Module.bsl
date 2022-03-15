@@ -2,6 +2,13 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
@@ -27,6 +34,24 @@ Procedure readAppearance ()
 	|Document show filled ( Object.Document );
 	|" );
 	Appearance.Read ( ThisObject, rules );
+
+EndProcedure
+
+&AtClient
+Procedure NotificationProcessing ( EventName, Parameter, Source )
+	
+	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

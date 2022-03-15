@@ -516,8 +516,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	elsif ( EventName = Enum.InvoiceRecordsWrite ()
 		and Source.Ref = InvoiceRecord ) then
 		readPrinted ();
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -551,6 +555,13 @@ Procedure addItem ( Fields )
 	updateTotals ( ThisObject, row );
 	
 EndProcedure 
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )

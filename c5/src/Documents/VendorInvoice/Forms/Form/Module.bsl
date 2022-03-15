@@ -998,8 +998,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and Parameter.Contract = Object.Contract ) then
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -1039,9 +1043,16 @@ EndProcedure
 
 &AtClient
 Procedure applySocial () 
-
+	
 	UseSocial = findSocial ( Object.Items );
 	Appearance.Apply ( ThisObject, "UseSocial" );
+	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -1051,7 +1062,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	operation = SelectedValue.Operation;
 	if ( operation = Enum.ChoiceOperationsFixedAsset () ) then
 		loadRow ( SelectedValue, Items.FixedAssets );
-	elsif ( operation = Enum.ChoiceOperationsIntangibleAsset () ) then
+		elsif ( operation = Enum.ChoiceOperationsIntangibleAsset () ) then
 		loadRow ( SelectedValue, Items.IntangibleAssets );
 	elsif ( operation = Enum.ChoiceOperationsFixedAssetSaveAndNew () ) then
 		loadAndNew ( SelectedValue, Items.FixedAssets );

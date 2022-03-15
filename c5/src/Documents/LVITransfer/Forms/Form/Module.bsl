@@ -149,8 +149,14 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	if ( EventName = Enum.InvoiceRecordsWrite ()
 		and Source.Ref = InvoiceRecord ) then
 		readPrinted ();	
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
+EndProcedure
+
 EndProcedure
 
 &AtServer
@@ -159,6 +165,13 @@ Procedure readPrinted ()
 	InvoiceRecords.Read ( ThisObject );
 	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer

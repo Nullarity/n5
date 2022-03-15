@@ -142,8 +142,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	elsif ( EventName = Enum.MessageVendorInvoiceIsSaved ()
 		and DF.Pick ( Parameter, "Receipt" ) = Object.Ref ) then
 		reread ();
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -172,7 +176,7 @@ Procedure addItem ( Fields )
 	else
 		row.Print = 0;
 	endif;
-
+	
 EndProcedure 
 
 &AtServer
@@ -183,6 +187,13 @@ Procedure reread ()
 	setLinks ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 // *****************************************

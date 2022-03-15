@@ -33,6 +33,24 @@ Procedure fillNew ()
 	
 EndProcedure 
 
+&AtClient
+Procedure NotificationProcessing ( EventName, Parameter, Source )
+	
+	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
 // *****************************************
 // *********** Group Form
 

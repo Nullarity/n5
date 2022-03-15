@@ -170,8 +170,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	if ( EventName = Enum.MessageBarcodeScanned ()
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -206,6 +210,13 @@ Procedure calcDifference ( ItemsRow )
 	ItemsRow.QuantityPkgDifference = ItemsRow.QuantityPkg - ItemsRow.QuantityPkgBalance;
 	ItemsRow.AmountDifference = ItemsRow.Amount - ItemsRow.AmountBalance;
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 // *****************************************

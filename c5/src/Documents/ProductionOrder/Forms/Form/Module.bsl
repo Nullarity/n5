@@ -219,8 +219,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		addItem ( Parameter );
 	elsif ( EventName = Enum.RefreshItemPictures () ) then
 		ItemPictures.Refresh ( ThisObject );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -246,6 +250,13 @@ Procedure addItem ( Fields )
 	endif; 
 	
 EndProcedure 
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

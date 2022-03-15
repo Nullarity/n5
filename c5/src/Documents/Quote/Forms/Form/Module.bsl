@@ -239,8 +239,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	elsif ( EventName = Enum.MessageBarcodeScanned ()
 		and Source.FormOwner.UUID = ThisObject.UUID ) then
 		addItem ( Parameter );
-	endif; 
-	
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -248,7 +252,7 @@ Procedure applyRejectionCause ()
 	
 	setRejection ();
 	Appearance.Apply ( ThisObject, "RejectionCause" );
-		
+	
 EndProcedure 
 
 &AtServer
@@ -283,6 +287,13 @@ Procedure addItem ( Fields )
 	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
