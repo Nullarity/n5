@@ -29,12 +29,24 @@ Procedure ApplyResolution ( Object ) export
 EndProcedure
 
 &AtServer
-Procedure NotifyUser ( Object ) export
+Procedure SendSalesResponse ( Object ) export
 	
 	p = new Structure ( "Creator, Document, Resolution, Responsible" );
 	FillPropertyValues ( p, Object );
 	params = new Array ();
 	params.Add ( p );
-	Jobs.Run ( "PermissionsMailing.NotifyUser", params, , , TesterCache.Testing () );
+	Jobs.Run ( "SalesPermissionMailing.NotifyUser", params, , , TesterCache.Testing () );
+	
+EndProcedure
+
+&AtServer
+Procedure SendChangesResponse ( Object ) export
+	
+	p = new Structure ( "Creator, Permission, Responsible, Resolution" );
+	FillPropertyValues ( p, Object );
+	p.Permission = Object.Ref;
+	params = new Array ();
+	params.Add ( p );
+	Jobs.Run ( "ChangesPermissionMailing.NotifyUser", params, , , TesterCache.Testing () );
 	
 EndProcedure

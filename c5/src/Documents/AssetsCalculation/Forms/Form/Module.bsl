@@ -3,10 +3,18 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	
 EndProcedure

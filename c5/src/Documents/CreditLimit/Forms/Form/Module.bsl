@@ -5,6 +5,7 @@
 Procedure OnReadAtServer ( CurrentObject )
 
 	setControlMode ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -23,6 +24,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		setControlMode ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	readAppearance ();
 	Appearance.Apply ( ThisObject );

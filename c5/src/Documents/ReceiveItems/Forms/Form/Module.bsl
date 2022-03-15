@@ -25,6 +25,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	readAccount ();
 	labelDims ();
 	setSocial ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -67,6 +68,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByAssetsInventory ();		
 			endif;
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

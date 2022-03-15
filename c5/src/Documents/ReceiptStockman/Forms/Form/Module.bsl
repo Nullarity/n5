@@ -9,6 +9,7 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -19,6 +20,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.SetCreator ( Object );
 		initNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

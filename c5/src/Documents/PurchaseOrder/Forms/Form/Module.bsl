@@ -17,6 +17,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	initCurrency ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -58,6 +59,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif; 
 		endif;
 		updateBalanceDue ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

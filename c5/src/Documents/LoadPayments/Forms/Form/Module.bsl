@@ -14,6 +14,7 @@ var AccountData;
 Procedure OnReadAtServer(CurrentObject)
 	
 	setCurrency ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply(ThisObject);
 	
 EndProcedure
@@ -40,6 +41,7 @@ Procedure OnCreateAtServer(Cancel, StandardProcessing)
 		endif;
 		DocumentForm.Init(Object);
 		fillNew();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	readAppearance();

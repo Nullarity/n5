@@ -17,6 +17,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setCarType ();
 	setNormative ();
 	setTotalsByHours ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -97,6 +98,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( not Object.Car.IsEmpty () ) then
 			setCar ();
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	readAppearance ();

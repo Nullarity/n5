@@ -2,6 +2,13 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	AssetsTransferForm.OnCreateAtServer ( ThisObject );

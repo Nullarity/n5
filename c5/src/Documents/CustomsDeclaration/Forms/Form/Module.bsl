@@ -20,6 +20,7 @@ var CustomsRow;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	setID ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -56,6 +57,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif;	
 		endif;
 		setID ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	updateTotals ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsWeight", , false );

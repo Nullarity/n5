@@ -16,6 +16,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	updateBalanceDue ();
 	OrderForm.LoadProcess ( ThisObject );
 	initCurrency ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -62,6 +63,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			OrderForm.ResetCopiedFields ( Object );
 		endif; 
 		updateBalanceDue ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

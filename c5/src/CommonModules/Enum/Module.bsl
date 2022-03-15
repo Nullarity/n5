@@ -355,9 +355,16 @@ Function MessageSaleIsSaved () export
 EndFunction 
 
 &AtClient
-Function MessagePermissionIsSaved () export
+Function MessageSalesPermissionIsSaved () export
 	
 	return "280";
+	
+EndFunction 
+
+&AtClient
+Function MessageChangesPermissionIsSaved () export
+	
+	return "290";
 	
 EndFunction 
 

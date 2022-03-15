@@ -16,6 +16,7 @@ var ViewWriteOff;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	setWarning ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -48,6 +49,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		fillByBase ();
 		setRange ();
 		setWarning ( ThisObject );
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	Options.Company ( ThisObject, Object.Company );

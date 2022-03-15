@@ -20,6 +20,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetContractCurrency ( ThisObject );
 	SetPrivilegedMode ( false );
 	readStatus ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

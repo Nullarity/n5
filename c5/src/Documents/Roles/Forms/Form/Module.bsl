@@ -4,6 +4,7 @@
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -14,6 +15,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	readAppearance ();
 	Appearance.Apply ( ThisObject );

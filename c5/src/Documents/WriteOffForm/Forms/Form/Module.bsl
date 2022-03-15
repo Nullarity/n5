@@ -9,6 +9,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	readAccount ();
 	labelDims ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

@@ -11,6 +11,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	formatting ();
 	enableWarning ();
+	Constraints.ShowAccess ( ThisObject );
 	
 EndProcedure
 
@@ -116,6 +117,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			formatting ();
 			enableWarning ();
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

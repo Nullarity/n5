@@ -10,6 +10,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	PettyCash.Read ( ThisObject );
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.ToggleDetails ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -31,6 +32,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			PaymentForm.Fill ( ThisObject );
 		endif;
 		defineCopy ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	PaymentForm.FilterAccount ( ThisObject );
 	PaymentForm.SetTitle ( ThisObject );

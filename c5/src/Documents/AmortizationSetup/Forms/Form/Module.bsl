@@ -4,6 +4,7 @@
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

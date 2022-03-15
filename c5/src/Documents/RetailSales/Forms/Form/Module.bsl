@@ -7,6 +7,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	setRemote ();
 	PettyCash.Read ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

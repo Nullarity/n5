@@ -17,6 +17,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	endif;
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	setPrintPaymentContent ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -56,6 +57,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByPayEmployees ();
 			endif; 
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();

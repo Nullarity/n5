@@ -5,11 +5,19 @@ var ItemsRow;
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

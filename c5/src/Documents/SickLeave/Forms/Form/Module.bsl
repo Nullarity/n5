@@ -7,12 +7,20 @@ var Copy;
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( isNew () ) then
 		Copy = not Parameters.CopyingValue.IsEmpty ();
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	Options.Company ( ThisObject, Object.Company );

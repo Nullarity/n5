@@ -23,6 +23,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	initCurrency ();
+	Constraints.ShowAccess ( ThisObject );
 	InvoiceRecords.Read ( ThisObject );
 	
 EndProcedure
@@ -60,6 +61,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			fillByBase ();	
 		endif;
 		updateBalanceDue ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setButtons ();
 	setLinks ();

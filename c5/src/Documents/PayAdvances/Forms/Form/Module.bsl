@@ -31,6 +31,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	findPaymentOrder ();
 	setLinks ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -105,6 +106,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 		fillNew ();
 		setLinks ();
 		defineCopy ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.FilterAccount ( ThisObject );

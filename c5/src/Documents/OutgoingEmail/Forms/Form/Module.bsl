@@ -16,6 +16,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	loadTable ( CurrentObject );
 	loadBody ();
 	loadSizes ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -136,6 +137,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( not copy ) then
 			setSender ();
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	readAppearance ();
 	Appearance.Apply ( ThisObject );

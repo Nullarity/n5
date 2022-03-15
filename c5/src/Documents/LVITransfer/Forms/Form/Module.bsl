@@ -16,6 +16,7 @@ var InvoiceRecordExists;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceRecords.Read ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -27,6 +28,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		Copy = not Parameters.CopyingValue.IsEmpty ();
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setAccount ();
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );

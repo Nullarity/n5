@@ -11,6 +11,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.ToggleDetails ( ThisObject );
 	updateInfo ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -42,6 +43,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif; 
 		defineCopy ();
 		updateInfo ( ThisObject );
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	PaymentForm.FilterAccount ( ThisObject );
 	PaymentForm.SetTitle ( ThisObject );

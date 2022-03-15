@@ -5,6 +5,13 @@ var ItemsRow;
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
@@ -14,6 +21,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			BalancesForm.FixDate ( ThisObject );
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

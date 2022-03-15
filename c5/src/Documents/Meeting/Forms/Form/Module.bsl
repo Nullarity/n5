@@ -22,6 +22,7 @@ Procedure OnReadAtServer ( CurrentObject )
 			arrangeControls ();
 		endif;
 	endif;
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -202,6 +203,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	else
 		applyParams ();
 	endif; 

@@ -23,3 +23,14 @@ Procedure setDate ( Object )
 	endif; 
 	
 EndProcedure 
+
+&AtClient
+Function SaveNew ( Form ) export
+	
+	if ( Form.Object.Ref.IsEmpty () ) then
+		return form.Write ( new Structure ( Enum.WriteParametersJustSave (), true ) );
+	else
+		return true;
+	endif;
+
+EndFunction

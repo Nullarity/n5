@@ -15,6 +15,7 @@ var Copy;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -35,6 +36,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByOrder ();
 			endif; 
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

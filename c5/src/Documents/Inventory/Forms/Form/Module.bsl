@@ -13,6 +13,7 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -23,6 +24,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg, ItemsQuantityBalance, ItemsQuantityPkgBalance, ItemsQuantityPkgDifference, ItemsQuantityDifference" );
 	setLinks ();

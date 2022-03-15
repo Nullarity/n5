@@ -45,6 +45,7 @@ Procedure OnReadAtServer ( CurrentObject )
 		initEditor ( CurrentObject );
 	endif; 
 	setAttachmentsCount ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -229,6 +230,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif; 
 		setCanChange ();
 		setCanChangeAccess ();
+		Constraints.ShowAccess ( ThisObject );
 	else
 		saveHistory ();
 	endif;

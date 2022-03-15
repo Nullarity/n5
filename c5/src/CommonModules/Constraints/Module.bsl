@@ -76,7 +76,7 @@ Function getSalesInfo ( Customer, Company, Contract, Document )
 	|			end
 	|		else Restrictions.Ref.Resolution
 	|	end as Resolution
-	|from Document.Permission.Restrictions as Restrictions
+	|from Document.SalesPermission.Restrictions as Restrictions
 	|where Restrictions.Ref.Document = &Ref
 	|and Restrictions.Ref.Customer = &Customer
 	|and not Restrictions.Ref.DeletionMark" );
@@ -275,7 +275,11 @@ EndFunction
 Function authorize ( Form, Reason )
 
 	p = new Structure ( "Reason, Form", Reason, Form.UUID );
-	command = GetUrl ( Metadata.CommonCommands.Authorize, , " ", p );
+	if ( Reason = Enums.RestrictionReasons.PeriodClosed ) then
+		command = GetUrl ( Metadata.CommonCommands.AuthorizeChanges, , " ", p );
+	else
+		command = GetUrl ( Metadata.CommonCommands.AuthorizeSales, , " ", p );
+	endif;
 	return new FormattedString ( Output.RestrictionSendRequest (), , , , command );
 
 EndFunction
@@ -359,6 +363,13 @@ Function CanApprove () export
 
 EndFunction
 
+Function CanAllow () export
+	
+	return Logins.Admin ()
+		or IsInRole ( Metadata.Roles.RightsEdit );
+
+EndFunction
+
 Procedure ShowAccess ( Form ) export
 	
 	date = objectDate ( Form );
@@ -439,6 +450,8 @@ Procedure displayAccess ( Form, Data, Subject )
 			parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
 			picture = PictureLib.Ok16;
 		elsif ( resolution = Enums.AllowDeny.Deny ) then
+			parts.Add ( Subject );
+			parts.Add ( ". " );
 			parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
 			picture = PictureLib.Forbidden;
 		endif;
@@ -484,18 +497,30 @@ Function getAccessInfo ( Ref, Date )
 	
 	s = "
 	|// #Approved
-	|select Restrictions.Reason as Reason, Restrictions.Ref as Permission,
+	|select Restrictions.Ref as Permission, value ( Enum.RestrictionReasons.PeriodClosed ) as Reason,
 	|	case
-	|		when Restrictions.Ref.Resolution = value ( Enum.AllowDeny.Allow ) then
-	|			case when &Today between Restrictions.Ref.Date and Restrictions.Ref.Expired
+	|		when Restrictions.Resolution = value ( Enum.AllowDeny.Allow ) then
+	|			case when &Today between Restrictions.Date and Restrictions.Expired
 	|				then value ( Enum.AllowDeny.Allow )
 	|				else value ( Enum.AllowDeny.EmptyRef )
 	|			end
-	|		else Restrictions.Ref.Resolution
+	|		else Restrictions.Resolution
 	|	end as Resolution
-	|from Document.Permission.Restrictions as Restrictions
-	|where Restrictions.Ref.Document = &Ref
-	|and not Restrictions.Ref.DeletionMark
+	|from (
+	|	select Restrictions.Ref as Ref, Restrictions.Resolution as Resolution,
+	|		Restrictions.Date as Date, Restrictions.Expired as Expired
+	|	from Document.ChangesPermission as Restrictions
+	|	where Restrictions.Document = &Ref
+	|	and Restrictions.Day = &DocumentDay
+	|	and not Restrictions.DeletionMark
+	|	union all
+	|	select Restrictions.Ref, Restrictions.Resolution, Restrictions.Date, Restrictions.Expired
+	|	from Document.ChangesPermission as Restrictions
+	|	where Restrictions.Document = undefined
+	|	and Restrictions.Class = &Document
+	|	and Restrictions.Day = &DocumentDay
+	|	and not Restrictions.DeletionMark
+	|	) as Restrictions
 	|;
 	|select undefined as User
 	|into UserAndGroups
@@ -522,7 +547,7 @@ Function getAccessInfo ( Ref, Date )
 	|from InformationRegister.Rights as Rights
 	|where not Rights.Disabled
 	|and Rights.Target in ( select User from UserAndGroups )
-	|and Rights.Document in ( value ( Catalog.Metadata.EmptyRef ), Document = &Document )
+	|and Rights.Document in ( value ( Catalog.Metadata.EmptyRef ), &Document )
 	|and (
 	|	( Rights.Method = value ( Enum.RestrictionMethods.Period )
 	|		and &DocumentDate > Rights.DateStart
@@ -554,6 +579,7 @@ Function getAccessInfo ( Ref, Date )
 	q.SetParameter ( "User", SessionParameters.User );
 	q.SetParameter ( "Document", MetadataRef.Get ( Metadata.FindByType ( TypeOf ( Ref ) ).FullName () ) );
 	q.SetParameter ( "DocumentDate", Date );
+	q.SetParameter ( "DocumentDay", BegOfDay ( Date ) );
 	q.SetParameter ( "Today", CurrentSessionDate () );
 	data = SQL.Exec ( q );
 	result = new Structure ( "Approved, Map", data.Approved, accessMap ( data.Access ) );
@@ -607,31 +633,27 @@ Function CheckAccess ( Object ) export
 	access = data.Access;
 	if ( access.Allowed or access.Warning ) then
 		return true;
-	else
-		outputAccessError ( Object, data ); 
 	endif;
+	request = requestStatus ( Data, Enums.RestrictionReasons.PeriodClosed );
+	if ( request <> undefined
+		and request.Resolution = Enums.AllowDeny.Allow ) then
+		return true;
+	endif;
+	error = new Array ();
+	subject = accessMessage ( data );
+	if ( request = undefined ) then
+		error.Add ( subject );
+	else
+		resolution = request.Resolution; 
+		error.Add ( subject );
+		error.Add ( ". " );
+		if ( resolution.IsEmpty () ) then
+			error.Add ( Output.RequestAlreadySent () );
+		else
+			error.Add ( Output.RestrictionRequestDenied ( request ) );
+		endif;
+	endif;
+	Output.PutMessage ( StrConcat ( error ), , , Object.Ref );
 	return false;
 
 EndFunction
-
-Procedure outputAccessError ( Object, Data )
-	
-	subject = accessMessage ( data );
-	parts = new Array ();
-	restriction = Enums.RestrictionReasons.PeriodClosed;
-	request = requestStatus ( Data, restriction );
-	if ( request = undefined ) then
-		parts.Add ( subject );
-	else
-		resolution = request.Resolution; 
-		if ( resolution.IsEmpty () ) then
-			parts.Add ( subject );
-			parts.Add ( ". " );
-			parts.Add ( Output.RequestAlreadySent () );
-		else
-			parts.Add ( Output.RestrictionRequestDenied ( request ) );
-		endif;
-	endif;
-	Output.PutMessage ( StrConcat ( parts ), , , Object.Ref );
-
-EndProcedure

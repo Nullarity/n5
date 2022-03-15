@@ -9,6 +9,7 @@ var Env;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -20,6 +21,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	applyParams ();
 	updateReminder ( ThisObject );

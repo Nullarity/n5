@@ -33,6 +33,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setTasks ();
 	fillTimeTypes ();
 	readSignature ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -246,6 +247,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			or Copy ) then
 			setExistedTimeEntry ();
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	readAppearance ();

@@ -22,6 +22,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceRecords.Read ( ThisObject );
 	findRetailSales ();
 	calcChange ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -57,6 +58,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			fillNew ();
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

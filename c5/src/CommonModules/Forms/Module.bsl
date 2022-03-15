@@ -403,3 +403,19 @@ Function EvalAppearance ( Expression ) export
 	return Eval ( Expression );
 	
 EndFunction
+
+&AtClient
+Function FindByID ( ID ) export
+
+	windows = GetWindows ();
+	clientForm = Type ( "ClientApplicationForm" );
+	for each window in windows do
+		for each form in window.Content do
+			if ( TypeOf ( form ) = clientForm
+				and form.UUID = ID ) then
+				return form;
+			endif;
+		enddo;
+	enddo; 
+
+EndFunction

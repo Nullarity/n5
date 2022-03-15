@@ -31,6 +31,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	changeAvailability ();
 	initCurrency ();
 	setSocial ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -195,6 +196,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif; 
 		endif;
 		updateBalanceDue ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	setAccuracy ();

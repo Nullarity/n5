@@ -10,6 +10,7 @@ var ShipmentsRow;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	readStatus ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

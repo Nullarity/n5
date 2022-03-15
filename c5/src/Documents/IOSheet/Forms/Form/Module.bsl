@@ -11,6 +11,7 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -23,6 +24,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		fillByCustomer ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

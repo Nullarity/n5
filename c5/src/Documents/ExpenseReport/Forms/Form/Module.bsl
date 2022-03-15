@@ -28,6 +28,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	updateTotal ( ThisObject );
 	setSocial ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -87,6 +88,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			setAccount ();
 		endif;
 		updateTotal ( ThisObject );
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	setLinks ();
 	filterPayments ( ref );

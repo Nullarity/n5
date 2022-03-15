@@ -5,6 +5,7 @@
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -17,6 +18,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
 		PaymentForm.SetRates ( Object );
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();

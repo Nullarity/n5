@@ -15,6 +15,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	readOperation ();
 	rememberOperation ();
 	enableWarning ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -54,6 +55,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		fillNew ();
 		enableWarning ( ThisObject );
 		defineCopy ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "RecordsQuantityDr, RecordsQuantityCr" );

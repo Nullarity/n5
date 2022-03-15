@@ -33,6 +33,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setDefaultButton ();
 	setDocumentSupportsApprovalProcess ();
 	calcTotals ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -422,6 +423,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		setStatusByDefault ();
 		resetRoutePoint ();
 		setDefaultButton ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setTimeWasModified ( ThisObject, false );
 	readAppearance ();

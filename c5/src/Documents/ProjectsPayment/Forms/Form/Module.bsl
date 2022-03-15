@@ -5,10 +5,18 @@ var Base;
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		setCreator ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	if ( TypeOf ( Parameters.Basis ) = Type ( "DocumentRef.ProjectsInvoice" ) ) then
 		fillByInvoice ();

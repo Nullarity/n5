@@ -3,41 +3,14 @@
 Procedure CommandProcessing ( Command, ExecuteParameters )
 
 	params = ExecuteParameters.Parameters;
-	form = findForm ( params.Form );
-	if ( not saveSource ( form ) ) then
+	form = Forms.FindByID ( params.Form );
+	if ( not DocumentForm.SaveNew ( form ) ) then
 		return;
 	endif;
 	makeRequest ( form.Object.Ref, params.Reason );
-	Notify ( Enum.MessagePermissionIsSaved (), form.Object.Ref );
+	Notify ( Enum.MessageSalesPermissionIsSaved (), form.Object.Ref );
 
 EndProcedure
-
-&AtClient
-Function findForm ( Source )
-
-	windows = GetWindows ();
-	clientForm = Type ( "ClientApplicationForm" );
-	for each window in windows do
-		for each form in window.Content do
-			if ( TypeOf ( form ) = clientForm
-				and form.UUID = Source ) then
-				return form;
-			endif;
-		enddo;
-	enddo; 
-
-EndFunction
-
-&AtClient
-Function saveSource ( Form )
-	
-	if ( form.Object.Ref.IsEmpty () ) then
-		return form.Write ( new Structure ( Enum.WriteParametersJustSave (), true ) );
-	else
-		return true;
-	endif;
-
-EndFunction
 
 &AtServer
 Procedure makeRequest ( val Document, val Reason )
@@ -46,7 +19,7 @@ Procedure makeRequest ( val Document, val Reason )
 	customer = fields.Customer;
 	ref = findPermission ( Document );
 	if ( ref = undefined ) then
-		doc = Documents.Permission.CreateDocument ();
+		doc = Documents.SalesPermission.CreateDocument ();
 	else
 		doc = ref.GetObject ();
 		if ( customer = doc.Customer  ) then
@@ -56,7 +29,7 @@ Procedure makeRequest ( val Document, val Reason )
 			doc.Expired = undefined;
 		else
 			doc.SetDeletionMark ( true );
-			doc = Documents.Permission.CreateDocument ();
+			doc = Documents.SalesPermission.CreateDocument ();
 		endif;
 	endif;
 	doc.Date = CurrentSessionDate ();
@@ -79,11 +52,11 @@ Function findPermission ( Document )
 	
 	s = "
 	|select top 1 Documents.Ref as Ref
-	|from Document.Permission as Documents
-	|where Documents.Document = &Ref
+	|from Document.SalesPermission as Documents
+	|where Documents.Document = &Document
 	|";
 	q = new Query ( s );
-	q.SetParameter ( "Ref", Document );
+	q.SetParameter ( "Document", Document );
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, undefined, table [ 0 ].Ref );
 
@@ -95,6 +68,6 @@ Procedure send ( Document, Reason )
 	params = new Array ();
 	params.Add ( Document );
 	params.Add ( Reason );
-	Jobs.Run ( "PermissionsMailing.Send", params, , , TesterCache.Testing () );
+	Jobs.Run ( "SalesPermissionMailing.Send", params, , , TesterCache.Testing () );
 	
 EndProcedure

@@ -11,6 +11,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	readAccount ();
 	labelDims ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -40,6 +41,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();

@@ -5,6 +5,7 @@
 Procedure OnReadAtServer ( CurrentObject )
 	
 	setDocumentPaid ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 		
 EndProcedure
@@ -40,6 +41,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		setCreator ();
 		setCurrency ( ThisObject );
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	if ( TypeOf ( Parameters.Base ) = Type ( "Array" ) ) then
 		typeOfBase = TypeOf ( Parameters.Base [ 0 ] );

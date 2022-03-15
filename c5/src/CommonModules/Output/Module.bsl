@@ -5544,14 +5544,14 @@ EndFunction
 
 Function ModificationIsNotAllowed ( Params ) export
 
-	text = NStr ( "en='""%User"" does not have sufficient access to perform the ""%Action"" action. Please contact your administrator to resolve this issue.'; ro='Utilizatorul ""%User"" nu are drepturi suficiente pentru a efectua operația ""%Action"". Contactați administratorul rolurilor pentru a rezolva situația.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
+	text = NStr ( "en = '""%User"" does not have sufficient access to perform the ""%Action"" action'; ro = 'Utilizatorul ""%User"" nu are drepturi suficiente pentru a efectua operația ""%Action""'; ru = 'У пользователя ""%User"" недостаточно прав для совершения операции ""%Action""'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
 
 Function AnyModificationIsNotAllowed ( Params ) export
 
-	text = NStr ( "en='Dear %User, you haven''t access to change the data in the selected period. Please contact your administrator to resolve this issue.'; ro='« %User » ne dispose pas d''un accès suffisant pour effectuer le « %Action » action. S''il vous plaît contacter votre administrateur pour résoudre ce problème.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
+	text = NStr ( "en='Dear %User, you haven''t access to change the data in the selected period'; ro='« %User » ne dispose pas d''un accès suffisant pour effectuer le « %Action » action. S''il vous plaît contacter votre administrateur pour résoudre ce problème.'; ru='У пользователя ""%User"" недостаточно прав для совершения операции ""%Action"". Обратитесь к администратору ролей для разрешения ситуации'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -8203,6 +8203,84 @@ Function SalesNotifyUserBody2 ( Params ) export
 EndFunction
 
 &AtServer
+Function ChangesRequestSubject ( Params ) export
+
+	text = NStr ( "en = '%User asks for permission to make changes in the closed period %Day';ro = '%User cere permisiunea de a face modificări în perioada închisă %Day';ru = '%User просит разрешить ему внести изменения в закрытый период %Day'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ChangesRequestBody ( Params ) export
+
+	text = NStr ( "en = '<p>%Receiver, please approve my request for changes in the closed period, <b>%Details.</b></p>
+				  |You can open my request in the application, through the <b>Quick Menu / Restrictions</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
+				  |<p>
+				  |<a href=""%Yes"">Approve |</a> <a href=""%No""> Reject</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Note: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '<p>%Receiver, vă rog să aprobați cererea mea de modificare a perioadei închise, <b>%Details.</b></p>
+				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Restricții</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
+				  |<p>
+				  |<a href=""%Yes"">Aprobă |</a> <a href=""%No""> Respingeți</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Notă: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = '<p>%Receiver, утвердите пожалуйста мою заявку на внесение изменений в закрытый период, <b>%Details.</b></p>
+				  |Мою заявку, Вы можете открыть в приложении, через меню <b>Главное / Ограничения</b>, либо выдать свою резолюцию прямо здесь, по нажатию на одну из ссылок ниже:</p>
+				  |<p>
+				  |<a href=""%Yes"">&nbsp;&nbsp;&nbsp; Одобрить &nbsp;&nbsp;&nbsp;</a> | <a href=""%No"">&nbsp;&nbsp;&nbsp; Отклонить &nbsp;&nbsp;&nbsp;</a>
+				  |</p>
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ChangesNotifyUserSubject1 ( Params ) export
+
+	text = NStr ( "en = '%Responsible approved the %Permission';ro = '%Responsible a aprobat %Permission';ru = '%Responsible одобрил запрос %Permission'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ChangesNotifyUserBody1 ( Params ) export
+
+	text = NStr ( "en = 'Your %Permission was <b>approved.</b>
+				  |<p></p>
+				  |<p><i>Attention: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '%Permission dvs. a fost <b>aprobat.</b>
+				  |<p></p>
+				  |<p><i>Atenție: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = 'Ваше %Permission было <b>одобрено.</b>
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ChangesNotifyUserSubject2 ( Params ) export
+
+	text = NStr ( "en = '%Responsible DENIED the %Permission';ro = '%Responsible a REFUZATĂ %Permission';ru = '%Responsible ОТКЛОНИЛ запрос %Permission'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function ChangesNotifyUserBody2 ( Params ) export
+
+	text = NStr ( "en = 'Your %Permission was <b>DENIED.</b>
+				  |<p></p>
+				  |<p><i>Attention: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '%Permission dvs. a fost <b>REFUZAT.</b>
+				  |<p></p>
+				  |<p><i>Atenție: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = 'Ваше %Permission было <b>ОТКЛОНЕНО.</b>
+				  |<p></p>
+				  |<p><i>Внимание! Это письмо сформировано автоматически и отправлено роботом. Пожалуйста, не отвечайте на это письмо.</i></p>'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
 Function RestrictionNoContract () export
 
 	text = NStr ( "en = 'The customer is in debt and does not have a signed contract';ro = 'Clientul are datorii și nu are un contract semnat';ru = 'У покупателя долг и нет подписанного договора'" );
@@ -8245,7 +8323,7 @@ EndFunction
 &AtServer
 Function RestrictionRequestDenied ( Params ) export
 
-	text = NStr ( "en = 'Request to remove ""%Reason"" restriction denied';ro = 'Cerere de eliminare a restricției ""%Reason"" respinsă';ru = 'Запрос на снятие ограничения ""%Reason"" отклонен'" );
+	text = NStr ( "en = 'Request to remove ""%Reason"" restriction DENIED';ro = 'Cerere de eliminare a restricției ""%Reason"" RESPINSĂ';ru = 'Запрос на снятие ограничения ""%Reason"" ОТКЛОНЕН'" );
 	return FormatStr ( text, Params );
 
 EndFunction

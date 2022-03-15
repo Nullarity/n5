@@ -29,6 +29,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceRecords.Read ( ThisObject );
 	initCurrency ();
 	setSocial ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -866,9 +867,13 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 	elsif ( EventName = Enum.MessageSaleIsSaved ()
 		and Parameter = Object.Ref ) then
 		updateLinks ();
-	elsif ( EventName = Enum.MessagePermissionIsSaved ()
+	elsif ( EventName = Enum.MessageSalesPermissionIsSaved ()
 		and Parameter = Object.Ref ) then
-		updatePermissions ();
+		updateSalesPermission ();
+	elsif ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
 	endif; 
 	
 EndProcedure
@@ -912,10 +917,16 @@ Procedure addItem ( Fields )
 EndProcedure 
 
 &AtServer
-Procedure updatePermissions ()
+Procedure updateSalesPermission ()
+
+	Constraints.ShowSales ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
 
 	Constraints.ShowAccess ( ThisObject );
-	Constraints.ShowSales ( ThisObject );
 
 EndProcedure
 

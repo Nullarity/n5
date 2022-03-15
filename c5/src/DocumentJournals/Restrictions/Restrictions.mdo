@@ -23,7 +23,8 @@
   <registeredDocuments>Document.InvoicesReturn</registeredDocuments>
   <registeredDocuments>Document.CreditLimit</registeredDocuments>
   <registeredDocuments>Document.SalesRestriction</registeredDocuments>
-  <registeredDocuments>Document.Permission</registeredDocuments>
+  <registeredDocuments>Document.SalesPermission</registeredDocuments>
+  <registeredDocuments>Document.ChangesPermission</registeredDocuments>
   <explanation>
     <key>en</key>
     <value>Customer restrictions</value>
@@ -71,7 +72,8 @@
     <references>Document.InvoicesReturn.Attribute.Company</references>
     <references>Document.CreditLimit.Attribute.Company</references>
     <references>Document.SalesRestriction.Attribute.Company</references>
-    <references>Document.Permission.Attribute.Company</references>
+    <references>Document.SalesPermission.Attribute.Company</references>
+    <references>Document.ChangesPermission.Attribute.Company</references>
   </columns>
   <columns uuid="c0993726-68f6-446b-89ec-01b15370d918">
     <name>Creator</name>
@@ -90,26 +92,8 @@
     <references>Document.InvoicesReturn.Attribute.Creator</references>
     <references>Document.CreditLimit.Attribute.Creator</references>
     <references>Document.SalesRestriction.Attribute.Creator</references>
-    <references>Document.Permission.Attribute.Creator</references>
-  </columns>
-  <columns uuid="87b5a8fd-1b28-41a0-996d-33d02cf563a5">
-    <name>Customer</name>
-    <synonym>
-      <key>en</key>
-      <value>Customer</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Покупатель</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Cumpãrãtor</value>
-    </synonym>
-    <references>Document.InvoicesReturn.Attribute.Customer</references>
-    <references>Document.CreditLimit.Attribute.Customer</references>
-    <references>Document.SalesRestriction.Attribute.Customer</references>
-    <references>Document.Permission.Attribute.Customer</references>
+    <references>Document.SalesPermission.Attribute.Creator</references>
+    <references>Document.ChangesPermission.Attribute.Creator</references>
   </columns>
   <columns uuid="15a4ba0e-327f-4e3e-ba82-a1b44eb2718f">
     <name>Memo</name>
@@ -128,7 +112,28 @@
     <references>Document.InvoicesReturn.Attribute.Memo</references>
     <references>Document.CreditLimit.Attribute.Memo</references>
     <references>Document.SalesRestriction.Attribute.Memo</references>
-    <references>Document.Permission.Attribute.Memo</references>
+    <references>Document.SalesPermission.Attribute.Memo</references>
+    <references>Document.ChangesPermission.Attribute.Memo</references>
+  </columns>
+  <columns uuid="87b5a8fd-1b28-41a0-996d-33d02cf563a5">
+    <name>Organization</name>
+    <synonym>
+      <key>en</key>
+      <value>Organization</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Контрагент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Terț</value>
+    </synonym>
+    <references>Document.InvoicesReturn.Attribute.Customer</references>
+    <references>Document.CreditLimit.Attribute.Customer</references>
+    <references>Document.SalesRestriction.Attribute.Customer</references>
+    <references>Document.SalesPermission.Attribute.Customer</references>
+    <references>Document.ChangesPermission.Attribute.Organization</references>
   </columns>
   <forms uuid="bbbbb1b7-050d-4d67-b346-41ad4eedac9a">
     <name>List</name>

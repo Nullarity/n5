@@ -3,6 +3,13 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
@@ -12,6 +19,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			BalancesForm.FixDate ( ThisObject );
 		endif;
 		DocumentForm.SetCreator ( Object );
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );

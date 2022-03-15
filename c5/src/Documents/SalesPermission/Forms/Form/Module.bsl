@@ -2,6 +2,13 @@
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
@@ -30,14 +37,14 @@ EndProcedure
 &AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
-	PermissionForm.NotifyUser ( Object );
+	PermissionForm.SendSalesResponse ( Object );
 	
 EndProcedure
 
 &AtClient
 Procedure AfterWrite ( WriteParameters )
 
-	Notify ( Enum.MessagePermissionIsSaved (), Object.Document );
+	Notify ( Enum.MessageSalesPermissionIsSaved (), Object.Document );
 
 EndProcedure
 

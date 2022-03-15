@@ -17,6 +17,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	initCurrency ();
 	setRejection ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -58,6 +59,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		fillByCustomer ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setLinks ();
 	setAccuracy ();

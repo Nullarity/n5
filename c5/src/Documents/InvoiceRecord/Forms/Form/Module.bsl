@@ -22,6 +22,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setRetail ();
 	setWarning ( ThisObject );
 	initStatuses ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -119,6 +120,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		setType ( Object );
 		setWarning ( ThisObject );
 		initStatuses ( ThisObject );
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	adjustCustomerControl ( ThisObject );
 	setAccuracy ();

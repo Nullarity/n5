@@ -15,8 +15,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|CustomerFilter show empty ( FixedCustomerFilter );
-	|Customer show empty ( FixedCustomerFilter ) and empty ( CustomerFilter );
+	|OrganizationFilter show empty ( FixedOrganizationFilter );
+	|Organization show empty ( FixedOrganizationFilter ) and empty ( OrganizationFilter );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -26,7 +26,7 @@ EndProcedure
 Procedure loadFixedFilters ()
 	
 	filter = Parameters.Filter;
-	filter.Property ( "Customer", FixedCustomerFilter );
+	filter.Property ( "Organization", FixedOrganizationFilter );
 	
 EndProcedure 
 
@@ -34,16 +34,16 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
-Procedure CustomerFilterOnChange ( Item )
+Procedure OrganizationFilterOnChange ( Item )
 	
-	filterByCustomer ();
+	filterByOrganization ();
 	
 EndProcedure
 
 &AtServer
-Procedure filterByCustomer ()
+Procedure filterByOrganization ()
 	
-	DC.ChangeFilter ( List, "Customer", CustomerFilter, not CustomerFilter.IsEmpty () );
-	Appearance.Apply ( ThisObject, "CustomerFilter" );
+	DC.ChangeFilter ( List, "Organization", OrganizationFilter, not OrganizationFilter.IsEmpty () );
+	Appearance.Apply ( ThisObject, "OrganizationFilter" );
 	
 EndProcedure 

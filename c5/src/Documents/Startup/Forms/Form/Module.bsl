@@ -12,6 +12,7 @@ var Basis;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -33,6 +34,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif;
 		applyCurrency ();
 		fillHeader ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
 	Options.Company ( ThisObject, Object.Company );

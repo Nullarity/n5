@@ -19,6 +19,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	OrderForm.LoadProcess ( ThisObject );
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -36,6 +37,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( Copy ) then
 			OrderForm.ResetCopiedFields ( Object );
 		endif; 
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

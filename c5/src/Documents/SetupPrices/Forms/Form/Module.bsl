@@ -12,6 +12,7 @@ var Base;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	readTables ( CurrentObject.Ref );
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -213,6 +214,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByItemsReceipt ();
 			endif;
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif;
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );

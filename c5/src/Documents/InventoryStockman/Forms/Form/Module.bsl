@@ -17,6 +17,7 @@ EndProcedure
 Procedure update ()
 	
 	isApplied ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -39,6 +40,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew ( Object ) ) then
 		DocumentForm.SetCreator ( Object );
 		initNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

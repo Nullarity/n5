@@ -42,7 +42,10 @@ Function perform ( Params, Error )
 		aboutMeeting ( result );
 	elsif ( action = Enums.RemoteActions.PermissionAllow
 		or action = Enums.RemoteActions.PermissionDeny ) then
-		aboutPermission ( result );
+		aboutSalesPermission ( result );
+	elsif ( action = Enums.RemoteActions.ChangesAllow
+		or action = Enums.RemoteActions.ChangesDeny ) then
+		aboutChangesPermission ( result );
 	endif;
 	
 EndFunction
@@ -135,7 +138,7 @@ Function success ()
 
 EndFunction
 
-Procedure aboutPermission ( Data )
+Procedure aboutSalesPermission ( Data )
 	
 	obj = Data.Parameter1.GetObject ();
 	responsible = Data.Parameter2;
@@ -153,7 +156,7 @@ Procedure aboutPermission ( Data )
 	PermissionForm.ApplyResolution ( obj );
 	checkObject ( obj );
 	obj.Write ();
-	PermissionForm.NotifyUser ( obj );
+	PermissionForm.SendSalesResponse ( obj );
 	
 EndProcedure
 
@@ -170,5 +173,27 @@ Procedure checkObject ( Object )
 	if ( text.Count () > 0 ) then
 		raise StrConcat ( text, "; " );
 	endif;
+	
+EndProcedure
+
+Procedure aboutChangesPermission ( Data )
+	
+	obj = Data.Parameter1.GetObject ();
+	responsible = Data.Parameter2;
+	SessionParameters.User = responsible;
+	if ( PermissionForm.Completed ( obj )
+		and obj.Responsible <> responsible ) then
+		raise Output.PermissionComplete ();
+	endif;                                    
+	PermissionForm.Init ( obj, responsible );
+	if ( Data.Action = Enums.RemoteActions.ChangesAllow ) then
+		obj.Resolution = Enums.AllowDeny.Allow;
+	else
+		obj.Resolution = Enums.AllowDeny.Deny;
+	endif;
+	PermissionForm.ApplyResolution ( obj );
+	checkObject ( obj );
+	obj.Write ();
+	PermissionForm.SendChangesResponse ( obj );
 	
 EndProcedure

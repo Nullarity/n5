@@ -7,12 +7,20 @@ var TableRow;
 // *********** Form events
 
 &AtServer
+Procedure OnReadAtServer ( CurrentObject )
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 	
 	init ();
 	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setLinks ();
 	Options.Company ( ThisObject, Object.Company );

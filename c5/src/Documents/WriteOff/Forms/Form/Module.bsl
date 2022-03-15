@@ -22,6 +22,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	readAccount ();
 	labelDims ();
+	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -65,6 +66,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif;
 			setCurrency ();
 		endif;
+		Constraints.ShowAccess ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();

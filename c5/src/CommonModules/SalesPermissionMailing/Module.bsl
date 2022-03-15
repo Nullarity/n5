@@ -39,12 +39,13 @@ EndFunction
 Function getReceivers ()
 	
 	s = "
-	|select Users.Ref as Ref, Users.Email as Email, Users.Code as Login
+	|select min ( Users.Ref ) as Ref, min ( Users.Code ) as Login, Users.Email as Email
 	|from Catalog.Users as Users
 	|where not Users.DeletionMark
 	|and not Users.AccessDenied
 	|and not Users.AccessRevoked
 	|and Users.Rights.RoleName = """ + Metadata.Roles.ApproveSales.Name + """
+	|group by Users.Email
 	|";
 	q = new Query ( s );
 	return q.Execute ().Unload ();
@@ -79,7 +80,7 @@ Procedure NotifyUser ( Params ) export
 	try
 		MailboxesSrv.Post ( profile, message );
 	except
-		WriteLogEvent ( "MailboxesSrv.Post", EventLogLevel.Error, , Document,
+		WriteLogEvent ( "MailboxesSrv.Post", EventLogLevel.Error, , document,
 			ErrorDescription () );
 	endtry
 	
