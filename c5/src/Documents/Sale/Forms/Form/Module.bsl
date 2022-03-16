@@ -703,6 +703,13 @@ EndFunction
 // *********** Group Form
 
 &AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
+	
+EndProcedure
+
+&AtClient
 Procedure WarehouseOnChange ( Item )
 	
 	applyWarehouse ();

@@ -317,6 +317,7 @@ Procedure DateOnChange ( Item )
 	
 	Object.Services.Clear ();
 	fillDocument ();
+	updateChangesPermission ();
 	
 EndProcedure
 

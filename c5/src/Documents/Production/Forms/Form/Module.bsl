@@ -500,8 +500,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
-EndProcedure
-
 &AtServer
 Procedure addItem ( Fields )
 	
@@ -591,8 +589,16 @@ EndProcedure
 &AtClient
 Procedure DateOnChange ( Item )
 	
-	reloadTables ();
+	applyDate ();
 	
+EndProcedure
+
+&AtServer
+Procedure applyDate ()
+	
+	reloadTables ();
+	updateChangesPermission ()
+
 EndProcedure
 
 &AtClient

@@ -181,3 +181,13 @@ Procedure setCompensation ()
 	TableRow.Compensation = Compensation;
 	
 EndProcedure
+
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
+	
+EndProcedure

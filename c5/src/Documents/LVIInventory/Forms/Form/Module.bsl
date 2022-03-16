@@ -191,7 +191,17 @@ Procedure readNew ( NewObject )
 	else
 		return;
 	endif;
+	
+EndProcedure
 
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure DateOnChange ( Item )
+	
+	updateChangesPermission ();
+	
 EndProcedure
 
 &AtClient

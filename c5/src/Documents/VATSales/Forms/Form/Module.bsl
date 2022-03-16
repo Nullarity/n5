@@ -57,6 +57,7 @@ EndProcedure
 Procedure DateOnChange ( Item )
 	
 	setRecordDate ();
+	updateChangesPermission ();
 	
 EndProcedure
 

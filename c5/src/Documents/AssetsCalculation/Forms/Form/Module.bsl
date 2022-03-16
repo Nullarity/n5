@@ -28,12 +28,12 @@ Procedure fillNew ()
 	settings = Logins.Settings ( "Company" );
 	Object.Company = settings.Company;
 	DocumentForm.Init ( Object );
-	setDate ( Object, CurrentDate () );
+	setDate ( CurrentSessionDate () );
 	
 EndProcedure
 
-&AtClientAtServerNoContext
-Procedure setDate ( Object, Date ) 
+&AtServer
+Procedure setDate ( Date ) 
 
 	Object.Date = EndOfMonth ( Date );
 
@@ -70,15 +70,16 @@ EndProcedure
 &AtClient
 Procedure DateOnChange ( Item )
 	
-	date = Object.Date;
-	setDate ( Object, date );
-	checkDate ( Object.Ref, date );
+	applyDate ();
 	
 EndProcedure
 
-&AtServerNoContext
-Function checkDate ( Ref, Date )
+&AtServer
+Procedure applyDate ()
 	
-	return Documents.AssetsCalculation.CheckDate ( Ref, Date );
-	
-EndFunction
+	date = Object.Date;
+	setDate ( date );
+	Documents.AssetsCalculation.CheckDate ( Object.Ref, date );
+	updateChangesPermission ();
+
+EndProcedure

@@ -60,3 +60,13 @@ Procedure updateChangesPermission ()
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
+
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
+	
+EndProcedure

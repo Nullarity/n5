@@ -861,7 +861,6 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 		Cancel = true;
 		return;
 	endif; 
-	setDocumentDate ( CurrentObject );
 	removeEmptyRows ( CurrentObject );
 	if ( existsDoubleRow ( CurrentObject ) ) then
 		Cancel = true;
@@ -899,13 +898,6 @@ Function isCommand ( CommandName, WriteParameters )
 	return WriteParameters.Property ( "Command" ) and WriteParameters.Command = CommandName;
 	
 EndFunction 
-
-&AtServer
-Procedure setDocumentDate ( CurrentObject )
-	
-	CurrentObject.Date = CurrentObject.DateEnd;
-	
-EndProcedure 
 
 &AtServer
 Procedure removeEmptyRows ( CurrentObject )
@@ -1661,6 +1653,7 @@ Procedure applyNewDateStart ()
 	arrangeColumns ();
 	loadEntries ();
 	calcTotals ( ThisObject );
+	updateChangesPermission ();
 	
 EndProcedure 
 
@@ -1668,6 +1661,7 @@ EndProcedure
 Procedure setDateEnd ()
 	
 	Object.DateEnd = Object.DateStart + Object.TimesheetDays * 86400;
+	Object.Date = Object.DateEnd;
 	
 EndProcedure 
 

@@ -237,6 +237,7 @@ EndProcedure
 Procedure DateOnChange ( Item )
 
 	adjustPeriod ();
+	updateChangesPermission ()
 
 EndProcedure
 

@@ -975,9 +975,17 @@ EndProcedure
 
 &AtClient
 Procedure DateOnChange ( Item )
+
+	applyDate ();	
+	
+EndProcedure
+
+&AtServer
+Procedure applyDate ()
 	
 	showExistedTimeEntry ();
-	
+	updateChangesPermission ()
+
 EndProcedure
 
 &AtServer

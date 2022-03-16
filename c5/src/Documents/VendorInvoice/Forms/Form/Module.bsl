@@ -343,6 +343,7 @@ Procedure updateContent ()
 		DiscountsTable.Load ( Object );
 	endif;
 	InvoiceForm.SetPayment ( Object );
+	updateChangesPermission ();
 	
 EndProcedure 
 

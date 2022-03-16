@@ -562,6 +562,7 @@ EndProcedure
 Procedure applyDate ()
 	
 	Object.DeliveryDate = Object.Date;
+	updateChangesPermission ()
 	
 EndProcedure
 

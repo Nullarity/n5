@@ -29,7 +29,6 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceRecords.Read ( ThisObject );
 	initCurrency ();
 	setSocial ();
-	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure

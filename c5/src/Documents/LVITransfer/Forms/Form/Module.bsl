@@ -157,8 +157,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
-EndProcedure
-
 &AtServer
 Procedure readPrinted ()
 	
@@ -208,6 +206,16 @@ EndProcedure
 Procedure CompanyOnChange ( Item )
 	
 	Options.ApplyCompany ( ThisObject );
+	
+EndProcedure
+
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
 	
 EndProcedure
 

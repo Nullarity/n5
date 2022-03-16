@@ -60,6 +60,13 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
+	
+EndProcedure
+
+&AtClient
 Procedure CompanyOnChange ( Item )
 	
 	Options.ApplyCompany ( ThisObject );

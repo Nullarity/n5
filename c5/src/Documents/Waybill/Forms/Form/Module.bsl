@@ -627,8 +627,16 @@ EndProcedure
 &AtClient
 Procedure DateOnChange ( Item )
 	
-	setFuelExpenseMethod ();
+	applyDate ();
 	
+EndProcedure
+
+&AtServer
+Procedure applyDate ()
+	
+	setFuelExpenseMethod ();
+	updateChangesPermission ();
+
 EndProcedure
 
 &AtClient

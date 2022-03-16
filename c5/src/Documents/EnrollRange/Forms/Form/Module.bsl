@@ -89,6 +89,13 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
+Procedure DateOnChange ( Item )
+
+	updateChangesPermission ();
+	
+EndProcedure
+
+&AtClient
 Procedure RangeStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	StandardProcessing = false;
