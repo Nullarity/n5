@@ -49,7 +49,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByShipmentStockman ();
 			endif; 
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

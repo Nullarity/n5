@@ -105,7 +105,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( not Object.Car.IsEmpty () ) then
 			setCar ();
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setLinks ();
 	readAppearance ();

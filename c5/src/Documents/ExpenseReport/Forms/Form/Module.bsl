@@ -95,7 +95,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			setAccount ();
 		endif;
 		updateTotal ( ThisObject );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setLinks ();
 	filterPayments ( ref );

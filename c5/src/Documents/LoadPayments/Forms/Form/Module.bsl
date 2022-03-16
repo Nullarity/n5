@@ -48,7 +48,7 @@ Procedure OnCreateAtServer(Cancel, StandardProcessing)
 		endif;
 		DocumentForm.Init(Object);
 		fillNew();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	readAppearance();

@@ -48,7 +48,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		setCreator ();
 		setCurrency ( ThisObject );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	if ( TypeOf ( Parameters.Base ) = Type ( "Array" ) ) then
 		typeOfBase = TypeOf ( Parameters.Base [ 0 ] );

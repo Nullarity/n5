@@ -100,7 +100,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif; 
 		endif;
 		updateBalanceDue ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();
@@ -1085,7 +1085,7 @@ EndProcedure
 Procedure applyDate ()
 	
 	updateContent ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 
 EndProcedure
 

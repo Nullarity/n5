@@ -113,7 +113,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 		fillNew ();
 		setLinks ();
 		defineCopy ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	PaymentForm.FilterAccount ( ThisObject );

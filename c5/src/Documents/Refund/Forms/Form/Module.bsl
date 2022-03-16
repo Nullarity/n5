@@ -35,7 +35,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			PaymentForm.Fill ( ThisObject );
 		endif; 
 		defineCopy ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	PaymentForm.FilterAccount ( ThisObject );
 	PaymentForm.SetTitle ( ThisObject );

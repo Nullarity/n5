@@ -31,7 +31,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		setControlMode ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	readAppearance ();
 	Appearance.Apply ( ThisObject );

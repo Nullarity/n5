@@ -65,7 +65,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			fillNew ();
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

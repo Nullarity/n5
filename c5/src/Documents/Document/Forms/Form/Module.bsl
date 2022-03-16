@@ -237,7 +237,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif; 
 		setCanChange ();
 		setCanChangeAccess ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	else
 		saveHistory ();
 	endif;

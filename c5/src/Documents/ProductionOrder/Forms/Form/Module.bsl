@@ -43,7 +43,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByOrder ();
 			endif; 
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

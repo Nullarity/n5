@@ -75,7 +75,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByAssetsInventory ();		
 			endif;
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

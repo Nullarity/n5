@@ -23,7 +23,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	if ( Object.Ref.IsEmpty () ) then
 		setCreator ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	if ( TypeOf ( Parameters.Basis ) = Type ( "DocumentRef.ProjectsInvoice" ) ) then
 		fillByInvoice ();

@@ -124,7 +124,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			formatting ();
 			enableWarning ();
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

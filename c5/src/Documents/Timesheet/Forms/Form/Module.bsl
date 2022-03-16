@@ -430,7 +430,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		setStatusByDefault ();
 		resetRoutePoint ();
 		setDefaultButton ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setTimeWasModified ( ThisObject, false );
 	readAppearance ();

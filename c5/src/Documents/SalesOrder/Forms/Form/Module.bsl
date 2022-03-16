@@ -70,7 +70,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			OrderForm.ResetCopiedFields ( Object );
 		endif; 
 		updateBalanceDue ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

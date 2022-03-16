@@ -254,7 +254,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			or Copy ) then
 			setExistedTimeEntry ();
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setLinks ();
 	readAppearance ();

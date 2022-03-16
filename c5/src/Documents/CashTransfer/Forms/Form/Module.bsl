@@ -25,7 +25,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
 		PaymentForm.SetRates ( Object );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();

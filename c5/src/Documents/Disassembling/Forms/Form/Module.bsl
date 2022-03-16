@@ -36,7 +36,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByAssembling ();
 			endif;
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

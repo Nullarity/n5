@@ -56,7 +56,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		fillByBase ();
 		setRange ();
 		setWarning ( ThisObject );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setLinks ();
 	Options.Company ( ThisObject, Object.Company );

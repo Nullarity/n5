@@ -27,7 +27,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		Copy = not Parameters.CopyingValue.IsEmpty ();
 		DocumentForm.Init ( Object );
 		fillNew ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setLinks ();
 	Options.Company ( ThisObject, Object.Company );

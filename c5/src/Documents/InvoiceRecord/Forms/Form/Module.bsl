@@ -127,7 +127,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		setType ( Object );
 		setWarning ( ThisObject );
 		initStatuses ( ThisObject );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	adjustCustomerControl ( ThisObject );
 	setAccuracy ();

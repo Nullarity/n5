@@ -21,7 +21,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing)
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	setRangeOnline ( ThisObject );
 	Options.Company ( ThisObject, Object.Company );

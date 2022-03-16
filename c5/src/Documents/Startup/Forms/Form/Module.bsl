@@ -41,7 +41,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif;
 		applyCurrency ();
 		fillHeader ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg" );
 	Options.Company ( ThisObject, Object.Company );

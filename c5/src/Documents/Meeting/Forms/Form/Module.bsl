@@ -210,7 +210,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( Object );
 		fillNew ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	else
 		applyParams ();
 	endif; 

@@ -62,7 +62,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		fillNew ();
 		enableWarning ( ThisObject );
 		defineCopy ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "RecordsQuantityDr, RecordsQuantityCr" );

@@ -29,7 +29,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			BalancesForm.CheckParameters ( ThisObject );
 		endif;
 		DocumentForm.SetCreator ( Object );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );

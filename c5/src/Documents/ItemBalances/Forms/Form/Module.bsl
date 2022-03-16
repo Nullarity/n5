@@ -28,7 +28,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		else
 			BalancesForm.FixDate ( ThisObject );
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	Options.Company ( ThisObject, Object.Company );

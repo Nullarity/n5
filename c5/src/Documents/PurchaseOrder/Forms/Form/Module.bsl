@@ -66,7 +66,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif; 
 		endif;
 		updateBalanceDue ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

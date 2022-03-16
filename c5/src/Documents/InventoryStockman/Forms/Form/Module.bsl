@@ -47,7 +47,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew ( Object ) ) then
 		DocumentForm.SetCreator ( Object );
 		initNew ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

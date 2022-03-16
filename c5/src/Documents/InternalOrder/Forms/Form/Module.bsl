@@ -44,7 +44,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( Copy ) then
 			OrderForm.ResetCopiedFields ( Object );
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setLinks ();

@@ -50,7 +50,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		endif; 
 		defineCopy ();
 		updateInfo ( ThisObject );
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	PaymentForm.FilterAccount ( ThisObject );
 	PaymentForm.SetTitle ( ThisObject );

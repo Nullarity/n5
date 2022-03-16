@@ -221,7 +221,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByItemsReceipt ();
 			endif;
 		endif;
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );

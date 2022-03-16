@@ -64,7 +64,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif;	
 		endif;
 		setID ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	updateTotals ( ThisObject );
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsWeight", , false );

@@ -144,7 +144,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		if ( not copy ) then
 			setSender ();
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	readAppearance ();
 	Appearance.Apply ( ThisObject );

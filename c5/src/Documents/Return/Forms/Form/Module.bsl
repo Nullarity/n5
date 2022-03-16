@@ -88,7 +88,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			fillByBase (); 
 		endif;
 		updateBalanceDue ();
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
 	setButtons ();

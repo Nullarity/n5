@@ -64,7 +64,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByPayEmployees ();
 			endif; 
 		endif; 
-		Constraints.ShowAccess ( ThisObject );
+		updateChangesPermission ();
 	endif;
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
