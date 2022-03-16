@@ -15,9 +15,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	readOperation ();
 	rememberOperation ();
 	enableWarning ( ThisObject );
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -175,13 +182,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
 	endif;
-
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

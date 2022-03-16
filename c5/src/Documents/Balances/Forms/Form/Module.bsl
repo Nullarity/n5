@@ -11,8 +11,15 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	formatting ();
 	enableWarning ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -184,13 +191,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
 	endif;
-
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

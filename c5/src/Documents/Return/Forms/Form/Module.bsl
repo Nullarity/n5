@@ -16,9 +16,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	updateBalanceDue ();
 	initCurrency ();
 	setSocial ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -595,13 +602,6 @@ Procedure applyInvoices ()
 	setLinks ();			
 	Appearance.Apply ( ThisObject, "InvoicesInTable" );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtClient

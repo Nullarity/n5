@@ -19,9 +19,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	OrderForm.LoadProcess ( ThisObject );
 	InvoiceForm.SetLocalCurrency ( ThisObject );
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -278,13 +285,6 @@ Procedure addItem ( Fields )
 	calcTotals ( Object );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClientAtServerNoContext
 Procedure calcTotals ( Object )

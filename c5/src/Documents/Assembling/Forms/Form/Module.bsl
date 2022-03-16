@@ -7,6 +7,13 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
@@ -80,13 +87,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		updateChangesPermission ();
 	endif; 
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtServer

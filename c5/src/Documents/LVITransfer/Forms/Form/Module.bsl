@@ -16,9 +16,16 @@ var InvoiceRecordExists;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceRecords.Read ( ThisObject );
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -163,13 +170,6 @@ Procedure readPrinted ()
 	InvoiceRecords.Read ( ThisObject );
 	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtServer

@@ -31,9 +31,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	changeAvailability ();
 	initCurrency ();
 	setSocial ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -1048,13 +1055,6 @@ Procedure applySocial ()
 	UseSocial = findSocial ( Object.Items );
 	Appearance.Apply ( ThisObject, "UseSocial" );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtClient

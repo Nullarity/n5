@@ -13,9 +13,16 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -210,13 +217,6 @@ Procedure calcDifference ( ItemsRow )
 	ItemsRow.QuantityPkgDifference = ItemsRow.QuantityPkg - ItemsRow.QuantityPkgBalance;
 	ItemsRow.AmountDifference = ItemsRow.Amount - ItemsRow.AmountBalance;
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 // *****************************************

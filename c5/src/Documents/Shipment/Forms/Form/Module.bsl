@@ -20,9 +20,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetContractCurrency ( ThisObject );
 	SetPrivilegedMode ( false );
 	readStatus ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -260,13 +267,6 @@ Procedure calcQuantityBack ()
 	ItemsRow.QuantityPkgBack = ItemsRow.QuantityBack / ItemsRow.CapacityPlan;
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 // *****************************************
 // *********** Group Form

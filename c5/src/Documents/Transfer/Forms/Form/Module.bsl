@@ -19,9 +19,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceRecords.Read ( ThisObject );
 	InvoiceForm.SetLocalCurrency ( ThisObject );
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -505,13 +512,6 @@ Procedure readPrinted ()
 	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )

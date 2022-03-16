@@ -23,9 +23,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	initCurrency ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	InvoiceRecords.Read ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -775,13 +782,6 @@ Procedure readPrinted ()
 	InvoiceRecords.Read ( ThisObject );
 	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtClient

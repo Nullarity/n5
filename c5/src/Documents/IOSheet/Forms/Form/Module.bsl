@@ -11,9 +11,16 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -307,13 +314,6 @@ Procedure activateItem ( Fields )
 	endif; 
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )

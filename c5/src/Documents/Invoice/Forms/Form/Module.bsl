@@ -23,7 +23,7 @@ var Copy;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Constraints.ShowSales ( ThisObject );
 	updateBalanceDue ();
 	InvoiceRecords.Read ( ThisObject );
@@ -31,6 +31,13 @@ Procedure OnReadAtServer ( CurrentObject )
 	setSocial ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -919,13 +926,6 @@ EndProcedure
 Procedure updateSalesPermission ()
 
 	Constraints.ShowSales ( ThisObject );
-
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

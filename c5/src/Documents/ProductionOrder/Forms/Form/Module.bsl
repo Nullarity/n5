@@ -15,9 +15,16 @@ var Copy;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -250,13 +257,6 @@ Procedure addItem ( Fields )
 	endif; 
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

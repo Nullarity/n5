@@ -16,9 +16,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	updateBalanceDue ();
 	OrderForm.LoadProcess ( ThisObject );
 	initCurrency ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -608,13 +615,6 @@ Procedure updateLinks ()
 	setLinks ();
 	updateBalanceDue ();
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtClient

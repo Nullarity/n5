@@ -5,7 +5,6 @@
 Procedure OnReadAtServer ( CurrentObject )
 	
 	Paid = getPaidFlag ( Object.Ref );
-	Constraints.ShowAccess ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	if ( Object.Posted ) then
 		ReadOnly = true;

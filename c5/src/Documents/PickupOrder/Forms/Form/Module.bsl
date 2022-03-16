@@ -10,9 +10,16 @@ var ShipmentsRow;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	readStatus ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -148,13 +155,6 @@ Procedure applyQuantity ()
 	enddo; 
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 // *****************************************
 // *********** Group Form

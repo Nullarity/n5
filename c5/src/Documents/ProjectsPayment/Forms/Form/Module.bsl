@@ -7,6 +7,13 @@ var Base;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
@@ -97,13 +104,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
 	endif;
-
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 

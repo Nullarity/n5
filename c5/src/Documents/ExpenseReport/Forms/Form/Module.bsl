@@ -28,9 +28,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	updateTotal ( ThisObject );
 	setSocial ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtClientAtServerNoContext
@@ -546,13 +553,6 @@ Procedure addItem ( Fields )
 	calcTotals ( ThisObject );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

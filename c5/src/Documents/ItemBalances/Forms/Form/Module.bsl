@@ -7,6 +7,13 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
@@ -100,13 +107,6 @@ Procedure calcAmount ( Row )
 	Row.Amount = Row.Cost * Row.QuantityPkg;
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 // *****************************************
 // *********** Group Form

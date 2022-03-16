@@ -22,8 +22,15 @@ Procedure OnReadAtServer ( CurrentObject )
 	setRetail ();
 	setWarning ( ThisObject );
 	initStatuses ( ThisObject );
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -497,13 +504,6 @@ Procedure addItem ( Fields )
 	calcTotals ( Object );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure AfterWrite ( WriteParameters ) 

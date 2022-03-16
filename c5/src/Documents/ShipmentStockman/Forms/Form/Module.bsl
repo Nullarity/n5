@@ -9,9 +9,16 @@ var ItemsRow;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -195,13 +202,6 @@ Procedure reread ()
 	setLinks ();
 	Appearance.Apply ( ThisObject );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 // *****************************************

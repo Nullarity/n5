@@ -25,9 +25,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	readAccount ();
 	labelDims ();
 	setSocial ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -530,13 +537,6 @@ Procedure addItem ( Fields )
 	calcTotals ( Object );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 // *****************************************
 // *********** Group Form

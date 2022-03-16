@@ -17,9 +17,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateBalanceDue ();
 	initCurrency ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtServer
@@ -429,13 +436,6 @@ Procedure addItem ( Fields )
 	updateTotals ( ThisObject, row );
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

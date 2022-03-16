@@ -33,9 +33,16 @@ Procedure OnReadAtServer ( CurrentObject )
 	setTasks ();
 	fillTimeTypes ();
 	readSignature ();
-	Constraints.ShowAccess ( ThisObject );
+	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
 EndProcedure
 
 &AtClientAtServerNoContext
@@ -741,13 +748,6 @@ Procedure addItem ( Fields )
 	endif; 
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )

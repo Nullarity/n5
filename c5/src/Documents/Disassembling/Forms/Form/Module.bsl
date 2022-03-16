@@ -11,6 +11,13 @@ var Env;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
@@ -174,13 +181,6 @@ Procedure addItem ( Fields )
 	endif; 
 	
 EndProcedure 
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
 
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
