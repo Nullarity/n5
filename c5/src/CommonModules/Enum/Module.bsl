@@ -362,6 +362,13 @@ Function MessageSalesPermissionIsSaved () export
 EndFunction 
 
 &AtClient
+Function MessageUpdateSalesPermission () export
+	
+	return "280";
+	
+EndFunction 
+
+&AtClient
 Function MessageChangesPermissionIsSaved () export
 	
 	return "290";
@@ -1070,9 +1077,21 @@ Function DocumentActionsUndelete () export
 	
 EndFunction 
 
+Function DocumentActionsSaveAndNew () export
+	
+	return "DocumentActionsSaveAndNew";
+	
+EndFunction 
+
 Function DocumentActionsPostAndNew () export
 	
 	return "DocumentActionsPostAndNew";
+	
+EndFunction 
+
+Function DocumentActionsPostAndClose () export
+	
+	return "DocumentActionsPostAndClose";
 	
 EndFunction 
 
@@ -1238,6 +1257,19 @@ Function ConstantsUpdateCheckingPeriod () export
 	
 EndFunction
 
+Function ConstantsPermissionExpiration () export
+	
+	return 86400;
+	
+EndFunction
+
+&AtServer
+Function ConstantsRemoteActionExpiration () export
+	
+	return 86400;
+	
+EndFunction
+
 #endregion
 
 #region Framework
@@ -1348,6 +1380,12 @@ EndFunction
 Function AdditionalPropertiesDontCheckOwner () export
 	
 	return "AdditionalPropertiesDontCheckOwner";
+	
+EndFunction
+
+Function AdditionalPropertiesUserAction () export
+	
+	return "UserAction";
 	
 EndFunction
 

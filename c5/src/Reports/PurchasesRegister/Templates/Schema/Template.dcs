@@ -201,7 +201,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -212,7 +212,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -223,7 +223,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -234,7 +234,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -245,7 +245,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	union all
 	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -256,7 +256,7 @@ from (
 	where Table.Ref.Posted
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
-	and Table.Ref.VATUse &lt;&gt; 0
+	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
 	union all
 	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT, Table.Ref.Number, Table.Ref.Date, 

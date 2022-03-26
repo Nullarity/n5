@@ -26,6 +26,7 @@ if (_ = undefined) then
 	signed = false;
 	contractDateStart = undefined;
 	contractDateEnd = undefined;
+	createCredit = false;
 else
 	government = _.Government;
 	name = _.Description;
@@ -43,6 +44,9 @@ else
 	rate = _.Rate;
 	signed = _.ContractSigned;
 	contractDateStart = _.ContractDateStart;
+	contractDateEnd = _.ContractDateEnd;
+	createCredit = _.CreateCredit;
+	creditLimit = _.CreditLimit;
 	contractDateEnd = _.ContractDateEnd;
 endif;
 //
@@ -79,8 +83,22 @@ if ( paymentAddress <> undefined ) then
 	With();
 endif;
 //
+// Credit limit
+//
+if ( createCredit ) then
+	Commando("e1cib/list/Document.CreditLimit");
+	Click("#FormCreate");
+	With ();
+	Set ("#Amount", creditLimit);
+	Put ("#Customer", name);
+	Click("#FormWriteAndClose");
+	With();
+	Close ();
+endif;
+//
 // Setup Contract
 //
+With ();
 Activate("#CustomerPage");
 Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");

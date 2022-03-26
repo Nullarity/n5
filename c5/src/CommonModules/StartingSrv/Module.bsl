@@ -119,12 +119,13 @@ EndFunction
 Function SessionInfo () export
 	
 	SetPrivilegedMode ( true );
-	p = new Structure ( "Rooted, Testing, Master, Cloud, Admin, Sysadmin, CheckUpdates, NewUpdates, UpdateRequired,
+	p = new Structure ( "Rooted, Testing, Master, Cloud, SaaS, Admin, Sysadmin, CheckUpdates, NewUpdates, UpdateRequired,
 	|FirstStart, AccessDenied, AccessRevoked, Unlimited, MustChangePassword" );
 	p.Testing = TesterCache.Testing ();
 	master = ExchangePlans.MasterNode () = undefined;
 	p.Master = master;
 	p.Cloud = Cloud.Cloud ();
+	p.Saas = Cloud.SaaS ();
 	p.Admin = Logins.Admin ();
 	p.UpdateRequired = master
 	and DataProcessors.UpdateInfobase.Required ();

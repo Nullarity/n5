@@ -52,19 +52,20 @@ Procedure adjustCommands ( Form, CommandBar, Env )
 	set.Add ( "FormWrite" );
 	set.Add ( "FormWriteAndClose" );
 	set.Add ( "FormPost" );
+	set.Add ( "FormPostAndClose" );
 	set.Add ( "JustSave" );
 	panel = ? ( CommandBar = undefined, Form.CommandBar, CommandBar );
-	buttonts = getButtons ( panel.ChildItems, set );
+	Buttons = getButtons ( panel.ChildItems, set );
 	if ( not Env.Save ) then
-		hide ( buttonts, "FormWrite" );
-		hide ( buttonts, "FormWriteAndClose" );
+		hide ( Buttons, "FormWrite" );
+		hide ( Buttons, "FormWriteAndClose" );
 	elsif ( Env.Post ) then
-		hide ( buttonts, "FormWrite" );
-		shortcut ( buttonts, "FormPost" );
+		hide ( Buttons, "FormWrite" );
+		shortcut ( Buttons, "FormPost" );
+		adjustPostAndClose ( Form, panel, Buttons );
 	else
-		shortcut ( buttonts, "FormWrite" );
+		shortcut ( Buttons, "FormWrite" );
 	endif;
-	move ( buttonts, "JustSave" );
 	
 EndProcedure
 
@@ -110,9 +111,9 @@ Function isButton ( Button, Name, Original = false )
 EndFunction
 
 &AtServer
-Procedure hide ( Buttonts, Name )
+Procedure hide ( Buttons, Name )
 	
-	for each item in Buttonts do
+	for each item in Buttons do
 		if ( isButton ( item, Name ) ) then
 			item.Visible = false;
 		endif;
@@ -121,9 +122,9 @@ Procedure hide ( Buttonts, Name )
 EndProcedure
 
 &AtServer
-Procedure shortcut ( Buttonts, Name )
+Procedure shortcut ( Buttons, Name )
 	
-	for each item in Buttonts do
+	for each item in Buttons do
 		if ( isButton ( item, Name, true ) ) then
 			item.Shortcut = new Shortcut ( Key.S, , true );
 			return;
@@ -133,20 +134,30 @@ Procedure shortcut ( Buttonts, Name )
 EndProcedure
 
 &AtServer
-Procedure move ( Buttonts, Name )
+Procedure adjustPostAndClose ( Form, CommandBar, Buttons )
 	
-	for each item in Buttonts do
-		if ( isButton ( item, Name ) ) then
-			if ( Framework.VersionLess ( "8.3.15" ) ) then
-				item.OnlyInAllActions = true;
-			else
-				// We use Eval to avoid syntax error in versions less than 8.3.15
-				item.LocationInCommandBar = Eval ( "ButtonLocationInCommandBar.InAdditionalSubmenu" );
-			endif;
-		endif;
-	enddo;
+	standard = findButton ( Buttons, "FormPostAndClose1" );
+	standardWasReplaced = standard <> undefined;
+	if ( standardWasReplaced ) then
+		standard.Visible = false;
+		custom = findButton ( Buttons, "FormPostAndClose" );
+		custom.Enabled = not Form.ReadOnly;
+		Form.Items.Move ( custom, CommandBar, CommandBar );
+	endif;
 	
 EndProcedure
+
+&AtServer
+Function findButton ( Buttons, Name )
+	
+	for each item in Buttons do
+		if ( isButton ( item, Name, true ) ) then
+			return item;
+		endif;
+	enddo;
+	return undefined;
+
+EndFunction
 
 &AtServer
 Procedure extendCommands ( Form, Env )
@@ -167,15 +178,15 @@ EndProcedure
 &AtClient
 Procedure PostAndNew ( Form ) export
 	
-	write ( Form, true );
+	write ( Form, true, Enum.DocumentActionsPostAndNew () );
 	
 EndProcedure 
 
 &AtClient
-Procedure write ( Form, Post ) export
+Procedure write ( Form, Post, Action ) export
 	
 	owner = Form.FormOwner;
-	if ( not save ( Form, Post ) ) then
+	if ( not save ( Form, Post, Action ) ) then
 		return;
 	endif; 
 	ref = Form.Object.Ref;
@@ -192,20 +203,23 @@ Procedure write ( Form, Post ) export
 EndProcedure 
 
 &AtClient
-Function save ( Form, Post )
+Function save ( Form, Post, UserAction )
 	
 	if ( form.ReadOnly ) then
 		return true;
-	else
-		alreadyPosted = false;
-		Form.Object.Property ( "Posted", alreadyPosted );
-		if ( Post or alreadyPosted ) then
-			action = new Structure ( "WriteMode", DocumentWriteMode.Posting );
-		else
-			action = new Structure ( Enum.WriteParametersJustSave (), true );
-		endif;
-		return form.Write ( action );
 	endif;
+	params = new Structure ();
+	if ( UserAction <> undefined ) then
+		params.Insert ( Enum.AdditionalPropertiesUserAction (), UserAction );
+	endif;
+	alreadyPosted = false;
+	Form.Object.Property ( "Posted", alreadyPosted );
+	if ( Post or alreadyPosted ) then
+		params.Insert ( "WriteMode", DocumentWriteMode.Posting );
+	else
+		params.Insert ( Enum.WriteParametersJustSave (), true );
+	endif;
+	return form.Write ( params );
 	
 EndFunction 
 
@@ -237,7 +251,7 @@ EndProcedure
 &AtClient
 Procedure SaveAndNew ( Form ) export
 	
-	write ( Form, false );
+	write ( Form, false, Enum.DocumentActionsSaveAndNew () );
 	
 EndProcedure 
 
@@ -252,7 +266,7 @@ EndProcedure
 &AtClient
 Procedure SaveDraft ( Form ) export
 	
-	save ( Form, false );
+	save ( Form, false, undefined );
 	
 EndProcedure 
 
@@ -266,3 +280,13 @@ Procedure AdjustSaving ( Form, WriteParameters ) export
 	endif;
 	
 EndProcedure
+
+&AtClient
+Procedure PostAndClose ( Form ) export
+	
+	if ( not save ( Form, true, Enum.DocumentActionsPostAndClose () ) ) then
+		return;
+	endif; 
+	Form.Close ();
+	
+EndProcedure 

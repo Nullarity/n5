@@ -69,15 +69,15 @@ EndProcedure
 
 Procedure onStart ()
 	
-	if ( SessionInfo.Cloud ) then
+	if ( SessionInfo.SaaS ) then
 		if ( StartingSrv.TenantDeactivated () ) then
 			p = new Structure ( "Info", StartingSrv.Info () );
 			Output.ProfileDeactivated ( ThisObject, , p, "Quit" );
 			return;
 		endif; 
-		startCloudSession ();
+		startSaasSession ();
 	else
-		afterStartCloudSession ();
+		afterStartSaaSSession ();
 	endif;
 	
 EndProcedure
@@ -88,15 +88,15 @@ Procedure Quit ( Params ) export
 	
 EndProcedure 
 
-Procedure startCloudSession ()
+Procedure startSaasSession ()
 	
 	if ( SessionInfo.Unlimited
 		or SessionInfo.Testing ) then
-		afterStartCloudSession ();
+		afterStartSaaSSession ();
 	else
 		anotherSessions = StartingSrv.GetCopies ();
 		if ( anotherSessions = undefined ) then
-			afterStartCloudSession ();
+			afterStartSaaSSession ();
 		else
 			s = StrConcat ( AnotherSessions, Chars.LF );
 			Output.AnotherSessionDetected ( ThisObject, , new Structure ( "Sessions", s ), "AnotherSessionDetected" );
@@ -109,14 +109,14 @@ Procedure AnotherSessionDetected ( Answer, Params ) export
 	
 	if ( Answer = DialogReturnCode.Yes ) then
 		StartingSrv.DisconnectCopies ();
-		afterStartCloudSession ();
+		afterStartSaaSSession ();
 	else
 		Terminate ();
 	endif;
 	
 EndProcedure 
 
-Procedure afterStartCloudSession ()
+Procedure afterStartSaaSSession ()
 	
 	if ( SessionInfo.AccessDenied
 		or SessionInfo.AccessRevoked ) then
@@ -151,7 +151,7 @@ EndProcedure
 Procedure afterUserChangePassword ()
 	
 	setTitle ();
-	if ( SessionInfo.Cloud ) then
+	if ( SessionInfo.SaaS ) then
 		paymentInfo = CloudPayments.GetInfo ();
 		if ( userMustPay ( paymentInfo ) ) then
 			payOrder ( paymentInfo );

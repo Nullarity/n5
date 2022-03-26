@@ -142,6 +142,13 @@ Procedure OpenQueryBox ( Text, Params, ProcName, Module, CallbackParams, Buttons
 
 EndProcedure
 
+&AtClient
+Function AskUser ( Text, Params, Buttons, Timeout, DefaultButton, Title ) export
+
+	return DoQueryBoxAsync ( Output.FormatStr ( Text, Params ), Buttons, Timeout, DefaultButton, ? ( Title = "", MetadataPresentation (), Title ) );
+
+EndFunction
+
 Function getTable ( Field )
 
 	i = StrFind ( Field, "[" );
@@ -8138,13 +8145,13 @@ Function SalesRequestBody ( Params ) export
 	text = NStr ( "en = '<p>%Receiver, please approve my transaction <b>%Document</b> for <b>%Customer.</b></p>
 				  |You can open my request in the application, through the <b>Quick Menu / Restrictions</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
 				  |<p>
-				  |<a href=""%Yes"">Approve |</a> <a href=""%No""> Reject</a>
+				  |<a href=""%Yes"">Approve</a> | <a href=""%No"">Reject</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Note: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '<p>%Receiver, vă rog să aprobați tranzacția mea <b>%Document</b> pentru <b>%Customer.</b></p>
 				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Restricții</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
 				  |<p>
-				  |<a href=""%Yes"">Aprobă |</a> <a href=""%No""> Respingeți</a>
+				  |<a href=""%Yes"">Aprobă</a> | <a href=""%No"">Respingeți</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Notă: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = '<p>%Receiver, утвердите пожалуйста мою операцию <b>%Document</b> для покупателя <b>%Customer.</b></p>
@@ -8216,13 +8223,13 @@ Function ChangesRequestBody ( Params ) export
 	text = NStr ( "en = '<p>%Receiver, please approve my request for changes in the closed period, <b>%Details.</b></p>
 				  |You can open my request in the application, through the <b>Quick Menu / Restrictions</b> menu, or issue your resolution right here, by clicking on one of the links below:</p>
 				  |<p>
-				  |<a href=""%Yes"">Approve |</a> <a href=""%No""> Reject</a>
+				  |<a href=""%Yes"">Approve</a> | <a href=""%No""> Reject</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Note: This email is automatically generated and sent by a robot. Please do not reply to this email.</i></p>';ro = '<p>%Receiver, vă rog să aprobați cererea mea de modificare a perioadei închise, <b>%Details.</b></p>
 				  |Puteți deschide cererea mea în aplicație, prin meniul <b>Principal / Restricții</b>, sau puteți emite rezoluția chiar aici, făcând clic pe unul dintre link-urile de mai jos:</p>
 				  |<p>
-				  |<a href=""%Yes"">Aprobă |</a> <a href=""%No""> Respingeți</a>
+				  |<a href=""%Yes"">Aprobă</a> | <a href=""%No""> Respingeți</a>
 				  |</p>
 				  |<p></p>
 				  |<p><i>Notă: Acest e-mail este generat automat și trimis de un robot. Vă rugăm să nu răspundeți la acest e-mail.</i></p>';ru = '<p>%Receiver, утвердите пожалуйста мою заявку на внесение изменений в закрытый период, <b>%Details.</b></p>
@@ -8297,6 +8304,22 @@ Function RestrictionCreditExceeded ( Params ) export
 EndFunction
 
 &AtServer
+Function RestrictionZeroCredit () export
+
+	text = NStr ( "en = 'Zero credit limit';ro = 'Limita de credit zero';ru = 'Нулевой лимит кредита'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function RestrictionCreditLimit ( Params ) export
+
+	text = NStr ( "en = 'The balance of the credit limit is %Amount';ro = 'Soldul limitei de credit este de %Amount';ru = 'Остаток кредитного лимита %Amount'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
 Function RestrictionInvoiceRequired ( Params ) export
 
 	text = NStr ( "en = 'The %Invoice was not returned';ro = '%Invoice nu a fost returnată';ru = 'Не была возвращена %Invoice'" );
@@ -8325,6 +8348,14 @@ Function RestrictionRequestDenied ( Params ) export
 
 	text = NStr ( "en = 'Request to remove ""%Reason"" restriction DENIED';ro = 'Cerere de eliminare a restricției ""%Reason"" RESPINSĂ';ru = 'Запрос на снятие ограничения ""%Reason"" ОТКЛОНЕН'" );
 	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function RestrictionRequestAmountExceeded () export
+
+	text = NStr ( "en = 'The amount of the document was increased after the sales authorization request. Reissue the request';ro = 'Valoarea documentului a fost majorată după solicitarea autorizației de vânzare. Reemiteți cererea';ru = 'Сумма документа была увеличена после запроса на разрешение продажи. Переоформите запрос'" );
+	return text;
 
 EndFunction
 
@@ -8373,5 +8404,25 @@ Function DontControl () export
 
 	text = NStr ( "en = 'Don''t control'; ro = 'Nu controlați'; ru = 'Не контролировать'" );
 	return text;
+
+EndFunction
+
+&AtServer
+Function ClickToUpdate () export
+
+	text = NStr ( "en = 'Update Information';ro = 'Informații actualizate';ru = 'Обновить информацию'" );
+	return text;
+
+EndFunction
+
+&AtClient
+Function RestrictionsRequestWarning ( Params = undefined ) export
+
+	text = NStr ( "en = 'After sending the request, the amount of the document should not be increased.
+				  |Would you like to send a request?';ro = 'After sending the request, the amount of the document should not be increased.
+				  |Doriți să trimiteți o cerere?';ru = 'После отправки запроса сумма документа не должна быть увеличена.
+				  |Отправить запрос?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
 EndFunction

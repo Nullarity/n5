@@ -27,6 +27,7 @@ EndProcedure
 Procedure reset ()
 	
 	Customer = undefined;
+	Amount = 0;
 	Document = undefined;
 	Responsible = undefined;
 	Resolution = undefined;

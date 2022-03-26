@@ -147,7 +147,6 @@ Procedure aboutSalesPermission ( Data )
 		and obj.Responsible <> responsible ) then
 		raise Output.PermissionComplete ();
 	endif;                                    
-	PermissionForm.Init ( obj, responsible );
 	if ( Data.Action = Enums.RemoteActions.PermissionAllow ) then
 		obj.Resolution = Enums.AllowDeny.Allow;
 	else
@@ -185,7 +184,6 @@ Procedure aboutChangesPermission ( Data )
 		and obj.Responsible <> responsible ) then
 		raise Output.PermissionComplete ();
 	endif;                                    
-	PermissionForm.Init ( obj, responsible );
 	if ( Data.Action = Enums.RemoteActions.ChangesAllow ) then
 		obj.Resolution = Enums.AllowDeny.Allow;
 	else

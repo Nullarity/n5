@@ -1,7 +1,7 @@
 ﻿Procedure Make ()
 
 	commonVatFields = "
-	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
+	|select case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT,
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
 	|	Table.VATCode.Rate as Rate, Table.VATCode.Type as Type
 	|";
@@ -79,66 +79,43 @@
 	|	value ( Enum.FormStatuses.Submitted )
 	|)
 	|union all
-	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
+	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Accounts as Table
 	|" + conditions + "
-	|and Table.Ref.VATUse <> 0
+	|and ( Table.Ref.VATUse <> 0 or Table.Ref.Import )
 	|and Table.Ref.Posted
-	|and not Table.Ref.Import
 	|union all
-	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
+	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.FixedAssets as Table
 	|" + conditions + "
-	|and Table.Ref.VATUse <> 0
+	|and ( Table.Ref.VATUse <> 0 or Table.Ref.Import )
 	|and Table.Ref.Posted
-	|and not Table.Ref.Import
 	|union all
-	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
+	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.IntangibleAssets as Table
 	|" + conditions + "
-	|and Table.Ref.VATUse <> 0
+	|and ( Table.Ref.VATUse <> 0 or Table.Ref.Import )
 	|and Table.Ref.Posted
-	|and not Table.Ref.Import
 	|union all
-	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
+	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Items as Table
 	|" + conditions + "
-	|and Table.Ref.VATUse <> 0
+	|and ( Table.Ref.VATUse <> 0 or Table.Ref.Import )
 	|and Table.Ref.Posted
-	|and not Table.Ref.Import
 	|union all
-	|" + vendorInvoiceFields + ", 1, Table.Ref.Vendor.CodeFiscal
+	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
 	|from Document.VendorInvoice.Services as Table
 	|" + conditions + "
-	|and Table.Ref.VATUse <> 0
+	|and ( Table.Ref.VATUse <> 0 or Table.Ref.Import )
 	|and Table.Ref.Posted
-	|and not Table.Ref.Import
 	|union all
-	|select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT.Rate, Table.Charge.VAT.Type,
-	|	"""", """", """", 2, """"
+	|select sum ( case when Table.VAT then Table.Amount else 0 end ),
+	|	sum ( case when Table.VAT then 0 else Table.Amount end ),
+	|	Table.Charge.VAT.Rate, Table.Charge.VAT.Type, """", """", """", 2, """"
 	|from Document.CustomsDeclaration.Charges as Table
-	|	//
-	|	// Custom Groups
-	|	//
-	|	left join Document.CustomsDeclaration.CustomsGroups as Groups
-	|	on Groups.Ref = Table.Ref
-	|	and Groups.CustomsGroup = Table.CustomsGroup
-	|	//
-	|	// VAT
-	|	//
-	|	left join (
-	|		select sum ( case when Table.VAT then Table.Amount else 0 end ) as VAT, sum ( case when Table.VAT then 0 else Table.Amount end ) as Amount, Table.Ref as Ref,
-	|			Table.CustomsGroup as CustomsGroup
-	|		from Document.CustomsDeclaration.Charges as Table
-	|		" + conditions + "
-	|		and Table.Ref.Posted
-	|		group by Table.Ref, Table.CustomsGroup
-	|		) as Charges
-	|	on Charges.Ref = Table.Ref
-	|	and Charges.CustomsGroup = Table.CustomsGroup
 	|" + conditions + "
-	|and Table.VAT
 	|and Table.Ref.Posted
+	|group by Table.Charge.VAT
 	|union all
 	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.Series, Table.FormNumber, Table.Date, 1, Table.Vendor.CodeFiscal
@@ -219,19 +196,25 @@
 	|order by VATs.Date
 	|;
 	|// @Advances
-	|select General.AmountTurnoverDr as Amount
-	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account.Code in hierarchy ( ""2252"" ), , Company = &Company, , ) as General
+	|select sum ( General.Amount) as Amount
+	|from AccountingRegister.General as General
+	|where General.Period Between &DateStart and &DateEnd
+	|and General.AccountDr in hierarchy ( value ( ChartOfAccounts.General._2252 ) )
+	|and General.Company = &Company
+	|and General.Amount > 0
 	|;
 	|// @AdvancesTaken
-	|select General.AmountTurnoverCr as Amount
+	|select General.AmountTurnoverCr - General.AmountTurnoverDr as Amount
 	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account in hierarchy ( value ( ChartOfAccounts.General._523 ) ), , Company = &Company, , ) as General
 	|;
 	|// @VATTaken
 	|select General.AmountTurnoverDr as Amount
-	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, , Account = value ( ChartOfAccounts.General._2252 ), , Company = &Company, , ) as General
+	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, ,
+	|	Account = value ( ChartOfAccounts.General._2252 ), , Company = &Company, , ) as General
 	|";
 	Env.Selection.Add ( str );	
 	Env.Q.SetParameter ( "Currency", Constants.Currency.Get () );
+	//Env.Q.SetParameter ( "Account2252", ChartsOfAccounts.General.FindByCode ( "225 2" ) );
 	getData ();
 
 	// Fields
@@ -248,8 +231,8 @@
 	//*************************
 	vats = Env.VATs;
 	table = vats.Copy ( new Structure ( "Type, Operation", Enums.VAT.Standart, 0 ) );
-	FieldsValues [ "A21" ] = table.Total ( "Amount" ) + Env.AdvancesTaken.Amount;
-	FieldsValues [ "B21" ] = table.Total ( "VAT" ) + Env.VATTaken.Amount;;
+	FieldsValues [ "A21" ] = table.Total ( "Amount" ) + Env.AdvancesTaken.Amount - Env.VATTaken.Amount;
+	FieldsValues [ "B21" ] = table.Total ( "VAT" ) + Env.VATTaken.Amount;
 	
 	//************ reduced rate
 	//*************************
@@ -505,6 +488,7 @@ EndProcedure
 Procedure B37 ()
 
 	result = get ( "B34" ) - get ( "B28" ) - get ( "B38" );
+	result = ? ( result < 0, 0, result );
 
 EndProcedure
 

@@ -880,6 +880,9 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.MessageUpdateSalesPermission ()
+		and Parameter = UUID ) then
+		updateSalesPermission ();
 	endif; 
 	
 EndProcedure
@@ -979,6 +982,9 @@ EndProcedure
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	updateBalanceDue ();	
+	if ( not DocumentForm.Closing ( WriteParameters ) ) then
+		updateSalesPermission ();
+	endif;
 	
 EndProcedure
 

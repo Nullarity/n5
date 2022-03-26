@@ -119,7 +119,7 @@ Procedure closeOverpayments ( Env )
 		movement.Detail = row.Detail;
 		movement.Overpayment = row.Amount;
 		if ( commitAdvances ) then
-			registerOverpayment ( payments, movement );
+			registerOverpayment ( payments, movement, row );
 		endif;
 	enddo; 
 	if ( commitAdvances ) then
@@ -147,6 +147,8 @@ Function paymentsTable ()
 	columns = table.Columns;
 	columns.Add ( "Payment" );
 	columns.Add ( "Amount", new TypeDescription ( "Number" ) );
+	columns.Add ( "Rate", new TypeDescription ( "Number" ) );
+	columns.Add ( "Factor", new TypeDescription ( "Number" ) );
 	return table;
 
 EndFunction
@@ -303,7 +305,7 @@ Procedure addDebt ( Env )
 
 EndProcedure
 
-Procedure registerOverpayment ( Payments, Record )
+Procedure registerOverpayment ( Payments, Record, Row )
 	
 	list = new Array ();
 	list.Add ( Record.Document );
@@ -313,11 +315,15 @@ Procedure registerOverpayment ( Payments, Record )
 	types.Add ( Type ( "DocumentRef.VendorPayment" ) );
 	types.Add ( Type ( "DocumentRef.Refund" ) );
 	types.Add ( Type ( "DocumentRef.VendorRefund" ) );
+	types.Add ( Type ( "DocumentRef.Debts" ) );
+	types.Add ( Type ( "DocumentRef.VendorDebts" ) );
 	for each document in list do
 		if ( types.Find ( TypeOf ( document ) ) <> undefined ) then
-			row = Payments.Add ();
-			row.Payment = document;
-			row.Amount = Record.Overpayment;
+			entry = Payments.Add ();
+			entry.Payment = document;
+			entry.Amount = Record.Overpayment;
+			entry.Rate = Row.Rate;
+			entry.Factor = Row.Factor;
 			break;
 		endif;
 	enddo;
@@ -332,23 +338,23 @@ Procedure commitOverpayment ( Env, Payments )
 	type = Env.Type;
 	if ( type = Type ( "DocumentRef.Invoice" ) ) then
 		debtor = true;
-		p.AccountCr = fields.CustomerAccount;
+		accountCr = fields.CustomerAccount;
 		organization = fields.Customer;
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		debtor = false;
-		p.AccountDr = fields.CustomerAccount;
+		accountDr = fields.CustomerAccount;
 		organization = fields.Customer;
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		debtor = true;
-		p.AccountCr = fields.VendorAccount;
+		accountCr = fields.VendorAccount;
 		organization = fields.Vendor;
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		debtor = false;
-		p.AccountDr = fields.VendorAccount;
+		accountDr = fields.VendorAccount;
 		organization = fields.Vendor;
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
 		debtor = false;
-		p.AccountDr = fields.CustomsAccount;
+		accountDr = fields.CustomsAccount;
 		organization = fields.Customs;
 	endif;
 	p.DimDr1 = organization;
@@ -367,7 +373,7 @@ Procedure commitOverpayment ( Env, Payments )
 	localCurrency = fields.LocalCurrency;
 	rate = fields.Rate;
 	factor = fields.factor;
-	Payments.GroupBy ( "Payment", "Amount" );
+	Payments.GroupBy ( "Payment, Rate, Factor", "Amount" );
 	reverseVAT = Env.ReverseVAT;
 	paymentFields = "AdvanceAccount";
 	if ( reverseVAT ) then
@@ -375,16 +381,24 @@ Procedure commitOverpayment ( Env, Payments )
 	endif;
 	for each row in Payments do
 		payment = row.Payment;
-		data = DF.Values ( payment, paymentFields );
+		if ( TypeOf ( payment ) = Type ( "DocumentRef.Debts" )
+			or TypeOf ( payment ) = Type ( "DocumentRef.VendorDebts" ) ) then
+			data = DF.Values ( payment, "Account as AdvanceAccount" );
+			data.Insert ( "VAT", 0 );
+		else
+			data = DF.Values ( payment, paymentFields );
+		endif;
 		if ( debtor ) then
 			p.AccountDr = data.AdvanceAccount;
+			p.AccountCr = accountCr;
 		else
+			p.AccountDr = accountDr;
 			p.AccountCr = data.AdvanceAccount;
 		endif;
 		overpayment = row.Amount;
 		p.CurrencyAmountDr = overpayment;
 		p.CurrencyAmountCr = overpayment;
-		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, rate, factor );
+		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, row.Rate, row.Factor );
 		p.Operation = Enums.Operations.AdvanceApplied;
 		p.Content = operationAdvance + payment;
 		reverse = reverseVAT and data.VAT <> 0;
@@ -396,7 +410,7 @@ Procedure commitOverpayment ( Env, Payments )
 			p.AccountDr = data.ReceivablesVATAccount;
 			p.AccountCr = data.VATAccount;
 			vatAmount = - overpayment + overpayment * ( 100 / ( 100 + data.VAT ) );
-			p.Amount = Currencies.Convert ( vatAmount, currency, localCurrency, fields.Date, rate, factor );
+			p.Amount = Currencies.Convert ( vatAmount, currency, localCurrency, fields.Date, row.Rate, row.Factor );
 			p.Operation = Enums.Operations.VATAdvancesReverse;
 			p.Content = operationVAT + payment; 
 			GeneralRecords.Add ( p );
@@ -662,7 +676,9 @@ Procedure sqlPayments ( Env )
 		|;
 		|// #Overpayments
 		|select Debts.Document as Document, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
-		|	Debts.Overpayment as Amount
+		|	Debts.Overpayment as Amount,
+		|	isnull ( isnull ( Debts.Detail.ContractRate, Debts.Document.ContractRate ), 1 ) as Rate,
+		|	isnull ( isnull ( Debts.Detail.ContractFactor, Debts.Document.ContractFactor ), 1 ) as Factor
 		|from Debts as Debts
 		|where Debts.Overpayment > 0
 		|order by Debts.Date desc, Debts.PaymentDate desc

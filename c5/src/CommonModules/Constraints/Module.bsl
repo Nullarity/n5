@@ -17,10 +17,14 @@ Procedure ShowSales ( Form ) export
 		displaySales ( Form, data, Enums.RestrictionReasons.NoContract, subject, position );
 		position = position + 1;
 	endif;
-	if ( creditExceeded ( data ) ) then
-		p = new Structure ( "Amount", Conversion.NumberToMoney ( data.Sales.Debt - data.Sales.Limit ) );
-		subject = Output.RestrictionCreditExceeded ( p );
-		displaySales ( Form, data, Enums.RestrictionReasons.CreditLimit, subject, position );
+	if ( data.ControlCredit  ) then
+		if ( creditExceeded ( data ) ) then
+			p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.LimitBalance ) );
+			subject = Output.RestrictionCreditExceeded ( p );
+			displaySales ( Form, data, Enums.RestrictionReasons.CreditLimit, subject, position );
+		else
+			displayLimit ( Form, data, position );
+		endif;
 		position = position + 1;
 	endif;
 	if ( invoiceRequired ( data ) ) then
@@ -44,30 +48,77 @@ EndProcedure
 
 Function getSalesData ( Object )
 
-	ref = Object.Ref;
-	contract = ? ( TypeOf ( ref ) = Type ( "DocumentRef.Invoice" ),
-		Object.Contract, Catalogs.Contracts.EmptyRef () );
-	return getSalesInfo ( Object.Customer, Object.Company, contract, ref );
+	context = getContext ( Object );
+	if ( context = undefined ) then
+		return undefined;
+	endif;
+	info = getSalesInfo ( Object, context );
+	data = new Structure ( "ControlContracts, ControlCredit, ControlTaxInvoices, Amount, Currency,
+	|Sales, InvoiceOnHand, Approved" );
+	FillPropertyValues ( data, context );
+	FillPropertyValues ( data, info );
+	return data;
 
 EndFunction
 
-Function getSalesInfo ( Customer, Company, Contract, Document )
-	
-	if ( Customer.IsEmpty ()
-		or Company.IsEmpty () ) then
+Function getContext ( Object )
+
+	context = new Structure ( "Customer, Contract, Currency, Amount, Company, ControlContracts,
+	|ControlCredit, ControlTaxInvoices, Today" );
+	ref = Object.Ref;
+	type = TypeOf ( ref );
+	if ( type = Type ( "DocumentRef.Invoice" )
+		or type = Type ( "DocumentRef.SalesOrder" )
+		or type = Type ( "DocumentRef.Quote" )
+	) then
+		context.Customer = valueOf ( Object.Customer );
+		context.Contract = valueOf ( Object.Contract );
+		context.Company = valueOf ( Object.Company );
+		context.Currency = valueOf ( Object.Currency );
+		context.Amount = Object.Amount;
+	elsif ( type = Type ( "DocumentRef.InvoiceRecord" )
+		and Object.Base = undefined ) then
+		customer = Object.Customer;
+		if ( TypeOf ( customer ) = Type ( "CatalogRef.Organizations" ) ) then
+			context.Customer = valueOf ( customer );
+			context.Contract = valueOf ( DF.Pick ( customer, "CustomerContract" ) );
+			context.Company = valueOf (	Object.Company );
+			context.Currency = valueOf ( Object.Currency );
+			context.Amount = Object.Amount;
+		endif;
+	endif;
+	if ( context.Customer = undefined
+		or context.Company = undefined ) then
 		return undefined;
 	endif;
-	controlCredit = Options.ControlCredit ();
-	controlContracts = Options.ControlContracts ();
-	controlReturn = Options.ControlTaxInvoices ();
-	control = controlCredit or controlContracts or controlReturn;
+	context.ControlCredit = Options.ControlCredit ();
+	context.ControlContracts = Options.ControlContracts ();
+	context.ControlTaxInvoices = Options.ControlTaxInvoices ();
+	control = context.ControlCredit or context.ControlContracts or context.ControlTaxInvoices;
 	if ( not control ) then
 		return undefined;
 	endif;
+	context.Today = CurrentSessionDate ();
+	return context;
+
+EndFunction
+
+Function valueOf ( Reference )
+
+	return ? ( ValueIsFilled ( Reference ), Reference, undefined );
+
+EndFunction
+
+Function getSalesInfo ( Object, Context )
+	
+	controlCredit = Context.ControlCredit;
+	controlContracts = Context.ControlContracts;
+	controlTaxInvoices = Context.ControlTaxInvoices;
 	selection = new Array ();
 	selection.Add ( "
 	|// #Approved
 	|select Restrictions.Reason as Reason, Restrictions.Ref as Permission,
+	|	Restrictions.Ref.Amount as Amount, Restrictions.Ref.Currency as Currency,
 	|	case
 	|		when Restrictions.Ref.Resolution = value ( Enum.AllowDeny.Allow ) then
 	|			case when &Today between Restrictions.Ref.Date and Restrictions.Ref.Expired
@@ -84,10 +135,20 @@ Function getSalesInfo ( Customer, Company, Contract, Document )
 		selection.Add ( "
 		|;
 		|// Debts
-		|select Debts.Contract.Currency as Currency, Debts.AmountBalance as Debt
+		|select Debts.Contract.Currency as Currency, ( Debts.AmountBalance - Debts.OverpaymentBalance ) as Debt
 		|into Debts
 		|from AccumulationRegister.Debts.Balance ( , Contract.Owner = &Customer ) as Debts
 		|where Debts.AmountBalance > 0
+		|union all
+		|select Debts.Contract.Currency, - ( Debts.AmountBalance - Debts.OverpaymentBalance )
+		|from AccumulationRegister.VendorDebts.Balance ( , Contract.Owner = &Customer ) as Debts
+		|where Debts.AmountBalance > 0
+		|union all
+		|select Debts.Contract.Currency, - ( Debts.Amount - Debts.Overpayment )
+		|from AccumulationRegister.Debts as Debts
+		|where Debts.Recorder = &Ref
+		|union all
+		|select &Currency, &Amount
 		|;
 		|// Exchange Rates
 		|select Rates.Currency as Currency, Rates.Rate as Rate, Rates.Factor as Factor
@@ -100,6 +161,7 @@ Function getSalesInfo ( Customer, Company, Contract, Document )
 	|;
 	|// @Sales
 	|select sum ( Debts.Debt ) as Debt, max ( Debts.Limit ) as Limit,
+	|	max ( Debts.Limit ) - max ( Debts.Debt ) as LimitBalance,
 	|	1 = max ( Debts.Ban ) as Ban, 1 = max ( Debts.Signed ) as Signed
 	|from (
 	|	select 0 as Debt, 0 as Limit, 0 as Ban, 0 as Signed
@@ -157,7 +219,7 @@ Function getSalesInfo ( Customer, Company, Contract, Document )
 		|		and case Contracts.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Contracts.DateEnd end" );
 	endif;
 	selection.Add ( " ) as Debts" );
-	if ( controlReturn ) then
+	if ( controlTaxInvoices ) then
 		selection.Add ( "
 		|;
 		|// @InvoiceOnHand
@@ -185,18 +247,14 @@ Function getSalesInfo ( Customer, Company, Contract, Document )
 		|order by Documents.Date desc" );
 	endif;
 	q = new Query ( StrConcat ( selection ) );
-	q.SetParameter ( "Customer", Customer );
-	q.SetParameter ( "Company", Company );
-	q.SetParameter ( "Contract", Contract );
-	q.SetParameter ( "Ref", Document );
-	q.SetParameter ( "Today", CurrentSessionDate () );
-	data = SQL.Exec ( q );
-	result = new Structure ( "ControlContracts, ControlCredit, ControlReturn, Sales, InvoiceOnHand, Approved" );
-	FillPropertyValues ( result, data );
-	result.ControlContracts = controlContracts;
-	result.ControlCredit = controlCredit;
-	result.ControlReturn = controlReturn;
-	return result;
+	q.SetParameter ( "Customer", Context.Customer );
+	q.SetParameter ( "Company", Context.Company );
+	q.SetParameter ( "Contract", Context.Contract );
+	q.SetParameter ( "Ref", Object.Ref );
+	q.SetParameter ( "Currency", Context.Currency );
+	q.SetParameter ( "Amount", Context.Amount );
+	q.SetParameter ( "Today", Context.Today );
+	return SQL.Exec ( q );
 
 EndFunction
 
@@ -217,13 +275,13 @@ EndFunction
 Function creditExceeded ( Data )
 	
 	return Data.ControlCredit
-		and Data.Sales.Debt > Data.Sales.Limit;
+		and Data.Sales.LimitBalance < 0;
 		
 EndFunction
 
 Function invoiceRequired ( Data )
 	
-	return Data.ControlReturn
+	return Data.ControlTaxInvoices
 		and Data.InvoiceOnHand <> undefined;
 		
 EndFunction
@@ -236,6 +294,8 @@ Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 		parts.Add ( Subject );
 		parts.Add ( ". " );
 		parts.Add ( authorize ( Form, Restriction ) );
+		parts.Add ( " | " );
+		parts.Add ( refresh ( Form ) );
 		picture = PictureLib.Warning16;
 	else
 		resolution = request.Resolution; 
@@ -243,10 +303,22 @@ Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 			parts.Add ( Subject );
 			parts.Add ( ". " );
 			parts.Add ( wait ( request ) );
+			parts.Add ( " | " );
+			parts.Add ( refresh ( Form ) );
 			picture = PictureLib.Time16;
 		elsif ( resolution = Enums.AllowDeny.Allow ) then
-			parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
-			picture = PictureLib.Ok16;
+			if ( Data.Amount > request.Amount
+				or Data.Currency <> request.Currency ) then
+				parts.Add ( Output.RestrictionRequestAmountExceeded () );
+				parts.Add ( ". " );
+				parts.Add ( authorize ( Form, Restriction ) );
+				picture = PictureLib.Warning16;
+			else
+				parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
+				picture = PictureLib.Ok16;
+			endif;
+			parts.Add ( " | " );
+			parts.Add ( refresh ( Form ) );
 		elsif ( resolution = Enums.AllowDeny.Deny ) then
 			parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
 			picture = PictureLib.Forbidden;
@@ -265,7 +337,7 @@ Function requestStatus ( Data, Reason )
 	if ( row = undefined ) then
 		return undefined;
 	else
-		result = new Structure ( "Reason, Resolution, Permission" );
+		result = new Structure ( "Reason, Resolution, Permission, Amount, Currency" );
 		FillPropertyValues ( result, row );
 		return result;
 	endif;
@@ -291,12 +363,40 @@ Function wait ( Request )
 
 EndFunction
 
+Function refresh ( Form )
+	
+	p = new Structure ( "Form", Form.UUID );
+	command = GetUrl ( Metadata.CommonCommands.UpdateSalesRestriction, , " ", p );
+	return new FormattedString ( Output.ClickToUpdate (), , , , command );
+
+EndFunction
+
 Function permissionUrl ( Text, Request )
 	
 	link = GetUrl ( Request.Permission );
 	return new FormattedString ( Text, , , , link );
 
 EndFunction
+
+Procedure displayLimit ( Form, Data, Position )
+	
+	parts = new Array ();
+	amount = Data.Sales.LimitBalance;
+	if ( amount = 0 ) then
+		subject = Output.RestrictionZeroCredit ();
+	else
+		p = new Structure ( "Amount", Conversion.NumberToMoney ( amount ) );
+		subject = Output.RestrictionCreditLimit ( p );
+	endif;
+	parts.Add ( subject );
+	parts.Add ( ". " );
+	parts.Add ( refresh ( Form ) );
+	items = Form.Items;
+	items [ "RestrictionPicture" + Position ].Picture = PictureLib.Info;
+	items [ "RestrictionLabel" + Position ].Title = new FormattedString ( parts );
+	items [ "RestrictionGroup" + Position ].Visible = true;
+
+EndProcedure
 
 Function CheckSales ( Object ) export
 	
@@ -314,7 +414,7 @@ Function CheckSales ( Object ) export
 		errors.Add ( error );
 	endif;
 	if ( creditExceeded ( data ) ) then
-		p = new Structure ( "Amount", Conversion.NumberToMoney ( data.Sales.Debt - data.Sales.Limit ) );
+		p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.LimitBalance ) );
 		subject = Output.RestrictionCreditExceeded ( p );
 		error = getSalesError ( data, Enums.RestrictionReasons.CreditLimit, subject );
 		errors.Add ( error );
@@ -348,6 +448,11 @@ Function getSalesError ( Data, Restriction, Subject )
 			parts.Add ( Subject );
 			parts.Add ( ". " );
 			parts.Add ( Output.RequestAlreadySent () );
+		elsif ( resolution = Enums.AllowDeny.Allow ) then
+			if ( Data.Amount > request.Amount
+				or Data.Currency <> request.Currency ) then
+				parts.Add ( Output.RestrictionRequestAmountExceeded () );
+			endif;
 		elsif ( resolution = Enums.AllowDeny.Deny ) then
 			parts.Add ( Output.RestrictionRequestDenied ( request ) );
 		endif;

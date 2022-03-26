@@ -1,4 +1,3 @@
-&AtServer
 Function Completed ( Object ) export
 	
 	return not ( Object.Responsible.IsEmpty ()
@@ -6,29 +5,17 @@ Function Completed ( Object ) export
 
 EndFunction
 
-&AtServer
-Procedure Init ( Object, Responsible = undefined ) export
-	
-	Object.Responsible = ? ( Responsible = undefined, SessionParameters.User, Responsible );
-
-EndProcedure
-
 Procedure ApplyResolution ( Object ) export
 
-	if ( Object.Resolution = PredefinedValue ( "Enum.AllowDeny.Deny" ) ) then
+	Object.Responsible = SessionParameters.User;
+	if ( Object.Resolution = Enums.AllowDeny.Deny ) then
 		Object.Expired = undefined;
 	else
-		#if ( Client ) then
-			now = SessionDate ();
-		#else
-			now = CurrentSessionDate ();
-		#endif
-		Object.Expired = now + 86400;
+		Object.Expired = CurrentSessionDate () + Enum.ConstantsPermissionExpiration ();
 	endif;
 
 EndProcedure
 
-&AtServer
 Procedure SendSalesResponse ( Object ) export
 	
 	p = new Structure ( "Creator, Document, Resolution, Responsible" );
@@ -39,7 +26,6 @@ Procedure SendSalesResponse ( Object ) export
 	
 EndProcedure
 
-&AtServer
 Procedure SendChangesResponse ( Object ) export
 	
 	p = new Structure ( "Creator, Permission, Responsible, Resolution" );

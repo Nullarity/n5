@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0OD" );
+id = Call ( "Common.ScenarioID", "A0OE" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -12,6 +12,8 @@ createEnv ();
 Commando("e1cib/command/Document.Invoice.Create");
 Set("#Customer", this.Customer);
 Next ();
+warning = Get ( "#RestrictionLabel1" ).TitleText;
+Assert ( warning ).Contains ( "The customer is in debt and does not have a signed contract" );
 #endregion
 
 // *************************

@@ -34,3 +34,15 @@ Function SaveNew ( Form ) export
 	endif;
 
 EndFunction
+
+Function Closing ( WriteParameters ) export
+	
+	var action;
+	if ( not WriteParameters.Property ( Enum.AdditionalPropertiesUserAction (), action ) ) then
+		return false;
+	endif;
+	return action = Enum.DocumentActionsPostAndClose ()
+	or action = Enum.DocumentActionsPostAndNew ()
+	or action = Enum.DocumentActionsSaveAndNew ();
+
+EndFunction

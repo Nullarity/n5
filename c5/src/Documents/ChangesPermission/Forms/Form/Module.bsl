@@ -21,10 +21,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( Object.Ref.IsEmpty () ) then
 		raise Output.InteractiveCreationForbidden ();
 	endif;
-	if ( not PermissionForm.Completed ( Object )
-		and Constraints.CanAllow () ) then
-		PermissionForm.Init ( Object );
-	endif;
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 
@@ -81,6 +77,13 @@ EndProcedure
 
 &AtClient
 Procedure ResolutionOnChange ( Item )
+	
+	applyResolution ();
+
+EndProcedure
+
+&AtServer
+Procedure applyResolution ()
 	
 	PermissionForm.ApplyResolution ( Object );
 	Appearance.Apply ( ThisObject, "Object.Resolution" );

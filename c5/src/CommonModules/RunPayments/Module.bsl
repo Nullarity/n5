@@ -23,6 +23,8 @@ Procedure setContext ( Env )
 		Env.Insert ( "Discounts", "Discounts" );
 		Env.Insert ( "DiscountDebts", "DiscountDebts" );
 		Env.Insert ( "IncomingPayment", true );
+		Env.Insert ( "Money", "Dr" );
+		Env.Insert ( "Organizations", "Cr" );
 	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
 		Env.Insert ( "Refund", true );
 		Env.Insert ( "Customer", true );
@@ -30,6 +32,8 @@ Procedure setContext ( Env )
 		Env.Insert ( "Discounts", "Discounts" );
 		Env.Insert ( "DiscountDebts", "DiscountDebts" );
 		Env.Insert ( "IncomingPayment", false );
+		Env.Insert ( "Money", "Cr" );
+		Env.Insert ( "Organizations", "Dr" );
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
 		Env.Insert ( "Refund", true );
 		Env.Insert ( "Customer", false );
@@ -37,6 +41,8 @@ Procedure setContext ( Env )
 		Env.Insert ( "Discounts", "VendorDiscounts" );
 		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
 		Env.Insert ( "IncomingPayment", true );
+		Env.Insert ( "Money", "Dr" );
+		Env.Insert ( "Organizations", "Cr" );
 	else
 		Env.Insert ( "Refund", false );
 		Env.Insert ( "Customer", false );
@@ -44,6 +50,8 @@ Procedure setContext ( Env )
 		Env.Insert ( "Discounts", "VendorDiscounts" );
 		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
 		Env.Insert ( "IncomingPayment", false );
+		Env.Insert ( "Money", "Cr" );
+		Env.Insert ( "Organizations", "Dr" );
 	endif;
 	
 EndProcedure
@@ -410,26 +418,20 @@ Procedure commitDebt ( Env, Organization, Contract, Amount, Advance )
 	p.Company = fields.Company;
 	refund = Env.Refund;
 	customer = Env.Customer;
+	contractors = Env.Organizations;
+	money = Env.Money;
 	if ( customer ) then
 		if ( refund ) then
-			contractors = "Dr";
-			money = "Cr";
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceGiven, Enums.Operations.CustomerRefund );
 		else
-			contractors = "Cr";
-			money = "Dr";
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceTaken, Enums.Operations.CustomerPayment );
 		endif;
 		debtAmount = Amount;
 	else
 		if ( refund ) then
-			contractors = "Cr";
-			money = "Dr";
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceTaken, Enums.Operations.VendorRefund );
 			debtAmount = Amount;
 		else
-			contractors = "Dr";
-			money = "Cr";
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceGiven, Enums.Operations.VendorPayment );
 			incomeTax = Round ( Amount / 100 * fields.IncomeTaxRate, Metadata.AccountingRegisters.General.Resources.Amount.Type.NumberQualifiers.FractionDigits );
 			debtAmount = Amount - incomeTax;			
@@ -515,7 +517,8 @@ Procedure commitAdvanceVAT ( Env )
 	p.DimDr1 = fields.Organization;
 	p.DimDr2 = fields.Contract;
 	p.AccountCr = fields.VATAccount;
-	p.Amount = advance - advance * ( 100 / ( 100 + fields.VAT ) );
+	amount = Currencies.Convert ( advance, fields.ContractCurrency, fields.LocalCurrency, fields.Date, fields.ContractRate, fields.ContractFactor );
+	p.Amount = amount - amount * ( 100 / ( 100 + fields.VAT ) );
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
 	
@@ -610,11 +613,16 @@ EndProcedure
 Procedure fixCurrencyAmount ( Env )
 	
 	fields = Env.Fields;
+	account = fields.Account;
+	money = "Account" + Env.Money;
 	record = undefined;
 	max = 0;
 	fix = fields.Amount - ? ( Env.Customer or Env.Refund, 0, fields.IncomeTaxAmount );
 	cash = "CurrencyAmount" + ? ( Env.Customer, "Dr", "Cr" );
 	for each row in Env.Buffer do
+		if ( account <> row [ money ]  ) then
+			continue;
+		endif;
 		currencyAmount = row [ cash ];
 		amount = ? ( currencyAmount < 0, - currencyAmount, currencyAmount );
 		fix = fix - currencyAmount;
@@ -633,10 +641,15 @@ EndProcedure
 Procedure fixAmount ( Env )
 	
 	fields = Env.Fields;
+	account = fields.Account;
+	money = "Account" + Env.Money;
 	record = undefined;
 	max = 0;
 	fix = Currencies.Convert ( fields.Amount, fields.Currency, fields.LocalCurrency, fields.Date, fields.Rate, fields.Factor, , , 2 );
 	for each row in Env.Buffer do
+		if ( account <> row [ money ]  ) then
+			continue;
+		endif;
 		amount = ? ( row.Amount < 0, - row.Amount, row.Amount );
 		fix = fix - row.Amount;
 		if ( max < amount ) then

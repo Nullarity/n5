@@ -270,7 +270,7 @@ Procedure sqlItems ()
 	|	Items.Quantity - isnull ( Returned.Quantity, 0 ) as Quantity, Items.QuantityPkg as QuantityPkg,
 	|	Items.RowKey as RowKey, Items.Series as Series, Items.Social as Social, Items.Total as Total,
 	|	Items.VAT as VAT, Items.VATAccount as VATAccount, Items.VATCode as VATCode,
-	|	Items.VATRate as VATRate, Items.Warehouse as Warehouse
+	|	Items.VATRate as VATRate, Items.Warehouse as Warehouse, Returned.Ref is not null as Partial
 	|from Document.VendorInvoice.Items as Items
 	|	//
 	|	// Returned
@@ -401,9 +401,11 @@ Procedure fillTables ()
 	for each row in Env.Items do
 		newRow = table.Add ();
 		FillPropertyValues ( newRow, row );
-		Computations.Packages ( newRow );
-		Computations.Amount ( newRow );
-		Computations.Total ( newRow, vatUse );
+		if ( row.Partial ) then
+			Computations.Packages ( newRow );
+			Computations.Amount ( newRow );
+			Computations.Total ( newRow, vatUse );
+		endif;
 	enddo;		
 	table = Object.FixedAssets;
 	for each row in Env.FixedAssets do

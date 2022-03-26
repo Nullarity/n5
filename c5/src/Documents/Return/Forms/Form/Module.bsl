@@ -267,7 +267,7 @@ Procedure sqlItems ()
 	|	Items.QuantityPkg as QuantityPkg, Items.RowKey as RowKey, Items.SalesCost as SalesCost,
 	|	case when Items.SalesOrder = value ( Document.SalesOrder.EmptyRef ) then Items.Ref.SalesOrder else Items.SalesOrder end as SalesOrder,
 	|	Items.Series as Series, Items.Social as Social, Items.Total as Total, Items.VAT as VAT, Items.VATAccount as VATAccount, Items.VATCode as VATCode,
-	|	Items.VATRate as VATRate, Items.Warehouse as Warehouse
+	|	Items.VATRate as VATRate, Items.Warehouse as Warehouse, Returned.Invoice is not null as Partial
 	|from Document.Invoice.Items as Items
 	|	//
 	|	// Returned
@@ -320,9 +320,11 @@ Procedure fillTables ()
 	for each row in Env.Items do
 		newRow = table.Add ();
 		FillPropertyValues ( newRow, row );
-		Computations.Packages ( newRow );
-		Computations.Amount ( newRow );
-		Computations.Total ( newRow, vatUse );
+		if ( row.Partial ) then
+			Computations.Packages ( newRow );
+			Computations.Amount ( newRow );
+			Computations.Total ( newRow, vatUse );
+		endif;
 	enddo;		
 	updateTotals ( ThisObject );
 	
@@ -555,7 +557,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 		else
 			Output.WrongVATUse ();
 		endif; 
-		elsif ( type = Type ( "Structure" ) ) then
+	elsif ( type = Type ( "Structure" ) ) then
 		fillItems ( SelectedValue.Items );
 		applyInvoices ();
 		updateTotals ( ThisObject );

@@ -179,6 +179,8 @@ Function getPayments ( Object )
 	q.SetParameter ( "Contract", Object.Contract );
 	q.SetParameter ( "Currency", Object.ContractCurrency );
 	q.SetParameter ( "Base", getBase ( Object.Base ) );
+	name = Metadata.FindByType ( TypeOf ( Object.Ref ) ).Name;
+	q.SetParameter ( "Types", Metadata.Documents [ name ].TabularSections.Payments.Attributes.Document.Type.Types () );
 	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.Payment" )
 		or TypeOf ( Object.Ref ) = Type ( "DocumentRef.Refund" ) ) then
 		q.SetParameter ( "Organization", Object.Customer );
@@ -214,6 +216,8 @@ Function sqlPayments ( Object )
 	objectType = TypeOf ( Object.Ref );
 	refund = ( objectType = Type ( "DocumentRef.Refund" ) )
 	or ( objectType = Type ( "DocumentRef.VendorRefund" ) );
+	debts = objectType = Type ( "DocumentRef.Payment" )
+	or objectType = Type ( "DocumentRef.Refund" );
 	s = "
 	|select Balances.Contract as Contract, Balances.Document as Document, Balances.PaymentKey as PaymentKey,
 	|	" + ? ( refund, "- ", "" ) + "( Balances.PaymentBalance + Balances.OverpaymentBalance ) as Payment, 
@@ -221,14 +225,7 @@ Function sqlPayments ( Object )
 	|	" + ? ( refund, "", "- " ) + "Balances.OverpaymentBalance as Advance,
 	|	Balances.BillBalance as Bill, Balances.Detail as Detail,
 	|	PaymentDetails.Option as Option, PaymentDetails.Date as Date, Discounts.Discount as DiscountRate
-	|from AccumulationRegister.";
-	if ( objectType = Type ( "DocumentRef.Payment" )
-		or objectType = Type ( "DocumentRef.Refund" ) ) then
-		s = s + "Debts";
-	else
-		s = s + "VendorDebts";
-	endif;
-	s = s + ".Balance ( ,
+	|from AccumulationRegister." + ? ( debts, "Debts", "VendorDebts" ) + ".Balance ( ,
 	|	( Contract = &Contract or ( Contract.Currency = &Currency and Contract.Owner.Chain = &Organization ) )";
 	if ( ValueIsFilled ( Object.Base ) ) then
 		s = s + " and &Base in ( Document, Detail )";
@@ -259,6 +256,7 @@ Function sqlPayments ( Object )
 	s = s + "
 	|and Balances.Document.Date <= &Period
 	|and isnull ( Balances.Detail.Date, &Period ) <= &Period
+	|and valuetype ( Balances.Document ) in ( &Types )
 	|order by PaymentDetails.Date
 	|";
 	return s;
