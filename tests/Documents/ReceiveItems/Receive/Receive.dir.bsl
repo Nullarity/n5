@@ -4,6 +4,10 @@ form = With ( "Receive Items (create)" );
 
 Set ( "Date", _.Date );
 
+if ( _.Company <> undefined ) then
+	Put ( "#Company", _.Company );
+endif;
+
 Choose ( "#Warehouse" );
 
 p = Call ( "Common.Select.Params" );

@@ -12,6 +12,7 @@ form = With("Organizations (create)");
 
 if (_ = undefined) then
 	name = "_Customer: " + CurrentDate();
+	company = undefined;
 	currency = __.LocalCurrency;
 	terms = undefined;
 	taxGroup = undefined;
@@ -28,6 +29,7 @@ if (_ = undefined) then
 	contractDateEnd = undefined;
 	createCredit = false;
 else
+	company = _.Company;
 	government = _.Government;
 	name = _.Description;
 	currency = _.Currency;
@@ -91,6 +93,10 @@ if ( createCredit ) then
 	With ();
 	Set ("#Amount", creditLimit);
 	Put ("#Customer", name);
+	if (Company<>undefined) then
+		Put ( "#Company", company );
+	endif;
+	Put ("#Customer", name);
 	Click("#FormWriteAndClose");
 	With();
 	Close ();
@@ -102,6 +108,9 @@ With ();
 Activate("#CustomerPage");
 Get ( "#CustomerContract" ).Open ();
 With("*(Contracts)");
+if ( company <> undefined ) then
+	Put ( "#Company", _.Company );
+endif;
 if ( signed ) then
 	Click("#Signed");
 endif;

@@ -11,6 +11,9 @@ if ( TypeOf ( _ ) = Type ( "Structure" ) ) then
 	if ( _.Discounts ) then
 		Click ( "#Discounts" );
 	endif;
+	if ( _.BalanceControl <> undefined ) then
+		Set ( "#BalanceControl", _.BalanceControl );
+	endif;
 else
 	name = ? ( _ = undefined, "_Company: " + CurrentDate (), _ );
 	Put ( "#Description", name );

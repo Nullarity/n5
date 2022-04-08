@@ -2,6 +2,7 @@
 p.Insert ( "Description", "_Customer: " + CurrentDate () );
 p.Insert ( "Government", false );
 p.Insert ( "CodeFiscal" );
+p.Insert ( "Company" );
 p.Insert ( "Currency", __.LocalCurrency );
 p.Insert ( "BankAccount" );
 p.Insert ( "PaymentAddress" );
