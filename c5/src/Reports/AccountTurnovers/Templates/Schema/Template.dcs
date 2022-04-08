@@ -1394,7 +1394,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 	QuantityTurnoverCr, Dim1.*, Dim2.*, Dim3.*}
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, Account = &amp;Account, ,
 	{Company.* as Company, Currency.* as Currency, ExtDimension1.* as Dim1, ExtDimension2.* as Dim2,
-	ExtDimension3.* as Dim3}, {BalancedAccount.* as BalancedAccount} ) as Turnovers
+	ExtDimension3.* as Dim3}, {BalancedAccount.* as BalancedAccount} BalancedAccount in ( select Ref from ChartOfAccounts.General ) ) as Turnovers
 {where Turnovers.AmountTurnoverCr as AmountTurnoverCr,
 	Turnovers.AmountTurnoverDr as AmountTurnoverDr,
 	Turnovers.CurrencyAmountTurnoverCr as CurrencyAmountTurnoverCr,

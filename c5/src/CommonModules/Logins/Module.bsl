@@ -42,3 +42,9 @@ Function User () export
 	return SessionParameters.User;
 	
 EndFunction
+
+Function Agent () export
+
+	return UserName () = Enum.ConstantsAgentUserName ();
+
+EndFunction

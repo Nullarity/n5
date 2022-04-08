@@ -18,11 +18,29 @@ Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 	if ( DataExchange.Load ) then
 		return;
 	endif;
+	if ( not checkAccess () ) then
+		Cancel = true;
+		return;
+	endif;
 	if ( DeletionMark ) then
 		reset ();
 	endif;
 
 EndProcedure
+
+Function checkAccess ()
+	
+	ok = Resolution.IsEmpty ()
+	or IsInRole ( Metadata.Roles.ApproveSales )
+	or Logins.Admin ()
+	or Logins.Agent ();
+	if ( ok ) then
+		return true;
+	endif;
+	Output.ResolutionAlreadyIssued ();
+	return false;
+
+EndFunction
 
 Procedure reset ()
 	

@@ -43,6 +43,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Expired show Object.Resolution = Enum.AllowDeny.Allow;
+	|Responsible show filled ( Object.Resolution );
 	|FormOK show Changed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -56,6 +57,7 @@ Procedure fill ()
 	
 	data = baseData ();
 	Object.Date = CurrentSessionDate ();
+	Object.DeletionMark = false;
 	Object.Document = Base;
 	Object.Amount = data.Amount;
 	Object.Currency = data.Currency;

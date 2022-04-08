@@ -180,13 +180,15 @@ Procedure completeCost ( Env, Cost, Items )
 	for each row in Items do
 		costRow = Cost.Add ();
 		FillPropertyValues ( costRow, row );
+		balance = row.QuantityBalance;
+		outstanding = row.Quantity - balance;
+		costRow.Quantity = outstanding;
 		msg.Item = row.Item;
 		msg.Department = row.Department;
 		msg.Employee = row.Employee;
-		quantityBalance = row.QuantityBalance;
 		unit = row.Unit;
-		msg.QuantityBalance = Conversion.NumberToQuantity ( quantityBalance, unit );
-		msg.Quantity = Conversion.NumberToQuantity ( row.Quantity - quantityBalance, unit );
+		msg.QuantityBalance = Conversion.NumberToQuantity ( balance, unit );
+		msg.Quantity = Conversion.NumberToQuantity ( outstanding, unit );
 		Output.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
 	enddo; 
 		

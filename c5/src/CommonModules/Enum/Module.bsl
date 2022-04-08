@@ -1055,43 +1055,43 @@ EndFunction
 
 Function DocumentActionsPost () export
 	
-	return "DocumentActionsPost";
+	return "DAP";
 	
 EndFunction 
 
 Function DocumentActionsUnpost () export
 	
-	return "DocumentActionsUnpost";
+	return "DAU";
 	
 EndFunction 
 
 Function DocumentActionsDelete () export
 	
-	return "DocumentActionsDelete";
+	return "DAD";
 	
 EndFunction 
 
 Function DocumentActionsUndelete () export
 	
-	return "DocumentActionsUndelete";
+	return "DAUn";
 	
 EndFunction 
 
 Function DocumentActionsSaveAndNew () export
 	
-	return "DocumentActionsSaveAndNew";
+	return "DASAN";
 	
 EndFunction 
 
 Function DocumentActionsPostAndNew () export
 	
-	return "DocumentActionsPostAndNew";
+	return "DAPAN";
 	
 EndFunction 
 
 Function DocumentActionsPostAndClose () export
 	
-	return "DocumentActionsPostAndClose";
+	return "DAPAC";
 	
 EndFunction 
 
@@ -1267,6 +1267,13 @@ EndFunction
 Function ConstantsRemoteActionExpiration () export
 	
 	return 86400;
+	
+EndFunction
+
+&AtServer
+Function ConstantsAgentUserName () export
+	
+	return "_agent";
 	
 EndFunction
 

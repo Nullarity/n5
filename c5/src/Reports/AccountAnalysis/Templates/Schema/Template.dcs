@@ -898,7 +898,7 @@ from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;Da
 from AccountingRegister.General.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto,
 	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
 	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3},
-	{BalancedAccount.* as BalancedAccount} ) as Turnovers
+	{BalancedAccount.* as BalancedAccount} BalancedAccount in ( select Ref from ChartOfAccounts.General ) ) as Turnovers
 {where BalancedExtDimension1.* as BalancedDim1, BalancedExtDimension2.* as BalancedDim2,
 	BalancedExtDimension3.* as BalancedDim3}
 </query>

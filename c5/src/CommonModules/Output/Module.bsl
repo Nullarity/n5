@@ -15,8 +15,20 @@ Function FormatStr ( Str, Params ) export
 	endif;
 	result = Str;
 	p = new Array ();
-	for each parameter in Params do
-		p.Add ( parameter.Key );
+	#if ( Server ) then
+		if ( TypeOf ( Params ) = Type ( "ValueTableRow" ) ) then
+			set = Params.Owner ().Columns;
+			keyID = "Name";
+		else
+			set = Params;
+			keyID = "Key";
+		endif;
+	#else
+		set = Params;
+		keyID = "Key";
+	#endif
+	for each parameter in set do
+		p.Add ( parameter [ keyID ] );
 	enddo;
 	indexOfMax = 0;
 	while ( true ) do
@@ -8426,3 +8438,35 @@ Function RestrictionsRequestWarning ( Params = undefined ) export
 	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
 EndFunction
+
+&AtClient
+Function ForThisDocument () export
+
+	text = NStr ( "en = 'For the current document	';ro = 'Pentru documentul curent';ru = 'Для текущего документа'" );
+	return text;
+
+EndFunction
+
+&AtClient
+Function ForTheDay () export
+
+	text = NStr ( "en = 'For the day';ro = 'Pentru o zi';ru = 'На день'" );
+	return text;
+
+EndFunction
+
+&AtClient
+Function OpenPeriodRequest () export
+
+	text = NStr ( "en = 'Open Period';ro = 'Deschideți o perioadă';ru = 'Открыть период'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Procedure ResolutionAlreadyIssued ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The resolution has already been issued, it is not allowed to change the document';ro = 'Rezoluția a fost deja emisă, nu este permisă modificarea documentului';ru = 'Резолюция уже выдана, изменение документа запрещено'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

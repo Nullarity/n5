@@ -310,11 +310,14 @@ Procedure completeCost ( Env, Cost, Items )
 		endif; 
 		costRow = Cost.Add ();
 		FillPropertyValues ( costRow, row );
+		balance = row.QuantityBalance;
+		outstanding = row.Quantity - balance;
+		costRow.Quantity = outstanding;
 		msg.Item = row.Item;
 		msg.Warehouse = row.Warehouse;
-		msg.QuantityBalance = Conversion.NumberToQuantity ( row.QuantityBalance, row.Package );
-		msg.Quantity = Conversion.NumberToQuantity ( row.Quantity - row.QuantityBalance, row.Package );
-		Output.ItemsCostBalanceError ( msg, "Items [" + Format ( row.LineNumber - 1, "NG=;NZ=" ) + "]." + column, Env.Ref );
+		msg.QuantityBalance = Conversion.NumberToQuantity ( balance, row.Unit );
+		msg.Quantity = Conversion.NumberToQuantity ( outstanding, row.Unit );
+		Output.ItemsCostBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), Env.Ref );
 	enddo; 
 		
 EndProcedure 

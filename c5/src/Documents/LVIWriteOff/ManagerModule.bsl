@@ -260,12 +260,14 @@ Procedure completeCost ( Env, Cost, Items )
 		endif; 
 		costRow = Cost.Add ();
 		FillPropertyValues ( costRow, row );
+		balance = row.QuantityBalance;
+		outstanding = row.Quantity - balance;
+		costRow.Quantity = outstanding;
 		msg.Item = item;
 		msg.Department = row.Department;
 		msg.Employee = row.Employee;
-		quantityBalance = row.QuantityBalance;
-		msg.QuantityBalance = Conversion.NumberToQuantity ( quantityBalance, package );
-		msg.Quantity = Conversion.NumberToQuantity ( row.Quantity - quantityBalance, package );
+		msg.QuantityBalance = Conversion.NumberToQuantity ( balance, package );
+		msg.Quantity = Conversion.NumberToQuantity ( outstanding, package );
 		Output.LVIBalanceError ( msg, Output.Row ( "Items", row.LineNumber, column ), ref );
 	enddo; 
 		

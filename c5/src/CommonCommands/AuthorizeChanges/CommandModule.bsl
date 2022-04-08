@@ -4,108 +4,67 @@ async Procedure CommandProcessing ( Command, ExecuteParameters )
 
 	params = ExecuteParameters.Parameters;
 	form = Forms.FindByID ( params.Form );
-	object = form.Object;
-	ref = object.Ref;
 	variant = await askPeriod ( form );
 	if ( variant = undefined ) then
 		return;
-	elsif ( variant = 0 ) then
-		if ( not DocumentForm.SaveNew ( form ) ) then
+	else
+		forDocument = variant = 0;
+		if ( forDocument
+			and not DocumentForm.SaveNew ( form ) ) then
 			return;
 		endif;
-		document = ref;
-		scope = document;
-	else
-		document = undefined;
-		scope = object.Date;
 	endif;
-	makeRequest ( document, object.Date, TypeOf ( ref ) );
-	Notify ( Enum.MessageChangesPermissionIsSaved (), scope );
+	openRequest ( Form, forDocument );
 
 EndProcedure
 
-&Atclient
+&AtClient
 async Function askPeriod ( Form )
 	
 	menu = new ValueList ();
-	menu.Add ( 0, "This Document" );
-	menu.Add ( 1, "For the day" );
-	item = await menu.ChooseItemAsync ( "how", Form.CurrentItem );
+	menu.Add ( 0, Output.ForThisDocument () );
+	menu.Add ( 1, Output.ForTheDay () );
+	item = await menu.ChooseItemAsync ( Output.OpenPeriodRequest (), Form.CurrentItem );
 	return ? ( item = undefined, undefined, item.Value );
 	
 EndFunction
 
-&AtServer
-Procedure makeRequest ( val Document, val Day, val Class )
+&AtClient
+Procedure openRequest ( Form, ForDocument )
 
-	if ( Document = undefined ) then
-		company = Logins.Settings ( "Company" ).Company;
-		organization = undefined;
-	else
-		list = new Array ();
-		list.Add ( "Company" );
-		meta = Metadata.FindByType ( TypeOf ( Document ) ).Attributes;
-		if ( meta.Find ( "Customer" ) <> undefined ) then
-			list.Add ( "Customer as Organization" );
-		elsif ( meta.Find ( "Vendor" ) ) then
-			list.Add ( "Vendor as Organization" );
-		endif;
-		fields = DF.Values ( Document, StrConcat ( list, "," ) );
-		company = fields.Company;
-		organization = fields.Organization;
-	endif;
-	ref = findPermission ( Document, Day, company );
-	if ( ref = undefined ) then
-		doc = Documents.ChangesPermission.CreateDocument ();
-	else
-		doc = ref.GetObject ();
-		if ( Day = doc.Day ) then
-			doc.DeletionMark = false;
-			doc.Responsible = undefined;
-			doc.Resolution = undefined;
-			doc.Expired = undefined;
-			doc.Class = undefined;
-		else
-			doc.SetDeletionMark ( true );
-			doc = Documents.ChangesPermission.CreateDocument ();
-		endif;
-	endif;
-	doc.Date = CurrentSessionDate ();
-	doc.Document = Document;
-	doc.Class = MetadataRef.Get ( Metadata.FindByType ( Class ).FullName () );
-	doc.Day = Day;
-	doc.Organization = organization;
-	doc.Company = company;
-	doc.Creator = SessionParameters.User;
-	doc.Write ();
-	send ( doc.Ref );
+	object = Form.Object;
+	date = object.Date;
+	ref = object.Ref;
+	base = ? ( ForDocument, ref, date );
+	p = new Structure ( "Key, Base, Document", findPermission ( ref, date ), base, ref );
+	OpenForm ( "Document.ChangesPermission.ObjectForm", p, Form );
 
 EndProcedure
 
 &AtServer
-Function findPermission ( Document, Day, Company )
+Function findPermission ( val Document, val Day )
 	
+	q = new Query ();
 	s = "
 	|select top 1 Documents.Ref as Ref
 	|from Document.ChangesPermission as Documents
-	|where Documents.Document = &Document
-	|and Documents.Day = &Day
-	|and Documents.Company = &Company
-	|";
-	q = new Query ( s );
-	q.SetParameter ( "Document", Document );
-	q.SetParameter ( "Day", Day );
-	q.SetParameter ( "Company", Company );
+	|where ";
+	if ( Document.IsEmpty () ) then
+		s = s + "
+		|Documents.Document = undefined
+		|and Documents.Class = &Class
+		|and Documents.Day = &Day
+		|and Documents.Creator = &Creator";
+		q.SetParameter ( "Class", MetadataRef.Get ( Document.Metadata ().FullName () ) );
+		q.SetParameter ( "Day", BegOfDay ( Day ) );
+		q.SetParameter ( "Creator", SessionParameters.User );
+	else
+		s = s + "
+		|Documents.Document = &Document";
+		q.SetParameter ( "Document", Document );
+	endif;
+	q.Text = s;
 	table = q.Execute ().Unload ();
 	return ? ( table.Count () = 0, undefined, table [ 0 ].Ref );
 
 EndFunction
-
-&AtServer
-Procedure send ( Document )
-	
-	params = new Array ();
-	params.Add ( Document );
-	Jobs.Run ( "ChangesPermissionMailing.Send", params, , , TesterCache.Testing () );
-	
-EndProcedure

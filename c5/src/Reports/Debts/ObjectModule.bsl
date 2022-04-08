@@ -9,7 +9,6 @@ Procedure OnCompose () export
 	enablePeriods ();
 	setPeriod ();
 	filterPaymentPeriods ();
-	filterByCurrency ();
 	
 EndProcedure
 
@@ -18,6 +17,7 @@ Procedure hideParams ()
 	list = Params.HiddenParams;
 	list.Add ( "PeriodFactor" );
 	list.Add ( "PeriodsBorder" );
+	list.Add ( "LocalCurrency" );
 	
 EndProcedure 
 
@@ -66,17 +66,6 @@ Procedure filterPaymentPeriods ()
 		DC.AddFilter ( group, "PaymentDate", dateEnd, DataCompositionComparisonType.LessOrEqual );
 		DC.SetFilter ( group, "PaymentBalance", 0, DataCompositionComparisonType.Greater );
 	endif; 
-	
-EndProcedure
-
-Procedure filterByCurrency ()
-	
-	settings = Params.Settings;
-	currency = DC.FindFilter ( settings, "Currency" );
-	if ( not currency.Use
-		or currency.RightValue.IsEmpty () ) then
-		DC.SetFilter ( settings, "Currency", Application.Currency () );
-	endif;
 	
 EndProcedure
 

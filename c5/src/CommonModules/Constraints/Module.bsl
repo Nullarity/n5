@@ -6,6 +6,9 @@ Procedure ShowSales ( Form ) export
 	if ( data = undefined ) then
 		return;
 	endif;
+	if ( permissionIssued ( Form, data ) ) then
+		return;
+	endif;
 	position = 1;
 	if ( customerBanned ( data ) ) then
 		subject = Output.RestrictionSalesBanned ();
@@ -258,6 +261,44 @@ Function getSalesInfo ( Object, Context )
 
 EndFunction
 
+Function permissionIssued ( Form, Data )
+	
+	approval = Data.Approved;
+	if ( approval.Count () = 0
+		or approval [ 0 ].Resolution.IsEmpty () ) then
+		return false;
+	endif;
+	position = 1;
+	for each request in approval do
+		resolution = request.resolution;
+		parts = new Array ();
+		if ( resolution = Enums.AllowDeny.Allow ) then
+			if ( Data.Amount > request.Amount
+				or Data.Currency <> request.Currency ) then
+				parts.Add ( Output.RestrictionRequestAmountExceeded () );
+				parts.Add ( ". " );
+				parts.Add ( authorize ( Form, request.Reason ) );
+				picture = PictureLib.Warning16;
+			else
+				parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
+				picture = PictureLib.Ok16;
+			endif;
+			parts.Add ( " | " );
+			parts.Add ( refresh ( Form ) );
+		elsif ( resolution = Enums.AllowDeny.Deny ) then
+			parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
+			picture = PictureLib.Forbidden;
+		endif;
+		items = Form.Items;
+		items [ "RestrictionPicture" + position ].Picture = picture;
+		items [ "RestrictionLabel" + position ].Title = new FormattedString ( parts );
+		items [ "RestrictionGroup" + position ].Visible = true;
+		position = position + 1;
+	enddo;
+	return true;
+
+EndFunction
+
 Function customerBanned ( Data )
 	
 	return Data.Sales.Ban;
@@ -298,31 +339,12 @@ Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 		parts.Add ( refresh ( Form ) );
 		picture = PictureLib.Warning16;
 	else
-		resolution = request.Resolution; 
-		if ( resolution.IsEmpty () ) then
-			parts.Add ( Subject );
-			parts.Add ( ". " );
-			parts.Add ( wait ( request ) );
-			parts.Add ( " | " );
-			parts.Add ( refresh ( Form ) );
-			picture = PictureLib.Time16;
-		elsif ( resolution = Enums.AllowDeny.Allow ) then
-			if ( Data.Amount > request.Amount
-				or Data.Currency <> request.Currency ) then
-				parts.Add ( Output.RestrictionRequestAmountExceeded () );
-				parts.Add ( ". " );
-				parts.Add ( authorize ( Form, Restriction ) );
-				picture = PictureLib.Warning16;
-			else
-				parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
-				picture = PictureLib.Ok16;
-			endif;
-			parts.Add ( " | " );
-			parts.Add ( refresh ( Form ) );
-		elsif ( resolution = Enums.AllowDeny.Deny ) then
-			parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
-			picture = PictureLib.Forbidden;
-		endif;
+		parts.Add ( Subject );
+		parts.Add ( ". " );
+		parts.Add ( wait ( request ) );
+		parts.Add ( " | " );
+		parts.Add ( refresh ( Form ) );
+		picture = PictureLib.Time16;
 	endif;
 	items = Form.Items;
 	items [ "RestrictionPicture" + Position ].Picture = picture;
@@ -331,16 +353,15 @@ Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 
 EndProcedure
 
-Function requestStatus ( Data, Reason )
+Function requestStatus ( Data, Reason = undefined )
 	
 	row = Data.Approved.Find ( Reason, "Reason" );
 	if ( row = undefined ) then
 		return undefined;
-	else
-		result = new Structure ( "Reason, Resolution, Permission, Amount, Currency" );
-		FillPropertyValues ( result, row );
-		return result;
 	endif;
+	result = new Structure ( "Reason, Resolution, Permission, Amount, Currency" );
+	FillPropertyValues ( result, row );
+	return result;
 
 EndFunction
 
@@ -426,6 +447,7 @@ Function CheckSales ( Object ) export
 		errors.Add ( error );
 	endif;
 	ok = true;
+	Collections.Group ( errors );
 	for each error in errors do
 		if ( error <> undefined ) then
 			Output.PutMessage ( error, , , Object.Ref );
@@ -624,6 +646,7 @@ Function getAccessInfo ( Ref, Date )
 	|	where Restrictions.Document = undefined
 	|	and Restrictions.Class = &Document
 	|	and Restrictions.Day = &DocumentDay
+	|	and Restrictions.Creator = &User
 	|	and not Restrictions.DeletionMark
 	|	) as Restrictions
 	|;
@@ -655,8 +678,8 @@ Function getAccessInfo ( Ref, Date )
 	|and Rights.Document in ( value ( Catalog.Metadata.EmptyRef ), &Document )
 	|and (
 	|	( Rights.Method = value ( Enum.RestrictionMethods.Period )
-	|		and &DocumentDate > Rights.DateStart
-	|		and ( &DocumentDate < Rights.DateEnd or Rights.DateEnd = datetime ( 1, 1, 1 ) ) )
+	|		and &DocumentDate between Rights.DateStart
+	|			and ( case Rights.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 1, 1 ) else Rights.DateEnd end ) )
 	|	or
 	|	( Rights.Method = value ( Enum.RestrictionMethods.Span )
 	|		and Rights.Access = value ( Enum.AllowDeny.Allow )
@@ -674,7 +697,8 @@ Function getAccessInfo ( Ref, Date )
 	|		and Rights.Access = value ( Enum.AllowDeny.Allow )
 	|		and datediff ( &DocumentDate, &Today, day ) <= Rights.Duration )
 	|	or
-	|		Rights.Method = value ( Enum.RestrictionMethods.EmptyRef ) )
+	|		Rights.Method = value ( Enum.RestrictionMethods.EmptyRef )
+	|	)
 	|and ( &Today < Rights.Expiration or Rights.Expiration = datetime ( 1, 1, 1 ) )
 	|order by Weight desc
 	|";
