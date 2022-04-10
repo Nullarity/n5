@@ -84,7 +84,7 @@ Function getContext ( Object )
 			context.Amount = 0;
 		endif;
 	elsif ( type = Type ( "DocumentRef.InvoiceRecord" )
-		and Object.Base = undefined ) then
+		and Documents.InvoiceRecord.Independent ( Object ) ) then
 		customer = Object.Customer;
 		if ( TypeOf ( customer ) = Type ( "CatalogRef.Organizations" ) ) then
 			context.Customer = valueOf ( customer );

@@ -40,8 +40,7 @@ EndProcedure
 
 Function checkSales ( WriteMode )
 	
-	dont = Base <> undefined
-	or TypeOf ( Customer ) <> Type ( "CatalogRef.Organizations" );
+	dont = not Documents.InvoiceRecord.Independent ( ThisObject );
 	return dont or Constraints.CheckSales ( ThisObject );
 
 EndFunction

@@ -12,6 +12,13 @@ Procedure PresentationGetProcessing(Data, Presentation, StandardProcessing)
 	
 EndProcedure
 
+Function Independent ( Object ) export
+	
+	return Object.Base = undefined
+		and TypeOf ( Object.Customer ) = Type ( "CatalogRef.Organizations" );
+
+EndFunction
+
 #region Printing
 
 Function Print(Params, Env) export

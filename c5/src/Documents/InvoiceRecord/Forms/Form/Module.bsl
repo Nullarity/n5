@@ -23,6 +23,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	setWarning ( ThisObject );
 	initStatuses ( ThisObject );
 	updateChangesPermission ();
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -129,7 +130,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		initStatuses ( ThisObject );
 		updateChangesPermission ();
 	endif;
-	adjustCustomerControl ( ThisObject );
+	adjustCustomerControl ();
 	setAccuracy ();
 	setLinks ();
 	if ( ValueIsFilled ( Object.Customer ) ) then
@@ -210,7 +211,7 @@ Procedure fillNew ()
 		setAccount ( Object );
 	endif;
 	if ( ValueIsFilled ( Object.Customer ) ) then
-		setCustomerAccount ( Object );
+		setCustomerAccount ();
 	endif;
 	
 EndProcedure
@@ -229,8 +230,8 @@ Procedure setAccount ( Object )
 
 EndProcedure
 
-&AtClientAtServerNoContext
-Procedure setCustomerAccount ( Object )
+&AtServer
+Procedure setCustomerAccount ()
 
 	customer = Object.Customer;
 	if ( TypeOf ( customer ) = Type ( "CatalogRef.Companies" ) ) then
@@ -242,11 +243,11 @@ Procedure setCustomerAccount ( Object )
 
 EndProcedure
 
-&AtClientAtServerNoContext
-Procedure adjustCustomerControl ( Form )
+&AtServer
+Procedure adjustCustomerControl ()
 	
-	if ( Form.Object.Customer <> undefined ) then
-		Form.Items.Customer.ChooseType = false;
+	if ( Object.Customer <> undefined ) then
+		Items.Customer.ChooseType = false;
 	endif;
 
 EndProcedure
@@ -468,6 +469,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.MessageSalesPermissionIsSaved ()
+		and Parameter = Object.Ref ) then
+		updateSalesPermission ();
+	elsif ( EventName = Enum.MessageUpdateSalesPermission ()
+		and Parameter = UUID ) then
+		updateSalesPermission ();
 	endif;
 
 EndProcedure
@@ -504,6 +511,13 @@ Procedure addItem ( Fields )
 	calcTotals ( Object );
 	
 EndProcedure 
+
+&AtServer
+Procedure updateSalesPermission ()
+
+	Constraints.ShowSales ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure AfterWrite ( WriteParameters ) 
@@ -717,11 +731,21 @@ EndProcedure
 &AtClient
 Procedure CustomerOnChange ( Item )
 	
-	if ( ValueIsFilled ( Object.Customer ) ) then
-		setCustomerAccount ( Object );
-	endif;
-	adjustCustomerControl ( ThisObject );
+	applyCustomer ();
 	
+EndProcedure
+
+&AtServer
+Procedure applyCustomer ()
+	
+	if ( ValueIsFilled ( Object.Customer ) ) then
+		setCustomerAccount ();
+	endif;
+	if ( Documents.InvoiceRecord.Independent ( Object ) ) then
+		Constraints.ShowSales ( ThisObject );
+	endif;
+	adjustCustomerControl ();
+
 EndProcedure
 
 &AtClient
