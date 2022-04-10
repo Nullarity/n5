@@ -94,18 +94,3 @@ Function changesAllowed ( Status )
 	or IsInRole ( Metadata.Roles.ModifyIssuedInvoices );
 	
 EndFunction
-
-Procedure CheckSales ( Source, Cancel, WriteMode, PostingMode ) export
-	
-	dont = Cancel
-	or Source.DataExchange.Load
-	or WriteMode = DocumentWriteMode.UndoPosting
-	or ( WriteMode = DocumentWriteMode.Write and not Source.Posted );
-	if ( dont ) then
-		return;
-	endif;
-	if ( not Constraints.CheckSales ( Source ) ) then
-		Cancel = true;
-	endif; 
-
-EndProcedure

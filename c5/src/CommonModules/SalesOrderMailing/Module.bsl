@@ -87,29 +87,39 @@ Procedure sqlReceivers ( Params, Env )
 	|// #Receivers
 	|select Receivers.User as User, Receivers.RoutePoint as RoutePoint, Receivers.Email as Email, isnull ( Memos.Memo, &EmptyMemo ) as Memo
 	|from (
-	|	select Tasks.User as User, Tasks.RoutePoint as RoutePoint, Tasks.User.Email as Email
-	|	from Task.Task as Tasks
-	|	where not Tasks.Executed
-	|	and not Tasks.DeletionMark
-	|	and Tasks.BusinessProcess = &Process
-	|	and Tasks.User <> value ( Catalog.Users.EmptyRef )
-	|	and Tasks.User.Email <> """"
-	|	union
-	|	select BPRouter.User, Tasks.RoutePoint, BPRouter.User.Email
-	|	from Task.Task as Tasks
-	|		//
-	|		// BPRouter
-	|		//
-	|		join InformationRegister.BPRouter as BPRouter
-	|		on BPRouter.Activity
-	|		and BPRouter.Role = Tasks.Role
-	|		and BPRouter.Department = Tasks.Department
-	|		and Tasks.RoutePoint = value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution )
-	|		and BPRouter.User.Email <> """"
-	|	where not Tasks.Executed
-	|	and not Tasks.DeletionMark
-	|	and Tasks.BusinessProcess = &Process
-	|	and Tasks.User = value ( Catalog.Users.EmptyRef )
+	|	select max ( Receivers.User ) as User, Receivers.RoutePoint as RoutePoint, Receivers.Email as Email
+	|	from (
+	|		select Tasks.User as User, Tasks.RoutePoint as RoutePoint, Tasks.User.Email as Email
+	|		from Task.Task as Tasks
+	|		where not Tasks.Executed
+	|		and not Tasks.DeletionMark
+	|		and Tasks.BusinessProcess = &Process
+	|		and Tasks.User <> value ( Catalog.Users.EmptyRef )
+	|		and Tasks.User.Email <> """"
+	|		union
+	|		select BPRouter.User, Tasks.RoutePoint, BPRouter.User.Email
+	|		from Task.Task as Tasks
+	|			//
+	|			// BPRouter
+	|			//
+	|			join InformationRegister.BPRouter as BPRouter
+	|			on BPRouter.Activity
+	|			and BPRouter.Role = Tasks.Role
+	|			and BPRouter.Department = Tasks.Department
+	|			and Tasks.RoutePoint = value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution )
+	|			and BPRouter.User.Email <> """"
+	|		where not Tasks.Executed
+	|		and not Tasks.DeletionMark
+	|		and Tasks.BusinessProcess = &Process
+	|		and Tasks.User = value ( Catalog.Users.EmptyRef )
+	|		) as Receivers
+	|	where Receivers.RoutePoint in ( value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution ),
+	|		value ( BusinessProcess.SalesOrder.RoutePoint.Reject ),
+	|		value ( BusinessProcess.SalesOrder.RoutePoint.Rework ),
+	|		value ( BusinessProcess.SalesOrder.RoutePoint.Shipping ),
+	|		value ( BusinessProcess.SalesOrder.RoutePoint.Invoicing )
+	|		)
+	|	group by Receivers.RoutePoint, Receivers.Email
 	|	) as Receivers
 	|	//
 	|	// Memo
@@ -121,12 +131,6 @@ Procedure sqlReceivers ( Params, Env )
 	|		order by Memos.Date desc
 	|	) as Memos
 	|	on Memos.User = &Sender
-	|where Receivers.RoutePoint in ( value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Reject ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Rework ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Shipping ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Invoicing )
-	|	)
 	|";
 	Env.Selection.Add ( s );
 	

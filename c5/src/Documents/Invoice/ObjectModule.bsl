@@ -103,10 +103,21 @@ Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 	endif; 
 	if ( DeletionMark ) then
 		InvoiceRecords.Delete ( ThisObject );
+	elsif ( not checkSales ( WriteMode ) ) then
+		Cancel = true;
+		return;
 	endif;
 	setProperties ();
 	
 EndProcedure
+
+Function checkSales ( WriteMode )
+
+	dont = ( WriteMode = DocumentWriteMode.UndoPosting )
+	or ( WriteMode = DocumentWriteMode.Write and not Posted );
+	return dont or Constraints.CheckSales ( ThisObject );
+
+EndFunction
 
 Procedure setProperties ()
 	

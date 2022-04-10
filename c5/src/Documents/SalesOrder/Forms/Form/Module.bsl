@@ -17,6 +17,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	OrderForm.LoadProcess ( ThisObject );
 	initCurrency ();
 	updateChangesPermission ();
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -216,6 +217,7 @@ Procedure applyContract ()
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	InvoiceForm.SetDelivery ( ThisObject, data );
 	PaymentsTable.Fill ( Object );
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	
 EndProcedure
@@ -310,6 +312,7 @@ Procedure fillByQuote ()
 	Object.Services.Load ( Env.Services );
 	Object.Payments.Load ( Env.Payments );
 	InvoiceForm.SetCurrencyList ( ThisObject );
+	Constraints.ShowSales ( ThisObject );
 
 EndProcedure
 
@@ -575,6 +578,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.MessageSalesPermissionIsSaved ()
+		and Parameter = Object.Ref ) then
+		updateSalesPermission ();
+	elsif ( EventName = Enum.MessageUpdateSalesPermission ()
+		and Parameter = UUID ) then
+		updateSalesPermission ();
 	endif;
 
 EndProcedure
@@ -615,6 +624,13 @@ Procedure updateLinks ()
 	setLinks ();
 	updateBalanceDue ();
 	
+EndProcedure
+
+&AtServer
+Procedure updateSalesPermission ()
+
+	Constraints.ShowSales ( ThisObject );
+
 EndProcedure
 
 &AtClient

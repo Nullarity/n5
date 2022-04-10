@@ -29,9 +29,22 @@ Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 	if ( DataExchange.Load ) then
 		return;
 	endif;
+	if ( not DeletionMark
+		and not checkSales ( WriteMode ) ) then
+		Cancel = true;
+		return;
+	endif;
 	RegulatedRanges.Fill ( ThisObject );
 
 EndProcedure
+
+Function checkSales ( WriteMode )
+	
+	dont = Base <> undefined
+	or TypeOf ( Customer ) <> Type ( "CatalogRef.Organizations" );
+	return dont or Constraints.CheckSales ( ThisObject );
+
+EndFunction
 
 Procedure OnWrite ( Cancel )
 	

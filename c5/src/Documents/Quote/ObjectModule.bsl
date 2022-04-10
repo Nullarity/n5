@@ -20,6 +20,25 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
 EndProcedure
 
+Procedure BeforeWrite(Cancel, WriteMode, PostingMode)
+
+	if ( DataExchange.Load ) then
+		return;
+	endif;
+	if ( not checkSales ( WriteMode ) ) then
+		Cancel = true;
+	endif;
+	
+EndProcedure
+
+Function checkSales ( WriteMode )
+	
+	dont = ( WriteMode = DocumentWriteMode.UndoPosting )
+	or ( WriteMode = DocumentWriteMode.Write and not Posted );
+	return dont or Constraints.CheckSales ( ThisObject );
+
+EndFunction
+
 Procedure checkWarehouse ( CheckedAttributes )
 	
 	if ( Items.Count () > 0 ) then

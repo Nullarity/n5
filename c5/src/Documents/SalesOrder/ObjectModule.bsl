@@ -169,13 +169,25 @@ Procedure OnWrite ( Cancel )
 		return;
 	endif; 
 	SetPrivilegedMode ( true );
-	if ( not performCommand () ) then
+	if ( not checkSales ()
+		or not performCommand () ) then
 		Cancel = true;
 		return;
 	endif; 
 	sendEmails ();
 	
 EndProcedure
+
+Function checkSales ()
+	
+	if ( Command = undefined
+		or Command = Enums.Actions.Reject ) then
+		return true;
+	else
+		return Constraints.CheckSales ( ThisObject );
+	endif;
+
+EndFunction
 
 Function performCommand ()
 	

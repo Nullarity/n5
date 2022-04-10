@@ -78,7 +78,11 @@ Function getContext ( Object )
 		context.Contract = valueOf ( Object.Contract );
 		context.Company = valueOf ( Object.Company );
 		context.Currency = valueOf ( Object.Currency );
-		context.Amount = Object.Amount;
+		if ( type = Type ( "DocumentRef.Invoice" ) ) then 
+			context.Amount = Object.Amount;
+		else
+			context.Amount = 0;
+		endif;
 	elsif ( type = Type ( "DocumentRef.InvoiceRecord" )
 		and Object.Base = undefined ) then
 		customer = Object.Customer;
@@ -182,22 +186,22 @@ Function getSalesInfo ( Object, Context )
 		selection.Add ( "
 		|union all
 		|select case when Rates.Rate is null then Debts.Debt else Debts.Debt * Rates.Rate / Rates.Factor end, 0, 0, 0
-		|	from Debts as Debts
-		|		//
-		|		// Rates
-		|		//
-		|		left join Rates as Rates
-		|		on Rates.Currency = Debts.Currency
-		|	union all
-		|	select 0, Credits.Amount, 0, 0
-		|	from (
-		|		select top 1 Credits.Amount as Amount
-		|		from Document.CreditLimit as Credits
-		|		where not Credits.DeletionMark
-		|		and Credits.Customer = &Customer
-		|		and Credits.Company = &Company
-		|		order by Credits.Date desc
-		|		) as Credits" );
+		|from Debts as Debts
+		|	//
+		|	// Rates
+		|	//
+		|	left join Rates as Rates
+		|	on Rates.Currency = Debts.Currency
+		|union all
+		|select 0, Credits.Amount, 0, 0
+		|from (
+		|	select top 1 case when Credits.Disable then 9999999999 else Credits.Amount end as Amount
+		|	from Document.CreditLimit as Credits
+		|	where not Credits.DeletionMark
+		|	and Credits.Customer = &Customer
+		|	and Credits.Company = &Company
+		|	order by Credits.Date desc
+		|	) as Credits" );
 	endif;
 	if ( controlContracts ) then
 		selection.Add ( "
