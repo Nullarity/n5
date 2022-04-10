@@ -18,6 +18,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	initCurrency ();
 	setRejection ();
 	updateChangesPermission ();
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -154,6 +155,7 @@ Procedure applyContract ()
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	InvoiceForm.SetDelivery ( ThisObject, data );
 	PaymentsTable.Fill ( Object );
+	Constraints.ShowSales ( ThisObject );
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 
 EndProcedure
@@ -250,6 +252,12 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.MessageSalesPermissionIsSaved ()
+		and Parameter = Object.Ref ) then
+		updateSalesPermission ();
+	elsif ( EventName = Enum.MessageUpdateSalesPermission ()
+		and Parameter = UUID ) then
+		updateSalesPermission ();
 	endif;
 
 EndProcedure
@@ -294,6 +302,13 @@ Procedure addItem ( Fields )
 	InvoiceForm.CalcTotals ( ThisObject );
 	
 EndProcedure 
+
+&AtServer
+Procedure updateSalesPermission ()
+
+	Constraints.ShowSales ( ThisObject );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
