@@ -22,7 +22,7 @@ Procedure ShowSales ( Form ) export
 	endif;
 	if ( data.ControlCredit  ) then
 		if ( creditExceeded ( data ) ) then
-			p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.LimitBalance ) );
+			p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.Limit ) );
 			subject = Output.RestrictionCreditExceeded ( p );
 			displaySales ( Form, data, Enums.RestrictionReasons.CreditLimit, subject, position );
 		else
@@ -145,11 +145,9 @@ Function getSalesInfo ( Object, Context )
 		|select Debts.Contract.Currency as Currency, ( Debts.AmountBalance - Debts.OverpaymentBalance ) as Debt
 		|into Debts
 		|from AccumulationRegister.Debts.Balance ( , Contract.Owner = &Customer ) as Debts
-		|where Debts.AmountBalance > 0
 		|union all
 		|select Debts.Contract.Currency, - ( Debts.AmountBalance - Debts.OverpaymentBalance )
 		|from AccumulationRegister.VendorDebts.Balance ( , Contract.Owner = &Customer ) as Debts
-		|where Debts.AmountBalance > 0
 		|union all
 		|select Debts.Contract.Currency, - ( Debts.Amount - Debts.Overpayment )
 		|from AccumulationRegister.Debts as Debts
@@ -167,13 +165,13 @@ Function getSalesInfo ( Object, Context )
 	selection.Add ( "
 	|;
 	|// @Sales
-	|select sum ( Debts.Debt ) as Debt, max ( Debts.Limit ) as Limit,
-	|	max ( Debts.Limit ) - max ( Debts.Debt ) as LimitBalance,
+	|select sum ( Debts.Debt ) as Debt, sum ( Debts.Limit ) - sum ( Debts.Debt ) as Limit,
+	|	1 = max ( Debts.NoLimit ) as NoLimit,
 	|	1 = max ( Debts.Ban ) as Ban, 1 = max ( Debts.Signed ) as Signed
 	|from (
-	|	select 0 as Debt, 0 as Limit, 0 as Ban, 0 as Signed
+	|	select 0 as Debt, 0 as Limit, 0 as NoLimit, 0 as Ban, 0 as Signed
 	|	union all
-	|	select 0, 0, case when Restrictions.Ban then 1 else 0 end, 0
+	|	select 0, 0, 0, case when Restrictions.Ban then 1 else 0 end, 0
 	|	from (
 	|		select top 1 Restrictions.Ban as Ban
 	|		from Document.SalesRestriction as Restrictions
@@ -185,7 +183,7 @@ Function getSalesInfo ( Object, Context )
 	if ( controlCredit ) then
 		selection.Add ( "
 		|union all
-		|select case when Rates.Rate is null then Debts.Debt else Debts.Debt * Rates.Rate / Rates.Factor end, 0, 0, 0
+		|select case when Rates.Rate is null then Debts.Debt else Debts.Debt * Rates.Rate / Rates.Factor end, 0, 0, 0, 0
 		|from Debts as Debts
 		|	//
 		|	// Rates
@@ -193,9 +191,9 @@ Function getSalesInfo ( Object, Context )
 		|	left join Rates as Rates
 		|	on Rates.Currency = Debts.Currency
 		|union all
-		|select 0, Credits.Amount, 0, 0
+		|select 0, Credits.Amount, Credits.NoLimit, 0, 0
 		|from (
-		|	select top 1 case when Credits.Disable then 9999999999 else Credits.Amount end as Amount
+		|	select top 1 Credits.Amount as Amount, case when Credits.Disable then 1 else 0 end as NoLimit
 		|	from Document.CreditLimit as Credits
 		|	where not Credits.DeletionMark
 		|	and Credits.Customer = &Customer
@@ -206,7 +204,7 @@ Function getSalesInfo ( Object, Context )
 	if ( controlContracts ) then
 		selection.Add ( "
 		|	union all
-		|	select 0, 0, 0, 1
+		|	select 0, 0, 0, 0, 1
 		|	from Catalog.Contracts as Contracts
 		|	where not Contracts.DeletionMark
 		|	and Contracts.Ref = &Contract
@@ -215,7 +213,7 @@ Function getSalesInfo ( Object, Context )
 		|	and &Today between Contracts.DateStart
 		|		and case Contracts.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Contracts.DateEnd end
 		|	union all
-		|	select top 1 0, 0, 0, 1
+		|	select top 1 0, 0, 0, 0, 1
 		|	from Catalog.Contracts as Contracts
 		|	where not Contracts.DeletionMark
 		|	and Contracts.Owner = &Customer
@@ -318,9 +316,11 @@ Function contractRequired ( Data )
 EndFunction
 
 Function creditExceeded ( Data )
-	
+		
 	return Data.ControlCredit
-		and Data.Sales.LimitBalance < 0;
+		and ( not Data.Sales.NoLimit
+			and Data.Sales.Limit < 0
+		);
 		
 EndFunction
 
@@ -406,12 +406,17 @@ EndFunction
 Procedure displayLimit ( Form, Data, Position )
 	
 	parts = new Array ();
-	amount = Data.Sales.LimitBalance;
-	if ( amount = 0 ) then
-		subject = Output.RestrictionZeroCredit ();
+	info = Data.Sales;
+	if ( info.NoLimit ) then
+		subject = Output.RestrictionNoCreditLimit ();
 	else
-		p = new Structure ( "Amount", Conversion.NumberToMoney ( amount ) );
-		subject = Output.RestrictionCreditLimit ( p );
+		amount = info.Limit;
+		if ( amount = 0 ) then
+			subject = Output.RestrictionZeroCredit ();
+		else
+			p = new Structure ( "Amount", Conversion.NumberToMoney ( amount ) );
+			subject = Output.RestrictionCreditLimit ( p );
+		endif;
 	endif;
 	parts.Add ( subject );
 	parts.Add ( ". " );
@@ -439,7 +444,7 @@ Function CheckSales ( Object ) export
 		errors.Add ( error );
 	endif;
 	if ( creditExceeded ( data ) ) then
-		p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.LimitBalance ) );
+		p = new Structure ( "Amount", Conversion.NumberToMoney ( - data.Sales.Limit ) );
 		subject = Output.RestrictionCreditExceeded ( p );
 		error = getSalesError ( data, Enums.RestrictionReasons.CreditLimit, subject );
 		errors.Add ( error );
