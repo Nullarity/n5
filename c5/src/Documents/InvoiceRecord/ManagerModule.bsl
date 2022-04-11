@@ -183,7 +183,8 @@ Procedure sqlItems(Env)
 	|		else (" + amount + ") / case when Items.Item refs Catalog.Items then Items.QuantityPkg else Items.Quantity end 
 	|	end as Price, " + amount + " as Amount, 
 	|	isnull ( Items.Feature.Description, """" ) as Feature, isnull ( Items.Series.Description, """" ) as Series,
-	|	isnull ( Items.Item.FullDescription, """" ) as Item, Items.VATCode.Type = value ( Enum.VAT.None ) as NoVAT,
+	|	isnull ( Items.Item.FullDescription, """" ) as Item,
+	|	isnull ( Items.VATCode.Type = value ( Enum.VAT.None ), true ) as NoVAT,
 	|	Items.VATRate as VATRate, false as Empty, Items.OtherInfo as OtherInfo,
 	|	Items.Social as Social, " + producerPrice + " as ProducerPrice, Items.ExtraCharge as ExtraCharge,
 	|	isnull ( Items.Item.SKU, """" ) as SKU
@@ -193,14 +194,14 @@ Procedure sqlItems(Env)
 	|select """", Services.Item.Unit.Code, Services.Quantity, 0, " + total + ", " + vat + ", 
 	|	case when Services.Quantity = 0 then " + amount + " else (" + amount + ") /  Services.Quantity end, 
 	|	" + amount + ", isnull ( Services.Feature.Description, """" ), """", Services.Description,
-	|	Services.VATCode.Type = value ( Enum.VAT.None ), Services.VATRate, false, Services.OtherInfo,
+	|	isnull ( Services.VATCode.Type = value ( Enum.VAT.None ), true ), Services.VATRate, false, Services.OtherInfo,
 	|	false, 0, 0, """"
 	|from Document.InvoiceRecord.Services as Services
 	|where Services.Ref = &Ref 
 	|union all
 	|select """", """", 0, 0, - Discounts.Amount * &Rate / &Factor, - Discounts.VAT * &Rate / &Factor, 0, 
 	|	- ( Discounts.Amount - Discounts.VAT ) * &Rate / &Factor, """", """", Discounts.Item.FullDescription,
-	|	Discounts.VATCode.Type = value ( Enum.VAT.None ), Discounts.VATRate, false, """", false, 0, 0, """"
+	|	isnull ( Discounts.VATCode.Type = value ( Enum.VAT.None ), true ), Discounts.VATRate, false, """", false, 0, 0, """"
 	|from Document.InvoiceRecord.Discounts as Discounts
 	|where Discounts.Ref = &Ref 
 	|";
@@ -428,11 +429,11 @@ Procedure putRow(Params, Env, Table)
 			tabDoc.Put(emptyRow);
 			continue;
 		endif;
-		p.Fill(row);
+			p.Fill(row);
 		p.ItemPresentation = Conversion.ValuesToString (
 			row.SKU, row.Item, row.Feature, ? ( row.Series = "", "", "#" + row.Series )
 		);
-		if (row.Social) then
+		if (row.Social) then		
 			p.OtherInfo = "" + row.ProducerPrice + "/" + Format(row.ExtraCharge, "NFD=2; NZ=") + " " + row.OtherInfo;
 		endif;
 		p.VATRate = ? ( row.NoVAT, "-", Format ( row.VATRate, "NZ=0" ) + "%" );
