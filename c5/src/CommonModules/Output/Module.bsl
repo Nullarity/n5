@@ -5530,30 +5530,6 @@ Procedure DocumentRightsPermissionError ( Params = undefined, Field = "", DataKe
 
 EndProcedure
 
-&AtServer
-Procedure DocumentRightsUndefined ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = Output.RightsUndefined ( Params );
-	Output.PutMessage ( text, undefined, Field, DataKey, DataPath );
-
-EndProcedure
-
-&AtServer
-Procedure DocumentModificationIsNotAllowed ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = Output.ModificationIsNotAllowed ( Params );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
-&AtServer
-Procedure DocumentAnyModificationIsNotAllowed ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = Output.AnyModificationIsNotAllowed ( Params );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
 Function RightsUndefined ( Params ) export
 
 	text = NStr ( "en='Access rights for ""%User"" are undefined. User cannot change or create documents'; ro='Pentru utilizator ""%User"" nu sunt setate drepturi de creare / editare a documentelor'; ru='Для пользователя ""%User"" не заданы права на создание/изменение документов'" );
@@ -5575,15 +5551,6 @@ Function AnyModificationIsNotAllowed ( Params ) export
 
 EndFunction
 
-&AtClient
-Procedure DocumentRightsUndefinedWarning ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "DocumentRightsUndefinedWarning" ) export
-
-	text = Output.RightsUndefined ( Params );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-	
 Function AnyModificationIsNotRecommended ( Params  ) export
 
 	text = NStr ( "en = 'Dear %User, it is not recommended to make any changes in the selected period';ro = 'Stimate %User, nu este recomandat să faceți modificări în perioada selectată';ru = 'Уважаемый %User, не рекомендуется проводить какие-либо изменения в выбранном периоде'" );
@@ -8319,6 +8286,14 @@ EndFunction
 Function RestrictionZeroCredit () export
 
 	text = NStr ( "en = 'Zero credit limit';ro = 'Limita de credit zero';ru = 'Нулевой лимит кредита'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function RestrictionNoCreditLimit () export
+
+	text = NStr ( "en = 'Credit limit control is disabled for this customer';ro = 'Controlul limitei de credit este dezactivat pentru acest client';ru = 'Контроль кредитного лимита для этого клиента отключен'" );
 	return text;
 
 EndFunction
