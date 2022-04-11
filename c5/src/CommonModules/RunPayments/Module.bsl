@@ -383,25 +383,26 @@ EndProcedure
 
 Function takenAdvanceData ( Env, Row )
 	
-	payments = new Array ();
-	payments.Add ( Type ( "DocumentRef.Payment" ) );
-	payments.Add ( Type ( "DocumentRef.VendorRefund" ) );
+	result = new Structure ( "Payment, VAT, VATAccount, AdvanceAccount, ReceivablesVATAccount", , 0 );
+	customerPayment = Type ( "DocumentRef.Payment" );
+	vendorRefund= Type ( "DocumentRef.VendorRefund" );
+	vendorDebts = Type ( "DocumentRef.VendorDebts" );
 	recorders = new Array ();
 	recorders.Add ( Row.Document );
 	recorders.Add ( Row.Detail );
-	payment = undefined;
+	recorders.Add ( Env.Ref );
 	for each recorder in recorders do
-		if ( payments.Find ( TypeOf ( recorder ) ) <> undefined ) then
-			payment = recorder;
+		type = TypeOf ( recorder );
+		if ( type = customerPayment
+			or type = vendorRefund ) then
+			set = "AdvanceAccount, ReceivablesVATAccount, VATAdvance.Rate as VAT, VATAccount";
+			break;
+		elsif ( type = vendorDebts ) then
+			set = "Account as AdvanceAccount";
 			break;
 		endif;
 	enddo;
-	if ( payment = undefined ) then
-		payment = Env.Ref;
-	endif;
-	result = new Structure ( "Payment, AdvanceAccount, ReceivablesVATAccount, VAT, VATAccount" );
-	result.Payment = payment;
-	data = DF.Values ( payment, "AdvanceAccount, ReceivablesVATAccount, VATAdvance.Rate as VAT, VATAccount" );
+	data = DF.Values ( recorder, set );
 	FillPropertyValues ( result, data );
 	return result;
 	
