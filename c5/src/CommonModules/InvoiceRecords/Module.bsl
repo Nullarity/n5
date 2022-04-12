@@ -133,8 +133,6 @@ Procedure fillHeaderCommon ( Object, Base )
 	if ( Object.Ref.IsEmpty () ) then
 		Object.Creator = Base.Creator;
 		Object.Base = Base.Ref;
-		Object.FirstPageRows = 10;
-		Object.AttachmentRows = 10;
 		Object.Memo = Base.Memo;
 		Object.Account = DF.Pick ( Base.Company, "BankAccount" );
 	else

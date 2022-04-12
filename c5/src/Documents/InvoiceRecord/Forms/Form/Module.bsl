@@ -270,6 +270,8 @@ Procedure setDefaultValues ()
 	endif;
 	fields = data.Fields;
 	if ( fields <> undefined ) then
+		Object.FirstPageRows = fields.FirstPageRows;
+		Object.AttachmentRows = fields.AttachmentRows;
 		Object.Storekeeper = fields.Storekeeper;
 		Object.Carrier = fields.Carrier;
 		Object.Dispatcher = fields.Dispatcher;
@@ -295,7 +297,7 @@ Function getDefaultValues ()
 	|;
 	|// @Fields
 	|select allowed top 1 Documents.Number as Number, Documents.Storekeeper as Storekeeper, Documents.Carrier as Carrier,
-	|	Documents.Dispatcher as Dispatcher
+	|	Documents.Dispatcher as Dispatcher, Documents.FirstPageRows as FirstPageRows, Documents.AttachmentRows as AttachmentRows
 	|from Document.InvoiceRecord as Documents
 	|where Documents.Company = &Company
 	|and Documents.LoadingPoint = &WarehouseOrNothing

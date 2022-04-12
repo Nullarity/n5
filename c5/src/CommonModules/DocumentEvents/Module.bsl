@@ -81,14 +81,16 @@ Function canChange ( Source )
 	if ( invoice = undefined ) then
 		return true;
 	else
-		return changesAllowed ( DF.Pick ( invoice, "Status" ) );
+		return changesAllowed ( DF.Values ( invoice, "Status, DeletionMark" ) );
 	endif;
 
 EndFunction
 
-Function changesAllowed ( Status )
+Function changesAllowed ( Info )
 	
-	return Status.IsEmpty ()
+	status = Info.Status;
+	return Info.DeletionMark
+	or Status.IsEmpty ()
 	or Status = Enums.FormStatuses.Saved
 	or Status = Enums.FormStatuses.Canceled
 	or IsInRole ( Metadata.Roles.ModifyIssuedInvoices );
