@@ -213,6 +213,13 @@ Function NumberWithoutPrefix ( DocumentNumber, DocumentPrefix ) export
 EndFunction
 
 &AtServer
+Function NumberWithoutSeries ( Number, Series ) export
+	
+	return TrimAll ( Mid ( Number, 1 + StrLen ( Series ) ) );
+		
+EndFunction
+
+&AtServer
 Procedure Entitle ( TabDoc, Title, Keyword = "###" ) export
 	
 	begin = TabDoc.FindText ( Keyword );
