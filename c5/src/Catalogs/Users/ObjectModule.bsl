@@ -257,6 +257,9 @@ Procedure setInterface ()
 	settings.ShowNavigationAndActionsPanels = false;
 	settings.ApplicationFormsOpenningMode = ApplicationFormsOpenningMode.Tabs;
 	SystemSettingsStorage.Save ( "Common/ClientSettings", "", settings, , Description );
+	settings = new CommandInterfaceSettings ();
+	settings.SectionsPanelRepresentation = SectionsPanelRepresentation.Picture;
+	SystemSettingsStorage.Save ( "Common/SectionsPanel/CommandInterfaceSettings", "", settings, , Description );
 	
 EndProcedure 
 
