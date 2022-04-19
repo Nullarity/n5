@@ -63,7 +63,8 @@
 	|and Table.Ref.Status in (
 	|	value ( Enum.FormStatuses.Unloaded ),
 	|	value ( Enum.FormStatuses.Printed ),
-	|	value ( Enum.FormStatuses.Submitted )
+	|	value ( Enum.FormStatuses.Submitted ),
+	|	value ( Enum.FormStatuses.Returned )
 	|)
 	|union all
 	|" + invoiceRecordsFields + ", Table.Ref.DeliveryDate as Date, 0, Table.Ref.Customer.CodeFiscal as CodeFiscal
@@ -76,7 +77,8 @@
 	|and Table.Ref.Status in (
 	|	value ( Enum.FormStatuses.Unloaded ),
 	|	value ( Enum.FormStatuses.Printed ),
-	|	value ( Enum.FormStatuses.Submitted )
+	|	value ( Enum.FormStatuses.Submitted ),
+	|	value ( Enum.FormStatuses.Returned )
 	|)
 	|union all
 	|" + vendorInvoiceFields + ", case when Table.Ref.Import then 2 else 1 end, Table.Ref.Vendor.CodeFiscal
