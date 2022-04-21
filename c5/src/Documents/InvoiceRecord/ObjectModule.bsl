@@ -40,7 +40,10 @@ EndProcedure
 
 Function checkSales ( WriteMode )
 	
-	dont = not Documents.InvoiceRecord.Independent ( ThisObject );
+	dont = not Documents.InvoiceRecord.Independent ( ThisObject )
+	or Status = Enums.FormStatuses.Saved
+	or Status = Enums.FormStatuses.Canceled
+	or Status = Enums.FormStatuses.Returned;
 	return dont or Constraints.CheckSales ( ThisObject );
 
 EndFunction
