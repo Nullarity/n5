@@ -555,9 +555,11 @@ from InformationRegister.Holidays as HolidaysList
 	//
 	// Preholidays
 	//
-	join InformationRegister.Schedules as Preholidays
+	left join InformationRegister.Schedules as Preholidays
 	on Preholidays.Day = dateadd ( HolidaysList.Day, day, -1 )
 	and Preholidays.Schedule.Holidays = HolidaysList.Reference
+	and Preholidays.Schedule = Schedules.Schedule
+	and Preholidays.Schedule.Preholidays
     //
     // PreholidaysInHolidays
     //
@@ -588,11 +590,12 @@ from HolidaysRawData as LocalHolidays
 where LocalHolidays.Division &lt;&gt; value ( Catalog.Divisions.EmptyRef )
 ;
 // Only holidays falling on working days
-select Holidays.Day as Day, Holidays.Preholiday as Preholiday, Holidays.Division as Division, Holidays.Schedule as Schedule
+select Holidays.Day as Day,
+	case when Holidays.Preholiday &lt; &amp;DateStart then null else Holidays.Preholiday end as Preholiday,
+	Holidays.Division as Division, Holidays.Schedule as Schedule
 into Holidays
 from AllHolidays as Holidays
 where Holidays.Day between &amp;DateStart and dateadd ( &amp;DateEnd, day, 1 )
-and Holidays.Preholiday &gt;= &amp;DateStart
 ;
 // Deviations
 select Hours.Employee as Employee, Hours.Time as Time, Hours.Day as Day, sum ( Hours.Minutes ) as Minutes
