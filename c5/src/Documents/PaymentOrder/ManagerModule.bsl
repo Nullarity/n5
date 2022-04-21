@@ -29,6 +29,8 @@ Function RemoveInadmissibleSymbols ( String ) export
 	s = StrReplace ( s, "|", "" );
 	s = StrReplace ( s, "<", "(" );
 	s = StrReplace ( s, ">", ")" );
+	s = StrReplace ( s, Chars.Tab, " " );
+	s = StrReplace ( s, Chars.LF, " " );
 	return s;
 	
 EndFunction
@@ -89,7 +91,7 @@ Function addPrintParameters ( Params, Env )
 
 	paramsAdded = true;
 	Env.Insert ( "object", Params.Reference.GetObject () );
-	Env.Insert (  "PrintParams", new Structure () );
+	Env.Insert ( "PrintParams", new Structure () );
 	Env.PrintParams.Insert ( "paymentContentStr", Env.object.GetPrintPaymentContent () );
 	Env.PrintParams.Insert ( "paymentContentArray", Conversion.StringToArray ( Env.PrintParams.paymentContentStr, Chars.LF ) );
 	if ( paymentContentOk ( Env ) ) then
