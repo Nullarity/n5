@@ -5,7 +5,7 @@
 	|	case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
 	|	Table.VATCode.Rate as Rate, Table.VATCode.Type as Type
 	|";
-	invoiceRecordsFields = commonVatFields + ", Table.Ref.Series as Series, Table.Ref.FormNumber as Number";
+	invoiceRecordsFields = commonVatFields + ", Table.Ref.Series as Series, Table.Ref.Number as Number";
 	vendorInvoiceFields = commonVatFields + ", Table.Ref.Series as Series, Table.Ref.Reference as Number,
 	|	case Table.Ref.ReferenceDate when datetime (1, 1, 1) then Table.Ref.Date else Table.Ref.ReferenceDate end as Date";
 	conditions = "
@@ -120,7 +120,7 @@
 	|group by Table.Charge.VAT
 	|union all
 	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
-	|	Table.Series, Table.FormNumber, Table.Date, 1, Table.Vendor.CodeFiscal
+	|	Table.Series, Table.Series + Table.FormNumber, Table.Date, 1, Table.Vendor.CodeFiscal
 	|from Document.VATPurchases as Table
 	|where not Table.Ref.DeletionMark
 	|and Table.Ref.Date between &DateStart and &DateEnd
@@ -128,7 +128,7 @@
 	|and Table.Ref.VATUse <> 0
 	|union all
 	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
-	|	Table.Series, Table.FormNumber, Table.Date, 0, Table.Customer.CodeFiscal
+	|	Table.Series, Table.Series + Table.FormNumber, Table.Date, 0, Table.Customer.CodeFiscal
 	|from Document.VATSales as Table
 	|where not Table.Ref.DeletionMark
 	|and Table.Ref.Date between &DateStart and &DateEnd
@@ -371,9 +371,9 @@
 	    FieldsValues [ "BA" + i ] = row.CodeFiscal;
 	    FieldsValues [ "CA" + i ] = row.Date;
 	    FieldsValues [ "DA" + i ] = row.Series;	
-		suffix = Format ( row.Number, "NG=0" );
-		size = StrLen ( suffix );
-	    FieldsValues [ "EA" + i ] = ? ( size < 7, Left ( "0000000", 7 - size ) + suffix, suffix );
+		size = StrLen ( row.Series );
+		number = Mid ( row.Number, size + 1 );
+	    FieldsValues [ "EA" + i ] = number;
 	    FieldsValues [ "FA" + i ] = row.Amount;	
 	    FieldsValues [ "GA" + i ] = row.VAT;	
 	    line = line + 1;
