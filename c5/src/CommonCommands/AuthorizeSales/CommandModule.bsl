@@ -8,7 +8,7 @@ async Procedure CommandProcessing ( Command, ExecuteParameters )
 	endif;
 	params = ExecuteParameters.Parameters;
 	form = Forms.FindByID ( params.Form );
-	if ( DocumentForm.SaveNew ( form ) ) then
+	if ( DocumentForm.SaveModified ( form ) ) then
 		openRequest ( form, params.Reason );
 	endif;
 

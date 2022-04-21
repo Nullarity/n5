@@ -6,9 +6,6 @@ Procedure ShowSales ( Form ) export
 	if ( data = undefined ) then
 		return;
 	endif;
-	if ( permissionIssued ( Form, data ) ) then
-		return;
-	endif;
 	position = 1;
 	if ( customerBanned ( data ) ) then
 		subject = Output.RestrictionSalesBanned ();
@@ -263,44 +260,6 @@ Function getSalesInfo ( Object, Context )
 
 EndFunction
 
-Function permissionIssued ( Form, Data )
-	
-	approval = Data.Approved;
-	if ( approval.Count () = 0
-		or approval [ 0 ].Resolution.IsEmpty () ) then
-		return false;
-	endif;
-	position = 1;
-	for each request in approval do
-		resolution = request.resolution;
-		parts = new Array ();
-		if ( resolution = Enums.AllowDeny.Allow ) then
-			if ( Data.Amount > request.Amount
-				or Data.Currency <> request.Currency ) then
-				parts.Add ( Output.RestrictionRequestAmountExceeded () );
-				parts.Add ( ". " );
-				parts.Add ( authorize ( Form, request.Reason ) );
-				picture = PictureLib.Warning16;
-			else
-				parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
-				picture = PictureLib.Ok16;
-			endif;
-			parts.Add ( " | " );
-			parts.Add ( refresh ( Form ) );
-		elsif ( resolution = Enums.AllowDeny.Deny ) then
-			parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
-			picture = PictureLib.Forbidden;
-		endif;
-		items = Form.Items;
-		items [ "RestrictionPicture" + position ].Picture = picture;
-		items [ "RestrictionLabel" + position ].Title = new FormattedString ( parts );
-		items [ "RestrictionGroup" + position ].Visible = true;
-		position = position + 1;
-	enddo;
-	return true;
-
-EndFunction
-
 Function customerBanned ( Data )
 	
 	return Data.Sales.Ban;
@@ -333,6 +292,9 @@ EndFunction
 
 Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 	
+	if ( permissionIssued ( Form, Data, Restriction, Position ) ) then
+		return;
+	endif;
 	parts = new Array ();
 	request = requestStatus ( Data, Restriction );
 	if ( request = undefined ) then
@@ -357,7 +319,43 @@ Procedure displaySales ( Form, Data, Restriction, Subject, Position )
 
 EndProcedure
 
-Function requestStatus ( Data, Reason = undefined )
+Function permissionIssued ( Form, Data, Permission, Position )
+	
+	request = requestStatus ( Data, Permission );
+	if ( request = undefined ) then
+		return false;
+	endif;
+	parts = new Array ();
+	resolution = request.Resolution;
+	if ( resolution = Enums.AllowDeny.Deny ) then
+		parts.Add ( permissionUrl ( Output.RestrictionRequestDenied ( request ), request ) );
+		picture = PictureLib.Forbidden;
+	elsif ( resolution = Enums.AllowDeny.Allow
+		and request.Reason = Permission ) then 
+		if ( Data.Amount > request.Amount
+			or Data.Currency <> request.Currency ) then
+			parts.Add ( Output.RestrictionRequestAmountExceeded () );
+			parts.Add ( ". " );
+			parts.Add ( authorize ( Form, Permission ) );
+			picture = PictureLib.Warning16;
+		else
+			parts.Add ( permissionUrl ( Output.RestrictionRequestApproved ( request ), request ) );
+			picture = PictureLib.Ok16;
+		endif;
+		parts.Add ( " | " );
+		parts.Add ( refresh ( Form ) );
+	else
+		return false;
+	endif;
+	items = Form.Items;
+	items [ "RestrictionPicture" + Position ].Picture = picture;
+	items [ "RestrictionLabel" + Position ].Title = new FormattedString ( parts );
+	items [ "RestrictionGroup" + Position ].Visible = true;
+	return true;
+
+EndFunction
+
+Function requestStatus ( Data, Reason )
 	
 	row = Data.Approved.Find ( Reason, "Reason" );
 	if ( row = undefined ) then
@@ -605,13 +603,12 @@ Function getAccessData ( Ref, Date )
 	map = rights.Map;
 	access = new Structure ( "Allowed, Action, Warning", false, undefined, false );
 	if ( Ref.IsEmpty () ) then
-		//@skip-warning
+		//@skip-check module-unused-local-variable
 		stub = accessDenied ( map, Enums.AccessRights.Create, access )
 		or accessDenied ( map, Enums.AccessRights.Any, access )
 		or accessAllowed ( map, Enums.AccessRights.Create, access )
 		or accessAllowed ( map, Enums.AccessRights.Any, access );
 	else
-		//@skip-warning
 		stub = accessDenied ( map, Enums.AccessRights.Edit, access )
 		or accessDenied ( map, Enums.AccessRights.UndoPosting, access )
 		or accessDenied ( map, Enums.AccessRights.Any, access )

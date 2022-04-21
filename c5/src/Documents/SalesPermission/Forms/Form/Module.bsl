@@ -30,6 +30,9 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			raise Output.InteractiveCreationForbidden ();
 		endif;
 	else
+		if ( Object.Resolution = Enums.AllowDeny.Deny ) then
+			raise Output.RequestAlreadyDenied ();
+		endif;
 		fill ();
 	endif;
 	readAppearance ();

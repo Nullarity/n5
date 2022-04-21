@@ -8445,3 +8445,11 @@ Procedure ResolutionAlreadyIssued ( Params = undefined, Field = "", DataKey = un
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Function RequestAlreadyDenied () export
+
+	text = NStr ( "en = 'The request has already been denied';ro = 'Cererea a fost deja refuzată';ru = 'Запрос уже был отклонен'" );
+	return text;
+
+EndFunction

@@ -10,7 +10,7 @@ async Procedure CommandProcessing ( Command, ExecuteParameters )
 	else
 		forDocument = variant = 0;
 		if ( forDocument
-			and not DocumentForm.SaveNew ( form ) ) then
+			and not DocumentForm.SaveModified ( form ) ) then
 			return;
 		endif;
 	endif;

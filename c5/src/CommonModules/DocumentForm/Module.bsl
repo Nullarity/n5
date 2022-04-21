@@ -25,9 +25,10 @@ Procedure setDate ( Object )
 EndProcedure 
 
 &AtClient
-Function SaveNew ( Form ) export
+Function SaveModified ( Form ) export
 	
-	if ( Form.Object.Ref.IsEmpty () ) then
+	if ( Form.Modified
+		or Form.Object.Ref.IsEmpty () ) then
 		return form.Write ( new Structure ( Enum.WriteParametersJustSave (), true ) );
 	else
 		return true;
