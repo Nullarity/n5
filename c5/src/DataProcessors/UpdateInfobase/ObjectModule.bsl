@@ -8,7 +8,7 @@ var Release;
 var Files;
 var Config;
 var Remove;
-//@skip-warning
+//@skip-check module-unused-local-variable
 var Update;
 var ReportsList;
 var Template;
@@ -142,7 +142,9 @@ Procedure _5_0_25_1 () export
 	for each tenant in Tenants do
 		activateTenant ( tenant );
 		setTaxNumbers ();
-		//updateReports ();
+		updateAccounts ();
+		loadCities ();
+		updateReports ();
 	enddo;
 	CommitTransaction ();
 	
@@ -159,6 +161,124 @@ Procedure setTaxNumbers ()
 	r.Write ();
 
 EndProcedure
+
+Procedure updateAccounts ()
+	
+	updateAccount ( "2265", "Дебиторская задолженность подотчетных лиц в валюте" );
+	updateAccount ( "22441", "Прочие текущие авансы выданные внутри страны" );
+	updateAccount ( "22442", "Прочие текущие авансы выданные из-за рубежа" );
+	updateAccount ( "3111", "Уставный фонд в валюте" );
+	updateAccount ( "3112", "Простые акции" );
+	updateAccount ( "3113", "Простые акции в валюте" );
+	updateAccount ( "3114", "Привилегированные акции" );
+	updateAccount ( "3115", "Привилегированные акции в валюте" );
+	updateAccount ( "3116", "Вклады" );
+	updateAccount ( "3117", "Вклады в валюте" );
+	updateAccount ( "3118", "Паи" );
+	updateAccount ( "3119", "Паи в валюте" );
+	updateAccount ( "3311", "Поправка прибыли предыдущих периодов" );
+	updateAccount ( "3312", "Поправка убытков предыдущих периодов" );
+	updateAccount ( "3321", "Нераспределенная прибыль прошлых лет" );
+	updateAccount ( "3322", "Непокрытый убыток прошлых лет" );
+	updateAccount ( "3331", "Чистая прибыль отчетного периода" );
+	updateAccount ( "3332", "Чистые убытки отчетного периода" );
+	updateAccount ( "5371", "Текущие целевые финансирование и поступления в стране" );
+	updateAccount ( "5372", "Текущие целевые финансирование и поступления из-за рубежа" );
+	updateAccount ( "7311", "Расходы по подоходному налогу" );
+	updateAccount ( "7312", "Расходы по налогу на доход от операционной деятельности" );
+	updateAccount ( "7313", "Прочие расходы по подоходному налогу" );
+	updateAccount ( "8111", "Прямые материальные затраты" );
+	updateAccount ( "8112", "Прямые затраты на оплату труда" );
+	updateAccount ( "8113", "Отчисления на соц. страхование и обеспечение" );
+	updateAccount ( "8114", "Косвенные производственные затраты" );
+	updateAccount ( "8121", "Затраты на материалы" );
+	updateAccount ( "8122", "Затраты на оплату труда" );
+	updateAccount ( "8123", "Отчисл. на соц.страх. и обеспечение" );
+	updateAccount ( "8124", "Косвенные производственные затраты" );
+	updateAccount ( "8211", "Расходы на износ ОС" );
+	updateAccount ( "8212", "Расходы на ремонт ОС" );
+	updateAccount ( "8213", "Расходы на текущий ремонт ОС" );
+	updateAccount ( "8214", "Амортизация НМА произв-го назначения" );
+	updateAccount ( "8215", "Содержание упр. и обсл. перс. произв-х подр." );
+	updateAccount ( "8216", "Охрана труда и техника безопасности" );
+	updateAccount ( "8217", "Потери от простоев" );
+	updateAccount ( "8218", "Содерж. охраны и затр. на обесп. ППБ пр. под." );
+	updateAccount ( "8219", "Командиров. расходы произв-го персонала" );
+	updateAccount ( "82110", "Прочие косвенные произв. затраты" );
+	updateAccount ( "8311", "Торговая надбавка в розничной торговле" );
+	updateAccount ( "8312", "Торговая надбавка в розничной торговле общими суммами" );
+	
+EndProcedure
+
+Procedure updateAccount ( Account, Description )
+
+	ref = ChartsOfAccounts.General.FindByCode ( Account );
+	if ( ref.IsEmpty () ) then
+		Message ( "code:" + Account + " is not found" );
+		return;
+	endif;
+	obj = ref.GetObject ();
+	obj.DescriptionRo = obj.Description;
+	obj.DescriptionRu = Description;
+	obj.Class = obj.Parent.Class;
+	obj.Write ();
+
+EndProcedure
+
+Procedure loadCities ()
+
+	country = Catalogs.Countries.FindByCode ( "498" );
+	if ( country.IsEmpty () ) then
+		return;
+	endif;
+	cities = getCities ( country );
+	for each name in cities do
+		obj = Catalogs.Cities.CreateItem ();
+		obj.Owner = country;
+		obj.Description = name;
+		obj.Write ();
+	enddo;
+
+EndProcedure
+
+Function getCities ( Country )
+
+	s = "
+	|select Cities.City as Name
+	|into List
+	|from &List as Cities
+	|;
+	|select List.Name as Name
+	|from List as List
+	|where List.Name not in ( select Description from Catalog.Cities where Owner = &Country )
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Country", country );                                                       
+	q.SetParameter ( "List", citiesList () );
+	return q.Execute ().Unload ().UnloadColumn ( "Name" );
+
+EndFunction
+
+Function citiesList ()
+
+	list = new ValueTable ();
+	list.Columns.Add ( "City", Metadata.Catalogs.Cities.StandardAttributes.Description.Type );
+	t = GetTemplate ( "Cities" );
+	tableWidth = t.TableWidth;
+	for i = 1 to t.TableHeight do
+		for j = 1 to tableWidth do
+			city = t.Area ( i, j, i, j ).Text;
+			if ( IsBlankString ( city ) ) then
+				continue;
+			endif;
+			row = list.Add ();
+			row.City = TrimAll ( city );
+		enddo;
+	enddo;
+	list.GroupBy ( "City" );
+	return list;
+
+EndFunction
 
 #endregion
 
