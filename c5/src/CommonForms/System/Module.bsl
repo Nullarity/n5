@@ -32,8 +32,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|GroupCloud SaaS enable Object.Cloud;
-	|GroupSaaS enable Object.SaaS;
+	|GroupCloud GroupMail SaaS show Object.Cloud;
+	|GroupSaaS show Object.SaaS;
 	|ProxyServer ProxyPort enable Object.UseProxy = 2;
 	|ProxyUser ProxyPassword enable Object.UseProxy <> 0
 	|" );
