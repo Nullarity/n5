@@ -59,13 +59,7 @@ Function checkCloudSaaS ()
 		fields.Add ( "Domain" );
 		fields.Add ( "ApplicationURL" );
 		fields.Add ( "RemoteActionsService" );
-		fields.Add ( "EmailAttachmentsURL" );
-		fields.Add ( "EmailAttachments" );
-		fields.Add ( "EmailStyle" );
 		fields.Add ( "FoldersURL" );
-		fields.Add ( "CKEditorURL" );
-		fields.Add ( "CKEditorURLie" );
-		fields.Add ( "PicturesURL" );
 	endif;
 	if ( Object.SaaS ) then
 		fields.Add ( "CloudPaymentMethod" );
