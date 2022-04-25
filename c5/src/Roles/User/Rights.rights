@@ -581,13 +581,13 @@
 		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Organization in ( #Organizations ( "Organization" ) )</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>InputByString</name>
+			<name>Insert</name>
 			<value>true</value>
 		</right>
 		<right>
@@ -599,10 +599,6 @@
 			<value>true</value>
 		</right>
 		<right>
-			<name>Insert</name>
-			<value>true</value>
-		</right>
-		<right>
 			<name>Posting</name>
 			<value>true</value>
 		</right>
@@ -611,11 +607,15 @@
 			<value>true</value>
 		</right>
 		<right>
-			<name>Edit</name>
+			<name>View</name>
 			<value>true</value>
 		</right>
 		<right>
 			<name>InteractiveInsert</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Edit</name>
 			<value>true</value>
 		</right>
 		<right>
@@ -624,6 +624,10 @@
 		</right>
 		<right>
 			<name>InteractivePostingRegular</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
 			<value>true</value>
 		</right>
 	</object>
@@ -1088,6 +1092,13 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.ChangesPermission.Attribute.Document</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>Constant.ApplicationURL</name>
 		<right>
 			<name>Read</name>
@@ -1370,6 +1381,13 @@
 			<name>View</name>
 			<value>false</value>
 		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.ChangesPermission.Attribute.Resolution</name>
 		<right>
 			<name>Edit</name>
 			<value>false</value>
@@ -2150,6 +2168,13 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.ChangesPermission.Attribute.Creator</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>Document.Timesheet.TabularSection.OneWeek.Attribute.ExistTimeEntries</name>
 		<right>
 			<name>View</name>
@@ -2592,6 +2617,13 @@
 		<right>
 			<name>Get</name>
 			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.ChangesPermission.Attribute.Day</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
 		</right>
 	</object>
 	<object>
@@ -3518,57 +3550,6 @@
 		</right>
 	</object>
 	<object>
-		<name>Document.SalesPermission</name>
-		<right>
-			<name>Read</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Insert</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Update</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Delete</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Posting</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>UndoPosting</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>InteractiveInsert</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Edit</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>InteractivePosting</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>InteractivePostingRegular</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>InputByString</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
 		<name>InformationRegister.EmailStatuses.Resource.Details</name>
 		<right>
 			<name>View</name>
@@ -3648,6 +3629,13 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.ChangesPermission.Attribute.Class</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>InformationRegister.UsersAccess.Dimension.User</name>
 		<right>
 			<name>View</name>
@@ -3693,6 +3681,13 @@
 	</object>
 	<object>
 		<name>Catalog.UserSettings.Attribute.Folder</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.ChangesPermission.Attribute.Expired</name>
 		<right>
 			<name>Edit</name>
 			<value>false</value>
@@ -4293,6 +4288,13 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.ChangesPermission.Attribute.Organization</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>InformationRegister.Holidays</name>
 		<right>
 			<name>Read</name>
@@ -4573,6 +4575,13 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.ChangesPermission.Attribute.Company</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>Catalog.Users.Attribute.LastName</name>
 		<right>
 			<name>Edit</name>
@@ -4715,6 +4724,13 @@
 		<right>
 			<name>Read</name>
 			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.ChangesPermission.Attribute.Responsible</name>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
 		</right>
 	</object>
 	<object>
@@ -5040,146 +5056,6 @@
 			<value>true</value>
 		</right>
 	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Resolution</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Responsible</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Expired</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Customer</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Currency</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Amount</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Company</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Document</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.Attribute.Creator</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.TabularSection.Restrictions.Attribute.Reason</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.SalesPermission.TabularSection.Restrictions</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Responsible</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Document</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Company</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Organization</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Expired</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Creator</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Day</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Resolution</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.ChangesPermission.Attribute.Class</name>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
 	<restrictionTemplate>
 		<name>Companies</name>
 		<condition>// #Parameter(1) - Reference Field
@@ -5223,6 +5099,210 @@ union all
 select #Parameter(1)
 where TenantAccess = value ( Enum.Access.Forbid )
 and #Parameter(1) not in ( select Ref from Catalog.Membership.Tenants where Tenant = &amp;Tenant )
+</condition>
+	</restrictionTemplate>
+	<restrictionTemplate>
+		<name>Organizations</name>
+		<condition>// #Parameter(1) - Reference Field
+
+select value ( Catalog.Organizations.EmptyRef )
+union all
+//
+// Customers
+//
+select #Parameter(1)
+where
+#if "#Parameter(1)" = "Ref" #then
+	IsFolder
+#elseif "#Parameter(1)" = "Owner" #then
+	cast ( #Parameter(1) as Catalog.Organizations ).IsFolder
+#else
+	#Parameter(1).IsFolder
+#endif
+and &amp;UserClass = value ( Enum.Users.StandardUser )
+union all
+select #Parameter(1)
+where &amp;UserClass = value ( Enum.Users.StandardUser )
+and
+#if "#Parameter(1)" = "Ref" #then
+	CustomerType
+#elseif "#Parameter(1)" = "Owner" #then
+	cast ( #Parameter(1) as Catalog.Organizations ).CustomerType
+#else
+	#Parameter(1).CustomerType
+#endif
+	= value ( Enum.CustomerTypes.Chain )
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Undefined )
+and &amp;CanViewCustomers
+#if "#Parameter(1)" = "Ref" #then
+	and Customer
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Customer
+#else
+	and #Parameter(1).Customer
+#endif
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Allow )
+and &amp;CanViewCustomers
+#if "#Parameter(1)" = "Ref" #then
+	and Customer
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Customer
+#else
+	and #Parameter(1).Customer
+#endif
+and #Parameter(1) in ( select Organization from Catalog.Users.Organizations where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Forbid )
+and &amp;CanViewCustomers
+#if "#Parameter(1)" = "Ref" #then
+	and Customer
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Customer
+#else
+	and #Parameter(1).Customer
+#endif
+and #Parameter(1) not in ( select Organization from Catalog.Users.Organizations where Ref = &amp;User )
+union all
+select #Parameter(1)
+where
+#if "#Parameter(1)" = "Ref" #then
+	Salesman
+#elseif "#Parameter(1)" = "Owner" #then
+	cast ( #Parameter(1) as Catalog.Organizations ).Salesman
+#else
+	#Parameter(1).Salesman
+#endif
+	= &amp;User
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.States )
+and &amp;CanViewCustomers
+#if "#Parameter(1)" = "Ref" #then
+	and Customer
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Customer
+#else
+	and #Parameter(1).Customer
+#endif
+#if "#Parameter(1)" = "Ref" #then
+	and ShippingAddress.State
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).ShippingAddress.State
+#else
+	and #Parameter(1).ShippingAddress.State
+#endif
+	in ( select State from Catalog.Users.OrganizationsStates where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.States )
+and &amp;CanViewCustomers
+#if "#Parameter(1)" = "Ref" #then
+	and Customer
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Customer
+#else
+	and #Parameter(1).Customer
+#endif
+#if "#Parameter(1)" = "Ref" #then
+	and ShippingAddress
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).ShippingAddress
+#else
+	and #Parameter(1).ShippingAddress
+#endif
+	= value ( Catalog.Addresses.EmptyRef )
+union all
+//
+// Vendors
+//
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Undefined )
+and &amp;CanViewVendors
+#if "#Parameter(1)" = "Ref" #then
+	and Vendor
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Vendor
+#else
+	and #Parameter(1).Vendor
+#endif
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Allow )
+and &amp;CanViewVendors
+#if "#Parameter(1)" = "Ref" #then
+	and Vendor
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Vendor
+#else
+	and #Parameter(1).Vendor
+#endif
+and #Parameter(1) in ( select Organization from Catalog.Users.Organizations where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.Forbid )
+and &amp;CanViewVendors
+#if "#Parameter(1)" = "Ref" #then
+	and Vendor
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Vendor
+#else
+	and #Parameter(1).Vendor
+#endif
+and #Parameter(1) not in ( select Organization from Catalog.Users.Organizations where Ref = &amp;User )
+union all
+select #Parameter(1)
+where
+#if "#Parameter(1)" = "Ref" #then
+	Responsible
+#elseif "#Parameter(1)" = "Owner" #then
+	cast ( #Parameter(1) as Catalog.Organizations ).Responsible
+#else
+	#Parameter(1).Responsible
+#endif
+	= &amp;User
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.States )
+and &amp;CanViewVendors
+#if "#Parameter(1)" = "Ref" #then
+	and Vendor
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Vendor
+#else
+	and #Parameter(1).Vendor
+#endif
+#if "#Parameter(1)" = "Ref" #then
+	and ShippingAddress.State
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).ShippingAddress.State
+#else
+	and #Parameter(1).ShippingAddress.State
+#endif
+	in ( select State from Catalog.Users.OrganizationsStates where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;OrganizationAccess = value ( Enum.Access.States )
+and &amp;CanViewVendors
+#if "#Parameter(1)" = "Ref" #then
+	and Vendor
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).Vendor
+#else
+	and #Parameter(1).Vendor
+#endif
+#if "#Parameter(1)" = "Ref" #then
+	and ShippingAddress
+#elseif "#Parameter(1)" = "Owner" #then
+	and cast ( #Parameter(1) as Catalog.Organizations ).ShippingAddress
+#else
+	and #Parameter(1).ShippingAddress
+#endif
+	= value ( Catalog.Addresses.EmptyRef )
 </condition>
 	</restrictionTemplate>
 	<restrictionTemplate>

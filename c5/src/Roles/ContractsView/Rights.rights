@@ -19,6 +19,26 @@
 		</right>
 	</object>
 	<object>
+		<name>Document.CreditLimit</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Customer in ( #Organizations ( "Customer" ) )
+</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>Catalog.BankAccounts</name>
 		<right>
 			<name>Read</name>
@@ -47,6 +67,78 @@
 			<value>true</value>
 			<restrictionByCondition>
 				<condition>T where T.Owner in ( #Organizations ( "Owner" ) )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>DocumentJournal.Restrictions</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Catalog.ContractStatuses</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Configuration.Contabilizare</name>
+		<right>
+			<name>MainWindowModeNormal</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeEmbeddedWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeFullscreenWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeKiosk</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>AnalyticsSystemClient</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.InvoicesReturn</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Customer in ( #Organizations ( "Customer" ) )</condition>
 			</restrictionByCondition>
 		</right>
 		<right>
@@ -114,30 +206,7 @@
 		</right>
 	</object>
 	<object>
-		<name>Document.InvoicesReturn</name>
-		<right>
-			<name>InputByString</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Read</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>Document.CreditLimit</name>
-		<right>
-			<name>InputByString</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Read</name>
-			<value>true</value>
-		</right>
+		<name>DocumentJournal.Restrictions.Command.Embedded</name>
 		<right>
 			<name>View</name>
 			<value>true</value>
@@ -146,44 +215,15 @@
 	<object>
 		<name>Document.SalesRestriction</name>
 		<right>
-			<name>InputByString</name>
-			<value>true</value>
-		</right>
-		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Customer in ( #Organizations ( "Customer" ) )</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>View</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>DocumentJournal.Restrictions</name>
-		<right>
-			<name>Read</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>DocumentJournal.Restrictions.Command.Embedded</name>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>Catalog.ContractStatuses</name>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>Read</name>
 			<value>true</value>
 		</right>
 		<right>
