@@ -12,6 +12,7 @@ var CurrencyStruct;
 
 Procedure DownloadCurrencies ( Data ) export
 
+	SetPrivilegedMode ( true );
 	init ( Data );
 	initParameters ();
 	if ( hostNameEmpty () ) then
@@ -341,6 +342,7 @@ EndFunction
 
 Procedure DownloadCurrenciesShedule () export
 
+	SetPrivilegedMode ( true );
 	initParameters ();
 	if ( hostNameEmpty () ) then
 		writeLog ();
