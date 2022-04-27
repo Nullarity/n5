@@ -48,6 +48,8 @@ Procedure readAppearance ()
 	|Document show filled ( Object.Document );
 	|Responsible show filled ( Object.Resolution );
 	|FormOK show Changed;
+	|Memo lock filled ( Object.Ref );
+	|Resolution hide empty ( Object.Ref );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
