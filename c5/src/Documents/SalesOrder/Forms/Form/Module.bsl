@@ -446,7 +446,7 @@ Procedure setLinks ()
 		q.SetParameter ( "Quote", Object.Quote );
 		q.SetParameter ( "IOSheet", Object.IOSheet );
 		q.SetParameter ( "Contract", Object.Contract );
-		SQL.Perform ( Env );
+		SQL.Perform ( Env, false );
 		setURLPanel ();
 	endif;
 	Appearance.Apply ( ThisObject, "ShowLinks" );
