@@ -429,7 +429,7 @@ Procedure putRow(Params, Env, Table)
 			tabDoc.Put(emptyRow);
 			continue;
 		endif;
-			p.Fill(row);
+		p.Fill(row);
 		p.ItemPresentation = Conversion.ValuesToString (
 			row.SKU, row.Item, row.Feature, ? ( row.Series = "", "", "#" + row.Series )
 		);

@@ -105,6 +105,7 @@
   <basedOn>Document.LVITransfer</basedOn>
   <basedOn>Document.VendorReturn</basedOn>
   <basedOn>Document.Sale</basedOn>
+  <basedOn>Document.WriteOff</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -1496,15 +1497,15 @@
     </type>
     <toolTip>
       <key>en</key>
-      <value>It is obligatory to put a flag if it is transportation of assets without transfer of ownership, transfer of assets for leasing, rent, processing, etc. With the active flag, this entry will not be included in the VAT Declaration, but will fall into the &quot;Sales Register&quot; or in the &quot;Purchases Register&quot;</value>
+      <value>It is obligatory to put a flag if it is transportation of assets without transfer of ownership, transfer of assets for leasing, rent, processing, etc.</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Обязательно проставить флаг, в случае если это транспортировка активов без передачи права собственности, передача активов в лизинг, аренду, на переработку и т.д. При активном флаге данная запись не попадет в Декларацию по НДС, но попадет в &quot;Книгу Продаж&quot; либо в &quot;Книгу Покупок&quot;</value>
+      <value>Обязательно проставить флаг, в случае если это транспортировка активов без передачи права собственности, передача активов в лизинг, аренду, на переработку и т.д.</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Este obligatoriu să se plaseze bifă dacă este vorba de transportul bunurilor fără transfer de proprietate, transferul de active pentru leasing, chirie, procesare etc. Cu steagul activ, această înregistrare nu va fi inclusă în Declarația privind TVA, ci va intra în &quot;Cartea de vânzări&quot; sau în &quot;Cartea de cumpărare&quot;</value>
+      <value>Este obligatoriu să se plaseze bifă dacă este vorba de transportul bunurilor fără transfer de proprietate, transferul de active pentru leasing, chirie, procesare etc</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -3353,12 +3354,12 @@
       <value>Invoice</value>
     </synonym>
     <synonym>
-      <key>ro</key>
-      <value>FF</value>
-    </synonym>
-    <synonym>
       <key>ru</key>
       <value>НН</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>FF</value>
     </synonym>
   </templates>
   <templates uuid="6af1d85d-9c6c-423a-a569-b3e4969f35a0">
@@ -3426,6 +3427,9 @@
       <types>DocumentRef.Invoice</types>
       <types>DocumentRef.VendorReturn</types>
       <types>DocumentRef.Sale</types>
+      <types>DocumentRef.Transfer</types>
+      <types>DocumentRef.WriteOff</types>
+      <types>DocumentRef.LVITransfer</types>
     </commandParameterType>
     <parameterUseMode>Multiple</parameterUseMode>
     <representation>Auto</representation>

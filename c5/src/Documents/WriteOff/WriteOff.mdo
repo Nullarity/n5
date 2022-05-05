@@ -314,6 +314,49 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="1ff0a32a-a4b4-4e5c-8c04-88aaba7552d2">
+    <name>Contract</name>
+    <synonym>
+      <key>en</key>
+      <value>Contract</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Договор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contract</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Contracts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Contract</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Договор</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contract</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Company</name>
+      <field>Document.WriteOff.Attribute.Company</field>
+    </choiceParameterLinks>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.WriteOff.Attribute.Customer</field>
+    </choiceParameterLinks>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="21f46f09-8e87-4247-a16b-69ca1784c33e">
     <name>Creator</name>
     <synonym>
@@ -381,6 +424,47 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="941a7fa2-fe65-49b1-84fa-d18506c2c43d">
+    <name>Customer</name>
+    <synonym>
+      <key>en</key>
+      <value>Customer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Покупатель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cumpãrãtor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Organizations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Customer</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Покупатель</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cumpãrãtor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Customer</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -1258,6 +1342,200 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d5905eb9-ef2a-46ca-ade1-2014c16c1dae">
+    <name>VATAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Account (VAT)</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет (НДС)</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul (TVA)</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Expense account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета затрат</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cont de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.CostOfGoodsSold</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.Expenses</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherExpenses</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e0cb2f04-e070-435b-9d00-b94f446a0edd">
+    <name>VATDim1</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 1</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 1</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 1</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The first analytics of expense account (VAT)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Первая аналитика счета списания (НДС)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Primele Analytics cont de cheltuieli (TVA)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.WriteOff.Attribute.Company</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>1</linkItem>
+      <field>Document.WriteOff.Attribute.VATAccount</field>
+    </linkByType>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="9bd6f536-0aea-407f-a9a0-08b2c7f754ac">
+    <name>VATDim2</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 2</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 2</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 2</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The second analytics of expense account (VAT)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вторая аналитика счета списания (НДС)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Al doilea Analytics cont de cheltuieli (TVA)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Company</name>
+      <field>Document.WriteOff.Attribute.Company</field>
+    </choiceParameterLinks>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.WriteOff.Attribute.VATDim1</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>2</linkItem>
+      <field>Document.WriteOff.Attribute.VATAccount</field>
+    </linkByType>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="646e2133-0c7c-4841-be39-c1da368cc171">
+    <name>VATDim3</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 3</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 3</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 3</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The third analytics of expense account (VAT)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Третья аналитика счета списания (НДС)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Al treilea Analytics cont de cheltuieli (TVA)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Company</name>
+      <field>Document.WriteOff.Attribute.Company</field>
+    </choiceParameterLinks>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.WriteOff.Attribute.VATDim2</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>3</linkItem>
+      <field>Document.WriteOff.Attribute.VATAccount</field>
+    </linkByType>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -2356,6 +2634,46 @@
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="8e7cd11a-d3e3-49ae-ac87-09f2a340efe8">
+      <name>VATAccount</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </value>
+      </choiceParameters>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>

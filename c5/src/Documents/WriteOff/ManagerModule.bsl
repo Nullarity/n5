@@ -43,6 +43,9 @@ Function Post ( Env ) export
 	ItemDetails.Save ( Env );
 	if ( not Env.RestoreCost ) then
 		attachSequence ( Env );
+		if ( fields.ApplyVAT ) then
+			commitVAT ( Env );
+		endif;
 		if ( fields.Forms ) then
 			if ( not makeRanges ( Env ) ) then
 				return false;
@@ -75,6 +78,9 @@ Procedure getData ( Env )
 		if ( Env.DocumentOrderExists ) then
 			sqlReserves ( Env );
 		endif;
+		if ( fields.ApplyVAT ) then
+			sqlVAT ( Env );
+		endif;
 		sqlQuantity ( Env );
 	endif; 
 	if ( Env.RestoreCost
@@ -92,9 +98,10 @@ Procedure sqlFields ( Env )
 	s = "
 	|// @Fields
 	|select Documents.Date as Date, Documents.Warehouse as Warehouse, Documents.Company as Company,
-	|	Documents.PointInTime as Timestamp, Documents.Product as Product,
+	|	Documents.PointInTime as Timestamp, Documents.Product as Product, Documents.VATUse > 0 as ApplyVAT,
 	|	Documents.ProductFeature as ProductFeature, Documents.ExpenseAccount as ExpenseAccount,
-	|	Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3,
+	|	Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3, Documents.VATAccount as VATAccount,
+	|	Documents.VATDim1 as VATDim1, Documents.VATDim2 as VATDim2, Documents.VATDim3 as VATDim3,
 	|	isnull ( Forms.Exists, false ) as Forms, Documents.Base refs Document.Waybill as FuelExpense,
 	|	Cars.Ref as Car
 	|from Document.WriteOff as Documents
@@ -164,6 +171,30 @@ Procedure sqlItems ( Env )
 	
 EndProcedure
  
+Procedure sqlVAT ( Env )
+	
+	s = "
+	|// #VAT
+	|select Items.VATAccount as Account,
+	|	sum (
+	|		case Items.Ref.Currency when Constants.Currency then Items.VAT
+	|		else Items.VAT * Items.Ref.Rate / Items.Ref.Factor
+	|		end
+	|	) as Amount
+	|from Document.WriteOff.Items as Items
+	|	//
+	|	// Contstants
+	|	//
+	|	left join Constants as Constants
+	|	on true
+	|where Items.Ref = &Ref
+	|and Items.VAT <> 0
+	|group by Items.VATAccount
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
 Procedure sqlSequence ( Env )
 	
 	s = "
@@ -561,6 +592,30 @@ Procedure attachSequence ( Env )
 		movement.Item = row.Item;
 	enddo;
 	recordset.Write ();
+	
+EndProcedure
+
+Procedure commitVAT ( Env )
+	
+	table = Env.VAT;
+	if ( table.Count () = 0 ) then
+		return;
+	endif; 
+	fields = Env.Fields;
+	p = GeneralRecords.GetParams ();
+	p.Date = fields.Date;
+	p.Company = fields.Company;
+	p.AccountDr = fields.VATAccount;
+	p.DimDr1 = fields.VATDim1;
+	p.DimDr2 = fields.VATDim2;
+	p.DimDr3 = fields.VATDim3;
+	p.Operation = Enums.Operations.VATPayable;
+	p.Recordset = Env.Registers.General;
+	for each row in table do
+		p.AccountCr = row.Account;
+		p.Amount = row.Amount;
+		GeneralRecords.Add ( p );
+	enddo; 
 	
 EndProcedure
 

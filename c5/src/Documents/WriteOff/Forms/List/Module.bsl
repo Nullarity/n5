@@ -1,3 +1,4 @@
+
 // *****************************************
 // *********** Form events
 
@@ -6,6 +7,20 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	UserTasks.InitList ( List );
 	
+EndProcedure
+
+&AtClient
+Procedure NotificationProcessing ( EventName, Parameter, Source )
+
+	if ( EventName = Enum.InvoiceRecordsWrite () ) then
+		base = Source.Base;
+		if ( TypeOf ( base ) = Type ( "DocumentRef.WriteOff" ) ) then
+			NotifyChanged ( base );
+		endif;
+	elsif ( EventName = Enum.MessageInvoicesExchnage () ) then
+		Items.List.Refresh ();
+	endif; 
+
 EndProcedure
 
 // *****************************************

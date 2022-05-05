@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>ListSettingsComposerUserSettings</name>
     <id>1</id>
@@ -109,6 +109,57 @@
     <defaultItem>true</defaultItem>
     <titleLocation>None</titleLocation>
     <items xsi:type="form:FormField">
+      <name>Status</name>
+      <id>117</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.Status</segments>
+      </dataPath>
+      <titleLocation>None</titleLocation>
+      <extendedTooltip>
+        <name>StatusExtendedTooltip</name>
+        <id>119</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>StatusContextMenu</name>
+        <id>118</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>PictureField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:ImageFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <valuesPicture xsi:type="core:PictureRef">
+          <picture>CommonPicture.FormStatuses</picture>
+        </valuesPicture>
+        <fileDragMode>AsFileRef</fileDragMode>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
       <name>Date</name>
       <id>16</id>
       <visible>true</visible>
@@ -200,6 +251,81 @@
       <extInfo xsi:type="form:LabelFieldExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
         <autoMaxHeight>true</autoMaxHeight>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>TaxInvoice</name>
+      <id>114</id>
+      <title>
+        <key>en</key>
+        <value>Tax #</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>НН</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>FF</value>
+      </title>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>List.TaxInvoice</segments>
+      </dataPath>
+      <toolTip>
+        <key>en</key>
+        <value>Tax invoice number</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Номер налоговой накладной</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul facturii fiscale</value>
+      </toolTip>
+      <extendedTooltip>
+        <name>TaxInvoiceExtendedTooltip</name>
+        <id>116</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>TaxInvoiceContextMenu</name>
+        <id>115</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>15</width>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
@@ -1070,6 +1196,10 @@
     <autoFill>true</autoFill>
   </autoCommandBar>
   <handlers>
+    <event>NotificationProcessing</event>
+    <name>NotificationProcessing</name>
+  </handlers>
+  <handlers>
     <event>OnCreateAtServer</event>
     <name>OnCreateAtServer</name>
   </handlers>
@@ -1098,21 +1228,482 @@
       <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number,	Documents.Date,	Documents.Posted, Documents.Amount,	Documents.Approved,	Documents.ApprovedPosition,	Documents.Company, Documents.Creator, Documents.Currency,
 	Documents.Detail, Documents.Dim1, Documents.Dim2, Documents.Dim3, Documents.ExpenseAccount,	Documents.Factor, Documents.GrossAmount, Documents.Head, Documents.HeadPosition, Documents.Base, Documents.Memo,
 	Documents.Prices, Documents.Product, Documents.ProductFeature, Documents.Rate, Documents.ShowPrices, Documents.Tax,	Documents.Taxable, Documents.TaxableAmount,	Documents.TaxCode, Documents.TaxGroup, Documents.TaxRate,
-	Documents.Warehouse, Documents.Items, Documents.Members, Documents.Taxes, Documents.PointInTime,
+	Documents.Warehouse, Documents.Items, Documents.Members, Documents.Taxes, Documents.PointInTime, Documents.VATUse as VATUse,
+	Forms.Number as TaxInvoice, Forms.Form as Form,
+	case Forms.Status
+		when value ( Enum.FormStatuses.Saved ) then 1
+		when value ( Enum.FormStatuses.Printed ) then 2
+		when value ( Enum.FormStatuses.Canceled ) then 3
+		when value ( Enum.FormStatuses.Submitted ) then 4
+		when value ( Enum.FormStatuses.Waiting ) then 5
+		when value ( Enum.FormStatuses.Unloaded ) then 6
+		when value ( Enum.FormStatuses.Returned ) then 6
+		else 0
+	end as Status,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
 from Document.WriteOff as Documents
+	//
+	// Forms
+	//
+	left join InformationRegister.Forms as Forms
+	on Forms.Document = Documents.Ref
 	//
 	// Tasks
 	//
 	{left join InformationRegister.Tasks as TasksList
 	on TasksList.Source = Documents.Ref
-	and TasksList.User = &amp;Performer}</queryText>
+	and TasksList.User = &amp;Performer}
+</queryText>
       <mainTable>Document.WriteOff</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Observation</dataPath>
+        <field>Observation</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskProgress</dataPath>
+        <field>TaskProgress</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task progress</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PointInTime</dataPath>
+        <field>PointInTime</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Taxes</dataPath>
+        <field>Taxes</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Percent</dataPath>
+        <field>Taxes.Percent</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.LineNumber</dataPath>
+        <field>Taxes.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Ref</dataPath>
+        <field>Taxes.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxable</dataPath>
+        <field>Taxable</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskCompleted</dataPath>
+        <field>TaskCompleted</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task completed</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATAccount</dataPath>
+        <field>VATAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Tax</dataPath>
+        <field>Tax</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Tax</dataPath>
+        <field>Taxes.Tax</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.RowKey</dataPath>
+        <field>Items.RowKey</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Product</dataPath>
+        <field>Product</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>HeadPosition</dataPath>
+        <field>HeadPosition</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ExpenseAccount</dataPath>
+        <field>ExpenseAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ShowPrices</dataPath>
+        <field>ShowPrices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim1</dataPath>
+        <field>Dim1</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Dim1</dataPath>
+        <field>Items.Dim1</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VATCode</dataPath>
+        <field>Items.VATCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaxableAmount</dataPath>
+        <field>TaxableAmount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Currency</dataPath>
+        <field>Currency</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Head</dataPath>
+        <field>Head</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskStatus</dataPath>
+        <field>TaskStatus</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task status</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VAT</dataPath>
+        <field>VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Detail</dataPath>
+        <field>Detail</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATUse</dataPath>
+        <field>VATUse</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Factor</dataPath>
+        <field>Factor</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATDim2</dataPath>
+        <field>VATDim2</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Base</dataPath>
+        <field>Base</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ProductFeature</dataPath>
+        <field>ProductFeature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Taxable</dataPath>
+        <field>Items.Taxable</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Prices</dataPath>
+        <field>Prices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>GrossAmount</dataPath>
+        <field>GrossAmount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim2</dataPath>
+        <field>Dim2</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Taxes.Amount</dataPath>
+        <field>Taxes.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Item</dataPath>
+        <field>Items.Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VATRate</dataPath>
+        <field>Items.VATRate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Approved</dataPath>
+        <field>Approved</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ApprovedPosition</dataPath>
+        <field>ApprovedPosition</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Members</dataPath>
+        <field>Members</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaxCode</dataPath>
+        <field>TaxCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Rate</dataPath>
+        <field>Rate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Dim3</dataPath>
+        <field>Items.Dim3</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaskRef</dataPath>
+        <field>TaskRef</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Task ref</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Quantity</dataPath>
+        <field>Items.Quantity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Account</dataPath>
+        <field>Items.Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Warehouse</dataPath>
+        <field>Items.Warehouse</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Warehouse</dataPath>
+        <field>Warehouse</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Product</dataPath>
+        <field>Items.Product</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaxGroup</dataPath>
+        <field>TaxGroup</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Total</dataPath>
+        <field>Items.Total</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATDim3</dataPath>
+        <field>VATDim3</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Ref</dataPath>
+        <field>Items.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.LineNumber</dataPath>
+        <field>Items.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Dim2</dataPath>
+        <field>Items.Dim2</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Total</dataPath>
+        <field>Total</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Feature</dataPath>
+        <field>Items.Feature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.DocumentOrder</dataPath>
+        <field>Items.DocumentOrder</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.ExpenseAccount</dataPath>
+        <field>Items.ExpenseAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Package</dataPath>
+        <field>Items.Package</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Members.Member</dataPath>
+        <field>Members.Member</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Price</dataPath>
+        <field>Items.Price</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim3</dataPath>
+        <field>Dim3</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Prices</dataPath>
+        <field>Items.Prices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Capacity</dataPath>
+        <field>Items.Capacity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.ProductFeature</dataPath>
+        <field>Items.ProductFeature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.QuantityPkg</dataPath>
+        <field>Items.QuantityPkg</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaxRate</dataPath>
+        <field>TaxRate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Range</dataPath>
+        <field>Items.Range</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Series</dataPath>
+        <field>Items.Series</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.TaxableAmount</dataPath>
+        <field>Items.TaxableAmount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.TaxCode</dataPath>
+        <field>Items.TaxCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATDim1</dataPath>
+        <field>VATDim1</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VAT</dataPath>
+        <field>Items.VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Amount</dataPath>
+        <field>Items.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VATAccount</dataPath>
+        <field>Items.VATAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Items</dataPath>
+        <field>Items</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Members.Ref</dataPath>
+        <field>Members.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Members.LineNumber</dataPath>
+        <field>Members.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Members.Position</dataPath>
+        <field>Members.Position</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Form</dataPath>
+        <field>Form</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>TaxInvoice</dataPath>
+        <field>TaxInvoice</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Tax invoice</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Status</dataPath>
+        <field>Status</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Status</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Contract</dataPath>
+        <field>Contract</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Customer</dataPath>
+        <field>Customer</field>
+      </fields>
+      <parameters>
+        <name>Performer</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Performer</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>CatalogRef.Users</types>
+        </valueType>
+        <values xsi:type="core:UndefinedValue"/>
+        <useRestriction>true</useRestriction>
+      </parameters>
     </extInfo>
   </attributes>
   <attributes>

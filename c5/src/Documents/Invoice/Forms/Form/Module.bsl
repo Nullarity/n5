@@ -952,7 +952,7 @@ EndProcedure
 Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
 	completeShipment ();
-	if ( Object.Ref.IsEmpty () ) then
+	if ( isNew () ) then
 		return;
 	endif;
 	readPrinted ();

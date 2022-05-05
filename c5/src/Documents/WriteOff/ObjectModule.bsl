@@ -2,6 +2,21 @@
 
 var Realtime;
 
+Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
+	
+	checkVAT ( CheckedAttributes );
+
+EndProcedure
+
+Procedure checkVAT ( CheckedAttributes )
+	
+	if ( VATUse > 0 ) then
+		CheckedAttributes.Add ( "VATAccount" );
+		CheckedAttributes.Add ( "Items.VATAccount" );
+	endif; 
+	
+EndProcedure
+
 Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
 	
 	if ( DataExchange.Load ) then

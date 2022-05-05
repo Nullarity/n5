@@ -12,6 +12,8 @@ var ItemsRow;
 var AccountData;
 &AtClient
 var AccountData;
+&AtServer
+var VATAccountData;
 
 // *****************************************
 // *********** Form events
@@ -20,8 +22,13 @@ var AccountData;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
+	InvoiceRecords.Read ( ThisObject );
 	readAccount ();
-	labelDims ();
+	labelDims ( AccountData );
+	if ( Object.VATUse > 0 ) then
+		readVATAccount ();
+		labelDims ( VATAccountData, "VAT" );
+	endif;
 	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
@@ -43,20 +50,28 @@ Procedure readAccount ()
 EndProcedure 
 
 &AtServer
-Procedure labelDims ()
+Procedure labelDims ( Data, Prefix = "" )
 	
 	i = 1;
-	for each dim in AccountData.Dims do
-		Items [ "Dim" + i ].Title = dim.Presentation;
+	for each dim in Data.Dims do
+		Items [ Prefix + "Dim" + i ].Title = dim.Presentation;
 		i = i + 1;
 	enddo; 
 	
 EndProcedure 
 
 &AtServer
+Procedure readVATAccount ()
+	
+	VATAccountData = GeneralAccounts.GetData ( Object.VATAccount );
+	VATExpensesLevel = VATAccountData.Fields.Level;
+	
+EndProcedure 
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	if ( Object.Ref.IsEmpty () ) then
+	if ( isNew () ) then
 		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
 		Base = Parameters.Basis;
@@ -91,19 +106,34 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Links show ShowLinks;
+	|FormInvoice show filled ( InvoiceRecord );
 	|Dim1 show ExpensesLevel > 0;
 	|Dim2 show ExpensesLevel > 1;
 	|Dim3 show ExpensesLevel > 2;
+	|VATDim1 show VATExpensesLevel > 0;
+	|VATDim2 show VATExpensesLevel > 1;
+	|VATDim3 show VATExpensesLevel > 2;
 	|ItemsShowDetails press Object.Detail;
 	|Prices GrossAmount Amount VATUse show Object.ShowPrices;
-	|VAT show ( Object.VATUse > 0 and Object.ShowPrices );
 	|ItemsExpenseAccount ItemsDim1 ItemsDim2 ItemsDim3 ItemsProduct ItemsProductFeature hide not Object.Detail;
 	|ItemsPrice ItemsAmount ItemsPrices show Object.ShowPrices;
-	|ItemsVATCode ItemsVAT ItemsTotal show ( Object.VATUse > 0 and Object.ShowPrices )
+	|VAT VATAccount ItemsVATCode ItemsVAT ItemsVATAccount Customer Contract show Object.VATUse > 0;
+	|ItemsTotal show Object.VATUse = 2;
+	|NewInvoiceRecord show Object.VATUse > 0 and ( FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus ) );
+	|Warning show ChangesDisallowed;
+	|GroupHeader GroupItems GroupStakeholders GroupFooter GroupMore lock ChangesDisallowed;
+	|ItemsTableCommandBar disable ChangesDisallowed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
 EndProcedure
+
+&AtServer
+Function isNew ()
+	
+	return Object.Ref.IsEmpty ();
+	
+EndFunction
 
 &AtServer
 Procedure fillNew ()
@@ -332,8 +362,9 @@ Procedure itemsByWaybill ()
 	for each row in Env.Items do
 		newRow = table.Add ();
 		FillPropertyValues ( newRow, row );
-		accounts = AccountsMap.Item ( newRow.Item, company, warehouse, "Account" );
+		accounts = AccountsMap.Item ( newRow.Item, company, warehouse, "Account, VAT" );
 		newRow.Account = accounts.Account;
+		newRow.VATAccount = accounts.VAT;
 		Computations.Packages ( newRow );
 	enddo;
 	
@@ -393,8 +424,9 @@ Procedure loadShipmentStockman ()
 	for each row in Env.Items do
 		newRow = itemsTable.Add ();
 		FillPropertyValues ( newRow, row );
-		account = AccountsMap.Item ( row.Item, company, warehouse, "Account" ).Account;
-		newRow.Account = account;
+		accounts = AccountsMap.Item ( row.Item, company, warehouse, "Account, VAT" );
+		newRow.Account = accounts.Account;
+		newRow.VATAccount = accounts.VAT;
 	enddo; 
 
 EndProcedure
@@ -415,16 +447,20 @@ Procedure setLinks ()
 	if ( Env.Selection.Count () = 0 ) then
 		ShowLinks = false;
 	else
-		Env.Q.SetParameter ( "Base", Object.Base );
+		q = Env.Q;
+		q.SetParameter ( "Ref", Object.Ref );
+		q.SetParameter ( "Base", Object.Base );
 		SQL.Perform ( Env );
 		setURLPanel ();
 	endif;
+	Appearance.Apply ( ThisObject, "ShowLinks" );
 
 EndProcedure 
 
 &AtServer
 Procedure sqlLinks ()
 	
+	selection = Env.Selection;
 	BaseExists = ValueIsFilled ( Object.Base );
 	if ( BaseExists ) then
 		BaseMetadata = Metadata.FindByType ( TypeOf ( Object.Base ) );
@@ -434,8 +470,19 @@ Procedure sqlLinks ()
 		|from Document." + BaseMetadata.Name + " as Documents
 		|where Documents.Ref = &Base
 		|";
-		Env.Selection.Add ( s );
+		selection.Add ( s );
 	endif;
+	if ( isNew () ) then
+		return;
+	endif; 
+	s = "
+	|// #InvoiceRecords
+	|select Documents.Ref as Document, Documents.DeliveryDate as Date, Documents.Number as Number
+	|from Document.InvoiceRecord as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|";
+	selection.Add ( s );
 	
 EndProcedure 
 
@@ -445,6 +492,9 @@ Procedure setURLPanel ()
 	parts = new Array ();
 	if ( BaseExists ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Base, BaseMetadata ) );
+	endif;
+	if ( not isNew () ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, Metadata.Documents.InvoiceRecord ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then
@@ -454,7 +504,26 @@ Procedure setURLPanel ()
 		Links = s;
 	endif; 
 	
-EndProcedure 
+EndProcedure
+
+&AtClient
+Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
+
+	readNewInvoices ( NewObject );
+	setLinks ();
+
+EndProcedure
+ 
+&AtServer
+Procedure readNewInvoices ( NewObject ) 
+
+	type = TypeOf ( NewObject );
+	if ( type = Type ( "DocumentRef.InvoiceRecord" ) ) then
+		InvoiceRecords.Read ( ThisObject );
+		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
+	endif;
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
@@ -499,6 +568,9 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.InvoiceRecordsWrite ()
+		and Source.Ref = InvoiceRecord ) then
+		readPrinted ();
 	endif;
 
 EndProcedure
@@ -523,8 +595,9 @@ Procedure addItem ( Fields )
 		row.Quantity = Fields.Quantity;
 		warehouse = Object.Warehouse;
 		row.Price = Goods.Price ( , Object.Date, Object.Prices, item, package, feature, , , , warehouse, Object.Currency );
-		accounts = AccountsMap.Item ( item, Object.Company, warehouse, "Account" );
+		accounts = AccountsMap.Item ( item, Object.Company, warehouse, "Account, VAT" );
 		row.Account = accounts.Account;
+		row.VATAccount = accounts.VAT;
 		data = DF.Values ( item, "VAT, VAT.Rate as Rate" );
 		row.VATCode = data.VAT;
 		row.VATRate = data.Rate;
@@ -536,6 +609,14 @@ Procedure addItem ( Fields )
 	Computations.Amount ( row );
 	Computations.Total ( row, Object.VATUse );
 	calcTotals ( Object );
+	
+EndProcedure 
+
+&AtServer
+Procedure readPrinted ()
+	
+	InvoiceRecords.Read ( ThisObject );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
 	
 EndProcedure 
 
@@ -552,6 +633,11 @@ EndProcedure
 Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
 	completeShipment ();
+	if ( isNew () ) then
+		return;
+	endif;
+	readPrinted ();
+	Appearance.Apply ( ThisObject, "InvoiceRecord" );
 	
 EndProcedure
 
@@ -594,6 +680,24 @@ Procedure CompanyOnChange ( Item )
 	
 	Options.ApplyCompany ( ThisObject );
 	
+EndProcedure
+
+&AtClient
+Procedure CustomerOnChange ( Item )
+	
+	applyCustomer ();
+
+EndProcedure
+
+&AtClient
+Procedure applyCustomer ()
+	
+	customer = Object.Customer;
+	if ( customer.IsEmpty () ) then
+		return;
+	endif;
+	Object.Contract = DF.Pick ( customer, "CustomerContract" );
+
 EndProcedure
 
 &AtClient
@@ -641,42 +745,69 @@ Procedure applyExpenseAccount ()
 	
 	readAccount ();
 	adjustDims ( AccountData, Object );
-	labelDims ();
+	labelDims ( AccountData );
 	Appearance.Apply ( ThisObject, "ExpensesLevel" );
 	      	
 EndProcedure 
 
 &AtClientAtServerNoContext
-Procedure adjustDims ( Data, Target )
+Procedure adjustDims ( Data, Target, Prefix = "" )
 	
-	fields = Data.Fields;
 	dims = Data.Dims;
-	level = fields.Level;
-	if ( level = 0 ) then
-		Target.Dim1 = null;
-		Target.Dim2 = null;
-		Target.Dim3 = null;
-	elsif ( level = 1 ) then
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = null;
-		Target.Dim3 = null;
-	elsif ( level = 2 ) then
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
-		Target.Dim3 = null;
-	else
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
-		Target.Dim3 = dims [ 2 ].ValueType.AdjustValue ( Target.Dim3 );
-	endif; 
+	top = Data.Fields.Level;
+	dimName = Prefix + "Dim";
+	for i = 1 to 3 do
+		name = dimName + i;
+		Target [ name ] = ? ( i > top, null, dims [ i - 1 ].ValueType.AdjustValue ( Target [ name ] ) );
+	enddo;
 
+EndProcedure 
+
+&AtClient
+Procedure VATAccountOnChange ( Item )
+	
+	applyVATAccount ();
+
+EndProcedure
+
+&AtServer
+Procedure applyVATAccount ()
+	
+	readVATAccount ();
+	adjustDims ( VATAccountData, Object, "VAT" );
+	labelDims ( VATAccountData, "VAT" );
+	Appearance.Apply ( ThisObject, "VATExpensesLevel" );
+	      	
 EndProcedure 
 
 &AtClient
 Procedure ShowPricesOnChange ( Item )
 	
-	Appearance.Apply ( ThisObject, "Object.ShowPrices" );
+	applyShowPrices ();
 	
+EndProcedure
+
+&AtServer
+Procedure applyShowPrices ()
+	
+	if ( Object.ShowPrices ) then
+		Object.VATUse = Metadata.Documents.WriteOff.Attributes.ShowPrices.FillValue;
+	else
+		Object.VATUse = 0;
+		resetVATUse ();
+	endif;
+	Appearance.Apply ( ThisObject, "Object.ShowPrices, Object.VATUse" );
+
+EndProcedure
+
+&AtServer
+Procedure resetVATUse ()
+	
+	Object.Customer = undefined;
+	Object.Contract = undefined;
+	Object.VATAccount = undefined;
+	applyVATAccount ();
+
 EndProcedure
 
 &AtClient
@@ -686,14 +817,17 @@ Procedure VATUseOnChange ( Item )
 	
 EndProcedure
 
-&AtClient
+&AtServer
 Procedure applyVATUse ()
 	
 	vatUse = Object.VATUse;
 	for each row in Object.Items do
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
-	enddo; 
+	enddo;
+	if ( vatUse = 0 ) then
+		resetVATUse ();
+	endif;
 	calcTotals ( Object );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
@@ -862,6 +996,7 @@ Procedure applyItem ()
 	ItemsRow.VATCode = data.VAT;
 	ItemsRow.VATRate = data.Rate;
 	ItemsRow.Account = data.Account;
+	ItemsRow.VATAccount = data.VATAccount;
 	Computations.Units ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
@@ -875,9 +1010,10 @@ Function getItemData ( val Params )
 	data = DF.Values ( item, "Package, Package.Capacity as Capacity, VAT, VAT.Rate as Rate" );
 	warehouse = Params.Warehouse;
 	price = Goods.Price ( , Params.Date, Params.Prices, item, data.Package, , , , , warehouse, Params.Currency );
-	accounts = AccountsMap.Item ( item, Params.Company, warehouse, "Account" );
+	accounts = AccountsMap.Item ( item, Params.Company, warehouse, "Account, VAT" );
 	data.Insert ( "Price", price );
 	data.Insert ( "Account", accounts.Account );
+	data.Insert ( "VATAccount", accounts.VAT );
 	if ( data.Capacity = 0 ) then
 		data.Capacity = 1;
 	endif; 
@@ -1076,4 +1212,3 @@ Procedure MembersMemberOnChange ( Item )
 	MembersForm.FillPosition ( Items.Members.CurrentData, Object.Date );
 	
 EndProcedure
-
