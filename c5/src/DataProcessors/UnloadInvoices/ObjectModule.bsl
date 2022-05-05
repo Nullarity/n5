@@ -44,7 +44,7 @@ Procedure initDataReader()
 	
 	s = "
 	|select Invoices.Company.CodeFiscal as CompanyCodeFiscal, Invoices.Company.FullDescription as Company,
-	|	Invoices.Company.VAT as VATPayer,
+	|	Invoices.Company.VAT as VATPayer, Invoices.Redirects as Redirects,
 	|	isnull ( Invoices.Company.PaymentAddress.Address, """" ) as CompanyAddress,
 	|	isnull ( Invoices.Account.Bank.Description, """" ) as CompanyBank,
 	|	isnull ( Invoices.Account.Bank.Code, """" ) as CompanyBankCode,
@@ -60,12 +60,13 @@ Procedure initDataReader()
 	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank.Code, """" ) as CarrierBankCode,
 	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.AccountNumber, """" ) as CarrierAccountNumber,
 	|	isnull ( Invoices.LoadingAddress.Address, """" ) as LoadingAddress,
-	|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress	
+	|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress
 	|from Document.InvoiceRecord as Invoices
 	|where Invoices.Ref = &Ref
 	|;
 	|select 1 as Table, Items.Item.Code as Code, Items.Item.FullDescription as Item, Items.Item.Unit.Description as Unit,
-	|	isnull ( Items.Package.Description, """" ) as Package, isnull ( Items.Item.Weight, 0 ) as Weight
+	|	isnull ( Items.Package.Description, """" ) as Package, isnull ( Items.Item.Weight, 0 ) as Weight,
+	|	Items.Item.SKU as SKU, Items.Feature.Description as Feature, Items.Series.Description as Series
 	|from Document.InvoiceRecord.Items as Items
 	|where Items.Ref = &Ref
 	|order by Items.LineNumber
@@ -197,7 +198,7 @@ Procedure unload()
 		XML.WriteText(value);
 		XML.WriteEndElement();
 	endif;
-	value = Fields.UnloadingAddress;
+	value = Fields.Redirects;
 	if (value <> "") then
 		XML.WriteStartElement("Redirections");
 		XML.WriteText(value);
@@ -210,7 +211,10 @@ Procedure unload()
 		details = ItemsTable[row.LineNumber - 1];
 		XML.WriteStartElement("Row");
 		writeAttribute("Code", TrimR(details.Code));
-		writeAttribute("Name", details.Item, true);
+		name = Conversion.ValuesToString (
+			details.SKU, details.Item, details.Feature, ? ( details.Series = "", "", "#" + details.Series )
+		);
+		writeAttribute("Name", name, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
 		qty = row.Quantity;
 		total = row.Total * rate / factor;
