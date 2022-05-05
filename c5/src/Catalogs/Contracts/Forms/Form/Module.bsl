@@ -27,6 +27,12 @@ Procedure fillNew ()
 	
 	if ( Parameters.CopyingValue.IsEmpty () ) then
 		Object.Signed = false;
+		Object.DateStart = CurrentSessionDate ();
+		if ( not Object.Parent.IsEmpty () ) then
+			FillPropertyValues ( Object, Object.Parent, ,
+			"Code, Description, DataVersion, Parent, Predefined, PredefinedDataName, Items, Services, VendorItems,
+			|VendorServices" );
+		endif;
 	else
 		setFlags ();
 		setCurrency ();
@@ -176,6 +182,29 @@ Function checkTables ( Tables )
 	return not error;
 	
 EndFunction 
+
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	if ( Object.Customer
+		and IsBlankString ( Object.Description ) ) then
+		setNumber ( CurrentObject );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure setNumber ( CurrentObject )
+	
+	CurrentObject.SetNewCode ();
+	CurrentObject.Description = DF.Pick ( SessionParameters.User, "Code" )
+	+ "-"
+	+ ? ( CurrentObject.DateStart = Date ( 1, 1, 1 ), "", Right ( "" + Year ( CurrentObject.DateStart ), 2 ) )
+	+ "-"
+	+ Print.ShortNumber ( CurrentObject.Code )
+	+ CurrentObject.Currency;
+
+EndProcedure
 
 // *****************************************
 // *********** Group Form

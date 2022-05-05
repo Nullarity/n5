@@ -2,9 +2,18 @@
 
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
+	checkDescription ( CheckedAttributes );
 	checkRates ( CheckedAttributes );
 	checkPeriod ( CheckedAttributes );
 	
+EndProcedure
+
+Procedure checkDescription ( Attributes )
+	
+	if ( Vendor ) then
+		Attributes.Add ( "CustomerRateType" );
+	endif;
+
 EndProcedure
 
 Procedure checkRates ( Attributes )
