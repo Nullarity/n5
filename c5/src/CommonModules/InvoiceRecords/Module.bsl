@@ -82,6 +82,9 @@ Procedure Fill ( Object, Base ) export
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		env = getEnv ( Object, "VendorReturn" );
 		fillByReturn ( env, Object, Base );
+	elsif ( type = Type ( "DocumentRef.WriteOff" ) ) then
+		env = getEnv ( Object, "WriteOff", true );
+		fillByWriteOff ( env, Object, Base );
 	endif;
 	
 EndProcedure
@@ -525,6 +528,51 @@ Procedure sqlItemsReturn ( Env )
 	|	Items.Total, Items.VAT, Items.VATCode, Items.VATRate, 0, false
 	|from Document.VendorReturn.IntangibleAssets as Items
 	|where Items.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure 
+
+&AtServer
+Procedure fillByWriteOff ( Env, Object, Base ) 
+
+	headerByBase ( Object, Base );
+	getDataWriteOff ( Env, Base );
+	fillHeader ( Env, Object );
+	fillItems ( Env, Object );
+
+EndProcedure
+
+&AtServer
+Procedure getDataWriteOff ( Env, Base ) 
+
+	sqlFieldsWriteOff ( Env );
+	sqlItems ( Env );
+	getTables ( Env, Base );
+
+EndProcedure
+
+&AtServer
+Procedure sqlFieldsWriteOff ( Env )
+	
+	s = "
+	|// @Fields
+	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint";
+	isNew = Env.IsNew;
+	if ( isNew ) then
+		s = s + ",
+		|	Documents.Customer.ShippingAddress as UnloadingAddress, &Transfer as Redirects,
+		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount";
+	endif;
+	s = s + ",
+	|	Documents.Customer as Customer";
+	if ( isNew ) then
+		s = s + ",
+		|	Documents.Date as DeliveryDate";
+	endif;
+	s = s + "
+	|from Document.WriteOff as Documents
+	|where Documents.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );
 
