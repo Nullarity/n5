@@ -16,6 +16,8 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		if ( TypeOf ( base ) = Type ( "DocumentRef.Transfer" ) ) then
 			NotifyChanged ( base );
 		endif;
+	elsif ( EventName = Enum.MessageInvoicesExchnage () ) then
+		Items.List.Refresh ();
 	endif; 
 	
 EndProcedure

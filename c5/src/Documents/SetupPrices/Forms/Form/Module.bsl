@@ -75,6 +75,7 @@ Procedure sqlPricesAndPriceGroups ( Env )
 	|and List.Owner = &Company
 	|and Pricing <> value ( Enum.Pricing.Percent )
 	|and Pricing <> value ( Enum.Pricing.Group )
+	|and Pricing <> value ( Enum.Pricing.Cost )
 	|order by List.Code
 	|;
 	|// #PriceGroups
