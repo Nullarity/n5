@@ -101,6 +101,8 @@ Function calcPrice ( Cache, Params, Prices )
 		priceOrPercent = getPriceItemPercent ( Cache, Params, Prices );
 	elsif ( Prices.Pricing = Enums.Pricing.Base ) then
 		priceOrPercent = getPriceForBase ( Cache, Params, Prices );
+	elsif ( Prices.Pricing = Enums.Pricing.Cost ) then
+		priceOrPercent = getCost ( Cache, Params, Prices );
 	endif; 
 	if ( cachedPrice.CacheEnabled ) then
 		cachedPrice.CashItem.Price = priceOrPercent;
@@ -488,6 +490,51 @@ Function getPriceForBase ( Cache, Params, Prices )
 	return price;
 	
 EndFunction 
+
+Function getCost ( Cache, Params, Prices )
+	
+	price = getItemCost ( Params, Prices );
+	finalizePrice ( price, Params, Prices );
+	return price;
+	
+EndFunction 
+
+Function getItemCost ( Params, Prices )
+
+	q = new Query ();
+	s = "
+	|select ItemKey
+	|from InformationRegister.ItemDetails as Details
+	|where Details.Item = &Item";
+	if ( Params.Feature <> undefined ) then
+		s = s + "
+		|and Details.Feature = &Feature";
+		q.SetParameter ( "Feature", Params.Feature );
+	endif;
+	if ( Params.Warehouse <> undefined ) then
+		s = s + "
+		|and Details.Warehouse = &Warehouse";
+		q.SetParameter ( "Warehouse", Params.Warehouse );
+	endif;
+	if ( Params.Package <> undefined ) then
+		s = s + "
+		|and Details.Package = &Package
+		|union
+		|" + s + "
+		|and Details.Package = value ( Catalog.Packages.EmptyRef )";
+		q.SetParameter ( "Package", Params.Package );
+	endif;
+	s = "
+	|select Cost.AmountBalance / case Cost.QuantityBalance when 0 then 1 else Cost.QuantityBalance end as Price
+	|from AccumulationRegister.Cost.Balance ( &Date, ItemKey in ( " + s + " ) ) as Cost
+	|";
+	q.Text = s;
+	q.SetParameter ( "Date", Periods.GetOperationalDate ( Params.Date ) );
+	q.SetParameter ( "Item", Params.Item );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Price );
+	
+EndFunction
 
 Function GetCustomerPrices ( Contract, Warehouse, Cache = undefined ) export
 	
