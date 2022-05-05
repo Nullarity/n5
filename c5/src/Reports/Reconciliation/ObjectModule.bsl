@@ -205,7 +205,12 @@ Procedure sqlRecords ()
 	|and Invoices.Company = &Company
 	|and Invoices.Status = value ( Enum.FormStatuses.Printed )
 	|and Invoices.Base refs Document.Sale
-	|and cast ( Invoices.Base as Document.Sale ).Date between &DateStart and &DateEnd
+	|and cast ( Invoices.Base as Document.Sale ).Date between &DateStart and &DateEnd";
+	if ( ContractDefined ) then
+		s = s + "
+		|and cast ( Invoices.Customer as Catalog.Organizations ).CustomerContract in hierarchy ( &Contract )";
+	endif;
+	s = s + "
 	|;
 	|select Records.Recorder as Document, max ( Records.Period ) as Date
 	|";
@@ -223,7 +228,7 @@ Procedure sqlRecords ()
 	|	Account in ( select Account from Accounts ), &Dimensions,
 	|	Company = &Company and ExtDimension1 = &Organization";
 	if ( ContractDefined ) then
-		s = s + " and ExtDimension2 = &Contract";
+		s = s + " and ExtDimension2 in hierarchy ( &Contract )";
 	endif;
 	if ( CurrencyDefined ) then
 		s = s + " and Currency = &Currency";
@@ -303,7 +308,7 @@ Procedure sqlContracts ()
 	|		Account in ( select Account from Accounts ), &Dimensions,
 	|		Company = &Company and ExtDimension1 = &Organization";
 	if ( ContractDefined ) then
-		s = s + " and ExtDimension2 = &Contract";
+		s = s + " and ExtDimension2 in hierarchy ( &Contract )";
 	endif;
 	if ( CurrencyDefined ) then
 		s = s + " and Currency = &Currency";
@@ -346,7 +351,7 @@ Procedure sqlBalance ()
 	|	Account in ( select Account from Accounts ), &Dimensions,
 	|	Company = &Company and ExtDimension1 = &Organization";
 	if ( ContractDefined ) then
-		s = s + " and ExtDimension2 = &Contract";
+		s = s + " and ExtDimension2 in hierarchy ( &Contract )";
 	endif;
 	if ( CurrencyDefined ) then
 		s = s + " and Currency = &Currency";
