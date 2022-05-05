@@ -555,6 +555,7 @@ Function formData ()
 	endif; 
 	data.Insert ( "Prices", Prices );
 	data.Insert ( "ShowPrices", ShowPrices );
+	data.Insert ( "ShowCost", Source.ShowCost );
 	data.Insert ( "Period", ? ( Date = Date ( 1, 1, 1 ), undefined, Date ) );
 	data.Insert ( "Company", Source.Company );
 	data.Insert ( "Item", row.Ref );
@@ -616,7 +617,12 @@ Function getPricesTable ( Data )
 		|	0 as Price
 		|from Catalog.Prices as Prices
 		|where not Prices.DeletionMark
-		|and Prices.Owner = &Company
+		|and Prices.Owner = &Company";
+		if ( not Data.ShowCost ) then
+			s = s + "
+			|and Prices.Pricing <> value ( Enum.Pricing.Cost )";
+		endif;
+		s = s + "
 		|order by Prices.Code
 		|";
 		q = new Query ( s );

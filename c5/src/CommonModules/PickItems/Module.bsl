@@ -25,6 +25,7 @@ Function GetParams ( Form ) export
 	p.Insert ( "Prices", getPrices ( p, object ) );
 	p.Insert ( "Discounts", getDiscounts ( p, object ) );
 	p.Insert ( "ShowPrice", getShowPrice ( p, object ) );
+	p.Insert ( "ShowCost", getShowCost ( p, object ) );
 	p.Insert ( "ShowAmount", getShowAmount ( p ) );
 	p.Insert ( "ItemsOnly", getItemsOnly ( p ) );
 	p.Insert ( "Keys", getKeys ( p ) );
@@ -217,6 +218,19 @@ Function getShowPrice ( Params, Object )
 		return false;
 	else
 		return true;
+	endif; 
+	
+EndFunction
+
+&AtServer
+Function getShowCost ( Params, Object )
+	
+	type = Params.Type;
+	if ( type.Transfer
+		or type.WriteOff ) then
+		return Object.ShowPrices;
+	else
+		return false;
 	endif; 
 	
 EndFunction
