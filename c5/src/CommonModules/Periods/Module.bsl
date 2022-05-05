@@ -39,6 +39,9 @@ EndFunction
 &AtServer
 Function GetOperationalDate ( Date ) export
 	
+	if ( Date = undefined ) then
+		return undefined;
+	endif;
 	today = CurrentSessionDate ();
 	if ( BegOfDay ( today ) = BegOfDay ( Date ) ) then
 		return undefined;
