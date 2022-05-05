@@ -31,7 +31,8 @@ Procedure OK ( Command )
 		return;
 	endif;
 	start ();
-	Progress.Open ( UUID, , new NotifyDescription ( "CreationCompleted", ThisObject ), true, true );
+	Progress.Open ( UUID, , new NotifyDescription ( "CreationCompleted", ThisObject ), true,
+		Enum.ShowMessagesInSeparateWindow () );
 	
 EndProcedure
 
