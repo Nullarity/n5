@@ -25,9 +25,9 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|BasePrices RoundMethod RoundToNextPart enable Object.Pricing <> Enum.Pricing.Base;
+	|RoundMethod RoundToNextPart enable Object.Pricing <> Enum.Pricing.Base;
+	|BasePrices Detail enable not inlist ( Object.Pricing, Enum.Pricing.Base, Enum.Pricing.Cost );
 	|Percent enable Object.Pricing = Enum.Pricing.Percent;
-	|Detail enable Object.Pricing <> Enum.Pricing.Percent
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -65,6 +65,8 @@ Procedure resetFieldsByCalculationMethod ()
 		Object.BasePrices = undefined;
 		Object.RoundMethod = undefined;
 		Object.RoundToNextPart = false;
+	elsif ( Object.Pricing = Enums.Pricing.Cost ) then
+		Object.BasePrices = undefined;
 	elsif ( Object.Pricing = Enums.Pricing.Percent ) then
 		Object.Detail = Enums.PriceDetails.Item;
 	endif;
