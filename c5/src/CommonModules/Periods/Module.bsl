@@ -37,6 +37,18 @@ Function GetDocumentDate ( Object ) export
 EndFunction
 
 &AtServer
+Function GetOperationalDate ( Date ) export
+	
+	today = CurrentSessionDate ();
+	if ( BegOfDay ( today ) = BegOfDay ( Date ) ) then
+		return undefined;
+	else
+		return Date;
+	endif; 
+
+EndFunction
+
+&AtServer
 Function Ok ( DateStart, DateEnd ) export
 	
 	if ( DateStart = Date ( 1, 1, 1 ) ) or ( DateEnd = Date ( 1, 1, 1 ) ) then
