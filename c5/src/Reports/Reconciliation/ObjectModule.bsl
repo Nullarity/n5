@@ -36,8 +36,8 @@ Procedure readParams ()
 	Detailed = DC.GetParameter ( settings, "Detailed" ).Value;
 	Ready = not DC.GetParameter ( settings, "Draft" ).Value;
 	period = DC.GetParameter ( settings, "Period" ).Value;
-	DateStart = period.StartDate;
-	DateEnd = period.EndDate;
+	DateStart = Max ( period.StartDate, Date ( 1900, 1, 1 ) );
+	DateEnd = ? ( period.EndDate = Date ( 1, 1, 1 ), Date ( 3999, 1, 1 ), period.EndDate );
 	Language = DC.GetParameter ( settings, "Language" ).Value;
 	LanguageCode = getLanguageCode ();
 	
@@ -234,8 +234,14 @@ Procedure sqlRecords ()
 		s = s + " and Currency = &Currency";
 	endif;
 	s = s + " ) as Records
-	|where not ( Records.BalancedAccount in ( select Account from Accounts )
-	|	and isnull ( Records.BalancedExtDimension1, value ( Catalog.Organizations.EmptyRef ) ) = Records.ExtDimension1";
+	|where valuetype ( Records.Recorder ) in (
+	|	type ( Document.AdjustDebts ),
+	|	type ( Document.AdjustVendorDebts )
+	|)
+	|or
+	|	not ( Records.BalancedAccount in ( select Account from Accounts )
+	|		and isnull ( Records.BalancedExtDimension1, value ( Catalog.Organizations.EmptyRef ) )
+	|			= Records.ExtDimension1";
 	if ( ContractDefined ) then
 		s = s + "
 		|and isnull ( Records.BalancedExtDimension2, value ( Catalog.Contracts.EmptyRef ) ) = Records.ExtDimension2";
