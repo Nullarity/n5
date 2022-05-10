@@ -81,10 +81,13 @@ Procedure Fill ( Object, Base ) export
 		fillByLVI ( env, Object, Base );
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		env = getEnv ( Object, "VendorReturn" );
-		fillByReturn ( env, Object, Base );
+		fillByVendorReturn ( env, Object, Base );
 	elsif ( type = Type ( "DocumentRef.WriteOff" ) ) then
 		env = getEnv ( Object, "WriteOff", true );
 		fillByWriteOff ( env, Object, Base );
+	elsif ( type = Type ( "DocumentRef.Return" ) ) then
+		env = getEnv ( Object, "Return" );
+		fillByReturn ( env, Object, Base );
 	endif;
 	
 EndProcedure
@@ -161,8 +164,8 @@ Procedure sqlFieldsTransfer ( Env )
 	|select Documents.Sender as LoadingPoint, Documents.Company as Customer, Documents.Receiver as UnloadingPoint";
 	if ( Env.IsNew ) then
 		s = s + ",
-		|	Documents.Receiver.Address as UnloadingAddress, Documents.Company.BankAccount as CustomerAccount, Documents.Sender.Address as LoadingAddress,
-		|	true as Transfer, &Transfer as Redirects";
+		|	Documents.Receiver.Address as UnloadingAddress, Documents.Company.BankAccount as CustomerAccount,
+		|	Documents.Sender.Address as LoadingAddress, true as Transfer, &Transfer as Redirects";
 	endif;
 	s = s + "
 	|from Document.Transfer as Documents
@@ -247,18 +250,12 @@ Procedure sqlFieldsInvoice ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint";
-	isNew = Env.IsNew;
-	if ( isNew ) then
+	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint, Documents.Customer as Customer";
+	if ( Env.IsNew ) then
 		s = s + ",
-		|	Documents.Customer.ShippingAddress as UnloadingAddress, true as ShowServices,
-		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount";
-	endif;
-	s = s + ",
-	|	Documents.Customer as Customer";
-	if ( isNew ) then
-		s = s + ",
-		|	Documents.Date as DeliveryDate";
+		|	Documents.Date as DeliveryDate, Documents.Customer.ShippingAddress as UnloadingAddress,
+		|	true as ShowServices, Documents.Warehouse.Address as LoadingAddress,
+		|	Documents.Contract.CustomerBank as CustomerAccount";
 	endif;
 	s = s + "
 	|from Document.Invoice as Documents
@@ -363,8 +360,7 @@ Procedure sqlFieldsSale ( Env )
 	s = "
 	|// @Fields
 	|select Documents.Warehouse as LoadingPoint";
-	isNew = Env.IsNew;
-	if ( isNew ) then
+	if ( Env.IsNew ) then
 		s = s + ",
 		|	false as ShowServices, Documents.Warehouse.Address as LoadingAddress, Documents.Date as DeliveryDate";
 	endif;
@@ -444,17 +440,17 @@ Procedure sqlItemsLVI ( Env )
 EndProcedure 
 
 &AtServer
-Procedure fillByReturn ( Env, Object, Base ) 
+Procedure fillByVendorReturn ( Env, Object, Base ) 
 
-	headerByReturn ( Object, Base );
-	getDataReturn ( env, Base );
+	headerByVendorReturn ( Object, Base );
+	getDataVendorReturn ( env, Base );
 	fillHeader ( env, Object );
 	fillItems ( env, Object );
 
 EndProcedure
 
 &AtServer
-Procedure headerByReturn ( Object, Base )
+Procedure headerByVendorReturn ( Object, Base )
 	
 	Object.Date = Base.Date;
 	Object.Company = Base.Company;
@@ -471,31 +467,25 @@ Procedure headerByReturn ( Object, Base )
 EndProcedure
 
 &AtServer
-Procedure getDataReturn ( Env, Base )
+Procedure getDataVendorReturn ( Env, Base )
 	
-	sqlFieldsReturn ( Env );
-	sqlItemsReturn ( Env );
+	sqlFieldsVendorReturn ( Env );
+	sqlItemsVendorReturn ( Env );
 	getTables ( Env, Base );
 	
 EndProcedure
 
 &AtServer
-Procedure sqlFieldsReturn ( Env )
+Procedure sqlFieldsVendorReturn ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Warehouse as LoadingPoint, Documents.Vendor as UnloadingPoint";
-	isNew = Env.IsNew;
-	if ( isNew ) then
+	|select Documents.Warehouse as LoadingPoint, Documents.Vendor as UnloadingPoint, Documents.Vendor as Customer";
+	if ( Env.IsNew ) then
 		s = s + ",
 		|	Documents.Vendor.ShippingAddress as UnloadingAddress, Documents.Contract.VendorBank as CustomerAccount,
-		|	Documents.Warehouse.Address as LoadingAddress";
-	endif;
-	s = s + ",
-	|	Documents.Vendor as Customer";
-	if ( isNew ) then
-		s = s + ",
-		|	Documents.Date as DeliveryDate";
+		|	Documents.Warehouse.Address as LoadingAddress, Documents.Date as DeliveryDate,
+		|	true as Transfer, &Transfer as Redirects";
 	endif;
 	s = s + "
 	|from Document.VendorReturn as Documents
@@ -506,7 +496,7 @@ Procedure sqlFieldsReturn ( Env )
 EndProcedure 
 
 &AtServer
-Procedure sqlItemsReturn ( Env )
+Procedure sqlItemsVendorReturn ( Env )
 	
 	s = "
 	|// #Items
@@ -557,18 +547,12 @@ Procedure sqlFieldsWriteOff ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint";
-	isNew = Env.IsNew;
-	if ( isNew ) then
+	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint, Documents.Customer as Customer";
+	if ( Env.IsNew ) then
 		s = s + ",
-		|	Documents.Customer.ShippingAddress as UnloadingAddress, &Transfer as Redirects,
-		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount";
-	endif;
-	s = s + ",
-	|	Documents.Customer as Customer";
-	if ( isNew ) then
-		s = s + ",
-		|	Documents.Date as DeliveryDate";
+		|	Documents.Date as DeliveryDate, Documents.Customer.ShippingAddress as UnloadingAddress,
+		|	&Transfer as Redirects, Documents.Warehouse.Address as LoadingAddress,
+		|	Documents.Contract.CustomerBank as CustomerAccount";
 	endif;
 	s = s + "
 	|from Document.WriteOff as Documents
@@ -577,6 +561,78 @@ Procedure sqlFieldsWriteOff ( Env )
 	Env.Selection.Add ( s );
 
 EndProcedure 
+
+&AtServer
+Procedure fillByReturn ( Env, Object, Base ) 
+
+	headerByReturn ( Object, Base );
+	getDataReturn ( Env, Base );
+	fillHeader ( Env, Object );
+	fillReturnItems ( Env, Object );
+
+EndProcedure
+
+&AtServer
+Procedure headerByReturn ( Object, Base ) 
+
+	Object.Date = Base.Date;
+	Object.Company = Base.Company;
+	Object.Currency = Base.Currency;
+	rate = Base.Rate;
+	Object.Rate = ? ( rate = 0, 1, rate );
+	factor = Base.Factor;
+	Object.Factor = ? ( factor = 0, 1, factor );
+	Object.Amount = - Base.Amount;
+	Object.VAT = - Base.VAT;
+	Object.VATUse = Base.VATUse;
+	fillHeaderCommon ( Object, Base );
+
+EndProcedure
+
+&AtServer
+Procedure getDataReturn ( Env, Base ) 
+
+	sqlFieldsReturn ( Env );
+	sqlItems ( Env );
+	getTables ( Env, Base );
+
+EndProcedure
+
+&AtServer
+Procedure sqlFieldsReturn ( Env )
+	
+	s = "
+	|// @Fields
+	|select Documents.Warehouse as LoadingPoint, Documents.Customer as UnloadingPoint, Documents.Customer as Customer";
+	if ( Env.IsNew ) then
+		s = s + ",
+		|	Documents.Customer.ShippingAddress as UnloadingAddress, Documents.Date as DeliveryDate,
+		|	Documents.Warehouse.Address as LoadingAddress, Documents.Contract.CustomerBank as CustomerAccount";
+	endif;
+	s = s + "
+	|from Document.Return as Documents
+	|where Documents.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure 
+
+&AtServer
+Procedure fillReturnItems ( Env, Object ) 
+
+	items = Object.Items;
+	items.Clear ();
+	for each row in Env.Items do
+		newRow = items.Add ();
+		FillPropertyValues ( newRow, row );
+		newRow.Quantity = - newRow.Quantity;
+		newRow.QuantityPkg = - newRow.QuantityPkg;
+		newRow.Amount = - newRow.Amount;
+		newRow.VAT = - newRow.VAT;
+		newRow.Total = - newRow.Total;
+	enddo;
+
+EndProcedure
 
 #endregion
 
