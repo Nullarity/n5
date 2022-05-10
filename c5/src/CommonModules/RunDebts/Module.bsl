@@ -373,6 +373,7 @@ Procedure commitOverpayment ( Env, Payments )
 	localCurrency = fields.LocalCurrency;
 	rate = fields.Rate;
 	factor = fields.factor;
+	exchangeRate = rate / factor;
 	Payments.GroupBy ( "Payment, Rate, Factor", "Amount" );
 	reverseVAT = Env.ReverseVAT;
 	paymentFields = "AdvanceAccount";
@@ -398,7 +399,14 @@ Procedure commitOverpayment ( Env, Payments )
 		overpayment = row.Amount;
 		p.CurrencyAmountDr = overpayment;
 		p.CurrencyAmountCr = overpayment;
-		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, row.Rate, row.Factor );
+		if ( exchangeRate > ( row.Rate / row.Factor ) ) then
+			currencyRate = row.Rate;
+			currencyFactor = row.Factor;
+		else
+			currencyRate = rate;
+			currencyFactor = factor;
+		endif;
+		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, currencyRate, currencyFactor );
 		p.Operation = Enums.Operations.AdvanceApplied;
 		p.Content = operationAdvance + payment;
 		reverse = reverseVAT and data.VAT <> 0;

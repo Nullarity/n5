@@ -11,7 +11,7 @@ Function Post ( Env ) export
 		makeGeneral ( Env );
 		makeExpenses ( Env );
 	endif;
-	RunPayments.FixCash ( Env );
+	fixCurrency ( Env );
 	flagRegisters ( Env );
 	return true;
 	
@@ -426,6 +426,69 @@ Procedure makeExpenses ( Env )
 	movement.AmountDr = Env.Adjustments.Total ( "Amount" );
 
 EndProcedure
+
+Procedure fixCurrency ( Env )
+	
+	fields = Env.Fields;
+	localCurrency = fields.LocalCurrency;
+	currency = fields.Currency;
+	contractCurrency = fields.ContractCurrency;
+	if ( currency = localCurrency
+		and contractCurrency = localCurrency ) then
+		return;
+	endif;
+	if ( currency <> localCurrency ) then
+		fixCurrencyAmount ( Env );
+	endif;
+	if ( currency <> contractCurrency ) then
+		fixAmount ( Env );
+	endif;
+
+EndProcedure 
+
+Procedure fixCurrencyAmount ( Env )
+	
+	fields = Env.Fields;
+	record = undefined;
+	max = 0;
+	fix = fields.Amount - ? ( Env.Customer or Env.Refund, 0, fields.IncomeTaxAmount );
+	cash = "CurrencyAmount" + ? ( Env.Customer, "Dr", "Cr" );
+	for each row in Env.Buffer do
+		currencyAmount = row [ cash ];
+		amount = ? ( currencyAmount < 0, - currencyAmount, currencyAmount );
+		fix = fix - currencyAmount;
+		if ( max < amount ) then
+			Record = row;
+			max = amount;
+		endif; 
+	enddo;
+	if ( fix <> 0
+		and record <> undefined ) then
+		record [ cash ] = record [ cash ] + fix;
+	endif; 
+	
+EndProcedure
+
+Procedure fixAmount ( Env )
+	
+	fields = Env.Fields;
+	record = undefined;
+	max = 0;
+	fix = Currencies.Convert ( fields.Amount, fields.Currency, fields.LocalCurrency, fields.Date, fields.Rate, fields.Factor, , , 2 );
+	for each row in Env.Buffer do
+		amount = ? ( row.Amount < 0, - row.Amount, row.Amount );
+		fix = fix - row.Amount;
+		if ( max < amount ) then
+			Record = row;
+			max = amount;
+		endif; 
+	enddo;
+	if ( fix <> 0
+		and record <> undefined ) then
+		record.Amount = record.Amount + fix;
+	endif; 
+	
+EndProcedure 
 
 Procedure flagRegisters ( Env )
 	

@@ -7,7 +7,7 @@ Function Post ( Env ) export
 	if ( Env.IncomingPayment ) then
 		commitAdvanceVAT ( Env );
 	endif;
-	RunPayments.FixCash ( Env );
+	fixCurrency ( Env );
 	flagRegisters ( Env );
 	return true;
 	
@@ -592,7 +592,7 @@ Procedure proceedIncomeTax ( Env )
 
 EndProcedure
 
-Procedure FixCash ( Env ) export
+Procedure fixCurrency ( Env )
 	
 	fields = Env.Fields;
 	localCurrency = fields.LocalCurrency;
