@@ -158,7 +158,12 @@ Procedure SetTitle ( Params, Period, Account = undefined ) export
 		endif;
 	elsif ( Period.Use ) then
 		value = Period.Value;
-		s = s + ", " + PeriodPresentation ( value.StartDate, value.EndDate, "FP=true" );
+		try
+			presentation = Periods.Presentation ( value.StartDate, value.EndDate );
+		except
+			presentation = Output.WrongPeriod ();
+		endtry;
+		s = s + ", " + presentation;
 	endif; 
 	p = Params.Settings.OutputParameters.FindParameterValue ( new DataCompositionParameter ( "Title" ) );
 	p.Value = s;
