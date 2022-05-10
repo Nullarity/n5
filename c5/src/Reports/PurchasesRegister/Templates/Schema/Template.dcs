@@ -367,6 +367,17 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorReturn.Items as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
 ) as VATPurchase</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -1714,6 +1725,10 @@ where Table.Ref in ( &amp;Documents )
 						<dcsat:value xsi:type="dcscor:Parameter">Vendor</dcsat:value>
 					</dcsat:item>
 					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
 						<dcscor:item>
 							<dcscor:parameter>Details</dcscor:parameter>
 							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
