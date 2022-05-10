@@ -22,7 +22,7 @@ Procedure titleReport ()
 	if ( period.Use ) then
 		p = Params.Settings.OutputParameters.FindParameterValue ( new DataCompositionParameter ( "Title" ) );
 		value = period.Value;
-		p.Value = p.Value + ", " + PeriodPresentation ( value.StartDate, value.EndDate, "FP=true" );
+		p.Value = p.Value + ", " + Periods.Presentation ( value.StartDate, value.EndDate );
 	endif; 
 
 EndProcedure 
