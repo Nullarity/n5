@@ -529,7 +529,8 @@ Procedure AfterWrite ( WriteParameters )
 	if ( not ValueIsFilled ( base ) ) then
 		return;
 	endif;
-	Notify ( Enum.InvoiceRecordsWrite (), Object.Status, new Structure ( "Ref, Base", Object.Ref, base ) );
+	Notify ( Enum.InvoiceRecordsWrite (), Object.Status,
+		new Structure ( "Ref, Base, Customer", Object.Ref, base, Object.Customer ) );
 	
 EndProcedure
 
