@@ -107,6 +107,8 @@ Procedure readAppearance ()
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Links show ShowLinks;
 	|FormInvoice show filled ( InvoiceRecord );
+	|NewInvoiceRecord show Object.VATUse > 0 and ( FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus ) );
+	|Warning show ChangesDisallowed;
 	|Dim1 show ExpensesLevel > 0;
 	|Dim2 show ExpensesLevel > 1;
 	|Dim3 show ExpensesLevel > 2;
@@ -119,8 +121,6 @@ Procedure readAppearance ()
 	|ItemsPrice ItemsAmount ItemsPrices show Object.ShowPrices;
 	|VAT VATAccount ItemsVATCode ItemsVAT ItemsVATAccount Customer Contract show Object.VATUse > 0;
 	|ItemsTotal show Object.VATUse = 2;
-	|NewInvoiceRecord show Object.VATUse > 0 and ( FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus ) );
-	|Warning show ChangesDisallowed;
 	|GroupHeader GroupItems GroupStakeholders GroupFooter GroupMore lock ChangesDisallowed;
 	|ItemsTableCommandBar disable ChangesDisallowed;
 	|" );
