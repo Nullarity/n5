@@ -47,7 +47,7 @@ Procedure extendPeriod ( NewPeriod )
 	set = Items.Period.ChoiceList;
 	item = set.FindByValue ( NewPeriod );
 	if ( item = undefined ) then
-		set.Add ( NewPeriod, PeriodPresentation ( NewPeriod.StartDate, NewPeriod.EndDate, "FP=true" ) );
+		set.Add ( NewPeriod, Periods.Presentation ( NewPeriod.StartDate, NewPeriod.EndDate ) );
 	endif; 
 
 EndProcedure 
