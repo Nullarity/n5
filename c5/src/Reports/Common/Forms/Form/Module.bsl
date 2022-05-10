@@ -49,12 +49,23 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		reportManager ().BeforeOpen ( ThisObject );
 	endif;
 	if ( GenerateOnOpen ) then
-		makeReport ( false );
+		giveAChanceToChangeSettings ();
 	endif; 
 	setReportTitle ( ThisObject );
 	setCurrentItem ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure giveAChanceToChangeSettings ()
+
+	try
+		makeReport ( false );
+	except
+		Message ( BriefErrorDescription ( ErrorInfo () ) );
+	endtry;
 
 EndProcedure
 
@@ -665,7 +676,7 @@ Procedure addPeriod ( Parts, Composer )
 		p = DC.FindParameter ( Composer, "Period" );
 		if ( p.Use ) then
 			period = p.Value;
-			Parts.Add ( PeriodPresentation ( period.StartDate, period.EndDate, "FP=true" ) );
+			Parts.Add ( Periods.Presentation ( period.StartDate, period.EndDate ) );
 		endif; 
 	#endif
 	
