@@ -343,7 +343,7 @@ Procedure financialPeriod ( Report, Period = undefined )
 	else
 		startDate = newPeriod.StartDate;
 		endDate = newPeriod.EndDate;
-		presentation = PeriodPresentation ( startDate, endDate, "FP=true" );
+		presentation = Periods.Presentation ( startDate, endDate );
 	endif; 
 	Report.DateStart = startDate;
 	Report.DateEnd = endDate;
