@@ -57,9 +57,8 @@
 	|from Document.InvoiceRecord.Items as Table
 	|" + conditions + "
 	|and not Table.Ref.DeletionMark
+	|and not Table.Ref.Transfer
 	|and Table.Ref.VATUse <> 0
-	|and not Table.Ref.Base refs Document.Transfer
-	|and not Table.Ref.Base refs Document.LVITransfer
 	|and Table.Ref.Status in (
 	|	value ( Enum.FormStatuses.Unloaded ),
 	|	value ( Enum.FormStatuses.Printed ),
@@ -72,8 +71,7 @@
 	|" + conditions + "
 	|and Table.Ref.VATUse <> 0
 	|and not Table.Ref.DeletionMark
-	|and not Table.Ref.Base refs Document.Transfer
-	|and not Table.Ref.Base refs Document.LVITransfer
+	|and not Table.Ref.Transfer
 	|and Table.Ref.Status in (
 	|	value ( Enum.FormStatuses.Unloaded ),
 	|	value ( Enum.FormStatuses.Printed ),
@@ -118,6 +116,17 @@
 	|" + conditions + "
 	|and Table.Ref.Posted
 	|group by Table.Charge.VAT
+	|union all
+	|select
+	|	- case when Table.Ref.Currency = &Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end,
+	|	- case when Table.Ref.Currency = &Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end,
+	|	Table.VATCode.Rate, Table.VATCode.Type, Table.Ref.Series, Table.Ref.Reference,
+	|	case Table.Ref.ReferenceDate when datetime (1, 1, 1) then Table.Ref.Date else Table.Ref.ReferenceDate end,
+	|	1, Table.Ref.Vendor.CodeFiscal
+	|from Document.VendorReturn.Items as Table
+	|" + conditions + "
+	|and Table.Ref.VATUse <> 0
+	|and Table.Ref.Posted
 	|union all
 	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.Series, Table.Series + Table.FormNumber, Table.Date, 1, Table.Vendor.CodeFiscal
@@ -216,7 +225,6 @@
 	|";
 	Env.Selection.Add ( str );	
 	Env.Q.SetParameter ( "Currency", Constants.Currency.Get () );
-	//Env.Q.SetParameter ( "Account2252", ChartsOfAccounts.General.FindByCode ( "225 2" ) );
 	getData ();
 
 	// Fields
@@ -280,18 +288,19 @@
 	pagesCount = 0;
 	pageTableStarts = 5; // r-index from the top of the page (skip table header)
 	for each row in receipt do
-		FieldsValues [ "A" + i ] = line;
-	    FieldsValues [ "B" + i ] = row.CodeFiscal;
-	    FieldsValues [ "C" + i ] = row.Date;
+		index = Format ( i, "NG=0" );
+		FieldsValues [ "A" + index ] = line;
+	    FieldsValues [ "B" + index ] = row.CodeFiscal;
+	    FieldsValues [ "C" + index ] = row.Date;
 		prefix = row.Series;
-	    FieldsValues [ "D" + i ] = prefix;
-	    FieldsValues [ "E" + i ] = StrReplace ( row.Number, prefix, "" );
-	    FieldsValues [ "F" + i ] = row.Amount;	
-	    FieldsValues [ "G" + i ] = row.VAT;	
+	    FieldsValues [ "D" + index ] = prefix;
+	    FieldsValues [ "E" + index ] = StrReplace ( row.Number, prefix, "" );
+	    FieldsValues [ "F" + index ] = row.Amount;	
+	    FieldsValues [ "G" + index ] = row.VAT;	
 	    line = line + 1;
 		if ( i = 135 ) then
 	    	i = nextPage;
-			elsif ( i = ( nextPage + pageSize ) ) then
+		elsif ( i = ( nextPage + pageSize ) ) then
 			nextPage = nextPage + pageStep;
 			i = nextPage;
 			newPage = T.GetArea ( "A1" );
@@ -367,19 +376,20 @@
 	pageTableStarts = 5; // r-index from the top of the page (skip table header)
 	attachment = T.GetArea ( "B1" );
 	for each row in sales do
-		FieldsValues [ "AA" + i ] = line;
-	    FieldsValues [ "BA" + i ] = row.CodeFiscal;
-	    FieldsValues [ "CA" + i ] = row.Date;
-	    FieldsValues [ "DA" + i ] = row.Series;	
+		index = Format ( i, "NG=0" );
+		FieldsValues [ "AA" + index ] = line;
+	    FieldsValues [ "BA" + index ] = row.CodeFiscal;
+	    FieldsValues [ "CA" + index ] = row.Date;
+	    FieldsValues [ "DA" + index ] = row.Series;	
 		size = StrLen ( row.Series );
 		number = Mid ( row.Number, size + 1 );
-	    FieldsValues [ "EA" + i ] = number;
-	    FieldsValues [ "FA" + i ] = row.Amount;	
-	    FieldsValues [ "GA" + i ] = row.VAT;	
+	    FieldsValues [ "EA" + index ] = number;
+	    FieldsValues [ "FA" + index ] = row.Amount;	
+	    FieldsValues [ "GA" + index ] = row.VAT;	
 	    line = line + 1;
 		if ( i = 143 ) then
 	    	i = nextPage;
-			elsif ( i = ( nextPage + pageSize ) ) then
+		elsif ( i = ( nextPage + pageSize ) ) then
 			nextPage = nextPage + pageStep;
 			i = nextPage;
 			newPage = attachment.GetArea ();
@@ -562,7 +572,203 @@ Procedure G555 ()
 
 EndProcedure
 
-Procedure F1000 ()
+Procedure F655 ()
+
+	result = sum ( "F600:F654" );
+	put ( "F655", result );
+
+EndProcedure
+
+Procedure G655 ()
+
+	result = sum ( "G600:G654" );
+	put ( "G655", result );
+
+EndProcedure
+
+Procedure F755 ()
+
+	result = sum ( "F700:F754" );
+	put ( "F755", result );
+
+EndProcedure
+
+Procedure G755 ()
+
+	result = sum ( "G700:G754" );
+	put ( "G755", result );
+
+EndProcedure
+
+Procedure F855 ()
+
+	result = sum ( "F800:F854" );
+	put ( "F855", result );
+
+EndProcedure
+
+Procedure G855 ()
+
+	result = sum ( "G800:G854" );
+	put ( "G855", result );
+
+EndProcedure
+
+Procedure F955 ()
+
+	result = sum ( "F900:F954" );
+	put ( "F955", result );
+
+EndProcedure
+
+Procedure G955 ()
+
+	result = sum ( "G900:G954" );
+	put ( "G955", result );
+
+EndProcedure
+
+Procedure F1055 ()
+
+	result = sum ( "F1000:F1054" );
+	put ( "F1055", result );
+
+EndProcedure
+
+Procedure G1055 ()
+
+	result = sum ( "G1000:G1054" );
+	put ( "G1055", result );
+
+EndProcedure
+
+Procedure F1155 ()
+
+	result = sum ( "F1100:F1154" );
+	put ( "F1155", result );
+
+EndProcedure
+
+Procedure G1155 ()
+
+	result = sum ( "G1100:G1154" );
+	put ( "G1155", result );
+
+EndProcedure
+
+Procedure F1255 ()
+
+	result = sum ( "F1200:F1254" );
+	put ( "F1255", result );
+
+EndProcedure
+
+Procedure G1255 ()
+
+	result = sum ( "G1200:G1254" );
+	put ( "G1255", result );
+
+EndProcedure
+
+Procedure F1355 ()
+
+	result = sum ( "F1300:F1354" );
+	put ( "F1355", result );
+
+EndProcedure
+
+Procedure G1355 ()
+
+	result = sum ( "G1300:G1354" );
+	put ( "G1355", result );
+
+EndProcedure
+
+Procedure F1455 ()
+
+	result = sum ( "F1400:F1454" );
+	put ( "F1455", result );
+
+EndProcedure
+
+Procedure G1455 ()
+
+	result = sum ( "G1400:G1454" );
+	put ( "G1455", result );
+
+EndProcedure
+
+Procedure F1555 ()
+
+	result = sum ( "F1500:F1554" );
+	put ( "F1555", result );
+
+EndProcedure
+
+Procedure G1555 ()
+
+	result = sum ( "G1500:G1554" );
+	put ( "G1555", result );
+
+EndProcedure
+
+Procedure F1655 ()
+
+	result = sum ( "F1600:F1654" );
+	put ( "F1655", result );
+
+EndProcedure
+
+Procedure G1655 ()
+
+	result = sum ( "G1600:G1654" );
+	put ( "G1655", result );
+
+EndProcedure
+
+Procedure F1755 ()
+
+	result = sum ( "F1700:F1754" );
+	put ( "F1755", result );
+
+EndProcedure
+
+Procedure G1755 ()
+
+	result = sum ( "G1700:G1754" );
+	put ( "G1755", result );
+
+EndProcedure
+
+Procedure F1855 ()
+
+	result = sum ( "F1800:F1854" );
+	put ( "F1855", result );
+
+EndProcedure
+
+Procedure G1855 ()
+
+	result = sum ( "G1800:G1854" );
+	put ( "G1855", result );
+
+EndProcedure
+
+Procedure F1955 ()
+
+	result = sum ( "F1900:F1954" );
+	put ( "F1955", result );
+
+EndProcedure
+
+Procedure G1955 ()
+
+	result = sum ( "G1900:G1954" );
+	put ( "G1955", result );
+
+EndProcedure
+
+Procedure F2000 ()
 
 	list = new Array ();
 	list.Add ( get ( "F136" ) );
@@ -574,17 +780,27 @@ Procedure F1000 ()
 	list.Add ( get ( "F755" ) );
 	list.Add ( get ( "F855" ) );
 	list.Add ( get ( "F955" ) );
+	list.Add ( get ( "F1055" ) );
+	list.Add ( get ( "F1155" ) );
+	list.Add ( get ( "F1255" ) );
+	list.Add ( get ( "F1355" ) );
+	list.Add ( get ( "F1455" ) );
+	list.Add ( get ( "F1555" ) );
+	list.Add ( get ( "F1655" ) );
+	list.Add ( get ( "F1755" ) );
+	list.Add ( get ( "F1855" ) );
+	list.Add ( get ( "F1955" ) );
 	result = 0;
 	for each amount in list do
 		if ( amount <> undefined ) then
 			result = result + amount;
 		endif;
 	enddo;
-	put ( "F1000", result );
+	put ( "F2000", result );
 
 EndProcedure
 
-Procedure G1000 ()
+Procedure G2000 ()
 
 	list = new Array ();
 	list.Add ( get ( "G136" ) );
@@ -596,13 +812,23 @@ Procedure G1000 ()
 	list.Add ( get ( "G755" ) );
 	list.Add ( get ( "G855" ) );
 	list.Add ( get ( "G955" ) );
+	list.Add ( get ( "G1055" ) );
+	list.Add ( get ( "G1155" ) );
+	list.Add ( get ( "G1255" ) );
+	list.Add ( get ( "G1355" ) );
+	list.Add ( get ( "G1455" ) );
+	list.Add ( get ( "G1555" ) );
+	list.Add ( get ( "G1655" ) );
+	list.Add ( get ( "G1755" ) );
+	list.Add ( get ( "G1855" ) );
+	list.Add ( get ( "G1955" ) );
 	result = 0;
 	for each amount in list do
 		if ( amount <> undefined ) then
 			result = result + amount;
 		endif;
 	enddo;
-	put ( "G1000", result );
+	put ( "G2000", result );
 
 EndProcedure
 
@@ -626,7 +852,7 @@ Procedure FA259 ()
 
 EndProcedure
 
-Procedure GA259 ()
+Procedure GA259 (
 
 	result = sum ( "GA200:GA258" );
 
@@ -669,7 +895,7 @@ EndProcedure
 
 Procedure GA559 ()
 
-	result = sum ( "GA500:G5258" );
+	result = sum ( "GA500:GA558" );
 	put ( "GA559", result );
 
 EndProcedure
@@ -702,7 +928,315 @@ Procedure GA759 ()
 
 EndProcedure
 
-Procedure FA1000 ()
+Procedure FA859 ()
+	
+	result = sum ( "FA800:FA858" );
+	put ( "FA859", result );
+
+EndProcedure
+
+Procedure GA859 ()
+
+	result = sum ( "GA800:GA858" );
+	put ( "GA859", result );
+
+EndProcedure
+
+Procedure FA959 ()
+
+	result = sum ( "FA900:FA958" );
+	put ( "FA959", result );
+
+EndProcedure
+
+Procedure GA959 ()
+
+	result = sum ( "GA900:GA958" );
+	put ( "GA959", result );
+
+EndProcedure
+
+Procedure FA1059 ()
+
+	result = sum ( "FA1000:FA1058" );
+	put ( "FA1059", result );
+
+EndProcedure
+
+Procedure GA1059 ()
+
+	result = sum ( "GA1000:GA1058" );
+	put ( "GA1059", result );
+
+EndProcedure
+
+Procedure FA1159 ()
+
+	result = sum ( "FA1100:FA1158" );
+	put ( "FA1159", result );
+
+EndProcedure
+
+Procedure GA1159 ()
+
+	result = sum ( "GA1100:GA1158" );
+	put ( "GA1159", result );
+
+EndProcedure
+
+Procedure FA1259 ()
+
+	result = sum ( "FA1200:FA1258" );
+	put ( "FA1259", result );
+
+EndProcedure
+
+Procedure GA1259 ()
+
+	result = sum ( "GA1200:GA1258" );
+	put ( "GA1259", result );
+
+EndProcedure
+
+Procedure FA1359 ()
+
+	result = sum ( "FA1300:FA1358" );
+	put ( "FA1359", result );
+
+EndProcedure
+
+Procedure GA1359 ()
+
+	result = sum ( "GA1300:GA1358" );
+	put ( "GA1359", result );
+
+EndProcedure
+
+Procedure FA1459 ()
+
+	result = sum ( "FA1400:FA1458" );
+	put ( "FA1459", result );
+
+EndProcedure
+
+Procedure GA1459 ()
+
+	result = sum ( "GA1400:GA1458" );
+	put ( "GA1459", result );
+
+EndProcedure
+
+Procedure FA1559 ()
+
+	result = sum ( "FA1500:FA1558" );
+	put ( "FA1559", result );
+
+EndProcedure
+
+Procedure GA1559 ()
+
+	result = sum ( "GA1500:GA1558" );
+	put ( "GA1559", result );
+
+EndProcedure
+
+Procedure FA1659 ()
+
+	result = sum ( "FA1600:FA1658" );
+	put ( "FA1659", result );
+
+EndProcedure
+
+Procedure GA1659 ()
+
+	result = sum ( "GA1600:GA1658" );
+	put ( "GA1659", result );
+
+EndProcedure
+
+Procedure FA1759 ()
+
+	result = sum ( "FA1700:FA1758" );
+	put ( "FA1759", result );
+
+EndProcedure
+
+Procedure GA1759 ()
+
+	result = sum ( "GA1700:GA1758" );
+	put ( "GA1759", result );
+
+EndProcedure
+
+Procedure FA1859 ()
+
+	result = sum ( "FA1800:FA1858" );
+	put ( "FA1859", result );
+
+EndProcedure
+
+Procedure GA1859 ()
+
+	result = sum ( "GA1800:GA1858" );
+	put ( "GA1859", result );
+
+EndProcedure
+
+Procedure FA1959 ()
+
+	result = sum ( "FA1900:FA1958" );
+	put ( "FA1959", result );
+
+EndProcedure
+
+Procedure GA1959 ()
+
+	result = sum ( "GA1900:GA1958" );
+	put ( "GA1959", result );
+
+EndProcedure
+
+Procedure FA2059 ()
+
+	result = sum ( "FA2000:FA2058" );
+	put ( "FA2059", result );
+
+EndProcedure
+
+Procedure GA2059 ()
+
+	result = sum ( "GA2000:GA2058" );
+	put ( "GA2059", result );
+
+EndProcedure
+
+Procedure FA2159 ()
+
+	result = sum ( "FA2100:FA2158" );
+	put ( "FA2159", result );
+
+EndProcedure
+
+Procedure GA2159 ()
+
+	result = sum ( "GA2100:GA2158" );
+	put ( "GA2159", result );
+
+EndProcedure
+
+Procedure FA2259 ()
+
+	result = sum ( "FA2200:FA2258" );
+	put ( "FA2259", result );
+
+EndProcedure
+
+Procedure GA2259 ()
+
+	result = sum ( "GA2200:GA2258" );
+	put ( "GA2259", result );
+
+EndProcedure
+
+Procedure FA2359 ()
+
+	result = sum ( "FA2300:FA2358" );
+	put ( "FA2359", result );
+
+EndProcedure
+
+Procedure GA2359 ()
+
+	result = sum ( "GA2300:GA2358" );
+	put ( "GA2359", result );
+
+EndProcedure
+
+Procedure FA2459 ()
+
+	result = sum ( "FA2400:FA2458" );
+	put ( "FA2459", result );
+
+EndProcedure
+
+Procedure GA2459 ()
+
+	result = sum ( "GA2400:GA2458" );
+	put ( "GA2459", result );
+
+EndProcedure
+
+Procedure FA2559 ()
+
+	result = sum ( "FA2500:FA2558" );
+	put ( "FA2559", result );
+
+EndProcedure
+
+Procedure GA2559 ()
+
+	result = sum ( "GA2500:GA2558" );
+	put ( "GA2559", result );
+
+EndProcedure
+
+Procedure FA2659 ()
+
+	result = sum ( "FA2600:FA2658" );
+	put ( "FA2659", result );
+
+EndProcedure
+
+Procedure GA2659 ()
+
+	result = sum ( "GA2600:GA2658" );
+	put ( "GA2659", result );
+
+EndProcedure
+
+Procedure FA2759 ()
+
+	result = sum ( "FA2700:FA2758" );
+	put ( "FA2759", result );
+
+EndProcedure
+
+Procedure GA2759 ()
+
+	result = sum ( "GA2700:GA2758" );
+	put ( "GA2759", result );
+
+EndProcedure
+
+Procedure FA2859 ()
+
+	result = sum ( "FA2800:FA2858" );
+	put ( "FA2859", result );
+
+EndProcedure
+
+Procedure GA2859 ()
+
+	result = sum ( "GA2800:GA2858" );
+	put ( "GA2859", result );
+
+EndProcedure
+
+Procedure FA2959 ()
+
+	result = sum ( "FA2900:FA2958" );
+	put ( "FA2959", result );
+
+EndProcedure
+
+Procedure GA2959 ()
+
+	result = sum ( "GA2900:GA2958" );
+	put ( "GA2959", result );
+
+EndProcedure
+
+Procedure FA3000 ()
 
 	list = new Array ();
 	list.Add ( get ( "FA144" ) );
@@ -714,17 +1248,37 @@ Procedure FA1000 ()
 	list.Add ( get ( "FA759" ) );
 	list.Add ( get ( "FA859" ) );
 	list.Add ( get ( "FA959" ) );
+	list.Add ( get ( "FA1059" ) );
+	list.Add ( get ( "FA1159" ) );
+	list.Add ( get ( "FA1259" ) );
+	list.Add ( get ( "FA1359" ) );
+	list.Add ( get ( "FA1459" ) );
+	list.Add ( get ( "FA1559" ) );
+	list.Add ( get ( "FA1659" ) );
+	list.Add ( get ( "FA1759" ) );
+	list.Add ( get ( "FA1859" ) );
+	list.Add ( get ( "FA1959" ) );
+	list.Add ( get ( "FA2059" ) );
+	list.Add ( get ( "FA2159" ) );
+	list.Add ( get ( "FA2259" ) );
+	list.Add ( get ( "FA2359" ) );
+	list.Add ( get ( "FA2459" ) );
+	list.Add ( get ( "FA2559" ) );
+	list.Add ( get ( "FA2659" ) );
+	list.Add ( get ( "FA2759" ) );
+	list.Add ( get ( "FA2859" ) );
+	list.Add ( get ( "FA2959" ) );
 	result = 0;
 	for each amount in list do
 		if ( amount <> undefined ) then
 			result = result + amount;
 		endif;
 	enddo;
-	put ( "FA1000", result );
+	put ( "FA3000", result );
 
 EndProcedure
 
-Procedure GA1000 ()
+Procedure GA3000 ()
 
 	list = new Array ();
 	list.Add ( get ( "GA144" ) );
@@ -736,12 +1290,32 @@ Procedure GA1000 ()
 	list.Add ( get ( "GA759" ) );
 	list.Add ( get ( "GA859" ) );
 	list.Add ( get ( "GA959" ) );
+	list.Add ( get ( "GA1059" ) );
+	list.Add ( get ( "GA1159" ) );
+	list.Add ( get ( "GA1259" ) );
+	list.Add ( get ( "GA1359" ) );
+	list.Add ( get ( "GA1459" ) );
+	list.Add ( get ( "GA1559" ) );
+	list.Add ( get ( "GA1659" ) );
+	list.Add ( get ( "GA1759" ) );
+	list.Add ( get ( "GA1859" ) );
+	list.Add ( get ( "GA1959" ) );
+	list.Add ( get ( "GA2059" ) );
+	list.Add ( get ( "GA2159" ) );
+	list.Add ( get ( "GA2259" ) );
+	list.Add ( get ( "GA2359" ) );
+	list.Add ( get ( "GA2459" ) );
+	list.Add ( get ( "GA2559" ) );
+	list.Add ( get ( "GA2659" ) );
+	list.Add ( get ( "GA2759" ) );
+	list.Add ( get ( "GA2859" ) );
+	list.Add ( get ( "GA2959" ) );
 	result = 0;
 	for each amount in list do
 		if ( amount <> undefined ) then
 			result = result + amount;
 		endif;
 	enddo;
-	put ( "GA1000", result );
+	put ( "GA3000", result );
 
 EndProcedure

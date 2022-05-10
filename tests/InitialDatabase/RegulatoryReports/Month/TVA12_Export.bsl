@@ -141,7 +141,7 @@ Procedure addPurchases ( Env )
 
 	data = Env.Data;
 	rows = new Array ();
-	for i = 100 to 1000 do
+	for i = 100 to 2000 do
 		id = Format ( i, "NG=0" );
 		line = data [ "A" + id ];
 		if ( line = undefined ) then
@@ -159,8 +159,8 @@ Procedure addPurchases ( Env )
 		rows.Add ( new Structure ( "row", row ) );
 	enddo;
 	total = new Structure ();
-	total.Insert ( "totCol5", valueOf ( data [ "F1000" ] ) );
-	total.Insert ( "summContr", valueOf ( data [ "G1000" ] ) );
+	total.Insert ( "totCol5", valueOf ( data [ "F2000" ] ) );
+	total.Insert ( "summContr", valueOf ( data [ "G2000" ] ) );
 	rows.Add ( new Structure ( "total", total ) );
 	Env.Body.Insert ( "dinamicTable", rows );
 
@@ -170,7 +170,7 @@ Procedure addSales ( Env )
 
 	data = Env.Data;
 	rows = new Array ();
-	for i = 100 to 1000 do
+	for i = 100 to 3000 do
 		id = Format ( i, "NG=0" );
 		line = data [ "AA" + id ];
 		if ( line = undefined ) then
@@ -188,8 +188,8 @@ Procedure addSales ( Env )
 		rows.Add ( new Structure ( "row", row ) );
 	enddo;
 	total = new Structure ();
-	total.Insert ( "totCol5", valueOf ( data [ "FA1000" ] ) );
-	total.Insert ( "summContr", valueOf ( data [ "GA1000" ] ) );
+	total.Insert ( "totCol5", valueOf ( data [ "FA3000" ] ) );
+	total.Insert ( "summContr", valueOf ( data [ "GA3000" ] ) );
 	rows.Add ( new Structure ( "total", total ) );
 	Env.Body.Insert ( "dinamicTable1", rows );
 
