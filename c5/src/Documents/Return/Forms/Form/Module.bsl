@@ -6,6 +6,8 @@ var Base;
 var Copy;
 &AtClient
 var ItemsRow;
+&AtServer
+var InvoiceRecordExists;
 
 // *****************************************
 // *********** Form events
@@ -17,6 +19,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	initCurrency ();
 	setSocial ();
 	updateChangesPermission ();
+	InvoiceRecords.Read ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -114,17 +117,22 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|Links show ShowLinks;
+	|Warning show ChangesDisallowed;
 	|ContractAmount show filled ( ContractCurrency ) and ContractCurrency <> Object.Currency;
 	|ContractAmount title/Form.ContractCurrency ContractCurrency <> Object.Currency;
 	|Rate Factor enable
-	|filled ( LocalCurrency )
-	|and filled ( ContractCurrency )
-	|and ( Object.Currency <> LocalCurrency or ContractCurrency <> LocalCurrency );
+	|	filled ( LocalCurrency )
+	|	and filled ( ContractCurrency )
+	|	and ( Object.Currency <> LocalCurrency or ContractCurrency <> LocalCurrency );
 	|CreatePayment show BalanceDue <> 0;
 	|VAT ItemsVATAccount ItemsVATCode show Object.VATUse > 0;
 	|ItemsTotal show Object.VATUse = 2;
 	|ItemsProducerPrice ItemsExtraCharge show UseSocial;
 	|ItemsInvoice show InvoicesInTable;
+	|Header GroupItems GroupAdditional Footer lock ChangesDisallowed;
+	|ItemsAddGroup hide ChangesDisallowed;
+	|FormInvoice show filled ( InvoiceRecord );
+	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -472,13 +480,18 @@ Procedure sqlLinks ()
 	if ( isNew () ) then
 		return;
 	endif; 
+	InvoiceRecordExists = not InvoiceRecord.IsEmpty ();
+	if ( InvoiceRecordExists ) then
+		s = "
+		|// #InvoiceRecords
+		|select Documents.Ref as Document, Documents.DeliveryDate as Date, Documents.Number as Number
+		|from Document.InvoiceRecord as Documents
+		|where Documents.Base = &Ref
+		|and not Documents.DeletionMark
+		|";
+		selection.Add ( s );
+	endif;
 	s = "
-	|// #InvoiceRecords
-	|select Documents.Ref as Document, Documents.DeliveryDate as Date, Documents.Number as Number
-	|from Document.InvoiceRecord as Documents
-	|where Documents.Base in ( &Invoices )  
-	|and not Documents.DeletionMark
-	|;
 	|// #Refunds
 	|select Documents.Ref as Document,
 	|	case when Documents.ReferenceDate = datetime ( 1, 1, 1 ) then Documents.Date else Documents.ReferenceDate end as Date,
@@ -514,7 +527,9 @@ Procedure setURLPanel ()
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Invoices, meta.Invoice ) );	
 	endif;
 	if ( not isNew () ) then
-		parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, meta.InvoiceRecord ) );
+		if ( InvoiceRecordExists ) then
+			parts.Add ( URLPanel.DocumentsToURL ( Env.InvoiceRecords, meta.InvoiceRecord ) );
+		endif;
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Sales, meta.Sale ) );		
 		parts.Add ( URLPanel.DocumentsToURL ( Env.Refunds, meta.Refund ) );		
 	endif; 
@@ -531,7 +546,10 @@ EndProcedure
 &AtClient
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
-	if ( EventName = Enum.MessageRefundIsSaved ()
+	if ( EventName = Enum.InvoiceRecordsWrite ()
+		and Source.Ref = InvoiceRecord ) then
+		readPrinted ();
+	elsif ( EventName = Enum.MessageRefundIsSaved ()
 		and Parameter.Contract = Object.Contract ) then
 		updateLinks ();
 		NotifyChanged ( Object.Ref );
@@ -544,6 +562,14 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 		updateChangesPermission ();
 	endif;
 
+EndProcedure
+
+&AtServer
+Procedure readPrinted ()
+	
+	InvoiceRecords.Read ( ThisObject );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
+	
 EndProcedure
 
 &AtClient
@@ -613,9 +639,23 @@ Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
 	alreadyProcessed = type = Type ( "DocumentRef.VendorPayment" );
 	if ( alreadyProcessed ) then
 		return;
+	else
+		readNewInvoices ( NewObject );
+		updateLinks ();
 	endif;
-	updateLinks ();
 	
+EndProcedure
+
+&AtServer
+Procedure readNewInvoices ( NewObject ) 
+
+	type = TypeOf ( NewObject );
+	if ( type <> Type ( "DocumentRef.InvoiceRecord" ) ) then
+		return;
+	endif;
+	InvoiceRecords.Read ( ThisObject );
+	Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
+
 EndProcedure
 
 &AtServer
@@ -672,6 +712,21 @@ Procedure ContractOnChange ( Item )
 	applyContract ();
 	updateTotals ( ThisObject );
 	
+EndProcedure
+
+&AtClient
+Procedure ReferenceOnChange ( Item )
+	
+	applyReference ();
+
+EndProcedure
+
+&AtClient
+Procedure applyReference ()
+	
+	InvoiceForm.AdjustReference ( Object );
+	InvoiceForm.ExtractSeries ( Object );
+
 EndProcedure
 
 // *****************************************

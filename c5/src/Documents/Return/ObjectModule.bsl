@@ -41,6 +41,9 @@ Procedure OnWrite ( Cancel )
 	if ( DataExchange.Load ) then
 		SequenceCost.Rollback ( Ref, Company, PointInTime () );
 	endif;
+	if ( not DeletionMark ) then
+		InvoiceRecords.Sync ( ThisObject );
+	endif; 
 	
 EndProcedure
 
