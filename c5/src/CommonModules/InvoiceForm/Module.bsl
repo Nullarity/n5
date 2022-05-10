@@ -514,3 +514,27 @@ Procedure SetShippedPercent ( Form ) export
 	set.SetParameterValue ( "Show", new DataCompositionField ( inProgress.DataPath ) );
 	
 EndProcedure
+
+&AtClient
+Procedure AdjustReference ( Object ) export
+	
+	Object.Reference = StrConcat ( StrSplit ( Object.Reference, " /:-#" ) );
+
+EndProcedure
+
+&AtClient
+Procedure ExtractSeries ( Object ) export
+	
+	series = new Array ();
+	fullNumber = Object.Reference;
+	for i = 1 to StrLen ( fullNumber ) do
+		letter = Mid ( fullNumber, i, 1 );
+		if ( StrFind ( "0123456789", letter ) = 0 ) then
+			series.Add ( letter );
+		else
+			break;
+		endif;
+	enddo;
+	Object.Series = StrConcat ( series );
+
+EndProcedure
