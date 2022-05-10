@@ -16,8 +16,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|CustomerFilter show empty ( FixedCustomerFilter );
-	|Customer GroupQuickInfo show empty ( CustomerFilter );
-	|GroupQuickInfo hide empty ( CustomerFilter );
+	|Customer hide filled ( CustomerFilter ) or filled ( FixedCustomerFilter );
+	|GroupQuickInfo show filled ( CustomerFilter );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -29,6 +29,28 @@ Procedure loadFixedFilters ()
 	Parameters.Filter.Property ( "Customer", FixedCustomerFilter );
 	
 EndProcedure 
+
+&AtClient
+Procedure NotificationProcessing ( EventName, Parameter, Source )
+
+	if ( EventName = Enum.InvoiceRecordsWrite () ) then
+		updateList ( Source.Customer );
+	elsif ( EventName = Enum.MessageInvoicesExchnage () ) then
+		Items.List.Refresh ();
+	endif; 
+
+EndProcedure
+
+&AtClient
+Procedure updateList ( Customer )
+	
+	refresh = FixedCustomerFilter = Customer
+	or CustomerFilter = Customer;
+	if ( refresh ) then
+		Items.List.Refresh ();
+	endif;
+
+EndProcedure
 
 // *****************************************
 // *********** Group Form

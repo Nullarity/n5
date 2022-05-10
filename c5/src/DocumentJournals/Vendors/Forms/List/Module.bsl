@@ -16,8 +16,8 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|VendorFilter show empty ( FixedVendorFilter );
-	|Vendor GroupQuickInfo show empty ( VendorFilter );
-	|GroupQuickInfo hide empty ( VendorFilter );
+	|Vendor hide filled ( VendorFilter ) or filled ( FixedVendorFilter );
+	|GroupQuickInfo show filled ( VendorFilter );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
