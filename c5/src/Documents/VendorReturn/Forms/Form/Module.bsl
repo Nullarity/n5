@@ -109,7 +109,7 @@ Procedure readAppearance ()
 	|ItemsProducerPrice show UseSocial;
 	|Warning show ChangesDisallowed;
 	|FormInvoice show filled ( InvoiceRecord );
-	|NewInvoiceRecord show empty ( InvoiceRecord );
+	|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
 	|Header GroupItems GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupAdditional Footer lock ChangesDisallowed;
 	|ItemsAddGroup FixedAssetsAddGroup IntangibleAssetsAddGroup AccountsAddGroup hide ChangesDisallowed;
 	|ItemsVendorInvoice FixedAssetsVendorInvoice IntangibleAssetsVendorInvoice AccountsVendorInvoice show InvoicesInTable;
@@ -830,6 +830,21 @@ Procedure ContractOnChange ( Item )
 	
 	applyContract ();
 	
+EndProcedure
+
+&AtClient
+Procedure ReferenceOnChange ( Item )
+	
+	applyReference ();
+
+EndProcedure
+
+&AtClient
+Procedure applyReference ()
+	
+	InvoiceForm.AdjustReference ( Object );
+	InvoiceForm.ExtractSeries ( Object );
+
 EndProcedure
 
 &AtClient
