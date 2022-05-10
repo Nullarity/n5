@@ -125,6 +125,17 @@ Procedure setProperties ()
 	
 EndProcedure 
 
+Procedure OnWrite ( Cancel )
+	
+	if ( DataExchange.Load ) then
+		SequenceCost.Rollback ( Ref, Company, PointInTime () );
+	endif;
+	if ( not DeletionMark ) then
+		InvoiceRecords.Sync ( ThisObject );
+	endif; 
+	
+EndProcedure
+
 Procedure Posting ( Cancel, PostingMode )
 	
 	env = Posting.GetParams ( Ref, RegisterRecords );
@@ -138,17 +149,6 @@ Procedure UndoPosting ( Cancel )
 	
 	SequenceCost.Rollback ( Ref, Company, PointInTime () );
 	BelongingToSequences.Cost.Clear ();
-	
-EndProcedure
-
-Procedure OnWrite ( Cancel )
-	
-	if ( DataExchange.Load ) then
-		SequenceCost.Rollback ( Ref, Company, PointInTime () );
-	endif;
-	if ( not DeletionMark ) then
-		InvoiceRecords.Sync ( ThisObject );
-	endif; 
 	
 EndProcedure
 
