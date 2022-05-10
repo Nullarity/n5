@@ -1210,32 +1210,8 @@ Procedure applyReference ()
 	if ( notExactlySeriesAndNumber ) then
 		return;
 	endif;
-	adjustReference ();
-	extractSeries ();
-
-EndProcedure
-
-&AtClient
-Procedure adjustReference ()
-	
-	Object.Reference = StrConcat ( StrSplit ( Object.Reference, " /:-#" ) );
-
-EndProcedure
-
-&AtClient
-Procedure extractSeries ()
-	
-	series = new Array ();
-	fullNumber = Object.Reference;
-	for i = 1 to StrLen ( fullNumber ) do
-		letter = Mid ( fullNumber, i, 1 );
-		if ( StrFind ( "0123456789", letter ) = 0 ) then
-			series.Add ( letter );
-		else
-			break;
-		endif;
-	enddo;
-	Object.Series = StrConcat ( series );
+	InvoiceForm.AdjustReference ( Object );
+	InvoiceForm.ExtractSeries ( Object );
 
 EndProcedure
 
