@@ -249,6 +249,7 @@ from (
 		Table.Ref.Base as Base
 	from Document.InvoiceRecord.Items as Table
 	where not Table.Ref.DeletionMark
+	and not Table.Ref.Transfer
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -266,6 +267,7 @@ from (
 		Table.Ref.Base
 	from Document.InvoiceRecord.Services as Table
 	where not Table.Ref.DeletionMark
+	and not Table.Ref.Transfer
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -283,6 +285,7 @@ from (
 		Table.Ref.Base
 	from Document.InvoiceRecord.Discounts as Table
 	where not Table.Ref.DeletionMark
+	and not Table.Ref.Transfer
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -1750,6 +1753,10 @@ and Table.Ref in ( &amp;Documents )
 					</dcsat:item>
 					<dcsat:appearance>
 						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
 							<dcscor:parameter>Details</dcscor:parameter>
 							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
 						</dcscor:item>
@@ -2094,6 +2101,10 @@ and Table.Ref in ( &amp;Documents )
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>DataParametersOutput</dcscor:parameter>
 					<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">Output</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>FixedLeft</dcscor:parameter>
+					<dcscor:value xsi:type="dcsset:DataCompositionFixation">DontUse</dcscor:value>
 				</dcscor:item>
 			</dcsset:outputParameters>
 			<dcsset:item xsi:type="dcsset:StructureItemTable">
