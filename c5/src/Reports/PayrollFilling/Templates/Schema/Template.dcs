@@ -1166,7 +1166,15 @@ from (
 		select Compensations.Employee as Employee,
 			sum ( case when HolidaysList.Day is null then 0 else 1 end ) as All,
 			sum ( case when HolidaysList.Day is null then 0 else case when Schedules.Minutes &gt; 0 then 1 else 0 end end ) as Actual
-		from PreviousCompensationsForVacations as Compensations
+		from (
+			select Compensations.Employee as Employee, Compensations.Schedule as Schedule, Compensations.Division as Division,
+				beginofperiod ( Compensations.DateStart, month ) as DateStart,
+				endofperiod ( Compensations.DateEnd, month ) as DateEnd
+			from PreviousCompensationsForVacations as Compensations
+			where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
+			group by Compensations.Employee, Compensations.Schedule, Compensations.Division,
+				beginofperiod ( Compensations.DateStart, month ), endofperiod ( Compensations.DateEnd, month )
+		) as Compensations
 			//
 			// Schedules
 			//
@@ -1180,7 +1188,6 @@ from (
 			on HolidaysList.Reference = Schedules.Schedule.Holidays
 			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
-		where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
 		group by Compensations.Employee
 	) as Holidays
 	on Holidays.Employee = Compensations.Employee
@@ -1525,7 +1532,15 @@ from (
 		select Compensations.Employee as Employee,
 			sum ( case when HolidaysList.Day is null then 0 else 1 end ) as All,
 			sum ( case when HolidaysList.Day is null then 0 else case when Schedules.Minutes &gt; 0 then 1 else 0 end end ) as Actual
-		from PreviousCompensationsForSickLeaves as Compensations
+		from (
+			select Compensations.Employee as Employee, Compensations.Schedule as Schedule, Compensations.Division as Division,
+				beginofperiod ( Compensations.DateStart, month ) as DateStart,
+				endofperiod ( Compensations.DateEnd, month ) as DateEnd
+			from PreviousCompensationsForSickLeaves as Compensations
+			where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
+			group by Compensations.Employee, Compensations.Schedule, Compensations.Division,
+				beginofperiod ( Compensations.DateStart, month ), endofperiod ( Compensations.DateEnd, month )
+		)as Compensations
 			//
 			// Schedules
 			//
@@ -1539,7 +1554,6 @@ from (
 			on HolidaysList.Reference = Schedules.Schedule.Holidays
 			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
-		where Compensations.Compensation.Method in ( value ( Enum.Calculations.MonthlyRate ), value ( Enum.Calculations.HourlyRate ) )
 		group by Compensations.Employee
 	) as Holidays
 	on Holidays.Employee = Compensations.Employee
