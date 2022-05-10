@@ -5336,10 +5336,17 @@ EndProcedure
 &AtServer
 Procedure PeriodError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='Period is incorrect'; ro='Perioadă specificată incorect'; ru='Некорректно задан период'" );
+	text = Output.WrongPeriod ();
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+Function WrongPeriod () export
+
+	text = NStr ( "en='Period is incorrect'; ro='Perioadă specificată incorect'; ru='Некорректно задан период'" );
+	return text;
+
+EndFunction
 
 &AtClient
 Procedure DataCleaning ( Module, CallbackParams = undefined, Params = undefined, ProcName = "DataCleaning" ) export
