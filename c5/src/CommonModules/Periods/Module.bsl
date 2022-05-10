@@ -81,3 +81,14 @@ Function DateDiff ( DateStart, DateEnd ) export
 	endif; 
 	
 EndFunction 
+
+Function Presentation ( DateStart, DateEnd ) export
+	
+	try
+		presentation = PeriodPresentation ( DateStart, DateEnd, "FP=true" );
+	except
+		presentation = Output.WrongPeriod ();
+	endtry;
+	return presentation;
+
+EndFunction
