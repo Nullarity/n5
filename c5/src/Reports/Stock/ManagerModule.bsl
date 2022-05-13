@@ -1,5 +1,4 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
-
 	
 Function Events () export
 	
@@ -22,8 +21,10 @@ Procedure BeforeOpen ( Form ) export
 	
 	Form.GenerateOnOpen = true;
 	composer = Form.Object.SettingsComposer;
-	warehouse = DC.FindParameter ( composer, "Warehouse" ).Value;
-	if ( ValueIsFilled ( warehouse ) ) then
+	filter = DC.FindFilter ( composer, "Warehouse" );
+	warehouse = filter.RightValue;
+	if ( filter.Use
+		and ValueIsFilled ( warehouse ) ) then
 		return;
 	endif;
 	warehouse = Logins.Settings ( "Warehouse" ).Warehouse;
@@ -31,7 +32,7 @@ Procedure BeforeOpen ( Form ) export
 		Form.GenerateOnOpen = false;
 		return;
 	endif;
-	DC.SetParameter ( composer, "Warehouse", warehouse, true );
+	DC.SetFilter ( composer, "Warehouse", warehouse );
 	
 EndProcedure
 

@@ -4,10 +4,32 @@ var Params export;
 
 Procedure OnCompose () export	
 	
-	SetPrivilegedMode(true);
+	filterWarehouses ();
+	hideParams ();
 	setPeriod ();
+	SetPrivilegedMode ( true );
 	
 EndProcedure
+
+Procedure filterWarehouses ()
+
+	DC.SetParameter ( Params.Settings, "Warehouses", allowedWarehouses (), true );
+
+EndProcedure
+
+Function allowedWarehouses ()
+
+	q = new Query ( "select allowed Ref as Ref from Catalog.Warehouses" );
+	return q.Execute ().Unload ().UnloadColumn ( "Ref" );
+
+EndFunction
+
+Procedure hideParams ()
+	
+	list = Params.HiddenParams;
+	list.Add ( "Warehouses" );
+	
+EndProcedure 
 
 Procedure setPeriod ()
 	
