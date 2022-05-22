@@ -9,8 +9,6 @@ var Production;
 &AtClient
 var Series;
 &AtClient
-var License;
-&AtClient
 var AccountingRow;
 &AtClient
 var StayOpen;
@@ -77,9 +75,10 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|FormPreviuosStep enable CurrentStep > 0;
-	|FormNextStep enable CurrentStep < LastStep;
-	|ShowExpiration enable filled ( Object.License )
-	|" );
+	|FormNextStep enable CurrentStep < LastStep;" );
+	if ( Logins.Sysadmin () ) then
+		rules.Add ( "ShowExpiration enable filled ( Object.License );" );
+	endif;
 	Appearance.Read ( ThisObject, rules );
 
 EndProcedure
@@ -166,7 +165,9 @@ Procedure readOptions ()
 	Packages = Object.Packages;
 	Production = Object.Production;
 	Series = Object.Series;
-	License = Object.License;
+	if ( Logins.Sysadmin () ) then
+		License = Object.License;
+	endif;
 	
 EndProcedure 
 
@@ -180,6 +181,7 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 		Cancel = true;
 		return;
 	endif; 
+	LicenseChanged = Logins.Sysadmin () and Object.License <> Constants.License.Get ();
 	setNoPackages ();
 	setTenantTimeZone ();
 	saveAddresses ();
@@ -226,7 +228,9 @@ EndProcedure
 &AtServer
 Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	saveConnectionString ();
+	if ( Logins.Sysadmin () ) then
+		saveConnectionString ();
+	endif;
 	registerConstants ();
 	
 EndProcedure
@@ -257,7 +261,7 @@ EndProcedure
 &AtClient
 Procedure AfterWrite ( WriteParameters )
 	
-	if ( licenseChanged () ) then
+	if ( LicenseChanged ) then
 		StayOpen = true;
 		Output.RestartSystem ( ThisObject );
 	elsif ( optionsChanged () ) then
@@ -266,13 +270,6 @@ Procedure AfterWrite ( WriteParameters )
 	endif; 
 	
 EndProcedure
-
-&AtClient
-Function licenseChanged ()
-	
-	return License <> Object.License;
-	
-EndFunction
 
 &AtClient
 Function optionsChanged ()
