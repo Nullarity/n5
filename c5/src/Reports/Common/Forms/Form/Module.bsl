@@ -915,34 +915,24 @@ Procedure LoadVariant ( Command )
 EndProcedure
 
 &AtClient
-Procedure LoadSettings ( Command )
-	
-	loadUserSettings ();
-	
-EndProcedure
-
-&AtClient
 Procedure loadReportVariant ()
 	
-	openAndLoadVariantOrSettings ( false );
-	
-EndProcedure
- 
-&AtClient
-Procedure loadUserSettings ()
-	
-	openAndLoadVariantOrSettings ( true );
+	showSettings ( false, false, "CommonLoadSettings" );
 	
 EndProcedure
 
 &AtClient
-Procedure openAndLoadVariantOrSettings ( IsSettings )
+Procedure showSettings ( IsSettings, IsSaving, Callback )
 	
-	p = new Structure ( "ReportName, IsSettings, ReportVariant", Object.ReportName, IsSettings, ReportVariant ); 
-	if ( IsSettings ) then
-		p.Insert ( "CurrentSettings", ReportSettings );
-	endif; 
-	OpenForm ( "Report.Common.Form.LoadSettings", p, , , , , new NotifyDescription ( "CommonLoadSettings", ThisObject, IsSettings ), FormWindowOpeningMode.LockWholeInterface );
+	p = new Structure ();
+	address = PutToTempStorage ( ? ( IsSettings, Object.SettingsComposer.UserSettings, Object.SettingsComposer.Settings ), UUID );
+	p.Insert ( "Report", Object.ReportName );
+	p.Insert ( "Settings", IsSettings );
+	p.Insert ( "SettingsAddress", address );
+	p.Insert ( "Saving", IsSaving );
+	p.Insert ( "ReportVariant", ReportVariant );
+	p.Insert ( "ReportSettings", ReportSettings );
+	OpenForm ( "Catalog.ReportSettings.Form.SaveLoad", p, , , , , new NotifyDescription ( Callback, ThisObject, IsSettings ), FormWindowOpeningMode.LockWholeInterface );
 	
 EndProcedure
 
@@ -952,17 +942,15 @@ Procedure CommonLoadSettings ( SelectedItem, IsSettings ) export
 	if ( SelectedItem = undefined ) then
 		return;
 	endif; 
-	if ( TypeOf ( SelectedItem ) = Type ( "String" ) ) then
-		if ( IsSettings ) then
-			applySettings ( SelectedItem );
+	if ( IsSettings ) then
+		applySettings ( SelectedItem );
+	else
+		if ( VariantModified ) then
+			SelectedVariant = SelectedItem;
+			Output.ReportVariantModified1 ( ThisObject, , , "LoadConfirmedVariant" );
 		else
-			if ( VariantModified ) then
-				SelectedVariant = SelectedItem;
-				Output.ReportVariantModified1 ( ThisObject, , , "LoadConfirmedVariant" );
-			else
-				applyVariant ( SelectedItem );
-			endif; 
-		endif;
+			applyVariant ( SelectedItem );
+		endif; 
 	endif;
 	
 EndProcedure 
@@ -976,23 +964,19 @@ Procedure applySettings ( val Setting )
 EndProcedure 
 
 &AtServer
-Procedure loadSettingsServer ( Code )
+Procedure loadSettingsServer ( Item )
 	
-	if ( IsTempStorageURL ( Code ) ) then
-		settingsReport = GetFromTempStorage ( Code );
-	else
-		if ( TypeOf ( Code ) = Type ( "CatalogRef.ReportSettings" ) ) then
-			settings = Code;
-		else
-			settings = Catalogs.ReportSettings.FindByCode ( Code );
+	if ( IsTempStorageURL ( Item ) ) then
+		settingsReport = GetFromTempStorage ( Item );
+		if ( settingsReport = undefined ) then
+			return;
 		endif;
-		settingsReport = settings.Storage.Get ();
-		ReportSettings = settings;
+	else
+		settingsReport = Item.Storage.Get ();
+		ReportSettings = Item;
 	endif; 
-	if ( settingsReport <> undefined ) then
-		Object.SettingsComposer.LoadUserSettings ( settingsReport );
-		disableActualState ( Items.Result );
-	endif; 
+	Object.SettingsComposer.LoadUserSettings ( settingsReport );
+	disableActualState ( Items.Result );
 	
 EndProcedure
 
@@ -1115,9 +1099,30 @@ Procedure loadVariantAfterSavePrevious ( SavedSettings, IsSettings ) export
 EndProcedure 
 
 &AtClient
+Procedure LoadSettings ( Command )
+	
+	loadUserSettings ();
+	
+EndProcedure
+
+&AtClient
+Procedure loadUserSettings ()
+	
+	showSettings ( true, false, "CommonLoadSettings" );
+	
+EndProcedure
+
+&AtClient
 Procedure SaveVariant ( Command )
 	
 	saveReportVariant ( "CommonSaveSettings" );
+	
+EndProcedure
+
+&AtClient
+Procedure saveReportVariant ( ProcAfterSave )
+	
+	showSettings ( false, true, ProcAfterSave );
 	
 EndProcedure
 
@@ -1129,31 +1134,9 @@ Procedure SaveSettings ( Command )
 EndProcedure
 
 &AtClient
-Procedure saveReportVariant ( ProcAfterSave )
-	
-	openAndSaveVariantOrSettings ( false, ProcAfterSave );
-	
-EndProcedure
-
-&AtClient
 Procedure userSettingsSave ()
 	
-	openAndSaveVariantOrSettings ( true, "CommonSaveSettings" );
-	
-EndProcedure
-
-&AtClient
-Procedure openAndSaveVariantOrSettings ( IsSettings, ProcAfterSave )
-	
-	p = new Structure ();
-	address = PutToTempStorage ( ? ( IsSettings, Object.SettingsComposer.UserSettings, Object.SettingsComposer.Settings ), UUID );
-	p.Insert ( "SettingsAddress", address );
-	p.Insert ( "ReportName", Object.ReportName );
-	p.Insert ( "IsSettings", IsSettings );
-	if ( IsSettings ) then
-		p.Insert ( "ReportVariant", ReportVariant );
-	endif; 
-	OpenForm ( "Report.Common.Form.SaveSettings", p, , , , , new NotifyDescription ( ProcAfterSave, ThisObject, IsSettings ), FormWindowOpeningMode.LockWholeInterface );
+	showSettings ( true, true, "CommonSaveSettings" );
 	
 EndProcedure
 

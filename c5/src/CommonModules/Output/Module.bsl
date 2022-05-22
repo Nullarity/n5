@@ -239,7 +239,7 @@ Function ClickGenerateReport () export
 EndFunction
 
 &AtServer
-Function LoadReportSettings () export
+Function ShowingReportSettings () export
 
 	text = NStr ( "en='Report settings'; ro='Setări raport'; ru='Настройки отчета'" );
 	return text;
@@ -247,7 +247,7 @@ Function LoadReportSettings () export
 EndFunction
 
 &AtServer
-Function LoadReportVariant () export
+Function ShowingReportVariants () export
 
 	text = NStr ( "en='Report variants'; ro='Opţiuni raport'; ru='Варианты отчета'" );
 	return text;
@@ -261,15 +261,6 @@ Procedure LoadMetadata ( Module, CallbackParams = undefined, Params = undefined,
 				|(this may take several minutes)'; ro='Doriți să descărcați metadatele?
 				|(procesul poate dura câteva minute) '; ru='Выполнить загрузку метаданных?
 				|(процесс может занять несколько минут)'" );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
-
-EndProcedure
-
-&AtClient
-Procedure ReplaceReportVariant ( Module, CallbackParams = undefined, Params = undefined, ProcName = "ReplaceReportVariant" ) export
-
-	text = NStr ( "en='Are you sure that you want to overwrite the existing report settings?'; ro='Reinscrieți setările existente ale rapoartelor?'; ru='Перезаписать существующие настройки отчета?'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -8460,3 +8451,4 @@ Function RequestAlreadyDenied () export
 	return text;
 
 EndFunction
+

@@ -44,6 +44,15 @@
 		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.User = &amp;User
+or T.Users.User = &amp;User
+or T.Membership.Membership in (
+	select Membership
+	from InformationRegister.Membership
+	where User = &amp;User
+)</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>Insert</name>
@@ -52,6 +61,16 @@
 		<right>
 			<name>Update</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.User = &amp;User
+or ( T.Users.User = &amp;User
+	and T.Users.Modify )
+or ( T.Membership.Membership in (
+    select Membership
+    from InformationRegister.Membership
+    where User = &amp;User )
+    and T.Membership.Modify )</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>Delete</name>
@@ -3399,6 +3418,13 @@ and T.Organization in ( #Organizations ( "Organization" ) )</condition>
 		</right>
 	</object>
 	<object>
+		<name>CommonCommand.AuthorizeChanges</name>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>CommonForm.Changes</name>
 		<right>
 			<name>View</name>
@@ -5046,13 +5072,6 @@ and T.Organization in ( #Organizations ( "Organization" ) )</condition>
 		<name>Constant.Discounts</name>
 		<right>
 			<name>Read</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>CommonCommand.AuthorizeChanges</name>
-		<right>
-			<name>View</name>
 			<value>true</value>
 		</right>
 	</object>

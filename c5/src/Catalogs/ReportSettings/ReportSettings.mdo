@@ -133,6 +133,7 @@
   <defaultPresentation>AsDescription</defaultPresentation>
   <editType>InDialog</editType>
   <choiceMode>BothWays</choiceMode>
+  <defaultObjectForm>Catalog.ReportSettings.Form.Form</defaultObjectForm>
   <attributes uuid="b4b0531d-4c76-4bae-97a6-42dcefbcffa9">
     <name>IsSettings</name>
     <synonym>
@@ -172,21 +173,19 @@
     <name>LastUpdateDate</name>
     <synonym>
       <key>en</key>
-      <value>Last Save Date</value>
+      <value>Saved</value>
     </synonym>
     <synonym>
       <key>ru</key>
-      <value>Дата последнего сохранения</value>
+      <value>Сохранено</value>
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>Ultima dată de salvare</value>
+      <value>Salvat</value>
     </synonym>
     <type>
       <types>Date</types>
-      <dateQualifiers>
-        <dateFractions>Date</dateFractions>
-      </dateQualifiers>
+      <dateQualifiers/>
     </type>
     <toolTip>
       <key>en</key>
@@ -238,47 +237,6 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
-    <dataHistory>Use</dataHistory>
-  </attributes>
-  <attributes uuid="d776c325-cf53-4875-b550-02d5098059ac">
-    <name>ReportVariant</name>
-    <synonym>
-      <key>en</key>
-      <value>Report Version</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Вариант отчета</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Opţiuni raport</value>
-    </synonym>
-    <type>
-      <types>CatalogRef.ReportSettings</types>
-      <types>String</types>
-      <stringQualifiers>
-        <length>50</length>
-      </stringQualifiers>
-    </type>
-    <toolTip>
-      <key>en</key>
-      <value>Report version -or a link to a report version from this catalog-  as specified by its creator. For each report version, the user's customized settings will be used</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Варианта отчета, как он задан в конфигураторе или ссылка на вариант отчета из этого справочника. Для каждого варианта отчета используется свой набор пользовательских настроек</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Varianta raportului, așa cum este specificată în configurator sau un link către varianta raportului din acest director. Pentru fiecare versiune a raportului, utilizează propriul set de setări de utilizator</value>
-    </toolTip>
-    <minValue xsi:type="core:UndefinedValue"/>
-    <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:StringValue">
-      <value></value>
-    </fillValue>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -352,4 +310,234 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <tabularSections uuid="b5d62fd9-c478-4be6-a80c-6a214e40575e">
+    <producedTypes>
+      <objectType typeId="6abb0b83-79cb-41be-ab72-1a8f2ec1c7f3" valueTypeId="0f8d02d5-c1b2-449f-8308-236e0e2e5c17"/>
+      <rowType typeId="5c808310-5208-4f30-bfce-468b5c09ce3b" valueTypeId="36e675be-952a-4ad6-8c48-ffa2f7fa0c35"/>
+    </producedTypes>
+    <name>Membership</name>
+    <synonym>
+      <key>en</key>
+      <value>Groups</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Группы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Grupuri</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>User's groups</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Группы пользователей</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Grupuri de utilizatori</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="be030ba8-30bf-46f2-b38b-7246ac483aa6">
+      <name>Membership</name>
+      <synonym>
+        <key>en</key>
+        <value>Group</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Группа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Grupul</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Membership</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Users group</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Группа пользователей</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Grupul de utilizatori</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+    </attributes>
+    <attributes uuid="779333fd-2038-473f-999a-a9871042a343">
+      <name>Modify</name>
+      <synonym>
+        <key>en</key>
+        <value>Modify</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Изменять</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Modificarea</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The right to change the report settings</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Право на изменение настроек отчета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Dreptul de a modifica setările raportului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="f6bc5bc1-2c58-468a-b860-ed6fee6d81cd">
+    <producedTypes>
+      <objectType typeId="b4239152-d646-4592-8c74-17ca7accd45c" valueTypeId="7ae31a01-fca2-4146-8214-e59487868ed7"/>
+      <rowType typeId="5c2fe241-67d2-4200-bfd5-a4717249171e" valueTypeId="e8ea03ba-5ef0-4d17-a299-5e598f71d9e1"/>
+    </producedTypes>
+    <name>Users</name>
+    <synonym>
+      <key>en</key>
+      <value>Users</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пользователи</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Utilizatori</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Group members</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Члены группы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Membrii grupului</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="64c4992d-f824-41c9-82c6-e06943d144b6">
+      <name>Modify</name>
+      <synonym>
+        <key>en</key>
+        <value>Modify</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Изменять</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Modificarea</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The right to change the report settings</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Право на изменение настроек отчета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Dreptul de a modifica setările raportului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ecaa541c-aba7-45c8-aa89-08a73e94af35">
+      <name>User</name>
+      <synonym>
+        <key>en</key>
+        <value>User</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Пользователь</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Utilizator</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Users</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>User, group member</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Пользователь, член группы</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Utilizator, membru al grupului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.AccessDenied</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.AccessRevoked</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+    </attributes>
+  </tabularSections>
+  <forms uuid="c7e70291-eebf-4da0-b223-bc34b418c653">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="271d60e7-e45a-4d0b-8b01-f50c74c21e79">
+    <name>SaveLoad</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
 </mdclass:Catalog>
