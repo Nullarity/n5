@@ -4968,6 +4968,9 @@ and T.Organization in ( #Organizations ( "Organization" ) )</condition>
 		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>#UsersOnly</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>View</name>
@@ -5344,5 +5347,9 @@ select #Parameter(1)
 where 1 in ( select 1 from Catalog.Logins where TenantAccess = value ( Enum.Access.Forbid ) and Ref = &amp;Login )
 and #Parameter(1) not in ( select Tenant from Catalog.Logins.Tenants where Ref.TenantAccess = value ( Enum.Access.Forbid ) and Ref = &amp;Login )
 </condition>
+	</restrictionTemplate>
+	<restrictionTemplate>
+		<name>UsersOnly</name>
+		<condition>T where T.Rights.RoleName not like "AdministratorSystem"</condition>
 	</restrictionTemplate>
 </Rights>

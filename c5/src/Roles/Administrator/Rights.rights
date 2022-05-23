@@ -1025,6 +1025,53 @@
 		</right>
 	</object>
 	<object>
+		<name>Constant.License</name>
+		<right>
+			<name>Read</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>ReadDataHistory</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>UpdateDataHistory</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>UpdateDataHistorySettings</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>UpdateDataHistoryVersionComment</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>ViewDataHistory</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>EditDataHistoryVersionComment</name>
+			<value>false</value>
+		</right>
+		<right>
+			<name>SwitchToDataHistoryVersion</name>
+			<value>false</value>
+		</right>
+	</object>
+	<object>
 		<name>Catalog.MailKeys.TabularSection.Labels</name>
 		<right>
 			<name>View</name>
@@ -5406,6 +5453,13 @@
 	<object>
 		<name>Catalog.Users</name>
 		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#UsersOnly</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
 			<name>InteractiveDelete</name>
 			<value>false</value>
 		</right>
@@ -5422,53 +5476,6 @@
 		</right>
 		<right>
 			<name>InteractiveDeletePredefinedData</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>Constant.License</name>
-		<right>
-			<name>Read</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>Update</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>View</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>ReadDataHistory</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>ViewDataHistory</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>UpdateDataHistory</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>UpdateDataHistorySettings</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>UpdateDataHistoryVersionComment</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>EditDataHistoryVersionComment</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>SwitchToDataHistoryVersion</name>
 			<value>false</value>
 		</right>
 	</object>
@@ -5519,5 +5526,9 @@ select #Parameter(1)
 where 1 in ( select 1 from Catalog.Logins where TenantAccess = value ( Enum.Access.Forbid ) and Ref = &amp;Login )
 and #Parameter(1) not in ( select Tenant from Catalog.Logins.Tenants where Ref.TenantAccess = value ( Enum.Access.Forbid ) and Ref = &amp;Login )
 </condition>
+	</restrictionTemplate>
+	<restrictionTemplate>
+		<name>UsersOnly</name>
+		<condition>T where T.Rights.RoleName not like "AdministratorSystem"</condition>
 	</restrictionTemplate>
 </Rights>
