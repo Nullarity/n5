@@ -642,7 +642,7 @@ from Document.TimeEntry.Tasks as TimeEntries
 	left join Document.Timesheet as Timesheets
 	on Timesheets.Employee = TimeEntries.Ref.Employee
 	and TimeEntries.Ref.Date between Timesheets.DateStart and endofperiod ( Timesheets.DateEnd, day )
-	and not Timesheets.DeletionMark
+	and Timesheets.Posted
 	//
 	// TimesheetStatuses
 	//
@@ -653,6 +653,7 @@ from Document.TimeEntry.Tasks as TimeEntries
 	//
 	left join InformationRegister.RejectedTimeEntries as RejectedTimeEntries
 	on RejectedTimeEntries.TimeEntry = TimeEntries.Ref
+where TimeEntries.Ref.Posted
 {where TimeEntries.Ref.Date between &amp;DateStart and &amp;DateEnd,
 	TimeEntries.Ref.Project.* as Project, TimeEntries.Ref.Employee.* as Employee,
 	TimeEntries.Ref.Customer.* as Customer, TimeEntries.Task.* as Task, TimeEntries.TimeType as TimeType,
@@ -687,7 +688,7 @@ from (
 			Timesheets.TimeType as TimeType, Timesheets.Ref as Timesheet, Timesheets.TotalByTimesheet as Minutes,
 			Timesheets.TimesheetApproval as TimesheetApproval
 		from Document.Timesheet.Month as Timesheets
-		where not Timesheets.Ref.DeletionMark
+		where Timesheets.Ref.Posted
 		and Timesheets.TotalMinutesByTimesheet &lt;&gt; 0
 		{where Timesheets.Ref.Date between &amp;DateStart and &amp;DateEnd, Timesheets.Project.* as Project, Timesheets.Ref.Employee.* as Employee,
 			Timesheets.Customer.* as Customer, Timesheets.TimeType as TimeType, Timesheets.Ref.* as Timesheet}
@@ -698,7 +699,7 @@ from (
 		select Timesheets.Ref.Date, Timesheets.Project, Timesheets.Ref.Employee, Timesheets.Customer,
 			Timesheets.TimeType, Timesheets.Ref, Timesheets.TotalByTimesheet, Timesheets.TimesheetApproval
 		from Document.Timesheet.OneWeek as Timesheets
-		where not Timesheets.Ref.DeletionMark
+		where Timesheets.Ref.Posted
 		and Timesheets.TotalMinutesByTimesheet &lt;&gt; 0
 		{where Timesheets.Ref.Date between &amp;DateStart and &amp;DateEnd, Timesheets.Project.* as Project, Timesheets.Ref.Employee.* as Employee,
 			Timesheets.Customer.* as Customer, Timesheets.TimeType as TimeType, Timesheets.Ref.* as Timesheet}
@@ -709,7 +710,7 @@ from (
 		select Timesheets.Ref.Date, Timesheets.Project, Timesheets.Ref.Employee, Timesheets.Customer,
 			Timesheets.TimeType, Timesheets.Ref, Timesheets.TotalByTimesheet, Timesheets.TimesheetApproval
 		from Document.Timesheet.Other as Timesheets
-		where not Timesheets.Ref.DeletionMark
+		where Timesheets.Ref.Posted
 		and Timesheets.TotalMinutesByTimesheet &lt;&gt; 0
 		{where Timesheets.Ref.Date between &amp;DateStart and &amp;DateEnd, Timesheets.Project.* as Project, Timesheets.Ref.Employee.* as Employee,
 			Timesheets.Customer.* as Customer, Timesheets.TimeType as TimeType, Timesheets.Ref.* as Timesheet}
@@ -720,7 +721,7 @@ from (
 		select Timesheets.Ref.Date, Timesheets.Project, Timesheets.Ref.Employee, Timesheets.Customer,
 			Timesheets.TimeType, Timesheets.Ref, Timesheets.TotalByTimesheet, Timesheets.TimesheetApproval
 		from Document.Timesheet.TwoWeeks as Timesheets
-		where not Timesheets.Ref.DeletionMark
+		where Timesheets.Ref.Posted
 		and Timesheets.TotalMinutesByTimesheet &lt;&gt; 0
 		{where Timesheets.Ref.Date between &amp;DateStart and &amp;DateEnd, Timesheets.Project.* as Project, Timesheets.Ref.Employee.* as Employee,
 			Timesheets.Customer.* as Customer, Timesheets.TimeType as TimeType, Timesheets.Ref.* as Timesheet}
@@ -1645,12 +1646,12 @@ from (
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1870,12 +1871,12 @@ from (
 								<dcsset:field>TotalMinutes.GroupPercentInColumnOrPoint</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>% времени</v8:content>
-									</v8:item>
-									<v8:item>
 										<v8:lang>en</v8:lang>
 										<v8:content>% time</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>% времени</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
@@ -1988,12 +1989,12 @@ from (
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2216,12 +2217,12 @@ from (
 								<dcsset:field>TotalMinutes.GroupPercentInColumnOrPoint</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>% времени</v8:content>
-									</v8:item>
-									<v8:item>
 										<v8:lang>en</v8:lang>
 										<v8:content>% time</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>% времени</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
@@ -2331,12 +2332,12 @@ from (
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2559,12 +2560,12 @@ from (
 								<dcsset:field>TotalMinutes.GroupPercentInColumnOrPoint</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>% времени</v8:content>
-									</v8:item>
-									<v8:item>
 										<v8:lang>en</v8:lang>
 										<v8:content>% time</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>% времени</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
@@ -2664,12 +2665,12 @@ from (
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2892,12 +2893,12 @@ from (
 								<dcsset:field>TotalMinutes.GroupPercentInColumnOrPoint</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>% времени</v8:content>
-									</v8:item>
-									<v8:item>
 										<v8:lang>en</v8:lang>
 										<v8:content>% time</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>% времени</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>
@@ -3005,12 +3006,12 @@ from (
 					<dcsset:field>TotalMinutes</dcsset:field>
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Общее время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Total time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Общее время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -3265,12 +3266,12 @@ from (
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -3490,12 +3491,12 @@ from (
 								<dcsset:field>TotalMinutes.GroupPercentInColumnOrPoint</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>% времени</v8:content>
-									</v8:item>
-									<v8:item>
 										<v8:lang>en</v8:lang>
 										<v8:content>% time</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>% времени</v8:content>
 									</v8:item>
 									<v8:item>
 										<v8:lang>ro</v8:lang>

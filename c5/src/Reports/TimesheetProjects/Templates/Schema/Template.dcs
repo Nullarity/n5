@@ -188,7 +188,7 @@ from Document.Timesheet.Totals as Timesheets
 	//
 	join Projects as Projects
 	on Projects.Project = Timesheets.Project
-where not Timesheets.Ref.DeletionMark
+where Timesheets.Ref.Posted
 and Timesheets.Ref.Date between &amp;DateStart and &amp;DateEnd
 {where Timesheets.Ref.Employee.* as Employee, isnull ( TimesheetStatuses.Status, value ( Enum.TimesheetStatuses.None ) ) as TimesheetStatus,
 	Timesheets.Total as Minutes}
