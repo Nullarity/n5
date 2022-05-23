@@ -1,4 +1,4 @@
-﻿F  // Open Balance Sheet and save/load settings/variant
+﻿// Open Balance Sheet and save/load settings/variant
 
 Call ( "Common.Init" );
 CloseAll ();
