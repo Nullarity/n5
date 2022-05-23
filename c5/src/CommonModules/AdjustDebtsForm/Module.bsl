@@ -144,7 +144,6 @@ Procedure OnCreateAtServer ( Form ) export
 	setTitle ( Form );
 	if ( Form.UseReceiver ) then
 		filterReceiver ( Form );
-		filterReceiverAccount ( Form );
 		setReceiverCaption ( Form );
 	endif;
 	StandardButtons.Arrange ( Form );
@@ -683,18 +682,6 @@ Function isReceiverCustomer ( Form )
 EndFunction
 
 &AtServer
-Procedure filterReceiverAccount ( Form )
-	
-	list = new Array ();
-	class = ? ( isReceiverCustomer ( Form ), Enums.Accounts.AccountsReceivable, Enums.Accounts.AccountsPayable );
-	list.Add ( new ChoiceParameter ( "Filter.Class", class ) );
-	list.Add ( new ChoiceParameter ( "Filter.Folder", false ) );
-	list.Add ( new ChoiceParameter ( "Filter.Offline", false ) );
-	Form.Items.ReceiverAccount.ChoiceParameters = new FixedArray ( list );
-	
-EndProcedure
-
-&AtServer
 Procedure setReceiverCaption ( Form )
 	
 	presentation = Metadata.Documents.AdjustDebts.TabularSections.ReceiverDebts.Attributes.Amount.Presentation ();
@@ -778,7 +765,6 @@ Procedure ApplyOption ( Form ) export
 	setTypeReceiver ( Form );
 	if ( Form.UseReceiver ) then
 		filterReceiver ( Form );
-		filterReceiverAccount ( Form );
 	endif;
 	Appearance.Apply ( Form, "UseReceiver" );
 	
