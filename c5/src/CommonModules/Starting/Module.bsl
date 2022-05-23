@@ -278,7 +278,7 @@ Procedure checkLicense ()
 	endif;
 	if ( status = Enum.LicensingError ()
 		or status = Enum.LicensingLicenseNotFound () ) then
-		if ( SessionInfo.Admin ) then
+		if ( SessionInfo.SysAdmin ) then
 			OpenForm ( "CommonForm.ResetKey", , , , , , new NotifyDescription ( "AfterKeyResetting", ThisObject ) );
 			return;
 		endif;
@@ -287,6 +287,9 @@ Procedure checkLicense ()
 		// Insert your code
 		// OpenHelp ( "Configuration" );
 	endif; 
+	if ( SessionInfo.SysAdmin ) then
+		HintsPopup.Open ( Output.HintsSysadminShouldNotWork (), Enum.HintsSysadminShouldNotWork () );
+	endif;
 	if ( SessionInfo.CheckUpdates ) then
 		StartUpdatesChecking ();
 	endif;

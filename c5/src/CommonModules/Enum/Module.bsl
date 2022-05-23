@@ -1113,6 +1113,13 @@ Function HintsRoomsInCalendar () export
 	
 EndFunction 
 
+&AtClient
+Function HintsSysAdminShouldNotWork () export
+	
+	return "HintsSysAdminShouldNotWork";
+	
+EndFunction 
+
 #endregion
 
 #region Licensing

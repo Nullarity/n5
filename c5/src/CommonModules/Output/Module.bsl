@@ -8452,3 +8452,10 @@ Function RequestAlreadyDenied () export
 
 EndFunction
 
+&AtClient
+Function HintsSysadminShouldNotWork () export
+
+	text = NStr ( "en = 'It is not recommended that you use the System Administrator account to enter documents and perform routine business operations. Please create and use a dedicated user for this purpose.';ro = 'Nu este recomandat să utilizați contul de administrator de sistem pentru a introduce documente și a efectua operațiuni de rutină. Vă rugăm să creați și să utilizați un utilizator dedicat în acest scop.';ru = 'Не рекомендуется использовать учетную запись системного администратора для ввода документов и выполнения обычных бизнес-операций. Пожалуйста, создайте и используйте для этого отдельного пользователя.'" );
+	return text;
+
+EndFunction
