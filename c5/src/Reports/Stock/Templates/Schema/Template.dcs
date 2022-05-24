@@ -27,6 +27,12 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>MonthPeriod</dataPath>
@@ -367,7 +373,7 @@ from (
 		ReserveClosing, QuantityOpeningBalance, QuantityClosingBalance}
 	from AccumulationRegister.Items.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, ,
 		Warehouse in ( &amp;Warehouses )
-		{Warehouse.* as Warehouse} ) as Balances
+		{Warehouse.* as Warehouse, Item.* as Item, Feature.* as Feature} ) as Balances
 	union all
 	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
@@ -382,7 +388,7 @@ from (
 		join Reserves as Reserves
 		on Reserves.DocumentOrder = Items.Ref
 		and Reserves.RowKey = Items.RowKey
-	{where Warehouse.* as Warehouse}
+	{where Warehouse.* as Warehouse, Items.Item.* as Item, Items.Feature.* as Feature}
 	union all
 	select Items.Item, Items.Feature, Items.Series,
 		case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end,
@@ -397,7 +403,7 @@ from (
 		join Reserves as Reserves
 		on Reserves.DocumentOrder = Items.Ref
 		and Reserves.RowKey = Items.RowKey
-	{where Warehouse.* as Warehouse}
+	{where Warehouse.* as Warehouse, Items.Item.* as Item, Items.Feature.* as Feature}
 ) as Balances
 {where Balances.Package.* as Package,
 ( Balances.QuantityClosingBalance - Balances.ReserveClosing ) / Balances.Capacity as Available}
@@ -746,6 +752,12 @@ from (
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:userSettingID>c141df80-4360-4c85-b9ce-71b6d4cde603</dcsset:userSettingID>
 				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Item</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>733addf0-9e78-4275-a2d9-6fa3e28e340e</dcsset:userSettingID>
+				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
 				<dcsset:userSettingID>a79ff692-2601-4cf6-a83f-9e4b8fbf1456</dcsset:userSettingID>
 			</dcsset:filter>
@@ -1011,6 +1023,12 @@ from (
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:userSettingID>c141df80-4360-4c85-b9ce-71b6d4cde603</dcsset:userSettingID>
 				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Item</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>799357b1-e46b-4e8c-8999-18589c43065a</dcsset:userSettingID>
+				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
 				<dcsset:userSettingID>a79ff692-2601-4cf6-a83f-9e4b8fbf1456</dcsset:userSettingID>
 			</dcsset:filter>
@@ -1262,6 +1280,12 @@ from (
 					<dcsset:comparisonType>Equal</dcsset:comparisonType>
 					<dcsset:userSettingID>b0c4ab3f-0509-4fc2-92c3-269e099a4789</dcsset:userSettingID>
 				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Item</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>7e6a1b83-e8e9-4fb4-9660-24c21d4855ae</dcsset:userSettingID>
+				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
 				<dcsset:userSettingID>a79ff692-2601-4cf6-a83f-9e4b8fbf1456</dcsset:userSettingID>
 			</dcsset:filter>
@@ -1422,11 +1446,6 @@ from (
 					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>f89888ad-1710-4bf5-b922-4e0600694901</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Warehouse</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-					<dcsset:userSettingID>5627cdf0-30ff-44f7-98e8-cb96de10eac5</dcsset:userSettingID>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
