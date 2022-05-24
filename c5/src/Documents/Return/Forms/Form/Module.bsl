@@ -746,6 +746,9 @@ EndProcedure
 &AtClient
 Procedure ChoiceInvoice ( Command )
 	
+	if ( not Forms.Check ( ThisObject, "Department" ) ) then
+		return;
+	endif;
 	date = Periods.GetDocumentDate ( Object );
 	settings = new DataCompositionSettings ();
 	DC.SetFilter ( settings, "Date", date, DataCompositionComparisonType.LessOrEqual );
