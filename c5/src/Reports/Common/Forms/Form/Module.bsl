@@ -1616,6 +1616,7 @@ EndFunction
 Procedure FilterOnChange ( Item )
 	
 	setting = getSetting ( Item );
+	fixComparison ( setting );
 	applyUserSetting ( setting );
 	
 EndProcedure
@@ -1633,29 +1634,6 @@ Function getSetting ( Item )
 	return setting;
 	
 EndFunction
-
-&AtClient
-Procedure FilterStartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	startChoice ( getSetting ( Item ), Item, StandardProcessing );
-	
-EndProcedure
-
-&AtClient
-Procedure UserSettingsValueOnChange ( Item )
-	
-	applyValue ( Object.SettingsComposer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow ) );
-	
-EndProcedure
-
-&AtClient
-Procedure applyValue ( Setting )
-	
-	if ( TypeOf ( Setting ) = Type ( "DataCompositionFilterItem" ) ) then
-		fixComparison ( Setting );
-	endif;
-
-EndProcedure
 
 &AtClient
 Procedure fixComparison ( Setting )
@@ -1689,6 +1667,29 @@ Function isFolder ( val Value )
 	return Metafields.IsFolder ( Value );
 
 EndFunction
+
+&AtClient
+Procedure FilterStartChoice ( Item, ChoiceData, StandardProcessing )
+	
+	startChoice ( getSetting ( Item ), Item, StandardProcessing );
+	
+EndProcedure
+
+&AtClient
+Procedure UserSettingsValueOnChange ( Item )
+	
+	applyValue ( Object.SettingsComposer.UserSettings.GetObjectByID ( Items.UserSettings.CurrentRow ) );
+	
+EndProcedure
+
+&AtClient
+Procedure applyValue ( Setting )
+	
+	if ( TypeOf ( Setting ) = Type ( "DataCompositionFilterItem" ) ) then
+		fixComparison ( Setting );
+	endif;
+
+EndProcedure
 
 // *****************************************
 // *********** Result
