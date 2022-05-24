@@ -12,6 +12,12 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Project</dataPath>
@@ -43,6 +49,10 @@
 							<dcscor:mode xmlns:d8p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d8p1:LinkedValueChangeMode">Clear</dcscor:mode>
 						</dcscor:item>
 					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
 				</dcscor:item>
 			</inputParameters>
 		</field>
@@ -127,6 +137,10 @@
 							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
 						</dcscor:item>
 					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
 				</dcscor:item>
 			</inputParameters>
 		</field>
@@ -1232,12 +1246,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Сроки, дни</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Terms, days</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Сроки, дни</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1248,12 +1262,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ProjectDuration</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Итого</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Total</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Итого</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1265,12 +1279,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1282,12 +1296,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Просрочено</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Overdue</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Просрочено</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1300,12 +1314,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Оплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time payable</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Оплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1316,12 +1330,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1333,12 +1347,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1351,12 +1365,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Неоплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Non-Billable Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Неоплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1367,12 +1381,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1384,12 +1398,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1402,12 +1416,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Общее время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Total time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Общее время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1418,12 +1432,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1435,12 +1449,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1452,12 +1466,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1469,12 +1483,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1490,12 +1504,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Себестоимость</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Net cost</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Себестоимость</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1506,12 +1520,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1523,12 +1537,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1540,12 +1554,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1557,12 +1571,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1797,12 +1811,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Сроки, дни</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Terms, days</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Сроки, дни</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1813,12 +1827,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ProjectDuration</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Итого</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Total</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Итого</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1830,12 +1844,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1847,12 +1861,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Просрочено</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Overdue</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Просрочено</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1865,12 +1879,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Оплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time payable</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Оплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1881,12 +1895,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1898,12 +1912,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1916,12 +1930,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Неоплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Non-Billable Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Неоплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1932,12 +1946,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1949,12 +1963,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -1967,12 +1981,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Общее время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Total time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Общее время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -1983,12 +1997,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2000,12 +2014,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2017,12 +2031,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2034,12 +2048,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2055,12 +2069,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Себестоимость</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Net cost</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Себестоимость</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2071,12 +2085,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2088,12 +2102,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2105,12 +2119,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2122,12 +2136,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2370,12 +2384,12 @@ where Tasks.Description &lt;&gt; ""</query>
 					<dcsset:use>false</dcsset:use>
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Сроки, дни</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Terms, days</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Сроки, дни</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2386,12 +2400,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ProjectDuration</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Итого</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Total</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Итого</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2403,12 +2417,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2420,12 +2434,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>DaysOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Просрочено</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Overdue</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Просрочено</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2438,12 +2452,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Оплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Time payable</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Оплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2454,12 +2468,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2471,12 +2485,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2489,12 +2503,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Неоплачиваемое время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Non-Billable Time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Неоплачиваемое время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2505,12 +2519,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2522,12 +2536,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualNonBillableMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2540,12 +2554,12 @@ where Tasks.Description &lt;&gt; ""</query>
 				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Общее время</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Total time</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Общее время</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2556,12 +2570,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2573,12 +2587,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualMinutes</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2590,12 +2604,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2607,12 +2621,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>MinutesRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2629,12 +2643,12 @@ where Tasks.Description &lt;&gt; ""</query>
 					<dcsset:use>false</dcsset:use>
 					<dcsset:lwsTitle>
 						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Себестоимость</v8:content>
-						</v8:item>
-						<v8:item>
 							<v8:lang>en</v8:lang>
 							<v8:content>Net cost</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Себестоимость</v8:content>
 						</v8:item>
 						<v8:item>
 							<v8:lang>ro</v8:lang>
@@ -2645,12 +2659,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>EstimatedCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By plan</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2662,12 +2676,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>ActualCost</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>По факту</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>By fact</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>По факту</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2679,12 +2693,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostOver</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Не по плану</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Outside of the plan scope</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Не по плану</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
@@ -2696,12 +2710,12 @@ where Tasks.Description &lt;&gt; ""</query>
 						<dcsset:field>CostRemain</dcsset:field>
 						<dcsset:lwsTitle>
 							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Осталось</v8:content>
-							</v8:item>
-							<v8:item>
 								<v8:lang>en</v8:lang>
 								<v8:content>Left</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Осталось</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
