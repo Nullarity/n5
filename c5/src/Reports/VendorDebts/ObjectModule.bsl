@@ -6,7 +6,6 @@ var DebtsOnDate;
 Procedure OnCompose () export
 	
 	hideParams ();
-	enablePeriods ();
 	setPeriod ();
 	filterPaymentPeriods ();
 	
@@ -15,21 +14,12 @@ EndProcedure
 Procedure hideParams ()
 	
 	list = Params.HiddenParams;
-	list.Add ( "PeriodFactor" );
-	list.Add ( "PeriodsBorder" );
 	list.Add ( "LocalCurrency" );
+	list.Add ( "Interval" );
+	list.Add ( "OperationDate" );
+	list.Add ( "Accounts" );
 	
 EndProcedure 
-
-Procedure enablePeriods ()
-	
-	settings = Params.Settings;
-	p = DC.GetParameter ( settings, "PeriodsBorder" );
-	p.Use = true;
-	p = DC.GetParameter ( settings, "PeriodFactor" );
-	p.Use = true;
-	
-EndProcedure
 
 Procedure setPeriod ()
 	

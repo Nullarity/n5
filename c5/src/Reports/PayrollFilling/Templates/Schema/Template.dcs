@@ -84,6 +84,9 @@
 					<v8:content>Base period</v8:content>
 				</v8:item>
 			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>BaseDays</dataPath>
@@ -1087,7 +1090,7 @@ group by Vacations.Ref, Vacations.Employee, Schedules.Schedule, beginofperiod ( 
 ;
 // VacationRates
 select Compensations.Ref as Ref, Compensations.Employee as Employee, Compensations.Amount as Amount, Compensations.Days as Days,
-	Compensations.Bonuses as Bonuses, datediff ( Compensations.DateStart, Compensations.DateEnd, day ) + 1 as Period, Holidays.All as Holidays,
+	Compensations.Bonuses as Bonuses, Holidays.All as Holidays,
 	Compensations.AnnualBonuses as AnnualBonuses, Compensations.QuarterlyBonuses as QuarterlyBonuses,
 	Schedules.Days - isnull ( Holidays.Actual, 0 ) as ScheduledDays,
 	case when Compensations.Days = 0 then 0
@@ -1449,8 +1452,7 @@ group by SickLeaves.Ref, SickLeaves.Employee, Schedules.Schedule, beginofperiod 
 // SickLeavesRates
 select Compensations.Ref as Ref, Compensations.Employee as Employee,
 	Compensations.Amount as Amount, Compensations.Days as Days, Compensations.Bonuses as Bonuses, 
-	datediff ( Compensations.DateStart, Compensations.DateEnd, day ) + 1 as Period, Holidays.All as Holidays,
-	Compensations.AnnualBonuses as AnnualBonuses, Compensations.QuarterlyBonuses as QuarterlyBonuses,
+	Holidays.All as Holidays, Compensations.AnnualBonuses as AnnualBonuses, Compensations.QuarterlyBonuses as QuarterlyBonuses,
 	Schedules.Days - isnull ( Holidays.Actual, 0 ) as ScheduledDays,
 	case when Compensations.Days = 0 then 0
 		else ( Compensations.Amount / Compensations.Days + Compensations.Bonuses ) 
@@ -1980,9 +1982,11 @@ from (
 		Vacations.DateStart, Vacations.DateEnd, Vacations.Compensation, 0, false, Constants.Currency,
 		Vacations.ScheduledHours, Vacations.ScheduledDays,
 		0, 0, 0, 0, 0, Vacations.Days, 0, 0, 0, 0, 0,
-		VacationRates.Rate, VacationRates.Amount, VacationRates.Days, VacationRates.Bonuses, VacationRates.Period, VacationRates.Holidays,
-		Vacations.Ref, VacationRates.AnnualBonuses, VacationRates.QuarterlyBonuses, VacationRates.ScheduledDays, Vacations.Holidays,
-		false
+		VacationRates.Rate, VacationRates.Amount, VacationRates.Days, VacationRates.Bonuses,
+		datediff ( dateadd ( beginofperiod ( Vacations.DateStart, month ), month, -3 ),
+			beginofperiod ( Vacations.DateStart, month ), day ),
+		VacationRates.Holidays, Vacations.Ref, VacationRates.AnnualBonuses, VacationRates.QuarterlyBonuses,
+		VacationRates.ScheduledDays, Vacations.Holidays, false
 	from (
 		select Vacations.Ref as Ref, Location.Employee as Employee, Location.Department as Department, Location.Position as Position,
 			Location.Expenses as Expenses, Location.Schedule as Schedule, Vacations.Compensation as Compensation,
@@ -2018,7 +2022,10 @@ from (
 		SickLeaves.ScheduledHours, SickLeaves.ScheduledDays,
 		0, 0, 0, 0, 0, SickLeaves.Days, 0, 0, 0, 0, 0,
 		SickLeavesRates.Rate * SickLeaves.OnCompany, SickLeavesRates.Amount * SickLeaves.OnCompany, SickLeavesRates.Days,
-		SickLeavesRates.Bonuses * SickLeaves.OnCompany, SickLeavesRates.Period, SickLeavesRates.Holidays,
+		SickLeavesRates.Bonuses * SickLeaves.OnCompany,
+		datediff ( dateadd ( beginofperiod ( SickLeaves.DateStart, month ), month, -3 ),
+			beginofperiod ( SickLeaves.DateStart, month ), day ) as Period,
+		SickLeavesRates.Holidays,
 		SickLeaves.Ref, SickLeavesRates.AnnualBonuses * SickLeaves.OnCompany,
 		SickLeavesRates.QuarterlyBonuses * SickLeaves.OnCompany, SickLeavesRates.ScheduledDays, 0, SickLeaves.OnCompany = 1
 	from (
