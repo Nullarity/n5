@@ -27,6 +27,7 @@ EndProcedure
 Procedure loadFixedFilters ()
 	
 	Parameters.Filter.Property ( "Customer", FixedCustomerFilter );
+	CustomerFilter = FixedCustomerFilter;
 	
 EndProcedure 
 

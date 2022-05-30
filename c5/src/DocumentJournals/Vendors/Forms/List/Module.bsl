@@ -27,6 +27,7 @@ EndProcedure
 Procedure loadFixedFilters ()
 	
 	Parameters.Filter.Property ( "Vendor", FixedVendorFilter );
+	VendorFilter = FixedVendorFilter;
 	
 EndProcedure 
 
