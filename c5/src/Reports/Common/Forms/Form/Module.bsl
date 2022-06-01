@@ -1638,6 +1638,9 @@ EndFunction
 &AtClient
 Procedure fixComparison ( Setting )
 	
+	if ( TypeOf ( Setting ) <> Type ( "DataCompositionFilterItem" ) ) then
+		return;
+	endif;
 	isFolder = isFolder ( Setting.RightValue );
 	comparison = Setting.ComparisonType;
 	if ( isFolder ) then
