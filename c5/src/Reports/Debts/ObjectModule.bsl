@@ -17,7 +17,6 @@ Procedure hideParams ()
 	list.Add ( "LocalCurrency" );
 	list.Add ( "Interval" );
 	list.Add ( "OperationDate" );
-	list.Add ( "Accounts" );
 	
 EndProcedure 
 
