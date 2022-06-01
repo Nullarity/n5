@@ -6,6 +6,9 @@ var TabDoc;
 var DateStart;
 var DateEnd;
 var Company;
+var Currency;
+var ByCurrency;
+var LocalCurrency;
 var PutCover;
 var Cash;
 var AreasRows;
@@ -13,7 +16,6 @@ var AreasHeader;
 var AreasFooter;
 var Page;
 var TabDocPages;
-var Currency;
 var Records;
 var Day;
 var Receipt;
@@ -41,6 +43,7 @@ Procedure readParams ()
 	
 	settings = Params.Composer.GetSettings ();
 	Company = DC.GetParameter ( settings, "Company" ).Value;
+	Currency = DC.GetParameter ( settings, "Currency" ).Value;
 	value = DC.GetParameter ( settings, "PutCover" ).Value;
 	PutCover = ? ( ValueIsFilled ( value ), value, false );
 	value = DC.GetParameter ( settings, "Period" ).value;
@@ -81,6 +84,9 @@ EndProcedure
 
 Procedure init () 
 
+	applicationCurrency = Application.Currency ();
+	LocalCurrency = String ( applicationCurrency );
+	ByCurrency = ValueIsFilled ( Currency ) and Currency <> applicationCurrency;
 	initEnv ();
 	initTabDocs ();
 	initAreas ();
@@ -181,7 +187,7 @@ Procedure sqlFields ()
 	|;
 	|// @Fields
 	|select allowed Companies.FullDescription as Company, Companies.CodeFiscal as CodeFiscal, RolesAccountant.Accountant as Accountant, 
-	|	RolesDirector.Director as Director, Constants.Currency.Description as Currency, isnull ( Pages.Page, 0 ) as Page,
+	|	RolesDirector.Director as Director, isnull ( Pages.Page, 0 ) as Page,
 	|	isnull ( Pages.PagesMonth, 0 ) as PagesMonth
 	|from Catalog.Companies as Companies
 	|	//
@@ -202,11 +208,6 @@ Procedure sqlFields ()
 	|		where Roles.Role = value ( Enum.Roles.GeneralManager )
 	|		) as RolesDirector
 	|	on true
-	| 	//
-	| 	// Constants
-	| 	//
-	| 	left join Constants as Constants
-	| 	on true
 	| 	//
 	| 	// Pages
 	| 	//
@@ -256,12 +257,19 @@ Procedure sqlCash ()
 	|	isnull ( Cash.Receipt, General.AmountTurnoverDr > 0 ) as IsReceipt,
 	|	isnull ( General.Currency.Description, Constants.Currency.Description ) as Currency,
 	|	isnull ( General.Currency.FullDescription, Constants.Currency.FullDescription ) as FullCurrency
-	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, auto, Account.Class = value ( Enum.Accounts.Cash ), , 
+	|from AccountingRegister.General.Turnovers ( &DateStart, &DateEnd, auto,
+	|	Account.Class = value ( Enum.Accounts.Cash ) and Account.Currency = &ByCurrency, , 
 	|	ExtDimension1 in (
 	|		select Ref from Catalog.PaymentLocations where not Remote and Owner = &Company
 	|		union all select value ( Catalog.PaymentLocations.EmptyRef )
 	|	)
-	|	and Company = &Company ) as General
+	|	and Company = &Company
+	|";
+	if ( ByCurrency ) then
+		s = s + "and Currency = &Currency";
+	endif;
+	s =  s + " 
+	|	) as General
 	|	//
 	|	// Cash
 	|	//
@@ -313,12 +321,18 @@ Procedure sqlBalances ()
 	|from (
 	|	select General.AmountBalanceDr as BalanceBegin, General.CurrencyAmountBalanceDr as BalanceBeginCurrency,	
 	|		isnull ( General.Currency, Constants.Currency ) as Currency
-	|	from AccountingRegister.General.Balance ( &DateStart, Account.Class = value ( Enum.Accounts.Cash ), ,
+	|	from AccountingRegister.General.Balance ( &DateStart,
+	|		Account.Class = value ( Enum.Accounts.Cash ) and Account.Currency = &ByCurrency, ,
 	|		ExtDimension1 in (
 	|			select Ref from Catalog.PaymentLocations where not Remote and Owner = &Company
 	|			union all select value ( Catalog.PaymentLocations.EmptyRef )
 	|		)
 	|		and Company = &Company
+	|";
+	if ( ByCurrency ) then
+		s = s + "and Currency = &Currency";
+	endif;
+	s = s + "
 	|	) as General
 	|		//
 	|		// Constants
@@ -335,6 +349,8 @@ Procedure getTables ()
 	
 	q = Env.Q;
 	q.SetParameter ( "Company", Company );
+	q.SetParameter ( "Currency", Currency );
+	q.SetParameter ( "ByCurrency", ByCurrency );
 	q.SetParameter ( "DateStart", DateStart );
 	q.SetParameter ( "DateEnd", DateEnd );
 	SQL.Prepare ( Env );
@@ -391,7 +407,6 @@ Procedure initPagesData ()
 	fields = Env.Fields;
 	Page = fields.Page;
 	PagesMonth = fields.PagesMonth;
-	Currency = fields.Currency;
 	Cash = Env.Cash;
 	Balances = Env.Balances;
 
@@ -447,13 +462,19 @@ Procedure putDay ()
 
 	putHeaderDay ();
 	putBalanceBegin ();
-	putCurrencyBegin ();
+	if ( ByCurrency ) then
+		putCurrencyBegin ();
+	endif;
 	putHeader ();
 	putRecords ();
 	putTurnover ();
-	putTurnoverCurrency ();
+	if ( ByCurrency ) then
+		putTurnoverCurrency ();
+	endif;
 	putBalanceEnd ();
-	putCurrencyEnd ();
+	if ( ByCurrency ) then
+		putCurrencyEnd ();
+	endif;
 	putFooter ();
 
 EndProcedure
@@ -496,7 +517,7 @@ EndProcedure
 Function formatAmount ( Amount, CurrencyFormat = undefined ) 
 
 	if ( CurrencyFormat = undefined ) then
-		CurrencyFormat = Currency;
+		CurrencyFormat = LocalCurrency;
 	endif;
 	return Format ( Amount, "NFD=2; NDS==; NN=0; NZ=0=00" ) + " " + CurrencyFormat;
 
@@ -504,27 +525,22 @@ EndFunction
 
 Procedure putCurrencyBegin () 
 
-	if ( Balances.Count () = 1
-		and Balances [ 0 ].Currency = Currency ) 
-		or ( Balances.Total ( "BalanceBegin" ) = 0 ) then
+	if ( Balances.Total ( "BalanceBegin" ) = 0 ) then
 		return;
 	endif;
 	putIncluding ( AreasHeader );
 	t = Env.T;
 	splitter = t.GetArea ( "CurrencyBalance | Splitter" );
 	for each row in Balances do
-		rowCurrency = row.Currency;
-		if ( rowCurrency <> Currency ) then
-			if ( row.BalanceBegin = 0 ) then
-				continue;
-			endif;
-			area = t.GetArea ( "CurrencyBalance | Report" );
-			p = area.Parameters;
-			p.Currency = row.FullCurrency;
-			p.Balance = formatAmount ( row.BalanceBegin );
-			p.CurrencyBalance = formatAmount ( row.BalanceBeginCurrency, rowCurrency );
-			AreasHeader.Add ( spreadsheet ( area, splitter ) );
+		if ( row.BalanceBegin = 0 ) then
+			continue;
 		endif;
+		area = t.GetArea ( "CurrencyBalance | Report" );
+		p = area.Parameters;
+		p.Currency = row.FullCurrency;
+		p.Balance = formatAmount ( row.BalanceBegin );
+		p.CurrencyBalance = formatAmount ( row.BalanceBeginCurrency, row.Currency );
+		AreasHeader.Add ( spreadsheet ( area, splitter ) );
 	enddo;
 
 EndProcedure
@@ -547,10 +563,10 @@ Procedure putRecords ()
 
 	line = 1;
 	for each row in Records do
-		if ( row.Currency = Currency ) then
-			putRow ( row, line );
-		else
+		if ( ByCurrency ) then
 			putRowCurrency ( row, line );
+		else
+			putRow ( row, line );
 		endif;
 		line = line + 1;
 	enddo;
@@ -634,22 +650,20 @@ Procedure putTurnoverCurrency ()
 	splitter = t.GetArea ( "TurnoverCurrency | Splitter" );
 	for each row in table do
 		rowCurrency = row.Currency;
-		if ( rowCurrency <> Currency ) then
-			area = t.GetArea ( "TurnoverCurrency | Report" );
-			p = area.Parameters;
-			p.Currency = row.FullCurrency;
-			p.Receipt = formatAmount ( row.Receipt );
-			p.Expense = formatAmount ( row.Expense );
-			amount = row.ReceiptCurrency;
-			if ( amount > 0 ) then
-				p.ReceiptCurrency = formatAmount ( amount, rowCurrency );
-			endif;
-			amount = row.ExpenseCurrency;
-			if ( amount > 0 ) then
-				p.ExpenseCurrency = formatAmount ( amount, rowCurrency );
-			endif;
-			AreasFooter.Add ( spreadsheet ( area, splitter ) );
+		area = t.GetArea ( "TurnoverCurrency | Report" );
+		p = area.Parameters;
+		p.Currency = row.FullCurrency;
+		p.Receipt = formatAmount ( row.Receipt );
+		p.Expense = formatAmount ( row.Expense );
+		amount = row.ReceiptCurrency;
+		if ( amount > 0 ) then
+			p.ReceiptCurrency = formatAmount ( amount, rowCurrency );
 		endif;
+		amount = row.ExpenseCurrency;
+		if ( amount > 0 ) then
+			p.ExpenseCurrency = formatAmount ( amount, rowCurrency );
+		endif;
+		AreasFooter.Add ( spreadsheet ( area, splitter ) );
 	enddo;
 
 EndProcedure
@@ -665,27 +679,22 @@ EndProcedure
 
 Procedure putCurrencyEnd () 
 
-	if ( Balances.Count () = 1
-		and Balances [ 0 ].Currency = Currency ) 
-		or ( Balances.Total ( "BalanceEnd" ) = 0 ) then
+	if ( Balances.Total ( "BalanceEnd" ) = 0 ) then
 		return;
 	endif;
 	putIncluding ( AreasFooter );
 	t = Env.T;
 	splitter = t.GetArea ( "CurrencyBalance | Splitter" );
 	for each row in Balances do
-		rowCurrency = row.Currency;
-		if ( rowCurrency <> Currency ) then
-			if ( row.BalanceEnd = 0 ) then
-				continue;
-			endif;
-			area = t.GetArea ( "CurrencyBalance | Report" );
-			p = area.Parameters;
-			p.Currency = row.FullCurrency;
-			p.Balance = formatAmount ( row.BalanceEnd );
-			p.CurrencyBalance = formatAmount ( row.BalanceEndCurrency, rowCurrency );
-			AreasFooter.Add ( spreadsheet ( area, splitter ) );
+		if ( row.BalanceEnd = 0 ) then
+			continue;
 		endif;
+		area = t.GetArea ( "CurrencyBalance | Report" );
+		p = area.Parameters;
+		p.Currency = row.FullCurrency;
+		p.Balance = formatAmount ( row.BalanceEnd );
+		p.CurrencyBalance = formatAmount ( row.BalanceEndCurrency, row.Currency );
+		AreasFooter.Add ( spreadsheet ( area, splitter ) );
 	enddo;
 
 EndProcedure
