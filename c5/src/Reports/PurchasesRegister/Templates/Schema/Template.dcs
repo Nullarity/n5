@@ -190,21 +190,17 @@
 			<dataPath>Ref</dataPath>
 			<field>Ref</field>
 		</field>
-		<field xsi:type="DataSetFieldField">
-			<dataPath>Series</dataPath>
-			<field>Series</field>
-		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>select VATPurchase.VAT as VAT, VATPurchase.Amount as Amount, VATPurchase.Ref as Ref,
 	( VATPurchase.VAT + VATPurchase.Amount ) as Total, VATPurchase.Rate as Rate,
-	VATPurchase.CodeFiscal as CodeFiscal, VATPurchase.Vendor as Vendor, VATPurchase.Series as Series,
+	VATPurchase.CodeFiscal as CodeFiscal, VATPurchase.Vendor as Vendor,
 	case when VATPurchase.Date = datetime ( 1, 1, 1 ) then VATPurchase.DocumentDate else VATPurchase.Date end as Date, 
 	case when VATPurchase.Number = "" then VATPurchase.DocumentNumber else VATPurchase.Number end as Number
-{select VAT, Amount, Total, Rate.*, CodeFiscal, Vendor.*, Series, Number, Date, Ref.*}
+{select VAT, Amount, Total, Rate.*, CodeFiscal, Vendor.*, Number, Date, Ref.*}
 from (
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
-		Table.VATCode as Rate, Table.Ref.Series as Series, Table.Ref.Reference as Number, Table.Ref.ReferenceDate as Date, 
+		Table.VATCode as Rate, Table.Ref.Reference as Number, Table.Ref.ReferenceDate as Date, 
 		Table.Ref.Vendor.CodeFiscal as CodeFiscal, Table.Ref.Vendor as Vendor, Table.Ref as Ref,
 		Table.Ref.Date as DocumentDate, Table.Ref.Number as DocumentNumber
 	from Document.VendorInvoice.Accounts as Table
@@ -215,7 +211,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.FixedAssets as Table
@@ -226,7 +222,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.IntangibleAssets as Table
@@ -237,7 +233,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Items as Table
@@ -248,7 +244,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Services as Table
@@ -259,7 +255,7 @@ from (
 	union all
 	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorInvoice.Discounts as Table
@@ -269,7 +265,7 @@ from (
 	and ( Table.Ref.VATUse &lt;&gt; 0 or Table.Ref.Import )
 	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
 	union all
-	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT, "", Table.Ref.Number, Table.Ref.Date, 
+	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT, Table.Ref.Number, Table.Ref.Date, 
 		Items.CodeFiscal, Items.Vendor, Table.Ref, null, null
 	from Document.CustomsDeclaration.Charges as Table
 		//
@@ -312,7 +308,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.VAT
 	union all
-	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Series, Table.Number, Table.Date, 
+	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Number, Table.Date, 
 		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref, null, null
 	from Document.VATPurchases as Table
 	where not Table.Ref.DeletionMark
@@ -321,7 +317,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Items as Table
 	where Table.Ref.Posted
@@ -332,7 +328,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Services as Table
 	where Table.Ref.Posted
@@ -343,7 +339,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.FixedAssets as Table
 	where Table.Ref.Posted
@@ -354,7 +350,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.IntangibleAssets as Table
 	where Table.Ref.Posted
@@ -365,7 +361,7 @@ from (
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.DocumentSeries, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Accounts as Table
 	where Table.Ref.Posted
@@ -376,7 +372,7 @@ from (
 	union all
 	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
-		Table.VATCode, Table.Ref.Series, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.VendorReturn.Items as Table
@@ -2180,13 +2176,6 @@ where Table.Ref in ( &amp;Documents )
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>Ref</dcsset:field>
-							<dcsset:groupType>Items</dcsset:groupType>
-							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
-							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
-							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
-						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:GroupItemField">
-							<dcsset:field>Series</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
