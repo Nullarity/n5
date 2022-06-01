@@ -136,18 +136,43 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
-Procedure _5_0_26_1 () export
+Procedure _5_0_28_1 () export
 	
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
-		updateReports ();
+		setIntervals ();
 	enddo;
 	CommitTransaction ();
 	
 EndProcedure
 
 #endregion
+
+Procedure setIntervals ()
+	
+	obj = Catalogs.Intervals.Standard.GetObject ();
+	obj.Description = "Стандартный";
+	table = obj.Intervals;
+	row = table.Add ();
+	row.Start = 1;
+	row.Finish = 30;
+	row.Presentation = "1 - 30";
+	row = table.Add ();
+	row.Start = 31;
+	row.Finish = 60;
+	row.Presentation = "31 - 60";
+	row = table.Add ();
+	row.Start = 61;
+	row.Finish = 90;
+	row.Presentation = "61 - 90";
+	row = table.Add ();
+	row.Start = 91;
+	row.Finish = 9999999;
+	row.Presentation = "> 90";
+	obj.Write ();
+
+EndProcedure
 
 Procedure updateReports ()
 
