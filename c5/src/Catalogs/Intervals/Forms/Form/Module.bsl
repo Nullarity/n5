@@ -65,11 +65,21 @@ EndProcedure
 Procedure augmentFinish ()
 	
 	row = Items.Intervals.CurrentData;
-	if ( row.Finish = 0 ) then
+	if ( row.Finish = 0
+		and lastRow () ) then
 		row.Finish = MaxPeriod;
 	endif;
 
 EndProcedure
+
+&AtClient
+Function lastRow ()
+	
+	table = Object.Intervals;
+	return table.IndexOf ( Items.Intervals.CurrentData )
+		= table.IndexOf ( table [ table.Count () - 1 ] );
+
+EndFunction
 
 &AtClient
 Procedure IntervalsStartOnChange ( Item )
