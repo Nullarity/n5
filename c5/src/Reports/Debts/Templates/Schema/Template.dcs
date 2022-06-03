@@ -418,12 +418,8 @@ select &amp;StrTotalsGroup as StrTotalsGroup, &amp;StrPayment as StrPayment, &am
 	Balances.Contract as Contract, Balances.Document as Document, Balances.Detail as Detail,
 	PaymentDetails.Option as Option,
 	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
-	case
-		when &amp;OperationDate then
-			case when Balances.Document.Date &lt; &amp;DebtsOnDate then datediff ( Balances.Document.Date, &amp;DebtsOnDate, day ) else 0 end
-		else
-			case when PaymentDetails.Date &lt; &amp;DebtsOnDate then datediff ( PaymentDetails.Date, &amp;DebtsOnDate, day ) else 0 end
-	end as BalanceDays,
+	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) as BalanceDays,
 	Intervals.Presentation as OverduePeriods, Intervals.LineNumber as Interval, Intervals.LineNumber is null as CurrentDebt,
 	case when &amp;LocalCurrency then Balances.PaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
 		else Balances.PaymentBalance
@@ -461,13 +457,8 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 	//
 	left join Catalog.Intervals.Intervals as Intervals
 	on Intervals.Ref = &amp;Interval
-	and
-		case
-		when &amp;OperationDate then
-			case when Balances.Document.Date &lt; &amp;DebtsOnDate then datediff ( Balances.Document.Date, &amp;DebtsOnDate, day ) else 0 end
-		else
-			case when PaymentDetails.Date &lt; &amp;DebtsOnDate then datediff ( PaymentDetails.Date, &amp;DebtsOnDate, day ) else 0 end
-		end between Intervals.Start and Intervals.Finish
+	and datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) between Intervals.Start and Intervals.Finish
 {where Balances.PaymentBalance as PaymentBalance, PaymentDetails.Option.* as Option,
 	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
 	case when &amp;LocalCurrency then Balances.AmountBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
@@ -476,6 +467,8 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 	case when &amp;LocalCurrency then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
 		else Balances.OverpaymentBalance
 	end as Overpayment,
+	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) as BalanceDays,
 	Intervals.LineNumber is null as CurrentDebt}
 </query>
 		<autoFillFields>false</autoFillFields>
@@ -1712,6 +1705,103 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 				<dcsset:column>
 					<dcsset:groupItems>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>StrPayment</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
+							<dcsset:comparisonType>Equal</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>LessOrEqual</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+						</dcsset:item>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Итого</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+					<dcsset:item>
+						<dcsset:groupItems>
+							<dcsset:item xsi:type="dcsset:GroupItemField">
+								<dcsset:field>OverduePeriods</dcsset:field>
+								<dcsset:groupType>Items</dcsset:groupType>
+								<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+								<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+							</dcsset:item>
+						</dcsset:groupItems>
+						<dcsset:order>
+							<dcsset:item xsi:type="dcsset:OrderItemField">
+								<dcsset:field>Interval</dcsset:field>
+								<dcsset:orderType>Desc</dcsset:orderType>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+						</dcsset:order>
+						<dcsset:selection>
+							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>PaymentBalance</dcsset:field>
+								<dcsset:lwsTitle>
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>Overdue</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Просрочено</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>Expirat</v8:content>
+									</v8:item>
+								</dcsset:lwsTitle>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+					</dcsset:item>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>StrOverduePayment</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
@@ -1724,6 +1814,11 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
 							<dcsset:comparisonType>Equal</dcsset:comparisonType>
 							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>Greater</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
 						</dcsset:item>
 					</dcsset:filter>
 					<dcsset:order>
@@ -1973,11 +2068,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>StrTotalsGroup</dcscor:parameter>
 					<dcscor:value xsi:type="xs:string">Overall</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>StrOver</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">Over</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
