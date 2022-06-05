@@ -58,10 +58,13 @@ Function findAccounts ( Parameters )
 	|and Accounts.Code like &Code
 	|";
 	typeArray = Type ( "FixedArray" );
+	typeList = Type ( "ValueList" );
 	for each item in Parameters.Filter do
 		value = item.Value;
 		name = item.Key;
-		if ( TypeOf ( value ) = typeArray ) then
+		valueType = TypeOf ( value );
+		if ( valueType = typeArray
+			or valueType = typeList ) then
 			condition = " in ( &" + name + " )";
 		else
 			condition = " = &" + name;
