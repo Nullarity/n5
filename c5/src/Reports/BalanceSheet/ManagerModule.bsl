@@ -29,21 +29,15 @@ EndProcedure
 Procedure ApplyDetails ( Composer, Params ) export
 	
 	filters = GetFromTempStorage ( Params.Filters );
-	balanceSheet = Params.ReportName = "BalanceSheet";
-	analyticTransactions = Params.ReportName = "AnalyticTransactions";
-	parent = Params.Parent;
-	incomeStatement = false;
-	debts = false;
-	debtDetails = false;
-	if ( parent = "IncomeStatement" ) then
-		incomeStatement = true;
-	elsif ( parent = "Debts"
-		or parent = "VendorDebts" ) then
-		debts = true;
-	elsif ( parent = "DebtDetails"
-		or parent = "VendorDebtDetails" ) then
-		debtDetails = true;
-	endif;
+	destination = Params.ReportName;
+	balanceSheet = destination  = "BalanceSheet";
+	analyticTransactions = destination = "AnalyticTransactions";
+	transactions = destination = "Transactions";
+	source = Params.Parent;
+	incomeStatement = source = "IncomeStatement";
+	debts = source = "Debts" or source = "VendorDebts";
+	debtDetails = source = "DebtDetails" or source = "VendorDebtDetails";
+	assets = source = "Assets";
 	periodDefined = false;
 	filterType = Type ( "DataCompositionFilterItem" );
 	for each filter in filters do
@@ -112,6 +106,24 @@ Procedure ApplyDetails ( Composer, Params ) export
 					endif; 
 				endif; 
 			endif; 
+		elsif ( filterName = "Asset" ) then
+			if ( assets ) then
+				value = filter.Item.Value;
+				if ( balanceSheet ) then
+					DC.AddFilter ( Composer, "Dim1", value, , true );
+				elsif ( analyticTransactions ) then
+					DC.SetParameter ( Composer, "DimType1", dimensionOfValue ( value ) );
+					DC.SetParameter ( Composer, "Dim1", value );
+				elsif ( transactions ) then
+					DC.SetFilter ( Composer, "Dim1", value );
+				endif; 
+			endif;
+		elsif ( filterName = "Account" ) then
+			if ( assets ) then
+				if ( balanceSheet ) then
+					filter.StandardProcessing = false;
+				endif; 
+			endif;
 		endif;
 	enddo; 
 	Reporter.ApplyDetails ( Composer, filters );
@@ -145,6 +157,19 @@ Function getPeriod ( Period, Filters )
 	return new StandardPeriod ( start, EndOfDay ( end ) );
 	
 EndFunction 
+
+Function dimensionOfValue ( Value )
+	
+	type = TypeOf ( Value );
+	if ( type = Type ( "CatalogRef.Organizations" ) ) then
+		return ChartsOfCharacteristicTypes.Dimensions.Organizations;
+	elsif ( type = Type ( "CatalogRef.FixedAssets" ) ) then
+		return ChartsOfCharacteristicTypes.Dimensions.FixedAssets;
+	elsif ( type = Type ( "CatalogRef.IntangibleAssets" ) ) then
+		return ChartsOfCharacteristicTypes.Dimensions.IntangibleAssets;
+	endif;
+
+EndFunction
 
 Procedure SetTitle ( Params, Period, Account = undefined ) export
 	
