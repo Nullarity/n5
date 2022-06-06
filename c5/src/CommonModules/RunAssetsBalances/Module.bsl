@@ -51,7 +51,7 @@ EndProcedure
 Procedure sqlItems ( Env )
 	
 	s = "
-	|select Items.InitialCost as InitialCost, Items.Depreciation as Depreciation
+	|select Items.InitialCost as InitialCost, Items.Depreciation as Depreciation, Items.Date as Date
 	|";
 	if ( Env.FixedAssets ) then
 		s = s + ",
@@ -83,7 +83,7 @@ Procedure sqlAssets ( Env )
 	|select Items.Asset as Asset, Items.Department as Department, Items.Employee as Employee, Items.InitialCost as InitialCost,
 	|	Items.Acceleration as Acceleration, Items.Charge as Charge, Items.Expenses as Expenses, Items.Depreciation as Depreciation,
 	|	Items.Method as Method, Items.Starting as Starting, Items.UsefulLife as UsefulLife, Items.AssetAccount as AssetAccount,
-	|	Items.DepreciationAccount as DepreciationAccount
+	|	Items.DepreciationAccount as DepreciationAccount, Items.Date as Date
 	|";
 	if ( Env.FixedAssets ) then
 		s = s + ",
@@ -111,6 +111,7 @@ Procedure makeAssets ( Env )
 	makeDepreciation ( Env );
 	makeLocation ( Env );
 	makeBalances ( Env );
+	makeCommissioning ( Env );
 	
 EndProcedure
 
@@ -191,6 +192,21 @@ Procedure makeBalances ( Env )
 	
 EndProcedure
 
+Procedure makeCommissioning ( Env )
+	
+	if ( Env.FixedAssets ) then
+		recordset = Env.Registers.Commissioning;
+	else
+		recordset = Env.Registers.IntangibleAssetsCommissioning;
+	endif;
+	for each row in Env.Assets do
+		movement = recordset.Add ();
+		movement.Asset = row.Asset;
+		movement.Date = row.Date;
+	enddo; 
+	
+EndProcedure
+
 Procedure flagRegisters ( Env )
 	
 	registers = Env.Registers;
@@ -198,9 +214,10 @@ Procedure flagRegisters ( Env )
 	if ( Env.FixedAssets ) then
 		registers.Depreciation.Write = true;
 		registers.FixedAssetsLocation.Write = true;
+		registers.Commissioning.Write = true;
 	else
 		registers.Amortization.Write = true;
-		registers.IntangibleAssetsLocation.Write = true;
+		registers.IntangibleAssetsCommissioning.Write = true;
 	endif; 
 	
 EndProcedure

@@ -247,6 +247,7 @@ Procedure makeAssets ( Env )
 	table = SQL.Fetch ( Env, "$Assets" );
 	makeDepreciation ( Env, table );
 	makeLocation ( Env, table );
+	makeCommissioning ( Env, table );
 	
 EndProcedure
 
@@ -292,6 +293,23 @@ Procedure makeLocation ( Env, Assets )
 		movement.Asset = row.Asset;
 		movement.Department = row.Department;
 		movement.Employee = row.Employee;
+	enddo; 
+	
+EndProcedure
+
+Procedure makeCommissioning ( Env, Assets )
+	
+	tangible = Env.FixedAssets;
+	if ( tangible ) then
+		recordset = Env.Registers.Commissioning;
+	else
+		recordset = Env.Registers.IntangibleAssetsCommissioning;
+	endif;
+	date = Env.Fields.Date;
+	for each row in Assets do
+		movement = recordset.Add ();
+		movement.Asset = row.Asset;
+		movement.Date = date;
 	enddo; 
 	
 EndProcedure
@@ -522,9 +540,11 @@ Procedure flagRegisters ( Env )
 	if ( Env.FixedAssets ) then
 		registers.Depreciation.Write = true;
 		registers.FixedAssetsLocation.Write = true;
+		registers.Commissioning.Write = true;
 	else
 		registers.Amortization.Write = true;
 		registers.IntangibleAssetsLocation.Write = true;
+		registers.IntangibleAssetsCommissioning.Write = true;
 	endif; 
 	if ( not Env.RestoreCost ) then
 		if ( not Env.CheckBalances ) then

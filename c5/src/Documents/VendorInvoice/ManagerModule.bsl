@@ -1403,6 +1403,7 @@ Procedure makeFixedAssets ( Env )
 	registers = Env.Registers;
 	depreciation = registers.Depreciation;
 	location = registers.FixedAssetsLocation;
+	commissioning = registers.Commissioning;
 	fields = Env.Fields;
 	date = fields.Date;
 	startDepreciation = BegOfMonth ( AddMonth ( date, 1 ) );
@@ -1433,6 +1434,9 @@ Procedure makeFixedAssets ( Env )
 		movement.Asset = item;
 		movement.Employee = row.Employee;
 		movement.Department = row.Department;
+		movement = commissioning.Add ();
+		movement.Asset = item;
+		movement.Date = date;
 		p.AccountDr = row.Account;
 		p.QuantityDr = 1;
 		p.Amount = row.Amount;
@@ -1456,6 +1460,7 @@ Procedure makeIntangibleAssets ( Env )
 	registers = Env.Registers;
 	amortization = registers.Amortization;
 	location = registers.IntangibleAssetsLocation;
+	commissioning = registers.IntangibleAssetsCommissioning;
 	fields = Env.Fields;
 	date = fields.Date;
 	vendorAccount = fields.VendorAccount;
@@ -1483,6 +1488,9 @@ Procedure makeIntangibleAssets ( Env )
 		movement.Asset = item;
 		movement.Employee = row.Employee;
 		movement.Department = row.Department;
+		movement = commissioning.Add ();
+		movement.Asset = item;
+		movement.Date = date;
 		p.AccountDr = row.Account;
 		p.QuantityDr = 1;
 		p.Amount = row.Amount;
@@ -1723,6 +1731,8 @@ Procedure flagRegisters ( Env )
 	registers.RangeStatuses.Write = true;
 	registers.VendorDiscounts.Write = true;
 	registers.Sales.Write = true;
+	registers.Commissioning.Write = true;
+	registers.IntangibleAssetsCommissioning.Write = true;
 	
 EndProcedure
 

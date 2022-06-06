@@ -1,6 +1,5 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
-	
 Procedure PresentationFieldsGetProcessing ( Fields, StandardProcessing )
 	
 	DocumentPresentation.StandardFields ( Fields, StandardProcessing );

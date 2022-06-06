@@ -7,16 +7,15 @@ createEnv ( Env );
 
 MainWindow.ExecuteCommand ( "e1cib/data/Document.Commissioning" );
 form = With ( "Commissioning (cr*" );
-
+                         
 table = Activate ( "#Items" );
 Close ( "Fixed Asset" );
 
 Set ( "#Warehouse", env.Warehouse );
 Set ( "#Department", env.Department );
-Set ( "#Employee", env.Responsible );
+Put ( "#Employee", env.Responsible );
 
-table = Activate ( "#Items" );
-Click ( "#ItemsEdit" );
+Click ( "#ItemsAdd" );
 With ( "Fixed Asset" );
 Set ( "#Item", env.Item );
 Set ( "#QuantityPkg", "1" );
@@ -29,8 +28,7 @@ With ( form );
 IgnoreErrors = true;
 Click ( "#FormPost" );
 Call ( "Common.FillCheckError", "Calculation *" );
-Call ( "Table.Clear", table );
-Click ( "#JustSave" );
+CloseAll ();
 IgnoreErrors = false;
 
 // *************************
@@ -39,7 +37,7 @@ IgnoreErrors = false;
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "253FF541" );
+	id = Call ( "Common.ScenarioID", "A0PS" );
 	env = new Structure ();
 	env.Insert ( "ID", id );
 	env.Insert ( "Warehouse", "Main" );
@@ -59,7 +57,9 @@ Procedure createEnv ( env )
 		return;
 	endif;
 
-	Call ( "Catalogs.Items.CreateIfNew", env.Item );
+	p = Call ( "Catalogs.Items.Create.Params" );
+	p.Description = env.Item;
+	Call ( "Catalogs.Items.Create", p );
 
 	p = Call ( "Catalogs.FixedAssets.Create.Params" );
 	p.Description = env.FixedAsset;

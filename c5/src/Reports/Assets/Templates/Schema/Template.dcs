@@ -396,6 +396,24 @@
 				</dcscor:item>
 			</inputParameters>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CommissioningDate</dataPath>
+			<field>CommissioningDate</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Commissioning Date</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Data în funcțiune</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Дата ввода</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Asset Accounts
 select distinct Assets.Account as Account
@@ -480,9 +498,11 @@ select Assets.Company as Company, Assets.Asset as Asset, Assets.OpeningBalance a
 	Assets.TotalAmortization as TotalAmortization, Assets.AmortizationDr as AmortizationDr,
 	Assets.AmortizationCr as AmortizationCr, Assets.Cost as Cost, Assets.Asset.Account as Account,
 	Locations.Department as Department, Locations.Employee as Employee,
-	Depreciation.Charge as Charge, Depreciation.UsefulLife as UsefulLife
+	Depreciation.Charge as Charge, Depreciation.UsefulLife as UsefulLife,
+	isnull ( Commissioning.Date, IntangibleAssetsCommissioning.Date ) as CommissioningDate
 {select Company.*, Asset.*, Account.*, OpeningBalance, TurnoverDr as TurnoverDr, TurnoverCr, ClosingBalance,
-	TotalAmortization, AmortizationDr, AmortizationCr, Cost, Department, Employee, UsefulLife, Charge}
+	TotalAmortization, AmortizationDr, AmortizationCr, Cost, Department, Employee, UsefulLife, Charge,
+	CommissioningDate}
 from Assets as Assets
 	//
 	// Locations
@@ -494,8 +514,19 @@ from Assets as Assets
 	//
 	left join Depreciation as Depreciation
 	on Depreciation.Asset = Assets.Asset
+	//
+	// Commissioning
+	//
+	left join InformationRegister.Commissioning as Commissioning
+	on Commissioning.Asset = Assets.Asset
+	//
+	// Intangible Assets Commissioning
+	//
+	left join InformationRegister.IntangibleAssetsCommissioning as IntangibleAssetsCommissioning
+	on IntangibleAssetsCommissioning.Asset = Assets.Asset
 {where Depreciation.Charge as Charge, Depreciation.UsefulLife as UsefulLife,
-	Locations.Department.* as Department, Locations.Employee as Employee}
+	Locations.Department.* as Department, Locations.Employee as Employee,
+	isnull ( Commissioning.Date, IntangibleAssetsCommissioning.Date ) as CommissioningDate}
 </query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -549,6 +580,11 @@ from Assets as Assets
 	<totalField>
 		<dataPath>UsefulLife</dataPath>
 		<expression>UsefulLife</expression>
+		<group>Asset</group>
+	</totalField>
+	<totalField>
+		<dataPath>CommissioningDate</dataPath>
+		<expression>CommissioningDate</expression>
 		<group>Asset</group>
 	</totalField>
 	<parameter>
@@ -657,6 +693,9 @@ from Assets as Assets
 		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
 			<dcsset:selection>
 				<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>CommissioningDate</dcsset:field>
+				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Department</dcsset:field>
 				</dcsset:item>
