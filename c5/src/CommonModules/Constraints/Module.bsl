@@ -164,11 +164,13 @@ Function getSalesInfo ( Object, Context )
 	|// @Sales
 	|select sum ( Debts.Debt ) as Debt, sum ( Debts.Limit ) - sum ( Debts.Debt ) as Limit,
 	|	1 = max ( Debts.NoLimit ) as NoLimit,
-	|	1 = max ( Debts.Ban ) as Ban, 1 = max ( Debts.Signed ) as Signed
+	|	1 = max ( Debts.Ban ) as Ban,
+	|	1 = max ( Debts.Signed ) as Signed,
+	|	0 = max ( Debts.FirstSale ) as FirstSale
 	|from (
-	|	select 0 as Debt, 0 as Limit, 0 as NoLimit, 0 as Ban, 0 as Signed
+	|	select 0 as Debt, 0 as Limit, 0 as NoLimit, 0 as Ban, 0 as Signed, 0 as FirstSale
 	|	union all
-	|	select 0, 0, 0, case when Restrictions.Ban then 1 else 0 end, 0
+	|	select 0, 0, 0, case when Restrictions.Ban then 1 else 0 end, 0, 0
 	|	from (
 	|		select top 1 Restrictions.Ban as Ban
 	|		from Document.SalesRestriction as Restrictions
@@ -180,7 +182,8 @@ Function getSalesInfo ( Object, Context )
 	if ( controlCredit ) then
 		selection.Add ( "
 		|union all
-		|select case when Rates.Rate is null then Debts.Debt else Debts.Debt * Rates.Rate / Rates.Factor end, 0, 0, 0, 0
+		|select case when Rates.Rate is null then Debts.Debt else Debts.Debt * Rates.Rate / Rates.Factor end,
+		|	0, 0, 0, 0, 0
 		|from Debts as Debts
 		|	//
 		|	// Rates
@@ -188,7 +191,7 @@ Function getSalesInfo ( Object, Context )
 		|	left join Rates as Rates
 		|	on Rates.Currency = Debts.Currency
 		|union all
-		|select 0, Credits.Amount, Credits.NoLimit, 0, 0
+		|select 0, Credits.Amount, Credits.NoLimit, 0, 0, 0
 		|from (
 		|	select top 1 Credits.Amount as Amount, case when Credits.Disable then 1 else 0 end as NoLimit
 		|	from Document.CreditLimit as Credits
@@ -201,7 +204,7 @@ Function getSalesInfo ( Object, Context )
 	if ( controlContracts ) then
 		selection.Add ( "
 		|	union all
-		|	select 0, 0, 0, 0, 1
+		|	select 0, 0, 0, 0, 1, 0
 		|	from Catalog.Contracts as Contracts
 		|	where not Contracts.DeletionMark
 		|	and Contracts.Ref = &Contract
@@ -210,7 +213,7 @@ Function getSalesInfo ( Object, Context )
 		|	and &Today between Contracts.DateStart
 		|		and case Contracts.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Contracts.DateEnd end
 		|	union all
-		|	select top 1 0, 0, 0, 0, 1
+		|	select top 1 0, 0, 0, 0, 1, 0
 		|	from Catalog.Contracts as Contracts
 		|	where not Contracts.DeletionMark
 		|	and Contracts.Owner = &Customer
@@ -218,7 +221,13 @@ Function getSalesInfo ( Object, Context )
 		|	and Contracts.Company = &Company
 		|	and Contracts.Signed
 		|	and &Today between Contracts.DateStart
-		|		and case Contracts.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Contracts.DateEnd end" );
+		|		and case Contracts.DateEnd when datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Contracts.DateEnd end
+		|	union all
+		|	select top 1 0, 0, 0, 0, 0, 1
+		|	from Document.Invoice as Invoices
+		|	where Invoices.Ref <> &Ref
+		|	and Invoices.Customer = &Customer
+		|	and Invoices.Posted" );
 	endif;
 	selection.Add ( " ) as Debts" );
 	if ( controlTaxInvoices ) then
@@ -270,6 +279,7 @@ Function contractRequired ( Data )
 	
 	return Data.ControlContracts
 		and Data.Sales.Debt > 0
+		and not Data.Sales.FirstSale
 		and not Data.Sales.Signed;
 		
 EndFunction
