@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0OE" );
+id = Call ( "Common.ScenarioID", "A0Q1" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -15,6 +15,7 @@ Next ();
 warning = Get ( "#RestrictionLabel1" ).TitleText;
 Assert ( warning ).Contains ( "The customer is in debt and does not have a signed contract" );
 #endregion
+CloseAll ();
 
 // *************************
 // Procedures
