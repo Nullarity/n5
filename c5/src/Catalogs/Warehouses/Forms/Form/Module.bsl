@@ -40,7 +40,8 @@ Procedure readAppearance ()
 	|Address Contact enable filled ( Object.Ref );
 	|Write show empty ( Object.Ref );
 	|Responsible show inlist ( Object.Class, Enum.WarehouseTypes.Salesman, Enum.WarehouseTypes.Car );
-	|Department show Object.Production
+	|Department show Object.Production;
+	|Inventory hide Object.Class = Enum.WarehouseTypes.PickPack;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

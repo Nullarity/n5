@@ -32,9 +32,9 @@ EndProcedure
 &AtServer
 Procedure isApplied ()
 	
-	s = "select top 1 1 from Document.Inventory.Inventories where Inventory = &Ref and Ref.Posted";
+	s = "select top 1 1 from Document.Inventory where Ref.Posted and Ref.Warehouse = &Warehouse";
 	q = new Query ( s );
-	q.SetParameter ( "Ref", Object.Ref );
+	q.SetParameter ( "Warehouse", Object.Warehouse );
 	SetPrivilegedMode ( true );
 	InventoryApplied = not q.Execute ().IsEmpty ();
 	
@@ -103,7 +103,7 @@ Procedure setLinks ()
 		ShowLinks = false;
 	else
 		q = Env.Q;
-		q.SetParameter ( "Ref", Object.Ref );
+		q.SetParameter ( "Warehouse", Object.Warehouse );
 		SQL.Perform ( Env, false );
 		setURLPanel ();
 	endif;
@@ -120,8 +120,8 @@ Procedure sqlLinks ()
 	s = "
 	|// #Inventories
 	|select Documents.Ref as Document, Documents.Ref.Date as Date, Documents.Ref.Number as Number
-	|from Document.Inventory.Inventories as Documents
-	|where Documents.Inventory = &Ref
+	|from Document.Inventory as Documents
+	|where Documents.Warehouse = &Warehouse
 	|";
 	Env.Selection.Add ( s );
 	

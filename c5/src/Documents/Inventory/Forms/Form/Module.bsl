@@ -156,22 +156,6 @@ Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
 EndProcedure
 
 &AtClient
-Procedure BeforeWrite ( Cancel, WriteParameters )
-	
-	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
-	Forms.DeleteLastRow ( Object.Items, "Item" );
-	calcTotals ( Object );
-	
-EndProcedure
-
-&AtClient
-Procedure calcTotals ( Object )
-	
-	Object.Amount = Object.Items.Total ( "Amount" );
-	
-EndProcedure 
-
-&AtClient
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageBarcodeScanned ()
@@ -219,6 +203,22 @@ Procedure calcDifference ( ItemsRow )
 	
 EndProcedure
 
+&AtClient
+Procedure BeforeWrite ( Cancel, WriteParameters )
+	
+	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
+	Forms.DeleteLastRow ( Object.Items, "Item" );
+	calcTotals ( Object );
+	
+EndProcedure
+
+&AtClient
+Procedure calcTotals ( Object )
+	
+	Object.Amount = Object.Items.Total ( "Amount" );
+	
+EndProcedure 
+
 // *****************************************
 // *********** Group Form
 
@@ -240,6 +240,49 @@ EndProcedure
 // *********** Table Items
 
 &AtClient
+async Procedure OpenInventory ( Command )
+	
+	row = Items.ItemsTable.CurrentData;
+	if ( row = undefined ) then
+		return;
+	endif;
+	list = findInventories ( row.Item );
+	if ( list = undefined ) then
+		return;
+	elsif ( list.Count () = 1 ) then
+		OpenValueAsync ( list [ 0 ].Value );
+	else
+		item = await ChooseFromListAsync ( list );
+		if ( item <> undefined ) then
+			OpenValueAsync ( list [ 0 ].Value );
+		endif;
+	endif;
+
+EndProcedure
+
+&AtServer
+Function findInventories ( val Item )
+	
+	s = "
+	|select distinct Items.Ref, presentation ( Items.Ref ) as Presentation
+	|from Document.InventoryStockman.Items as Items
+	|where Items.Ref.Warehouse = &Warehouse
+	|and Items.Item = &Item
+	|and Items.Ref.Posted
+	|and Items.Ref.Date between dateadd ( &Date, day, - Items.Ref.Warehouse.Inventory ) and &Date";
+	q = new Query ( s );
+	q.SetParameter ( "Item", Item );
+	q.SetParameter ( "Date", Object.Date );
+	q.SetParameter ( "Warehouse", Object.Warehouse );
+	result = new ValueList ();
+	for each row in q.Execute ().Unload () do
+		result.Add ( row.Ref, row.Presentation );
+	enddo;
+	return ? ( result.Count () = 0, undefined, result );
+
+EndFunction
+ 
+&AtClient
 Procedure Scan ( Command )
 	
 	ScanForm.Open ( ThisObject, true );
@@ -250,28 +293,32 @@ EndProcedure
 Procedure Fill ( Command )
 	
 	if ( Forms.Check ( ThisObject, "Warehouse" ) ) then
-		Output.UpdateInventory ( ThisObject );
+		askAndFill ();
 	endif; 
 	
 EndProcedure
 
 &AtClient
-Procedure UpdateInventory ( Answer, Params ) export
+async Procedure askAndFill ()
 	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif; 
+	if ( Object.Items.Count () > 0 ) then
+		answer = await Output.CleanTableBeforeFilling ();
+		if ( answer = DialogReturnCode.Cancel ) then
+			return;
+		elsif ( answer = DialogReturnCode.Yes ) then
+			Object.Items.Clear ();
+		endif;
+	endif;
 	fillTable ();
-	
-EndProcedure 
+
+EndProcedure
 
 &AtServer
 Procedure fillTable ()
 	
-	table = getTable ();
 	itemsTable = Object.Items;
 	search = new Structure ( "Item, Package, Feature, Series, Account" );
-	for each row in table do
+	for each row in getTable () do
 		FillPropertyValues ( search, row );
 		foundRows = itemsTable.FindRows ( search );
 		found = foundRows.Count () > 0;
@@ -295,6 +342,7 @@ EndProcedure
 &AtServer
 Function getTable ()
 	
+	folder = not Object.Folder.IsEmpty ();
 	s = "
 	|// ItemKeys
 	|select Details.ItemKey as ItemKey, Details.Item as Item, Details.Feature as Feature,
@@ -302,30 +350,94 @@ Function getTable ()
 	|into Details
 	|from InformationRegister.ItemDetails as Details
 	|where Details.Warehouse = &Warehouse
+	|";
+	if ( folder ) then
+		s = s + "and Details.Item in hierarchy ( &Folder )"
+	endif;
+	s = s + "
 	|index by ItemKey
 	|;
+	|// Stockman Inventory
+	|select Items.Ref as Ref, Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Quantity as Quantity,
+	|	case when Items.Item.CountPackages then Items.Package else value ( Catalog.Packages.EmptyRef ) end as Package,
+	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as QuantityPkg,
+	|	case when Items.Item.CountPackages then Items.Capacity else 1 end as Capacity
+	|into Inventory
+	|from Document.InventoryStockman.Items as Items
+	|where Items.Ref.Warehouse = &Warehouse
+	|and Items.Ref.Date between dateadd ( &InventoryDate, day, - Items.Ref.Warehouse.Inventory ) and &InventoryDate
+	|and Items.Ref.Posted
+	|";
+	if ( folder ) then
+		s = s + "and Items.Item in hierarchy ( &Folder )"
+	endif;
+	s = s + "
+	|;
+	|// Cost
 	|select Details.Item as Item, Details.Package as Package, Details.Feature as Feature,
 	|	Details.Series as Series, Details.Account as Account,
 	|	isnull ( Details.Package.Capacity, 1 ) as Capacity,
-	|	cast ( Balances.AmountBalance / Balances.QuantityBalance as Number ( 15, 2 ) ) as Price,
-	|	Balances.QuantityBalance * isnull ( Details.Package.Capacity, 1 ) as Quantity,
-	|	Balances.QuantityBalance as QuantityPkg, Balances.AmountBalance as Amount
+	|	Balances.QuantityBalance * isnull ( Details.Package.Capacity, 1 ) as QuantityBalance,
+	|	Balances.QuantityBalance as QuantityPkgBalance, Balances.AmountBalance as AmountBalance
+	|into Cost
 	|from AccumulationRegister.Cost.Balance ( &Date, ItemKey in ( select ItemKey from Details ) ) as Balances
 	|	//
 	|	// Details
 	|	//
 	|	join Details as Details
 	|	on Details.ItemKey = Balances.ItemKey
-	|order by Item.Description, Account.Code, Capacity
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
+	|	Items.Account as Account, Items.Capacity as Capacity, Items.Price as Price, Items.Price as PriceDifference,
+	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg, Items.QuantityBalance as QuantityBalance,
+	|	Items.QuantityPkgBalance as QuantityPkgBalance,
+	|	Items.QuantityBalance - Items.Quantity as QuantityDifference,
+	|	Items.QuantityPkgBalance - Items.QuantityPkg as QuantityPkgDifference,
+	|	Items.AmountBalance as AmountBalance,
+	|	Items.Price * ( Items.QuantityBalance - Items.Quantity ) as AmountDifference,
+	|	case when Items.Quantity = Items.QuantityBalance then Items.AmountBalance else Items.Price * Items.Quantity end as Amount
+	|from (
+	|	select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
+	|		Items.Account as Account, Items.Capacity as Capacity,
+	|		cast ( sum ( Items.AmountBalance ) / sum ( Items.QuantityBalance ) as Number ( 15, 2 ) ) as Price,
+	|		sum ( Items.QuantityBalance ) as QuantityBalance, sum ( Items.QuantityPkgBalance ) as QuantityPkgBalance,
+	|		sum ( Items.AmountBalance ) as AmountBalance, sum ( Items.Quantity ) as Quantity,
+	|		sum ( Items.QuantityPkg ) as QuantityPkg
+	|	from (
+	|		select Cost.Item as Item, Cost.Package as Package, Cost.Feature as Feature, Cost.Series as Series,
+	|			Cost.Account as Account, isnull ( Cost.Package.Capacity, 1 ) as Capacity,
+	|			Cost.QuantityBalance * isnull ( Cost.Package.Capacity, 1 ) as QuantityBalance,
+	|			Cost.QuantityBalance as QuantityPkgBalance, Cost.AmountBalance as AmountBalance,
+	|			0 as Quantity, 0 as QuantityPkg
+	|		from Cost as Cost
+	|		union all
+	|		select Inventory.Item, Inventory.Package, Inventory.Feature, Inventory.Series, Details.Account,
+	|			Inventory.Capacity, 0, 0, 0, Inventory.Quantity, Inventory.QuantityPkg
+	|		from Inventory as Inventory
+	|			//
+	|			// Details
+	|			//
+	|			left join Details as Details
+	|			on Details.Item = Inventory.Item
+	|			and Details.Feature = Inventory.Feature
+	|			and Details.Series = Inventory.Series
+	|			and Details.Package = Inventory.Package
+	|		) as Items
+	|	group by Items.Item, Items.Package, Items.Feature, Items.Series, Items.Account, Items.Capacity
+	|	) as Items
+	|order by Item.Description, Items.Feature.Description, Items.Series.Description, Account.Code, Capacity
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Warehouse", Object.Warehouse );
+	q.SetParameter ( "Folder", Object.Folder );
 	q.SetParameter ( "Date", Periods.GetBalanceDate ( Object ) );
+	q.SetParameter ( "InventoryDate", EndOfDay ( Object.Date ) );
 	table = q.Execute ().Unload ();
 	table.Indexes.Add ( "Item, Package, Feature, Series, Account, Price" );
 	return table;
 	
-EndFunction 
+EndFunction
 
 &AtClient
 Procedure ItemsOnActivateRow ( Item )

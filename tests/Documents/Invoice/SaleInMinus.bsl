@@ -82,7 +82,7 @@ Procedure createEnv ()
 	
 	#region receiveItems
 	items = new Array ();
-	 row = Call ( "Documents.ReceiveItems.Receive.Row" );
+	row = Call ( "Documents.ReceiveItems.Receive.Row" );
 	row.Item = this.Item;
 	row.Quantity = "150";
 	row.Price = "7";

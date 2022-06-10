@@ -8459,3 +8459,12 @@ Function HintsSysadminShouldNotWork () export
 	return text;
 
 EndFunction
+
+&AtClient
+Function CleanTableBeforeFilling ( Params = undefined ) export
+
+	text = NStr ( "en = 'Clear the table before filling it?';ro = 'Ștergeți secțiunea tabelară înainte de a o completa?';ru = 'Очистить таблицу перед заполенинем?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return Output.AskUser ( text, Params, QuestionDialogMode.YesNoCancel, 0, DialogReturnCode.Yes, title );
+
+EndFunction
