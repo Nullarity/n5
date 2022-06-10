@@ -230,15 +230,16 @@ Procedure createContract ( CurrentObject, Ref )
 	obj.Currency = Application.Currency ();
 	obj.Customer = customer;
 	obj.Vendor = vendor;
+	data = Catalogs.Contracts.GetDefaults ( Ref );
 	if ( customer ) then
 		obj.CustomerTerms = Constants.Terms.Get ();
 		obj.CustomerPayment = Constants.PaymentMethod.Get ();
-		obj.CustomerVATAdvance = getVATAdvance ();
+		obj.CustomerVATAdvance = data.VATAdvance;
 	endif;
 	if ( vendor ) then
 		obj.VendorTerms = Constants.VendorTerms.Get ();
 		obj.VendorPayment = Constants.VendorPaymentMethod.Get ();
-		obj.VendorVATAdvance = getVATAdvance ();
+		obj.VendorVATAdvance = data.VATAdvance;
 	endif; 
 	obj.Write ();
 	if ( customer ) then
@@ -249,20 +250,6 @@ Procedure createContract ( CurrentObject, Ref )
 	endif; 
 	
 EndProcedure 
-
-Function getVATAdvance ()
-	
-	s = "
-	|select Settings.Value as Value
-	|from InformationRegister.Settings.SliceLast ( ,
-	|	Parameter = value ( ChartOfCharacteristicTypes.Settings.VATAdvance )
-	|) as Settings
-	|";
-	q = new Query ( s );
-	table = q.Execute ().Unload ();
-	return ? ( table.Count () = 0, undefined, table [ 0 ].Value );
-
-EndFunction
 
 &AtServer
 Procedure loadFields ( CurrentObject, Ref, Data )
