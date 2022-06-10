@@ -50,14 +50,6 @@ table = Activate ( "#ItemsTable" );
 Click ( "#ItemsTableDelete" );
 
 Click ( "#ItemsFill" );
-question = App.FindObject ( Type ( "TestedForm" ), DialogsTitle );
-//if ( question <> undefined ) then
-//	Click ( "Yes");
-//endif;
-
-With ();
-Click ( "Yes" );
-With ();
 
 p = Call ( "Common.Row.Params");
 p.Table = table;

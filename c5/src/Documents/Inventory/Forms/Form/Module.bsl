@@ -321,18 +321,14 @@ Procedure fillTable ()
 	for each row in getTable () do
 		FillPropertyValues ( search, row );
 		foundRows = itemsTable.FindRows ( search );
-		found = foundRows.Count () > 0;
-		if ( found ) then
-			itemsRow = foundRows [ 0 ];
-		else
+		if ( foundRows.Count () = 0 ) then
 			itemsRow = itemsTable.Add ();
 			FillPropertyValues ( itemsRow, row );
-		endif; 
-		itemsRow.QuantityBalance = row.Quantity;
-		itemsRow.QuantityPkgBalance = row.QuantityPkg;
-		itemsRow.PriceBalance = row.Price;
-		itemsRow.AmountBalance = row.Amount;
-		if ( found ) then
+			itemsRow.Price = row.PriceBalance;
+		else
+			itemsRow = foundRows [ 0 ];
+			FillPropertyValues ( itemsRow, row, , "Quantity, QuantityPkg" );
+			itemsRow.Price = row.PriceBalance;
 			calcDifference ( itemsRow );
 		endif; 
 	enddo; 
@@ -389,26 +385,30 @@ Function getTable ()
 	|;
 	|// #Items
 	|select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Account as Account, Items.Capacity as Capacity, Items.Price as Price, Items.Price as PriceDifference,
-	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg, Items.QuantityBalance as QuantityBalance,
-	|	Items.QuantityPkgBalance as QuantityPkgBalance,
+	|	Items.Account as Account, Items.Capacity as Capacity, Items.Price as PriceBalance,
+	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.QuantityBalance as QuantityBalance, Items.QuantityPkgBalance as QuantityPkgBalance,
 	|	Items.QuantityBalance - Items.Quantity as QuantityDifference,
 	|	Items.QuantityPkgBalance - Items.QuantityPkg as QuantityPkgDifference,
 	|	Items.AmountBalance as AmountBalance,
-	|	Items.Price * ( Items.QuantityBalance - Items.Quantity ) as AmountDifference,
-	|	case when Items.Quantity = Items.QuantityBalance then Items.AmountBalance else Items.Price * Items.Quantity end as Amount
+	|	case
+	|		when Items.Quantity = Items.QuantityBalance then Items.AmountBalance
+	|		else Items.Price * Items.Quantity
+	|	end as Amount,
+	|	Items.Price * ( Items.QuantityBalance - Items.Quantity ) as AmountDifference
 	|from (
 	|	select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
 	|		Items.Account as Account, Items.Capacity as Capacity,
-	|		cast ( sum ( Items.AmountBalance ) / sum ( Items.QuantityBalance ) as Number ( 15, 2 ) ) as Price,
+	|		cast ( sum ( Items.AmountBalance )
+	|			/ sum ( case when Items.Package is null then Items.QuantityBalance else Items.QuantityPkgBalance end
+	|		) as Number ( 15, 2 ) ) as Price,
 	|		sum ( Items.QuantityBalance ) as QuantityBalance, sum ( Items.QuantityPkgBalance ) as QuantityPkgBalance,
 	|		sum ( Items.AmountBalance ) as AmountBalance, sum ( Items.Quantity ) as Quantity,
 	|		sum ( Items.QuantityPkg ) as QuantityPkg
 	|	from (
 	|		select Cost.Item as Item, Cost.Package as Package, Cost.Feature as Feature, Cost.Series as Series,
-	|			Cost.Account as Account, isnull ( Cost.Package.Capacity, 1 ) as Capacity,
-	|			Cost.QuantityBalance * isnull ( Cost.Package.Capacity, 1 ) as QuantityBalance,
-	|			Cost.QuantityBalance as QuantityPkgBalance, Cost.AmountBalance as AmountBalance,
+	|			Cost.Account as Account, Cost.Capacity as Capacity, Cost.QuantityBalance as QuantityBalance,
+	|			Cost.QuantityPkgBalance as QuantityPkgBalance, Cost.AmountBalance as AmountBalance,
 	|			0 as Quantity, 0 as QuantityPkg
 	|		from Cost as Cost
 	|		union all
@@ -434,7 +434,7 @@ Function getTable ()
 	q.SetParameter ( "Date", Periods.GetBalanceDate ( Object ) );
 	q.SetParameter ( "InventoryDate", EndOfDay ( Object.Date ) );
 	table = q.Execute ().Unload ();
-	table.Indexes.Add ( "Item, Package, Feature, Series, Account, Price" );
+	table.Indexes.Add ( "Item, Package, Feature, Series, Account" );
 	return table;
 	
 EndFunction
