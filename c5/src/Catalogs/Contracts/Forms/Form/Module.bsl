@@ -26,19 +26,20 @@ EndProcedure
 Procedure fillNew ()
 	
 	if ( Parameters.CopyingValue.IsEmpty () ) then
-		Object.Signed = false;
-		Object.DateStart = CurrentSessionDate ();
-		if ( not Object.Parent.IsEmpty () ) then
+		if ( Object.Parent.IsEmpty () ) then
+			setFlags ();
+			setCurrency ();
+			setCompany ();
+			setTerms ();
+			setDefaults ();
+		else
 			FillPropertyValues ( Object, Object.Parent, ,
 			"Code, Description, DataVersion, Parent, Predefined, PredefinedDataName, Items, Services, VendorItems,
 			|VendorServices" );
 		endif;
 	else
-		setFlags ();
-		setCurrency ();
-		setCompany ();
-		setTerms ();
-		setVATAdvance ();
+		Object.Signed = false;
+		Object.DateStart = CurrentSessionDate ();
 	endif;
 	
 EndProcedure
@@ -87,22 +88,39 @@ Procedure setTerms ()
 EndProcedure 
 
 &AtServer
-Procedure setVATAdvance ()
+Procedure setDefaults ()
 
+	customer = Object.Customer;
+	vendor = Object.Vendor;
+	if ( not ( customer or vendor ) ) then
+		return;
+	endif;
 	s = "
+	|// @BankAccount
+	|select top 1 Accounts.Ref as Ref
+	|from Catalog.BankAccounts as Accounts
+	|where Accounts.Owner = &Owner
+	|and not Accounts.DeletionMark
+	|order by Accounts.Code desc
+	|;
+	|// @VATAdvance
 	|select Settings.Value as Value
 	|from InformationRegister.Settings.SliceLast ( ,
 	|	Parameter = value ( ChartOfCharacteristicTypes.Settings.VATAdvance )
 	|) as Settings
 	|";
 	q = new Query ( s );
-	table = q.Execute ().Unload ();
-	value = ? ( table.Count () = 0, undefined, table [ 0 ].Value );
-	if ( Object.Customer ) then
-		Object.CustomerVATAdvance = value;
+	q.SetParameter ( "Owner", Object.Owner );
+	data = SQL.Exec ( q );
+	bank = ? ( data.BankAccount = undefined, undefined, data.BankAccount.Ref );
+	advance = ? ( data.VATAdvance = undefined, undefined, data.VATAdvance.Value );
+	if ( customer ) then
+		Object.CustomerBank = bank;
+		Object.CustomerVATAdvance = advance;
 	endif;
-	if ( Object.Vendor ) then
-		Object.VendorVATAdvance = value;
+	if ( vendor ) then
+		Object.VendorBank = bank;
+		Object.VendorVATAdvance = advance;
 	endif;
 	
 EndProcedure
