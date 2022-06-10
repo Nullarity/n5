@@ -71,8 +71,10 @@ Procedure createEnv ()
 	#endregion
 
 	#region newStockmanInventory
-	Commando ( "e1cib/command/Document.InventoryStockman.Create" );
+	MainWindow.ExecuteCommand("e1cib/command/Document.InventoryStockman.Create");
+	Pause(1);
 	Close ( "Scan" );
+	With ();
 	Put ( "#Warehouse", this.Warehouse );
 	Click ( "#ItemsAdd" );
 	Close ( "Items" );
