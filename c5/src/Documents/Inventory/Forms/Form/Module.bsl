@@ -248,7 +248,7 @@ async Procedure OpenInventory ( Command )
 	endif;
 	list = findInventories ( row.Item );
 	if ( list = undefined ) then
-		return;
+		Output.ThereIsNoStockmanInventory ();
 	elsif ( list.Count () = 1 ) then
 		OpenValueAsync ( list [ 0 ].Value );
 	else

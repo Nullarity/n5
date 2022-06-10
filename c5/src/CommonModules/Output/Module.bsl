@@ -132,16 +132,12 @@ Procedure putUserNotification ( Text, Params, NavigationLink, Explanation, Pictu
 EndProcedure
 
 &AtClient
-Procedure OpenMessageBox ( Text, Params, ProcName, Module, CallbackParams, Timeout, Title ) export
+Procedure OpenMessageBox ( Text, Params, ProcName, Module, CallbackParams, Timeout, Title = "" ) export
 
 	if ( Module = undefined ) then
-		handler = undefined;
+		DoMessageBoxAsync ( Output.FormatStr ( Text, Params ), Timeout, ? ( Title = "", MetadataPresentation (), Title ) );
 	else
 		handler = new NotifyDescription ( ProcName, Module, CallbackParams );
-	endif;
-	if ( handler = undefined ) then // Bug workaround 8.3.3.658 for WebClient: it doesn't understand "Undefined" in first paramer
-		ShowMessageBox ( , Output.FormatStr ( Text, Params ), Timeout, ? ( Title = "", MetadataPresentation (), Title ) );
-	else
 		ShowMessageBox ( handler, Output.FormatStr ( Text, Params ), Timeout, ? ( Title = "", MetadataPresentation (), Title ) );
 	endif;
 
@@ -7964,7 +7960,7 @@ EndProcedure
 &AtClient
 Procedure AssignNewBarcode ( Module, CallbackParams = undefined, Params = undefined, ProcName = "AssignNewBarcode" ) export
 
-	text = NStr ( "en = 'This item already has a barcode assigned to it. Would you like to assign a new one?';ro = 'Această marfă are deja un cod de bare atribuit. Doriți să îi atribuiți unul nou?';ru = 'Для этого товара уже назначен штрихкод. Назначить новый? '" );
+	text = NStr ( "en = 'This item already has a barcode assigned to it. Would you like to assign a new one?';ro = 'Această marfă are deja un cod de bare atribuit. Doriți să îi atribuiți unul nou?';ru = 'Для этого товара уже назначен штрихкод. Назначить новый?'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
@@ -8468,3 +8464,11 @@ Function CleanTableBeforeFilling ( Params = undefined ) export
 	return Output.AskUser ( text, Params, QuestionDialogMode.YesNoCancel, 0, DialogReturnCode.Yes, title );
 
 EndFunction
+
+&AtClient
+Procedure ThereIsNoStockmanInventory ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "ThereIsNoStockmanInventory" ) export
+
+	text = NStr ( "en = 'Related document is not found';ro = 'Documentul asociat nu este găsit';ru = 'Связанный документ не найден'" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0 );
+
+EndProcedure
