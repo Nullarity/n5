@@ -29,40 +29,22 @@ var Balances;
 
 Procedure OnCheck ( Cancel ) export
 	
-	readParams ();
-	if ( not checkCompany () ) then
-		Cancel = true;
-	endif;
+	readPeriod ();
 	if ( not checkPeriod () ) then
 		Cancel = true;
 	endif; 
 	
 EndProcedure 
 
-Procedure readParams ()
+Procedure readPeriod ()
 	
-	settings = Params.Composer.GetSettings ();
-	Company = DC.GetParameter ( settings, "Company" ).Value;
-	Currency = DC.GetParameter ( settings, "Currency" ).Value;
-	value = DC.GetParameter ( settings, "PutCover" ).Value;
-	PutCover = ? ( ValueIsFilled ( value ), value, false );
-	value = DC.GetParameter ( settings, "Period" ).value;
+	value = DC.GetParameter ( Params.Composer, "Period" ).value;
 	if ( ValueIsFilled ( value ) ) then
 		DateStart = value.StartDate;
 		DateEnd = value.EndDate;
 	endif;
 	
 EndProcedure 
-
-Function checkCompany () 
-
-	if ( ValueIsFilled ( Company ) ) then
-		return true;
-	endif;
-	Output.CompanyEmpty ();
-	return false;
-
-EndFunction
 
 Function checkPeriod ()
 	
@@ -77,16 +59,30 @@ EndFunction
 
 Procedure AfterOutput () export
 
+	readParams ();
 	init ();
 	print ();
 
 EndProcedure
 
+Procedure readParams ()
+	
+	settings = Params.Settings;
+	Company = DC.GetParameter ( settings, "Company" ).Value;
+	Currency = DC.GetParameter ( settings, "Currency" ).Value;
+	value = DC.GetParameter ( settings, "PutCover" ).Value;
+	PutCover = ? ( ValueIsFilled ( value ), value, false );
+	
+EndProcedure 
+
 Procedure init () 
 
 	applicationCurrency = Application.Currency ();
 	LocalCurrency = String ( applicationCurrency );
-	ByCurrency = ValueIsFilled ( Currency ) and Currency <> applicationCurrency;
+	if ( Currency.IsEmpty () ) then
+		Currency = applicationCurrency;
+	endif;
+	ByCurrency = Currency <> ApplicationCurrency;
 	initEnv ();
 	initTabDocs ();
 	initAreas ();
@@ -124,7 +120,6 @@ EndProcedure
 
 Function print ()
 	
-	Print.SetFooter ( TabDoc );
 	setPageSettings ();
 	getData ();
 	if ( PutCover ) then
@@ -208,17 +203,42 @@ Procedure sqlFields ()
 	|		where Roles.Role = value ( Enum.Roles.GeneralManager )
 	|		) as RolesDirector
 	|	on true
-	| 	//
-	| 	// Pages
-	| 	//
+	|	//
+	|	// Pages
+	|	//
 	|	left join (
-	|		select sum ( Pages.Page ) as Page, 
-	|			sum ( case when beginofperiod ( Pages.Period, month ) = beginofperiod ( &DateStart, month ) then Pages.Page else 0 end ) as PagesMonth
-	|		from InformationRegister.CashBookPages as Pages
-	|		where Pages.Company = &Company
-	|		and Pages.Period < &DateStart
-	|		and beginofperiod ( Pages.Period, year ) = beginofperiod ( &DateStart, year )
-	|		) as Pages
+	|		select sum ( Days.Page ) as Page,
+	|			sum ( case when Days.Day between beginofperiod ( &DateStart, month )
+	|				and dateadd ( &DateStart, day, -1 ) then 1 else 0 end ) as PagesMonth
+	|		from (
+	|			select beginofperiod ( Documents.Date, day ) as Day, 1 as Page
+	|			from Document.CashReceipt as Documents
+	|			where Documents.Base.Posted
+	|			and Documents.Date between beginofperiod ( &DateStart, year ) and dateadd ( &DateStart, day, -1 )
+	|			and Documents.Company = &Company
+	|			and Documents.Currency = &Currency
+	|			union
+	|			select beginofperiod ( Documents.Date, day ), 1
+	|			from Document.CashVoucher as Documents
+	|			where Documents.Base.Posted
+	|			and Documents.Date between beginofperiod ( &DateStart, year ) and dateadd ( &DateStart, day, -1 )
+	|			and Documents.Company = &Company
+	|			and Documents.Currency = &Currency
+	|			union
+	|			select null, Book.Page
+	|			from Catalog.Companies.Cashbook as Book
+	|			where Book.Ref = &Company
+	|			and Book.Currency = &Currency
+	|			and 1 in (
+	|				select top 1 1
+	|				from Document.Balances as Balances
+	|				where Balances.Posted
+	|				and Balances.Company = &Company
+	|				and Balances.Date between beginofperiod ( &DateStart, year ) and &DateEnd
+	|				order by Balances.Date
+	|			)
+	|		) as Days
+	|	) as Pages
 	|	on true
 	|where Companies.Ref = &Company
 	|";
@@ -868,19 +888,8 @@ Procedure put ()
 		TabDocPages.Put ( area );
 	enddo;
 	TabDocPages.PutHorizontalPageBreak ();
-	writePages ();
-
-EndProcedure
-
-Procedure writePages () 
-
 	PagesMonth = PagesMonth + 1;
 	PagesDay = PagesDay + 1;
-	manager = InformationRegisters.CashBookPages.CreateRecordManager ();
-	manager.Company = Company;
-	manager.Period = Day;
-	manager.Page = PagesDay;
-	manager.Write ( true );
 
 EndProcedure
 
