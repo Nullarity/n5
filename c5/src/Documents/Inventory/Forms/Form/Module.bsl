@@ -388,19 +388,24 @@ Function getTable ()
 	|	Items.Account as Account, Items.Capacity as Capacity, Items.Price as PriceBalance,
 	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
 	|	Items.QuantityBalance as QuantityBalance, Items.QuantityPkgBalance as QuantityPkgBalance,
-	|	Items.QuantityBalance - Items.Quantity as QuantityDifference,
-	|	Items.QuantityPkgBalance - Items.QuantityPkg as QuantityPkgDifference,
+	|	Items.Quantity - Items.QuantityBalance as QuantityDifference,
+	|	Items.QuantityPkg - Items.QuantityPkgBalance as QuantityPkgDifference,
 	|	Items.AmountBalance as AmountBalance,
 	|	case
 	|		when Items.Quantity = Items.QuantityBalance then Items.AmountBalance
 	|		else Items.Price * Items.Quantity
 	|	end as Amount,
-	|	Items.Price * ( Items.QuantityBalance - Items.Quantity ) as AmountDifference
+	|	case when Items.Quantity = 0 then - Items.AmountBalance
+	|		when Items.Quantity = Items.QuantityBalance then 0
+	|		else Items.Price * ( Items.Quantity - Items.QuantityBalance )
+	|	end as AmountDifference
 	|from (
 	|	select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
 	|		Items.Account as Account, Items.Capacity as Capacity,
 	|		cast ( sum ( Items.AmountBalance )
-	|			/ sum ( case when Items.Package is null then Items.QuantityBalance else Items.QuantityPkgBalance end
+	|			/ sum ( case when Items.Package is null then Items.QuantityBalance else
+	|				case when Items.QuantityPkgBalance = 0 then 1 else Items.QuantityPkgBalance end
+	|			end
 	|		) as Number ( 15, 2 ) ) as Price,
 	|		sum ( Items.QuantityBalance ) as QuantityBalance, sum ( Items.QuantityPkgBalance ) as QuantityPkgBalance,
 	|		sum ( Items.AmountBalance ) as AmountBalance, sum ( Items.Quantity ) as Quantity,
@@ -502,9 +507,21 @@ EndFunction
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
-	Computations.Amount ( ItemsRow );
+	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
+EndProcedure
+
+&AtClient
+Procedure calcAmount ( Row )
+	
+	if ( Row.Price = Row.PriceBalance
+		and Row.Quantity = Row.QuantityBalance ) then
+		Row.Amount = Row.AmountBalance;
+	else
+		Computations.Amount ( ItemsRow );
+	endif;
+
 EndProcedure
 
 &AtClient
