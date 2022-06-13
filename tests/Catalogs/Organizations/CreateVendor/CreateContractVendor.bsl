@@ -4,7 +4,7 @@ Choose ( "#VendorContract" );
 formContracts = With ( "Contracts" );
 list = Activate ( "#List" );
 search = new Map ();
-search.Insert ( "Description", "Contract No." );
+search.Insert ( "Contract No.", "General" );
 list.GotoRow ( search, RowGotoDirection.Down );
 Click ( "Edit", formContracts.GetCommandBar () );
 useParams = ( _ <> undefined );
