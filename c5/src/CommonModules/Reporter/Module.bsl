@@ -134,6 +134,7 @@ Function getParams ( Report )
 	p.Insert ( "GenerateOnOpen", false );
 	p.Insert ( "CheckAccess", true );
 	p.Insert ( "CompanyInHeader", true );
+	p.Insert ( "StandardFooter", true );
 	p.Insert ( "BatchQuery" );
 	return p;
 	
@@ -476,9 +477,11 @@ Procedure headerFooter ( Params )
 		header.Enabled = true;
 		header.RightText = Logins.Settings ( "Company" ).Company;
 	endif;
-	footer = Params.Result.Footer;
-	footer.Enabled = true;
-	footer.RightText = Output.PageFooter ();
+	if ( Params.StandardFooter ) then
+		footer = Params.Result.Footer;
+		footer.Enabled = true;
+		footer.RightText = Output.PageFooter ();
+	endif;
 	
 EndProcedure
 
