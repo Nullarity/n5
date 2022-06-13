@@ -5,7 +5,7 @@ Procedure OnCreateAtServer ( Form ) export
 	if ( object.Ref.IsEmpty () ) then
 		DocumentForm.Init ( object );
 		fillNew ( Form );
-		Constraints.ShowAccess ( ThisObject );
+		Constraints.ShowAccess ( Form );
 	endif;
 	StandardButtons.Arrange ( Form );
 	
