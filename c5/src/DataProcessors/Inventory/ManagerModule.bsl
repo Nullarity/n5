@@ -64,6 +64,7 @@ Procedure sqlItems ( Env )
 	|// #Items
 	|select Items.Item.Description as Item, Items.Item.Code as Code, Items.Item.Unit.Code as Unit,
 	|	Items.Amount as Amount, Items.QuantityPkg as Quantity, Items.LineNumber as LineNumber, Items.Price as Price, 	
+	|	Items.Series.Description as Series, Items.Feature.Description as Feature,
 	|	Items.QuantityPkgBalance as QuantityBalance, Items.AmountBalance as AmountBalance,
 	|	case when Items.QuantityPkgDifference > 0 then Items.QuantityPkgDifference else 0 end as QuantitySurplus,
 	|	case when Items.QuantityPkgDifference < 0 then - Items.QuantityPkgDifference else 0 end as QuantityShortage,
@@ -78,7 +79,7 @@ Procedure sqlItems ( Env )
 EndProcedure
 
 Procedure PutTable ( Params, Env ) export
-	
+
 	t = Env.T;
 	header1 = header1 ( Env );
 	header2 = t.GetArea ( "Header2" );
@@ -176,7 +177,9 @@ EndFunction
 Function getAreaRow ( Template, Row )
 
 	area = Template.GetArea ( "Row" );
-	area.Parameters.Fill ( Row );
+	p = area.Parameters;
+	p.Fill ( Row );
+	p.Item = Print.FormatItem ( Row.Item, , Row.Feature, Row.Series );
 	return area;
 
 EndFunction
