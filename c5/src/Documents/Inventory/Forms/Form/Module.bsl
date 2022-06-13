@@ -485,7 +485,7 @@ Procedure applyItem ()
 	ItemsRow.Capacity = data.Capacity;
 	ItemsRow.Account = data.Account;
 	Computations.Units ( ItemsRow );
-	Computations.Amount ( ItemsRow );
+	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
 EndProcedure 
@@ -515,7 +515,9 @@ EndProcedure
 &AtClient
 Procedure calcAmount ( Row )
 	
-	if ( Row.Price = Row.PriceBalance
+	if ( Row.Quantity = 0 ) then
+		Row.Amount = 0;
+	elsif ( Row.Price = Row.PriceBalance
 		and Row.Quantity = Row.QuantityBalance ) then
 		Row.Amount = Row.AmountBalance;
 	else
@@ -536,7 +538,7 @@ Procedure applyPackage ()
 	
 	ItemsRow.Capacity = DF.Pick ( ItemsRow.Package, "Capacity", 1 );
 	Computations.Units ( ItemsRow );
-	Computations.Amount ( ItemsRow );
+	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
 EndProcedure 
@@ -545,7 +547,7 @@ EndProcedure
 Procedure ItemsQuantityOnChange ( Item )
 	
 	Computations.Packages ( ItemsRow );
-	Computations.Amount ( ItemsRow );
+	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
 EndProcedure
@@ -553,7 +555,7 @@ EndProcedure
 &AtClient
 Procedure ItemsPriceOnChange ( Item )
 	
-	Computations.Amount ( ItemsRow );
+	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
 EndProcedure
