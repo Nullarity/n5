@@ -135,6 +135,7 @@ EndFunction
  
 Procedure setPageSettings ()
 	
+	Params.StandardFooter = false;
 	TabDoc.PageOrientation = PageOrientation.Landscape;
 	TabDoc.FitToPage = true;
 	FillPropertyValues ( TabDocPages, TabDoc );
