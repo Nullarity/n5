@@ -11,7 +11,7 @@ EndProcedure
 Procedure checkDescription ( Attributes )
 	
 	if ( Vendor ) then
-		Attributes.Add ( "CustomerRateType" );
+		Attributes.Add ( "Description" );
 	endif;
 
 EndProcedure

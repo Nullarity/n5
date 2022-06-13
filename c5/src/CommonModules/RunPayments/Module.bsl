@@ -4,9 +4,7 @@ Function Post ( Env ) export
 	initVars ( Env );
 	getData ( Env );
 	makePayments ( Env );
-	if ( Env.IncomingPayment ) then
-		commitAdvanceVAT ( Env );
-	endif;
+	commitAdvanceVAT ( Env );
 	fixCurrency ( Env );
 	flagRegisters ( Env );
 	return true;
@@ -22,7 +20,6 @@ Procedure setContext ( Env )
 		Env.Insert ( "Register", "Debts" );
 		Env.Insert ( "Discounts", "Discounts" );
 		Env.Insert ( "DiscountDebts", "DiscountDebts" );
-		Env.Insert ( "IncomingPayment", true );
 		Env.Insert ( "Money", "Dr" );
 		Env.Insert ( "Organizations", "Cr" );
 	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
@@ -31,7 +28,6 @@ Procedure setContext ( Env )
 		Env.Insert ( "Register", "Debts" );
 		Env.Insert ( "Discounts", "Discounts" );
 		Env.Insert ( "DiscountDebts", "DiscountDebts" );
-		Env.Insert ( "IncomingPayment", false );
 		Env.Insert ( "Money", "Cr" );
 		Env.Insert ( "Organizations", "Dr" );
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
@@ -40,7 +36,6 @@ Procedure setContext ( Env )
 		Env.Insert ( "Register", "VendorDebts" );
 		Env.Insert ( "Discounts", "VendorDiscounts" );
 		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
-		Env.Insert ( "IncomingPayment", true );
 		Env.Insert ( "Money", "Dr" );
 		Env.Insert ( "Organizations", "Cr" );
 	else
@@ -49,7 +44,6 @@ Procedure setContext ( Env )
 		Env.Insert ( "Register", "VendorDebts" );
 		Env.Insert ( "Discounts", "VendorDiscounts" );
 		Env.Insert ( "DiscountDebts", "VendorDiscountDebts" );
-		Env.Insert ( "IncomingPayment", false );
 		Env.Insert ( "Money", "Cr" );
 		Env.Insert ( "Organizations", "Dr" );
 	endif;
@@ -58,11 +52,13 @@ EndProcedure
 
 Procedure initVars ( Env )
 	
-	if ( not Env.Customer
-		and not Env.Refund ) then
+	if ( Env.Refund ) then
+		return;
+	elsif ( Env.Customer ) then
+		Env.Insert ( "Advance", 0 );
+	else
 		Env.Insert ( "IncomeTaxWithheld", 0 );
 	endif;
-	Env.Insert ( "Advance", 0 );
 
 EndProcedure
 
@@ -86,10 +82,14 @@ Procedure sqlFields ( Env )
 	|	Documents.Location as Location, Documents.Account as Account,
 	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
 	|	Documents.ContractRate as ContractRate, Documents.ContractFactor as ContractFactor, Documents.CashFlow as CashFlow,
-	|	Documents.AdvanceAccount as AdvanceAccount, Constants.AdvancesMonthly as AdvancesMonthly
+	|	Constants.AdvancesMonthly as AdvancesMonthly
 	|";
 	if ( Env.Customer ) then
 		s = s + ", Documents.Customer as Organization, Documents.CustomerAccount as OrganizationAccount";
+		if ( not Env.Refund ) then
+			s = s + ", Documents.ReceivablesVATAccount as ReceivablesVATAccount,
+			|Documents.VATAccount as VATAccount, Documents.VATAdvance.Rate as VAT";
+		endif;
 	else
 		if ( Env.Refund ) then
 			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount";
@@ -100,9 +100,8 @@ Procedure sqlFields ( Env )
 			|Documents.IncomeTaxAccount as IncomeTaxAccount";
 		endif;
 	endif;
-	if ( Env.IncomingPayment ) then
-		s = s + ", Documents.ReceivablesVATAccount as ReceivablesVATAccount, Documents.VATAccount as VATAccount,
-		|Documents.VATAdvance.Rate as VAT";
+	if ( Env.Customer or not Env.Refund ) then
+		s = s + ", Documents.AdvanceAccount as AdvanceAccount";
 	endif;
 	s = s + "
 	|from Document." + Env.Document + " as Documents
@@ -229,7 +228,7 @@ Function proceedPayment ( Env, Row )
 		movement.Overpayment = - advance;
 		payment = payment - advance;
 		fields.PaymentAmount = fields.PaymentAmount - advance;
-		if ( Env.IncomingPayment ) then
+		if ( Env.Customer and not Env.Refund ) then
 			acceptAdvance ( Env, movement, Row.Organization, Row.Contract, not fields.AdvancesMonthly );
 		else
 			returnAdvance ( Env, movement, Row.Organization, Row.Contract, not fields.AdvancesMonthly );
@@ -385,7 +384,7 @@ Function takenAdvanceData ( Env, Row )
 	
 	result = new Structure ( "Payment, VAT, VATAccount, AdvanceAccount, ReceivablesVATAccount", , 0 );
 	customerPayment = Type ( "DocumentRef.Payment" );
-	vendorRefund= Type ( "DocumentRef.VendorRefund" );
+	vendorRefund = Type ( "DocumentRef.VendorRefund" );
 	vendorDebts = Type ( "DocumentRef.VendorDebts" );
 	recorders = new Array ();
 	recorders.Add ( Row.Document );
@@ -393,11 +392,11 @@ Function takenAdvanceData ( Env, Row )
 	recorders.Add ( Env.Ref );
 	for each recorder in recorders do
 		type = TypeOf ( recorder );
-		if ( type = customerPayment
-			or type = vendorRefund ) then
+		if ( type = customerPayment ) then
 			set = "AdvanceAccount, ReceivablesVATAccount, VATAdvance.Rate as VAT, VATAccount";
 			break;
-		elsif ( type = vendorDebts ) then
+		elsif ( type = vendorDebts
+			or type = vendorRefund ) then
 			set = "Account as AdvanceAccount";
 			break;
 		endif;
@@ -423,14 +422,14 @@ Procedure commitDebt ( Env, Organization, Contract, Amount, Advance )
 	money = Env.Money;
 	if ( customer ) then
 		if ( refund ) then
-			p.Operation = ? ( Advance, Enums.Operations.AdvanceGiven, Enums.Operations.CustomerRefund );
+			p.Operation = Enums.Operations.CustomerRefund;
 		else
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceTaken, Enums.Operations.CustomerPayment );
 		endif;
 		debtAmount = Amount;
 	else
 		if ( refund ) then
-			p.Operation = ? ( Advance, Enums.Operations.AdvanceTaken, Enums.Operations.VendorRefund );
+			p.Operation = Enums.Operations.VendorRefund;
 			debtAmount = Amount;
 		else
 			p.Operation = ? ( Advance, Enums.Operations.AdvanceGiven, Enums.Operations.VendorPayment );
@@ -438,7 +437,7 @@ Procedure commitDebt ( Env, Organization, Contract, Amount, Advance )
 			debtAmount = Amount - incomeTax;			
 		endif;
 	endif; 
-	p [ "Account" + contractors ] = ? ( Advance, fields.AdvanceAccount, fields.OrganizationAccount );
+	p [ "Account" + contractors ] = ? ( Advance and not refund, fields.AdvanceAccount, fields.OrganizationAccount );
 	p [ "Currency" + contractors ] = fields.ContractCurrency;
 	p [ "CurrencyAmount" + contractors ] = debtAmount;
 	p [ "Dim" + contractors + "1" ] = Organization;
@@ -466,8 +465,8 @@ Procedure commitDebt ( Env, Organization, Contract, Amount, Advance )
 		incomeTax = Currencies.Convert ( incomeTax, fields.ContractCurrency, fields.Currency, fields.Date, fields.ContractRate, fields.ContractFactor, fields.Rate, fields.Factor );
 		commitIncomeTax ( Env, Organization, Contract, incomeTax, Advance );
 	endif;
-	if ( Advance and Env.IncomingPayment ) then
-		Env.Advance = Env.Advance + amount;
+	if ( Advance and customer and not refund ) then
+		Env.Advance = Env.Advance + Amount;
 	endif;
 	
 EndProcedure
@@ -504,10 +503,8 @@ EndProcedure
 Procedure commitAdvanceVAT ( Env )
 	
 	fields = Env.Fields;
-	advance = Env.Advance;
-	if ( advance = 0
-		or fields.AdvancesMonthly
-		or  fields.VAT = 0 ) then
+	commit = Env.Customer and not Env.Refund and ( Env.Advance <> 0 ) and ( fields.VAT <> 0 );
+	if ( not commit ) then
 		return;
 	endif;
 	p = GeneralRecords.GetParams ();
@@ -518,7 +515,8 @@ Procedure commitAdvanceVAT ( Env )
 	p.DimDr1 = fields.Organization;
 	p.DimDr2 = fields.Contract;
 	p.AccountCr = fields.VATAccount;
-	amount = Currencies.Convert ( advance, fields.ContractCurrency, fields.LocalCurrency, fields.Date, fields.ContractRate, fields.ContractFactor );
+	amount = Currencies.Convert ( Env.Advance, fields.ContractCurrency, fields.LocalCurrency, fields.Date,
+		fields.ContractRate, fields.ContractFactor );
 	p.Amount = amount - amount * ( 100 / ( 100 + fields.VAT ) );
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
@@ -569,12 +567,17 @@ Procedure proceedAdvance ( Env )
 	overpayment = Env.Fields.PaymentAmount;
 	if ( overpayment > 0 ) then
 		register = Env.Registers [ Env.Register ];
-		movement = ? ( Env.Refund, register.AddExpense (), register.AddReceipt () );
+		movement = register.AddReceipt ();
+		if ( Env.Refund ) then
+			movement.Amount = overpayment;
+			movement.Payment = overpayment;
+		else
+			movement.Overpayment = overpayment;
+		endif;
 		fields = Env.Fields;
 		movement.Period = fields.date;
 		movement.Contract = fields.Contract;
 		movement.Document = Env.Ref;
-		movement.Overpayment = overpayment;
 		commitDebt ( Env, fields.Organization, fields.Contract, overpayment, not fields.AdvancesMonthly );
 	endif;
 

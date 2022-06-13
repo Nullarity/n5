@@ -230,7 +230,7 @@ Procedure createContract ( CurrentObject, Ref )
 	obj.Currency = Application.Currency ();
 	obj.Customer = customer;
 	obj.Vendor = vendor;
-	data = Catalogs.Contracts.GetDefaults ( Ref );
+	data = Catalogs.Contracts.GetDefaults ( Ref, customer );
 	if ( customer ) then
 		obj.CustomerTerms = Constants.Terms.Get ();
 		obj.CustomerPayment = Constants.PaymentMethod.Get ();
@@ -239,7 +239,6 @@ Procedure createContract ( CurrentObject, Ref )
 	if ( vendor ) then
 		obj.VendorTerms = Constants.VendorTerms.Get ();
 		obj.VendorPayment = Constants.VendorPaymentMethod.Get ();
-		obj.VendorVATAdvance = data.VATAdvance;
 	endif; 
 	obj.Write ();
 	if ( customer ) then

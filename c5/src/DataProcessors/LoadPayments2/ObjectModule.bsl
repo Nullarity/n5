@@ -328,10 +328,8 @@ Procedure createVendorRefund(Row, RowDetail)
 	endif;
 	object.Vendor = Row.Dim1;
 	object.VendorAccount = Row.Account;
-	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
-	PaymentForm.SetVATAdvance ( object );
 	PaymentForm.CalcContractAmount(object, 1);
 	PaymentForm.CalcAppliedAmount(object, 1);
 	PaymentForm.FillTable(object);

@@ -95,14 +95,13 @@ Procedure setDefaults ()
 	if ( not ( customer or vendor ) ) then
 		return;
 	endif;
-	data = Catalogs.Contracts.GetDefaults ( Object.Owner );
+	data = Catalogs.Contracts.GetDefaults ( Object.Owner, customer );
 	if ( customer ) then
 		Object.CustomerBank = data.BankAccount;
 		Object.CustomerVATAdvance = data.VATAdvance;
 	endif;
 	if ( vendor ) then
 		Object.VendorBank = data.BankAccount;
-		Object.VendorVATAdvance = data.VATAdvance;
 	endif;
 	
 EndProcedure
@@ -117,7 +116,6 @@ Procedure readAppearance ()
 	|CustomerBank enable Object.CustomerPayment <> Enum.PaymentMethods.Cash;
 	|VendorBank enable Object.VendorPayment <> Enum.PaymentMethods.Cash;
 	|CustomerVATAdvance show Object.Customer;
-	|VendorVATAdvance show Object.Vendor;
 	|CustomerRateType show Object.Customer and Object.Currency <> LocalCurrency;
 	|CustomerRate CustomerFactor show Object.Customer and Object.Currency <> LocalCurrency
 	|	and Object.CustomerRateType = Enum.CurrencyRates.Fixed;
@@ -294,6 +292,7 @@ Procedure applyCustomer ()
 		Object.Export = false;
 		Object.Signed = false;
 		Object.CustomerVATAdvance = undefined;
+		Object.Template = undefined;
 	endif; 
 	Appearance.Apply ( ThisObject, "Object.Customer" );
 	
@@ -316,7 +315,6 @@ Procedure applyVendor ()
 		Object.VendorTerms = undefined;
 		Object.VendorDelivery = 0;
 		Object.Import = false;
-		Object.VendorVATAdvance = undefined;
 	endif; 
 	Appearance.Apply ( ThisObject, "Object.Vendor" );
 	

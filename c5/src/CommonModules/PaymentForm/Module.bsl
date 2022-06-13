@@ -13,8 +13,7 @@ Procedure FillNew ( Form ) export
 	object.Location = settings.PaymentLocation;
 	object.CashFlow = settings.CashFlow;
 	type = TypeOf ( object.Ref );
-	if ( type = Type ( "DocumentRef.Payment" )
-		or type = Type ( "DocumentRef.VendorRefund" ) ) then
+	if ( type = Type ( "DocumentRef.Payment" ) ) then
 		PaymentForm.SetVATAdvance ( object );
 	endif;
 	PaymentForm.SetAccount ( object );
@@ -66,10 +65,11 @@ Procedure Fill ( Form ) export
 	PaymentForm.CalcContractAmount ( object, 2 );
 	PaymentForm.CalcPaymentAmount ( object );
 	type = TypeOf ( object.Ref );
-	if ( type = Type ( "DocumentRef.Payment" )
-		or type = Type ( "DocumentRef.VendorRefund" ) ) then
+	if ( type = Type ( "DocumentRef.Payment" ) ) then
 		PaymentForm.CalcAppliedAmount ( Object, 1 );
 		PaymentForm.SetVATAdvance ( Object );
+	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
+		PaymentForm.CalcAppliedAmount ( Object, 1 );
 	endif;
 	PaymentForm.SetAccount ( object );
 	PaymentForm.SetOrganizationAccounts ( object );
@@ -456,7 +456,6 @@ Procedure SetOrganizationAccounts ( Object ) export
 	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
 		accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, AdvanceTaken" );
 		Object.VendorAccount = accounts.VendorAccount;
-		Object.AdvanceAccount = accounts.AdvanceTaken;
 	endif; 
 	
 EndProcedure
@@ -565,8 +564,6 @@ Function contractData ( Object )
 	endif;
 	if ( payment ) then
 		fields.Add ( "CustomerVATAdvance as VATAdvance" );
-	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-		fields.Add ( "VendorVATAdvance as VATAdvance" );
 	endif;
 	return DF.Values ( Object.Contract, fields );
 	
@@ -785,8 +782,9 @@ Procedure ApplyPay ( Form ) export
 	paymentsRow = Form.PaymentsRow;
 	if ( paymentsRow.Pay ) then
 		debt = paymentsRow.Payment - paymentsRow.Discount;
-		if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Payment" )
-			or TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorRefund" ) ) then
+		type = TypeOf ( object.Ref );
+		if ( type = Type ( "DocumentRef.Payment" )
+			or type = Type ( "DocumentRef.VendorRefund" ) ) then
 			rest = object.Amount - object.Applied;
 			rest = Currencies.Convert ( rest, object.Currency, object.ContractCurrency, object.Date, object.Rate, object.Factor, object.ContractRate, object.ContractFactor );
 			if ( rest > 0 ) then
