@@ -4,6 +4,10 @@ var ItemsRow;
 var Base;
 &AtServer
 var Env;
+&AtServer
+var BaseExists;
+&AtServer
+var BaseMetadata;
 
 // *****************************************
 // *********** Form events
@@ -12,6 +16,7 @@ var Env;
 Procedure OnReadAtServer ( CurrentObject )
 
 	updateChangesPermission ();
+	Appearance.Apply ( ThisObject );
 
 EndProcedure
 
@@ -25,7 +30,7 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	if ( Object.Ref.IsEmpty () ) then
+	if ( isNew () ) then
 		DocumentForm.Init ( Object );
 		Base = Parameters.Basis;
 		if ( Base = undefined ) then
@@ -34,15 +39,27 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			baseType = TypeOf ( Base );
 			if ( baseType = Type ( "DocumentRef.Assembling" ) ) then
 				fillByAssembling ();
+			elsif ( baseType = Type ( "DocumentRef.Inventory" ) ) then
+				fillByInventory ();
 			endif;
 		endif;
 		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
+	setLinks ();
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
+	readAppearance ();
+	Appearance.Apply ( ThisObject );
 	
 EndProcedure
+
+&AtServer
+Function isNew ()
+	
+	return Object.Ref.IsEmpty ();
+	
+EndFunction
 
 &AtServer
 Procedure fillNew ()
@@ -118,12 +135,125 @@ Procedure itemsByAssembling ()
 EndProcedure
 
 &AtServer
+Procedure fillByInventory ()
+	
+	setEnv ();
+	sqlInventory ();
+	SQL.Perform ( Env );
+	headerByInventory ();
+	itemsByInventory ();
+	
+EndProcedure
+
+&AtServer
+Procedure sqlInventory ()
+	
+	s = "
+	|// @Fields
+	|select Document.Company as Company, Document.Warehouse as Warehouse
+	|from Document.Inventory as Document
+	|where Document.Ref = &Base
+	|;
+	|// #Items
+	|select Items.Item as Item, Items.Feature as Feature, Items.Capacity as Capacity, Items.Series as Series,
+	|	Items.Package as Package, Items.Account as Account, Items.QuantityDifference as Quantity, 
+	|	Items.QuantityPkgDifference as QuantityPkg, Items.AmountDifference as CostRate
+	|from Document.Inventory.Items as Items
+	|where Items.Ref = &Base
+	|and Items.QuantityDifference > 0
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByInventory ()
+	
+	FillPropertyValues ( Object, Env.Fields );
+	Object.Base = Base;
+	
+EndProcedure 
+
+&AtServer
+Procedure itemsByInventory ()
+	
+	if ( Env.Items.Count () = 0 ) then
+		raise Output.FillingDataNotFoundError ();
+	endif;
+	Object.Items.Load ( Env.Items );
+	
+EndProcedure
+
+&AtServer
 Procedure setAccuracy ()
 	
 	Options.SetAccuracy ( ThisObject, "ItemsQuantity, ItemsQuantityPkg, Quantity, QuantityPkg" );
 	Options.SetAccuracy ( ThisObject, "ItemsTotalQuantityPkg, ItemsTotalQuantity", false );
 	
 EndProcedure 
+
+&AtServer
+Procedure setLinks ()
+	
+	SQL.Init ( Env );
+	sqlLinks ();
+	if ( Env.Selection.Count () = 0 ) then
+		ShowLinks = false;
+	else
+		q = Env.Q;
+		q.SetParameter ( "Ref", Object.Ref );
+		q.SetParameter ( "Base", Object.Base );
+		SQL.Perform ( Env );
+		setURLPanel ();
+	endif;
+
+EndProcedure 
+
+&AtServer
+Procedure sqlLinks ()
+	
+	selection = Env.Selection;
+	BaseExists = ValueIsFilled ( Object.Base );
+	if ( BaseExists ) then
+		BaseMetadata = Metadata.FindByType ( TypeOf ( Object.Base ) );
+		s = "
+		|// #Base
+		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+		|from Document." + BaseMetadata.Name + " as Documents
+		|where Documents.Ref = &Base
+		|";
+		selection.Add ( s );
+	endif;
+	
+EndProcedure 
+
+&AtServer
+Procedure setURLPanel ()
+	
+	parts = new Array ();
+	if ( BaseExists ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Base, BaseMetadata ) );
+	endif;
+	s = URLPanel.Build ( parts );
+	if ( s = undefined ) then
+		ShowLinks = false;
+	else
+		ShowLinks = true;
+		Links = s;
+	endif; 
+	
+EndProcedure
+
+&AtServer
+Procedure readAppearance ()
+
+	rules = new Array ();
+	rules.Add ( "
+	|Links show ShowLinks;
+	|" );
+	Appearance.Read ( ThisObject, rules );
+
+EndProcedure
 
 &AtClient
 Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )

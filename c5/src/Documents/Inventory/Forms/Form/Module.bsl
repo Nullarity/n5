@@ -1,9 +1,5 @@
 &AtServer
 var Env;
-&AtServer
-var ViewReceiveItems;
-&AtServer
-var ViewWriteOff;
 &AtClient
 var ItemsRow;
 
@@ -85,7 +81,7 @@ Procedure setLinks ()
 		ShowLinks = false;
 	else
 		Env.Q.SetParameter ( "Ref", Object.Ref );
-		SQL.Perform ( Env );
+		SQL.Perform ( Env, false );
 		setURLPanel ();
 	endif;
 	Appearance.Apply ( ThisObject, "ShowLinks" );
@@ -98,30 +94,32 @@ Procedure sqlLinks ()
 	if ( isNew () ) then
 		return;
 	endif; 
-	selection = Env.Selection;
-	meta = Metadata.Documents;
-	ViewReceiveItems = AccessRight ( "View", meta.ReceiveItems );
-	if ( ViewReceiveItems ) then
-		s = "
-		|// #ReceiveItems
-		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-		|from Document.ReceiveItems as Documents
-		|where Documents.Inventory = &Ref
-		|and not Documents.DeletionMark
-		|";
-		selection.Add ( s );
-	endif; 
-	ViewWriteOff = AccessRight ( "View", meta.WriteOff );
-	if ( ViewWriteOff ) then
-		s = "
-		|// #WriteOff
-		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
-		|from Document.WriteOff as Documents
-		|where Documents.Base = &Ref
-		|and not Documents.DeletionMark
-		|";
-		selection.Add ( s );
-	endif; 
+	s = "
+	|// #ReceiveItems
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.ReceiveItems as Documents
+	|where Documents.Inventory = &Ref
+	|and not Documents.DeletionMark
+	|;
+	|// #WriteOff
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.WriteOff as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|;
+	|// #Assembling
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.Assembling as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|;
+	|// #Disassembling
+	|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+	|from Document.Disassembling as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|";
+	Env.Selection.Add ( s );
 	
 EndProcedure 
 
@@ -131,12 +129,10 @@ Procedure setURLPanel ()
 	parts = new Array ();
 	meta = Metadata.Documents;
 	if ( not isNew () ) then
-		if ( ViewReceiveItems ) then
-			parts.Add ( URLPanel.DocumentsToURL ( Env.ReceiveItems, meta.ReceiveItems ) );
-		endif; 
-		if ( ViewWriteOff ) then
-			parts.Add ( URLPanel.DocumentsToURL ( Env.WriteOff, meta.WriteOff ) );
-		endif; 
+		parts.Add ( URLPanel.DocumentsToURL ( Env.ReceiveItems, meta.ReceiveItems ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.WriteOff, meta.WriteOff ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Assembling, meta.Assembling ) );
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Disassembling, meta.Disassembling ) );
 	endif; 
 	s = URLPanel.Build ( parts );
 	if ( s = undefined ) then

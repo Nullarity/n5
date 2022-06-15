@@ -77,6 +77,7 @@
     <maxValue xsi:type="core:UndefinedValue"/>
   </standardAttributes>
   <basedOn>Document.Assembling</basedOn>
+  <basedOn>Document.Inventory</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -177,6 +178,42 @@
       <name>Filter.Offline</name>
       <value xsi:type="core:BooleanValue"/>
     </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="0fd08b22-a551-42ae-b715-a56ff6888ba1">
+    <name>Base</name>
+    <synonym>
+      <key>en</key>
+      <value>Inventory</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Инвентаризация</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Inventarierea</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.Inventory</types>
+      <types>DocumentRef.Assembling</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Inventory</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Инвентаризация</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Inventarierea</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -746,10 +783,7 @@
         <value>Ponderea costului</value>
       </synonym>
       <type>
-        <types>Number</types>
-        <numberQualifiers>
-          <precision>10</precision>
-        </numberQualifiers>
+        <types>DefinedType.Amount</types>
       </type>
       <toolTip>
         <key>en</key>

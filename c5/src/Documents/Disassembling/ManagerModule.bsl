@@ -108,7 +108,7 @@ Procedure sqlItems ( Env )
 	|where Document.Ref = &Ref
 	|;
 	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Quantity as Quantity, Items.CostRate CostRate,
+	|	Items.Quantity as Quantity, Items.CostRate as CostRate,
 	|	case when Items.Item.CountPackages then Items.Capacity else 1 end as Capacity,
 	|	case when Items.Item.CountPackages then Items.Package.Description else Items.Item.Unit.Code end as Unit,
 	|	case when Items.Item.CountPackages then Items.QuantityPkg else Items.Quantity end as QuantityPkg,
