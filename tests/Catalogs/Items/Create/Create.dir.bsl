@@ -20,6 +20,7 @@ if ( _ = undefined ) then
 	capacity = 5;
 	barcode = undefined;
 	series = false;
+	createPackage = true;
 else
 	name = _.Description;
 	countPkg = _.CountPackages;
@@ -37,6 +38,7 @@ else
 	capacity = ? ( _.Capacity = undefined, 5, _.Capacity );
 	barcode = _.Barcode;
 	series = _.Series;
+	createPackage = _.CreatePackage;
 endif;
 With ();
 Set ( "#Description", name );
@@ -78,28 +80,30 @@ Click ( "#FormWrite" );
 unit = TrimAll ( Fetch ( "#Unit" ) );
 
 if ( not service ) then
-	field = Activate ( "#Package" );
-	if ( Fetch ("#Package") <> package ) then
-		try
-			field.OpenDropList ();
-		except
-		endtry;
-		try
-			field.Create ();
-		except
-			DebugStart ();
-		endtry;	
-		With ( "Packages (create)" );
+	if ( createPackage ) then
+		field = Activate ( "#Package" );
+		if ( Fetch ("#Package") <> package ) then
+			try
+				field.OpenDropList ();
+			except
+			endtry;
+			try
+				field.Create ();
+			except
+				DebugStart ();
+			endtry;	
+			With ( "Packages (create)" );
+			
+			Set ( "#Unit", package );
+			Set ( "#Capacity", capacity );
+			Click ( "#FormWriteAndClose" );
 		
-		Set ( "#Unit", package );
-		Set ( "#Capacity", capacity );
-		Click ( "#FormWriteAndClose" );
-	
-		With ( form );
-	endif;
-	if ( countPkg ) then
-		Click ( "#CountPackages" );
-		Click ( "Yes", Forms.Get1C () ); // Closes 1C standard dialog
+			With ( form );
+		endif;
+		if ( countPkg ) then
+			Click ( "#CountPackages" );
+			Click ( "Yes", Forms.Get1C () ); // Closes 1C standard dialog
+		endif;
 	endif;
 	if ( costMtd ) then
 		Set ( "#CostMethod", _.CostMethod );
