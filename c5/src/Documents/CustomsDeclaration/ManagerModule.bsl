@@ -82,7 +82,7 @@ Procedure sqlFields ( Env )
 	|// @Fields
 	|select top 1 Document.Date as Date, Document.Customs as Customs, Document.Distribution as Distribution, Document.Amount as ContractAmount,
 	|	Document.Company as Company, Document.Contract as Contract, Constants.Currency as LocalCurrency, Constants.Currency as ContractCurrency,
-	|	1 as Rate, 1 as Factor, Documents.Contract.AdvancesMonthly as AdvancesMonthly,
+	|	1 as Rate, 1 as Factor, Documents.Contract.VendorAdvancesMonthly as AdvancesMonthly,
 	|	Document.PointInTime as Timestamp, Document.CustomsAccount as CustomsAccount, Document.VAT as VAT,
 	|	isnull ( DistributionTable.Exist, false ) as DistributionExists,
 	|	case when Document.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Document.PaymentDate end as PaymentDate,

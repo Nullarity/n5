@@ -113,7 +113,7 @@ Procedure sqlFields ( Env )
 	|	Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
 	|	Documents.VendorAccount as VendorAccount, Documents.Date as Date, " + paymentDate + " as PaymentDate, 
 	|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey, 
-	|	Documents.Contract.Currency as ContractCurrency, Documents.Contract.AdvancesMonthly as AdvancesMonthly,
+	|	Documents.Contract.Currency as ContractCurrency, Documents.Contract.VendorAdvancesMonthly as AdvancesMonthly,
 	|	Documents.CloseAdvances as CloseAdvances
 	|from Document.VendorReturn as Documents
 	|	//
