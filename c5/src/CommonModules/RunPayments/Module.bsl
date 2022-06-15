@@ -79,22 +79,24 @@ Procedure sqlFields ( Env )
 	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,
 	|	Documents.Amount as Amount, Documents.ContractAmount as PaymentAmount, Documents.Rate as Rate,
 	|	Documents.Factor as Factor, Documents.BankAccount as BankAccount, Documents.Method as Method,
-	|	Documents.Location as Location, Documents.Account as Account,
-	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
-	|	Documents.ContractRate as ContractRate, Documents.ContractFactor as ContractFactor, Documents.CashFlow as CashFlow,
-	|	Constants.AdvancesMonthly as AdvancesMonthly
+	|	Documents.Location as Location, Documents.Account as Account, Documents.ContractCurrency as ContractCurrency,
+	|	Documents.Currency as Currency, Constants.Currency as LocalCurrency,
+	|	Documents.ContractRate as ContractRate, Documents.ContractFactor as ContractFactor,
+	|	Documents.CashFlow as CashFlow
 	|";
 	if ( Env.Customer ) then
 		s = s + ", Documents.Customer as Organization, Documents.CustomerAccount as OrganizationAccount";
 		if ( not Env.Refund ) then
-			s = s + ", Documents.ReceivablesVATAccount as ReceivablesVATAccount,
+			s = s + ", Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly,
+			|Documents.ReceivablesVATAccount as ReceivablesVATAccount,
 			|Documents.VATAccount as VATAccount, Documents.VATAdvance.Rate as VAT";
 		endif;
 	else
 		if ( Env.Refund ) then
 			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount";
 		else
-			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount,
+			s = s + ", Documents.Contract.VendortAdvancesMonthly as AdvancesMonthly,
+			|Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount,
 			|Documents.ExpenseReport.Employee as Employee, Documents.IncomeTaxRate as IncomeTaxRate,
 			|Documents.IncomeTaxAmount as IncomeTaxAmount, Documents.IncomeTax as IncomeTax,
 			|Documents.IncomeTaxAccount as IncomeTaxAccount";

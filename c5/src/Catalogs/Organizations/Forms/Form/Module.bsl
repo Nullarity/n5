@@ -235,10 +235,12 @@ Procedure createContract ( CurrentObject, Ref )
 		obj.CustomerTerms = Constants.Terms.Get ();
 		obj.CustomerPayment = Constants.PaymentMethod.Get ();
 		obj.CustomerVATAdvance = data.VATAdvance;
+		obj.CustomerAdvancesMonthly = data.AdvancesMonthly;
 	endif;
 	if ( vendor ) then
 		obj.VendorTerms = Constants.VendorTerms.Get ();
 		obj.VendorPayment = Constants.VendorPaymentMethod.Get ();
+		obj.VendorAdvancesMonthly = data.AdvancesMonthly;
 	endif; 
 	obj.Write ();
 	if ( customer ) then

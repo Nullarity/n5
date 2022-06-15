@@ -9,7 +9,9 @@ Function GetDefaults ( Organization, ForCustomer ) export
 	|where Accounts.Owner = &Organization
 	|and not Accounts.DeletionMark
 	|order by Accounts.Code desc
-	|";
+	|;
+	|// @AdvancesMonthly
+	|select Constants.AdvancesMonthly as AdvancesMonthly";
 	if ( ForCustomer ) then
 		s = s + "
 		|;
@@ -23,8 +25,9 @@ Function GetDefaults ( Organization, ForCustomer ) export
 	q = new Query ( s );
 	q.SetParameter ( "Organization", Organization );
 	data = SQL.Exec ( q );
-	result = new Structure ( "BankAccount, VATAdvance" );
+	result = new Structure ( "BankAccount, VATAdvance, AdvancesMonthly" );
 	result.BankAccount = ? ( data.BankAccount = undefined, undefined, data.BankAccount.Ref );
+	result.AdvancesMonthly = data.AdvancesMonthly.AdvancesMonthly;
 	if ( ForCustomer ) then
 		result.VATAdvance = ? ( data.VATAdvance = undefined, undefined, data.VATAdvance.Value );
 	endif;

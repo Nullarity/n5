@@ -99,9 +99,11 @@ Procedure setDefaults ()
 	if ( customer ) then
 		Object.CustomerBank = data.BankAccount;
 		Object.CustomerVATAdvance = data.VATAdvance;
+		Object.CustomerAdvancesMonthly = data.AdvancesMonthly;
 	endif;
 	if ( vendor ) then
 		Object.VendorBank = data.BankAccount;
+		Object.VendorAdvancesMonthly = data.AdvancesMonthly;
 	endif;
 	
 EndProcedure
@@ -273,6 +275,21 @@ Procedure setCurrencyRate ( Customer, Vendor )
 	
 EndProcedure
 
+&AtServer
+Procedure setAdvance ( ForCustomer )
+	
+	if ( ForCustomer ) then
+		yes = Metadata.Catalogs.Contracts.Attributes.CustomerAdvances.FillValue;
+		Object.CustomerAdvances = yes;
+		Object.CustomerAdvancesMonthly = yes and Constants.AdvancesMonthly.Get ();
+	else
+		yes = Metadata.Catalogs.Contracts.Attributes.VendorAdvances.FillValue;
+		Object.VendorAdvances = yes;
+		Object.VendorAdvancesMonthly = yes and Constants.AdvancesMonthly.Get ();
+	endif;
+	
+EndProcedure
+
 &AtClient
 Procedure CustomerOnChange ( Item )
 	
@@ -285,7 +302,9 @@ Procedure applyCustomer ()
 	
 	resetRateType ( true, false );
 	setCurrencyRate ( true, false );
-	if ( not Object.Customer ) then
+	if ( Object.Customer ) then
+		setAdvance ( true );
+	else
 		Object.CustomerPrices = undefined;
 		Object.CustomerTerms = undefined;
 		Object.CustomerDelivery = 0;
@@ -310,7 +329,9 @@ Procedure applyVendor ()
 	
 	resetRateType ( false, true );
 	setCurrencyRate ( false, true );
-	if ( not Object.Vendor ) then
+	if ( Object.Vendor ) then
+		setAdvance ( false );
+	else
 		Object.VendorPrices = undefined;
 		Object.VendorTerms = undefined;
 		Object.VendorDelivery = 0;

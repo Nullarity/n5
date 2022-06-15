@@ -72,7 +72,7 @@ Procedure sqlFields ( Env )
 	|select Documents.Date as Date, Documents.Warehouse as Warehouse, Documents.Company as Company,
 	|	Documents.Department as Department, Documents.PointInTime as Timestamp, Documents.Currency as Currency,
 	|	Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
-	|	Constants.AdvancesMonthly as AdvancesMonthly, Documents.CloseAdvances as CloseAdvances,
+	|	Documents.Contract.AdvancesMonthly as AdvancesMonthly, Documents.CloseAdvances as CloseAdvances,
 	|	Documents.Contract as Contract, Documents.CustomerAccount as CustomerAccount,
 	|	Documents.Customer as Customer, Documents.PaymentOption as PaymentOption,
 	|	PaymentDetails.PaymentKey as PaymentKey, " + paymentDate + " as PaymentDate, 
