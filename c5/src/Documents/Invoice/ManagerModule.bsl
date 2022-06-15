@@ -112,7 +112,7 @@ Procedure sqlFields ( Env )
 	|select Documents.Date as Date, Documents.Warehouse as Warehouse, Documents.Company as Company,
 	|	Documents.Department as Department, Documents.PointInTime as Timestamp, Documents.Currency as Currency,
 	|	Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
-	|	Document.Contract.CustomerAdvancesMonthly as AdvancesMonthly";
+	|	Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly";
 	if ( not Env.RestoreCost ) then
 		s = s + ", Documents.Contract as Contract, Documents.CustomerAccount as CustomerAccount,
 		|	Documents.CloseAdvances as CloseAdvances, Documents.Customer as Customer,
