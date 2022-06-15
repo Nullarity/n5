@@ -1,11 +1,11 @@
 ﻿// Check advance returning
 // Pay to Vendor
-// Vendor Refurn
+// Vendor Refund
 
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2BFC78B6" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0R3" ) );
 getEnv ();
 createEnv ();
 

@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0GU" );
+id = Call ( "Common.ScenarioID", "A0RI" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();

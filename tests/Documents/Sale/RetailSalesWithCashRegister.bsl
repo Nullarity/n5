@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0ML" );
+id = Call ( "Common.ScenarioID", "A0RC" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -14,6 +14,7 @@ createEnv ();
 #region commit
 Commando("e1cib/list/Document.Sale");
 Put ( "#WarehouseFilter", this.Warehouse );
+Clear ( "#LocationFilter" );
 Activate ( "#Accounting" );
 Click("#Calculate");
 With ();

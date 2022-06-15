@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0HB" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0QR" ) );
 getEnv ();
 createEnv ();
 
@@ -30,7 +30,7 @@ Close();
 
 // Check if Invoice is not available for changes anymore
 With(invoice, true);
-CheckState("#ItemsSelectItems, #ItemsScan, #ItemsApplySalesOrders", "Enable", false);
+CheckState("#ItemsTableCommandBar", "Enable", false);
 
 // *************************
 // Procedures

@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-id = Call ( "Common.ScenarioID", "A0O0" );
+id = Call ( "Common.ScenarioID", "A0QT" );
 
 // Create an Invoice
 invoice = Commando("e1cib/command/Document.Invoice.Create");
@@ -23,5 +23,5 @@ Close();
 
 // Check if Invoice is not available for changes anymore
 With(invoice, true);
-CheckState("#ItemsSelectItems, #ItemsScan, #ItemsApplySalesOrders", "Enable", false);
+CheckState("#ItemsTableCommandBar", "Enable", false);
 

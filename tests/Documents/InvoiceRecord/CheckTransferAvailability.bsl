@@ -14,7 +14,7 @@ Click("#JustSave");
 Click("#NewInvoiceRecord");
 record = With();
 Get ( "#Range" ).Clear ();
-Set ( "#Number", "AA" + Call ( "Common.ScenarioID", "2B6AD83A" ) );
+Set ( "#Number", "AA" + Call ( "Common.ScenarioID", "A0QS" ) );
 Set ("#DeliveryDate", "05/20/2020");
 Click("#FormWrite");
 Click("#FormPrint");
@@ -22,5 +22,5 @@ Close();
 
 // Check if Transfer is not available for changes anymore
 With(transfer, true);
-CheckState("#ItemsSelectItems, #ItemsScan", "Enable", false);
+CheckState("#ItemsTableCommandBar", "Enable", false);
 

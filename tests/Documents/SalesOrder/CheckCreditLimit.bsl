@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0P8" );
+id = Call ( "Common.ScenarioID", "A0RG" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -94,7 +94,7 @@ Click("#FormSendForApproval");
 With();
 Click ( "#Button0" ); // Confirm sending
 With ();
-Click ( "#Button0" ); // Close error message
+Click ( "#OK" ); // Close error message
 Call ( "Common.FillCheckError", "*limit*" );
 IgnoreErrors = false;
 #endregion
