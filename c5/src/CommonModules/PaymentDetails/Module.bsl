@@ -22,7 +22,10 @@ Function GetKey ( Env ) export
 	
 	item = findKey ( Env );
 	if ( item = undefined ) then
-		item = newKey ( Env );
+		item = fetchKey ( Env );
+		if ( item = undefined ) then
+			item = newKey ( Env );
+		endif;
 		addKey ( Env, item );
 	endif; 
 	return item;
@@ -39,6 +42,35 @@ Function findKey ( Env )
 	
 EndFunction
 
+Function fetchKey ( Env )
+	
+	lock ( Env );
+	q = new Query ( "
+	|select Details.PaymentKey as Key
+	|from InformationRegister.PaymentDetails as Details
+	|where Details.Option = &Option
+	|and Details.Date = &Date
+	|" );
+	fields = Env.PaymentDetails;
+	q.SetParameter ( "Option", fields.Option );
+	q.SetParameter ( "Date", fields.Date );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table.Key );
+	
+EndFunction
+
+Procedure lock ( Env )
+	
+	fields = Env.PaymentDetails;
+	lock = new DataLock ();
+	item = lock.Add ( "InformationRegister.PaymentDetails" );
+	item.Mode = DataLockMode.Exclusive;
+	item.SetValue ( "Option", fields.Option );
+	item.SetValue ( "Date", fields.Date );
+	lock.Lock ();
+
+EndProcedure
+ 
 Function newKey ( Env )
 	
 	fields = Env.PaymentDetails;
