@@ -336,18 +336,22 @@ Procedure returnAdvance ( Env, Record, Organization, Contract, Advance )
 	p.Company = fields.Company;
 	p.Operation = Enums.Operations.PaymentReturn;
 	amount = - Record.Overpayment;			
+	money = Env.Money;
+	organizations = Env.Organizations;
 	if ( Advance ) then
 		advanceData = takenAdvanceData ( Env, Record );
-		p.AccountDr = advanceData.AdvanceAccount;
+		account = advanceData.AdvanceAccount;
 	else
-		p.AccountDr = fields.OrganizationAccount;
+		account = fields.OrganizationAccount;
 	endif;
-	p.CurrencyDr = fields.ContractCurrency;
-	p.CurrencyAmountDr = amount;
-	p.DimDr1 = fields.Organization;
-	p.DimDr2 = fields.Contract;
-	p.AccountCr = fields.Account;
-	p.CurrencyCr = fields.Currency;
+	p [ "Account" + organizations ] = account;
+	p [ "Currency" + organizations ] = fields.ContractCurrency;
+	p [ "CurrencyAmount" + organizations ] = amount;
+	dim = "Dim" + organizations;
+	p [ dim + 1 ] = fields.Organization;
+	p [ dim + 2 ] = fields.Contract;
+	p [ "Account" + money ] = fields.Account;
+	p [ "Currency" + money ] = fields.Currency;
 	methods = Enums.PaymentMethods;
 	if ( fields.Method = methods.Cash ) then
 		location = fields.Location;
@@ -356,10 +360,11 @@ Procedure returnAdvance ( Env, Record, Organization, Contract, Advance )
 	else
 		location = fields.BankAccount;
 	endif; 
-	p.DimCr1 = location;
-	p.DimCr2 = fields.CashFlow;
+	dim = "Dim" + money;
+	p [ dim + 1 ] = location;
+	p [ dim + 2 ] = fields.CashFlow;
 	currencyAmount = Currencies.Convert ( amount, fields.ContractCurrency, fields.Currency, fields.Date, fields.ContractRate, fields.ContractFactor, fields.Rate, fields.Factor );
-	p.CurrencyAmountCr = currencyAmount;
+	p [ "CurrencyAmount" + money ] = currencyAmount;
 	p.Amount = Currencies.Convert ( amount, fields.ContractCurrency, fields.LocalCurrency, fields.Date, fields.ContractRate, fields.ContractFactor );
 	p.Recordset = Env.Buffer;
 	reverseVAT = Advance and advanceData.VAT <> 0;
@@ -369,8 +374,8 @@ Procedure returnAdvance ( Env, Record, Organization, Contract, Advance )
 	endif;
 	GeneralRecords.Add ( p );
 	if ( reverseVAT ) then
-		p.AccountDr = advanceData.ReceivablesVATAccount;
-		p.AccountCr = advanceData.VATAccount;
+		p [ "Account" + organizations ] = advanceData.ReceivablesVATAccount;
+		p [ "Account" + money ] = advanceData.VATAccount;
 		vatAmount = - amount + amount * ( 100 / ( 100 + advanceData.VAT ) );
 		p.Amount = Currencies.Convert ( vatAmount, fields.ContractCurrency, fields.LocalCurrency, fields.Date, fields.ContractRate, fields.ContractFactor );
 		p.Operation = Enums.Operations.VATAdvancesReverse;
@@ -385,6 +390,7 @@ Function takenAdvanceData ( Env, Row )
 	result = new Structure ( "Payment, VAT, VATAccount, AdvanceAccount, ReceivablesVATAccount", , 0 );
 	customerPayment = Type ( "DocumentRef.Payment" );
 	vendorRefund = Type ( "DocumentRef.VendorRefund" );
+	vendorPayment = Type ( "DocumentRef.VendorPayment" );
 	vendorDebts = Type ( "DocumentRef.VendorDebts" );
 	recorders = new Array ();
 	recorders.Add ( Row.Document );
@@ -394,6 +400,9 @@ Function takenAdvanceData ( Env, Row )
 		type = TypeOf ( recorder );
 		if ( type = customerPayment ) then
 			set = "AdvanceAccount, ReceivablesVATAccount, VATAdvance.Rate as VAT, VATAccount";
+			break;
+		elsif ( type = vendorPayment ) then
+			set = "AdvanceAccount";
 			break;
 		elsif ( type = vendorDebts
 			or type = vendorRefund ) then
