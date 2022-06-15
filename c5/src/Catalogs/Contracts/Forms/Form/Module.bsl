@@ -1,4 +1,3 @@
-
 // *****************************************
 // *********** Form events
 
@@ -115,6 +114,10 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|CustomerPage show Object.Customer;
 	|VendorPage show Object.Vendor;
+	|CustomerAdvancesWarning show Object.Customer and Object.Currency <> LocalCurrency and not Object.Export
+	|	and not Object.CustomerAdvancesMonthly;
+	|VendorAdvancesWarning show Object.Vendor and Object.Currency <> LocalCurrency and not Object.Import
+	|	and not Object.VendorAdvancesMonthly;
 	|CustomerBank enable Object.CustomerPayment <> Enum.PaymentMethods.Cash;
 	|VendorBank enable Object.VendorPayment <> Enum.PaymentMethods.Cash;
 	|CustomerVATAdvance show Object.Customer;
@@ -402,6 +405,34 @@ Procedure applyVendorRateType ()
 	
 	setCurrencyRate ( false, true);
 	Appearance.Apply ( ThisObject, "Object.VendorRateType" );
+	
+EndProcedure
+
+&AtClient
+Procedure CustomerAdvancesMonthlyOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
+
+EndProcedure
+
+&AtClient
+Procedure VendorAdvancesMonthlyOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
+
+EndProcedure
+
+&AtClient
+Procedure ExportOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.Export" );
+
+EndProcedure
+
+&AtClient
+Procedure ImportOnChange ( Item )
+	
+	Appearance.Apply ( ThisObject, "Object.Import" );
 	
 EndProcedure
 

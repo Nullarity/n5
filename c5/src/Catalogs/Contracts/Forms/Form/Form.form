@@ -917,6 +917,10 @@
         <dataPath xsi:type="form:DataPath">
           <segments>Object.Export</segments>
         </dataPath>
+        <handlers>
+          <event>OnChange</event>
+          <name>ExportOnChange</name>
+        </handlers>
         <extendedTooltip>
           <name>ExportExtendedTooltip</name>
           <id>133</id>
@@ -1095,6 +1099,63 @@
       <items xsi:type="form:FormGroup">
         <name>Group6</name>
         <id>371</id>
+        <items xsi:type="form:Decoration">
+          <name>CustomerAdvancesWarning</name>
+          <id>378</id>
+          <title>
+            <key>en</key>
+            <value>For residents, it is recommended to use monthly advances for mutual settlements in currency</value>
+          </title>
+          <title>
+            <key>ru</key>
+            <value>Рекомендуется включить опцию отражения авансов в конце месяца, при взаиморасчетах с резидентами, с привязкой к валюте</value>
+          </title>
+          <title>
+            <key>ro</key>
+            <value>Pentru rezidenți, se recomandă utilizarea avansurilor lunare pentru decontările reciproce în valută</value>
+          </title>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <extendedTooltip>
+            <name>CustomerAdvancesWarningExtendedTooltip</name>
+            <id>380</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>CustomerAdvancesWarningContextMenu</name>
+            <id>379</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+            <backColor xsi:type="core:ColorDef">
+              <red>204</red>
+              <green>255</green>
+              <blue>204</blue>
+            </backColor>
+          </extInfo>
+        </items>
         <items xsi:type="form:FormField">
           <name>CustomerAdvances</name>
           <id>330</id>
@@ -1150,6 +1211,10 @@
             <segments>Object.CustomerAdvancesMonthly</segments>
           </dataPath>
           <toolTipRepresentation>Button</toolTipRepresentation>
+          <handlers>
+            <event>OnChange</event>
+            <name>CustomerAdvancesMonthlyOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>CustomerAdvancesMonthlyExtendedTooltip</name>
             <id>370</id>
@@ -2765,6 +2830,10 @@
         <dataPath xsi:type="form:DataPath">
           <segments>Object.Import</segments>
         </dataPath>
+        <handlers>
+          <event>OnChange</event>
+          <name>ImportOnChange</name>
+        </handlers>
         <extendedTooltip>
           <name>ImportExtendedTooltip</name>
           <id>146</id>
@@ -2850,6 +2919,63 @@
       <items xsi:type="form:FormGroup">
         <name>Group7</name>
         <id>373</id>
+        <items xsi:type="form:Decoration">
+          <name>VendorAdvancesWarning</name>
+          <id>381</id>
+          <title>
+            <key>en</key>
+            <value>For residents, it is recommended to use monthly advances for mutual settlements in currency</value>
+          </title>
+          <title>
+            <key>ru</key>
+            <value>Рекомендуется включить опцию отражения авансов в конце месяца, при взаиморасчетах с резидентами, с привязкой к валюте</value>
+          </title>
+          <title>
+            <key>ro</key>
+            <value>Pentru rezidenți, se recomandă utilizarea avansurilor lunare pentru decontările reciproce în valută</value>
+          </title>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <extendedTooltip>
+            <name>VendorAdvancesWarningExtendedTooltip</name>
+            <id>383</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>VendorAdvancesWarningContextMenu</name>
+            <id>382</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+            <backColor xsi:type="core:ColorDef">
+              <red>204</red>
+              <green>255</green>
+              <blue>204</blue>
+            </backColor>
+          </extInfo>
+        </items>
         <items xsi:type="form:FormField">
           <name>VendorAdvances</name>
           <id>327</id>
@@ -2905,6 +3031,10 @@
             <segments>Object.VendorAdvancesMonthly</segments>
           </dataPath>
           <toolTipRepresentation>Button</toolTipRepresentation>
+          <handlers>
+            <event>OnChange</event>
+            <name>VendorAdvancesMonthlyOnChange</name>
+          </handlers>
           <extendedTooltip>
             <name>VendorAdvancesMonthlyExtendedTooltip</name>
             <id>377</id>
