@@ -210,16 +210,13 @@
 	) as VAT,
 	case valuetype ( General.Recorder )
 		when type ( Document.Payment ) then cast ( General.Recorder as Document.Payment ).VATAdvance
-		when type ( Document.VendorRefund ) then cast ( General.Recorder as Document.VendorRefund ).VATAdvance
 		when type ( Document.Invoice ) then
 			case valuetype ( General.Dependency )
 				when type ( Document.Payment ) then cast ( General.Dependency as Document.Payment ).VATAdvance
-				when type ( Document.VendorRefund ) then cast ( General.Dependency as Document.VendorRefund ).VATAdvance
 			end
 		when type ( Document.VendorReturn ) then
 			case valuetype ( General.Dependency )
 				when type ( Document.Payment ) then cast ( General.Dependency as Document.Payment ).VATAdvance
-				when type ( Document.VendorRefund ) then cast ( General.Dependency as Document.VendorRefund ).VATAdvance
 			end
 	end as VATCode
 into Advances
@@ -312,16 +309,6 @@ from (
 		//
 		join Advances as Advances
 		on Advances.Recorder = CustomerPayments.Ref
-	union all
-	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
-		VendorRefunds.Number, VendorRefunds.Date, VendorRefunds.Vendor.CodeFiscal,
-		VendorRefunds.Vendor, VendorRefunds.Ref, value ( Enum.Operations.VATAdvances ), undefined
-	from Document.VendorRefund as VendorRefunds
-		//
-		// VendorRefund Advances
-		//
-		join Advances as Advances
-		on Advances.Recorder = VendorRefunds.Ref
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		Invoices.Number, Invoices.Date, Invoices.Customer.CodeFiscal,
