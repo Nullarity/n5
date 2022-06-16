@@ -22,4 +22,5 @@ p.Insert ( "ContractDateStart", Date ( 2001, 1, 1 ) );
 p.Insert ( "ContractDateEnd", Date ( 2101, 1, 1 ) );
 p.Insert ( "CreateCredit", true );
 p.Insert ( "CreditLimit", 1000000 );
+p.Insert ( "MonthlyAdvances", false );
 return p;

@@ -28,6 +28,7 @@ if (_ = undefined) then
 	contractDateStart = undefined;
 	contractDateEnd = undefined;
 	createCredit = false;
+	monthlyAdvances = false;
 else
 	company = _.Company;
 	government = _.Government;
@@ -50,6 +51,7 @@ else
 	createCredit = _.CreateCredit;
 	creditLimit = _.CreditLimit;
 	contractDateEnd = _.ContractDateEnd;
+	monthlyAdvances = _.MonthlyAdvances;
 endif;
 //
 // Fill general
@@ -130,6 +132,9 @@ if ( rate <> undefined ) then
 endif;
 if (terms <> undefined) then
 	Set("#CustomerTerms", terms);
+endif;
+if ( monthlyAdvances ) then
+	Click ( "#CustomerAdvancesMonthly" );
 endif;
 if (clearTerms) then
 	Clear("#CustomerTerms");
