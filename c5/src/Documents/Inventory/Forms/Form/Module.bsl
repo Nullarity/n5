@@ -513,11 +513,15 @@ Procedure calcAmount ( Row )
 	
 	if ( Row.Quantity = 0 ) then
 		Row.Amount = 0;
-	elsif ( Row.Price = Row.PriceBalance
-		and Row.Quantity = Row.QuantityBalance ) then
-		Row.Amount = Row.AmountBalance;
+	elsif ( Row.Price = Row.PriceBalance ) then
+		if ( Row.Quantity = Row.QuantityBalance ) then
+			Row.Amount = Row.AmountBalance;
+		else
+			Row.Amount = ? ( Row.QuantityBalance = 0, Row.Price, Row.AmountBalance / Row.QuantityBalance )
+			* Row.Quantity;
+		endif;
 	else
-		Computations.Amount ( ItemsRow );
+		Row.Amount = Row.Price * Row.Quantity;
 	endif;
 
 EndProcedure
