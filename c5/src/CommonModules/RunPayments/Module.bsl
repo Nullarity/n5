@@ -93,10 +93,11 @@ Procedure sqlFields ( Env )
 			|Documents.VATAccount as VATAccount, Documents.VATAdvance.Rate as VAT";
 		endif;
 	else
+		s = s + ", Documents.Contract.VendorAdvancesMonthly as AdvancesMonthly";
 		if ( Env.Refund ) then
 			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount";
 		else
-			s = s + ", Documents.Contract.VendorAdvancesMonthly as AdvancesMonthly,
+			s = s + ",
 			|Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount,
 			|Documents.ExpenseReport.Employee as Employee, Documents.IncomeTaxRate as IncomeTaxRate,
 			|Documents.IncomeTaxAmount as IncomeTaxAmount, Documents.IncomeTax as IncomeTax,
