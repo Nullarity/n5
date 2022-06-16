@@ -85,9 +85,10 @@ Procedure sqlFields ( Env )
 	|	Documents.CashFlow as CashFlow
 	|";
 	if ( Env.Customer ) then
-		s = s + ", Documents.Customer as Organization, Documents.CustomerAccount as OrganizationAccount";
+		s = s + ", Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly,
+		|Documents.Customer as Organization, Documents.CustomerAccount as OrganizationAccount";
 		if ( not Env.Refund ) then
-			s = s + ", Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly,
+			s = s + ",
 			|Documents.ReceivablesVATAccount as ReceivablesVATAccount,
 			|Documents.VATAccount as VATAccount, Documents.VATAdvance.Rate as VAT";
 		endif;
@@ -95,7 +96,7 @@ Procedure sqlFields ( Env )
 		if ( Env.Refund ) then
 			s = s + ", Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount";
 		else
-			s = s + ", Documents.Contract.VendortAdvancesMonthly as AdvancesMonthly,
+			s = s + ", Documents.Contract.VendorAdvancesMonthly as AdvancesMonthly,
 			|Documents.Vendor as Organization, Documents.VendorAccount as OrganizationAccount,
 			|Documents.ExpenseReport.Employee as Employee, Documents.IncomeTaxRate as IncomeTaxRate,
 			|Documents.IncomeTaxAmount as IncomeTaxAmount, Documents.IncomeTax as IncomeTax,
