@@ -150,7 +150,7 @@ Procedure readAppearance ()
 	|FormChooseStandard show Loading = 0 and not Parameters.Settings and not Parameters.Saving ;
 	|FormSave show Parameters.Saving and Replacing = 0;
 	|SavingGroup show Parameters.Saving;
-	|RecordDescription enable Replacing = 0 and Parameters.Saving;
+	|RecordDescription OpenAccess enable Replacing = 0 and Parameters.Saving;
 	|LoadingStandard LoadingUser hide Parameters.Saving or Parameters.Settings;
 	|" );
 	Appearance.Read ( ThisObject, rules );
@@ -196,16 +196,32 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
-Procedure Save ( Command )
+async Procedure Save ( Command )
 	
 	if ( CheckFilling () ) then
-		NotifyChoice ( saveData ( ? ( Replacing = 0, undefined, Items.List.CurrentData ) ) );
+		item = saveData ( Items.List.CurrentData );
+		if ( Replacing = 0 ) then
+			answer = await Output.NewReportAccessDefinition ();
+			if ( answer = DialogReturnCode.Yes ) then
+				OpenForm ( "Catalog.ReportSettings.ObjectForm", new Structure ( "Key", item ), , , , ,
+					new NotifyDescription ( "AccessChanged", ThisObject ) );
+				return;
+			endif;
+		endif;
+		NotifyChoice ( item );
 	endif;
 	
 EndProcedure
 
+&AtClient
+Procedure AccessChanged ( Result, Ref ) export
+	
+	NotifyChoice ( Ref );
+
+EndProcedure
+
 &AtServer
-Function saveData ( val Ref )
+Function saveData ( val Ref = undefined )
 	
 	if ( Replacing = 0 ) then
 		obj = Catalogs.ReportSettings.CreateItem ();

@@ -8472,3 +8472,15 @@ Procedure ThereIsNoStockmanInventory ( Module = undefined, CallbackParams = unde
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0 );
 
 EndProcedure
+
+&AtClient
+Function NewReportAccessDefinition ( Params = undefined ) export
+
+	text = NStr ( "en = 'Would you like to define an access for storing item?
+				  |(you can do this later)';ro = 'Doriți să definiți accesul pentru elementul salvat?
+				  |(puteți face acest lucru mai târziu)';ru = 'Определить доступ для сохраняемого элемента?
+				  |(вы можете сделать это позже)'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.No, title );
+
+EndFunction
