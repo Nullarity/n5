@@ -203,7 +203,12 @@ Procedure sqlRecords ()
 	|where not Invoices.DeletionMark
 	|and Invoices.Customer = &Organization
 	|and Invoices.Company = &Company
-	|and Invoices.Status = value ( Enum.FormStatuses.Printed )
+	|and Invoices.Status in (
+	|	value ( Enum.FormStatuses.Unloaded ),
+	|	value ( Enum.FormStatuses.Printed ),
+	|	value ( Enum.FormStatuses.Submitted ),
+	|	value ( Enum.FormStatuses.Returned )
+	|)
 	|and Invoices.Base refs Document.Sale
 	|and cast ( Invoices.Base as Document.Sale ).Date between &DateStart and &DateEnd";
 	if ( ContractDefined ) then
