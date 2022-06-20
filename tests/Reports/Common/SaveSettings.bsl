@@ -16,6 +16,7 @@ Click ( "#UserSettingsContextMenuSaveSettings" );
 With ();
 Set ( "#RecordDescription", "" + CurrentDate () );
 Click ( "#FormSave" );
+Click ( "No", DialogsTitle );
 #endregion
 
 #region loadSettings
@@ -38,6 +39,7 @@ Click ( "#UserSettingsContextMenuSaveVariant" );
 With ();
 Set ( "#RecordDescription", "" + CurrentDate () );
 Click ( "#FormSave" );
+Click ( "No", DialogsTitle );
 #endregion
 
 #region generateReport
