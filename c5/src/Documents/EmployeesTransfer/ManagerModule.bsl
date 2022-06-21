@@ -161,67 +161,100 @@ EndProcedure
 Procedure sqlCompensationChanges ( Env )
 	
 	s = "
-	|select Compensations.Action as Action, Compensations.Employee as Employee, Compensations.Compensation as Compensation,
-	|	Compensations.Date as Date, Compensations.Currency as Currency, Compensations.Rate as Rate,
-	|	Compensations.InHand as InHand
+	|select false as Addition, Compensations.Action as Action, Compensations.Employee as Employee,
+	|	Compensations.Compensation as Compensation, Compensations.Date as Date,
+	|	Compensations.Currency as Currency, Compensations.Rate as Rate, Compensations.InHand as InHand
 	|into Compensations
 	|from Document.EmployeesTransfer.Employees as Compensations
 	|where Compensations.Ref = &Ref
 	|and Compensations.Action <> value ( Enum.Changes.Nothing )
 	|union all
-	|select Compensations.Action, Compensations.Employee, Compensations.Compensation, Compensations.Date,
+	|select true, Compensations.Action, Compensations.Employee, Compensations.Compensation, Compensations.Date,
 	|	Compensations.Currency, Compensations.Rate, Compensations.InHand
 	|from Document.EmployeesTransfer.Additions as Compensations
 	|where Compensations.Ref = &Ref
 	|and Compensations.Action <> value ( Enum.Changes.Nothing )
 	|index by Employee
 	|;
+	|// Last Info
+	|select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Currency as Currency,
+	|	Rates.Rate as Rate, Rates.InHand
+	|into LastInfo
+	|from InformationRegister.EmployeeRates as Rates
+	|	//
+	|	// LastChanges
+	|	//
+	|	join (
+	|		select Rates.Employee as Employee, Rates.Compensation as Compensation, max ( Rates.Period ) as Period
+	|		from InformationRegister.EmployeeRates as Rates
+	|			//
+	|			// Employees
+	|			//
+	|			join Compensations as Compensations
+	|			on Compensations.Employee = Rates.Employee
+	|			and Compensations.Compensation = Rates.Compensation
+	|			and Compensations.Date > Rates.Period
+	|		group by Rates.Employee, Rates.Compensation
+	|	) LastChanges
+	|	on LastChanges.Employee = Rates.Employee
+	|	and LastChanges.Compensation = Rates.Compensation
+	|	and LastChanges.Period = Rates.Period
+	|index by Employee, Compensation
+	|;
+	|// Last Compensations
+	|select Rates.Employee as Employee, Rates.Compensation as Compensation
+	|into LastCompensations
+	|from InformationRegister.EmployeeRates as Rates
+	|	//
+	|	// LastChanges
+	|	//
+	|	join (
+	|		select Rates.Employee as Employee, Rates.Compensation as Compensation, max ( Rates.Period ) as Period
+	|		from InformationRegister.EmployeeRates as Rates
+	|			//
+	|			// Employees
+	|			//
+	|			join Compensations as Compensations
+	|			on Compensations.Employee = Rates.Employee
+	|			and Compensations.Date > Rates.Period
+	|			and not Compensations.Addition
+	|		group by Rates.Employee, Rates.Compensation
+	|	) LastChanges
+	|	on LastChanges.Employee = Rates.Employee
+	|	and LastChanges.Compensation = Rates.Compensation
+	|	and LastChanges.Period = Rates.Period
+	|index by Employee
+	|;
 	|// #Compensations
 	|select Rows.LineNumber as LN, Compensations.Action as Action, Compensations.Employee as Employee,
 	|	Compensations.Compensation as Compensation, Compensations.Date as Date, Compensations.Currency as Currency,
-	|	Compensations.Rate as Rate, Compensations.InHand as InHand,
-	|	case when Last.Employee is null then false else true end as CompensationExists,
+	|	Compensations.Rate as Rate, Compensations.InHand as InHand, Compensations.Addition as Addition,
+	|	LastInfo.Employee is not null as CompensationExists, LastCompensations.Compensation as LastCompensation,
 	|	case
 	|		when ( Compensations.Action = value ( Enum.Changes.Add )
-	|			and not Last.Employee is null ) then 1
+	|			and not LastInfo.Employee is null ) then 1
 	|		when ( Compensations.Action = value ( Enum.Changes.Change )
-	|			and Compensations.Compensation = Last.Compensation
-	|			and Compensations.Currency = Last.Currency
-	|			and Compensations.Rate = Last.Rate
-	|			and Compensations.InHand = Last.InHand ) then 1
-	|		when ( Compensations.Action in ( value ( Enum.Changes.Change ), value ( Enum.Changes.Remove ) )
-	|			and Last.Employee is null ) then 2
+	|			and Compensations.Compensation = LastInfo.Compensation
+	|			and Compensations.Currency = LastInfo.Currency
+	|			and Compensations.Rate = LastInfo.Rate
+	|			and Compensations.InHand = LastInfo.InHand ) then 1
+	|		when Compensations.Addition and
+	|			Compensations.Action in ( value ( Enum.Changes.Change ), value ( Enum.Changes.Remove ) )
+	|				and LastInfo.Employee is null then 2
 	|		else 0
 	|	end as Situation
 	|from Compensations as Compensations
 	|	//
-	|	// Last
+	|	// Last Info
 	|	//
-	|	left join (
-	|		select Rates.Employee as Employee, Rates.Compensation as Compensation,
-	|			Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand
-	|		from InformationRegister.EmployeeRates as Rates
-	|			//
-	|			// LastChanges
-	|			//
-	|			join (
-	|				select Rates.Employee as Employee, Rates.Compensation as Compensation, max ( Rates.Period ) as Period
-	|				from InformationRegister.EmployeeRates as Rates
-	|					//
-	|					// Employees
-	|					//
-	|					join Compensations as Compensations
-	|					on Compensations.Employee = Rates.Employee
-	|					and Compensations.Compensation = Rates.Compensation
-	|					and Compensations.Date > Rates.Period
-	|				group by Rates.Employee, Rates.Compensation
-	|			) LastChanges
-	|			on LastChanges.Employee = Rates.Employee
-	|			and LastChanges.Compensation = Rates.Compensation
-	|			and LastChanges.Period = Rates.Period
-	|	) as Last
-	|	on Last.Employee = Compensations.Employee
-	|	and Last.Compensation = Compensations.Compensation
+	|	left join LastInfo as LastInfo
+	|	on LastInfo.Employee = Compensations.Employee
+	|	and LastInfo.Compensation = Compensations.Compensation
+	|	//
+	|	// Last Compensations
+	|	//
+	|	left join LastCompensations as LastCompensations
+	|	on LastCompensations.Employee = Compensations.Employee
 	|	//
 	|	// Rows
 	|	//
@@ -275,9 +308,9 @@ Function makeCompensations ( Env )
 		compensation = Row.Compensation;
 		situation = row.Situation;
 		if ( situation > 0 ) then
-			hrChanges = ( situation = 1 )
+			noChanges = ( situation = 1 )
 			and ( employees.Find ( employee, "Employee" ) <> undefined );
-			if ( hrChanges ) then
+			if ( noChanges ) then
 				continue;
 			else
 				error = true;
@@ -301,6 +334,12 @@ Function makeCompensations ( Env )
 		record.Rate = row.Rate;
 		record.InHand = row.InHand;
 		record.Actual = row.Action <> Enums.Changes.Remove;
+		if ( not row.Addition ) then
+			cancel = rates.Add ();
+			FillPropertyValues ( cancel, record );
+			cancel.Compensation = row.LastCompensation;
+			cancel.Actual = false;
+		endif;
 	enddo; 
 	return not error;
 	
