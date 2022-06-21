@@ -34,16 +34,14 @@ endif;
 
 #region Payment
 Click("#CreatePayment");
-Connect ();
-
 With ( "Customer Payment (create)" );
-Set ( "#Amount", "2,000.00" );
-Pick ( "#Currency1", "MDL" );
+Set ( "#Amount", 2000 );
+Put ( "#Currency1", "MDL" );
 Activate ( "#GroupCurrency" ); // Currency
-Set ( "#ContractRate", "19.0000" );
+Set ( "#ContractRate", 19 );
 Next ();
 Activate ( "#GroupDocuments" ); // Documents
-Set ( "#Amount", "2,000.00" );
+Set ( "#Amount", 2000 );
 Next ();
 Click ( "#FormPost" );
 #endregion
