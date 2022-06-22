@@ -235,16 +235,16 @@ Procedure addItem ( Fields )
 EndProcedure 
 
 &AtServerNoContext
-Function getBalance ( val Item, val Warehouse, val Package, val Feature, val Series )
+Function getBalance ( val Item, val Warehouse, val Package, val Feature, val Series = undefined )
 	
 	s = "
 	|select Balances.QuantityBalance as Balance
 	|from AccumulationRegister.Items.Balance ( ,
 	|	Item = &Item
 	|	and Warehouse = &Warehouse
-	|	and Package = &Package
+	|	and Package in ( &Package, value ( Catalog.Packages.EmptyRef ) )
 	|	and Feature = &Feature
-	|	and Series = &Series
+	|	and Series = &Series 
 	|) as Balances
 	|";
 	q = new Query ( s );
@@ -312,12 +312,24 @@ EndProcedure
 &AtClient
 Procedure applyItem ()
 	
-	data = DF.Values ( ItemsRow.Item, "Package, Package.Capacity as Capacity" );
+	data = itemData ( ItemsRow.Item, Object.Warehouse );
 	ItemsRow.Package = data.Package;
 	ItemsRow.Capacity = ? ( data.Capacity = 0, 1, data.Capacity );
+	ItemsRow.Balance = data.Balance;
 	Computations.Units ( ItemsRow );
 	
 EndProcedure
+
+&AtServerNoContext
+Function itemData ( val Item, val Warehouse )
+	
+	data = new Structure ( "Package, Capacity, Balance" );
+	fields = DF.Values ( Item, "Package, Package.Capacity as Capacity" );
+	FillPropertyValues ( data, fields );
+	data.Balance = getBalance ( item, Warehouse, fields.Package, undefined );
+	return data;
+
+EndFunction
 
 &AtClient
 Procedure ItemsQuantityOnChange ( Item )
@@ -336,15 +348,47 @@ EndProcedure
 &AtClient
 Procedure applyPackage ()
 	
-	capacity = DF.Pick ( ItemsRow.Package, "Capacity", 1 );
-	ItemsRow.Capacity = capacity;
+	data = packageData ( ItemsRow.Item, Object.Warehouse, ItemsRow.Package, ItemsRow.Feature, ItemsRow.Series );
+	ItemsRow.Capacity = data.Capacity;
+	ItemsRow.Balance = data.Balance;
 	Computations.Units ( ItemsRow );
 	
 EndProcedure 
+
+&AtServerNoContext
+Function packageData ( val Item, val Warehouse, val Package, val Feature, val Series )
+	
+	data = new Structure ( "Capacity, Balance" );
+	data.Capacity = DF.Pick ( Package, "Capacity", 1 );
+	data.Balance = getBalance ( Item, Warehouse, Package, Feature, Series );
+	return data;
+
+EndFunction
 
 &AtClient
 Procedure ItemsQuantityPkgOnChange ( Item )
 
 	Computations.Units ( ItemsRow );
 
+EndProcedure
+
+&AtClient
+Procedure ItemsFeatureOnChange ( Item )
+	
+	ItemsRow.Balance = rowBalance ();
+
+EndProcedure
+
+&AtClient
+Function rowBalance ()
+	
+	return getBalance ( ItemsRow.Item, Object.Warehouse, ItemsRow.Package, ItemsRow.Feature, ItemsRow.Series );
+
+EndFunction
+
+&AtClient
+Procedure ItemsSeriesOnChange ( Item )
+	
+	ItemsRow.Balance = rowBalance ();
+	
 EndProcedure
