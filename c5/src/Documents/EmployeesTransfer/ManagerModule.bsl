@@ -1,5 +1,4 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
-
 	
 Procedure PresentationFieldsGetProcessing ( Fields, StandardProcessing )
 	
@@ -334,7 +333,8 @@ Function makeCompensations ( Env )
 		record.Rate = row.Rate;
 		record.InHand = row.InHand;
 		record.Actual = row.Action <> Enums.Changes.Remove;
-		if ( not row.Addition ) then
+		if ( not row.Addition
+			and row.LastCompensation <> compensation ) then
 			cancel = rates.Add ();
 			FillPropertyValues ( cancel, record );
 			cancel.Compensation = row.LastCompensation;
