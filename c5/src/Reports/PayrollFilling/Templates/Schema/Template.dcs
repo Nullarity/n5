@@ -839,7 +839,7 @@ from InformationRegister.Schedules as Schedules
 	// Holidays
 	//
 	left join AllHolidays as Holidays
-	on Holidays.Reference = Schedules.Schedule.Holidays
+	on Holidays.Schedule = Schedules.Schedule
 	and Holidays.Day = Schedules.Day
 	and Holidays.Division = Divisions.Division
 	and Schedules.Minutes &gt; 0
@@ -983,7 +983,7 @@ from Document.Vacation.Employees as Vacations
 	// Holidays
 	//
 	left join AllHolidays as HolidaysList
-	on HolidaysList.Reference = Schedules.Schedule.Holidays
+	on HolidaysList.Schedule = Schedules.Schedule
 	and HolidaysList.Division = Intervals.Division
 	and HolidaysList.Day = Schedules.Day
 	//
@@ -1136,13 +1136,6 @@ from (
 						value ( Enum.Calculations.MonthlyRate ),
 						value ( Enum.Calculations.HourlyRate )
 					) then Compensations.Days
-				when Compensations.Method in (
-						value ( Enum.Calculations.Vacation ),
-						value ( Enum.Calculations.SickDays ),
-						value ( Enum.Calculations.SickDaysChild ),
-						value ( Enum.Calculations.SickOnlySocial ),
-						value ( Enum.Calculations.SickProduction )
-					) then Compensations.ScheduledDays
 				else 0
 			end
 		) as Days,
@@ -1188,7 +1181,7 @@ from (
 			// Holidays
 			//
 			left join AllHolidays as HolidaysList
-			on HolidaysList.Reference = Schedules.Schedule.Holidays
+			on HolidaysList.Schedule = Schedules.Schedule
 			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
 		group by Compensations.Employee
@@ -1223,6 +1216,7 @@ from Document.SickLeave as SickLeaves
 	and Extended.Posted
 where SickLeaves.Posted
 and SickLeaves.Employee in ( select distinct Employee from Personnel )
+and SickLeaves.Date between dateadd ( &amp;DateStart, month, -13 ) and &amp;DateEnd
 ;
 // Extended
 select ExtendedStart.Ref as Ref, ExtendedStart.Employee as Employee,
@@ -1249,7 +1243,7 @@ select Regular.Ref as Ref, Regular.Employee as Employee,
 	datediff ( Regular.DateStart, Regular.DateEnd, day ) + 1 as Days
 into SickLeavesAll
 from Illness as Regular
-where Regular.DateEnd between &amp;DateStart and &amp;DateEnd
+where Regular.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Regular.First
 and Regular.Last
 union all
@@ -1257,7 +1251,7 @@ select Extended.Ref, Extended.Employee, Extended.Compensation,
 	Extended.DateStart, Extended.DateEnd,
 	datediff ( Extended.DateStart, Extended.DateEnd, day ) + 1
 from Extended as Extended
-where Extended.DateEnd between &amp;DateStart and &amp;DateEnd 
+where Extended.Ref.Date between &amp;DateStart and &amp;DateEnd
 ;
 // Restrictions
 select SickLeaves.Ref as Ref, cast ( isnull ( MaxDaysAtOnce.Value, 0 ) as number ( 10, 0 ) ) as MaxDaysAtOnce,
@@ -1337,6 +1331,7 @@ from SickLeavesAll as SickLeaves
 	and Previous.Compensation.Method in ( value ( Enum.Calculations.SickDays ), value ( Enum.Calculations.SickProduction ) ) 
 	and Previous.DateEnd between beginofperiod ( SickLeaves.DateEnd, year ) and SickLeaves.DateStart
 	and Previous.Ref.Posted
+	and Previous.OnCompany
 group by SickLeaves.Ref
 ;
 // UsedByCompany
@@ -1350,6 +1345,97 @@ from (
 	from UsedByCompanyPerYear as UsedByCompanyPerYear	
 	) as SickLeaves
 group by SickLeaves.Ref
+;
+// SickPersonnel
+select First.DateStart as Period, Personnel.Employee as Employee, Personnel.Department as Department,
+	Personnel.Position as Position, Personnel.Schedule as Schedule, Personnel.Expenses as Expenses
+into SickPersonnel
+from InformationRegister.Personnel as Personnel
+	//
+	// Filter First
+	//
+	join (
+		select max ( Personnel.Period ) as Period, min ( SickLeaves.DateStart ) as DateStart,
+			Personnel.Employee as Employee
+		from InformationRegister.Personnel as Personnel
+			//
+			// SickLeaves
+			//
+			join SickLeavesAll as SickLeaves
+			on SickLeaves.Employee = Personnel.Employee
+			and SickLeaves.DateStart &gt; Personnel.Period
+		group by Personnel.Employee
+	) as First
+	on First.Employee = Personnel.Employee
+	and First.Period = Personnel.Period
+union
+select Personnel.Period, Personnel.Employee, Personnel.Department, Personnel.Position, Personnel.Schedule,
+	Personnel.Expenses
+from InformationRegister.Personnel as Personnel
+	//
+	// SickLeaves
+	//
+	join SickLeavesAll as SickLeaves
+	on SickLeaves.Employee = Personnel.Employee
+	and Personnel.Period between SickLeaves.DateStart and SickLeaves.DateEnd
+;
+// SickPeopleChanges
+select Personnel.Employee as Employee, Personnel.Period as DateStart,
+	min ( isnull ( dateadd ( Changes.Period, second, -1 ), SickLeaves.DateEnd ) ) as DateEnd
+into SickPeopleChanges
+from SickPersonnel as Personnel
+	//
+	// Last
+	//
+	join SickLeavesAll as SickLeaves
+	on SickLeaves.Employee = Personnel.Employee
+	and Personnel.Period between SickLeaves.DateStart and SickLeaves.DateEnd
+	//
+	// Changes
+	//
+	left join SickPersonnel as Changes
+	on Changes.Period &gt; Personnel.Period
+	and Changes.Period &lt; SickLeaves.DateEnd
+	and Changes.Employee = Personnel.Employee
+	and ( Personnel.Department &lt;&gt; Changes.Department
+		or Personnel.Position &lt;&gt; Changes.Position
+		or Personnel.Schedule &lt;&gt; Changes.Schedule
+		or Personnel.Expenses &lt;&gt; Changes.Expenses )
+group by Personnel.Employee, Personnel.Period
+;
+// ScheduledLocation
+select Personnel.Employee as Employee, Personnel.Department as Department, Personnel.Position as Position,
+	Personnel.Schedule as Schedule, Personnel.Expenses as Expenses,
+	Changes.DateStart as DateStart, Changes.DateEnd as DateEnd
+into SickPeopleScheduledLocation
+from SickPersonnel as Personnel
+	//
+	// Changed
+	//
+	join SickPeopleChanges as Changes
+	on Changes.Employee = Personnel.Employee
+	and Personnel.Period between Changes.DateStart and Changes.DateEnd
+union all
+select Personnel.Employee, Personnel.Department, Personnel.Position, Personnel.Schedule, Personnel.Expenses,
+	beginofperiod ( dateadd ( &amp;DateEnd, day, 1 ), day ), datetime ( 3999, 12, 31 )
+from SickPersonnel as Personnel
+	//
+	// LastLocation
+	//
+	join (
+		select Personnel.Employee as Employee, max ( Personnel.Period ) as Period
+		from SickPersonnel as Personnel
+		group by Personnel.Employee
+	) as LastLocation
+	on LastLocation.Employee = Personnel.Employee
+	and LastLocation.Period = Personnel.Period
+;
+// ScheduledIntervals
+select distinct Intervals.Employee as Employee, Intervals.Schedule as Schedule,
+	Intervals.DateStart as DateStart, Intervals.DateEnd as DateEnd, Intervals.Department.Division as Division
+into SickPeopleScheduledIntervals
+from SickPeopleScheduledLocation as Intervals
+index by Employee, Schedule
 ;
 // SickLeaves
 select SickLeaves.Ref as Ref, SickLeaves.Employee as Employee,
@@ -1400,7 +1486,7 @@ from (
 	//
 	// ScheduledIntervals
 	//
-	join ScheduledIntervals as Intervals
+	join SickPeopleScheduledIntervals as Intervals
 	on Intervals.Employee = SickLeaves.Employee
 	and Time.Day between Intervals.DateStart and Intervals.DateEnd
 	//
@@ -1496,13 +1582,6 @@ from (
 						value ( Enum.Calculations.MonthlyRate ),
 						value ( Enum.Calculations.HourlyRate )
 					) then Compensations.Days
-				when Compensations.Method in (
-						value ( Enum.Calculations.Vacation ),
-						value ( Enum.Calculations.SickDays ),
-						value ( Enum.Calculations.SickDaysChild ),
-						value ( Enum.Calculations.SickOnlySocial ),
-						value ( Enum.Calculations.SickProduction )
-					) then Compensations.ScheduledDays
 				else 0
 			end
 		) as Days,
@@ -1553,7 +1632,7 @@ from (
 			// Holidays
 			//
 			left join AllHolidays as HolidaysList
-			on HolidaysList.Reference = Schedules.Schedule.Holidays
+			on HolidaysList.Schedule = Schedules.Schedule
 			and HolidaysList.Division = Compensations.Division
 			and HolidaysList.Day = Schedules.Day
 		group by Compensations.Employee
@@ -2035,7 +2114,7 @@ from (
 			sum ( SickLeaves.ScheduledMinutes / 60 ) as ScheduledHours,
 			sum ( case when SickLeaves.ScheduledMinutes = 0 then 0 else 1 end ) as ScheduledDays,
 			count ( SickLeaves.Day ) as Days, case when SickLeaves.OnCompany then 1 else 0 end as OnCompany
-		from ScheduledLocation as Location
+		from SickPeopleScheduledLocation as Location
 			//
 			// SickLeaves
 			//
@@ -2735,7 +2814,7 @@ from (
 				else 0
 			end
 		) as Amount,
-		sum ( Compensations.ScheduledDays ) as ScheduledDays
+		max ( Compensations.ScheduledDays ) as ScheduledDays
 	from PreviousCompensationsForSickLeaves as Compensations
 		//
 		// BaseCompensations
@@ -2782,7 +2861,7 @@ from (
 				else 0
 			end
 		),
-		sum ( Compensations.ScheduledDays )
+		max ( Compensations.ScheduledDays )
 	from PreviousCompensationsForVacations as Compensations
 		//
 		// BaseCompensations
