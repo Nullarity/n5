@@ -39,7 +39,7 @@ Procedure sqlPrintData ( Env, Params )
 	|where Users.Owner = &User
 	|;";
 	if ( type = Type ( "CatalogRef.Items" )
-		or type = Type ( "CatalogRef.Lots" )
+		or type = Type ( "CatalogRef.Series" )
 		or type = Type ( "Number" ) ) then
 		if ( type = Type ( "CatalogRef.Items" ) ) then
 			name = "Item";
