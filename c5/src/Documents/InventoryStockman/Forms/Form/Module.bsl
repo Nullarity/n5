@@ -32,9 +32,10 @@ EndProcedure
 &AtServer
 Procedure isApplied ()
 	
-	s = "select top 1 1 from Document.Inventory where Ref.Posted and Ref.Warehouse = &Warehouse";
+	s = "select top 1 1 from Document.Inventory where Ref.Posted and Ref.Warehouse = &Warehouse and Ref.Date > &Date";
 	q = new Query ( s );
 	q.SetParameter ( "Warehouse", Object.Warehouse );
+	q.SetParameter ( "Date", Object.Date );
 	SetPrivilegedMode ( true );
 	InventoryApplied = not q.Execute ().IsEmpty ();
 	
@@ -122,6 +123,7 @@ Procedure sqlLinks ()
 	|select Documents.Ref as Document, Documents.Ref.Date as Date, Documents.Ref.Number as Number
 	|from Document.Inventory as Documents
 	|where Documents.Warehouse = &Warehouse
+	|and not Documents.DeletionMark
 	|";
 	Env.Selection.Add ( s );
 	
