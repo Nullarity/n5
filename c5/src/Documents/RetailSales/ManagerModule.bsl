@@ -353,6 +353,7 @@ Function getCost ( Env, Items )
 	p.Insert ( "DecreasingColumns", "Cost" );
 	p.Insert ( "DecreasingColumns2", "Amount, Total" );
 	p.Insert ( "AddInTable1FromTable2", "Capacity, Income, SalesCost, Return" );
+	CollectionsSrv.Adjust ( cost, "Cost", Metadata.AccumulationRegisters.Cost.Resources.Amount.Type );
 	result = CollectionsSrv.Decrease ( cost, Items, p );
 	for each row in result do
 		if ( row.Return ) then
