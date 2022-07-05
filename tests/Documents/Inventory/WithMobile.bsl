@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0QL" );
+id = Call ( "Common.ScenarioID", "A0SB" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -17,9 +17,12 @@ Click("#FormPost");
 
 #region justPrint
 Click("#FormDataProcessorInventoryInventory");
+With ();
+Click ( "#FormOK" );
 Close ( "Inventory: Print" );
 #endregion
 
+With ();
 Click ( "#OpenInventory" );
 With ( "Inventory *" );
 

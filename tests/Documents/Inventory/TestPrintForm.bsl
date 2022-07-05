@@ -8,6 +8,8 @@ With ( "Inventories" );
 GotoRow ( "#List", "Memo", env.ID );
 With ( "Inventories" );
 Click ( "#FormDataProcessorInventoryInventory" );
+With ();
+Click ( "#FormOK" );
 With ( "Inventory: Print" );
 Call ( "Common.CheckLogic", "#TabDoc" );
 
