@@ -378,7 +378,7 @@ Procedure commitOverpayment ( Env, Payments )
 	reverseVAT = Env.ReverseVAT;
 	for each row in Payments do
 		payment = row.Payment;
-		data = paymentInfo ( payment );
+		data = paymentInfo ( Env, payment );
 		if ( debtor ) then
 			p.AccountDr = data.AdvanceAccount;
 			p.AccountCr = accountCr;
@@ -399,15 +399,16 @@ Procedure commitOverpayment ( Env, Payments )
 		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, currencyRate, currencyFactor );
 		p.Operation = Enums.Operations.AdvanceApplied;
 		p.Content = operationAdvance + payment;
-		reverse = reverseVAT and data.VAT <> 0;
+		reverse = reverseVAT and data.VAT <> undefined and data.VAT.VAT <> 0;
 		if ( reverse ) then
 			p.Dependency = payment;
 		endif;
 		GeneralRecords.Add ( p );
 		if ( reverse ) then
-			p.AccountDr = data.ReceivablesVATAccount;
-			p.AccountCr = data.VATAccount;
-			vatAmount = - overpayment + overpayment * ( 100 / ( 100 + data.VAT ) );
+			vat = data.VAT;
+			p.AccountDr = vat.ReceivablesVATAccount;
+			p.AccountCr = vat.VATAccount;
+			vatAmount = - overpayment + overpayment * ( 100 / ( 100 + vat.VAT ) );
 			p.Amount = Currencies.Convert ( vatAmount, currency, localCurrency, fields.Date, row.Rate, row.Factor );
 			p.Operation = Enums.Operations.VATAdvancesReverse;
 			p.Content = operationVAT + payment; 
@@ -417,19 +418,26 @@ Procedure commitOverpayment ( Env, Payments )
 	
 EndProcedure
 
-Function paymentInfo ( Document )
+Function paymentInfo ( Env, Document )
 	
-	result = new Structure ( "AdvanceAccount, VATAccount, VAT, ReceivablesVATAccount" );
+	result = new Structure ( "AdvanceAccount, VAT" );
+	vat = new Structure ( "VATAccount, VAT, ReceivablesVATAccount" );
 	type = TypeOf ( Document );
-	if ( type = Type ( "DocumentRef.Debts" )
-		or type = Type ( "DocumentRef.VendorDebts" ) ) then
-		data = DF.Values ( Document,
-			"Account as AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+	if ( Env.ReverseVAT ) then
+		if ( type = Type ( "DocumentRef.Debts" ) ) then
+			data = DF.Values ( Document,
+				"Account as AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+		else
+			data = DF.Values ( Document,
+				"AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+		endif;
+		result.AdvanceAccount = data.AdvanceAccount;
+		FillPropertyValues ( vat, data );
+		result.VAT = vat;
 	else
-		data = DF.Values ( Document,
-			"AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+		account = ? ( type = Type ( "DocumentRef.VendorDebts" ), "Account", "AdvanceAccount" );
+		result.AdvanceAccount = DF.Pick ( Document, account );
 	endif;
-	FillPropertyValues ( result, data );
 	return result;
 	
 EndFunction
