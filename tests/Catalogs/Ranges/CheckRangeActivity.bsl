@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B6AB994" );
+id = Call ( "Common.ScenarioID", "A0SH" );
 
 env = getEnv ( id );
 createEnv ( env );
@@ -57,17 +57,19 @@ Procedure createEnv ( Env )
 		return;
 	endif;
 	
-	// *********************
-	// Create Range
-	// *********************
-	
-	Commando("e1cib/command/Catalog.Ranges.Create");
+	#region createRange
+	Commando("e1cib/list/Catalog.Ranges");
+	Click ( "#FormCreate" );
+	With ();
 	Set("#Type","Invoice Records");
 	Set("#Prefix", env.FormPrefix);
 	Set("#Start", 1);
 	Set("#Finish", 50);
 	Set("#Length", 3);
 	Click("#WriteAndClose");
+	With ( "Enroll Range*" );
+	Click ("#FormWriteAndClose");
+	#endregion
 	
 	RegisterEnvironment ( id );
 	
