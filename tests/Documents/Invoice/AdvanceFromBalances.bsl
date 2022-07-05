@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0S8" );
+id = Call ( "Common.ScenarioID", "A0SE" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -70,6 +70,13 @@ Procedure createEnv ()
 	OpenMenu ( "Sections panel / Accounting" );
 	OpenMenu ( "Functions menu / See also / Opening Balances" );
 	With ();
+	confirmation = Date(Fetch ( "#BalanceDate" )) <> Date(1, 1, 1);
+	Put("#BalanceDate", "1/1/2018");
+	if ( confirmation ) then
+		Click ( "Yes", "1?:*" );
+		Next();
+		Waiting ( "WaitUntilChangingProcessComplete", 5 * __.Performance );
+	endif;
 	Click ( "#FormCreateByParameterDebts" );
 	With ();
 	Put ( "#Account", "5231" );
