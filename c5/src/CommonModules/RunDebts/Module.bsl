@@ -60,7 +60,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", Env.PurchaseOrderExists );
 		Env.Insert ( "OrderName", "PurchaseOrder" );
-		Env.Insert ( "ReverseVAT", not Env.Fields.AdvancesMonthly );
+		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", true );
 		Env.Insert ( "DiscountsAfterDelivery", false );
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
@@ -376,19 +376,9 @@ Procedure commitOverpayment ( Env, Payments )
 	exchangeRate = rate / factor;
 	Payments.GroupBy ( "Payment, Rate, Factor", "Amount" );
 	reverseVAT = Env.ReverseVAT;
-	paymentFields = "AdvanceAccount";
-	if ( reverseVAT ) then
-		paymentFields = paymentFields + ", VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount";
-	endif;
 	for each row in Payments do
 		payment = row.Payment;
-		if ( TypeOf ( payment ) = Type ( "DocumentRef.Debts" )
-			or TypeOf ( payment ) = Type ( "DocumentRef.VendorDebts" ) ) then
-			data = DF.Values ( payment, "Account as AdvanceAccount" );
-			data.Insert ( "VAT", 0 );
-		else
-			data = DF.Values ( payment, paymentFields );
-		endif;
+		data = paymentInfo ( payment );
 		if ( debtor ) then
 			p.AccountDr = data.AdvanceAccount;
 			p.AccountCr = accountCr;
@@ -426,6 +416,23 @@ Procedure commitOverpayment ( Env, Payments )
 	enddo;
 	
 EndProcedure
+
+Function paymentInfo ( Document )
+	
+	result = new Structure ( "AdvanceAccount, VATAccount, VAT, ReceivablesVATAccount" );
+	type = TypeOf ( Document );
+	if ( type = Type ( "DocumentRef.Debts" )
+		or type = Type ( "DocumentRef.VendorDebts" ) ) then
+		data = DF.Values ( Document,
+			"Account as AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+	else
+		data = DF.Values ( Document,
+			"AdvanceAccount, VATAccount, VATAdvance.Rate as VAT, ReceivablesVATAccount" );
+	endif;
+	FillPropertyValues ( result, data );
+	return result;
+	
+EndFunction
 
 Procedure FromOrder ( Env ) export
 

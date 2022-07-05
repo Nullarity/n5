@@ -1,23 +1,10 @@
 &AtServer
 Procedure OnReadAtServer ( Form ) export
 	
-	Form.Advances = isAdvances ( Form.Object );
 	InvoiceForm.SetLocalCurrency ( Form );
 	Appearance.Apply ( Form );
 	
 EndProcedure
-
-&AtServer
-Function isAdvances ( Object ) 
-
-	type = DF.Pick ( Object.Account, "Type" );
-	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.Debts" ) ) then
-		return type = AccountType.Passive;
-	else
-		return type = AccountType.Active;
-	endif;
-
-EndFunction
 
 &AtServer
 Procedure OnCreateAtServer ( Form ) export
@@ -30,7 +17,6 @@ Procedure OnCreateAtServer ( Form ) export
 		else
 			BalancesForm.CheckParameters ( Form );
 		endif;
-		Form.Advances = isAdvances ( object );
 		InvoiceForm.SetLocalCurrency ( Form );
 		DocumentForm.SetCreator ( object );
 		if ( not copy ) then
@@ -49,15 +35,18 @@ Procedure readAppearance ( Form )
 
 	rules = new Array ();
 	rules.Add ( "
-	|DebtsTotalAmount DebtsTotalContractAmount show not Advances;
-	|DebtsTotalAdvance DebtsTotalContractAdvance show Advances;
-	|DebtsTotalContractAmount show ( Object.Currency <> LocalCurrency and not Advances );
-	|DebtsTotalContractAdvance show ( Object.Currency <> LocalCurrency and Advances );
-	|DebtsAmount DebtsContractAmount show not Advances;
-	|DebtsAdvance DebtsContractAdvance show Advances;
-	|DebtsContractAmount show ( Object.Currency <> LocalCurrency and not Advances );
-	|DebtsContractAdvance show ( Object.Currency <> LocalCurrency and Advances )
+	|DebtsTotalAmount DebtsTotalContractAmount show not Object.Advances;
+	|DebtsTotalAdvance DebtsTotalContractAdvance show Object.Advances;
+	|DebtsTotalContractAmount show ( Object.Currency <> LocalCurrency and not Object.Advances );
+	|DebtsTotalContractAdvance show ( Object.Currency <> LocalCurrency and Object.Advances );
+	|DebtsAmount DebtsContractAmount show not Object.Advances;
+	|DebtsAdvance DebtsContractAdvance show Object.Advances;
+	|DebtsContractAmount show ( Object.Currency <> LocalCurrency and not Object.Advances );
+	|DebtsContractAdvance show ( Object.Currency <> LocalCurrency and Object.Advances );
 	|" );
+	if ( TypeOf ( Form.Object.Ref ) = Type ( "DocumentRef.Debts" ) ) then
+		rules.Add ( "VATAccount ReceivablesVATAccount VATAdvance show Object.Advances;" );
+	endif;
 	Appearance.Read ( Form, rules );
 
 EndProcedure
@@ -65,8 +54,23 @@ EndProcedure
 &AtServer
 Procedure ApplyAccount ( Form ) export
 
-	Form.Advances = isAdvances ( Form.Object );
-	Appearance.Apply ( Form, "Advances" );
+	object = Form.Object;
+	type = DF.Pick ( object.Account, "Type" );
+	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorDebts" ) ) then
+		object.Advances = ( type = AccountType.Active );
+	else
+		advances = ( type = AccountType.Passive );
+		object.Advances = advances;
+		if ( advances ) then
+			PaymentForm.SetVATAdvance ( object );
+			object.VATAdvance = Constants.ItemsVAT.Get ();
+		else
+			object.VATAccount = undefined;
+			object.ReceivablesVATAccount = undefined;
+			object.VATAdvance = undefined;
+		endif;
+	endif;
+	Appearance.Apply ( Form, "Object.Advances" );
 
 EndProcedure
 
@@ -103,14 +107,14 @@ EndProcedure
 Procedure CalcTotals ( Form ) export
 	
 	object = Form.Object;
-	object.Amount = object.Debts.Total ( ? ( Form.Advances, "Advance", "Amount" ) );
+	object.Amount = object.Debts.Total ( ? ( object.Advances, "Advance", "Amount" ) );
 	
 EndProcedure
 
 &AtServer
 Procedure CheckAmount ( Object, CheckedAttributes ) export
 
-	field = ? ( isAdvances ( Object ), "Advance", "Amount" );
+	field = ? ( object.Advances, "Advance", "Amount" );
 	CheckedAttributes.Add ( "Debts." + field );
 	if ( Object.Currency <> Application.Currency () ) then
 		CheckedAttributes.Add ( "Debts.Contract" + field );
