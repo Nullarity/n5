@@ -182,6 +182,41 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="1c8442e7-7adb-4a3c-9545-e4afaf6d898f">
+    <name>Advances</name>
+    <synonym>
+      <key>en</key>
+      <value>Advances</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Авансы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avansuri</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Advances</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Авансы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Avansuri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="31d2b023-eef1-42d1-a53d-b398a88944ba">
     <name>Amount</name>
     <synonym>
@@ -361,6 +396,147 @@
     <fillValue xsi:type="core:StringValue">
       <value></value>
     </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="72fdc588-2893-4194-8052-8ced24cc34cb">
+    <name>ReceivablesVATAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Receivables from VAT Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет задолженности по НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul de creanțe din TVA</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Receivables from VAT Account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет задолженности по НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul de creanțe din TVA</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Currency</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5f5f5e8e-5f93-496b-b5aa-286bdb7e6bfa">
+    <name>VATAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul TVA</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul TVA</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Currency</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="4e8f58b8-77fa-4ef6-acd1-8370e06214e3">
+    <name>VATAdvance</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT from Advance</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>НДС с авансов</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>TVA pe avansuri</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.VAT</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT rate from advances</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ставка при расчете НДС с авансов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Rata la calcularea TVA-ului din avansuri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
