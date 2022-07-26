@@ -22,7 +22,7 @@ Procedure getData ( Params, Env )
 	
 	setContext ( Params, Env );
 	sqlFields ( Params, Env );	
-	sqlItems ( Env );
+	sqlItems ( Params, Env );
 	Env.Q.SetParameter ( "Ref", Params.Reference );
 	SetPrivilegedMode ( true );
 	SQL.Perform ( Env );
@@ -58,7 +58,7 @@ Procedure sqlFields ( Params, Env )
 	
 EndProcedure
 
-Procedure sqlItems ( Env )
+Procedure sqlItems ( Params, Env )
 	
 	s = "
 	|// #Items
@@ -72,6 +72,11 @@ Procedure sqlItems ( Env )
 	|	case when Items.AmountDifference < 0 then - Items.AmountDifference else 0 end as AmountShortage
 	|from Document." + Env.Table + ".Items as Items
 	|where Items.Ref = &Ref
+	|";
+	if ( Params.Template = "Statement" ) then
+		s = s + "and ( Items.AmountDifference <> 0 or Items.QuantityDifference <> 0 )";
+	endif;
+	s = s + "
 	|order by Items.LineNumber
 	|";
 	Env.Selection.Add ( s );
