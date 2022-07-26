@@ -398,11 +398,11 @@ Function getTable ()
 	|from (
 	|	select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
 	|		Items.Account as Account, Items.Capacity as Capacity,
-	|		cast ( sum ( Items.AmountBalance )
-	|			/ sum ( case when Items.Package is null then Items.QuantityBalance else
-	|				case when Items.QuantityPkgBalance = 0 then 1 else Items.QuantityPkgBalance end
+	|		cast (
+	|			case when sum ( case when Items.Package is null then Items.QuantityBalance else Items.QuantityPkgBalance end ) = 0 then 0
+	|				else sum ( Items.AmountBalance ) / sum ( case when Items.Package is null then Items.QuantityBalance else Items.QuantityPkgBalance end )
 	|			end
-	|		) as Number ( 15, 2 ) ) as Price,
+	|		as Number ( 15, 2 ) ) as Price,
 	|		sum ( Items.QuantityBalance ) as QuantityBalance, sum ( Items.QuantityPkgBalance ) as QuantityPkgBalance,
 	|		sum ( Items.AmountBalance ) as AmountBalance, sum ( Items.Quantity ) as Quantity,
 	|		sum ( Items.QuantityPkg ) as QuantityPkg
