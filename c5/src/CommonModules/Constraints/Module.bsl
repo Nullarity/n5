@@ -146,7 +146,7 @@ Function getSalesInfo ( Object, Context )
 		|select Debts.Contract.Currency, - ( Debts.AmountBalance - Debts.OverpaymentBalance )
 		|from AccumulationRegister.VendorDebts.Balance ( , Contract.Owner = &Customer ) as Debts
 		|union all
-		|select Debts.Contract.Currency, - ( Debts.Amount - Debts.Overpayment )
+		|select Debts.Contract.Currency, - ( Debts.Amount + Debts.Overpayment )
 		|from AccumulationRegister.Debts as Debts
 		|where Debts.Recorder = &Ref
 		|union all
