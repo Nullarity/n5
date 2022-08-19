@@ -421,7 +421,9 @@ EndProcedure
 &AtClient
 Procedure applyCustomerAdvancesMonthly ()
 	
-	Object.CustomerAdvances = false;
+	if ( not Object.CustomerAdvancesMonthly ) then
+		Object.CustomerAdvances = true;
+	endif;
 	Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
 
 EndProcedure
@@ -436,7 +438,9 @@ EndProcedure
 &AtClient
 Procedure applyVendorAdvancesMonthly ()
 	
-	Object.VendorAdvances = false;
+	if ( not Object.CustomerAdvancesMonthly ) then
+		Object.VendorAdvances = true;
+	endif;
 	Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
 
 EndProcedure
