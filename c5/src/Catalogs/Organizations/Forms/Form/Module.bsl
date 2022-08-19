@@ -231,16 +231,20 @@ Procedure createContract ( CurrentObject, Ref )
 	obj.Customer = customer;
 	obj.Vendor = vendor;
 	data = Catalogs.Contracts.GetDefaults ( Ref, customer );
+	monthlyAdvances = data.AdvancesMonthly;
+	closeAdvances = not monthlyAdvances;
 	if ( customer ) then
 		obj.CustomerTerms = Constants.Terms.Get ();
 		obj.CustomerPayment = Constants.PaymentMethod.Get ();
 		obj.CustomerVATAdvance = data.VATAdvance;
-		obj.CustomerAdvancesMonthly = data.AdvancesMonthly;
+		obj.CustomerAdvancesMonthly = monthlyAdvances;
+		obj.CustomerAdvances = closeAdvances;
 	endif;
 	if ( vendor ) then
 		obj.VendorTerms = Constants.VendorTerms.Get ();
 		obj.VendorPayment = Constants.VendorPaymentMethod.Get ();
-		obj.VendorAdvancesMonthly = data.AdvancesMonthly;
+		obj.VendorAdvancesMonthly = monthlyAdvances;
+		obj.VendorAdvances = closeAdvances;
 	endif; 
 	obj.Write ();
 	if ( customer ) then
