@@ -197,8 +197,11 @@ Function Add ( Params ) export
 	
 EndFunction
 
-Procedure Flush ( Recordset, Buffer ) export
+Procedure Flush ( Recordset, Buffer, RemoveUseless = false ) export
 	
+	if ( RemoveUseless ) then
+		cleanBuffer ( Buffer );
+	endif;
 	Buffer.GroupBy ( "
 		|AccountDr,
 		|AccountCr,
@@ -238,3 +241,22 @@ Procedure Flush ( Recordset, Buffer ) export
 	endif; 
 	
 EndProcedure 
+
+Procedure cleanBuffer ( Buffer )
+	
+	i = Buffer.Count ();
+	while ( i > 0 ) do
+		i = i - 1;
+		row = Buffer [ i ];
+		if ( row.AccountDr = row.AccountCr
+			and row.ExtDimensionDr1 = row.ExtDimensionCr1
+			and row.ExtDimensionDr2 = row.ExtDimensionCr2
+			and row.ExtDimensionDr3 = row.ExtDimensionCr3
+			and row.CurrencyDr = row.CurrencyCr
+			and row.CurrencyAmountDr = row.CurrencyAmountCr
+			and row.QuantityDr = row.QuantityCr ) then
+			Buffer.Delete ( i );
+		endif;
+	enddo; 
+
+EndProcedure

@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "27779892" );
+id = Call ( "Common.ScenarioID", "A0TW" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -22,9 +22,7 @@ if ( Fetch ( "#ContractAmount" ) <> "3,000" ) then
 	Stop ( "Contract Amount must be 3000" );
 endif;
 Click ( "#UnmarkAll" );
-if ( Fetch ( "#ContractAmount" ) <> "0" ) then
-	Stop ( "Contract Amount must be 0" );
-endif;
+Assert ( Fetch ( "#Info" ), "Info label should be visible" ).Contains ( "Payment Amount is 3,000.00 MDL" );
 
 // *************************
 // Procedures

@@ -26,7 +26,7 @@ endif;
 Function getEnv ()
 	
 	date = CurrentDate ();
-	id = Call ( "Common.ScenarioID", "27113F36" );
+	id = Call ( "Common.ScenarioID", "A0TS" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Customer", "_Customer: " + id );
@@ -48,7 +48,7 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
 	p.Description = Env.Customer;
-	p.Terms = "Main";
+	p.Terms = "Due on receipt";
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	
 	// *************************
@@ -58,7 +58,7 @@ Procedure createEnv ( Env )
 	p = Call ( "Documents.SalesOrder.CreateApproveOneUser.Params" );
 	p.Date = Env.SODate;
 	p.Customer = Env.Customer;
-	p.Terms = "Main";
+	p.Terms = "Due on receipt";
 	p.Memo = Env.ID;
 	row = Call ( "Documents.SalesOrder.CreateApproveOneUser.ServicesRow" );
 	row.Item = "_Service: " + id;

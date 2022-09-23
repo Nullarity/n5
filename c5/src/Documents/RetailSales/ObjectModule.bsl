@@ -60,6 +60,7 @@ Procedure OnWrite ( Cancel )
 	
 	if ( DataExchange.Load ) then
 		SequenceCost.Rollback ( Ref, Company, PointInTime () );
+		return;
 	endif;
 	PettyCash.Sync ( ThisObject );
 	

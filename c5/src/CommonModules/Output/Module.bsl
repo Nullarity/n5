@@ -5625,14 +5625,14 @@ Procedure MissedHours ( Params = undefined, Field = "", DataKey = undefined, Dat
 EndProcedure
 
 &AtServer
-Procedure CustomerPaymentError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+Procedure PaymentError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ( "en='Amount due is not equal to Payment amount'; ro='Suma datoriei nu este egală cu suma plății'; ru='Сумма долга не равна сумме оплаты'" );
+	text = NStr ( "en = 'The amount of payment is less than the amount owed';ro = 'Suma de plată este mai mică decât suma datorată';ru = 'Сумма оплаты меньше суммы долга'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
 
-Function CustomerPaymentDifference ( Params = undefined ) export
+Function PaymentDifference ( Params = undefined ) export
 
 	text = NStr ( "en='The difference between Amount Due and Payment Amount is %Amount'; ro='Diferența dintre suma datoriei și suma de plată este: %Amount'; ru='Разница между суммой долга и оплаты составляет: %Amount'" );
 	return Output.FormatStr ( text, Params );

@@ -7,181 +7,15 @@ var PaymentsRow export;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	PettyCash.Read ( ThisObject );
-	InvoiceForm.SetLocalCurrency ( ThisObject );
-	PaymentForm.ToggleDetails ( ThisObject );
-	updateChangesPermission ();
-	Appearance.Apply ( ThisObject );
+	PaymentForm.OnReadAtServer ( ThisObject );
 	
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
 EndProcedure
 
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
-	if ( Object.Ref.IsEmpty () ) then
-		InvoiceForm.SetLocalCurrency ( ThisObject );
-		DocumentForm.Init ( Object );
-		copy = not Parameters.CopyingValue.IsEmpty ();
-		if ( ThisObject.Parameters.Basis = undefined ) then
-			PaymentForm.FillNew ( ThisObject );
-			if ( not copy ) then
-				fillByVendor ();
-				fillByExpenseReport ();
-			endif;
-		else
-			PaymentForm.Fill ( ThisObject );
-		endif;
-		defineCopy ();
-		updateChangesPermission ();
-	endif; 
-	PaymentForm.FilterAccount ( ThisObject );
-	PaymentForm.SetTitle ( ThisObject );
-	StandardButtons.Arrange ( ThisObject );
-	readAppearance ();
-	Appearance.Apply ( ThisObject );
+	PaymentForm.OnCreateAtServer ( ThisObject );
 	
-EndProcedure
-
-&AtServer
-Procedure readAppearance ()
-
-	rules = new Array ();
-	rules.Add ( "
-	|Base show filled ( Object.Base );
-	|Vendor Contract Company lock filled ( Object.Base );
-	|BankAccount show Object.Method <> Enum.PaymentMethods.Cash;
-	|Rate Factor enable Object.Currency <> LocalCurrency;
-	|ContractRate ContractFactor enable Object.ContractCurrency <> Object.Currency and Object.ContractCurrency <> LocalCurrency;
-	|Employee ExpenseReport show Object.Method = Enum.PaymentMethods.ExpenseReport;
-	|Location show Object.Method <> Enum.PaymentMethods.ExpenseReport;
-	|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
-	|NewVoucher show empty ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
-	|Reference ReferenceDate PaymentContent show Object.Method <> Enum.PaymentMethods.Cash;
-	|Warning UndoPosting show Object.Posted;
-	|Header GroupDocuments GroupCurrency GroupMore lock Object.Posted;
-	|Update Refill enable not Object.Posted;
-	|GroupIncomeTax show filled ( Object.IncomeTax )
-	|" );
-	Appearance.Read ( ThisObject, rules );
-
-EndProcedure
-
-&AtServer
-Procedure fillByVendor ()
-	
-	if ( not Object.Vendor.IsEmpty () ) then
-		applyVendor ();
-	endif;
-	
-EndProcedure 
-
-&AtServer
-Procedure applyVendor ()
-	
-	PaymentForm.SetOrganizationAccounts ( Object );
-	PaymentForm.SetContract ( Object );
-	applyContract ();
-	
-EndProcedure
-
-&AtServer
-Procedure applyContract ()
-	
-	PaymentForm.LoadContract ( Object );
-	applyMethod ();
-	PaymentForm.CalcContractAmount ( Object, 1 );
-	PaymentForm.SetTitle ( ThisObject );
-	refill ();
-	Appearance.Apply ( ThisObject, "Object.ContractCurrency" );
-	Appearance.Apply ( ThisObject, "Object.Method" );
-	
-EndProcedure
-
-&AtServer
-Procedure applyMethod ()
-	
-	PaymentForm.SetBankAccount ( Object );
-	applyBankAccount ();
-	PaymentForm.FilterAccount ( ThisObject );
-	resetExpenseReport ();
-	Appearance.Apply ( ThisObject, "Object.Method" );
-	
-EndProcedure
-
-&AtServer
-Procedure applyBankAccount ()
-	
-	PaymentForm.SetAccount ( Object );
-	PaymentForm.SetCurrency ( Object );
-	applyCurrency ();
-	
-EndProcedure 
-
-&AtServer
-Procedure resetExpenseReport () 
-	
-	if ( Object.Method <> Enums.PaymentMethods.ExpenseReport ) then
-		Object.ExpenseReport = undefined;
-	endif;
-	
-EndProcedure
-
-&AtServer
-Procedure refill ()
-	
-	PaymentForm.Refill ( ThisObject );
-	
-EndProcedure 
-
-&AtServer
-Procedure fillByExpenseReport ()
-	
-	if ( not Object.ExpenseReport.IsEmpty () ) then
-		Object.Method = Enums.PaymentMethods.ExpenseReport;
-		applyExpenseReport ();
-	endif;
-	
-EndProcedure 
-
-&AtServer
-Procedure applyExpenseReport () 
-	
-	data = DF.Values ( Object.ExpenseReport, "EmployeeAccount, Currency" );
-	Object.Account = data.EmployeeAccount;
-	Object.Currency = data.Currency;
-	applyCurrency ();
-	
-EndProcedure
-
-&AtServer
-Procedure applyCurrency ()
-	
-	PaymentForm.SetRates ( Object );
-	applyRate ( Object );
-	Appearance.Apply ( ThisObject, "Object.Currency" );
-	
-EndProcedure
-
-&AtClientAtServerNoContext
-Procedure applyRate ( Object )
-	
-	PaymentForm.CalcContractAmount ( Object, 1 );
-	PaymentForm.DistributeAmount ( Object );
-	
-EndProcedure 
-
-&AtServer
-Procedure defineCopy ()
-	
-	CopyOf = Parameters.CopyingValue;
-
 EndProcedure
 
 &AtClient
@@ -195,6 +29,13 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
+
+EndProcedure
+
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
 	
@@ -205,32 +46,21 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	passCopy ( CurrentObject );
-	PaymentForm.Clean ( CurrentObject.Payments );	
+	PaymentForm.BeforeWriteAtServer ( CurrentObject, ThisObject );
 	
-EndProcedure
-
-&AtServer
-Procedure passCopy ( CurrentObject )
-	
-	if ( CurrentObject.IsNew () ) then
-		CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesCopyOf (), CopyOf ); 
-	endif;
-
 EndProcedure
 
 &AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
-	PettyCash.Read ( ThisObject );
-	Appearance.Apply ( ThisObject );
+	PaymentForm.AfterWriteAtServer ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure AfterWrite ( WriteParameters )
 	
-	Notify ( Enum.MessageVendorPaymentIsSaved (), Object );
+	PaymentForm.AfterWrite ( ThisObject );
 	
 EndProcedure
 
@@ -251,6 +81,13 @@ Procedure VendorOnChange ( Item )
 	
 EndProcedure
 
+&AtServer
+Procedure applyVendor ()
+	
+	PaymentForm.ApplyOrganization ( ThisObject );
+
+EndProcedure
+
 &AtClient
 Procedure ContractOnChange ( Item )
 	
@@ -258,11 +95,25 @@ Procedure ContractOnChange ( Item )
 	
 EndProcedure
 
+&AtServer
+Procedure applyContract ()
+	
+	PaymentForm.ApplyContract ( ThisObject );
+
+EndProcedure
+
 &AtClient
 Procedure BankAccountOnChange ( Item )
 	
 	applyBankAccount ();
 	
+EndProcedure
+
+&AtServer
+Procedure applyBankAccount ()
+	
+	PaymentForm.ApplyBankAccount ( ThisObject );
+
 EndProcedure
 
 &AtClient
@@ -275,51 +126,56 @@ EndProcedure
 &AtServer
 Procedure applyLocation ()
 	
-	PaymentForm.SetAccount ( Object );
-	PaymentForm.FilterAccount ( ThisObject );
+	PaymentForm.ApplyLocation ( ThisObject );
 	
-EndProcedure 
+EndProcedure
 
 &AtClient
 Procedure CurrencyOnChange ( Item )
+
+	applyCurrency ();	
 	
-	applyCurrency ();
+EndProcedure
+
+&AtServer
+Procedure applyCurrency ()
+
+	PaymentForm.ApplyCurrency ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure RateOnChange ( Item )
 	
-	applyRate ( Object );
+	PaymentForm.RateOnChange ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure FactorOnChange ( Item )
 	
-	applyRate ( Object );
+	PaymentForm.RateOnChange ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ContractRateOnChange ( Item )
 	
-	PaymentForm.CalcPaymentAmount ( Object );
+	PaymentForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ContractFactorOnChange ( Item )
 	
-	PaymentForm.CalcPaymentAmount ( Object );
+	PaymentForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure AmountOnChange ( Item )
 	
-	PaymentForm.CalcContractAmount ( Object, 1 );
-	PaymentForm.DistributeAmount ( Object );
+	PaymentForm.AmountOnChange ( ThisObject );
 	PaymentForm.CalcHandout ( Object );
 	
 EndProcedure
@@ -331,10 +187,24 @@ Procedure MethodOnChange ( Item )
 	
 EndProcedure
 
+&AtServer
+Procedure applyMethod ()
+	
+	PaymentForm.ApplyMethod ( ThisObject );
+
+EndProcedure
+
 &AtClient
 Procedure ExpenseReportOnChange ( Item )
 	
 	applyExpenseReport ();
+	
+EndProcedure
+
+&AtServer
+Procedure applyExpenseReport ()
+	
+	PaymentForm.ApplyExpenseReport ( ThisObject );
 	
 EndProcedure
 
@@ -394,7 +264,7 @@ EndProcedure
 Procedure FillPayments ( Command )
 	
 	Output.PaymentDataUpdateConfirmation ( ThisObject, true );
-	
+
 EndProcedure
 
 &AtClient
@@ -403,26 +273,35 @@ Procedure PaymentDataUpdateConfirmation ( Answer, Refilling ) export
 	if ( Answer = DialogReturnCode.No ) then
 		return;
 	endif;
-	if ( Refilling ) then
-		refill ();
-	else
-		update ();
-	endif;
-	CurrentItem = Items.Payments;
-	
+	applyDataUpdate ( Refilling );
+
 EndProcedure
 
 &AtServer
-Procedure update ()
+Procedure applyDataUpdate ( val Refilling )
 	
-	PaymentForm.Update ( ThisObject );
-	
+	PaymentForm.ApplyDataUpdate ( ThisObject, Refilling );
+
 EndProcedure
 
 &AtClient
 Procedure UpdatePayments ( Command )
 	
 	Output.PaymentDataUpdateConfirmation ( ThisObject, false );
+	
+EndProcedure
+
+&AtClient
+Procedure MarkAll ( Command )
+	
+	PaymentForm.Mark ( ThisObject, true );
+	
+EndProcedure
+
+&AtClient
+Procedure UnmarkAll ( Command )
+	
+	PaymentForm.Mark ( ThisObject, false );
 	
 EndProcedure
 
@@ -436,20 +315,9 @@ EndProcedure
 &AtClient
 Procedure PaymentsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	if ( not CancelEdit ) then
-		PaymentForm.TogglePay ( Item.CurrentData );
-	endif;
-	calcTotals ();
-	
-EndProcedure
+	PaymentForm.PaymentsOnEditEnd ( ThisObject, Item, CancelEdit );
 
-&AtClient
-Procedure calcTotals ()
-	
-	PaymentForm.CalcContractAmount ( Object, 2 );
-	PaymentForm.CalcPaymentAmount ( Object );
-	
-EndProcedure 
+EndProcedure
 
 &AtClient
 Procedure PaymentsBeforeAddRow ( Item, Cancel, Clone, Parent, Folder )
@@ -461,8 +329,8 @@ EndProcedure
 &AtClient
 Procedure PaymentsAfterDeleteRow ( Item )
 	
-	calcTotals ();
-	
+	PaymentForm.PaymentsAfterDeleteRow ( ThisObject );
+
 EndProcedure
 
 &AtClient
@@ -476,31 +344,21 @@ EndProcedure
 &AtClient
 Procedure PaymentsPayOnChange ( Item )
 	
-	PaymentForm.ApplyPay ( ThisObject );
+	PaymentForm.ApplyPay ( Object, PaymentsRow );
 	
 EndProcedure
 
 &AtClient
 Procedure PaymentsDiscountRateOnChange ( Item )
 	
-	PaymentForm.CalcDiscount ( PaymentsRow );
-	PaymentForm.CalcAmount ( PaymentsRow );
-	PaymentForm.CalcOverpayment ( PaymentsRow );
+	PaymentForm.PaymentsDiscountRateOnChange ( PaymentsRow );
 	
 EndProcedure
 
 &AtClient
 Procedure PaymentsDiscountOnChange ( Item )
 	
-	PaymentForm.CalcDiscountRate ( PaymentsRow );
-	PaymentForm.CalcAmount ( PaymentsRow );
-	PaymentForm.CalcOverpayment ( PaymentsRow );
+	PaymentForm.PaymentsDiscountOnChange ( PaymentsRow );
 	
 EndProcedure
 
-&AtClient
-Procedure PaymentsAmountOnChange ( Item )
-	
-	PaymentForm.CalcOverpayment ( PaymentsRow );
-	
-EndProcedure

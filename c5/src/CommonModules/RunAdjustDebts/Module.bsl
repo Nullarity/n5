@@ -1,44 +1,58 @@
 Function Post ( Env ) export
 	
+	setContext ( Env );
 	getData ( Env );
-	expenseDebts ( Env, Env.Adjustments, Env.Customer );
+	PaymentDetails.Init ( Env );
 	fields = Env.Fields;
-	if ( fields.UseReceiver ) then
-		expenseDebts ( Env, Env.ReceiverDebts, fields.IsCustomer );
-		makeReceiverGeneral ( Env );
-		makeDifference ( Env );
-	else
-		makeGeneral ( Env );
-		makeExpenses ( Env );
+	option = fields.Option;
+	if ( option = Enums.AdjustmentOptions.CustomAccountDr
+		or option = Enums.AdjustmentOptions.CustomAccountDr
+		or option = Enums.AdjustmentOptions.Customer
+		or option = Enums.AdjustmentOptions.Vendor
+	) then
+		adjustDebt ( Env, Env.Adjustments, false );
+		changeDebt ( Env, Env.Accounting, false );
+		if ( option = Enums.AdjustmentOptions.Customer
+			or option = Enums.AdjustmentOptions.Vendor ) then
+			adjustDebt ( Env, Env.AdjustmentsReceiver, true );
+			changeDebt ( Env, Env.AccountingReceiver, true );
+			reverseReceiverAdvances ( Env );
+		endif;
 	endif;
-	fixCurrency ( Env );
+	commitAdjustments ( Env );
 	flagRegisters ( Env );
+	PaymentDetails.Save ( Env );
 	return true;
 	
 EndFunction
 
-Procedure getData ( Env )
-
-	setContext ( Env );
-	sqlFields ( Env );
-	getFields ( Env );
-	sqlAdjustments ( Env );
-	if ( Env.Fields.UseReceiver ) then
-		sqlReceiverDebts ( Env );
-	endif;
-	SQL.Perform ( Env );
+Procedure setContext ( Env )
+	
+	Env.Insert ( "Customer", Env.Type = Type ( "DocumentRef.AdjustDebts" ) );
 	
 EndProcedure
 
-Procedure setContext ( Env )
-	
-	if ( Env.Type = Type ( "DocumentRef.AdjustDebts" ) ) then
-		Env.Insert ( "Customer", true );
-		Env.Insert ( "Table", "AdjustDebts" );
-	else
-		Env.Insert ( "Customer", false );
-		Env.Insert ( "Table", "AdjustVendorDebts" );
-	endif; 
+Procedure getData ( Env )
+
+	sqlFields ( Env );
+	getFields ( Env );
+	sqlAdjustments ( Env );
+	sqlAccounting ( Env );
+	fields = Env.Fields;
+	option = fields.Option;
+	if ( option = Enums.AdjustmentOptions.Customer
+		or option = Enums.AdjustmentOptions.Vendor ) then
+		sqlAdjustmentsReceiver ( Env );
+		sqlAccountingReceiver ( Env );
+	endif;
+	q = Env.Q;
+	q.SetParameter ( "Organization", fields.Organization );
+	q.SetParameter ( "OrganizationAccount", fields.OrganizationAccount );
+	q.SetParameter ( "ReceiverAccount", fields.ReceiverAccount );
+	q.SetParameter ( "Contract", fields.Contract );
+	SQL.Perform ( Env );
+	Env.Insert ( "DrCr", drcr ( Env ) );
+	Env.Insert ( "Buffer", GeneralRecords.Frame () );
 	
 EndProcedure
 
@@ -46,37 +60,32 @@ Procedure sqlFields ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,";
+	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,
+	|	Documents.Option as Option";
 	if ( Env.Customer ) then
-		s = s + "
-		|Documents.CustomerAccount as OrganizationAccount, Documents.Customer as Organization,";
+		s = s + ",
+		|Documents.CustomerAccount as OrganizationAccount, Documents.Customer as Organization,
+		|Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly, Documents.ApplyVAT as ApplyVAT";
 	else
-		s = s + "
-		|Documents.VendorAccount as OrganizationAccount, Documents.Vendor as Organization,";
+		s = s + ",
+		|Documents.VendorAccount as OrganizationAccount, Documents.Vendor as Organization";
 	endif;
-	s = s + "
-	|	case when Documents.Type = value ( Enum.TypesAdjustDebts.Debt ) then true else false end as IsDebt,
-	|	Documents.Amount as Amount, Documents.ContractAmount as ContractAmount, Documents.Rate as Rate,
-	|	Documents.Factor as Factor, Documents.Account as Account, Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3, 
-	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency, Constants.Currency as LocalCurrency,
-	|	Documents.ContractRate as ContractRate, Documents.ContractFactor as ContractFactor,  
-	|	case 
-	|		when Documents.Option = value ( Enum.AdjustmentOptions.Expenses ) 
-	|			or Documents.Account.Class in ( value ( Enum.Accounts.Expenses ), value ( Enum.Accounts.OtherExpenses ), value ( Enum.Accounts.CostOfGoodsSold ) ) then
-	|			true
-	|		else
-	|			false
-	|	end as IsExpense, Documents.Receiver as Receiver, Documents.ReceiverAccount as ReceiverAccount, Documents.ReceiverContract as ReceiverContract, 
-	|	case 
-	|		when Documents.Option in ( value ( Enum.AdjustmentOptions.Customer ), value ( Enum.AdjustmentOptions.Vendor ) ) then true
-	|		else false
-	|	end as UseReceiver,
-	|	case 
-	|		when Documents.Option = value ( Enum.AdjustmentOptions.Customer ) then true
-	|		else false
-	|	end as IsCustomer, Documents.Reversal as Reversal,
-	|	case when Documents.TypeReceiver = value ( Enum.TypesAdjustDebts.Debt ) then true else false end as IsReceiverDebt, Documents.Option as Option
-	|from Document." + Env.Table + " as Documents
+	s = s + ",
+	|	Documents.Type as Type, Documents.Amount as Amount, Documents.ContractAmount as ContractAmount,
+	|	Documents.Rate as Rate, Documents.Factor as Factor, Documents.ReceiverAccount as ReceiverAccount,
+	|	Documents.Account as Account, Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3, 
+	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency,
+	|	Constants.Currency as LocalCurrency, Documents.ContractRate as ContractRate,
+	|	Documents.ContractFactor as ContractFactor,  
+	|	Documents.Account.Class in (
+	|		value ( Enum.Accounts.Expenses ),
+	|		value ( Enum.Accounts.OtherExpenses ),
+	|		value ( Enum.Accounts.CostOfGoodsSold )
+	|	) as IsExpense,
+	|	Documents.Receiver as Receiver, Documents.ReceiverContract as ReceiverContract,
+	|	Documents.ReceiverContract.CustomerAdvancesMonthly as ReceiverAdvancesMonthly,
+	|	Documents.Reversal as Reversal, Documents.TypeReceiver as TypeReceiver
+	|from Document." + Env.Document + " as Documents
 	|	//
 	|	// Constants
 	|	//
@@ -97,76 +106,279 @@ EndProcedure
 
 Procedure sqlAdjustments ( Env )
 	
+	table = "Document." + Env.Document;
 	s = "
-	|// Adjustments
-	|select Adjustments.Contract.Owner as Organization, Adjustments.Contract as Contract, Adjustments.Document as Document,
-	|	Adjustments.Amount as Amount, Adjustments.Payment as Payment, Adjustments.Overpayment as Overpayment,
-	|	Adjustments.Debt as Debt, Adjustments.Bill as Bill, Adjustments.Detail as Detail, Adjustments.PaymentKey as PaymentKey,
+	|select Adjustments.Document
+	|into Adjustments
+	|from " + table + ".Adjustments as Adjustments
+	|where Adjustments.Ref = &Ref
+	|and valuetype ( Adjustments.Document ) in (
+	|	type ( Document.AdjustDebts ),
+	|	type ( Document.AdjustVendorDebts )
+	|)
+	|union all
+	|select Adjustments.Detail
+	|from " + table + ".Adjustments as Adjustments
+	|where Adjustments.Ref = &Ref
+	|and valuetype ( Adjustments.Detail ) in (
+	|	type ( Document.AdjustDebts ),
+	|	type ( Document.AdjustVendorDebts )
+	|)
+	|union all
+	|select Adjustments.Document
+	|from " + table + ".ReceiverDebts as Adjustments
+	|where Adjustments.Ref = &Ref
+	|and valuetype ( Adjustments.Document ) in (
+	|	type ( Document.AdjustDebts ),
+	|	type ( Document.AdjustVendorDebts )
+	|)
+	|union all
+	|select Adjustments.Detail
+	|from " + table + ".ReceiverDebts as Adjustments
+	|where Adjustments.Ref = &Ref
+	|and valuetype ( Adjustments.Detail ) in (
+	|	type ( Document.AdjustDebts ),
+	|	type ( Document.AdjustVendorDebts )
+	|)
+	|;
+	|// Adjustmets Customer Accounts
+	|select Documents.Ref as Ref,
+	|	case
+	|		when Documents.Option in (
+	|			value ( Enum.AdjustmentOptions.Customer ), value ( Enum.AdjustmentOptions.Vendor )
+	|		) then
+	|			case Documents.Type when value ( Enum.TypesAdjustDebts.Debt ) then Documents.CustomerAccount
+	|				else Documents.ReceiverAccount
+	|			end
+	|		else
+	|			Documents.CustomerAccount
+	|	end as Account
+	|into AdjustmentAccounts
+	|from Document.AdjustDebts as Documents
+	|where Documents.Ref in ( select Ref from Adjustments )
+	|union all
+	|select Documents.Ref, Documents.ReceiverAccount
+	|from Document.AdjustVendorDebts as Documents
+	|where Documents.Ref in ( select Ref from Adjustments )
+	|;
+	|// #Adjustments
+	|select Adjustments.Document as Document, Adjustments.Amount as Amount, Adjustments.Payment as Payment,
+	|	Adjustments.Overpayment as Overpayment, Adjustments.Debt as Debt, Adjustments.Bill as Bill,
+	|	Adjustments.Detail as Detail, Adjustments.PaymentKey as PaymentKey,
+	|	Adjustments.VAT as VAT, Adjustments.VATAccount as VATAccount, Adjustments.AmountLocal as AmountLocal,
+	|	Adjustments.VATLocal as VATLocal, Adjustments.AmountDocument as AmountDocument,
+	|	Adjustments.VATDocument as VATDocument,
 	|	case 
 	|		when ( Adjustments.Debt = 0 
 	|			and Adjustments.Overpayment > 0 )
 	|			or Adjustments.Debt > 0 then Adjustments.Amount
 	|		else -Adjustments.Amount
-	|	end as AmountDebts
-	|into Adjustments
-	|from Document." + Env.Table + ".Adjustments as Adjustments
-	|where Adjustments.Ref = &Ref
-	|;
-	|// #Adjustments
-	|select Adjustments.Organization as Organization, Adjustments.Contract as Contract, Adjustments.Document as Document,
-	|	Adjustments.Amount as Amount, Adjustments.Payment as Payment, Adjustments.Overpayment as Overpayment, Adjustments.AmountDebts as AmountDebts,
-	|	Adjustments.Debt as Debt, Adjustments.Bill as Bill, Adjustments.Detail as Detail, Adjustments.PaymentKey as PaymentKey
-	|from Adjustments as Adjustments
-	|;
-	|// #AdjustmentsRecords
-	|select Adjustments.Organization as Organization, Adjustments.Contract as Contract,	sum ( Adjustments.Amount ) as Amount
-	|from Adjustments as Adjustments
-	|group by Adjustments.Organization, Adjustments.Contract
-	|";
+	|	end as AmountDebts, " + vatSelection ( table + ".Adjustments" );
 	Env.Selection.Add ( s );
 	
 EndProcedure
 
-Procedure sqlReceiverDebts ( Env )
+Function vatSelection ( Table )
 	
 	s = "
-	|// Debts
-	|select Debts.Contract.Owner as Receiver, Debts.Contract as Contract, Debts.Document as Document,
-	|	Debts.Applied as Amount, Debts.Payment as Payment, Debts.Overpayment as Overpayment,
-	|	Debts.Debt as Debt, Debts.Bill as Bill, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
+	|	case
+	|	when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).CustomerAccount
+	|		when Adjustments.Document refs Document.Invoice then cast ( Adjustments.Document as Document.Invoice ).CustomerAccount
+	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).CustomerAccount
+	|		when Adjustments.Document refs Document.Refund then cast ( Adjustments.Document as Document.Refund ).CustomerAccount
+	|		when Adjustments.Document refs Document.Return then cast ( Adjustments.Document as Document.Return ).CustomerAccount
+	|		when Adjustments.Document refs Document.Debts
+	|			and not cast ( Adjustments.Document as Document.Debts ).Advances then cast ( Adjustments.Document as Document.Debts ).Account
+	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).CustomerAccount
+	|		when Adjustments.Detail refs Document.Invoice then cast ( Adjustments.Detail as Document.Invoice ).CustomerAccount
+	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).CustomerAccount
+	|		when Adjustments.Detail refs Document.Refund then cast ( Adjustments.Detail as Document.Refund ).CustomerAccount
+	|		when Adjustments.Detail refs Document.Return then cast ( Adjustments.Detail as Document.Return ).CustomerAccount
+	|		when Adjustments.Detail refs Document.Debts
+	|			and not cast ( Adjustments.Detail as Document.Debts ).Advances then cast ( Adjustments.Detail as Document.Debts ).Account
+	|		when Adjustments.Document refs Document.AdjustDebts then AdjustmentAccountsDocuments.Account
+	|		when Adjustments.Detail refs Document.AdjustDebts then AdjustmentAccountsDetails.Account
+	|		else Adjustments.Ref.CustomerAccount
+	|	end as OrganizationAccount,
+	|	case
+	|		when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).AdvanceAccount
+	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).AdvanceAccount
+	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).AdvanceAccount
+	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).AdvanceAccount
+	|		when Adjustments.Document refs Document.Debts
+	|			and cast ( Adjustments.Document as Document.Debts ).Advances then cast ( Adjustments.Document as Document.Debts ).Account
+	|		when Adjustments.Detail refs Document.Debts
+	|			and cast ( Adjustments.Detail as Document.Debts ).Advances then cast ( Adjustments.Detail as Document.Debts ).Account
+	|	end as AdvanceAccount,
+	|	case
+	|		when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).VATAccount
+	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).VATAccount
+	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).VATAccount
+	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).VATAccount
+	|		when Adjustments.Document refs Document.Debts
+	|			and cast ( Adjustments.Document as Document.Debts ).Advances then cast ( Adjustments.Document as Document.Debts ).VATAccount
+	|		when Adjustments.Detail refs Document.Debts
+	|			and cast ( Adjustments.Detail as Document.Debts ).Advances then cast ( Adjustments.Detail as Document.Debts ).VATAccount
+	|	end as PrepaymentVATAccount,
+	|	case
+	|		when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).ReceivablesVATAccount
+	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).ReceivablesVATAccount
+	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).ReceivablesVATAccount
+	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).ReceivablesVATAccount
+	|		when Adjustments.Document refs Document.Debts
+	|			and cast ( Adjustments.Document as Document.Debts ).Advances then cast ( Adjustments.Document as Document.Debts ).ReceivablesVATAccount
+	|		when Adjustments.Detail refs Document.Debts
+	|			and cast ( Adjustments.Detail as Document.Debts ).Advances then cast ( Adjustments.Detail as Document.Debts ).ReceivablesVATAccount
+	|	end as ReceivablesVATAccount,
+	|	case
+	|		when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).VATAdvance.Rate
+	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).VATAdvance.Rate
+	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).VATAdvance.Rate
+	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).VATAdvance.Rate
+	|		when Adjustments.Document refs Document.Debts
+	|			and cast ( Adjustments.Document as Document.Debts ).Advances then cast ( Adjustments.Document as Document.Debts ).VATAdvance.Rate
+	|		when Adjustments.Detail refs Document.Debts
+	|			and cast ( Adjustments.Detail as Document.Debts ).Advances then cast ( Adjustments.Detail as Document.Debts ).VATAdvance.Rate
+	|	end as VATAdvanceRate,
+	|	case
+	|		when Adjustments.Document refs Document.Payment then Adjustments.Document
+	|		when Adjustments.Detail refs Document.Payment then Adjustments.Detail
+	|		when Adjustments.Document refs Document.AdjustDebts then Adjustments.Document
+	|		when Adjustments.Detail refs Document.AdjustDebts then Adjustments.Detail
+	|		when Adjustments.Document refs Document.Debts
+	|			and cast ( Adjustments.Document as Document.Debts ).Advances then Adjustments.Document
+	|		when Adjustments.Detail refs Document.Debts
+	|			and cast ( Adjustments.Detail as Document.Debts ).Advances then Adjustments.Detail
+	|	end as PrepaymentRef
+	|from " + Table + " as Adjustments
+	|	//
+	|	// Adjustment Accounts for Documents
+	|	//
+	|	left join AdjustmentAccounts as AdjustmentAccountsDocuments
+	|	on AdjustmentAccountsDocuments.Ref = Adjustments.Document
+	|	//
+	|	// Adjustment Accounts for Details
+	|	//
+	|	left join AdjustmentAccounts as AdjustmentAccountsDetails
+	|	on AdjustmentAccountsDetails.Ref = Adjustments.Detail
+	|where Adjustments.Ref = &Ref
+	|";
+	return s;
+
+EndFunction
+
+Procedure sqlAdjustmentsReceiver ( Env )
+	
+	table = "Document." + Env.Document + ".ReceiverDebts";
+	s = "
+	|// #AdjustmentsReceiver
+	|select Adjustments.Document as Document, Adjustments.Applied as Amount, Adjustments.Payment as Payment,
+	|	Adjustments.Overpayment as Overpayment, Adjustments.Debt as Debt, Adjustments.Bill as Bill, Adjustments.Detail as Detail,
+	|	Adjustments.PaymentKey as PaymentKey,
 	|	case 
-	|		when ( Debts.Debt = 0 
-	|			and Debts.Overpayment > 0 )
-	|			or Debts.Debt > 0 then Debts.Applied
-	|		else -Debts.Applied
-	|	end as AmountDebts, Debts.Difference as Difference
-	|into Debts
-	|from Document." + Env.Table + ".ReceiverDebts as Debts
-	|where Debts.Ref = &Ref
-	|;
-	|// #ReceiverDebts
-	|select Debts.Receiver as Receiver, Debts.Contract as Contract, Debts.Document as Document,
-	|	Debts.Amount as Amount, Debts.Payment as Payment, Debts.Overpayment as Overpayment, Debts.AmountDebts as AmountDebts,
-	|	Debts.Debt as Debt, Debts.Bill as Bill, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey
-	|from Debts as Debts
-	|;
-	|// #ReceiverDebtsRecords
-	|select Debts.Receiver as Receiver, Debts.Contract as Contract, sum ( Debts.Amount ) as Amount, sum ( Debts.Difference ) as Difference
-	|from Debts as Debts
-	|group by Debts.Receiver, Debts.Contract
+	|		when ( Adjustments.Debt = 0 
+	|			and Adjustments.Overpayment > 0 )
+	|			or Adjustments.Debt > 0 then Adjustments.Applied
+	|		else -Adjustments.Applied
+	|	end as AmountDebts, " + vatSelection ( table );
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure sqlAccounting ( Env )
+	
+	s = "
+	|// #Accounting
+	|select Accounting.Amount as Amount, &OrganizationAccount as OrganizationAccount,
+	|	Accounting.VAT as VAT, Accounting.VATAccount as VATAccount, Accounting.AmountLocal as AmountLocal,
+	|	Accounting.VATLocal as VATLocal, Accounting.AmountDocument as AmountDocument,
+	|	Accounting.VATDocument as VATDocument, Accounting.PaymentOption as PaymentOption,
+	|	Accounting.PaymentDate as PaymentDate, PaymentDetails.PaymentKey as PaymentKey
+	|from Document." + Env.Document + ".Accounting as Accounting
+	|	//
+	|	// Payment Details
+	|	//
+	|	left join InformationRegister.PaymentDetails as PaymentDetails
+	|	on PaymentDetails.Option = Accounting.PaymentOption
+	|	and PaymentDetails.Date =
+	|		case when Accounting.PaymentDate = datetime ( 1, 1, 1 )
+	|			then datetime ( 3999, 12, 31 )
+	|			else Accounting.PaymentDate
+	|		end
+	|where Accounting.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );
 	
 EndProcedure
 
-Procedure expenseDebts ( Env, Table, IsCustomer )
+Procedure sqlAccountingReceiver ( Env )
 	
-	if ( IsCustomer ) then
+	s = "
+	|// #AccountingReceiver
+	|select Accounting.Amount as Amount, &ReceiverAccount as OrganizationAccount,
+	|	Accounting.VAT as VAT, Accounting.VATAccount as VATAccount, Accounting.AmountLocal as AmountLocal,
+	|	Accounting.VATLocal as VATLocal, Accounting.AmountDocument as AmountDocument,
+	|	Accounting.VATDocument as VATDocument, Accounting.PaymentOption as PaymentOption,
+	|	Accounting.PaymentDate as PaymentDate, PaymentDetails.PaymentKey as PaymentKey
+	|from Document." + Env.Document + ".AccountingReceiver as Accounting
+	|	//
+	|	// Payment Details
+	|	//
+	|	left join InformationRegister.PaymentDetails as PaymentDetails
+	|	on PaymentDetails.Option = Accounting.PaymentOption
+	|	and PaymentDetails.Date =
+	|		case when Accounting.PaymentDate = datetime ( 1, 1, 1 )
+	|			then datetime ( 3999, 12, 31 )
+	|			else Accounting.PaymentDate
+	|		end
+	|where Accounting.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Function drcr ( Env )
+
+	customer = Env.Customer;
+	fields = Env.Fields;
+	advance = ( fields.Type = Enums.TypesAdjustDebts.Advance );
+	organizationDr = ( customer and advance ) or not ( customer or advance );
+	if ( fields.Reversal ) then
+		organizationDr = not organizationDr;
+	endif;
+	if ( customer ) then
+		operation = ? ( advance, Enums.Operations.AdjustAdvances, Enums.Operations.AdjustDebts );
+	else
+		operation = ? ( advance, Enums.Operations.AdjustVendorAdvances, Enums.Operations.AdjustVendorDebts );
+	endif;
+	result = new Structure ( "Organization, Receiver, Operation" );
+	result.Operation = operation;
+	if ( organizationDr ) then
+		result.Organization = "Dr";
+		result.Receiver = "Cr";
+	else
+		result.Organization = "Cr";
+		result.Receiver = "Dr";
+	endif;
+	return result;
+
+EndFunction
+
+Procedure adjustDebt ( Env, Table, ForReceiver )
+	
+	fields = Env.Fields;
+	if ( ForReceiver ) then
+		isCustomer = fields.Option = Enums.AdjustmentOptions.Customer;
+		contract = fields.ReceiverContract;
+	else
+		isCustomer = Env.Customer;
+		contract = fields.Contract;
+	endif;
+	if ( isCustomer ) then
 		regiter = Env.Registers.Debts;
 	else
 		regiter = Env.Registers.VendorDebts;
 	endif;
-	fields = Env.Fields;
 	date = fields.Date;
 	reversal = fields.Reversal;
 	for each row in Table do
@@ -178,7 +390,7 @@ Procedure expenseDebts ( Env, Table, IsCustomer )
 			coef = 1;
 		endif;
 		movement.Period = date;
-		movement.Contract = row.Contract;
+		movement.Contract = contract;
 		movement.Document = row.Document;
 		movement.Detail = row.Detail;
 		movement.PaymentKey = row.PaymentKey;
@@ -195,214 +407,218 @@ Procedure expenseDebts ( Env, Table, IsCustomer )
 			movement.Payment = coef * Min ( amount, row.Payment );
 			movement.Bill =  coef * Min ( amount, -row.Bill );
 		endif;
+	enddo;
+	
+EndProcedure
+
+Procedure changeDebt ( Env, Table, ForReceiver )
+	
+	fields = Env.Fields;
+	if ( ForReceiver ) then
+		isCustomer = fields.Option = Enums.AdjustmentOptions.Customer;
+		contract = fields.ReceiverContract;
+	else
+		isCustomer = Env.Customer;
+		contract = fields.Contract;
+	endif;
+	if ( isCustomer ) then
+		regiter = Env.Registers.Debts;
+		increaseDebt = fields.Type = Enums.TypesAdjustDebts.Advance;
+	else
+		regiter = Env.Registers.VendorDebts;
+		increaseDebt = fields.Type = Enums.TypesAdjustDebts.Debt;
+	endif;
+	if ( ForReceiver ) then
+		increaseDebt = not increaseDebt;
+	endif;
+	date = fields.Date;
+	ref = Env.Ref;
+	reversal = fields.Reversal;
+	for each row in Table do
+		if ( reversal ) then
+			movement = regiter.AddExpense ();
+			coef = -1;
+		else
+			movement = regiter.AddReceipt ();
+			coef = 1;
+		endif;
+		movement.Period = date;
+		movement.Contract = contract;
+		movement.Document = ref;
+		amount = row.Amount * coef;
+		if ( increaseDebt ) then
+			movement.PaymentKey = getPaymentKey ( Env, row.PaymentKey, row.PaymentOption, row.PaymentDate );
+			movement.Amount = amount;
+			movement.Payment = amount;
+		else
+			movement.Overpayment = amount;
+		endif;
 	enddo; 
 	
 EndProcedure
 
-Procedure makeReceiverGeneral ( Env ) 
+Function getPaymentKey ( Env, PaymentKey, Option, Date )
+	
+	if ( PaymentKey = null ) then
+		Env.PaymentDetails.Option = Option;
+		Env.PaymentDetails.Date = Date;
+		return PaymentDetails.GetKey ( Env );
+	endif; 
+	return PaymentKey;
+		
+EndFunction 
 
-	Env.Insert ( "Buffer", GeneralRecords.Frame () );
-	receiverDebtsRecords = Env.ReceiverDebtsRecords.Copy ();
-	receiverRecordsEmpty = false;
-	for each row in Env.AdjustmentsRecords do
-		amount = row.Amount;
-		if ( not receiverRecordsEmpty ) then
-			i = receiverDebtsRecords.Count ();
-			while ( i > 0 ) do
-				if ( amount = 0 ) then
-					break;
-				endif;
-				i = i - 1;
-				rowReceiver = receiverDebtsRecords [ i ];
-				amountReceiver = rowReceiver.Amount;
-				applied = Min ( amountReceiver, amount );
-				rowReceiver.Amount = amountReceiver - applied;
-				commitReceiverDebt ( Env, row, applied, rowReceiver );
-				if ( rowReceiver.Amount = 0 ) then
-					receiverDebtsRecords.Delete ( i );	
-				endif;
-				amount = amount - applied;
-			enddo;
+Procedure commitAdjustments ( Env )
+	
+	reverseVAT = vatReversal ( Env, false );
+	for each row in Env.Adjustments do
+		if ( reverseVAT ) then
+			reverseAdvance ( Env, row );
+			reverseVAT ( Env, row );
 		endif;
-		if ( amount > 0 ) then
-			receiverRecordsEmpty = true;
-			commitReceiverDebt ( Env, row, amount );
-		endif;
+		commitDebt ( Env, row );
+	enddo;
+	for each row in Env.Accounting do
+		commitDebt ( Env, row );
 	enddo;
 
 EndProcedure
 
-Procedure commitReceiverDebt ( Env, Row, Amount, RowReceiver = undefined )
-	
-	if ( samePosting ( Env, Row, RowReceiver ) ) then
-		return;
-	endif;
+Function vatReversal ( Env, ForReceiver )
+
 	fields = Env.Fields;
+	if ( ForReceiver ) then
+		isCustomer = fields.Option = Enums.AdjustmentOptions.Customer;
+		advance = fields.TypeReceiver = Enums.TypesAdjustDebts.Advance;
+		advancesMonthly = fields.ReceiverAdvancesMonthly;
+	else
+		isCustomer = Env.Customer;
+		advance = fields.Type = Enums.TypesAdjustDebts.Advance;
+		advancesMonthly = fields.AdvancesMonthly;
+	endif;
+	return isCustomer and advance and fields.ApplyVAT and not advancesMonthly;
+
+EndFunction
+
+Procedure reverseAdvance ( Env, Row )
+	
+	fields = Env.Fields;
+	coef = ? ( fields.Reversal, -1, 1 );
 	p = GeneralRecords.GetParams ();
 	date = fields.Date;
 	p.Date = date;
 	p.Company = fields.Company;
-	data = getAccountData ( Env );
-	organization = data.Organization;
-	receiver = data.Receiver;
-	p.Operation = data.Operation;
-	reversal = fields.Reversal;
-	if ( reversal ) then
-		temp = organization;
-		organization = receiver;
-		receiver = temp;
-		coef = -1;
-	else
-		coef = 1;
-	endif;
-	p.Insert ( "Account" + organization, fields.OrganizationAccount );
-	currency = fields.Currency;
-	p.Insert ( "Currency" + organization, currency );
-	contractRate = fields.ContractRate;
-	contractFactor = fields.ContractFactor;
-	contractCurrency = fields.ContractCurrency;
-	currencyAmount = coef * Currencies.Convert ( Amount, contractCurrency, currency, date, contractRate, contractFactor, fields.Rate, fields.Factor );
-	p.Insert ( "CurrencyAmount" + organization, currencyAmount );
-	p.Insert ( "Dim" + organization + "1", Row.Organization );
-	p.Insert ( "Dim" + organization + "2", Row.Contract );
-	p.Insert ( "Account" + receiver, fields.ReceiverAccount );
-	p.Insert ( "Currency" + receiver, currency );
-	if ( RowReceiver = undefined ) then
-		p.Insert ( "Dim" + receiver + "1", fields.Receiver );
-		p.Insert ( "Dim" + receiver + "2", fields.ReceiverContract );
-	else
-		p.Insert ( "Dim" + receiver + "1", RowReceiver.Receiver );
-		p.Insert ( "Dim" + receiver + "2", RowReceiver.Contract );
-	endif;
-	p.Insert ( "CurrencyAmount" + receiver, currencyAmount );
-	p.Amount = coef * Currencies.Convert ( Amount, contractCurrency, fields.LocalCurrency, date, contractRate, contractFactor );
+	drcr = Env.DrCr;
+	sideOrganization = drcr.Organization;
+	sideReceiver = drcr.Receiver;
+	organization = fields.Organization;
+	contract = fields.Contract;
+	p [ "Account" + sideReceiver ] = fields.OrganizationAccount;
+	p [ "Dim" + sideReceiver + "1" ] = organization;
+	p [ "Dim" + sideReceiver + "2" ] = contract;
+	p [ "Currency" + sideReceiver ] =  fields.Currency;
+	p [ "CurrencyAmount" + sideReceiver ] = Row.AmountDocument * coef;
+	p [ "Account" + sideOrganization ] = Row.AdvanceAccount;
+	p [ "Dim" + sideOrganization + "1" ] = organization;
+	p [ "Dim" + sideOrganization + "2" ] = contract;
+	p [ "Currency" + sideOrganization ] = fields.ContractCurrency;
+	p [ "CurrencyAmount" + sideOrganization ] = Row.Amount * coef;
+	p.Amount = Row.AmountLocal * coef;
+	p.Operation = drcr.Operation;
+	p.Dependency = Row.PrepaymentRef;
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
 	
 EndProcedure
 
-Function samePosting ( Env, Row, RowReceiver ) 
-
-	fields = Env.Fields;
-	if ( fields.OrganizationAccount <> fields.ReceiverAccount ) then
-		return false;
-	endif;
-	if ( RowReceiver = undefined ) then
-		receiver = fields.Receiver;
-		receiverContract = fields.ReceiverContract;
-	else
-		receiver = RowReceiver.Receiver;
-		receiverContract = RowReceiver.Contract;
-	endif;
-	if ( Row.Organization = receiver
-		and Row.Contract = receiverContract ) then
-		return true;
-	endif;
-	return false;
-
-EndFunction
-
-Function getAccountData ( Env )
-
-	if ( Env.Fields.IsDebt ) then
-		if ( Env.Customer ) then
-			organization = "Cr";
-			receiver = "Dr";
-			operation = Enums.Operations.AdjustDebts;
-		else
-			organization = "Dr";
-			receiver = "Cr";
-			operation = Enums.Operations.AdjustVendorDebts;
-		endif;
-	else
-		if ( Env.Customer ) then
-			organization = "Dr";
-			receiver = "Cr";
-			operation = Enums.Operations.AdjustAdvances;
-		else
-			organization = "Cr";
-			receiver = "Dr";
-			operation = Enums.Operations.AdjustVendorAdvances;
-		endif;
-	endif;
-	return new Structure ( "Organization, Receiver, Operation", organization, receiver, operation );
-
-EndFunction
-
-Procedure makeDifference ( Env ) 
-
-	receiverDebtsRecords = Env.ReceiverDebtsRecords;
-	if ( receiverDebtsRecords.Count () = 0 ) then
-		difference = Env.AdjustmentsRecords.Total ( "Amount" );
-	else
-		difference = receiverDebtsRecords.Total ( "Difference" );
-	endif;
-	if ( difference > 0 ) then
-		receiptDebts ( Env, difference );
-	endif;
-
-EndProcedure
-
-Procedure receiptDebts ( Env, Amount )
+Procedure reverseVAT ( Env, Row )
 	
-	if ( Env.Fields.IsCustomer ) then
-		movement = Env.Registers.Debts.AddReceipt ();
-	else
-		movement = Env.Registers.VendorDebts.AddReceipt ();
-	endif;
 	fields = Env.Fields;
-	movement.Period = fields.Date;
-	movement.Contract = fields.ReceiverContract;
-	movement.Document = Env.Ref;
-	if ( fields.IsReceiverDebt ) then
-		movement.Overpayment = Amount;
-	else
-		movement.Amount = Amount;
-	endif;
-	
-EndProcedure
-
-Procedure makeGeneral ( Env ) 
-
-	Env.Insert ( "Buffer", GeneralRecords.Frame () );
-	for each row in Env.AdjustmentsRecords do
-		commitDebt ( Env, row );
-	enddo;
+	p = GeneralRecords.GetParams ();
+	date = fields.Date;
+	p.Date = date;
+	p.Company = fields.Company;
+	p.Operation = Enums.Operations.VATAdvancesReverse;
+	p.AccountDr = Row.ReceivablesVATAccount;
+	p.DimDr1 = fields.Organization;
+	p.DimDr2 = fields.Contract;
+	p.AccountCr = Row.PrepaymentVATAccount;
+	p.Recordset = Env.Buffer;
+	overpayment = Row.Amount;
+	vatAmount = - overpayment + overpayment * ( 100 / ( 100 + Row.VATAdvanceRate ) );
+	amount = Currencies.Convert ( vatAmount, fields.ContractCurrency, fields.LocalCurrency, date,
+		fields.ContractRate, fields.ContractFactor, fields.Rate, fields.Factor );
+	p.Amount = amount;
+	payment = Row.PrepaymentRef;
+	p.Content = String ( Enums.Operations.VATAdvancesReverse ) + ": " + payment; 
+	p.Dependency = payment;
+	GeneralRecords.Add ( p );
 
 EndProcedure
 
 Procedure commitDebt ( Env, Row )
 	
 	fields = Env.Fields;
+	coef = ? ( fields.Reversal, -1, 1 );
 	p = GeneralRecords.GetParams ();
+	p.Recordset = Env.Buffer;
 	date = fields.Date;
 	p.Date = date;
 	p.Company = fields.Company;
-	data = getAccountData ( Env );
-	organization = data.Organization;
-	account = data.Receiver;
-	p.Operation = data.Operation;
-	p.Insert ( "Account" + organization, fields.OrganizationAccount );
-	currency = fields.Currency;
-	p.Insert ( "Currency" + organization, currency );
-	amount = Row.Amount;
-	contractRate = fields.ContractRate;
-	contractFactor = fields.ContractFactor;
-	contractCurrency = fields.ContractCurrency;
-	currencyAmount = Currencies.Convert ( amount, contractCurrency, currency, date, contractRate, contractFactor, fields.Rate, fields.Factor );
-	p.Insert ( "CurrencyAmount" + organization, currencyAmount );
-	p.Insert ( "Dim" + organization + "1", Row.Organization );
-	p.Insert ( "Dim" + organization + "2", Row.Contract );
-	p.Insert ( "Account" + account, fields.Account );
-	p.Insert ( "Currency" + account, currency );
-	p.Insert ( "Dim" + account + "1", fields.Dim1 );
-	p.Insert ( "Dim" + account + "2", fields.Dim2 );
-	p.Insert ( "Dim" + account + "3", fields.Dim3 );
-	p.Insert ( "CurrencyAmount" + account, currencyAmount );
-	p.Amount = Currencies.Convert ( amount, contractCurrency, fields.LocalCurrency, date, contractRate, contractFactor );
-	p.Recordset = Env.Buffer;
-	GeneralRecords.Add ( p );
+	drcr = Env.DrCr;
+	sideOrganization = drcr.Organization;
+	sideReceiver = drcr.Receiver;
+	dim = "Dim" + sideReceiver;
+	option = fields.Option;
+	if ( option = Enums.AdjustmentOptions.Customer
+		or option = Enums.AdjustmentOptions.Vendor ) then
+		p [ "Account" + sideReceiver ] = fields.ReceiverAccount;
+		p [ dim + "1" ] = fields.Receiver;
+		p [ dim + "2" ] = fields.ReceiverContract;
+	else
+		p [ "Account" + sideReceiver ] = fields.Account;
+		p [ dim + "1" ] = fields.Dim1;
+		p [ dim + "2" ] = fields.Dim2;
+		p [ dim + "3" ] = fields.Dim3;
+	endif;
+	p [ "Currency" + sideReceiver ] =  fields.Currency;
+	p [ "CurrencyAmount" + sideReceiver ] = ( row.AmountDocument - row.VATDocument ) * coef;
+	p [ "Account" + sideOrganization ] = Row.OrganizationAccount;
+	dim = "Dim" + sideOrganization;
+	p [ dim + "1" ] = fields.Organization;
+	p [ dim + "2" ] = fields.Contract;
+	p [ "Currency" + sideOrganization ] = fields.ContractCurrency;
+	p [ "CurrencyAmount" + sideOrganization ] = ( row.Amount - row.VAT ) * coef;
+	p.Operation = drcr.Operation;
+	if ( fields.ApplyVAT ) then
+		vat = row.VATLocal;
+		p.Amount = ( row.AmountLocal - vat ) * coef;
+		GeneralRecords.Add ( p );
+		if ( vat <> 0 ) then
+			p [ "Account" + sideReceiver ] = Row.VATAccount;
+			p [ "CurrencyAmount" + sideReceiver ] = row.VATDocument * coef;
+			p [ "CurrencyAmount" + sideOrganization ] = row.VAT * coef;
+			p.Amount = vat * coef;
+			p.Operation = Enums.Operations.VATPayable;
+			GeneralRecords.Add ( p );
+		endif;
+	else
+		p.Amount = row.AmountLocal * coef;
+		GeneralRecords.Add ( p );
+	endif;
 	
+EndProcedure
+
+Procedure reverseReceiverAdvances ( Env )
+	
+	if ( not vatReversal ( Env, true ) ) then
+		return;
+	endif;
+	for each row in Env.AdjustmentsReceiver do
+		reverseAdvance ( Env, row );
+		reverseVAT ( Env, row );
+	enddo;
+
 EndProcedure
 
 Procedure makeExpenses ( Env ) 
@@ -427,73 +643,10 @@ Procedure makeExpenses ( Env )
 
 EndProcedure
 
-Procedure fixCurrency ( Env )
-	
-	fields = Env.Fields;
-	localCurrency = fields.LocalCurrency;
-	currency = fields.Currency;
-	contractCurrency = fields.ContractCurrency;
-	if ( currency = localCurrency
-		and contractCurrency = localCurrency ) then
-		return;
-	endif;
-	if ( currency <> localCurrency ) then
-		fixCurrencyAmount ( Env );
-	endif;
-	if ( currency <> contractCurrency ) then
-		fixAmount ( Env );
-	endif;
-
-EndProcedure 
-
-Procedure fixCurrencyAmount ( Env )
-	
-	fields = Env.Fields;
-	record = undefined;
-	max = 0;
-	fix = fields.Amount;
-	cash = "CurrencyAmount" + ? ( Env.Customer, "Dr", "Cr" );
-	for each row in Env.Buffer do
-		currencyAmount = row [ cash ];
-		amount = ? ( currencyAmount < 0, - currencyAmount, currencyAmount );
-		fix = fix - currencyAmount;
-		if ( max < amount ) then
-			Record = row;
-			max = amount;
-		endif; 
-	enddo;
-	if ( fix <> 0
-		and record <> undefined ) then
-		record [ cash ] = record [ cash ] + fix;
-	endif; 
-	
-EndProcedure
-
-Procedure fixAmount ( Env )
-	
-	fields = Env.Fields;
-	record = undefined;
-	max = 0;
-	fix = Currencies.Convert ( fields.Amount, fields.Currency, fields.LocalCurrency, fields.Date, fields.Rate, fields.Factor, , , 2 );
-	for each row in Env.Buffer do
-		amount = ? ( row.Amount < 0, - row.Amount, row.Amount );
-		fix = fix - row.Amount;
-		if ( max < amount ) then
-			Record = row;
-			max = amount;
-		endif; 
-	enddo;
-	if ( fix <> 0
-		and record <> undefined ) then
-		record.Amount = record.Amount + fix;
-	endif; 
-	
-EndProcedure 
-
 Procedure flagRegisters ( Env )
 	
 	registers = Env.Registers;
-	GeneralRecords.Flush ( registers.General, Env.Buffer );
+	GeneralRecords.Flush ( registers.General, Env.Buffer, true );
 	registers.General.Write = true;
 	registers.Debts.Write = true;
 	registers.VendorDebts.Write = true;

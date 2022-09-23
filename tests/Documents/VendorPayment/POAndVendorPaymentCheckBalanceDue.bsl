@@ -4,7 +4,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "2B252ACF"));
+this.Insert("ID", Call("Common.ScenarioID", "A0UQ"));
 getEnv();
 createEnv();
 
@@ -26,6 +26,7 @@ Assert(0 + Fetch("#PaymentsApplied")).Equal(0);
 // Create Payment
 Click("#CreatePayment");
 With ();
+Put ( "#Amount", 980 );
 Click ( "#FormPostAndClose" );
 
 // Check Payments Applied

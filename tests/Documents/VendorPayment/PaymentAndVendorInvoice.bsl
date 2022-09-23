@@ -5,14 +5,14 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "A02B"));
+this.Insert("ID", Call("Common.ScenarioID", "A0UN"));
 getEnv();
 createEnv();
 
 // Create payment
 Commando("e1cib/command/Document.VendorPayment.Create");
 Set("#Vendor", this.Vendor);
-Set("#Amount", 1000);
+Put("#Amount", 1000);
 Click("#FormPostAndClose");
 
 // Create VendorInvoice

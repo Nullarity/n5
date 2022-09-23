@@ -11,7 +11,8 @@ Procedure CommandProcessing ( Reference, ExecuteParameters )
 		organization.Value = Reference;
 	else
 		if ( type = Type ( "DocumentRef.Payment" )
-			or type = Type ( "DocumentRef.Refund" ) ) then
+			or type = Type ( "DocumentRef.Refund" )
+			or type = Type ( "DocumentRef.AdjustDebts" ) ) then
 			name = "Customer";
 		else
 			name = "Vendor";

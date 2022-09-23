@@ -275,10 +275,12 @@ Procedure setDefaultValues ()
 		Object.Storekeeper = fields.Storekeeper;
 		Object.Carrier = fields.Carrier;
 		Object.Dispatcher = fields.Dispatcher;
-		data = CoreLibrary.SeriesAndNumber ( fields.Number );
-		series = data.Series;
-		Object.Series = series;
-		Object.Number = RegulatedRanges.BuildNumber ( , series, data.Number, true );
+		if ( Object.Range.IsEmpty () ) then
+			data = CoreLibrary.SeriesAndNumber ( fields.Number );
+			series = data.Series;
+			Object.Series = series;
+			Object.Number = RegulatedRanges.BuildNumber ( , series, data.Number, true );
+		endif;
 	endif;
 
 EndProcedure

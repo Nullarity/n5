@@ -14,7 +14,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "286CF2F6" );
+id = Call ( "Common.ScenarioID", "A0UH" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -34,7 +34,7 @@ Check("#Payments / #PaymentsAmount[2]", 50.00);
 
 // Uncheck Pay's flags and check if Payment amount changes
 Click("#Payments / #PaymentsPay[1]");
-Check("#Amount", 50.00 );
+Assert ( Fetch ( "#Info" ) ).Contains ( "Payment Amount is 100.00 MDL" );
 
 // Click Pay checkbox for the first invoice
 Click("#Payments / #PaymentsPay[1]");
@@ -47,19 +47,18 @@ Check("#Payments / #PaymentsPay[2]", "No");
 
 // Make overpayment for the second invoice
 Set("#Payments / #PaymentsAmount[2]", env.Price + 10 );
-Check("#Payments / #PaymentsOverpayment[2]", 10.00);
 
 // Uncheck Pay's flags for the first invoice and update table
 Click("#Payments / #PaymentsPay[1]");
 Click("#Update");
-Click("Yes");
+Click("Yes", DialogsTitle);
 
 // Check if total payment is correct and checkbox for second invoice is automatically enabled
 Check("#Payments / #PaymentsPay[1]", "No");
-Check("#Amount", env.Price + 10 );
+Assert ( Fetch ( "#Info" ) ).Contains ( "Payment Amount is 40.00 MDL" );
 
 // Click save and check rows count: it should be 1 row only
-Click("#FormWrite");
+Click("#JustSave");
 invoices = Call("Table.Count", Get("#Payments"));
 if (invoices <> 1) then
 	Stop("Only 1 Invoice should left in the documents list");
@@ -68,7 +67,7 @@ endif;
 // Refill document and post
 Set("#Amount", env.Price );
 Click("#Refill");
-Click("Yes");
+Click("Yes", DialogsTitle);
 Click("#FormPost");
 
 // *************************
@@ -124,7 +123,6 @@ Procedure createEnv ( Env )
 		Set("#ServicesQuantity", 1);
 		Set("#ServicesPrice", env.Price);
 		Put("#ServicesExpense","Others");
-		Put ( "#TaxCode", "Non-Taxable Sales" );
 		Click("#FormPostAndClose");
 	EndDo;
 	

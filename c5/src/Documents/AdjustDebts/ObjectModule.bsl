@@ -24,13 +24,7 @@ EndProcedure
 Function checkAmount ()
 	
 	if ( Amount = Applied ) then
-		if ( UseReceiver ) then
-			if ( Amount = AppliedReceiver ) then
-				return true;
-			endif;
-		else
-			return true;
-		endif;
+		return true;
 	endif;
 	Output.AdjustDebtsError ( , "Amount" );
 	return false;
@@ -48,6 +42,25 @@ Procedure checkAttributes ( CheckedAttributes )
 	else
 		CheckedAttributes.Add ( "Account" );
 	endif;
+
+EndProcedure
+
+Procedure BeforeWrite ( Cancel, WriteMode, PostingMode )
+
+	if ( DataExchange.Load ) then
+		return;
+	endif; 
+	if ( DeletionMark ) then
+		InvoiceRecords.Delete ( ThisObject );
+	endif;
+
+EndProcedure
+
+Procedure OnWrite ( Cancel )
+
+	if ( not DeletionMark ) then
+		InvoiceRecords.Sync ( ThisObject );
+	endif; 
 
 EndProcedure
 

@@ -1,7 +1,7 @@
 #region Filling
 
 &AtServer
-Procedure FillNew ( Form ) export
+Procedure fillNew ( Form )
 	
 	p = Form.Parameters;
 	if ( not p.CopyingValue.IsEmpty () ) then
@@ -59,17 +59,13 @@ Procedure Fill ( Form ) export
 		getInvoiceData ( env );
 	endif;
 	fillHeader ( Env );
-	PaymentForm.FillTable ( object );
-	PaymentForm.ToggleDetails ( Form );
+	fillTable ( object );
+	toggleDetails ( Form );
 	fillAmounts ( object );
-	PaymentForm.CalcContractAmount ( object, 2 );
-	PaymentForm.CalcPaymentAmount ( object );
-	type = TypeOf ( object.Ref );
-	if ( type = Type ( "DocumentRef.Payment" ) ) then
-		PaymentForm.CalcAppliedAmount ( Object, 1 );
-		PaymentForm.SetVATAdvance ( Object );
-	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
-		PaymentForm.CalcAppliedAmount ( Object, 1 );
+	calcContract ( object );
+	calcApplied ( object );
+	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Payment" ) ) then
+		PaymentForm.SetVATAdvance ( object );
 	endif;
 	PaymentForm.SetAccount ( object );
 	PaymentForm.SetOrganizationAccounts ( object );
@@ -140,7 +136,7 @@ Procedure fillHeader ( Env )
 EndProcedure
 
 &AtServer
-Procedure FillTable ( Object ) export
+Procedure fillTable ( Object )
 	
 	payments = Object [ getTableName ( Object ) ];
 	if ( Object.Contract.IsEmpty () ) then
@@ -299,60 +295,40 @@ Procedure fillAmounts ( Object )
 	table = Object [ getTableName ( Object ) ];
 	for each row in table do
 		PaymentForm.CalcAmount ( row );
-		PaymentForm.TogglePay ( row );
+		togglePay ( row );
 	enddo; 
 	
 EndProcedure
 
 #endregion
 
-Procedure DistributeAmount ( Object ) export
+Procedure distributeAmount ( Object )
 	
 	table = Object [ getTableName ( Object ) ];
-	j = table.Count () - 1;
-	if ( j = -1 ) then
-		return;
-	endif; 
 	amount = Object.ContractAmount;
-	for i = 0 to j do
-		row = table [ i ];
-		payment = row.Payment - row.Discount;
-		row.Amount = Min ( amount, payment );
-		amount = amount - row.Amount;
-		if ( i = j
-			and amount > 0 ) then
-			row.Amount = row.Amount + amount;
-		endif; 
-		PaymentForm.TogglePay ( row );
-		PaymentForm.CalcOverpayment ( row );
+	for each row in table do
+		applied = Min ( row.Payment - row.Discount, amount );
+		if ( applied <= 0 ) then
+			continue;
+		endif;
+		row.Amount = applied;
+		togglePay ( row );
+		amount = amount - applied;
 	enddo; 
 
 EndProcedure
 
-Procedure TogglePay ( TableRow ) export
+Procedure togglePay ( TableRow )
 	
 	TableRow.Pay = TableRow.Amount <> 0;
 	
 EndProcedure
 
-Procedure CalcContractAmount ( Object, Method ) export
+Procedure calcContract ( Object )
 	
-	if ( Method = 1
-		or Object.Payments.Count () = 0 ) then
-		Object.ContractAmount = Currencies.Convert ( Object.Amount, Object.Currency, Object.ContractCurrency, Object.Date, Object.Rate, Object.Factor, Object.ContractRate, Object.ContractFactor );
-	elsif ( Method = 2 ) then
-		Object.ContractAmount = Object.Payments.Total ( "Amount" );
-	endif;
+	Object.ContractAmount = Currencies.Convert ( Object.Amount, Object.Currency, Object.ContractCurrency,
+		Object.Date, Object.Rate, Object.Factor, Object.ContractRate, Object.ContractFactor );
 
-EndProcedure 
-
-Procedure CalcPaymentAmount ( Object ) export
-	
-	Object.Amount = getPaymentAmount ( Object );
-	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.VendorPayment" ) ) then
-		PaymentForm.CalcHandout ( Object );
-	endif;
-	
 EndProcedure 
 
 Procedure CalcHandout ( Object ) export
@@ -362,18 +338,16 @@ Procedure CalcHandout ( Object ) export
 	
 EndProcedure
 
-Function getPaymentAmount ( Object )
+Procedure calcApplied ( Object )
 	
-	return Currencies.Convert ( Object.ContractAmount, Object.ContractCurrency, Object.Currency, Object.Date, Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
-	
-EndFunction
-
-Procedure CalcAppliedAmount ( Object, Method ) export
-	
-	if ( Method = 1 ) then
+	applied = Object.Payments.Total ( "Amount" );
+	if ( applied = 0 ) then
+		Object.Applied = 0;
+	elsif ( applied = Object.ContractAmount ) then
 		Object.Applied = Object.Amount;
-	elsif ( Method = 2 ) then
-		Object.Applied = getPaymentAmount ( Object );
+	else
+		Object.Applied = Currencies.Convert ( applied, Object.ContractCurrency, Object.Currency, Object.Date,
+			Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
 	endif;
 	
 EndProcedure 
@@ -398,18 +372,6 @@ Procedure CalcAmount ( TableRow ) export
 	TableRow.Amount = Max ( 0, TableRow.Payment - TableRow.Discount );
 	
 EndProcedure
-
-Procedure CalcOverpayment ( TableRow ) export
-	
-	payment = TableRow.Amount;
-	debt = TableRow.Payment + TableRow.Discount;
-	if ( payment = 0 ) then
-		TableRow.Overpayment = 0;
-	else
-		TableRow.Overpayment = Max ( 0, payment - ? ( debt > 0, debt, - debt ) );
-	endif;
-	
-EndProcedure 
 
 &AtServer
 Procedure SetAccount ( Object ) export
@@ -604,6 +566,10 @@ EndProcedure
 &AtServer
 Procedure Check ( Object, Cancel, CheckedAttributes ) export
 	
+	if ( not checkAmount ( Object ) ) then
+		Cancel = true;
+		return;
+	endif;
 	if ( not credits ( Object ) ) then
 		CheckedAttributes.Add ( "Amount" );
 	endif;
@@ -613,6 +579,16 @@ Procedure Check ( Object, Cancel, CheckedAttributes ) export
 	endif;
 	
 EndProcedure
+
+Function checkAmount ( Object )
+	
+	if ( Object.Amount < Object.Applied ) then
+		Output.PaymentError ( , "Amount" );
+		return false;
+	endif;
+	return true;
+	
+EndFunction
 
 &AtServer
 Function credits ( Object )
@@ -650,7 +626,7 @@ Procedure checkIncomeTax ( Object, CheckedAttributes )
 EndProcedure 
 
 &AtServer
-Procedure SetTitle ( Form ) export
+Procedure setTitle ( Form )
 	
 	object = Form.Object;
 	items = Form.Items;
@@ -661,7 +637,7 @@ Procedure SetTitle ( Form ) export
 EndProcedure 
 
 &AtServer
-Procedure FilterAccount ( Form ) export
+Procedure filterAccount ( Form )
 	
 	object = Form.Object;
 	items = Form.Items;
@@ -685,7 +661,7 @@ Procedure FilterAccount ( Form ) export
 EndProcedure 
 
 &AtServer
-Procedure ToggleDetails ( Form ) export
+Procedure toggleDetails ( Form )
 	
 	object = Form.Object;
 	type = TypeOf ( object.Ref );
@@ -708,28 +684,26 @@ Procedure ToggleDetails ( Form ) export
 EndProcedure
 
 &AtServer
-Procedure Refill ( Form ) export
+Procedure refill ( Form )
 	
 	object = Form.Object;
-	PaymentForm.FillTable ( object );
-	PaymentForm.DistributeAmount ( object );
-	PaymentForm.ToggleDetails ( Form );
+	fillTable ( object );
+	distributeAmount ( object );
+	calcApplied ( object );
+	toggleDetails ( Form );
 
 EndProcedure
 
 &AtServer
-Procedure Update ( Form ) export
+Procedure update ( Form )
 	
 	object = Form.Object;
 	paid = fetchPaid ( object );
-	PaymentForm.FillTable ( object );
-	PaymentForm.ToggleDetails ( Form );
+	fillTable ( object );
+	toggleDetails ( Form );
 	applyPayments ( object, paid );
-	PaymentForm.CalcContractAmount ( object, 2 );
-	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Payment" )
-		or TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorRefund" ) ) then
-		PaymentForm.CalcAppliedAmount ( object, 2 );
-	endif;
+	calcContract ( object );
+	calcApplied ( object );
 
 EndProcedure
 
@@ -759,8 +733,7 @@ Procedure applyPayments ( Object, Paid )
 		else
 			row = rows [ 0 ];
 			row.Amount = payment.Amount;
-			PaymentForm.CalcOverpayment ( row );
-			PaymentForm.TogglePay ( row );
+			togglePay ( row );
 		endif;
 	enddo;
 	
@@ -776,33 +749,401 @@ Procedure paymentNotFound ( Payment )
 EndProcedure
 
 &AtClient
-Procedure ApplyPay ( Form ) export
+Procedure ApplyPay ( Object, Row ) export
+	
+	if ( Row.Pay ) then
+		payment = Row.Payment - Row.Discount;
+		if ( Object.Amount > 0 ) then
+			Row.Amount = ? ( payment > 0, payment, - payment );
+		else
+			Row.Amount = ? ( payment > 0, - payment, payment );
+		endif;
+	else
+		Row.Amount = 0;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure BeforeWriteAtServer ( CurrentObject, Form ) export
+	
+	passCopy ( CurrentObject, Form );
+	PaymentForm.Clean ( CurrentObject.Payments );	
+
+EndProcedure
+
+&AtServer
+Procedure passCopy ( CurrentObject, Form )
+	
+	if ( CurrentObject.IsNew () ) then
+		CurrentObject.AdditionalProperties.Insert ( Enum.AdditionalPropertiesCopyOf (), Form.CopyOf ); 
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure ApplyContractRate ( Form ) export
 	
 	object = Form.Object;
-	paymentsRow = Form.PaymentsRow;
-	if ( paymentsRow.Pay ) then
-		debt = paymentsRow.Payment - paymentsRow.Discount;
-		type = TypeOf ( object.Ref );
-		if ( type = Type ( "DocumentRef.Payment" )
-			or type = Type ( "DocumentRef.VendorRefund" ) ) then
-			rest = object.Amount - object.Applied;
-			rest = Currencies.Convert ( rest, object.Currency, object.ContractCurrency, object.Date, object.Rate, object.Factor, object.ContractRate, object.ContractFactor );
-			if ( rest > 0 ) then
-				if ( debt > 0 ) then
-					amount = Max ( 0, Min ( rest, debt ) )
-				else
-					amount = debt;
-				endif;
-			else
-				amount = debt;
-			endif;
-		else
-			amount = Max ( 0, debt );
-		endif;
-		paymentsRow.Amount = amount;
-	else
-		paymentsRow.Amount = 0;
-	endif;
-	PaymentForm.CalcOverpayment ( paymentsRow );
+	calcContract ( object );
+	calcApplied ( object );
+	updateInfo ( Form );
 	
+EndProcedure
+
+Procedure updateInfo ( Form )
+	
+	object = Form.Object;
+	difference = object.Amount - object.Applied;
+	if ( difference = 0 ) then
+		Form.Info = "";
+	else
+		Form.Info = Output.PaymentDifference ( new Structure ( "Amount", Conversion.NumberToMoney ( difference, object.Currency ) ) );
+	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure AmountOnChange ( Form ) export
+	
+	object = Form.Object;
+	calcContract ( object );
+	distributeAmount ( object );
+	calcApplied ( object );
+	updateInfo ( Form );
+	
+EndProcedure
+
+&AtServer
+Procedure OnReadAtServer ( Form ) export
+	
+	PettyCash.Read ( Form );
+	InvoiceForm.SetLocalCurrency ( Form );
+	Constraints.ShowAccess ( Form );
+	toggleDetails ( Form );
+	updateInfo ( Form );
+	Appearance.Apply ( Form );
+
+EndProcedure
+
+&AtServer
+Procedure OnCreateAtServer ( Form ) export
+	
+	object = Form.Object;
+	if ( object.Ref.IsEmpty () ) then
+		InvoiceForm.SetLocalCurrency ( Form );
+		DocumentForm.Init ( Object );
+		params = Form.Parameters;
+		if ( params.Basis = undefined ) then
+			fillNew ( Form );
+			fillByOrganization ( Form );
+		else
+			fill ( Form );
+		endif; 
+		Form.CopyOf = params.CopyingValue;
+		updateInfo ( Form );
+		Constraints.ShowAccess ( Form );
+	endif; 
+	filterAccount ( Form );
+	setTitle ( Form );
+	StandardButtons.Arrange ( Form );
+	readAppearance ( Form );
+	Appearance.Apply ( Form );
+	
+EndProcedure
+
+&AtServer
+Procedure readAppearance ( Form )
+
+	type = TypeOf ( Form.Object.Ref );
+	isPayment = type = Type ( "DocumentRef.Payment" );
+	isRefund = type = Type ( "DocumentRef.Refund" );
+	isVendorPayment = type = Type ( "DocumentRef.VendorPayment" );
+	isVendorRefund = type = Type ( "DocumentRef.VendorRefund" );
+	rules = new Array ();
+	rules.Add ( "
+	|Base show filled ( Object.Base );
+	|Rate Factor enable Object.Currency <> LocalCurrency and Object.Currency <> Object.ContractCurrency;
+	|ContractRate ContractFactor enable Object.ContractCurrency <> LocalCurrency;
+	|BankAccount show Object.Method <> Enum.PaymentMethods.Cash;
+	|Reference ReferenceDate PaymentContent show Object.Method <> Enum.PaymentMethods.Cash;
+	|Warning UndoPosting show Object.Posted;
+	|Header GroupDocuments GroupCurrency GroupMore lock Object.Posted;
+	|GroupFill MarkAll1 UnmarkAll1 enable not Object.Posted
+	|" );
+	if ( isPayment or isRefund ) then
+		rules.Add ( "
+		|Customer Contract Company lock filled ( Object.Base );
+		|" );
+		if ( isPayment ) then
+			rules.Add ( "
+			|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash
+			|	and not field ( Object.Location, ""Register"" );
+			|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
+			|" );
+		endif;
+	else
+		rules.Add ( "
+		|Vendor Contract Company lock filled ( Object.Base );
+		|" );
+		if ( isVendorPayment ) then
+			rules.Add ( "
+			|Employee ExpenseReport show Object.Method = Enum.PaymentMethods.ExpenseReport;
+			|Location show Object.Method <> Enum.PaymentMethods.ExpenseReport;
+			|GroupIncomeTax show filled ( Object.IncomeTax );
+			|" );
+		endif;
+	endif;
+	if ( isRefund or isVendorPayment ) then
+		rules.Add ( "
+		|NewVoucher show empty ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
+		|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
+		|" );
+	endif;
+	Appearance.Read ( Form, rules );
+
+EndProcedure
+
+&AtServer
+Procedure fillByOrganization ( Form )
+	
+	params = Form.Parameters;
+	object = Form.Object;
+	type = TypeOf ( object );
+	if ( type = Type ( "DocumentRef.Payment" )
+		or type = Type ( "DocumentRef.Refund" )
+	) then
+		field = "Customer";
+	else
+		field = "Vendor";
+	endif;
+	apply = params.FillingValues.Property ( field )
+	and params.CopyingValue.IsEmpty () 
+	and not object [ field ].IsEmpty ();
+	if ( apply ) then
+		PaymentForm.ApplyOrganization ( Form );
+		if ( type = Type ( "DocumentRef.VendorPayment" ) ) then
+			fillByExpenseReport ( Form );
+		endif;
+	endif;
+	
+EndProcedure 
+
+&AtServer
+Procedure fillByExpenseReport ( Form )
+	
+	object = Form.Object;
+	if ( not object.ExpenseReport.IsEmpty () ) then
+		object.Method = Enums.PaymentMethods.ExpenseReport;
+		PaymentForm.ApplyExpenseReport ( Form );
+	endif;
+
+EndProcedure 
+
+&AtServer
+Procedure ApplyExpenseReport ( Form ) export 
+	
+	object = Form.Object;
+	data = DF.Values ( Object.ExpenseReport, "EmployeeAccount, Currency" );
+	object.Account = data.EmployeeAccount;
+	object.Currency = data.Currency;
+	PaymentForm.ApplyCurrency ( Form );
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyOrganization ( Form ) export
+	
+	object = Form.Object;
+	PaymentForm.SetOrganizationAccounts ( object );
+	PaymentForm.SetContract ( object );
+	PaymentForm.ApplyContract ( Form );
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyContract ( Form ) export
+	
+	object = Form.Object;
+	loadContract ( object );
+	PaymentForm.ApplyMethod ( Form );
+	calcContract ( object );
+	calcApplied ( object );
+	setTitle ( Form );
+	refill ( Form );
+	updateInfo ( Form );
+	Appearance.Apply ( Form, "Object.ContractCurrency" );
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyMethod ( Form ) export
+	
+	object = Form.Object;
+	PaymentForm.SetBankAccount ( object );
+	applyBankAccount ( Form );
+	filterAccount ( Form );
+	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorPayment" ) ) then
+		resetExpenseReport ( object );
+	endif;
+	Appearance.Apply ( Form, "Object.Method" );
+	
+EndProcedure
+
+&AtServer
+Procedure resetExpenseReport ( Object ) 
+	
+	if ( Object.Method <> Enums.PaymentMethods.ExpenseReport ) then
+		Object.ExpenseReport = undefined;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyBankAccount ( Form ) export
+	
+	object = Form.Object;
+	setAccount ( object );
+	setCurrency ( object );
+	PaymentForm.ApplyCurrency ( Form );
+	
+EndProcedure 
+
+&AtServer
+Procedure ApplyCurrency ( Form ) export
+	
+	object = Form.Object;
+	PaymentForm.SetRates ( object );
+	applyRate ( Form );
+	Appearance.Apply ( Form, "Object.Currency" );
+	
+EndProcedure 
+
+Procedure applyRate ( Form )
+	
+	object = Form.Object;
+	calcContract ( object );
+	calcApplied ( object );
+	distributeAmount ( object );
+	updateInfo ( Form );
+	
+EndProcedure 
+
+&AtServer
+Procedure ApplyDataUpdate ( Form, Refilling ) export
+	
+	object = Form.Object;
+	if ( Refilling ) then
+		calcContract ( object );
+		refill ( Form );
+	else
+		update ( Form );
+	endif;
+	updateInfo ( Form );
+	Form.CurrentItem = Form.Items.Payments;
+
+EndProcedure
+
+&AtServer
+Procedure AfterWriteAtServer ( Form ) export
+	
+	PettyCash.Read ( Form );
+	Appearance.Apply ( Form );
+	
+EndProcedure
+
+&AtClient
+Procedure AfterWrite ( Form ) export
+	
+	object = Form.Object;
+	type = TypeOf ( object.Ref );
+	if ( type = Type ( "DocumentRef.Payment" ) ) then
+		Notify ( Enum.MessagePaymentIsSaved (), object );
+	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
+		Notify ( Enum.MessageVendorPaymentIsSaved (), object );
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyLocation ( Form ) export
+	
+	object = Form.Object;
+	setAccount ( object );
+	filterAccount ( Form );
+	Appearance.Apply ( Form, "Object.Location" );
+	
+EndProcedure 
+
+&AtClient
+Procedure RateOnChange ( Form ) export
+	
+	object = Form.Object;
+	if ( object.Rate = 0 ) then
+		object.Rate = 1;
+	endif;
+	if ( object.Factor = 0 ) then
+		object.Factor = 1;
+	endif;
+	applyRate ( Form );
+	
+EndProcedure
+
+&AtClient
+Procedure Mark ( Form, Flag ) export 
+
+	object = Form.Object;
+	for each row in object.Payments do
+		if ( row.Pay = Flag ) then
+			continue;
+		endif;
+		row.Pay = Flag;
+		PaymentForm.ApplyPay ( object, row );
+	enddo;
+	calcContract ( object );
+	calcApplied ( object );
+	updateInfo ( Form );
+
+EndProcedure
+
+&AtClient
+Procedure PaymentsDiscountRateOnChange ( Row ) export
+	
+	calcDiscount ( Row );
+	calcAmount ( Row );
+	
+EndProcedure
+
+&AtClient
+Procedure PaymentsDiscountOnChange ( Row ) export
+	
+	calcDiscountRate ( Row );
+	calcAmount ( Row );
+	
+EndProcedure
+
+&AtClient
+Procedure PaymentsOnEditEnd ( Form, Item, CancelEdit ) export
+	
+	if ( not CancelEdit ) then
+		togglePay ( Item.CurrentData );
+	endif;
+	changeApplied ( Form );
+
+EndProcedure
+
+&AtClient
+Procedure changeApplied ( Form )
+	
+	object = Form.Object;
+	calcApplied ( object );
+	updateInfo ( Form );
+	
+EndProcedure 
+
+&AtClient
+Procedure PaymentsAfterDeleteRow ( Form ) export
+	
+	changeApplied ( Form );
+
 EndProcedure

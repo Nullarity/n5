@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A61A67C" );
+id = Call ( "Common.ScenarioID", "A0UK" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -15,10 +15,8 @@ createEnv ( env );
 Commando("e1cib/command/Document.VendorPayment.Create");
 With("Vendor Payment (create)");
 Put("#Vendor", env.Vendor);
+Put("#Amount", 300);
 
-Click("#Payments / #PaymentsPay[1]");
-Click("#Payments / #PaymentsPay[2]");
-Click("#Payments / #PaymentsPay[3]");
 Put("#IncomeTax", "CC");
 Set("#IncomeTaxRate", 5);
 Next();

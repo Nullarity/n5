@@ -466,7 +466,7 @@ EndProcedure
 &AtClient
 Procedure PaymentsPayOnChange ( Item )
 	
-	PaymentForm.ApplyPay ( ThisObject );
+	PaymentForm.ApplyPay ( Object, PaymentsRow );
 	
 EndProcedure
 

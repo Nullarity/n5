@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A6CA310" );
+id = Call ( "Common.ScenarioID", "A0UM" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -16,6 +16,7 @@ createEnv ( env );
 Commando("e1cib/command/Document.VendorPayment.Create");
 With("Vendor Payment (create)");
 Put("#Vendor", env.Vendor);
+Put("#Amount", 524.54);
 
 Set ("#Account", "2432");
 Set ("#VendorAccount", "5212");

@@ -44,6 +44,9 @@ EndFunction
 
 Procedure OnWrite ( Cancel )
 	
+	if ( DataExchange.Load ) then
+		return;
+	endif; 
 	if ( not DeletionMark ) then
 		InvoiceRecords.Sync ( ThisObject );
 	endif; 

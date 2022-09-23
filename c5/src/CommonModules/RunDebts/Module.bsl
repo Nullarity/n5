@@ -118,6 +118,7 @@ Procedure closeOverpayments ( Env )
 		movement.PaymentKey = row.PaymentKey;
 		movement.Detail = row.Detail;
 		movement.Overpayment = row.Amount;
+		movement.Advance = row.AmountAccounting;
 		if ( commitAdvances ) then
 			registerOverpayment ( payments, movement, row );
 		endif;
@@ -135,7 +136,7 @@ Function closeResource ( Env, Table )
 		p.Insert ( "OptionalFilterColumns", "Document" );
 	endif;
 	p.Insert ( "KeyColumn", "Amount" );
-	p.Insert ( "DecreasingColumns2", "Amount" );
+	p.Insert ( "DecreasingColumns2", "Amount, AmountAccounting" );
 	result = CollectionsSrv.Decrease ( Table, Env.Documents, p );
 	return result;
 	
@@ -178,6 +179,7 @@ Procedure decreaseDebts ( Env, Table )
 		movement.Detail = row.Detail;
 		amount = - row.Amount;
 		movement.Amount = amount;
+		movement.Accounting = - Row.AmountAccounting;
 		movement.Payment = amount;
 	enddo; 
 	
@@ -188,7 +190,7 @@ Function closeDiscounts ( Env )
 	p = new Structure ();
 	p.Insert ( "FilterColumns", "Document, Detail" );
 	p.Insert ( "KeyColumn", "Amount" );
-	p.Insert ( "DecreasingColumns2", "Amount" );
+	p.Insert ( "DecreasingColumns2", "Amount, AmountAccounting" );
 	table = CollectionsSrv.Decrease ( Env.Debts, Env.DiscountsTable, p );
 	if ( Env.DiscountsTable.Count () > 0 ) then
 		ref = Env.Ref;
@@ -217,7 +219,8 @@ Function detailPayments ( Env )
 	for each row in table do
 		amount = row.Amount;
 		if ( row.PaymentDate <= date ) then
-			Output.PaymentExpired ( new Structure ( "Option, Amount", row.Option, Conversion.NumberToMoney ( amount, Env.Fields.Currency ) ), , ref );
+			Output.PaymentExpired ( new Structure ( "Option, Amount",
+				row.Option, Conversion.NumberToMoney ( amount, Env.Fields.Currency ) ), , ref );
 			return false;
 		endif; 
 		bill = Min ( amount, row.Bill );
@@ -241,6 +244,7 @@ Function detailPayments ( Env )
 		endif; 
 		movement.Detail = ref;
 		movement.Amount = amount;
+		movement.Accounting = row.AmountAccounting;
 		movement.Payment = amount;
 		movement.Bill = bill;
 	enddo; 
@@ -291,6 +295,7 @@ Procedure addDebt ( Env )
 		movement.Contract = Env.Fields.Contract;
 		amount = reverse * row.Amount;
 		movement.Amount = amount;
+		movement.Accounting = row.AmountAccounting;
 		movement.Payment = amount;
 		document = row.Document;
 		details = ValueIsFilled ( document );
@@ -506,20 +511,21 @@ Procedure sqlDocuments ( Env )
 	type = Env.Type;
 	if ( type = Type ( "DocumentRef.Invoice" ) ) then
 		s = "
-		|select Documents.Document as Document, sum ( Documents.Amount ) as Amount
+		|select Documents.Document as Document, sum ( Documents.Amount ) as Amount,
+		|	sum ( Documents.AmountAccounting ) as AmountAccounting
 		|into Documents
 		|from (
 		|	select case Items.SalesOrder when value ( Document.SalesOrder.EmptyRef ) then undefined else Items.SalesOrder end as Document,
-		|		Items.ContractAmount + Items.ContractVAT as Amount
+		|		Items.ContractAmount + Items.ContractVAT as Amount, Items.AmountGeneral + Items.VAT as AmountAccounting
 		|	from Items as Items
 		|	union all
 		|	select case Services.SalesOrder when value ( Document.SalesOrder.EmptyRef ) then undefined else Services.SalesOrder end,
-		|		Services.ContractAmount + Services.ContractVAT
+		|		Services.ContractAmount + Services.ContractVAT, Services.AmountGeneral + Services.VAT
 		|	from Services as Services";
 		if ( fields.DiscountsBeforeDelivery ) then
 			s = s + "
 			|union all
-			|select Discounts.Document, - Discounts.Total
+			|select Discounts.Document, - Discounts.Total, Discounts.Amount + Discounts.VAT
 			|from Discounts as Discounts
 			|where BeforeDelivery
 			|";
@@ -530,7 +536,7 @@ Procedure sqlDocuments ( Env )
 		|index by Document
 		|;
 		|// #Documents
-		|select Documents.Amount as Amount, Documents.Document as Document
+		|select Documents.Amount as Amount, Documents.AmountAccounting as AmountAccounting, Documents.Document as Document
 		|from Documents as Documents
 		|";
 		if ( fields.DiscountsAfterDelivery ) then
@@ -538,36 +544,37 @@ Procedure sqlDocuments ( Env )
 			|;
 			|// #DiscountsTable
 			|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail,
-			|	Discounts.Total as Amount
+			|	Discounts.Total as Amount, Discounts.Amount + Discounts.VAT as AmountAccounting
 			|from Discounts as Discounts
 			|where not BeforeDelivery
 			|";
 		endif;
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		s = "
-		|select Documents.Document as Document, sum ( Documents.Amount ) as Amount
+		|select Documents.Document as Document, sum ( Documents.Amount ) as Amount,
+		|	sum ( Documents.AmountAccounting ) as AmountAccounting
 		|into Documents
 		|from (
 		|	select case Items.PurchaseOrder when value ( Document.PurchaseOrder.EmptyRef ) then undefined else Items.PurchaseOrder end as Document,
-		|		Items.ContractAmount + Items.ContractVAT as Amount
+		|		Items.ContractAmount + Items.ContractVAT as Amount, Items.Total as AmountAccounting
 		|	from Items as Items
 		|	union all
 		|	select case Services.PurchaseOrder when value ( Document.PurchaseOrder.EmptyRef ) then undefined else Services.PurchaseOrder end,
-		|		Services.ContractAmount + Services.ContractVAT
+		|		Services.ContractAmount + Services.ContractVAT, Services.Total
 		|	from Services as Services
 		|	union all
-		|	select undefined, FixedAssets.ContractAmount + FixedAssets.ContractVAT
+		|	select undefined, FixedAssets.ContractAmount + FixedAssets.ContractVAT, FixedAssets.Total
 		|	from FixedAssets as FixedAssets
 		|	union all
-		|	select undefined, IntangibleAssets.ContractAmount + IntangibleAssets.ContractVAT
+		|	select undefined, IntangibleAssets.ContractAmount + IntangibleAssets.ContractVAT, IntangibleAssets.Total
 		|	from IntangibleAssets as IntangibleAssets
 		|	union all
-		|	select undefined, Accounts.ContractAmount + Accounts.ContractVAT
+		|	select undefined, Accounts.ContractAmount + Accounts.ContractVAT, Accounts.Total
 		|	from Accounts as Accounts";
 		if ( fields.DiscountsBeforeDelivery ) then
 			s = s + "
 			|union all
-			|select Discounts.Document, - Discounts.Total
+			|select Discounts.Document, - Discounts.Total, Discounts.Amount + Discounts.VAT
 			|from Discounts as Discounts
 			|where BeforeDelivery
 			|";
@@ -578,7 +585,8 @@ Procedure sqlDocuments ( Env )
 		|index by Document
 		|;
 		|// #Documents
-		|select Documents.Amount as Amount, Documents.Document as Document
+		|select Documents.Amount as Amount, Documents.AmountAccounting as AmountAccounting,
+		|	Documents.Document as Document
 		|from Documents as Documents
 		|";
 		if ( fields.DiscountsAfterDelivery ) then
@@ -586,7 +594,7 @@ Procedure sqlDocuments ( Env )
 			|;
 			|// #DiscountsTable
 			|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail,
-			|	Discounts.Total as Amount
+			|	Discounts.Total as Amount, Discounts.Amount + Discounts.VAT as AmountAccounting
 			|from Discounts as Discounts
 			|where not BeforeDelivery
 			|";
@@ -723,10 +731,11 @@ Procedure sqlDebts ( Env )
 	s = "
 	|// #Debts
 	|select Debts.Document as Document, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
-	|	Debts.AmountBalance as Amount
+	|	Debts.AmountBalance as Amount, Debts.Accounting as AmountAccounting
 	|from AccumulationRegister." + Env.PaymentsRegister + ".Balance ( &Timestamp,
 	|	Contract = &Contract
 	|	and ( Document, Detail ) in ( " + source + " ) ) as Debts
+	|where Debts.AmountBalance <> 0
 	|";
 	Env.Selection.Add ( s );
 	

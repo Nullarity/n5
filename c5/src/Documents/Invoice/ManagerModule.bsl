@@ -265,6 +265,7 @@ Procedure sqlItems ( Env )
 	amount = fields.Amount;
 	contractAmount = fields.ContractAmount;
 	contractVAT = fields.ContractVAT;
+	vat = fields.VAT;
 	amountGeneral = fields.AmountGeneral;
 	usual = not Env.RestoreCost;
 	s = "
@@ -284,6 +285,7 @@ Procedure sqlItems ( Env )
 		s = s + ", Items.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
 		+ amountGeneral + " as AmountGeneral, "
+		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "
@@ -302,6 +304,7 @@ Procedure sqlItems ( Env )
 		s = s + ", Services.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
 		+ amountGeneral + " as AmountGeneral, "
+		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "

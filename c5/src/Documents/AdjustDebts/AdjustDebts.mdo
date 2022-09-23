@@ -161,6 +161,75 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f3802f16-2412-4e22-ae00-d6c62add11b1">
+    <name>AdvanceAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Advance Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет аванса</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul avans</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Received advance account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета полученного аванса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul avansului primit</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.LongTermLiability</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -269,6 +338,41 @@
       <value>Suma luată în considerare a destinatarului</value>
     </toolTip>
     <markNegatives>true</markNegatives>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e406fc6b-bd36-433f-a688-a30b60e71273">
+    <name>ApplyVAT</name>
+    <synonym>
+      <key>en</key>
+      <value>Apply VAT</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Применять НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Aplicați TVA</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Apply VAT</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Применять НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Aplicați TVA</value>
+    </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
@@ -896,6 +1000,44 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="2ef49228-1ba3-40a7-9174-9c39e32146e7">
+    <name>Option</name>
+    <synonym>
+      <key>en</key>
+      <value>Adjustment Option</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вариант корректировки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Varianta de rectificare</value>
+    </synonym>
+    <type>
+      <types>EnumRef.AdjustmentOptions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Adjustment option</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вариант корректировки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Varianta de rectificare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.AdjustmentOptions.EnumValue.CustomAccountDr</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="ff1d168d-c5fd-447f-b7dd-97c4c8b8cc6b">
     <name>Rate</name>
     <synonym>
@@ -935,41 +1077,57 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="979dc64b-3903-47eb-b861-5d8a7f3a5d80">
-    <name>Type</name>
+  <attributes uuid="0f04c3ad-a106-4531-aa37-fe6425cf5747">
+    <name>ReceivablesVATAccount</name>
     <synonym>
       <key>en</key>
-      <value>Type</value>
+      <value>Receivables from VAT Account</value>
     </synonym>
     <synonym>
       <key>ru</key>
-      <value>Вид</value>
+      <value>Счет задолженности по НДС</value>
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>Tip</value>
+      <value>Contul de creanțe din TVA</value>
     </synonym>
     <type>
-      <types>EnumRef.TypesAdjustDebts</types>
+      <types>ChartOfAccountsRef.General</types>
     </type>
     <toolTip>
       <key>en</key>
-      <value>Type of adjustment to customer debts</value>
+      <value>Receivables from VAT Account</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Вид корректируемой задолженности покупателя</value>
+      <value>Счет задолженности по НДС</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Tipul de îndatorare rectificat al cumpărătorului</value>
+      <value>Contul de creanțe din TVA</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
-    <fillValue xsi:type="core:ReferenceValue">
-      <value>Enum.TypesAdjustDebts.EnumValue.Debt</value>
-    </fillValue>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Currency</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -1281,46 +1439,44 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
-    <fillValue xsi:type="core:BooleanValue">
-      <value>true</value>
-    </fillValue>
+    <fillValue xsi:type="core:BooleanValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
-  <attributes uuid="2ef49228-1ba3-40a7-9174-9c39e32146e7">
-    <name>Option</name>
+  <attributes uuid="979dc64b-3903-47eb-b861-5d8a7f3a5d80">
+    <name>Type</name>
     <synonym>
       <key>en</key>
-      <value>Adjustment Option</value>
+      <value>Type</value>
     </synonym>
     <synonym>
       <key>ru</key>
-      <value>Вариант корректировки</value>
+      <value>Вид</value>
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>Varianta de rectificare</value>
+      <value>Tip</value>
     </synonym>
     <type>
-      <types>EnumRef.AdjustmentOptions</types>
+      <types>EnumRef.TypesAdjustDebts</types>
     </type>
     <toolTip>
       <key>en</key>
-      <value>Adjustment option</value>
+      <value>Type of adjustment to customer debts</value>
     </toolTip>
     <toolTip>
       <key>ru</key>
-      <value>Вариант корректировки</value>
+      <value>Вид корректируемой задолженности покупателя</value>
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Varianta de rectificare</value>
+      <value>Tipul de îndatorare rectificat al cumpărătorului</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
     <fillValue xsi:type="core:ReferenceValue">
-      <value>Enum.AdjustmentOptions.EnumValue.CustomAccount</value>
+      <value>Enum.TypesAdjustDebts.EnumValue.Debt</value>
     </fillValue>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -1362,6 +1518,96 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="3402d842-a8c9-4b20-9621-983e0a726d52">
+    <name>VATAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет НДС</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul TVA</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета НДС</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul TVA</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Currency</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="748092c7-8b23-4b6f-8efc-9ddb1d3e39dc">
+    <name>VATAdvance</name>
+    <synonym>
+      <key>en</key>
+      <value>VAT from Advance</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>НДС с авансов</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>TVA pe avansuri</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.VAT</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>VAT rate from advances</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ставка при расчете НДС с авансов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Rata la calcularea TVA-ului din avansuri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <forms uuid="ed9accf6-5a2a-47a2-ab4f-7a2c531b83d7">
     <name>Form</name>
     <usePurposes>PersonalComputer</usePurposes>
@@ -1372,6 +1618,1022 @@
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
+  <tabularSections uuid="65849ba5-40f8-4ff1-be99-20bc09e05e5e">
+    <producedTypes>
+      <objectType typeId="cab932ff-43ce-4351-b2b9-0dd132fd6e30" valueTypeId="ac4b356f-b7bd-458c-9196-3273cb037096"/>
+      <rowType typeId="d99a8743-3be2-4fee-9a5c-079bdae7fd28" valueTypeId="855b257e-0c7b-446c-ad5d-548bdd4215ec"/>
+    </producedTypes>
+    <name>Accounting</name>
+    <synonym>
+      <key>en</key>
+      <value>Accounting</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Бухгалтерия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contabilitate</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Debts</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Долги</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Datorii</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="66e14d16-835d-454f-b5f0-bcab23d3dea0">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="38724ee3-61ad-4d5f-9ad7-2080081c8f9e">
+      <name>AmountDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="25c7d42e-8186-4fe0-aedb-e596c1841adf">
+      <name>AmountLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="437fd6e4-9429-409a-84b0-316153b92382">
+      <name>Description</name>
+      <synonym>
+        <key>en</key>
+        <value>Description</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Описание</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descriere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>250</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>ru</key>
+        <value>Текстовое описание услуг</value>
+      </toolTip>
+      <toolTip>
+        <key>en</key>
+        <value>A textual service description </value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="e32f1baa-e25d-495f-adae-85731d2f25cb">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Service</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Услуга</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Service</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Услуга</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue">
+          <value>true</value>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="d907800e-9251-44a3-8ec1-1138fa3a8e6b">
+      <name>PaymentDate</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Date</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Дата оплаты</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Data plății</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Date</dateFractions>
+        </dateQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment date</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дата оплаты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Data plății</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="7db778b9-c28e-4a92-b5c0-86e72763e012">
+      <name>PaymentOption</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Option</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вариант оплаты</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Modalitate de plată</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.PaymentOptions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment option</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Вариант оплаты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Modalitate de plată</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="850533d6-ae5c-4a61-9354-03672b1b6e2d">
+      <name>VAT</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c38c8c4a-157e-4cbb-b48a-b33d981ef006">
+      <name>VATAccount</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6678a1a9-bc17-40d7-88fe-292905398856">
+      <name>VATCode</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ставка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Rata</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.VAT</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ставка НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cota TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="cda54b8f-7079-4460-85f9-f58d13ad0ff1">
+      <name>VATDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="148d2efe-bc3a-44dd-a15d-d7d545f28140">
+      <name>VATLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="49727446-754e-4b97-9c2e-e90091287f3b">
+      <name>VATRate</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA procent</value>
+      </synonym>
+      <type>
+        <types>DefinedType.TaxRate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT percent</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>TVA procent</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="c35daacb-bed0-4191-9ad7-2b418ed6ae97">
+    <producedTypes>
+      <objectType typeId="c61c6392-a762-40cf-9dd8-99c71edd2f54" valueTypeId="6b0350e4-04f2-4c69-a388-79a8b06d75b6"/>
+      <rowType typeId="38757f20-7753-41fe-b6c9-07fe30d9ed19" valueTypeId="8f3dcdea-bb05-4114-99ab-4e54487e04f8"/>
+    </producedTypes>
+    <name>AccountingReceiver</name>
+    <synonym>
+      <key>en</key>
+      <value>Accounting (Receiver)</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Бухгалтерия (получатель)</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contabilitate (destinatar)</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Accounting (Receiver)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Бухгалтерия (получатель)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contabilitate (destinatar)</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="5316185d-4d4c-4ac0-a083-6eac8667a882">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="54c662e4-ac44-47b3-8e44-3232f7e45ed1">
+      <name>AmountDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9962e2fb-0ddd-40be-8128-d7d24ebcbdd9">
+      <name>AmountLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="d89b400c-a99e-4442-98e6-82ccae314f7b">
+      <name>Description</name>
+      <synonym>
+        <key>en</key>
+        <value>Description</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Описание</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descriere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>250</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>ru</key>
+        <value>Текстовое описание услуг</value>
+      </toolTip>
+      <toolTip>
+        <key>en</key>
+        <value>A textual service description </value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="948f0499-db10-4ee2-823a-1d9fd7634c8a">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Service</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Услуга</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Service</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Услуга</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue">
+          <value>true</value>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9f013535-ad1a-47a9-91ab-0c9b0c4fb184">
+      <name>PaymentDate</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Date</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Дата оплаты</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Data plății</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Date</dateFractions>
+        </dateQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment date</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дата оплаты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Data plății</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="65c2671f-c6c4-41d9-9f76-b7fb4d8d623c">
+      <name>PaymentOption</name>
+      <synonym>
+        <key>en</key>
+        <value>Payment Option</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вариант оплаты</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Modalitate de plată</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.PaymentOptions</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Payment option</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Вариант оплаты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Modalitate de plată</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a81550a7-6caa-4900-995f-757248c8b2fd">
+      <name>VAT</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="1ca1a5fc-f56f-46a7-8eda-7de2ac27941d">
+      <name>VATAccount</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6aefd862-d836-4db7-a413-d9102c5d46fc">
+      <name>VATCode</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ставка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Rata</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.VAT</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ставка НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cota TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="06e25c7a-4915-4945-a59e-42b7decce670">
+      <name>VATDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c0340e67-c256-4762-898e-669ecce70359">
+      <name>VATLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="992e2f77-3497-46cf-ac4a-abbcf27cd219">
+      <name>VATRate</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA procent</value>
+      </synonym>
+      <type>
+        <types>DefinedType.TaxRate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT percent</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>TVA procent</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
   <tabularSections uuid="672226a1-9629-40a4-8f12-765700e0adc1">
     <producedTypes>
       <objectType typeId="8e2c5cd7-d3fe-4881-9375-013333aa707e" valueTypeId="5f17ffcb-0858-434d-bbc9-b0bbe5b343c3"/>
@@ -1402,7 +2664,6 @@
       <key>ro</key>
       <value>Tabel de documente pentru ajustare</value>
     </toolTip>
-    <fillChecking>ShowError</fillChecking>
     <standardAttributes>
       <dataHistory>Use</dataHistory>
       <name>LineNumber</name>
@@ -1482,70 +2743,76 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="3ee2f005-7d47-45b6-9e82-3ac0484ec1c5">
-      <name>Bill</name>
+    <attributes uuid="8d88f85b-58f1-41e3-863c-e51181d0ea0b">
+      <name>AmountDocument</name>
       <synonym>
         <key>en</key>
-        <value>Amount On Invoices</value>
+        <value>Applied in Document Currency</value>
       </synonym>
       <synonym>
         <key>ru</key>
-        <value>Сумма по счетам</value>
+        <value>Зачтено в валюте документа</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Suma din facturi</value>
+        <value>Aplicat în valuta documentului</value>
       </synonym>
       <type>
         <types>DefinedType.Amount</types>
       </type>
       <toolTip>
         <key>en</key>
-        <value>The amount of payable debts, as shown with receipts</value>
+        <value>Applied in document currency</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Сумма задолженности к оплате, подтвержденная счетами на оплату</value>
+        <value>Зачтенная сумма в валюте документа</value>
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Sumă datorată pentru plată, confirmată prin facturi pentru plată</value>
+        <value>Aplicat în valuta documentului</value>
       </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="a4fb69f4-65df-4f2c-9d95-c33cfdfe0665">
-      <name>Contract</name>
+    <attributes uuid="4be13efc-0af0-4ef6-9190-4d10c0ca9297">
+      <name>AmountLocal</name>
       <synonym>
         <key>en</key>
-        <value>Contract</value>
+        <value>Applied in Local Currency</value>
       </synonym>
       <synonym>
         <key>ru</key>
-        <value>Договор</value>
+        <value>Зачтено в национальной валюте</value>
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Contract</value>
+        <value>Aplicat în valuta națională</value>
       </synonym>
       <type>
-        <types>CatalogRef.Contracts</types>
+        <types>DefinedType.Amount</types>
       </type>
       <toolTip>
         <key>en</key>
-        <value>Contract</value>
+        <value>Amount applied in local currency</value>
       </toolTip>
       <toolTip>
         <key>ru</key>
-        <value>Договор</value>
+        <value>Зачтенная сумма в национальной валюте</value>
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Contract</value>
+        <value>Suma aplicata în valuta națională</value>
       </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
@@ -1622,6 +2889,39 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="76d63fd6-092a-48f0-ade8-83db5b61979c">
+      <name>Description</name>
+      <synonym>
+        <key>en</key>
+        <value>Description</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Описание</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descriere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>250</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>ru</key>
+        <value>Текстовое описание услуг</value>
+      </toolTip>
+      <toolTip>
+        <key>en</key>
+        <value>A textual service description </value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="c7ec2dca-cce4-498f-b4d2-5f6f8eaf3173">
       <name>Detail</name>
       <synonym>
@@ -1643,6 +2943,7 @@
         <types>DocumentRef.Refund</types>
         <types>DocumentRef.Return</types>
         <types>DocumentRef.Debts</types>
+        <types>DocumentRef.AdjustVendorDebts</types>
       </type>
       <toolTip>
         <key>en</key>
@@ -1684,6 +2985,7 @@
         <types>DocumentRef.Refund</types>
         <types>DocumentRef.Return</types>
         <types>DocumentRef.Debts</types>
+        <types>DocumentRef.AdjustVendorDebts</types>
       </type>
       <toolTip>
         <key>en</key>
@@ -1699,6 +3001,46 @@
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="75bbe007-7604-4236-9bcf-da35be270803">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Service</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Услуга</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Service</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Услуга</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serviciu</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue">
+          <value>true</value>
+        </value>
+      </choiceParameters>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -1834,6 +3176,222 @@
       <toolTip>
         <key>ro</key>
         <value>Cheie de plată</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="378833f3-0162-4ca1-ae7b-ee1cb6e17520">
+      <name>VAT</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9aa646cf-2165-4576-8875-bbef0fc599d9">
+      <name>VATAccount</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </value>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="01369dc2-7168-4883-ab9f-4dc118fa216b">
+      <name>VATCode</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ставка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Rata</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.VAT</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ставка НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cota TVA</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="e674817a-b42a-4b8a-b009-508289b99786">
+      <name>VATDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="484aa218-7a53-4ca4-a923-2e286559c02e">
+      <name>VATLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено НДС в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat TVA în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма НДС в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma TVA aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="545c0d5b-6249-40e1-ab28-b4daab0f0f60">
+      <name>VATRate</name>
+      <synonym>
+        <key>en</key>
+        <value>VAT Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>TVA procent</value>
+      </synonym>
+      <type>
+        <types>DefinedType.TaxRate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>VAT percent</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Процент НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>TVA procent</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
@@ -1983,74 +3541,6 @@
       <minValue xsi:type="core:StringValue">
         <value>0</value>
       </minValue>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
-    <attributes uuid="45c79220-0b90-4dc8-9eb4-724040dc87a8">
-      <name>Bill</name>
-      <synonym>
-        <key>en</key>
-        <value>Amount On Invoices</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Сумма по счетам</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Suma din facturi</value>
-      </synonym>
-      <type>
-        <types>DefinedType.Amount</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>The amount of payable debts, as shown with receipts</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Сумма задолженности к оплате, подтвержденная счетами на оплату</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Sumă datorată pentru plată, confirmată prin facturi pentru plată</value>
-      </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
-    <attributes uuid="b4c1f54b-ad19-4d0a-a411-905f2fc2fd21">
-      <name>Contract</name>
-      <synonym>
-        <key>en</key>
-        <value>Contract</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Договор</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Contract</value>
-      </synonym>
-      <type>
-        <types>CatalogRef.Contracts</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>Contract</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Договор</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Contract</value>
-      </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>

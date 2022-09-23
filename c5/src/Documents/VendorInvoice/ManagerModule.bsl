@@ -340,7 +340,7 @@ Procedure sqlFixedAssets ( Env )
 	|	Items.Department as Department, Items.Employee as Employee, Items.Expenses as Expenses, Items.Item as Item,
 	|	Items.LiquidationValue as LiquidationValue, Items.Method as Method, 
 	|	Items.Item.Account as Account, Items.Starting as Starting, Items.Schedule as Schedule, Items.UsefulLife as UsefulLife,
-	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount,
+	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount, " + amount.Total + " as Total,
 	|	" + amount.ContractVAT + " as ContractVAT
 	|into FixedAssets
 	|from Document.VendorInvoice.FixedAssets as Items
@@ -366,7 +366,7 @@ Procedure sqlIntangibleAssets ( Env )
 	|	Items.Department as Department, Items.Employee as Employee, Items.Expenses as Expenses, Items.Item as Item,
 	|	Items.Method as Method, Items.Item.Account as Account, Items.Starting as Starting,
 	|	Items.UsefulLife as UsefulLife, " + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount,
-	|	" + amount.ContractVAT + " as ContractVAT
+	|	" + amount.ContractVAT + " as ContractVAT, " + amount.Total + " as Total
 	|into IntangibleAssets
 	|from Document.VendorInvoice.IntangibleAssets as Items
 	|where Items.Ref = &Ref
@@ -391,7 +391,7 @@ Procedure sqlAccounts ( Env )
 	|	Accounts.CurrencyAmount as CurrencyAmount, Accounts.Rate as Rate, Accounts.Factor as Factor,
 	|	Accounts.Quantity as Quantity, Accounts.Dim1 as Dim1, Accounts.Dim2 as Dim2, Accounts.Dim3 as Dim3,
 	|	" + amount.Amount + " as Amount, " + amount.ContractAmount + " as ContractAmount,
-	|	" + amount.ContractVAT + " as ContractVAT
+	|	" + amount.ContractVAT + " as ContractVAT, " + amount.Total + " as Total
 	|into Accounts
 	|from Document.VendorInvoice.Accounts as Accounts
 	|where Accounts.Ref = &Ref

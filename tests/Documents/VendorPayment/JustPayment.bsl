@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "286CF580" );
+id = Call ( "Common.ScenarioID", "A0UE" );
 env = getEnv ( id );
 createEnv ( env );
 

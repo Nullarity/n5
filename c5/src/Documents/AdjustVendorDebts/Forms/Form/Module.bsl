@@ -304,7 +304,7 @@ EndProcedure
 &AtClient
 Procedure AdjustmentsAfterDeleteRow ( Item )
 	
-	AdjustDebtsForm.CalcTotals ( ThisObject );
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
 
 EndProcedure
 

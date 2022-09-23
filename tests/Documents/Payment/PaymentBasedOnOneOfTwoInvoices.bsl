@@ -1,7 +1,7 @@
 ﻿Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "271BAF29" );
+id = Call ( "Common.ScenarioID", "A0TV" );
 env = getEnv (id);
 createEnv ( env );
 
@@ -55,7 +55,7 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
 	p.Description = Env.Customer;
-	p.Terms = "Main";
+	p.Terms = "Due on receipt";
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	
 	// *************************

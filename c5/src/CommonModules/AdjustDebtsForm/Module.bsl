@@ -1,4 +1,3 @@
-
 &AtServer
 Procedure OnReadAtServer ( Form ) export
 	
@@ -11,6 +10,9 @@ Procedure OnReadAtServer ( Form ) export
 	if ( Form.UseReceiver ) then
 		toggleReceiverDetails ( Form );
 		updateInfoReceiver ( Form );
+	endif;
+	if ( isAdjustDebts ( Form.Object ) ) then
+		InvoiceRecords.Read ( Form );
 	endif;
 	Appearance.Apply ( Form );
 
@@ -39,6 +41,7 @@ Procedure updateInfo ( Form )
 	else
 		Form.Info = Output.AdjustDebtsDifference ( new Structure ( "Amount", Conversion.NumberToMoney ( difference, object.Currency ) ) );
 	endif;
+	Appearance.Apply ( Form, "Info" );
 	
 EndProcedure
 
@@ -65,7 +68,7 @@ EndProcedure
 &AtServer
 Procedure setReceiverOptions ( Form ) 
 
-	if ( isAdjustDebts ( Form ) ) then
+	if ( isAdjustDebts ( Form.Object ) ) then
 		setReceiverOptionsCustomer ( Form );
 	else
 		setReceiverOptionsVendor ( Form );
@@ -74,9 +77,9 @@ Procedure setReceiverOptions ( Form )
 EndProcedure
 
 &AtServer
-Function isAdjustDebts ( Form ) 
+Function isAdjustDebts ( Object ) 
 
-	return TypeOf ( Form.Object.Ref ) = Type ( "DocumentRef.AdjustDebts" );
+	return TypeOf ( Object.Ref ) = Type ( "DocumentRef.AdjustDebts" );
 
 EndFunction
 
@@ -84,10 +87,9 @@ EndFunction
 Procedure setReceiverOptionsCustomer ( Form ) 
 
 	option = Form.Object.Option;
-	adjustmentOptions = Enums.AdjustmentOptions;
-	Form.ReceiverCustomer = ( option = adjustmentOptions.Customer );
-	Form.UseReceiver = ( Form.ReceiverCustomer
-	or option = adjustmentOptions.Vendor );
+	customer = option = Enums.AdjustmentOptions.Customer;
+	Form.ReceiverCustomer = customer;
+	Form.UseReceiver = customer or ( option = Enums.AdjustmentOptions.Vendor );
 
 EndProcedure
 
@@ -95,10 +97,9 @@ EndProcedure
 Procedure setReceiverOptionsVendor ( Form ) 
 
 	option = Form.Object.Option;
-	adjustmentOptions = Enums.AdjustmentOptions;
-	Form.ReceiverVendor = ( option = adjustmentOptions.Vendor );
-	Form.UseReceiver = ( Form.ReceiverVendor
-	or option = adjustmentOptions.Customer );
+	vendor = option = Enums.AdjustmentOptions.Vendor;
+	Form.ReceiverVendor = vendor;
+	Form.UseReceiver = vendor or ( option = Enums.AdjustmentOptions.Customer );
 
 EndProcedure
 
@@ -140,11 +141,13 @@ Procedure OnCreateAtServer ( Form ) export
 		fillByOrganization ( Form );
 		updateInfo ( Form );
 	endif; 
-	filterAccount ( Form );
 	setTitle ( Form );
 	if ( Form.UseReceiver ) then
 		filterReceiver ( Form );
 		setReceiverCaption ( Form );
+	endif;
+	if ( isAdjustDebts ( object ) ) then
+		AdjustDebtsForm.SetLinks ( Form );
 	endif;
 	StandardButtons.Arrange ( Form );
 	readAppearance ( Form );
@@ -162,20 +165,107 @@ Procedure readAppearance ( Form )
 	|Dim1 show ( AccountLevel > 0 and not UseReceiver );
 	|Dim2 show ( AccountLevel > 1 and not UseReceiver );
 	|Dim3 show ( AccountLevel > 2 and not UseReceiver );
-	|Receiver ReceiverContract ReceiverAccount ReceiverCurrencyGroup GroupReceiverDebts show UseReceiver;
+	|Info hide empty ( Info );
+	|Account hide UseReceiver;
+	|Type Receiver ReceiverContract ReceiverAccount ReceiverCurrencyGroup GroupReceiverDebts show UseReceiver;
 	|GroupReceiverDebts enable UseReceiver and filled ( Object.Receiver ) and filled ( Object.ReceiverContract );
-	|Account show not UseReceiver;
+	|AdjustmentsVATAccount AdjustmentsVATCode AdjustmentsVAT
+	|	AccountingVATAccount AccountingVATCode AccountingVAT
+	|	AccountingReceiverVATAccount AccountingReceiverVATCode AccountingReceiverVAT
+	|	show Object.ApplyVAT;
 	|ReceiverContractRate ReceiverContractFactor enable
 	|	Object.ReceiverContractCurrency <> Object.Currency
 	|	and Object.ReceiverContractCurrency <> LocalCurrency
 	|	and filled ( Object.ReceiverContractCurrency );
-	|Warning UndoPosting show Object.Posted;
-	|Header Adjustments ReceiverDebts GroupMore GroupCurrency lock Object.Posted;
-	|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1 enable not Object.Posted
+	|WarningPosted UndoPosting show Object.Posted;
+	|Adjustments GroupFillDocuments hide inlist ( Object.Option,
+	|		Enum.AdjustmentOptions.AccountingDr,
+	|		Enum.AdjustmentOptions.AccountingCr );
 	|" );
+	if ( isAdjustDebts ( Form.Object ) ) then
+		rules.Add ( "
+		|Links show ShowLinks;
+		|Warning show ChangesDisallowed;
+		|FormInvoice show filled ( InvoiceRecord );
+		|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
+		|Header Adjustments AdjustmentsItem AdjustmentsDescription Accounting AccountingReceiver ReceiverDebts
+		|	GroupMore GroupCurrency lock Object.Posted or ChangesDisallowed;
+		|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1
+		|	disable Object.Posted or ChangesDisallowed;
+		|AdjustmentsItem AdjustmentsDescription hide inlist ( Object.Option,
+		|		Enum.AdjustmentOptions.AccountingDr,
+		|		Enum.AdjustmentOptions.AccountingCr );
+		|AccountingPaymentDate AccountingPaymentOption show Object.Type = Enum.TypesAdjustDebts.Advance;
+		|" );
+	else
+		rules.Add ( "
+		|Links show ShowLinks;
+		|Warning show ChangesDisallowed;
+		|FormInvoice show filled ( InvoiceRecord );
+		|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
+		|Header Adjustments Accounting ReceiverDebts GroupMore GroupCurrency lock Object.Posted;
+		|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1
+		|	disable Object.Posted;
+		|AccountingReceiverPaymentDate AccountingReceiverPaymentOption show Object.Type = Enum.TypesAdjustDebts.Debt;
+		|" );
+	endif;
 	Appearance.Read ( Form, rules );
 
 EndProcedure
+
+&AtServer
+Procedure SetLinks ( Form ) export
+	
+	SQL.Init ( Form.Env );
+	env = Form.Env;
+	sqlLinks ( Form );
+	if ( env.Selection.Count () = 0 ) then
+		Form.ShowLinks = false;
+	else
+		q = env.Q;
+		q.SetParameter ( "Ref", Form.Object.Ref );
+		SQL.Perform ( env, false );
+		setURLPanel ( Form );
+	endif;
+	Appearance.Apply ( Form, "ShowLinks" );
+
+EndProcedure 
+
+&AtServer
+Procedure sqlLinks ( Form )
+	
+	env = Form.Env;
+	selection = env.Selection;
+	if ( Form.Object.Ref.IsEmpty () ) then
+		return;
+	endif; 
+	s = "
+	|// #InvoiceRecords
+	|select Documents.Ref as Document, Documents.DeliveryDate as Date, Documents.Number as Number
+	|from Document.InvoiceRecord as Documents
+	|where Documents.Base = &Ref
+	|and not Documents.DeletionMark
+	|";
+	selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure setURLPanel ( Form )
+	
+	parts = new Array ();
+	if ( not Form.Object.Ref.IsEmpty () ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Form.Env.InvoiceRecords, Metadata.Documents.InvoiceRecord ) );
+	endif; 
+	s = URLPanel.Build ( parts );
+	if ( s = undefined ) then
+		Form.ShowLinks = false;
+	else
+		Form.ShowLinks = true;
+		Form.Links = s;
+	endif; 
+	
+EndProcedure 
 
 &AtServer
 Procedure fillNew ( Form )
@@ -203,7 +293,7 @@ EndProcedure
 &AtServer
 Procedure fillByOrganization ( Form )
 	
-	if ( isAdjustDebts ( Form ) ) then
+	if ( isAdjustDebts ( Form.Object ) ) then
 		fillByCustomer ( Form );	
 	else
 		fillByVendor ( Form );
@@ -237,10 +327,30 @@ EndProcedure
 &AtServer
 Procedure setCustomerAccount ( Object )
 	
-	accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount" );
+	company = Object.Customer;
+	accounts = AccountsMap.Organization ( company, Object.Company, "CustomerAccount, AdvanceTaken" );
 	Object.CustomerAccount = accounts.CustomerAccount;
+	Object.AdvanceAccount = accounts.AdvanceTaken;	
+	accounts = AccountsMap.Item ( Catalogs.Items.EmptyRef (), company, Catalogs.Warehouses.EmptyRef (), "VAT" );
+	Object.VATAccount = accounts.VAT;
+	Object.ReceivablesVATAccount = receivablesVAT ();
 	
 EndProcedure
+
+&AtServer
+Function receivablesVAT ()
+
+	s = "
+	|select Settings.Value as Value
+	|from InformationRegister.Settings.SliceLast ( ,
+	|	Parameter = value ( ChartOfCharacteristicTypes.Settings.ReceivablesVATAccount )
+	|) as Settings
+	|";
+	q = new Query ( s );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Value );
+	
+EndFunction
 
 &AtServer
 Procedure setCustomerContract ( Object )
@@ -269,10 +379,12 @@ Procedure loadContract ( Form )
 	object = Form.Object;
 	fields = new Array ();
 	fields.Add ( "Currency" );
-	if ( isAdjustDebts ( Form ) ) then
+	customerDebts = isAdjustDebts ( object );
+	if ( customerDebts ) then
 		fields.Add ( "CustomerRateType as RateType" );
 		fields.Add ( "CustomerRate as Rate" );
 		fields.Add ( "CustomerFactor as Factor" );
+		fields.Add ( "CustomerVATAdvance as VATAdvance" );
 	else
 		fields.Add ( "VendorRateType as RateType" );
 		fields.Add ( "VendorRate as Rate" );
@@ -290,6 +402,9 @@ Procedure loadContract ( Form )
 	Object.ContractRate = currency.Rate;
 	Object.ContractFactor = currency.Factor;
 	Object.Currency = contractCurrency;
+	if ( customerDebts ) then
+		Object.VATAdvance = data.VATAdvance;
+	endif;
 	AdjustDebtsForm.ApplyCurrency ( Form );
 
 EndProcedure
@@ -309,60 +424,42 @@ EndProcedure
 Procedure applyRate ( Form )
 	
 	object = Form.Object;
-	calcContract ( object, 1 );
-	calcApplied ( object, 1 );
-	distributeAmount ( object );
+	calcContract ( object );
+	calcApplied ( object );
 	updateInfo ( Form );
 	
 EndProcedure
 
-Procedure calcContract ( Object, Method )
+Procedure calcContract ( Object )
 	
-	if ( Method = 1
-		or Object.Adjustments.Count () = 0 ) then
-		Object.ContractAmount = Currencies.Convert ( Object.Amount, Object.Currency, Object.ContractCurrency, Object.Date, Object.Rate, Object.Factor, Object.ContractRate, Object.ContractFactor );
-	elsif ( Method = 2 ) then
-		Object.ContractAmount = Object.Adjustments.Total ( "Amount" );
-	endif;
+	Object.ContractAmount = Currencies.Convert ( Object.Amount, Object.Currency, Object.ContractCurrency,
+		Object.Date, Object.Rate, Object.Factor, Object.ContractRate, Object.ContractFactor );
 
 EndProcedure 
 
-Procedure calcApplied ( Object, Method )
+Procedure calcApplied ( Object )
 	
-	if ( Method = 1 ) then
+	applied = Object.Adjustments.Total ( "Amount" ) + Object.Accounting.Total ( "Amount" );
+	if ( applied = 0 ) then
+		Object.Applied = 0;
+	elsif ( applied = Object.ContractAmount ) then
 		Object.Applied = Object.Amount;
-	elsif ( Method = 2 ) then
-		Object.Applied = getPaymentAmount ( Object );
+	else
+		Object.Applied = Currencies.Convert ( applied, Object.ContractCurrency, Object.Currency, Object.Date,
+			Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
 	endif;
 	
 EndProcedure
 
-Function getPaymentAmount ( Object )
-	
-	return Currencies.Convert ( Object.ContractAmount, Object.ContractCurrency, Object.Currency, Object.Date, Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
-	
-EndFunction
-
 Procedure distributeAmount ( Object )
 	
-	table = Object.Adjustments;
-	j = table.Count () - 1;
-	if ( j = -1 ) then
-		return;
-	endif; 
-	amount = Object.ContractAmount;
+	amount = Object.ContractAmount - Object.Accounting.Total ( "Amount" );
 	isDebt = isDebt ( Object.Type );
-	for i = 0 to j do
-		row = table [ i ];
+	for each row in Object.Adjustments do
 		applied = Min ( amount, appliedAmountRow ( row, isDebt ) );
 		row.Amount = applied;
-		amount = amount - applied;
-		if ( i = j
-			and amount > 0 ) then
-			rest = Currencies.Convert ( amount, Object.ContractCurrency, Object.Currency, Object.Date, Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
-			Object.Applied = Object.Applied - rest;
-		endif; 
 		toggleAdjust ( row );
+		amount = amount - applied;
 	enddo; 
 
 EndProcedure
@@ -461,7 +558,10 @@ Procedure setTitle ( Form )
 	
 	presentation = Metadata.Documents.AdjustDebts.TabularSections.Adjustments.Attributes.Amount.Presentation ();
 	currency = Form.Object.ContractCurrency;
-	Form.Items.AdjustmentsAmount.Title = presentation + ? ( currency.IsEmpty (), "", ", " + currency );
+	presentation = presentation + ? ( currency.IsEmpty (), "", ", " + currency );
+	items = Form.Items;
+	items.AdjustmentsAmount.Title = presentation;
+	items.AccountingAmount.Title = presentation;
 	
 EndProcedure 
 
@@ -469,7 +569,9 @@ EndProcedure
 Procedure refill ( Form )
 	
 	fillTable ( Form );
-	distributeAmount ( Form.Object );
+	object = Form.Object;
+	distributeAmount ( object );
+	calcApplied ( object );
 	
 EndProcedure
 
@@ -491,7 +593,7 @@ EndProcedure
 Function getPayments ( Form )
 	
 	object = Form.Object;
-	if ( isAdjustDebts ( Form ) ) then
+	if ( isAdjustDebts ( object ) ) then
 		tableName = "Debts";
 		organization = object.Customer;
 	else
@@ -513,12 +615,11 @@ EndFunction
 Function sqlPayments ( Type, TableName )
 	
 	s = "
-	|select Balances.Contract as Contract, Balances.Document as Document, Balances.PaymentKey as PaymentKey,
+	|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
 	|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
 	|	Balances.BillBalance as Bill, Balances.Detail as Detail,
 	|	PaymentDetails.Option as Option, PaymentDetails.Date as Date
-	|from AccumulationRegister." + TableName + ".Balance ( ,
-	|	( Contract = &Contract or ( Contract.Currency = &Currency and Contract.Owner.Chain = &Organization ) ) ) as Balances
+	|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
 	|	//
 	|	// PaymentDetails
 	|	//
@@ -583,46 +684,6 @@ Procedure setVendorContract ( Object )
 EndProcedure 
 
 &AtServer
-Procedure filterAccount ( Form )
-	
-	if ( Form.UseReceiver ) then
-		return;
-	endif;
-	option = Form.Object.Option;
-	adjustOptions = Enums.AdjustmentOptions;
-	accounts = Enums.Accounts;
-	values = new Array ();
-	if ( option = adjustOptions.Income ) then
-		values.Add ( accounts.Income );
-		values.Add ( accounts.OtherIncome );
-	elsif ( option = adjustOptions.Expenses ) then
-		values.Add ( accounts.Expenses );
-		values.Add ( accounts.OtherExpenses );
-		values.Add ( accounts.CostOfGoodsSold );
-	endif;
-	list = new Array ();
-	if ( values.Count () > 0 ) then
-		list.Add ( new ChoiceParameter ( "Filter.Class", new FixedArray ( values ) ) );
-		clearAccount ( Form, values );
-	endif;
-	list.Add ( new ChoiceParameter ( "Filter.Folder", false ) );
-	list.Add ( new ChoiceParameter ( "Filter.Offline", false ) );
-	Form.Items.Account.ChoiceParameters = new FixedArray ( list );
-	
-EndProcedure
-
-&AtServer
-Procedure clearAccount ( Form, Accounts ) 
-
-	object = Form.Object;
-	if ( Accounts.Find ( DF.Pick ( object.Account, "Class" ) ) = undefined ) then
-		object.Account = undefined;
-		AdjustDebtsForm.ApplyAccount ( Form );
-	endif;
-
-EndProcedure
-
-&AtServer
 Procedure ApplyAccount ( Form ) export
 	
 	readAccount ( Form );
@@ -673,7 +734,7 @@ EndProcedure
 &AtServer
 Function isReceiverCustomer ( Form ) 
 
-	if ( isAdjustDebts ( Form ) ) then
+	if ( isAdjustDebts ( Form.Object ) ) then
 		return Form.ReceiverCustomer;
 	else
 		return not Form.ReceiverVendor;
@@ -697,6 +758,14 @@ Procedure BeforeWriteAtServer ( CurrentObject, Form ) export
 	if ( Form.UseReceiver ) then
 		clean ( CurrentObject.ReceiverDebts );
 	endif;
+	calcTablesAmount ( CurrentObject );
+	if ( isAdjustDebts ( CurrentObject ) ) then
+		if ( CurrentObject.ApplyVAT ) then
+			calcTablesVAT ( CurrentObject );
+		else
+			resetVATfields ( CurrentObject );
+		endif;
+	endif;
 
 EndProcedure
 
@@ -712,6 +781,91 @@ Procedure clean ( Table )
 		endif; 
 	enddo; 
 	
+EndProcedure
+
+&AtServer
+Procedure calcTablesAmount ( Object )
+	
+	localCurrency = Application.Currency ();
+	currency = Object.Currency;
+	contractCurrency = Object.ContractCurrency;
+	date = Object.Date;
+	contractRate = Object.ContractRate;
+	contractFactor = Object.ContractFactor;
+	rate = Object.Rate;
+	factor = Object.Factor;
+	tables = new Array ();
+	tables.Add ( Object.Adjustments );
+	tables.Add ( Object.Accounting );
+	biggestRow = undefined;
+	for each table in tables do
+		for each row in table do
+			amount = row.Amount;
+			row.AmountLocal = Currencies.Convert ( amount, contractCurrency, localCurrency, date,
+				contractRate, contractFactor, , , 2 );
+			row.AmountDocument = Currencies.Convert ( amount, contractCurrency, currency, date,
+				contractRate, contractFactor, rate, factor, 2 );
+			if ( biggestRow = undefined
+				or amount > biggestRow.Amount ) then
+				biggestRow = row;
+			endif;
+		enddo;
+	enddo;
+	if ( biggestRow <> undefined ) then
+		totalDocumentAmount = Object.Amount;
+		biggestRow.AmountDocument = biggestRow.AmountDocument + (
+			totalDocumentAmount
+			- Object.Adjustments.Total ( "AmountDocument" )
+			- Object.Accounting.Total ( "AmountDocument" ) );
+		totalLocalAmount = Currencies.Convert ( totalDocumentAmount, currency, localCurrency, date, rate, factor );
+		biggestRow.AmountLocal = biggestRow.AmountLocal + (
+			totalLocalAmount
+			- Object.Adjustments.Total ( "AmountLocal" )
+			- Object.Accounting.Total ( "AmountLocal" ) );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure calcTablesVAT ( Object )
+	
+	localCurrency = Application.Currency ();
+	documentCurrency = Object.Currency;
+	date = Object.Date;
+	rate = Object.Rate;
+	factor = Object.Factor;
+	tables = new Array ();
+	tables.Add ( Object.Adjustments );
+	tables.Add ( Object.Accounting );
+	for each table in tables do
+		for each row in table do
+			amount = row.AmountLocal;
+			vat = Round ( amount - amount * ( 100 / ( 100 + row.VATRate ) ), 2 );
+			row.VATLocal = vat;
+			row.VATDocument = Currencies.Convert ( vat, localCurrency, documentCurrency, date,
+				, , rate, factor );
+		enddo;
+	enddo;
+
+EndProcedure
+
+&AtServer
+Procedure resetVATfields ( Object )
+	
+	tables = new Array ();
+	tables.Add ( Object.Adjustments );
+	tables.Add ( Object.Accounting );
+	for each table in tables do
+		for each row in table do
+			row.VAT = 0;
+			row.VATRate = 0;
+			row.VATLocal = 0;
+			row.VATDocument = 0;
+			row.VATAccount = undefined;
+			row.VATCode = undefined;
+		enddo;
+	enddo;
+
 EndProcedure
 
 &AtClient
@@ -737,9 +891,12 @@ Procedure FactorOnChange ( Form ) export
 EndProcedure
 
 &AtClient
-Procedure CalcPaymentAmount ( Object ) export
+Procedure ApplyContractRate ( Form ) export
 	
-	Object.Amount = getPaymentAmount ( Object );
+	object = Form.Object;
+	calcContract ( object );
+	calcApplied ( object );
+	updateInfo ( Form );
 	
 EndProcedure
 
@@ -747,9 +904,9 @@ EndProcedure
 Procedure AmountOnChange ( Form ) export
 	
 	object = Form.Object;
-	calcContract ( object, 1 );
-	calcApplied ( object, 1 );
+	calcContract ( object );
 	distributeAmount ( object );
+	calcApplied ( object );
 	updateInfo ( Form );
 	if ( Form.UseReceiver ) then
 		applyReceiverRate ( Form );
@@ -761,23 +918,40 @@ EndProcedure
 Procedure ApplyOption ( Form ) export
 	
 	setReceiverOptions ( Form );
-	filterAccount ( Form );
-	setTypeReceiver ( Form );
+	object = Form.Object;
 	if ( Form.UseReceiver ) then
+		setTypeReceiver ( Form );
 		filterReceiver ( Form );
+	else
+		object.ReceiverDebts.Clear ();
+		AdjustDebtsForm.CalcTotalsReceiver ( Form );
+		option = object.Option;
+		if ( option = Enums.AdjustmentOptions.AccountingDr
+			or option = Enums.AdjustmentOptions.AccountingCr ) then
+			object.Adjustments.Clear ();
+			AdjustDebtsForm.ChahgeApplied ( Form );
+		endif;
+		oldType = object.Type;
+		if ( option = Enums.AdjustmentOptions.CustomAccountDr
+			or option = Enums.AdjustmentOptions.AccountingDr ) then
+			newType = Enums.TypesAdjustDebts.Debt;
+		else
+			newType = Enums.TypesAdjustDebts.Advance;
+		endif;
+		if ( oldType <> newType ) then
+			object.Type = newType;
+			AdjustDebtsForm.ApplyType ( Form );
+		endif;
 	endif;
-	Appearance.Apply ( Form, "UseReceiver" );
+	Appearance.Apply ( Form, "UseReceiver, Object.Option" );
 	
 EndProcedure
 
 &AtServer
 Procedure setTypeReceiver ( Form ) 
 
-	if ( not Form.UseReceiver ) then
-		return;
-	endif;
-	isAdjustDebts = isAdjustDebts ( Form );
 	object = Form.Object;
+	isAdjustDebts = isAdjustDebts ( object );
 	if ( isAdjustDebts and Form.ReceiverCustomer )
 		or ( not isAdjustDebts and Form.ReceiverVendor ) then
 		if ( isDebt ( object.Type ) ) then
@@ -795,10 +969,10 @@ EndProcedure
 &AtServer
 Procedure ApplyType ( Form ) export
 	
-	setTypeReceiver ( Form );
 	refill ( Form );
 	updateInfo ( Form );
 	if ( Form.UseReceiver ) then
+		setTypeReceiver ( Form );
 		refillReceiver ( Form );
 		updateInfoReceiver ( Form );
 	endif;
@@ -831,7 +1005,7 @@ EndProcedure
 Function getPaymentsReceiver ( Form )
 	
 	object = Form.Object;
-	if ( isAdjustDebts ( Form ) ) then
+	if ( isAdjustDebts ( object ) ) then
 		if ( Form.ReceiverCustomer ) then
 			type = object.TypeReceiver;
 			tableName = "Debts";
@@ -960,8 +1134,7 @@ Procedure update ( Form )
 	adjustments = fetchAdjustments ( tableAdjustments );
 	fillTable ( Form );
 	applyAdjustments ( adjustments, tableAdjustments );
-	calcContract ( object, 2 );
-	calcApplied ( object, 2 );
+	calcApplied ( object );
 
 EndProcedure
 
@@ -971,7 +1144,7 @@ Function fetchAdjustments ( TableAdjustments )
 	adjustments = new Array ();
 	for each row in TableAdjustments do
 		if ( row.Adjust ) then
-			adjustment = new Structure ( "Contract, Document, Detail, Date, Option" );
+			adjustment = new Structure ( "Document, Detail, Date, Option" );
 			FillPropertyValues ( adjustment, row );
 			adjustments.Add ( new Structure ( "Key, Amount", adjustment, row.Amount ) );
 		endif;
@@ -1017,9 +1190,8 @@ Procedure Mark ( Form, Flag ) export
 		row.Adjust = Flag;
 		Form.AdjustmentsRow = row;
 		AdjustDebtsForm.ApplyAdjust ( Form );
-		calcContract ( object, 2 );
-		calcApplied ( object, 2 );
 	enddo;
+	calcApplied ( object );
 	updateInfo ( Form );
 	Form.AdjustmentsRow = tempRow;
 
@@ -1047,16 +1219,14 @@ Procedure AdjustmentsOnEditEnd ( Form, Item, CancelEdit ) export
 	if ( not CancelEdit ) then
 		toggleAdjust ( Item.CurrentData );
 	endif;
-	AdjustDebtsForm.CalcTotals ( Form );
+	AdjustDebtsForm.ChahgeApplied ( Form );
 
 EndProcedure
 
-&AtClient
-Procedure CalcTotals ( Form ) export
+Procedure ChahgeApplied ( Form ) export
 	
 	object = Form.Object;
-	calcContract ( object, 2 );
-	calcApplied ( object, 2 );
+	calcApplied ( object );
 	updateInfo ( Form );
 	
 EndProcedure 
@@ -1190,7 +1360,6 @@ Procedure ReceiverDebtsOnEditEnd ( Form, Item, CancelEdit ) export
 
 EndProcedure
 
-&AtClient
 Procedure CalcTotalsReceiver ( Form ) export
 	
 	object = Form.Object;
@@ -1209,4 +1378,18 @@ Procedure ReceiverDebtsAmountOnChange ( Form ) export
 	receiverRow.Applied = applied;
 	receiverRow.Difference = Max ( 0, amount - applied );
 	
+EndProcedure
+
+&AtClient
+Procedure AccountingOnEditEnd ( Form, Item, CancelEdit ) export
+	
+	AdjustDebtsForm.ChahgeApplied ( Form );
+
+EndProcedure
+
+&AtClient
+Procedure ApplyVATOnChange ( Form ) export
+
+	Appearance.Apply ( Form, "Object.ApplyVAT" );
+
 EndProcedure

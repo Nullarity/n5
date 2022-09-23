@@ -239,11 +239,12 @@ Procedure sqlRecords ()
 		s = s + " and Currency = &Currency";
 	endif;
 	s = s + " ) as Records
-	|where valuetype ( Records.Recorder ) in (
-	|	type ( Document.AdjustDebts ),
-	|	type ( Document.AdjustVendorDebts )
-	|)
-	|or
+	|where
+//	|valuetype ( Records.Recorder ) in (
+//	|	type ( Document.AdjustDebts ),
+//	|	type ( Document.AdjustVendorDebts )
+//	|)
+//	|or
 	|	not ( Records.BalancedAccount in ( select Account from Accounts )
 	|		and isnull ( Records.BalancedExtDimension1, value ( Catalog.Organizations.EmptyRef ) )
 	|			= Records.ExtDimension1";

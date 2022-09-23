@@ -1,7 +1,13 @@
+&AtServer
+var Env export;
 &AtClient
 var AdjustmentsRow export;
 &AtClient
 var ReceiverRow export;
+&AtClient
+var AccountingRow export;
+&AtClient
+var AccountingReceiverRow export;
 &AtServer
 var AccountData export;
 
@@ -12,6 +18,14 @@ var AccountData export;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	AdjustDebtsForm.OnReadAtServer ( ThisObject );
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -23,22 +37,45 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 EndProcedure
 
 &AtClient
+Procedure NewWriteProcessing ( NewObject, Source, StandardProcessing )
+	
+	if ( TypeOf ( NewObject ) = Type ( "DocumentRef.InvoiceRecord" ) ) then
+		readNewInvoices ();
+		Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure readNewInvoices () 
+
+	InvoiceRecords.Read ( ThisObject );
+	AdjustDebtsForm.SetLinks ( ThisObject );
+	Appearance.Apply ( ThisObject, "InvoiceRecord, FormStatus, ChangesDisallowed" );
+
+EndProcedure
+
+&AtClient
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
 	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
 		and ( Parameter = Object.Ref
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
+	elsif ( EventName = Enum.InvoiceRecordsWrite ()
+		and Source.Ref = InvoiceRecord ) then
+		readPrinted ();
 	endif;
 
 EndProcedure
 
 &AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
+Procedure readPrinted ()
+	
+	InvoiceRecords.Read ( ThisObject );
+	Appearance.Apply ( ThisObject, "FormStatus, ChangesDisallowed" );
+	
+EndProcedure 
 
 &AtClient
 Procedure BeforeWrite ( Cancel, WriteParameters )
@@ -51,6 +88,17 @@ EndProcedure
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
 	AdjustDebtsForm.BeforeWriteAtServer ( CurrentObject, ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+
+	if ( Object.Ref.IsEmpty () ) then
+		return;
+	endif;
+	readPrinted ();
+	Appearance.Apply ( ThisObject, "InvoiceRecord" );
 
 EndProcedure
 
@@ -130,14 +178,14 @@ EndProcedure
 &AtClient
 Procedure ContractRateOnChange ( Item )
 	
-	AdjustDebtsForm.CalcPaymentAmount ( Object );
+	AdjustDebtsForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ContractFactorOnChange ( Item )
 	
-	AdjustDebtsForm.CalcPaymentAmount ( Object );
+	AdjustDebtsForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
@@ -232,6 +280,13 @@ Procedure applyReceiverContract ()
 
 EndProcedure
 
+&AtClient
+Procedure ApplyVATOnChange ( Item )
+
+	AdjustDebtsForm.ApplyVATOnChange ( ThisObject );
+
+EndProcedure
+
 // *****************************************
 // *********** Table Documents
 
@@ -253,7 +308,7 @@ Procedure AdjustmentDataUpdateConfirmation ( Answer, Refilling ) export
 EndProcedure
 
 &AtServer
-Procedure applyAdjustmentDataUpdate ( Refilling ) 
+Procedure applyAdjustmentDataUpdate ( val Refilling ) 
 
 	AdjustDebtsForm.AdjustmentDataUpdateConfirmation ( ThisObject, Refilling );
 
@@ -304,7 +359,7 @@ EndProcedure
 &AtClient
 Procedure AdjustmentsAfterDeleteRow ( Item )
 	
-	AdjustDebtsForm.CalcTotals ( ThisObject );
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
 
 EndProcedure
 
@@ -326,8 +381,76 @@ EndProcedure
 Procedure AdjustmentsAmountOnChange ( Item )
 	
 	AdjustDebtsForm.AdjustmentsAmountOnChange ( ThisObject );
+	if ( Object.ApplyVAT ) then
+		calcVAT ( AdjustmentsRow );
+	endif;
 	
 EndProcedure
+
+&AtClient
+Procedure AdjustmentsVATCodeOnChange ( Item )
+	
+	setVATRate ( AdjustmentsRow );
+	calcVAT ( AdjustmentsRow );
+
+EndProcedure
+
+&AtClient
+Procedure setVATRate ( Row )
+	
+	Row.VATRate = DF.Pick ( Row.VATCode, "Rate", 0 );
+
+EndProcedure
+
+&AtClient
+Procedure calcVAT ( Row )
+	
+	Row.VAT = Row.Amount - Row.Amount * ( 100 / ( 100 + Row.VATRate ) );
+
+EndProcedure
+
+&AtClient
+Procedure AdjustmentsItemOnChange ( Item )
+	
+	applyItem ( AdjustmentsRow );
+	if ( Object.ApplyVAT ) then
+		calcVAT ( AdjustmentsRow );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure applyItem ( Row )
+	
+	p = new Structure ();
+	p.Insert ( "Company", Object.Company );
+	p.Insert ( "Item", Row.Item );
+	applyVAT = Object.ApplyVAT;
+	p.Insert ( "ApplyVAT", applyVAT );
+	data = getItemData ( p );
+	Row.Description = data.FullDescription;
+	if ( ApplyVAT ) then
+		Row.VATCode = data.VAT;
+		Row.VATRate = data.Rate;
+		Row.VATAccount = data.VATAccount;
+	endif;
+
+EndProcedure
+
+&AtClientAtServerNoContext
+Function getItemData ( val Params )
+	
+	item = Params.Item;
+	if ( Params.ApplyVAT ) then
+		data = DF.Values ( item, "FullDescription, VAT, VAT.Rate as Rate" );
+		accounts = AccountsMap.Item ( item, Params.Company, , "VAT" );
+		data.Insert ( "VATAccount", accounts.VAT );
+	else
+		data = DF.Values ( item, "FullDescription" );
+	endif;
+	return data;
+
+EndFunction
 
 // *****************************************
 // *********** Table Receiver Documents
@@ -424,4 +547,79 @@ Procedure ReceiverDebtsAmountOnChange ( Item )
 	
 	AdjustDebtsForm.ReceiverDebtsAmountOnChange ( ThisObject );
 	
+EndProcedure
+
+// *****************************************
+// *********** Table Accounting
+
+&AtClient
+Procedure AccountingOnActivateRow ( Item )
+	
+	AccountingRow = Item.CurrentData;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAfterDeleteRow ( Item )
+	
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
+	
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure AccountingItemOnChange ( Item )
+	
+	applyItem ( AccountingRow );
+	if ( Object.ApplyVAT ) then
+		calcVAT ( AccountingRow );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAmountOnChange ( Item )
+	
+	if ( Object.ApplyVAT ) then
+		calcVAT ( AccountingRow );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingVATCodeOnChange ( Item )
+	
+	setVATRate ( AccountingRow );
+	calcVAT ( AccountingRow );
+	
+EndProcedure
+
+// *****************************************
+// *********** Table AccountingReceiver
+
+&AtClient
+Procedure AccountingReceiverOnActivateRow ( Item )
+	
+	AccountingReceiverRow = Item.CurrentData;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingReceiverAfterDeleteRow ( Item )
+
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingReceiverOnEditEnd ( Item, NewRow, CancelEdit )
+
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
 EndProcedure

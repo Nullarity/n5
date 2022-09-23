@@ -88,6 +88,9 @@ Procedure Fill ( Object, Base ) export
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		env = getEnv ( Object, "Return" );
 		fillByReturn ( env, Object, Base );
+	elsif ( type = Type ( "DocumentRef.AdjustDebts" ) ) then
+		env = getEnv ( Object, "AdjustDebts" );
+		fillByAdjustDebts ( env, Object, Base );
 	endif;
 	
 EndProcedure
@@ -631,6 +634,121 @@ Procedure fillReturnItems ( Env, Object )
 		newRow.VAT = - newRow.VAT;
 		newRow.Total = - newRow.Total;
 	enddo;
+
+EndProcedure
+
+&AtServer
+Procedure fillByAdjustDebts ( Env, Object, Base ) 
+
+	headerByAdjustDebts ( Object, Base );
+	getDataAdjustDebts ( Env, Base );
+	fillAdjustDebtsServices ( Env, Object );
+	fillAdjustDebtsHeader ( Env, Object );
+
+EndProcedure
+
+&AtServer
+Procedure headerByAdjustDebts ( Object, Base ) 
+
+	Object.Date = Base.Date;
+	Object.Company = Base.Company;
+	Object.Currency = Base.Currency;
+	rate = Base.Rate;
+	Object.Rate = ? ( rate = 0, 1, rate );
+	factor = Base.Factor;
+	Object.Factor = ? ( factor = 0, 1, factor );
+	Object.VATUse = 1;
+	fillHeaderCommon ( Object, Base );
+
+EndProcedure
+
+&AtServer
+Procedure getDataAdjustDebts ( Env, Base ) 
+
+	sqlFieldsAdjustDebts ( Env );
+	sqlAdjustDebtsServices ( Env );
+	getTables ( Env, Base );
+
+EndProcedure
+
+&AtServer
+Procedure sqlFieldsAdjustDebts ( Env )
+	
+	s = "
+	|// @Fields
+	|select Documents.Customer as UnloadingPoint, Documents.Customer as Customer,
+	|	Documents.Reversal as Reversal, Documents.Type as Type";
+	if ( Env.IsNew ) then
+		s = s + ",
+		|	true as ShowServices,
+		|	Documents.Customer.ShippingAddress as UnloadingAddress, Documents.Date as DeliveryDate,
+		|	Documents.Contract.CustomerBank as CustomerAccount";
+	endif;
+	s = s + "
+	|from Document.AdjustDebts as Documents
+	|where Documents.Ref = &Ref
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure 
+
+&AtServer
+Procedure sqlAdjustDebtsServices ( Env )
+	
+	s = "
+	|// #Services
+	|select Adjustments.AmountLocal as Total, Adjustments.VATLocal as VAT, Adjustments.AmountLocal - Adjustments.VATLocal as Amount,
+	|	Adjustments.VATCode as VATCode, Adjustments.VATRate as VATRate, Adjustments.Item as Item,
+	|	Adjustments.Description as Description
+	|from Document.AdjustDebts.Adjustments as Adjustments
+	|where Adjustments.Ref = &Ref
+	|and Adjustments.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|union all
+	|select Accounting.AmountLocal, Accounting.VATLocal, Accounting.AmountLocal - Accounting.VATLocal,
+	|	Accounting.VATCode, Accounting.VATRate, Accounting.Item, Accounting.Description
+	|from Document.AdjustDebts.Accounting as Accounting
+	|where Accounting.Ref = &Ref
+	|and Accounting.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|";
+	Env.Selection.Add ( s );
+
+EndProcedure 
+
+&AtServer
+Procedure fillAdjustDebtsServices ( Env, Object ) 
+
+	services = Object.Services;
+	services.Clear ();
+	fields = Env.Fields;
+	if ( fields.Reversal ) then
+		reverse = fields.Type = Enums.TypesAdjustDebts.Advance;
+	else
+		reverse = fields.Type = Enums.TypesAdjustDebts.Debt;
+	endif;
+	for each row in Env.Services do
+		newRow = services.Add ();
+		FillPropertyValues ( newRow, row );
+		if ( reverse ) then
+			newRow.Amount = - newRow.Amount;
+			newRow.Total = - newRow.Total;
+			newRow.VAT = - newRow.VAT;
+			if ( newRow.Quantity = 0 ) then
+				newRow.Price = - newRow.Price;
+			else
+				newRow.Quantity = - newRow.Quantity;
+			endif;
+		endif;
+	enddo;
+
+EndProcedure
+
+&AtServer
+Procedure fillAdjustDebtsHeader ( Env, Object )
+
+	fillHeader ( Env, Object );
+	services = Object.Services;
+	Object.VAT = services.Total ( "VAT" );
+	Object.Amount = services.Total ( "Total" );
 
 EndProcedure
 

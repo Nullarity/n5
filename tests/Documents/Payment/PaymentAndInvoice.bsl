@@ -5,7 +5,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "A0F8"));
+this.Insert("ID", Call("Common.ScenarioID", "A0TJ"));
 getEnv();
 createEnv();
 
@@ -23,7 +23,7 @@ Services = Get("#Services");
 Click("#ServicesAdd");
 Put("#ServicesItem", this.Service, Services);
 Set("#ServicesQuantity", 1, Services);
-Set("#ServicesPrice", "1000.000", Services);
+Set("#ServicesPrice", 1000, Services);
 Next();
 Click("#FormPost");
 
