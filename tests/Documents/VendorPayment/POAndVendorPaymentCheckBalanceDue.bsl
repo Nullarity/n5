@@ -4,7 +4,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "A0UQ"));
+this.Insert("ID", Call("Common.ScenarioID", "A0V0"));
 getEnv();
 createEnv();
 
@@ -26,7 +26,7 @@ Assert(0 + Fetch("#PaymentsApplied")).Equal(0);
 // Create Payment
 Click("#CreatePayment");
 With ();
-Put ( "#Amount", 980 );
+Put ( "#Amount", 1000 );
 Click ( "#FormPostAndClose" );
 
 // Check Payments Applied
@@ -64,6 +64,7 @@ Procedure createEnv()
 	
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params");
 	p.Description = this.Vendor;
+	p.Terms = "Due on receipt";
 	Call ( "Catalogs.Organizations.CreateVendor", p);
 	
 	// *************************

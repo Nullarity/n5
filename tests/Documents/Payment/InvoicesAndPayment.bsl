@@ -1,4 +1,4 @@
-﻿A0TK// Create Customer
+﻿// Create Customer
 // Create two Invoices
 // Create Payment
 // Set Payment amount & check distribution by invoices. Payment amount will cover Invoice1 and 50% of Invoice2
