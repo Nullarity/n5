@@ -286,47 +286,6 @@
 			</inputParameters>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>BillBalance</dataPath>
-			<field>BillBalance</field>
-			<title xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Неоплаченная сумма по счетам</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>Unpaid amount according to the receipts</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>Suma neachitata pe factura</v8:content>
-				</v8:item>
-			</title>
-			<useRestriction>
-				<group>true</group>
-				<order>true</order>
-			</useRestriction>
-			<appearance>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Format</dcscor:parameter>
-					<dcscor:value xsi:type="v8:LocalStringType">
-						<v8:item>
-							<v8:lang>en</v8:lang>
-							<v8:content>NFD=2</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ro</v8:lang>
-							<v8:content>NFD=2</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>NFD=2</v8:content>
-						</v8:item>
-					</dcscor:value>
-				</dcscor:item>
-			</appearance>
-		</field>
-		<field xsi:type="DataSetFieldField">
 			<dataPath>PaymentKey</dataPath>
 			<field>PaymentKey</field>
 			<useRestriction>
@@ -429,12 +388,9 @@ select &amp;StrTotalsGroup as StrTotalsGroup, &amp;StrPayment as StrPayment, &am
 	end as AmountDebt,
 	case when &amp;LocalCurrency then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
 		else Balances.OverpaymentBalance
-	end as Overpayment,
-	case when &amp;LocalCurrency then Balances.BillBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.BillBalance
-	end as BillBalance
+	end as Overpayment
 	{select StrTotalsGroup, StrPayment, StrOverduePayment, Vendor.* as Vendor, Contract.*, Document.*, Detail.*, PaymentDate, PaymentBalance, BalanceDays,
-	OverduePeriods, AmountDebt, Overpayment, BillBalance, PaymentKey, Option.*, Interval, CurrentDebt}
+	OverduePeriods, AmountDebt, Overpayment, PaymentKey, Option.*, Interval, CurrentDebt}
 from AccumulationRegister.VendorDebts.Balance ( &amp;Asof, {Contract.Company.* as Company, Contract.Owner.* as Vendor, Contract.* as Contract, Document.* as Document,
 	Detail.* as Detail, Contract.Currency.* as Currency} ) as Balances
 	//
@@ -624,10 +580,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 	<totalField>
 		<dataPath>PaymentBalance</dataPath>
 		<expression>Sum(PaymentBalance)</expression>
-	</totalField>
-	<totalField>
-		<dataPath>BillBalance</dataPath>
-		<expression>Sum(BillBalance)</expression>
 	</totalField>
 	<totalField>
 		<dataPath>Difference</dataPath>
@@ -2207,24 +2159,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 								</v8:item>
 							</dcsset:lwsTitle>
 						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:use>false</dcsset:use>
-							<dcsset:field>BillBalance</dcsset:field>
-							<dcsset:lwsTitle>
-								<v8:item>
-									<v8:lang>en</v8:lang>
-									<v8:content>By invoices</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>По счетам</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ro</v8:lang>
-									<v8:content>Prin facturi</v8:content>
-								</v8:item>
-							</dcsset:lwsTitle>
-						</dcsset:item>
 					</dcsset:selection>
 					<dcsset:outputParameters>
 						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
@@ -2288,24 +2222,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 								</v8:item>
 							</dcsset:lwsTitle>
 						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:use>false</dcsset:use>
-							<dcsset:field>BillBalance</dcsset:field>
-							<dcsset:lwsTitle>
-								<v8:item>
-									<v8:lang>en</v8:lang>
-									<v8:content>By invoices</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>По счетам</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ro</v8:lang>
-									<v8:content>Prin facturi</v8:content>
-								</v8:item>
-							</dcsset:lwsTitle>
-						</dcsset:item>
 					</dcsset:selection>
 					<dcsset:outputParameters>
 						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
@@ -2346,24 +2262,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 									<v8:item>
 										<v8:lang>ro</v8:lang>
 										<v8:content>Expirat</v8:content>
-									</v8:item>
-								</dcsset:lwsTitle>
-							</dcsset:item>
-							<dcsset:item xsi:type="dcsset:SelectedItemField">
-								<dcsset:use>false</dcsset:use>
-								<dcsset:field>BillBalance</dcsset:field>
-								<dcsset:lwsTitle>
-									<v8:item>
-										<v8:lang>en</v8:lang>
-										<v8:content>By invoices</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>По счетам</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ro</v8:lang>
-										<v8:content>Prin facturi</v8:content>
 									</v8:item>
 								</dcsset:lwsTitle>
 							</dcsset:item>
@@ -2425,24 +2323,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 								</v8:item>
 							</dcsset:lwsTitle>
 						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:use>false</dcsset:use>
-							<dcsset:field>BillBalance</dcsset:field>
-							<dcsset:lwsTitle>
-								<v8:item>
-									<v8:lang>en</v8:lang>
-									<v8:content>By invoices</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>По счетам</v8:content>
-								</v8:item>
-								<v8:item>
-									<v8:lang>ro</v8:lang>
-									<v8:content>Prin facturi</v8:content>
-								</v8:item>
-							</dcsset:lwsTitle>
-						</dcsset:item>
 					</dcsset:selection>
 					<dcsset:outputParameters>
 						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
@@ -2467,24 +2347,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							<dcsset:item xsi:type="dcsset:SelectedItemField">
 								<dcsset:field>PaymentBalance</dcsset:field>
-							</dcsset:item>
-							<dcsset:item xsi:type="dcsset:SelectedItemField">
-								<dcsset:use>false</dcsset:use>
-								<dcsset:field>BillBalance</dcsset:field>
-								<dcsset:lwsTitle>
-									<v8:item>
-										<v8:lang>en</v8:lang>
-										<v8:content>By invoices</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ru</v8:lang>
-										<v8:content>По счетам</v8:content>
-									</v8:item>
-									<v8:item>
-										<v8:lang>ro</v8:lang>
-										<v8:content>Prin facturi</v8:content>
-									</v8:item>
-								</dcsset:lwsTitle>
 							</dcsset:item>
 						</dcsset:selection>
 						<dcsset:conditionalAppearance>

@@ -316,7 +316,7 @@
 //
 select allowed cast ( Debts.Document as Document.SalesOrder ) as SalesOrder,
 	sum ( Debts.AmountBalance ) as Amount, sum ( Debts.PaymentBalance ) as Debt,
-	sum ( Debts.OverpaymentBalance ) as Overpayment, sum ( Debts.BillBalance ) as Bill
+	sum ( Debts.OverpaymentBalance ) as Overpayment
 into Debts
 from AccumulationRegister.Debts.Balance ( , {Contract.Company.* as Company, Contract.* as Contract, Contract.Owner.* as Customer,
 	cast ( Document as Document.SalesOrder ).* as SalesOrder} ) as Debts

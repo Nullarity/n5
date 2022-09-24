@@ -44,8 +44,6 @@ Function getType ( Ref )
 	pickers.Add ( "Quote" );
 	pickers.Add ( "SalesOrder" );
 	pickers.Add ( "InternalOrder" );
-	pickers.Add ( "VendorBill" );
-	pickers.Add ( "Bill" );
 	pickers.Add ( "ProductionOrder" );
 	pickers.Add ( "PurchaseOrder" );
 	pickers.Add ( "VendorInvoice" );
@@ -114,10 +112,8 @@ Function getContract ( Params, Object )
 	type = Params.Type;
 	if ( type.SalesOrder
 		or type.Quote
-		or type.Bill
 		or type.Invoice
 		or type.PurchaseOrder
-		or type.VendorBill
 		or type.VendorInvoice ) then
 		return Object.Contract;
 	endif; 
@@ -129,7 +125,6 @@ Function getVendor ( Params, Object )
 	
 	type = Params.Type;
 	if ( type.PurchaseOrder
-		or type.VendorBill
 		or type.VendorInvoice ) then
 		return Object.Vendor;
 	endif; 
@@ -189,13 +184,11 @@ Function getDiscounts ( Params, Object )
 	company = Params.Company;
 	if ( type.SalesOrder
 		or type.Invoice
-		or type.Bill
 		or type.Quote
 		or type.Sale ) then
 		return Options.Discounts ( company );
 	elsif ( type.PurchaseOrder
-		or type.VendorInvoice
-		or type.VendorBill ) then
+		or type.VendorInvoice ) then
 		return Options.VendorDiscounts ( company );
 	else
 		return false;
@@ -287,9 +280,7 @@ Function getKeys ( Params )
 		itemKeys = "Feature, Series, DocumentOrder, DocumentOrderRowKey, Item, Package";
 		serviceKeys = "Feature, DocumentOrder, DocumentOrderRowKey, Item, Description";	
 	elsif ( type.Quote
-		or type.Bill
 		or type.Invoice
-		or type.VendorBill
 		or type.VendorInvoice ) then
 		itemKeys = "Feature, Series, DiscountRate, Item, Package, Price, Prices, VATCode";
 		serviceKeys = "Feature, DiscountRate, Item, Price, Prices, Description, VATCode";
@@ -301,9 +292,7 @@ Function getKeys ( Params )
 		itemKeys = "Feature, Item, Package, Series";
 		serviceKeys = "";
 	elsif ( type.Quote
-		or type.Bill
 		or type.Invoice
-		or type.VendorBill
 		or type.VendorInvoice ) then
 		itemKeys = "Feature, DiscountRate, Item, Package, Price, VATCode";
 		serviceKeys = "";

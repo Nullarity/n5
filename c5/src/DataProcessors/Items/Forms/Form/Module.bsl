@@ -577,12 +577,10 @@ Function getOrganization ()
 	
 	type = Source.Type;
 	if ( type.SalesOrder
-		or type.Bill
 		or type.Invoice
 		or type.Quote ) then
 		return Source.Customer;
 	elsif ( type.PurchaseOrder
-		or type.VendorBill
 		or type.VendorInvoice ) then
 		return Source.Vendor;
 	endif; 
@@ -594,7 +592,6 @@ Function isVendor ()
 	
 	type = Source.Type;
 	return type.PurchaseOrder
-	or type.VendorBill
 	or type.VendorInvoice;
 	
 EndFunction 
@@ -965,9 +962,7 @@ Function getRow ()
 			row = getProductionOrderRow ( SelectedRow, Source, Package, Feature );
 		elsif ( type.Production ) then
 			row = getProductionRow ( SelectedRow, Source, Package, Feature, Series );	
-		elsif ( type.VendorBill
-			or type.Bill
-			or type.Quote ) then
+		elsif ( type.Quote ) then
 			row = getBillRow ( Cache.Prices, SelectedRow, Source, Prices, Package, Feature );
 		elsif ( type.Invoice )
 			or ( type.InvoiceRecord ) then

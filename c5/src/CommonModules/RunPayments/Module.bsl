@@ -125,7 +125,7 @@ Procedure sqlPayments ( Env )
 	|// The whole document as a table
 	|select Records.LineNumber as Row, Records.Contract.Owner as Organization, Records.Contract as Contract,
 	|	Records.Document as Document, Records.Detail as Detail, Records.PaymentKey as PaymentKey,
-	|	Records.Discount as Discount, Records.Advance <> 0 as ReturningAdvance,	Records.Debt <> 0 as Debt,
+	|	Records.Discount as Discount, Records.Advance <> 0 as ReturnAdvance, Records.Debt <> 0 as Debt,
 	|	Records.Payment <> 0 as Payment, Payments.Amount as Amount
 	|";
 	if ( incomeTax ) then
@@ -142,7 +142,7 @@ Procedure sqlPayments ( Env )
 	|where Records.Ref = &Ref
 	|union all
 	|select isnull ( Table.Row, 1 ), Documents." + organization + ", Documents.Contract, &Ref, undefined, null,
-	|	0, false, false, false, false, Documents.ContractAmount - isnull ( Table.Amount, 0 )
+	|	0, false, false, false, Documents.ContractAmount - isnull ( Table.Amount, 0 )
 	|";
 	if ( incomeTax ) then
 		s = s + ",
@@ -296,8 +296,9 @@ Procedure sqlPayments ( Env )
 	|select
 	|	Records.Organization as Organization, Records.Contract as Contract, Records.Document as Document,
 	|	Records.Discount as Discount, Records.PaymentKey as PaymentKey, Records.Payment as Payment,
-	|	case when Records.Payment and not ( Records.Debt or Records.ReturningAdvance ) then &Ref else Records.Detail end as Detail,
-	|	Records.Debt as Debt, Records.ReturningAdvance as ReturningAdvance,
+	|	valuetype ( Records.Document ) in ( type ( Document.SalesOrder ), type ( Document.PurchaseOrder ) ) as ByOrder,
+	|	case when Records.Payment and not ( Records.Debt or Records.ReturnAdvance ) then &Ref else Records.Detail end as Detail,
+	|	Records.Debt as Debt, Records.ReturnAdvance as ReturnAdvance,
 	|	Input.Amount as Amount, Amounts.AmountAccounting as AmountAccounting, Amounts.AmountDocument as AmountDocument
 	|";
 	if ( incomeTax ) then
@@ -328,7 +329,7 @@ Procedure makePayments ( Env )
 	Env.Insert ( "Buffer", GeneralRecords.Frame () );
 	for each row in Env.Payments do
 		proceedDiscount ( Env, row );
-		proceedPayment ( Env, row );
+		proceedAmount ( Env, row );
 	enddo;
 	
 EndProcedure
@@ -388,34 +389,34 @@ Procedure makeDiscount ( Env, Row )
 	
 EndProcedure
 
-Procedure proceedPayment ( Env, Row )
+Procedure proceedAmount ( Env, Row )
 	
 	fields = Env.Fields;
 	refund = Env.Refund;
 	amount = Row.Amount; 
 	amountAccounting = Row.AmountAccounting;
-	returningAdvance = Row.ReturningAdvance;
-	hasDebt = Row.Debt;
+	returnAdvance = Row.ReturnAdvance;
+	payDebt = Row.Debt;
 	register = Env.Registers [ Env.Register ];
-	if ( not refund and ( hasDebt or returningAdvance ) ) then
+	if ( not refund and ( payDebt or returnAdvance ) ) then
 		movement = register.AddExpense ();
 	else
 		movement = register.AddReceipt ();
 	endif;
 	movement.Period = fields.date;
 	FillPropertyValues ( movement, Row, "Contract, Document, Detail, PaymentKey" );
-	if ( hasDebt ) then
+	if ( payDebt ) then
 		movement.Amount = amount;
 		movement.Accounting = amountAccounting;
 		movement.Payment = amount;
-	elsif ( returningAdvance ) then
+	elsif ( returnAdvance ) then
 		movement.Overpayment = - amount;
 		movement.Advance = - amountAccounting;
-		restorePayment ( Env, Row );
-		if ( Env.Customer and not refund ) then
-			acceptAdvance ( Env, Row, not fields.AdvancesMonthly );
-		else
-			returnAdvance ( Env, Row, not fields.AdvancesMonthly );
+		if ( Row.ByOrder ) then
+			movement = ? ( refund, register.AddExpense (), register.AddReceipt () );
+			movement.Period = fields.date;
+			FillPropertyValues ( movement, Row, "Contract, Document, PaymentKey" );
+			movement.Payment = - amount;
 		endif;
 	else
 		if ( refund ) then
@@ -425,7 +426,7 @@ Procedure proceedPayment ( Env, Row )
 		else
 			movement.Overpayment = amount;
 			movement.Advance = amountAccounting;
-			if ( Row.Payment ) then
+			if ( Row.ByOrder ) then
 				movement = register.AddExpense ();
 				movement.Period = fields.date;
 				FillPropertyValues ( movement, Row, "Contract, Document, PaymentKey" );
@@ -433,7 +434,13 @@ Procedure proceedPayment ( Env, Row )
 			endif;
 		endif;
 	endif;
-	if ( not returningAdvance ) then
+	if ( returnAdvance ) then
+		if ( Env.Customer and not refund ) then
+			acceptAdvance ( Env, Row, not fields.AdvancesMonthly );
+		else
+			returnAdvance ( Env, Row, not fields.AdvancesMonthly );
+		endif;
+	else
 		commitDebt ( Env, Row );
 	endif;
 
@@ -615,7 +622,7 @@ EndFunction
 Procedure commitDebt ( Env, Row )
 	
 	fields = Env.Fields;
-	advance = not ( Row.Debt or Row.ReturningAdvance or fields.AdvancesMonthly );
+	advance = not ( Row.Debt or Row.ReturnAdvance or fields.AdvancesMonthly );
 	p = GeneralRecords.GetParams ();
 	p.Date = fields.Date;
 	p.Company = fields.Company;
@@ -711,25 +718,6 @@ Procedure commitAdvanceVAT ( Env, Row )
 	p.Amount = amount - amount * ( 100 / ( 100 + fields.VAT ) );
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
-	
-EndProcedure
-
-Procedure restorePayment ( Env, Row )
-	
-	document = Row.Document;
-	type = TypeOf ( Row.Document );
-	customer = Env.Customer;
-	if ( ( customer and type = Type ( "DocumentRef.SalesOrder" ) )
-		or ( not customer and type = Type ( "DocumentRef.PurchaseOrder" ) ) ) then
-		register = Env.Registers [ Env.Register ];
-		movement = ? ( Env.Refund, register.AddExpense (), register.AddReceipt () );
-		movement.Period = Env.Fields.Date;
-		movement.Contract = Row.Contract;
-		movement.PaymentKey = Row.PaymentKey;
-		movement.Document = document;
-		movement.Detail = undefined;
-		movement.Payment = Row.Amount;
-	endif;
 	
 EndProcedure
 

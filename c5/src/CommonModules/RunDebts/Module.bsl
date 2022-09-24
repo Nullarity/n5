@@ -667,7 +667,7 @@ Procedure sqlPayments ( Env )
 	s = "
 	|select Debts.Document as Document, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
 	|	&Return * Debts.PaymentBalance as Payment, &Return * Debts.OverpaymentBalance as Overpayment,
-	|	&Return * Debts.BillBalance as Bill, Debts.Document.Date as Date, Details.Date as PaymentDate,
+	|	Debts.Document.Date as Date, Details.Date as PaymentDate,
 	|	Details.Option as Option
 	|into Debts
 	|from AccumulationRegister." + Env.PaymentsRegister + ".Balance ( &Timestamp, Contract = &Contract
@@ -783,8 +783,8 @@ EndProcedure
 
 Function groupRecordset ( Recordset )
 
-	table = Recordset.Unload ( , "Period, RecordType, Document, Detail, Amount, Payment, Overpayment, Bill" );
-	table.GroupBy ( "Period, RecordType, Document, Detail", "Amount, Payment, Overpayment, Bill" );
+	table = Recordset.Unload ( , "Period, RecordType, Document, Detail, Amount, Payment, Overpayment" );
+	table.GroupBy ( "Period, RecordType, Document, Detail", "Amount, Payment, Overpayment" );
 	return table;
 
 EndFunction

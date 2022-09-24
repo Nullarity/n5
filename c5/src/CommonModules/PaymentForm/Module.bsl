@@ -51,13 +51,7 @@ Procedure Fill ( Form ) export
 	
 	env = getEnv ( Form );
 	object = Form.Object;
-	type = env.BaseType;
-	if ( type = Type ( "DocumentRef.Bill" )
-		or type = Type ( "DocumentRef.VendorBill" ) ) then
-		getBillData ( env );
-	else
-		getInvoiceData ( env );
-	endif;
+	getInvoiceData ( env );
 	fillHeader ( Env );
 	fillTable ( object );
 	toggleDetails ( Form );
@@ -89,31 +83,6 @@ Function getEnv ( Form )
 	
 EndFunction
  
-&AtServer
-Procedure getBillData ( Env )
-	
-	s = "
-	|// @Fields
-	|select Document.Company as Company, Document.Contract as Contract, Document.DiscountRate as DiscountRate,
-	|	Document.Deposit as Deposit, Document.Deposit.Account as Account
-	|";
-	if ( Env.BaseType = Type ( "DocumentRef.Bill" ) ) then
-		s = s + ", Document.Customer as Customer, Document.CustomerDeposit as CustomerDeposit";
-	else
-		s = s + ", Document.Vendor as Vendor, Document.VendorDeposit as VendorDeposit";
-	endif; 
-	s = s + "
-	|from Document." + Env.BaseName + " as Document
-	|where Document.Ref = &Bill
-	|";
-	Env.Selection.Add ( s );
-	Env.Q.SetParameter ( "Bill", Env.Base );
-	SQL.Prepare ( Env );
-	Env.Insert ( "Data", Env.Q.ExecuteBatch () );
-	SQL.Unload ( Env, Env.Data );
-	
-EndProcedure
-
 &AtServer
 Procedure fillHeader ( Env )
 	
@@ -174,7 +143,7 @@ Function getPayments ( Object )
 	q.SetParameter ( "Period", EndOfDay ( date ) );
 	q.SetParameter ( "Contract", Object.Contract );
 	q.SetParameter ( "Currency", Object.ContractCurrency );
-	q.SetParameter ( "Base", getBase ( Object.Base ) );
+	q.SetParameter ( "Base", Object.Base );
 	name = Metadata.FindByType ( TypeOf ( Object.Ref ) ).Name;
 	q.SetParameter ( "Types", Metadata.Documents [ name ].TabularSections.Payments.Attributes.Document.Type.Types () );
 	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.Payment" )
@@ -185,24 +154,6 @@ Function getPayments ( Object )
 	endif;
 	SetPrivilegedMode ( true );
 	return q.Execute ().Unload ();
-	
-EndFunction
-
-&AtServer
-Function getBase ( Base )
-	
-	baseType = TypeOf ( Base );
-	if ( baseType = Type ( "DocumentRef.Bill" )
-		or baseType = Type ( "DocumentRef.VendorBill" ) ) then
-		firstBase = DF.Pick ( Base, "Base" );
-		if ( firstBase = undefined ) then
-			return Base;
-		else
-			return firstBase;
-		endif; 
-	else
-		return Base;
-	endif; 
 	
 EndFunction
 
@@ -219,7 +170,7 @@ Function sqlPayments ( Object )
 	|	" + ? ( refund, "- ", "" ) + "( Balances.PaymentBalance + Balances.OverpaymentBalance ) as Payment, 
 	|	" + ? ( refund, "- ", "" ) + "Balances.AmountBalance as Debt,
 	|	" + ? ( refund, "", "- " ) + "Balances.OverpaymentBalance as Advance,
-	|	Balances.BillBalance as Bill, Balances.Detail as Detail,
+	|	Balances.Detail as Detail,
 	|	PaymentDetails.Option as Option, PaymentDetails.Date as Date, Discounts.Discount as DiscountRate
 	|from AccumulationRegister." + ? ( debts, "Debts", "VendorDebts" ) + ".Balance ( ,
 	|	( Contract = &Contract or ( Contract.Currency = &Currency and Contract.Owner.Chain = &Organization ) )";
@@ -875,13 +826,6 @@ Procedure readAppearance ( Form )
 		rules.Add ( "
 		|Customer Contract Company lock filled ( Object.Base );
 		|" );
-		if ( isPayment ) then
-			rules.Add ( "
-			|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash
-			|	and not field ( Object.Location, ""Register"" );
-			|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
-			|" );
-		endif;
 	else
 		rules.Add ( "
 		|Vendor Contract Company lock filled ( Object.Base );
@@ -894,10 +838,17 @@ Procedure readAppearance ( Form )
 			|" );
 		endif;
 	endif;
-	if ( isRefund or isVendorPayment ) then
+	if ( isVendorPayment or isRefund ) then
 		rules.Add ( "
 		|NewVoucher show empty ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
 		|Voucher FormVoucher show filled ( Voucher ) and Object.Method = Enum.PaymentMethods.Cash;
+		|" );
+	endif;
+	if ( isPayment or isVendorRefund ) then
+		rules.Add ( "
+		|NewReceipt show empty ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash
+		|	and not field ( Object.Location, ""Register"" );
+		|Receipt FormReceipt show filled ( Receipt ) and Object.Method = Enum.PaymentMethods.Cash;
 		|" );
 	endif;
 	Appearance.Read ( Form, rules );
@@ -1059,8 +1010,12 @@ Procedure AfterWrite ( Form ) export
 	type = TypeOf ( object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" ) ) then
 		Notify ( Enum.MessagePaymentIsSaved (), object );
+	elsif ( type = Type ( "DocumentRef.Refund" ) ) then
+		Notify ( Enum.MessageRefundIsSaved (), object );
 	elsif ( type = Type ( "DocumentRef.VendorPayment" ) ) then
 		Notify ( Enum.MessageVendorPaymentIsSaved (), object );
+	elsif ( type = Type ( "DocumentRef.VendorRefund" ) ) then
+		Notify ( Enum.MessageVendorRefundIsSaved (), object );
 	endif;
 	
 EndProcedure

@@ -20,7 +20,6 @@ Function getPayments ( Object )
 	|from Catalog.Terms.Payments as Payments
 	|where Payments.Ref in ( select ";
 	if ( type = Type ( "DocumentRef.Invoice" )
-		or type = Type ( "DocumentRef.Bill" )
 		or type = Type ( "DocumentRef.Quote" )
 		or type = Type ( "DocumentRef.SalesOrder" ) ) then
 		s = s + "CustomerTerms";

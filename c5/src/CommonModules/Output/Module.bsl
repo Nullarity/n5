@@ -2977,14 +2977,6 @@ Procedure BillAmountGreatPaymentsByBase ( Params = undefined, Field = "", DataKe
 
 EndProcedure
 
-&AtServer
-Procedure PaymentsBillBalanceError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = NStr ( "en='Payment of a bill on document %Document was exceeded by %Amount. The balance is %AmountBalance'; ro='Depășită cu %Amount pentru contul documentului %Document. Soldul este %AmountBalance'; ru='Превышена на %Amount оплата счету для документа %Document. В остатке  числится %AmountBalance'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
 Function CantCreateTenantCode () export
 
 	text = NStr ( "en='Unique client code creation failed'; ro='Crearea unui cod client unic a eșuat'; ru='Не удалось создать уникальный код для клиента'" );

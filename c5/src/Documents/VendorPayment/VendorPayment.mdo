@@ -79,7 +79,6 @@
   </standardAttributes>
   <basedOn>Document.PurchaseOrder</basedOn>
   <basedOn>Document.VendorInvoice</basedOn>
-  <basedOn>Document.VendorBill</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -355,7 +354,6 @@
       <value>Baza</value>
     </synonym>
     <type>
-      <types>DocumentRef.VendorBill</types>
       <types>DocumentRef.VendorInvoice</types>
       <types>DocumentRef.PurchaseOrder</types>
     </type>
@@ -1487,41 +1485,6 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="6e511202-f3a5-4c4a-948d-b277b946f199">
-      <name>Bill</name>
-      <synonym>
-        <key>en</key>
-        <value>Amount On Invoices</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Сумма по счетам</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Suma din facturi</value>
-      </synonym>
-      <type>
-        <types>DefinedType.Amount</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>The amount of payable debts, as shown with receipts</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Сумма задолженности к оплате, подтвержденная счетами на оплату</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Sumă datorată pentru plată, confirmată prin facturi pentru plată</value>
-      </toolTip>
-      <markNegatives>true</markNegatives>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
     <attributes uuid="f7d83f60-ba68-4b68-9a42-2363a1a02d37">
       <name>Amount</name>
       <synonym>
@@ -1749,7 +1712,6 @@
       </synonym>
       <type>
         <types>DocumentRef.VendorRefund</types>
-        <types>DocumentRef.VendorBill</types>
         <types>DocumentRef.VendorInvoice</types>
         <types>DocumentRef.PurchaseOrder</types>
         <types>DocumentRef.CustomsDeclaration</types>

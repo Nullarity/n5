@@ -49,37 +49,6 @@
 			</role>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>BillBalance</dataPath>
-			<field>BillBalance</field>
-			<title xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Неоплаченная сумма по счетам</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>Unpaid amount according to the receipts</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>Suma neachitata pe factura</v8:content>
-				</v8:item>
-			</title>
-			<useRestriction>
-				<group>true</group>
-			</useRestriction>
-			<appearance>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Format</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>MarkNegatives</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-				</dcscor:item>
-			</appearance>
-		</field>
-		<field xsi:type="DataSetFieldField">
 			<dataPath>PurchaseOrderAmount</dataPath>
 			<field>PurchaseOrderAmount</field>
 			<title xsi:type="v8:LocalStringType">
@@ -315,8 +284,7 @@
 // VendorDebtsBalance
 //
 select cast ( VendorDebtsBalance.Document as Document.PurchaseOrder ) as PurchaseOrder, sum ( VendorDebtsBalance.AmountBalance ) as VendorDebtsAmountBalance,
-	sum ( VendorDebtsBalance.PaymentBalance ) as VendorDebtsPaymentBalance, sum ( VendorDebtsBalance.OverpaymentBalance ) as OverpaymentBalance,
-	sum ( VendorDebtsBalance.BillBalance ) as BillBalance
+	sum ( VendorDebtsBalance.PaymentBalance ) as VendorDebtsPaymentBalance, sum ( VendorDebtsBalance.OverpaymentBalance ) as OverpaymentBalance
 into VendorDebtsBalance
 from AccumulationRegister.VendorDebts.Balance ( , {Contract.Company.* as Company, Contract.* as Contract, Contract.Owner.* as Vendor,
 	cast ( Document as Document.PurchaseOrder ).* as PurchaseOrder} ) as VendorDebtsBalance
@@ -331,18 +299,16 @@ select VendorDebtsBalance.PurchaseOrder as PurchaseOrder, VendorDebtsBalance.Pur
 	VendorDebtsBalance.PurchaseOrder.Amount as PurchaseOrderAmount, VendorDebtsBalance.VendorDebtsPaymentBalance as VendorDebtsPaymentBalance,
 	VendorDebtsBalance.PurchaseOrder.Amount + VendorDebtsBalance.VendorDebtsAmountBalance - VendorDebtsBalance.OverpaymentBalance - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountSold,
 	VendorDebtsBalance.OverpaymentBalance + VendorDebtsBalance.VendorDebtsPaymentBalance - VendorDebtsBalance.VendorDebtsAmountBalance as PurchaseOrderAmountBalance,
-	VendorDebtsBalance.VendorDebtsPaymentBalance - VendorDebtsBalance.BillBalance as AmountForOutgoingBills,
-	VendorDebtsBalance.PurchaseOrder.Amount - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountPayed,
-	VendorDebtsBalance.BillBalance as BillBalance
-	{select PurchaseOrder.*, Vendor.*, Contract.*, PurchaseOrderAmount, VendorDebtsPaymentBalance, BillBalance, PurchaseOrderAmountBalance,
+	VendorDebtsBalance.VendorDebtsPaymentBalance as AmountForOutgoingBills,
+	VendorDebtsBalance.PurchaseOrder.Amount - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountPayed
+	{select PurchaseOrder.*, Vendor.*, Contract.*, PurchaseOrderAmount, VendorDebtsPaymentBalance, PurchaseOrderAmountBalance,
 	AmountSold, AmountForOutgoingBills, AmountPayed}
 from VendorDebtsBalance as VendorDebtsBalance
 {where VendorDebtsBalance.PurchaseOrder.Amount as PurchaseOrderAmount, VendorDebtsBalance.VendorDebtsPaymentBalance as VendorDebtsPaymentBalance,
 	VendorDebtsBalance.PurchaseOrder.Amount + VendorDebtsBalance.VendorDebtsAmountBalance - VendorDebtsBalance.OverpaymentBalance - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountSold,
 	VendorDebtsBalance.OverpaymentBalance + VendorDebtsBalance.VendorDebtsPaymentBalance - VendorDebtsBalance.VendorDebtsAmountBalance as PurchaseOrderAmountBalance,
-	VendorDebtsBalance.VendorDebtsPaymentBalance - VendorDebtsBalance.BillBalance as AmountForOutgoingBills,
-	VendorDebtsBalance.PurchaseOrder.Amount - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountPayed,
-	VendorDebtsBalance.BillBalance as BillBalance}</query>
+	VendorDebtsBalance.VendorDebtsPaymentBalance as AmountForOutgoingBills,
+	VendorDebtsBalance.PurchaseOrder.Amount - VendorDebtsBalance.VendorDebtsPaymentBalance as AmountPayed}</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
 	<dataSet xsi:type="DataSetQuery">
@@ -615,10 +581,6 @@ case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.Deliver
 		</useRestriction>
 	</calculatedField>
 	<totalField>
-		<dataPath>BillBalance</dataPath>
-		<expression>Sum(BillBalance)</expression>
-	</totalField>
-	<totalField>
 		<dataPath>PurchaseOrderAmount</dataPath>
 		<expression>Sum(PurchaseOrderAmount)</expression>
 	</totalField>
@@ -755,9 +717,6 @@ case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.Deliver
 							<v8:content>Facturi de plată</v8:content>
 						</v8:item>
 					</dcsset:lwsTitle>
-					<dcsset:item xsi:type="dcsset:SelectedItemField">
-						<dcsset:field>BillBalance</dcsset:field>
-					</dcsset:item>
 					<dcsset:item xsi:type="dcsset:SelectedItemField">
 						<dcsset:field>AmountForOutgoingBills</dcsset:field>
 					</dcsset:item>

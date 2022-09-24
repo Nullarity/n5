@@ -77,7 +77,6 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
   </standardAttributes>
-  <basedOn>Document.Bill</basedOn>
   <basedOn>Document.Invoice</basedOn>
   <basedOn>Document.SalesOrder</basedOn>
   <createOnInput>Use</createOnInput>
@@ -356,7 +355,6 @@
     </synonym>
     <type>
       <types>DocumentRef.Invoice</types>
-      <types>DocumentRef.Bill</types>
       <types>DocumentRef.SalesOrder</types>
     </type>
     <toolTip>
@@ -1405,40 +1403,6 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="1fece3f4-4cb2-4eeb-bbc5-35ee2711556f">
-      <name>Bill</name>
-      <synonym>
-        <key>en</key>
-        <value>Amount On Invoices</value>
-      </synonym>
-      <synonym>
-        <key>ru</key>
-        <value>Сумма по счетам</value>
-      </synonym>
-      <synonym>
-        <key>ro</key>
-        <value>Suma din facturi</value>
-      </synonym>
-      <type>
-        <types>DefinedType.Amount</types>
-      </type>
-      <toolTip>
-        <key>en</key>
-        <value>The amount of payable debts, as shown with receipts</value>
-      </toolTip>
-      <toolTip>
-        <key>ru</key>
-        <value>Сумма задолженности к оплате, подтвержденная счетами на оплату</value>
-      </toolTip>
-      <toolTip>
-        <key>ro</key>
-        <value>Sumă datorată pentru plată, confirmată prin facturi pentru plată</value>
-      </toolTip>
-      <minValue xsi:type="core:UndefinedValue"/>
-      <maxValue xsi:type="core:UndefinedValue"/>
-      <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
-    </attributes>
     <attributes uuid="65251bd1-7e37-469b-8ed0-b5ffe6b675b1">
       <name>Contract</name>
       <synonym>
@@ -1668,11 +1632,10 @@
       </synonym>
       <type>
         <types>DocumentRef.Invoice</types>
-        <types>DocumentRef.Bill</types>
         <types>DocumentRef.SalesOrder</types>
+        <types>DocumentRef.AdjustDebts</types>
         <types>DocumentRef.Refund</types>
         <types>DocumentRef.Debts</types>
-        <types>DocumentRef.AdjustDebts</types>
       </type>
       <toolTip>
         <key>en</key>

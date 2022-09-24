@@ -617,8 +617,7 @@ Function sqlPayments ( Type, TableName )
 	s = "
 	|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
 	|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
-	|	Balances.BillBalance as Bill, Balances.Detail as Detail,
-	|	PaymentDetails.Option as Option, PaymentDetails.Date as Date
+	|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
 	|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
 	|	//
 	|	// PaymentDetails
