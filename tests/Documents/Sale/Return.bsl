@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0O7" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0VW" ) );
 getEnv ();
 createEnv ();
 

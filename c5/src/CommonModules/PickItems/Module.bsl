@@ -99,7 +99,6 @@ Function getCustomer ( Params, Object )
 	type = Params.Type;
 	if ( type.SalesOrder
 		or type.Quote
-		or type.Bill
 		or type.Invoice ) then
 		return Object.Customer;
 	endif; 

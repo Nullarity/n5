@@ -29,7 +29,7 @@ CheckTemplate ( "#TabDoc" );
 Function getEnv ()
 	
 	date = CurrentDate ();
-	id = Call ( "Common.ScenarioID", "A0UT" );
+	id = Call ( "Common.ScenarioID", "A0W5" );
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Customer", "_Customer: " + id );

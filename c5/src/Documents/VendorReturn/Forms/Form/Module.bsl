@@ -189,22 +189,7 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	if ( Row <> undefined ) then
 		Computations.Total ( Row, object.VATUse, CalcVAT );
 	endif;
-	items = object.Items;
-	accounts = object.Accounts;
-	fixedAssets = object.FixedAssets;
-	intangibleAssets = object.IntangibleAssets;
-	vat = items.Total ( "VAT" )
-	+ accounts.Total ( "VAT" )
-	+ fixedAssets.Total ( "VAT" )
-	+ intangibleAssets.Total ( "VAT" );
-	amount = items.Total ( "Total" )
-	+ accounts.Total ( "Total" )
-	+ fixedAssets.Total ( "Total" )
-	+ intangibleAssets.Total ( "Total" );
-	object.VAT = vat;
-	object.Amount = amount;
-	object.Discount = items.Total ( "Discount" );
-	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
+	InvoiceForm.CalcTotals ( Form );
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
 

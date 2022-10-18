@@ -1,19 +1,22 @@
 ﻿// 1. Create Purchase Order
 // 2. Create Vendor Payment
-// 3. Create Vendor Invoice
-// 4. Create Adjust vendor debt
+// 3. Create Vendor Invoice without closing advances
+// 4. Create Adjust vendor debt for closing advances and invoice manually (from the advance side)
 // 5. Check movemnts
+// There is an important step to restore payment amount in the adjusting debts
+// algorithm.
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "28CBEE8F" );
+id = Call ( "Common.ScenarioID", "A0XL" );
 env = getEnv ( id );
 createEnv ( env );
 
 // *************************
 // Create Adjust Vendor Debts
 // *************************
+
 Commando ( "e1cib/list/Document.AdjustVendorDebts" );
 list = With ();
 Put ( "#VendorFilter", env.Vendor );
@@ -27,21 +30,45 @@ try
 except
 	Click ( "#FormCreate" );
 	form = With ();
+	Click ( "#Reversal" ); // Uncheck reversal flag
 endtry;
 
 Put ( "#Option", "Vendor" );
+Put ( "#Type", "Advance" );
 Put ( "#Receiver", env.Vendor );
-Put ( "#ReceiverContract", env.Contract2 );
-if ( Fetch  ( "#Reversal" ) = "No" ) then
-	Click ( "#Reversal" );
-endif;	
 
-Put ( "#Amount", "1070" );
+Put ( "#Amount", 400 );
 Click ( "#FormPost" );
 
 Click ( "#FormReportRecordsShow" );
 records = With ();
 CheckTemplate ( "#TabDoc" );
+
+#region generateReport
+p = Call ( "Common.Report.Params" );
+p.Path = "e1cib/app/Report.VendorDebtDetails";
+p.Title = "Vendor Debt Detail*";
+filters = new Array ();
+
+item = Call ( "Common.Report.Filter" );
+item.Period = true;
+item.Name = "Period";
+item.ValueFrom = BegOfYear ( CurrentDate () );
+item.ValueTo = EndOfYear ( CurrentDate () );;
+filters.Add ( item );
+
+item = Call ( "Common.Report.Filter" );
+item.Name = "Vendor";
+item.Value = env.Vendor;
+filters.Add ( item );
+
+p.Filters = filters;
+
+With ( Call ( "Common.Report", p ) );
+Click ( "#GenerateReport" );
+Check ( "#Result [ R10C13 ]", 400 ); // For payment / At the end / 400.00
+
+#endregion
 
 // *************************
 // Procedures
@@ -73,32 +100,10 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
 	p.Description = Env.Vendor;
-	//p.TaxGroup = "California";
-	//p.SkipAddress = true;
-	p.ClearTerms = true;
+	p.Terms = "Due on receipt";
 	p.CloseAdvances = false;
 	Call ( "Catalogs.Organizations.CreateVendor", p );
-	
-	// *************************
-	// Create Contract2
-	// *************************
-	
-	Commando ( "e1cib/list/Catalog.Organizations" );
-	With ();
-	p = Call ( "Common.Find.Params" );
-	p.Where = "Name";
-	p.What = Env.Vendor;
-	Call ( "Common.Find", p );
-	Click ( "#FormChange" );
-	With ();
-	Click ( "Contracts", GetLinks () ); 
-	With ();
-	Click ( "#FormCreate" );
-	With ();
-	Put ( "#Description", Env.Contract2 );
-	Click ( "#VendorAdvances" );
-	Click ( "#FormWriteAndClose" );
-	
+		
 	// *************************
 	// Create Service
 	// *************************
@@ -137,13 +142,6 @@ Procedure createEnv ( Env )
 	Put ( "#ServicesItem", Env.Service );
 	Next ();
 	Put ( "#ServicesAmount", "1000", table );
-	
-	// Payments
-	table = Get ( "#Payments" );
-	Click ( "#PaymentsAdd" );
-	Put ( "#PaymentsPaymentOption", "nodiscount#" );
-	Next ();
-
 	Put ( "#Department", Env.Department );
 	Click ( "#FormPost" );
 	
@@ -156,9 +154,7 @@ Procedure createEnv ( Env )
 	
 	Put ( "#Vendor",  Env.Vendor );
 	Pick ( "#Method", "Cash" );
-	Put ( "#Amount", "1070" );
-	Put ( "#Account", "20000" );
-	Put ( "#AdvanceAccount", "20000" );
+	Put ( "#Amount", 600 );
 	Click ( "#FormPostAndClose" );
 	
 	// *************************
@@ -166,9 +162,10 @@ Procedure createEnv ( Env )
 	// *************************
 	
 	With ( purchaseOrder );
-	Click ( "#FormDocumentVendorInvoiceCreateBasedOn" );
+	Click ( "#FormVendorInvoice" );
 	With ();
 	table = Get ( "#Services" );
+	Set ( "#ServicesPrice [ 1 ]", 400, table ); 
 	Set ( "#ServicesExpense [ 1 ]", Env.Expense, table ); 
 	Set ( "#ServicesAccount [ 1 ]", "8111", table ); 
 	Click ( "#FormPostAndClose" );

@@ -43,9 +43,15 @@ Procedure readAppearance ( Form )
 	|DebtsAdvance DebtsContractAdvance show Object.Advances;
 	|DebtsContractAmount show ( Object.Currency <> LocalCurrency and not Object.Advances );
 	|DebtsContractAdvance show ( Object.Currency <> LocalCurrency and Object.Advances );
-	|" );
+	|AdvanceAccount hide Object.Advances;" );
 	if ( TypeOf ( Form.Object.Ref ) = Type ( "DocumentRef.Debts" ) ) then
-		rules.Add ( "VATAccount ReceivablesVATAccount VATAdvance show Object.Advances;" );
+		rules.Add ( "
+		|CustomerAccount VATAccount ReceivablesVATAccount VATAdvance show Object.Advances;
+		|" );
+	else
+		rules.Add ( "
+		|VendorAccount show Object.Advances;
+		|" );
 	endif;
 	Appearance.Read ( Form, rules );
 
@@ -55,19 +61,28 @@ EndProcedure
 Procedure ApplyAccount ( Form ) export
 
 	object = Form.Object;
-	type = DF.Pick ( object.Account, "Type" );
+	account = object.Account;
+	type = DF.Pick ( account, "Type" );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorDebts" ) ) then
-		object.Advances = ( type = AccountType.Active );
+		advances = ( type = AccountType.Active );
+		object.Advances = advances;
+		if ( advances ) then
+			object.AdvanceAccount = account;
+		else
+			object.VendorAccount = account;
+		endif;
 	else
 		advances = ( type = AccountType.Passive );
 		object.Advances = advances;
 		if ( advances ) then
 			PaymentForm.SetVATAdvance ( object );
 			object.VATAdvance = Constants.ItemsVAT.Get ();
+			object.AdvanceAccount = account;
 		else
 			object.VATAccount = undefined;
 			object.ReceivablesVATAccount = undefined;
 			object.VATAdvance = undefined;
+			object.CustomerAccount = account;
 		endif;
 	endif;
 	Appearance.Apply ( Form, "Object.Advances" );
@@ -112,7 +127,27 @@ Procedure CalcTotals ( Form ) export
 EndProcedure
 
 &AtServer
-Procedure CheckAmount ( Object, CheckedAttributes ) export
+Procedure FillCheckProcessing ( Object, Cancel, CheckedAttributes ) export
+	
+	checkAccounts ( Object, CheckedAttributes );
+	checkAmount ( Object, CheckedAttributes );
+	
+EndProcedure
+
+&AtServer
+Procedure checkAccounts ( Object, CheckedAttributes )
+	
+	if ( Object.Advances ) then
+		CheckedAttributes.Add (
+			? ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.Debts" ), "CustomerAccount", "VendorAccount" ) );
+	else
+		CheckedAttributes.Add ( "AdvanceAccount" );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure checkAmount ( Object, CheckedAttributes )
 
 	field = ? ( object.Advances, "Advance", "Amount" );
 	CheckedAttributes.Add ( "Debts." + field );

@@ -1176,8 +1176,7 @@ Function getBillRow ( val PricesCache, val SelectedRow, val Source, val Prices, 
 		pricePackage = row.Package;
 	endif; 
 	type = Source.Type;
-	if ( type.Bill
-		or type.Quote ) then
+	if ( type.Quote ) then
 		data = DF.Values ( item, "VAT, VAT.Rate as Rate" );
 		row.Insert ( "VATCode", data.VAT );
 		row.Insert ( "VATRate", data.Rate );

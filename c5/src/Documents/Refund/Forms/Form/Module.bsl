@@ -1,5 +1,5 @@
 &AtClient
-var PaymentsRow export;
+var PaymentsRow;
 
 // *****************************************
 // *********** Form events

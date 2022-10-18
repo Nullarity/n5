@@ -169,44 +169,44 @@ Procedure readAppearance ( Form )
 	|Account hide UseReceiver;
 	|Type Receiver ReceiverContract ReceiverAccount ReceiverCurrencyGroup GroupReceiverDebts show UseReceiver;
 	|GroupReceiverDebts enable UseReceiver and filled ( Object.Receiver ) and filled ( Object.ReceiverContract );
-	|AdjustmentsVATAccount AdjustmentsVATCode AdjustmentsVAT
-	|	AccountingVATAccount AccountingVATCode AccountingVAT
-	|	AccountingReceiverVATAccount AccountingReceiverVATCode AccountingReceiverVAT
+	|AdjustmentsItem AdjustmentsDescription AccountingItem AccountingDescription AdjustmentsVATAccount AdjustmentsVATCode
+	|AdjustmentsVAT AccountingVATAccount AccountingVATCode AccountingVAT AccountingReceiverVATAccount
+	|AccountingReceiverItem AccountingReceiverDescription AccountingReceiverVATCode AccountingReceiverVAT
 	|	show Object.ApplyVAT;
 	|ReceiverContractRate ReceiverContractFactor enable
 	|	Object.ReceiverContractCurrency <> Object.Currency
 	|	and Object.ReceiverContractCurrency <> LocalCurrency
 	|	and filled ( Object.ReceiverContractCurrency );
 	|WarningPosted UndoPosting show Object.Posted;
-	|Adjustments GroupFillDocuments hide inlist ( Object.Option,
+	|AdjustmentsDebt AdjustmentsOverpayment hide inlist ( Object.Option,
+	|		Enum.AdjustmentOptions.AccountingDr,
+	|		Enum.AdjustmentOptions.AccountingCr );
+	|AdjustmentsAccounting AdjustmentsAdvance show inlist ( Object.Option,
+	|		Enum.AdjustmentOptions.AccountingDr,
+	|		Enum.AdjustmentOptions.AccountingCr );
+	|Currency Currency1 lock inlist ( Object.Option,
 	|		Enum.AdjustmentOptions.AccountingDr,
 	|		Enum.AdjustmentOptions.AccountingCr );
 	|" );
 	if ( isAdjustDebts ( Form.Object ) ) then
 		rules.Add ( "
 		|Links show ShowLinks;
-		|Warning show ChangesDisallowed;
 		|FormInvoice show filled ( InvoiceRecord );
 		|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
+		|Warning show ChangesDisallowed;
 		|Header Adjustments AdjustmentsItem AdjustmentsDescription Accounting AccountingReceiver ReceiverDebts
 		|	GroupMore GroupCurrency lock Object.Posted or ChangesDisallowed;
 		|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1
 		|	disable Object.Posted or ChangesDisallowed;
-		|AdjustmentsItem AdjustmentsDescription hide inlist ( Object.Option,
-		|		Enum.AdjustmentOptions.AccountingDr,
-		|		Enum.AdjustmentOptions.AccountingCr );
 		|AccountingPaymentDate AccountingPaymentOption show Object.Type = Enum.TypesAdjustDebts.Advance;
 		|" );
 	else
 		rules.Add ( "
-		|Links show ShowLinks;
-		|Warning show ChangesDisallowed;
-		|FormInvoice show filled ( InvoiceRecord );
-		|NewInvoiceRecord show FormStatus = Enum.FormStatuses.Canceled or empty ( FormStatus );
-		|Header Adjustments Accounting ReceiverDebts GroupMore GroupCurrency lock Object.Posted;
+		|Header Adjustments AdjustmentsItem AdjustmentsDescription Accounting AccountingReceiver ReceiverDebts
+		|	GroupMore GroupCurrency lock Object.Posted;
 		|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1
 		|	disable Object.Posted;
-		|AccountingReceiverPaymentDate AccountingReceiverPaymentOption show Object.Type = Enum.TypesAdjustDebts.Debt;
+		|AccountingPaymentDate AccountingPaymentOption show Object.Type = Enum.TypesAdjustDebts.Advance;
 		|" );
 	endif;
 	Appearance.Read ( Form, rules );
@@ -327,11 +327,17 @@ EndProcedure
 &AtServer
 Procedure setCustomerAccount ( Object )
 	
-	company = Object.Customer;
-	accounts = AccountsMap.Organization ( company, Object.Company, "CustomerAccount, AdvanceTaken" );
+	accounts = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount, AdvanceTaken" );
 	Object.CustomerAccount = accounts.CustomerAccount;
 	Object.AdvanceAccount = accounts.AdvanceTaken;	
-	accounts = AccountsMap.Item ( Catalogs.Items.EmptyRef (), company, Catalogs.Warehouses.EmptyRef (), "VAT" );
+	setVATAccounts ( Object );
+	
+EndProcedure
+
+&AtServer
+Procedure setVATAccounts ( Object )
+	
+	accounts = AccountsMap.Item ( Catalogs.Items.EmptyRef (), Object.Company, Catalogs.Warehouses.EmptyRef (), "VAT" );
 	Object.VATAccount = accounts.VAT;
 	Object.ReceivablesVATAccount = receivablesVAT ();
 	
@@ -401,7 +407,9 @@ Procedure loadContract ( Form )
 	endif;
 	Object.ContractRate = currency.Rate;
 	Object.ContractFactor = currency.Factor;
-	Object.Currency = contractCurrency;
+	if ( not isAccounting ( object ) ) then
+		Object.Currency = contractCurrency;
+	endif;
 	if ( customerDebts ) then
 		Object.VATAdvance = data.VATAdvance;
 	endif;
@@ -440,25 +448,35 @@ EndProcedure
 Procedure calcApplied ( Object )
 	
 	applied = Object.Adjustments.Total ( "Amount" ) + Object.Accounting.Total ( "Amount" );
-	if ( applied = 0 ) then
-		Object.Applied = 0;
-	elsif ( applied = Object.ContractAmount ) then
-		Object.Applied = Object.Amount;
+	if ( isAccounting ( Object ) ) then
+		Object.Applied = applied;
 	else
-		Object.Applied = Currencies.Convert ( applied, Object.ContractCurrency, Object.Currency, Object.Date,
-			Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
+		if ( applied = 0 ) then
+			Object.Applied = 0;
+		elsif ( applied = Object.ContractAmount ) then
+			Object.Applied = Object.Amount;
+		else
+			Object.Applied = Currencies.Convert ( applied, Object.ContractCurrency, Object.Currency, Object.Date,
+				Object.ContractRate, Object.ContractFactor, Object.Rate, Object.Factor );
+		endif;
 	endif;
 	
 EndProcedure
 
 Procedure distributeAmount ( Object )
 	
-	amount = Object.ContractAmount - Object.Accounting.Total ( "Amount" );
+	accounting = isAccounting ( Object );
+	if ( accounting ) then
+		amount = Object.Amount - Object.Accounting.Total ( "Amount" );
+	else
+		amount = Object.ContractAmount - Object.Accounting.Total ( "Amount" );
+	endif;
 	isDebt = isDebt ( Object.Type );
 	for each row in Object.Adjustments do
-		applied = Min ( amount, appliedAmountRow ( row, isDebt ) );
+		applied = Min ( amount, appliedAmountRow ( row, isDebt, accounting ) );
 		row.Amount = applied;
 		toggleAdjust ( row );
+		calcVAT ( row );
 		amount = amount - applied;
 	enddo; 
 
@@ -470,19 +488,31 @@ Function isDebt ( Type )
 
 EndFunction
 
-Function appliedAmountRow ( TableRow, IsDebt ) 
+Function isAccounting ( Object )
+	
+	option = Object.Option;
+	return option = PredefinedValue ( "Enum.AdjustmentOptions.AccountingDr" )
+		or option = PredefinedValue ( "Enum.AdjustmentOptions.AccountingCr" );
+	
+EndFunction
 
-	if ( IsDebt ) then
-		if ( TableRow.Debt = 0 ) then
-			return -TableRow.Overpayment;
-		else
-			return TableRow.Debt;
-		endif;
+Function appliedAmountRow ( TableRow, IsDebt, Accounting ) 
+
+	if ( Accounting ) then
+		return TableRow.Accounting - TableRow.Advance;
 	else
-		if ( TableRow.Overpayment = 0 ) then
-			return -TableRow.Debt;
+		if ( IsDebt ) then
+			if ( TableRow.Debt = 0 ) then
+				return -TableRow.Overpayment;
+			else
+				return TableRow.Debt;
+			endif;
 		else
-			return TableRow.Overpayment;
+			if ( TableRow.Overpayment = 0 ) then
+				return -TableRow.Debt;
+			else
+				return TableRow.Overpayment;
+			endif;
 		endif;
 	endif;
 
@@ -536,9 +566,10 @@ Procedure distributeReceiverAmount ( Object )
 	endif; 
 	amount = Object.ReceiverContractAmount;
 	isDebt = isDebt ( Object.TypeReceiver );
+	accounting = isAccounting ( Object );
 	for i = 0 to j do
 		row = table [ i ];
-		applied = Min ( amount, appliedAmountRow ( row, isDebt ) );
+		applied = Min ( amount, appliedAmountRow ( row, isDebt, accounting ) );
 		row.Amount = applied;
 		row.Applied = applied;
 		amount = amount - applied;
@@ -557,7 +588,8 @@ EndProcedure
 Procedure setTitle ( Form )
 	
 	presentation = Metadata.Documents.AdjustDebts.TabularSections.Adjustments.Attributes.Amount.Presentation ();
-	currency = Form.Object.ContractCurrency;
+	object = Form.Object;
+	currency = ? ( isAccounting ( object ), object.Currency, object.ContractCurrency );
 	presentation = presentation + ? ( currency.IsEmpty (), "", ", " + currency );
 	items = Form.Items;
 	items.AdjustmentsAmount.Title = presentation;
@@ -600,11 +632,12 @@ Function getPayments ( Form )
 		tableName = "VendorDebts";
 		organization = object.Vendor;
 	endif;
-	s = sqlPayments ( object.Type, tableName );
+	s = sqlPayments ( object.Type, tableName, isAccounting ( object ) );
 	q = new Query ( s );
 	date = Periods.GetDocumentDate ( object );
 	q.SetParameter ( "Period", EndOfDay ( date ) );
 	q.SetParameter ( "Contract", object.Contract );
+	q.SetParameter ( "VATAccount", object.VATAccount );
 	q.SetParameter ( "Currency", object.ContractCurrency );
 	q.SetParameter ( "Organization", organization );
 	return q.Execute ().Unload ();
@@ -612,31 +645,131 @@ Function getPayments ( Form )
 EndFunction
 
 &AtServer
-Function sqlPayments ( Type, TableName )
+Function sqlPayments ( Type, TableName, Accounting )
 	
-	s = "
-	|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
-	|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
-	|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
-	|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
-	|	//
-	|	// PaymentDetails
-	|	//
-	|	left join InformationRegister.PaymentDetails as PaymentDetails
-	|	on PaymentDetails.PaymentKey = Balances.PaymentKey
-	|where ( Balances.AmountBalance <> 0 
-	|	or Balances.OverpaymentBalance <> 0 )
-	|and Balances.Document.Date <= &Period
-	|and isnull ( Balances.Detail.Date, &Period ) <= &Period
-	|and ";
-	if ( Type = Enums.TypesAdjustDebts.Debt ) then
-		s = s + "( Balances.AmountBalance > 0 ) or ( Balances.OverpaymentBalance < 0 )";
+	if ( Accounting ) then
+		s = "
+		|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
+		|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
+		|	Balances.AccountingBalance as Accounting, Balances.AdvanceBalance as Advance,
+		|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
+		|into Balances
+		|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
+		|	//
+		|	// PaymentDetails
+		|	//
+		|	left join InformationRegister.PaymentDetails as PaymentDetails
+		|	on PaymentDetails.PaymentKey = Balances.PaymentKey
+		|where Balances.Document.Date <= &Period
+		|and isnull ( Balances.Detail.Date, &Period ) <= &Period
+		|and ( Balances.AmountBalance = 0 and Balances.OverpaymentBalance = 0 )
+		|and ( Balances.AccountingBalance <> 0 or Balances.AdvanceBalance <> 0 )
+		|;
+		|select Items.Document as Document, max ( Items.Rate ) as Rate, max ( Items.Account ) as Account
+		|into VAT
+		|from (
+		|	select Items.Ref as Document, Items.VATCode as Rate, Items.VATAccount as Account
+		|	from Document.Invoice.Items as Items
+		|		//
+		|		// Amounts
+		|		//
+		|		join (
+		|			select Items.Ref as Ref, max ( Items.Amount ) as Amount
+		|			from Document.Invoice.Items as Items
+		|			where Items.Ref in (
+		|				select Document from Balances
+		|				union
+		|				select Detail from Balances
+		|			)
+		|			group by Items.Ref
+		|		) as Amounts
+		|		on Amounts.Amount = Items.Amount
+		|	where Items.Ref in (
+		|		select Document from Balances
+		|		union
+		|		select Detail from Balances
+		|	)
+		|	union
+		|	select Services.Ref, Services.VATCode, Services.VATAccount
+		|	from Document.Invoice.Services as Services
+		|		//
+		|		// Amounts
+		|		//
+		|		join (
+		|			select Services.Ref as Ref, max ( Services.Amount ) as Amount
+		|			from Document.Invoice.Services as Services
+		|			where Services.Ref in (
+		|				select Document from Balances
+		|				union
+		|				select Detail from Balances
+		|			)
+		|			group by Services.Ref
+		|		) as Amounts
+		|		on Amounts.Amount = Services.Amount
+		|	where Services.Ref in (
+		|		select Document from Balances
+		|		union
+		|		select Detail from Balances
+		|	)
+		|	union
+		|	select Documents.Ref, Documents.VATAdvance, Documents.VATAccount
+		|	from Document.Payment as Documents
+		|	where Documents.Ref in (
+		|		select Document from Balances
+		|		union
+		|		select Detail from Balances
+		|	)
+		|) as Items
+		|group by Items.Document
+		|;
+		|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
+		|	Balances.Accounting as Accounting, Balances.Advance as Advance,
+		|	Balances.Detail as Detail, Balances.Option as Option, Balances.Date as Date,
+		|	isnull ( isnull ( VATDocuments.Rate, VATDetails.Rate ), Constants.ItemsVAT ) as VATCode,
+		|	cast ( isnull ( isnull ( VATDocuments.Rate, VATDetails.Rate ), Constants.ItemsVAT ) as Catalog.VAT ).Rate as VATRate,
+		|	isnull ( isnull ( VATDocuments.Account, VATDetails.Account ), &VATAccount ) as VATAccount
+		|from Balances as Balances
+		|	//
+		|	// VATDocuments
+		|	//
+		|	left join VAT as VATDocuments
+		|	on VATDocuments.Document = Balances.Document
+		|	//
+		|	// VATDetails
+		|	//
+		|	left join VAT as VATDetails
+		|	on VATDetails.Document = Balances.Detail
+		|	//
+		|	// Constants
+		|	//
+		|	left join Constants as Constants
+		|	on true
+		|order by Balances.Date
+		|";
 	else
-		s = s + "( Balances.AmountBalance < 0 ) or ( Balances.OverpaymentBalance > 0 )";
+		s = "
+		|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
+		|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
+		|	Balances.AccountingBalance as Accounting, Balances.AdvanceBalance as Advance,
+		|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
+		|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
+		|	//
+		|	// PaymentDetails
+		|	//
+		|	left join InformationRegister.PaymentDetails as PaymentDetails
+		|	on PaymentDetails.PaymentKey = Balances.PaymentKey
+		|where Balances.Document.Date <= &Period
+		|and isnull ( Balances.Detail.Date, &Period ) <= &Period
+		|and ";
+		if ( Type = Enums.TypesAdjustDebts.Debt ) then
+			s = s + "( Balances.AmountBalance > 0 or Balances.OverpaymentBalance < 0 )";
+		else
+			s = s + "( Balances.AmountBalance < 0 or Balances.OverpaymentBalance > 0 )";
+		endif;
+		s = s + "
+		|order by PaymentDetails.Date
+		|";
 	endif;
-	s = s + "
-	|order by PaymentDetails.Date
-	|";
 	return s;
 	
 EndFunction
@@ -667,8 +800,10 @@ EndProcedure
 &AtServer
 Procedure setVendorAccount ( Object )
 	
-	accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount" );
+	accounts = AccountsMap.Organization ( Object.Vendor, Object.Company, "VendorAccount, AdvanceGiven" );
 	Object.VendorAccount = accounts.VendorAccount;
+	Object.AdvanceAccount = accounts.AdvanceGiven;
+	setVATAccounts ( Object );	
 	
 EndProcedure
 
@@ -754,16 +889,19 @@ EndProcedure
 Procedure BeforeWriteAtServer ( CurrentObject, Form ) export
 	
 	clean ( CurrentObject.Adjustments );
-	if ( Form.UseReceiver ) then
+	useReceiver = Form.UseReceiver;
+	calcTables ( CurrentObject, useReceiver );
+	if ( useReceiver ) then
 		clean ( CurrentObject.ReceiverDebts );
+		calcTablesReceiver ( CurrentObject );
 	endif;
-	calcTablesAmount ( CurrentObject );
-	if ( isAdjustDebts ( CurrentObject ) ) then
-		if ( CurrentObject.ApplyVAT ) then
-			calcTablesVAT ( CurrentObject );
-		else
-			resetVATfields ( CurrentObject );
+	if ( CurrentObject.ApplyVAT ) then
+		calcTablesVAT ( CurrentObject );
+		if ( useReceiver ) then
+			calcTablesVATReceiver ( CurrentObject );
 		endif;
+	else
+		resetVATfields ( CurrentObject );
 	endif;
 
 EndProcedure
@@ -783,19 +921,81 @@ Procedure clean ( Table )
 EndProcedure
 
 &AtServer
-Procedure calcTablesAmount ( Object )
+Procedure calcTables ( Object, UseReceiver )
 	
+	date = Object.Date;
 	localCurrency = Application.Currency ();
 	currency = Object.Currency;
-	contractCurrency = Object.ContractCurrency;
-	date = Object.Date;
-	contractRate = Object.ContractRate;
-	contractFactor = Object.ContractFactor;
 	rate = Object.Rate;
 	factor = Object.Factor;
+	if ( isAccounting ( Object ) ) then
+		contractCurrency = localCurrency;
+		contractRate = 1;
+		contractFactor = 1;
+		receiverCurrency = localCurrency;
+		receiverRate = 1;
+		receiverFactor = 1;
+	else
+		if ( UseReceiver ) then
+			receiverCurrency = Object.ReceiverContractCurrency;
+			receiverRate = Object.ReceiverContractRate;
+			receiverFactor = Object.ReceiverContractFactor;
+		else
+			receiverCurrency = currency;
+			receiverRate = rate;
+			receiverFactor = factor;
+		endif;
+		contractCurrency = Object.ContractCurrency;
+		contractRate = Object.ContractRate;
+		contractFactor = Object.ContractFactor;
+	endif;
 	tables = new Array ();
 	tables.Add ( Object.Adjustments );
 	tables.Add ( Object.Accounting );
+	biggestRow = undefined;
+	for each table in tables do
+		for each row in table do
+			amount = row.Amount;
+			row.AmountLocal = Currencies.Convert ( amount, contractCurrency, localCurrency, date,
+				contractRate, contractFactor, , , 2 );
+			row.AmountDocument = Currencies.Convert ( amount, contractCurrency, receiverCurrency, date,
+				contractRate, contractFactor, receiverRate, receiverFactor, 2 );
+			if ( biggestRow = undefined
+				or amount > biggestRow.Amount ) then
+				biggestRow = row;
+			endif;
+		enddo;
+	enddo;
+	if ( biggestRow <> undefined ) then
+		biggestRow.AmountDocument = biggestRow.AmountDocument + (
+			Object.ReceiverContractAmount
+			- Object.Adjustments.Total ( "AmountDocument" )
+			- Object.Accounting.Total ( "AmountDocument" ) );
+		totalLocalAmount = Currencies.Convert ( Object.Amount,
+			currency, localCurrency, date, rate, factor, , , 2 );
+		biggestRow.AmountLocal = biggestRow.AmountLocal + (
+			totalLocalAmount
+			- Object.Adjustments.Total ( "AmountLocal" )
+			- Object.Accounting.Total ( "AmountLocal" ) );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure calcTablesReceiver ( Object )
+	
+	date = Object.Date;
+	localCurrency = Application.Currency ();
+	currency = Object.Currency;
+	rate = Object.Rate;
+	factor = Object.Factor;
+	contractCurrency = Object.ReceiverContractCurrency;
+	contractRate = Object.ReceiverContractRate;
+	contractFactor = Object.ReceiverContractFactor;
+	biggestRow = undefined;
+	tables = new Array ();
+	tables.Add ( Object.ReceiverDebts );
+	tables.Add ( Object.AccountingReceiver );
 	biggestRow = undefined;
 	for each table in tables do
 		for each row in table do
@@ -811,16 +1011,15 @@ Procedure calcTablesAmount ( Object )
 		enddo;
 	enddo;
 	if ( biggestRow <> undefined ) then
-		totalDocumentAmount = Object.Amount;
 		biggestRow.AmountDocument = biggestRow.AmountDocument + (
-			totalDocumentAmount
-			- Object.Adjustments.Total ( "AmountDocument" )
-			- Object.Accounting.Total ( "AmountDocument" ) );
-		totalLocalAmount = Currencies.Convert ( totalDocumentAmount, currency, localCurrency, date, rate, factor );
+			Object.Amount
+			- Object.ReceiverDebts.Total ( "AmountDocument" )
+			- Object.AccountingReceiver.Total ( "AmountDocument" ) );
+		totalLocalAmount = Currencies.Convert ( Object.Amount, currency, localCurrency, date, rate, factor, , , 2 );
 		biggestRow.AmountLocal = biggestRow.AmountLocal + (
 			totalLocalAmount
-			- Object.Adjustments.Total ( "AmountLocal" )
-			- Object.Accounting.Total ( "AmountLocal" ) );
+			- Object.ReceiverDebts.Total ( "AmountLocal" )
+			- Object.AccountingReceiver.Total ( "AmountLocal" ) );
 	endif;
 
 EndProcedure
@@ -836,6 +1035,7 @@ Procedure calcTablesVAT ( Object )
 	tables = new Array ();
 	tables.Add ( Object.Adjustments );
 	tables.Add ( Object.Accounting );
+	tables.Add ( Object.AccountingReceiver );
 	for each table in tables do
 		for each row in table do
 			amount = row.AmountLocal;
@@ -849,13 +1049,34 @@ Procedure calcTablesVAT ( Object )
 EndProcedure
 
 &AtServer
+Procedure calcTablesVATReceiver ( Object )
+	
+	localCurrency = Application.Currency ();
+	documentCurrency = Object.Currency;
+	date = Object.Date;
+	rate = Object.Rate;
+	factor = Object.Factor;
+	for each row in Object.AccountingReceiver do
+		amount = row.AmountLocal;
+		vat = Round ( amount - amount * ( 100 / ( 100 + row.VATRate ) ), 2 );
+		row.VATLocal = vat;
+		row.VATDocument = Currencies.Convert ( vat, localCurrency, documentCurrency, date,
+			, , rate, factor );
+	enddo;
+
+EndProcedure
+
+&AtServer
 Procedure resetVATfields ( Object )
 	
 	tables = new Array ();
 	tables.Add ( Object.Adjustments );
 	tables.Add ( Object.Accounting );
+	tables.Add ( Object.AccountingReceiver );
 	for each table in tables do
 		for each row in table do
+			row.Item = undefined;
+			row.Description = "";
 			row.VAT = 0;
 			row.VATRate = 0;
 			row.VATLocal = 0;
@@ -923,23 +1144,23 @@ Procedure ApplyOption ( Form ) export
 		filterReceiver ( Form );
 	else
 		object.ReceiverDebts.Clear ();
+		object.AccountingReceiver.Clear ();
 		AdjustDebtsForm.CalcTotalsReceiver ( Form );
 		option = object.Option;
-		if ( option = Enums.AdjustmentOptions.AccountingDr
-			or option = Enums.AdjustmentOptions.AccountingCr ) then
-			object.Adjustments.Clear ();
-			AdjustDebtsForm.ChahgeApplied ( Form );
-		endif;
-		oldType = object.Type;
 		if ( option = Enums.AdjustmentOptions.CustomAccountDr
 			or option = Enums.AdjustmentOptions.AccountingDr ) then
 			newType = Enums.TypesAdjustDebts.Debt;
 		else
 			newType = Enums.TypesAdjustDebts.Advance;
 		endif;
-		if ( oldType <> newType ) then
+		if ( object.Type <> newType ) then
 			object.Type = newType;
 			AdjustDebtsForm.ApplyType ( Form );
+		endif;
+		if ( isAccounting ( object )
+			and object.Currency <> Form.LocalCurrency ) then
+			object.Currency = Form.LocalCurrency;
+			AdjustDebtsForm.ApplyCurrency ( Form );
 		endif;
 	endif;
 	Appearance.Apply ( Form, "UseReceiver, Object.Option" );
@@ -1021,7 +1242,7 @@ Function getPaymentsReceiver ( Form )
 			tableName = "Debts";
 		endif;
 	endif;
-	q = new Query ( sqlPayments ( type, tableName ) );
+	q = new Query ( sqlPayments ( type, tableName, isAccounting ( Object ) ) );
 	date = Periods.GetDocumentDate ( object );
 	q.SetParameter ( "Period", EndOfDay ( date ) );
 	q.SetParameter ( "Contract", object.ReceiverContract );
@@ -1081,7 +1302,17 @@ EndProcedure
 Procedure loadReceiverContract ( Form )
 	
 	object = Form.Object;
-	currency = DF.Pick ( object.ReceiverContract, "Currency" );
+	vendorToCustomer = not ( isAdjustDebts ( object ) or Form.ReceiverVendor );
+	if ( vendorToCustomer ) then
+		fields = "Currency, CustomerVATAdvance";
+	else
+		fields = "Currency";
+	endif;
+	data = DF.Values ( object.ReceiverContract, fields );
+	if ( vendorToCustomer ) then
+		object.VATAdvance = data.CustomerVATAdvance;
+	endif;
+	currency = data.Currency;
 	object.ReceiverContractCurrency = currency;
 	data = CurrenciesSrv.Get ( currency, object.Date );
 	object.ReceiverContractRate = data.Rate;
@@ -1162,6 +1393,7 @@ Procedure applyAdjustments ( Adjustments, TableAdjustments )
 		else
 			row = rows [ 0 ];
 			row.Amount = adjustment.Amount;
+			calcVAT ( row );
 			toggleAdjust ( row );
 		endif;
 	enddo;
@@ -1201,7 +1433,7 @@ Procedure ApplyAdjust ( Form ) export
 	
 	if ( Form.AdjustmentsRow.Adjust ) then
 		object = Form.Object;
-		appliedRow = appliedAmountRow ( Form.AdjustmentsRow, isDebt ( object.Type ) );
+		appliedRow = appliedAmountRow ( Form.AdjustmentsRow, isDebt ( object.Type ), isAccounting ( object ) );
 		rest = object.Amount - object.Applied;
 		rest = Currencies.Convert ( rest, object.Currency, object.ContractCurrency, object.Date, object.Rate, object.Factor, object.ContractRate, object.ContractFactor );
 		amount = ? ( rest <= 0, appliedRow, Max ( 0, Min ( rest, appliedRow ) ) );
@@ -1258,7 +1490,12 @@ EndProcedure
 &AtClient
 Procedure AdjustmentsAmountOnChange ( Form ) export
 	
-	Form.AdjustmentsRow.Amount = Min ( Form.AdjustmentsRow.Amount, appliedAmountRow ( Form.AdjustmentsRow, isDebt ( Form.Object.Type ) ) );
+	object = Form.Object;
+	Form.AdjustmentsRow.Amount = Min ( Form.AdjustmentsRow.Amount,
+		appliedAmountRow ( Form.AdjustmentsRow, isDebt ( object.Type ), isAccounting ( object ) ) );
+	if ( object.ApplyVAT ) then
+		calcVAT ( Form.AdjustmentsRow );
+	endif;
 	
 EndProcedure
 
@@ -1313,7 +1550,7 @@ Procedure ApplyReceiverAdjust ( Form ) export
 	
 	if ( Form.ReceiverRow.Adjust ) then
 		object = Form.Object;
-		appliedRow = appliedAmountRow ( Form.ReceiverRow, isDebt ( object.TypeReceiver ) );
+		appliedRow = appliedAmountRow ( Form.ReceiverRow, isDebt ( object.TypeReceiver ), isAccounting ( object ) );
 		rest = object.Amount - object.Applied;
 		rest = Currencies.Convert ( rest, object.Currency, object.ReceiverContractCurrency, object.Date, object.Rate, object.Factor, object.ReceiverContractRate, object.ReceiverContractFactor );
 		amount = ? ( rest <= 0, appliedRow, Max ( 0, Min ( rest, appliedRow ) ) );
@@ -1373,7 +1610,8 @@ Procedure ReceiverDebtsAmountOnChange ( Form ) export
 	
 	receiverRow = Form.ReceiverRow;
 	amount = receiverRow.Amount;
-	applied = Min ( amount, appliedAmountRow ( receiverRow, isDebt ( Form.Object.TypeReceiver ) ) );
+	object = Form.Object;
+	applied = Min ( amount, appliedAmountRow ( receiverRow, isDebt ( object.TypeReceiver ), isAccounting ( object ) ) );
 	receiverRow.Applied = applied;
 	receiverRow.Difference = Max ( 0, amount - applied );
 	
@@ -1390,5 +1628,96 @@ EndProcedure
 Procedure ApplyVATOnChange ( Form ) export
 
 	Appearance.Apply ( Form, "Object.ApplyVAT" );
+
+EndProcedure
+
+&AtClient
+Procedure AdjustmentsVATCodeOnChange ( Row ) export
+	
+	setVATRate ( Row );
+	calcVAT ( Row );
+
+EndProcedure
+
+&AtClient
+Procedure setVATRate ( Row )
+	
+	Row.VATRate = DF.Pick ( Row.VATCode, "Rate", 0 );
+
+EndProcedure
+
+Procedure calcVAT ( Row )
+	
+	Row.VAT = Row.Amount - Row.Amount * ( 100 / ( 100 + Row.VATRate ) );
+
+EndProcedure
+
+&AtClient
+Procedure AdjustmentsItemOnChange ( Object, Row ) export
+	
+	if ( isAccounting ( Object ) ) then
+		applyAccountingItem ( Object, Row );
+	else
+		applyItem ( Object, Row );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure applyAccountingItem ( Object, Row )
+	
+	item = Row.Item;
+	if ( item.IsEmpty () ) then
+		return;
+	endif;
+	description = DF.Pick ( item, "FullDescription" );
+	Row.Description = description;
+	for each row in Object.Adjustments do
+		if ( row.Item.IsEmpty () ) then
+			row.Item = item;
+			row.Description = description;
+		endif;
+	enddo;
+	
+EndProcedure
+
+&AtClient
+Procedure applyItem ( Object, Row )
+	
+	p = new Structure ();
+	p.Insert ( "Company", Object.Company );
+	p.Insert ( "Item", Row.Item );
+	data = getItemData ( p );
+	Row.Description = data.FullDescription;
+	Row.VATCode = data.VAT;
+	Row.VATRate = data.Rate;
+	Row.VATAccount = data.VATAccount;
+	calcVAT ( Row );
+
+EndProcedure
+
+Function getItemData ( val Params )
+	
+	item = Params.Item;
+	data = DF.Values ( item, "FullDescription, VAT, VAT.Rate as Rate" );
+	accounts = AccountsMap.Item ( item, Params.Company, , "VAT" );
+	data.Insert ( "VATAccount", accounts.VAT );
+	return data;
+
+EndFunction
+
+&AtClient
+Procedure AccountingItemOnChange ( Object, Row ) export
+	
+	applyItem ( Object, Row );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAmountOnChange ( Form ) export
+
+	if ( Form.Object.ApplyVAT ) then
+		calcVAT ( Form.AccountingRow );
+	endif;
 
 EndProcedure

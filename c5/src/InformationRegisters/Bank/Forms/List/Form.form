@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group3</name>
     <id>65</id>
@@ -2821,54 +2821,6 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>LogInternalMovement</name>
-          <id>263</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible/>
-          <dataPath xsi:type="form:DataPath">
-            <segments>Log.InternalMovement</segments>
-          </dataPath>
-          <extendedTooltip>
-            <name>LogInternalMovementExtendedTooltip</name>
-            <id>265</id>
-            <visible>true</visible>
-            <enabled>true</enabled>
-            <userVisible>
-              <common>true</common>
-            </userVisible>
-            <type>Label</type>
-            <autoMaxWidth>true</autoMaxWidth>
-            <autoMaxHeight>true</autoMaxHeight>
-            <extInfo xsi:type="form:LabelDecorationExtInfo">
-              <horizontalAlign>Left</horizontalAlign>
-            </extInfo>
-          </extendedTooltip>
-          <contextMenu>
-            <name>LogInternalMovementContextMenu</name>
-            <id>264</id>
-            <visible>true</visible>
-            <enabled>true</enabled>
-            <userVisible>
-              <common>true</common>
-            </userVisible>
-            <autoFill>true</autoFill>
-          </contextMenu>
-          <type>InputField</type>
-          <editMode>Enter</editMode>
-          <showInHeader>true</showInHeader>
-          <headerHorizontalAlign>Left</headerHorizontalAlign>
-          <showInFooter>true</showInFooter>
-          <extInfo xsi:type="form:InputFieldExtInfo">
-            <autoMaxWidth>true</autoMaxWidth>
-            <autoMaxHeight>true</autoMaxHeight>
-            <wrap>true</wrap>
-            <chooseType>true</chooseType>
-            <typeDomainEnabled>true</typeDomainEnabled>
-            <textEdit>true</textEdit>
-          </extInfo>
-        </items>
-        <items xsi:type="form:FormField">
           <name>LogOtherReceipt</name>
           <id>272</id>
           <visible>true</visible>
@@ -4410,11 +4362,104 @@ order by Day desc, Account.Order, Dim1, Currency
       <common>true</common>
     </edit>
     <extInfo xsi:type="form:DynamicListExtInfo">
+      <queryText>select Documents.Ref, Documents.DeletionMark, Documents.Number, Documents.Date, 
+       Documents.Posted, Documents.Account, Documents.Application, 
+       Documents.BankAccount, Documents.Company, Documents.Creator, 
+       Documents.Expense, Documents.Memo, Documents.OtherExpense, 
+       Documents.OtherReceipt, Documents.Path, Documents.Received, 
+       Documents.Status, Documents.PointInTime
+from Document.LoadPayments as Documents
+</queryText>
       <mainTable>Document.LoadPayments</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
+      <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Details</dataPath>
+        <field>Details</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Expenses</dataPath>
+        <field>Expenses</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Receipts</dataPath>
+        <field>Receipts</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Account</dataPath>
+        <field>Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Application</dataPath>
+        <field>Application</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>BankAccount</dataPath>
+        <field>BankAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Expense</dataPath>
+        <field>Expense</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>OtherExpense</dataPath>
+        <field>OtherExpense</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>OtherReceipt</dataPath>
+        <field>OtherReceipt</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Path</dataPath>
+        <field>Path</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Received</dataPath>
+        <field>Received</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Status</dataPath>
+        <field>Status</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PointInTime</dataPath>
+        <field>PointInTime</field>
+      </fields>
     </extInfo>
   </attributes>
   <attributes>

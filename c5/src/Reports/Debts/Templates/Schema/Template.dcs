@@ -388,7 +388,7 @@ select &amp;StrTotalsGroup as StrTotalsGroup, &amp;StrPayment as StrPayment, &am
 	end as AmountDebt,
 	case when &amp;LocalCurrency then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
 		else Balances.OverpaymentBalance
-	end as Overpayment,
+	end as Overpayment
 	{select StrTotalsGroup, StrPayment, StrOverduePayment, Customer.* as Customer, Contract.*, Document.*, Detail.*, PaymentDate, PaymentBalance, BalanceDays,
 	OverduePeriods, AmountDebt, Overpayment, PaymentKey, Option.*, Interval, CurrentDebt}
 from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Company, Contract.Owner.* as Customer, Contract.* as Contract, Document.* as Document,
@@ -603,31 +603,13 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 		<dataPath>Balance</dataPath>
 		<expression>0</expression>
 		<group>Balance</group>
-		<group>BalanceDays</group>
-		<group>Detail</group>
 		<group>Difference</group>
-		<group>Document</group>
-		<group>Option</group>
-		<group>OverduePeriods</group>
-		<group>PaymentDate</group>
-		<group>StrOverduePayment</group>
-		<group>StrPayment</group>
-		<group>StrTotalsGroup</group>
 	</totalField>
 	<totalField>
 		<dataPath>Difference</dataPath>
 		<expression>0</expression>
 		<group>Balance</group>
-		<group>BalanceDays</group>
-		<group>Detail</group>
 		<group>Difference</group>
-		<group>Document</group>
-		<group>Option</group>
-		<group>OverduePeriods</group>
-		<group>PaymentDate</group>
-		<group>StrOverduePayment</group>
-		<group>StrPayment</group>
-		<group>StrTotalsGroup</group>
 	</totalField>
 	<parameter>
 		<name>ReportDate</name>

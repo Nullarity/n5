@@ -37,31 +37,6 @@ Function getPayments ( Object )
 	
 EndFunction
 
-&AtServer
-Procedure SetDate ( Object ) export
-	
-	s = "
-	|select top 1 Payments.Delay as Delay
-	|from Catalog.Terms.Payments as Payments
-	|where Payments.Ref in ( select ";
-	if ( TypeOf ( Object.Ref ) = Type ( "DocumentRef.Invoice" ) ) then
-		s = s + "CustomerTerms";
-	else
-		s = s + "VendorTerms";
-	endif; 
-	s = s + " from Catalog.Contracts where Ref = &Contract )
-	|order by Payments.LineNumber
-	|";
-	q = new Query ( s );
-	q.SetParameter ( "Contract", Object.Contract );
-	table = q.Execute ().Unload ();
-	if ( table.Count () = 0 ) then
-		return;
-	endif; 
-	Object.PaymentDate = BegOfDay ( Periods.GetDocumentDate ( Object ) ) + table [ 0 ].Delay * 86400;
-	
-EndProcedure
- 
 Procedure Calc ( Object ) export
 	
 	Collections.Distribute ( Object.Amount, Object.Payments, "Percent", "Amount" );

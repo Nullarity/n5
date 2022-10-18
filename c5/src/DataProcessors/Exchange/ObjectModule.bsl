@@ -1,3 +1,5 @@
+//@skip-check doc-comment-field-type-strict
+
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
 #Если Сервер Или ТолстыйКлиентОбычноеПриложение Или ВнешнееСоединение Тогда

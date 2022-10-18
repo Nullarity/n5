@@ -4,7 +4,7 @@
 Call("Common.Init");
 CloseAll();
 
-this.Insert("ID", Call("Common.ScenarioID", "2B2679B3"));
+this.Insert("ID", Call("Common.ScenarioID", "A0VU"));
 getEnv();
 createEnv();
 
@@ -26,6 +26,7 @@ Click("#FormPost");
 
 Click("#CreatePayment");
 With ();
+Set ( "#Amount", 1000 );
 Click ( "#FormPostAndClose" );
 
 #endregion
@@ -42,6 +43,7 @@ Assert(0 + Fetch("#BalanceDue")).Greater(0);
 Assert(0 + Fetch("#PaymentsApplied")).Equal(0);
 Click("#CreatePayment");
 With();
+Set ( "#Amount", 1000 );
 Click("#FormPostAndClose");
 With();
 Assert(0 + Fetch("#BalanceDue")).Equal(0);

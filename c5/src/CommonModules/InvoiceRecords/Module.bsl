@@ -676,8 +676,7 @@ Procedure sqlFieldsAdjustDebts ( Env )
 	
 	s = "
 	|// @Fields
-	|select Documents.Customer as UnloadingPoint, Documents.Customer as Customer,
-	|	Documents.Reversal as Reversal, Documents.Type as Type";
+	|select Documents.Customer as UnloadingPoint, Documents.Customer as Customer, Documents.Type as AdjustmentType";
 	if ( Env.IsNew ) then
 		s = s + ",
 		|	true as ShowServices,
@@ -697,18 +696,24 @@ Procedure sqlAdjustDebtsServices ( Env )
 	
 	s = "
 	|// #Services
-	|select Adjustments.AmountLocal as Total, Adjustments.VATLocal as VAT, Adjustments.AmountLocal - Adjustments.VATLocal as Amount,
+	|select sum ( Adjustments.Total ) as Total, sum ( Adjustments.VAT ) as VAT, sum ( Adjustments.Amount ) as Amount,
 	|	Adjustments.VATCode as VATCode, Adjustments.VATRate as VATRate, Adjustments.Item as Item,
 	|	Adjustments.Description as Description
-	|from Document.AdjustDebts.Adjustments as Adjustments
-	|where Adjustments.Ref = &Ref
-	|and Adjustments.VATCode <> value ( Catalog.VAT.EmptyRef )
-	|union all
-	|select Accounting.AmountLocal, Accounting.VATLocal, Accounting.AmountLocal - Accounting.VATLocal,
-	|	Accounting.VATCode, Accounting.VATRate, Accounting.Item, Accounting.Description
-	|from Document.AdjustDebts.Accounting as Accounting
-	|where Accounting.Ref = &Ref
-	|and Accounting.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|from (
+	|	select Adjustments.AmountLocal as Total, Adjustments.VATLocal as VAT, Adjustments.AmountLocal - Adjustments.VATLocal as Amount,
+	|		Adjustments.VATCode as VATCode, Adjustments.VATRate as VATRate, Adjustments.Item as Item,
+	|		Adjustments.Description as Description
+	|	from Document.AdjustDebts.Adjustments as Adjustments
+	|	where Adjustments.Ref = &Ref
+	|	and Adjustments.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|	union all
+	|	select Accounting.AmountLocal, Accounting.VATLocal, Accounting.AmountLocal - Accounting.VATLocal,
+	|		Accounting.VATCode, Accounting.VATRate, Accounting.Item, Accounting.Description
+	|	from Document.AdjustDebts.Accounting as Accounting
+	|	where Accounting.Ref = &Ref
+	|	and Accounting.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|) as Adjustments
+	|group by Adjustments.VATCode, Adjustments.VATRate, Adjustments.Item, Adjustments.Description
 	|";
 	Env.Selection.Add ( s );
 
@@ -720,23 +725,17 @@ Procedure fillAdjustDebtsServices ( Env, Object )
 	services = Object.Services;
 	services.Clear ();
 	fields = Env.Fields;
-	if ( fields.Reversal ) then
-		reverse = fields.Type = Enums.TypesAdjustDebts.Advance;
-	else
-		reverse = fields.Type = Enums.TypesAdjustDebts.Debt;
-	endif;
+	sign = ? ( fields.AdjustmentType = Enums.TypesAdjustDebts.Advance, 1, -1 );
 	for each row in Env.Services do
 		newRow = services.Add ();
 		FillPropertyValues ( newRow, row );
-		if ( reverse ) then
-			newRow.Amount = - newRow.Amount;
-			newRow.Total = - newRow.Total;
-			newRow.VAT = - newRow.VAT;
-			if ( newRow.Quantity = 0 ) then
-				newRow.Price = - newRow.Price;
-			else
-				newRow.Quantity = - newRow.Quantity;
-			endif;
+		newRow.Amount = newRow.Amount * sign;
+		newRow.Total = newRow.Total * sign;
+		newRow.VAT = newRow.VAT * sign;
+		if ( newRow.Quantity = 0 ) then
+			newRow.Price = newRow.Price * sign;
+		else
+			newRow.Quantity = newRow.Quantity * sign;
 		endif;
 	enddo;
 

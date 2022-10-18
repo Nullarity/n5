@@ -125,37 +125,6 @@
 			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>Bill</dataPath>
-			<field>Bill</field>
-			<title xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>Bill</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Счета</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>Conturi</v8:content>
-				</v8:item>
-			</title>
-			<useRestriction>
-				<group>true</group>
-			</useRestriction>
-			<appearance>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Format</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>MarkNegatives</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-				</dcscor:item>
-			</appearance>
-		</field>
-		<field xsi:type="DataSetFieldField">
 			<dataPath>Balance</dataPath>
 			<field>Balance</field>
 			<title xsi:type="v8:LocalStringType">
@@ -249,37 +218,6 @@
 			</appearance>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>Unbilled</dataPath>
-			<field>Unbilled</field>
-			<title xsi:type="v8:LocalStringType">
-				<v8:item>
-					<v8:lang>en</v8:lang>
-					<v8:content>Unbilled</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Без счетов</v8:content>
-				</v8:item>
-				<v8:item>
-					<v8:lang>ro</v8:lang>
-					<v8:content>Nefacturat</v8:content>
-				</v8:item>
-			</title>
-			<useRestriction>
-				<group>true</group>
-			</useRestriction>
-			<appearance>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Format</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>MarkNegatives</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-				</dcscor:item>
-			</appearance>
-		</field>
-		<field xsi:type="DataSetFieldField">
 			<dataPath>Paid</dataPath>
 			<field>Paid</field>
 			<title xsi:type="v8:LocalStringType">
@@ -329,16 +267,14 @@ index by cast ( Debts.Document as Document.SalesOrder )
 //
 select allowed Debts.SalesOrder as SalesOrder, Debts.SalesOrder.Customer as Customer,
 	Debts.SalesOrder.Contract as Contract, Debts.SalesOrder.Amount as Amount,
-	Debts.Debt as Debt, Debts.Debt - Debts.Bill as Unbilled, Debts.Bill as Bill,
-	Debts.Overpayment + Debts.Debt - Debts.Amount as Balance,
+	Debts.Debt as Debt, Debts.Overpayment + Debts.Debt - Debts.Amount as Balance,
 	Debts.SalesOrder.Amount + Debts.Amount - Debts.Overpayment - Debts.Debt as Invoiced,
 	Debts.SalesOrder.Amount - Debts.Debt as Paid
-{select SalesOrder.*, Customer.*, Contract.*, Amount, Debt, Unbilled, Bill,
+{select SalesOrder.*, Customer.*, Contract.*, Amount, Debt,
 	Balance, Invoiced, Paid}
 from Debts as Debts
 {where Debts.SalesOrder.Amount as Amount,
-	Debts.Debt as Debt, Debts.Debt - Debts.Bill as Unbilled, Debts.Bill as Bill,
-	Debts.Overpayment + Debts.Debt - Debts.Amount as Balance,
+	Debts.Debt as Debt, Debts.Overpayment + Debts.Debt - Debts.Amount as Balance,
 	Debts.SalesOrder.Amount + Debts.Amount - Debts.Overpayment - Debts.Debt as Invoiced,
 	Debts.SalesOrder.Amount - Debts.Debt as Paid}
 </query>
@@ -612,10 +548,6 @@ case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.Deliver
 		<expression>Sum(Balance)</expression>
 	</totalField>
 	<totalField>
-		<dataPath>Bill</dataPath>
-		<expression>Sum(Bill)</expression>
-	</totalField>
-	<totalField>
 		<dataPath>Invoiced</dataPath>
 		<expression>Sum(Invoiced)</expression>
 	</totalField>
@@ -626,10 +558,6 @@ case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.Deliver
 	<totalField>
 		<dataPath>Debt</dataPath>
 		<expression>Sum(Debt)</expression>
-	</totalField>
-	<totalField>
-		<dataPath>Unbilled</dataPath>
-		<expression>Sum(Unbilled)</expression>
 	</totalField>
 	<parameter>
 		<name>SalesOrders</name>
@@ -755,31 +683,6 @@ case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.Deliver
 					</dcsset:item>
 					<dcsset:placement>Auto</dcsset:placement>
 					<dcsset:viewMode>Inaccessible</dcsset:viewMode>
-				</dcsset:item>
-				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
-					<dcsset:use>false</dcsset:use>
-					<dcsset:lwsTitle>
-						<v8:item>
-							<v8:lang>en</v8:lang>
-							<v8:content>Invoice</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Счета на оплату</v8:content>
-						</v8:item>
-						<v8:item>
-							<v8:lang>ro</v8:lang>
-							<v8:content>Facturi de plată</v8:content>
-						</v8:item>
-					</dcsset:lwsTitle>
-					<dcsset:item xsi:type="dcsset:SelectedItemField">
-						<dcsset:field>Bill</dcsset:field>
-					</dcsset:item>
-					<dcsset:item xsi:type="dcsset:SelectedItemField">
-						<dcsset:field>Unbilled</dcsset:field>
-					</dcsset:item>
-					<dcsset:placement>Auto</dcsset:placement>
-					<dcsset:viewMode>Normal</dcsset:viewMode>
 				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
 				<dcsset:userSettingID>1be36308-b4aa-49df-9cff-3cd577396548</dcsset:userSettingID>

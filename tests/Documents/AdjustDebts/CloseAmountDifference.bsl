@@ -1,10 +1,11 @@
-﻿// Will sell services for 2000 lei (100$ x 20), then accept the payment 1900 ley (100$ x 19)
-// and then adjust debt -100 lei (in reverse mode) to make the debt even.
+﻿// Will sell services for 2000 lei (100$ x 20), then accept the payment 1900 ley (100$ x 19).
+// Will accept prepayment 2000 lei (100$ x 20), then sell services for 1960 lei (100$ x 19.6).
+// Finally, will adjust our 100 lei debt and his 40 lei debt.
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0T3" );
+id = Call ( "Common.ScenarioID", "A106" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -17,19 +18,14 @@ if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
 	With ();
 else
 	Commando ( "e1cib/command/Document.AdjustDebts.Create" );
-	Set ( "#Customer", this.Customer );
 	Set ( "#Option", "Accounting (Dr)" );
+	Set ( "#Customer", this.Customer );
+	Click ( "#ApplyVAT" );
 	Click ( "#Reversal" );
 	Set ( "#Account", "6111" );
-	Put ( "#Currency", "mdl" );
 	Set ( "#ContractRate", 19 ); // the same rate as payment is
 	Put ( "#Memo", id );
-	Set ( "#Amount", 100 );
-	Click ( "#AccountingAdd" );
-	Accounting = Get ( "#Accounting" );
-	Accounting.EndEditRow ();
-	Set ( "#AccountingItem [ 1 ]", this.Discounts, Accounting );
-	Set ( "#AccountingAmount [ 1 ]", 5.26, Accounting ); // 5.26 = 100 / 19
+	Set ( "#Amount", 60 );
 endif;
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
@@ -68,6 +64,7 @@ Procedure createEnv ()
 	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
 	p.Description = this.Customer;
 	p.Currency = "usd";
+	p.MonthlyAdvances = true;
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
 
@@ -103,10 +100,35 @@ Procedure createEnv ()
 	#region acceptPayment
 	Commando ( "e1cib/command/Document.Payment.Create" );
 	Set ( "#Date", CurrentDate () - 86400 );
-	Pick ( "#Customer", this.Customer );
+	Put ( "#Customer", this.Customer );
 	Set ( "#ContractRate", 19 );
 	Set ( "#Amount", 1900 );
 	Next ();
+	Click ( "#FormPostAndClose" );
+	#endregion
+
+	#region acceptPrepayment
+	Commando ( "e1cib/command/Document.Payment.Create" );
+	Set ( "#Date", CurrentDate () - 86300 );
+	Put ( "#Customer", this.Customer );
+	Set ( "#ContractRate", 20 );
+	Set ( "#Amount", 2000 );
+	Next ();
+	Click ( "#FormPostAndClose" );
+	#endregion
+
+	#region invoice
+	Commando("e1cib/command/Document.Invoice.Create");
+	Put("#Date", this.Date-86000);
+	Put("#Customer", this.Customer);
+	Put("#Memo", id);
+	Set("#Rate", 19.6);
+	table = Get ( "#Services" );
+	Click ( "#ServicesAdd" );
+	table.EndEditRow ();
+	Set ( "#ServicesItem", this.Service, table );
+	Set ( "#ServicesQuantity", 1, table );
+	Set ( "#ServicesPrice", 100, table );
 	Click ( "#FormPostAndClose" );
 	#endregion
 

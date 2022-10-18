@@ -1,3 +1,6 @@
+//@skip-check redundant-export-method
+
+
 // Please do not use NStr () function in complex expressions!
 //
 // The following variant is incorrect:

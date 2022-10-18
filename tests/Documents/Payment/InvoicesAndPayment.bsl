@@ -47,7 +47,7 @@ Check("#Payments / #PaymentsPay[2]", "No");
 
 // Make overpayment for the second invoice
 Set("#Payments / #PaymentsAmount[2]", 100);
-Check("#Payments / #PaymentsOverpayment[2]", 0);
+Assert ( Fetch ( "#Info" ) ).Contains ( "Payment Amount is 50.00 MDL" );
 
 // Uncheck Pay's flags for the first invoice and update table
 Click("#Payments / #PaymentsPay[1]");
@@ -59,7 +59,7 @@ Check("#Payments / #PaymentsPay[1]", "No");
 Check("#Amount", amount );
 
 // Click save and check rows count: it should be 1 row only
-Click("#FormWrite");
+Click("#JustSave");
 invoices = Call("Table.Count", Get("#Payments"));
 if (invoices <> 1) then
 	Stop("Only 1 Invoice should left in the documents list");
@@ -68,7 +68,7 @@ endif;
 // Refill document and post
 Set("#Amount", env.Price );
 Click("#Refill");
-Click("Yes");
+Click("Yes", DialogsTitle);
 Click("#FormPost");
 
 // *************************

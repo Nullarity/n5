@@ -42,6 +42,10 @@ Procedure checkAttributes ( CheckedAttributes )
 	else
 		CheckedAttributes.Add ( "Account" );
 	endif;
+	if ( not ( Option = Enums.AdjustmentOptions.AccountingDr
+			or Option = Enums.AdjustmentOptions.AccountingCr ) ) then
+		CheckedAttributes.Add ( "Amount" );
+	endif;
 
 EndProcedure
 
@@ -58,6 +62,9 @@ EndProcedure
 
 Procedure OnWrite ( Cancel )
 
+	if ( DataExchange.Load ) then
+		return;
+	endif; 
 	if ( not DeletionMark ) then
 		InvoiceRecords.Sync ( ThisObject );
 	endif; 

@@ -17,8 +17,8 @@ Procedure fillNew ( Form )
 		PaymentForm.SetVATAdvance ( object );
 	endif;
 	PaymentForm.SetAccount ( object );
-	PaymentForm.SetCurrency ( object );
-	PaymentForm.SetRates ( object );
+	setCurrency ( object );
+	setRates ( object );
 	
 EndProcedure
 
@@ -47,7 +47,7 @@ Function receivablesVAT ()
 EndFunction
 
 &AtServer
-Procedure Fill ( Form ) export
+Procedure fill ( Form )
 	
 	env = getEnv ( Form );
 	object = Form.Object;
@@ -62,7 +62,7 @@ Procedure Fill ( Form ) export
 		PaymentForm.SetVATAdvance ( object );
 	endif;
 	PaymentForm.SetAccount ( object );
-	PaymentForm.SetOrganizationAccounts ( object );
+	setOrganizationAccounts ( object );
 	
 EndProcedure
 
@@ -99,8 +99,8 @@ Procedure fillHeader ( Env )
 	else
 		Env.Object.Vendor = Env.Fields.Vendor;
 	endif; 	
-	PaymentForm.SetRates ( object );
-	PaymentForm.LoadContract ( object );
+	setRates ( object );
+	loadContract ( object );
 	
 EndProcedure
 
@@ -114,7 +114,7 @@ Procedure fillTable ( Object )
 	endif; 
 	payments.Load ( getPayments ( Object ) );
 	for each row in payments do
-		PaymentForm.CalcDiscount ( row );
+		calcDiscount ( row );
 	enddo; 
 	
 EndProcedure
@@ -245,7 +245,7 @@ Procedure fillAmounts ( Object )
 	
 	table = Object [ getTableName ( Object ) ];
 	for each row in table do
-		PaymentForm.CalcAmount ( row );
+		calcAmount ( row );
 		togglePay ( row );
 	enddo; 
 	
@@ -303,14 +303,14 @@ Procedure calcApplied ( Object )
 	
 EndProcedure 
 
-Procedure CalcDiscount ( TableRow ) export
+Procedure calcDiscount ( TableRow )
 	
 	TableRow.Discount = TableRow.Payment / 100 * TableRow.DiscountRate;
 	
 EndProcedure
 
 &AtClient
-Procedure CalcDiscountRate ( TableRow ) export
+Procedure calcDiscountRate ( TableRow )
 	
 	discount = TableRow.Discount;
 	amount = TableRow.Amount;
@@ -318,7 +318,7 @@ Procedure CalcDiscountRate ( TableRow ) export
 
 EndProcedure
 
-Procedure CalcAmount ( TableRow ) export
+Procedure calcAmount ( TableRow )
 	
 	TableRow.Amount = Max ( 0, TableRow.Payment - TableRow.Discount );
 	
@@ -350,7 +350,7 @@ Procedure SetAccount ( Object ) export
 EndProcedure 
 
 &AtServer
-Procedure SetOrganizationAccounts ( Object ) export
+Procedure setOrganizationAccounts ( Object )
 	
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" ) ) then
@@ -387,7 +387,7 @@ Procedure SetBankAccount ( Object ) export
 EndProcedure 
 
 &AtServer
-Procedure SetCurrency ( Object ) export
+Procedure setCurrency ( Object )
 	
 	method = Object.Method;
 	if ( method = Enums.PaymentMethods.Cash
@@ -400,7 +400,7 @@ Procedure SetCurrency ( Object ) export
 EndProcedure 
 
 &AtServer
-Procedure SetRates ( Object ) export
+Procedure setRates ( Object )
 	
 	info = CurrenciesSrv.Get ( Object.Currency, Object.Date );
 	Object.Rate = info.Rate;
@@ -409,7 +409,7 @@ Procedure SetRates ( Object ) export
 EndProcedure 
 
 &AtServer
-Procedure Clean ( Table ) export
+Procedure clean ( Table )
 	
 	i = Table.Count ();
 	while ( i > 0 ) do
@@ -423,7 +423,7 @@ Procedure Clean ( Table ) export
 EndProcedure
 
 &AtServer
-Procedure SetContract ( Object ) export
+Procedure setContract ( Object )
 	
 	type = TypeOf ( Object.Ref );
 	if ( type = Type ( "DocumentRef.Payment" )
@@ -439,7 +439,7 @@ Procedure SetContract ( Object ) export
 EndProcedure 
 
 &AtServer
-Procedure LoadContract ( Object ) export
+Procedure loadContract ( Object )
 	
 	data = contractData ( Object );
 	FillPropertyValues ( Object, data, , "CashFlow" );
@@ -588,7 +588,7 @@ Procedure setTitle ( Form )
 EndProcedure 
 
 &AtServer
-Procedure filterAccount ( Form )
+Procedure FilterAccount ( Form ) export
 	
 	object = Form.Object;
 	items = Form.Items;
@@ -609,7 +609,7 @@ Procedure filterAccount ( Form )
 		items.Account.ChoiceParameters = new FixedArray ( list );
 	endif; 
 	
-EndProcedure 
+EndProcedure
 
 &AtServer
 Procedure toggleDetails ( Form )
@@ -719,7 +719,7 @@ EndProcedure
 Procedure BeforeWriteAtServer ( CurrentObject, Form ) export
 	
 	passCopy ( CurrentObject, Form );
-	PaymentForm.Clean ( CurrentObject.Payments );	
+	clean ( CurrentObject.Payments );	
 
 EndProcedure
 
@@ -795,7 +795,7 @@ Procedure OnCreateAtServer ( Form ) export
 		updateInfo ( Form );
 		Constraints.ShowAccess ( Form );
 	endif; 
-	filterAccount ( Form );
+	PaymentForm.FilterAccount ( Form );
 	setTitle ( Form );
 	StandardButtons.Arrange ( Form );
 	readAppearance ( Form );
@@ -906,8 +906,8 @@ EndProcedure
 Procedure ApplyOrganization ( Form ) export
 	
 	object = Form.Object;
-	PaymentForm.SetOrganizationAccounts ( object );
-	PaymentForm.SetContract ( object );
+	setOrganizationAccounts ( object );
+	setContract ( object );
 	PaymentForm.ApplyContract ( Form );
 	
 EndProcedure
@@ -928,12 +928,24 @@ Procedure ApplyContract ( Form ) export
 EndProcedure
 
 &AtServer
+Procedure ExecuteContract ( Object ) export
+	
+	loadContract ( Object );
+	calcContract ( Object );
+	fillTable ( Object );
+	distributeAmount ( Object );
+	calcApplied ( Object );
+	clean ( Object.Payments );
+	
+EndProcedure
+
+&AtServer
 Procedure ApplyMethod ( Form ) export
 	
 	object = Form.Object;
 	PaymentForm.SetBankAccount ( object );
 	applyBankAccount ( Form );
-	filterAccount ( Form );
+	PaymentForm.FilterAccount ( Form );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorPayment" ) ) then
 		resetExpenseReport ( object );
 	endif;
@@ -964,7 +976,7 @@ EndProcedure
 Procedure ApplyCurrency ( Form ) export
 	
 	object = Form.Object;
-	PaymentForm.SetRates ( object );
+	setRates ( object );
 	applyRate ( Form );
 	Appearance.Apply ( Form, "Object.Currency" );
 	
@@ -1025,7 +1037,7 @@ Procedure ApplyLocation ( Form ) export
 	
 	object = Form.Object;
 	setAccount ( object );
-	filterAccount ( Form );
+	PaymentForm.FilterAccount ( Form );
 	Appearance.Apply ( Form, "Object.Location" );
 	
 EndProcedure 

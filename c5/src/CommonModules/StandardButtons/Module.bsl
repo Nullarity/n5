@@ -193,11 +193,11 @@ Procedure write ( Form, Post, Action ) export
 	Form.Close ();
 	list = findParent ( owner );
 	if ( list = undefined ) then
-		StandardButtons.Create ( TypeOf ( ref ), undefined, undefined );
+		create ( TypeOf ( ref ), undefined, undefined );
 	elsif ( list.Parameters.Property ( "CustomStandardButtonsHandler" ) ) then
 		notifyParent ( ref, list );
 	else
-		StandardButtons.Create ( TypeOf ( ref ), owner, list [ owner.Name ] );
+		create ( TypeOf ( ref ), owner, list [ owner.Name ] );
 	endif; 
 	
 EndProcedure 
@@ -256,7 +256,7 @@ Procedure SaveAndNew ( Form ) export
 EndProcedure 
 
 &AtClient
-Procedure Create ( Type, Owner = undefined, List = undefined ) export
+Procedure create ( Type, Owner = undefined, List = undefined )
 	
 	params = StandardButtonsSrv.GetParams ( Type, ? ( List = undefined, undefined, List.SettingsComposer ) );
 	OpenForm ( params.Form, new Structure ( "FillingValues", params.FillingValues ), Owner );

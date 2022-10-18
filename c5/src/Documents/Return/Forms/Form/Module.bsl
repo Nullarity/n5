@@ -345,17 +345,12 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 	if ( Row <> undefined ) then
 		Computations.Total ( Row, object.VATUse, CalcVAT );
 	endif;
-	items = Object.Items;
-	vat = items.Total ( "VAT" );
-	amount = items.Total ( "Total" );
-	object.VAT = vat;
-	object.Amount = amount;
-	object.Discount = items.Total ( "Discount" );
-	object.GrossAmount = amount - ? ( object.VATUse = 2, vat, 0 ) + object.Discount;
+	InvoiceForm.CalcTotals ( Form );
 	InvoiceForm.CalcBalanceDue ( Form );
 	Appearance.Apply ( Form, "BalanceDue" );
-	
+
 EndProcedure
+
 
 &AtServer
 Procedure setAccuracy ()

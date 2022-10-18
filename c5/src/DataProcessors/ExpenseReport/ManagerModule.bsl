@@ -106,11 +106,12 @@ Procedure sqlBalance ( Env )
 	s = "
 	|// #Balances
 	|select General.AmountOpeningBalance as InitBalance, General.AmountTurnoverDr as Income, General.Recorder.Date as Date, CashVoucher.Number as Number
-	|from AccountingRegister.General.BalanceAndTurnovers ( &LastDate, dateadd ( &Date, second, -1 ), recorder, , Account = &Account, 
-	|														value ( ChartOfCharacteristicTypes.Dimensions.Employees ),
-	|														Company = &Company
-	|														and case when &Currency = &LocalCurrency then Currency is null else Currency = &Currency end
-	|														and ExtDimension1 = &Employee ) as General
+	|from AccountingRegister.General.BalanceAndTurnovers ( &LastDate,
+	|				case when &Date = &LastDate then &Date else dateadd ( &Date, second, -1 ) end, recorder, , Account = &Account, 
+	|				value ( ChartOfCharacteristicTypes.Dimensions.Employees ),
+	|				Company = &Company
+	|				and case when &Currency = &LocalCurrency then Currency is null else Currency = &Currency end
+	|				and ExtDimension1 = &Employee ) as General
 	|	//
 	|	//	CashVoucher
 	|	//

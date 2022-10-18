@@ -240,15 +240,11 @@ Procedure sqlRecords ()
 	endif;
 	s = s + " ) as Records
 	|where
-//	|valuetype ( Records.Recorder ) in (
-//	|	type ( Document.AdjustDebts ),
-//	|	type ( Document.AdjustVendorDebts )
-//	|)
-//	|or
 	|	not ( Records.BalancedAccount in ( select Account from Accounts )
 	|		and isnull ( Records.BalancedExtDimension1, value ( Catalog.Organizations.EmptyRef ) )
-	|			= Records.ExtDimension1";
-	if ( ContractDefined ) then
+	|			= Records.ExtDimension1
+	|";
+	if ( Detailed or ContractDefined ) then
 		s = s + "
 		|and isnull ( Records.BalancedExtDimension2, value ( Catalog.Contracts.EmptyRef ) ) = Records.ExtDimension2";
 	endif;

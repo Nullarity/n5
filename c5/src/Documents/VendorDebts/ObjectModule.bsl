@@ -2,7 +2,7 @@
 
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
-	DebtsForm.CheckAmount ( ThisObject, CheckedAttributes );
+	DebtsForm.FillCheckProcessing ( ThisObject, Cancel, CheckedAttributes );
 	
 EndProcedure
 

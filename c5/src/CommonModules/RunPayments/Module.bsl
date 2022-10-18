@@ -435,7 +435,9 @@ Procedure proceedAmount ( Env, Row )
 		endif;
 	endif;
 	if ( returnAdvance ) then
-		if ( Env.Customer and not refund ) then
+		incomingPayment = ( Env.Customer and not refund )
+			or ( not Env.Customer and refund );
+		if ( incomingPayment ) then
 			acceptAdvance ( Env, Row, not fields.AdvancesMonthly );
 		else
 			returnAdvance ( Env, Row, not fields.AdvancesMonthly );
@@ -460,9 +462,9 @@ Procedure acceptAdvance ( Env, Row, Advance )
 		p.AccountCr = fields.OrganizationAccount;
 	endif;
 	p.CurrencyCr = fields.ContractCurrency;
-	amount = - Row.Amount;
-	amountAccounting = - Row.AmountAccounting;
-	amountDocument = - Row.AmountDocument;
+	amount = Row.Amount;
+	amountAccounting = Row.AmountAccounting;
+	amountDocument = Row.AmountDocument;
 	incomeTaxRate = advanceData.IncomeTaxRate;
 	reverseIncomeTax = incomeTaxRate <> 0;
 	if ( reverseIncomeTax ) then
@@ -633,7 +635,7 @@ Procedure commitDebt ( Env, Row )
 	amountAccounting = Row.AmountAccounting;
 	amountDocument = Row.AmountDocument;
 	customer =  Env.Customer;
-	incomeTax = not ( Env.Customer or Refund );
+	incomeTax = not ( customer or refund or Row.IncomeTax = 0 );
 	if ( customer ) then
 		if ( refund ) then
 			p.Operation = Enums.Operations.CustomerRefund;
@@ -672,11 +674,10 @@ Procedure commitDebt ( Env, Row )
 	p.Amount = amountAccounting;
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
-	if ( incomeTax ) then
-		commitIncomeTax ( Env, Row, Advance );
-	endif;
 	if ( customer and advance and not refund and fields.VAT <> 0 ) then
 		commitAdvanceVAT ( Env, Row );
+	elsif ( incomeTax ) then
+		commitIncomeTax ( Env, Row, Advance );
 	endif;
 	
 EndProcedure
@@ -714,7 +715,7 @@ Procedure commitAdvanceVAT ( Env, Row )
 	p.DimDr1 = Row.Organization;
 	p.DimDr2 = Row.Contract;
 	p.AccountCr = fields.VATAccount;
-	amount = Row.Amount;
+	amount = Row.AmountAccounting;
 	p.Amount = amount - amount * ( 100 / ( 100 + fields.VAT ) );
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );

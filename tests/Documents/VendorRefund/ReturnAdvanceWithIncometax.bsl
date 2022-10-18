@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "2BFC7E47" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A0VJ" ) );
 getEnv ();
 createEnv ();
 
@@ -23,6 +23,7 @@ Click ( "#FormPostAndClose" );
 Commando("e1cib/command/Document.VendorRefund.Create");
 Put ( "#Vendor", this.vendor );
 Put ( "#Amount", 100 );
+Click("#Payments / #PaymentsPay[1]");
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
 With ();

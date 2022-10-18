@@ -205,7 +205,11 @@ Function getTotalParams ( Source )
 	type = TypeOf ( object.Ref );
 	params.VendorInvoice = type = Type ( "DocumentRef.VendorInvoice" );
 	params.PaymentDiscounts = params.VendorInvoice or ( type = Type ( "DocumentRef.Invoice" ) );
-	params.CalcServices = type <> Type ( "DocumentRef.Sale" );
+	params.CalcServices = not (
+		type = Type ( "DocumentRef.Sale" )
+		or type = Type ( "DocumentRef.Return" )
+		or type = Type ( "DocumentRef.VendorReturn" )
+	);
 	if ( type = Type ( "DocumentRef.ExpenseReport" )
 		or type = Type ( "DocumentRef.Shipment" )
 		or type = Type ( "DocumentRef.Sale" )

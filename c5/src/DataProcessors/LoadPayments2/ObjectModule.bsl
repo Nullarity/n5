@@ -204,11 +204,6 @@ Procedure createPayment(Row, RowDetail)
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
 	PaymentForm.SetVATAdvance ( object );
-	PaymentForm.CalcContractAmount(object, 1);
-	PaymentForm.CalcAppliedAmount(object, 1);
-	PaymentForm.FillTable(object);
-	PaymentForm.DistributeAmount(object);
-	clean(object.Payments);
 	writeDocument(object, Row, newDocument);
 	
 EndProcedure
@@ -248,22 +243,15 @@ Procedure loadContract(Object, Row)
 		Object.Factor = info.Factor;
 		Object.Amount = Row.Amount;
 	endif;
-	PaymentForm.LoadContract(Object);
-	Object.CashFlow = Row.CashFlow;
-	Object.Method = Method;
+	PaymentForm.ExecuteContract ( Object );
+	setUserInput ( Object, Row );
 	
 EndProcedure
 
-Procedure clean(Table)
+Procedure setUserInput ( Object, Row )
 	
-	i = Table.Count();
-	while (i > 0) do
-		i = i - 1;
-		row = Table[i];
-		if (row.Amount = 0) then
-			Table.Delete(i);
-		endif;
-	enddo;
+	Object.CashFlow = Row.CashFlow;
+	Object.Method = Method;
 	
 EndProcedure
 
@@ -330,11 +318,6 @@ Procedure createVendorRefund(Row, RowDetail)
 	object.VendorAccount = Row.Account;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
-	PaymentForm.CalcContractAmount(object, 1);
-	PaymentForm.CalcAppliedAmount(object, 1);
-	PaymentForm.FillTable(object);
-	PaymentForm.DistributeAmount(object);
-	clean(object.Payments);
 	writeDocument(object, Row, newDocument);
 	
 EndProcedure
@@ -430,11 +413,7 @@ Procedure createVendorPayment(Row, RowDetail)
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
-	PaymentForm.CalcContractAmount(object, 1);
-	PaymentForm.FillTable(object);
-	PaymentForm.DistributeAmount(object);
-	PaymentForm.CalcHandout(object);
-	clean(object.Payments);
+	PaymentForm.CalcHandout ( Object );
 	writeDocument(object, Row, newDocument);
 	
 EndProcedure
@@ -456,10 +435,6 @@ Procedure createRefund(Row, RowDetail)
 	object.AdvanceAccount = Row.AdvanceAccount;
 	headerDocument(object, Row, RowDetail);
 	loadContract(object, Row);
-	PaymentForm.CalcContractAmount(object, 1);
-	PaymentForm.FillTable(object);
-	PaymentForm.DistributeAmount(object);
-	clean(object.Payments);
 	writeDocument(object, Row, newDocument);
 	
 EndProcedure

@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2C0480FC" );
+id = Call ( "Common.ScenarioID", "A0VL" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -14,6 +14,7 @@ Commando("e1cib/command/Document.VendorRefund.Create");
 Set("#Vendor", env.Vendor);
 Next();
 Set("#Amount", 300);
+Click("#Payments / #PaymentsPay[1]");
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
 With ();
@@ -76,6 +77,7 @@ Procedure createEnv ( Env )
 	GotoRow ( "#List", "Memo", id );
 	Click("#FormDocumentVendorPaymentCreateBasedOn");
 	With ();
+	Put ( "#Amount", 300 );
 	Click ( "#FormPostAndClose" );
 	#endregion
 

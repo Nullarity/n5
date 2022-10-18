@@ -114,8 +114,6 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|CustomerPage show Object.Customer;
 	|VendorPage show Object.Vendor;
-	|CustomerAdvances hide Object.CustomerAdvancesMonthly;
-	|VendorAdvances hide Object.VendorAdvancesMonthly;
 	|CustomerAdvancesWarning show Object.Customer and Object.Currency <> LocalCurrency and not Object.Export
 	|	and not Object.CustomerAdvancesMonthly;
 	|VendorAdvancesWarning show Object.Vendor and Object.Currency <> LocalCurrency and not Object.Import
@@ -280,6 +278,22 @@ Procedure setCurrencyRate ( Customer, Vendor )
 	
 EndProcedure
 
+&AtServer
+Procedure setAdvance ( ForCustomer )
+	
+	monthlyAdvances = Constants.AdvancesMonthly.Get ();
+	if ( ForCustomer ) then
+		Object.CustomerAdvancesMonthly = monthlyAdvances; 
+		Object.CustomerAdvances = not monthlyAdvances;
+		Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
+	else
+		Object.VendorAdvancesMonthly = monthlyAdvances;
+		Object.VendorAdvances = not monthlyAdvances;
+		Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
+	endif;
+	
+EndProcedure
+
 &AtClient
 Procedure CustomerOnChange ( Item )
 	
@@ -304,22 +318,6 @@ Procedure applyCustomer ()
 		Object.Template = undefined;
 	endif; 
 	Appearance.Apply ( ThisObject, "Object.Customer" );
-	
-EndProcedure
-
-&AtServer
-Procedure setAdvance ( ForCustomer )
-	
-	monthlyAdvances = Constants.AdvancesMonthly.Get ();
-	if ( ForCustomer ) then
-		Object.CustomerAdvancesMonthly = monthlyAdvances; 
-		Object.CustomerAdvances = not monthlyAdvances;
-		Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
-	else
-		Object.VendorAdvancesMonthly = monthlyAdvances;
-		Object.VendorAdvances = not monthlyAdvances;
-		Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
-	endif;
 	
 EndProcedure
 
@@ -414,16 +412,6 @@ EndProcedure
 &AtClient
 Procedure CustomerAdvancesMonthlyOnChange ( Item )
 	
-	applyCustomerAdvancesMonthly ();
-
-EndProcedure
-
-&AtClient
-Procedure applyCustomerAdvancesMonthly ()
-	
-	if ( not Object.CustomerAdvancesMonthly ) then
-		Object.CustomerAdvances = true;
-	endif;
 	Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
 
 EndProcedure
@@ -431,16 +419,6 @@ EndProcedure
 &AtClient
 Procedure VendorAdvancesMonthlyOnChange ( Item )
 	
-	applyVendorAdvancesMonthly ();
-
-EndProcedure
-
-&AtClient
-Procedure applyVendorAdvancesMonthly ()
-	
-	if ( not Object.CustomerAdvancesMonthly ) then
-		Object.VendorAdvances = true;
-	endif;
 	Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
 
 EndProcedure

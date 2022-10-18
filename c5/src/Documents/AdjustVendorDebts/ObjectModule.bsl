@@ -45,8 +45,17 @@ Procedure checkAttributes ( CheckedAttributes )
 		CheckedAttributes.Add ( "ReceiverContractFactor" );
 		CheckedAttributes.Add ( "ReceiverContractRate" );
 		CheckedAttributes.Add ( "ReceiverAccount" );
+		if ( Option = Enums.AdjustmentOptions.Customer ) then
+			CheckedAttributes.Add ( "VATAccount" );
+			CheckedAttributes.Add ( "ReceivablesVATAccount" );
+			CheckedAttributes.Add ( "VATAdvance" );
+		endif;
 	else
 		CheckedAttributes.Add ( "Account" );
+	endif;
+	if ( not ( Option = Enums.AdjustmentOptions.AccountingDr
+			or Option = Enums.AdjustmentOptions.AccountingCr ) ) then
+		CheckedAttributes.Add ( "Amount" );
 	endif;
 
 EndProcedure

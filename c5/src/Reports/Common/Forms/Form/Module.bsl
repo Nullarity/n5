@@ -585,6 +585,7 @@ Procedure setDims ( Data, Prefix )
 		dims = Data.Dims;
 		level = Data.Fields.Level;
 	endif;
+	emptyAccountSupported = emptyAccountSupported ();
 	for i = 1 to 3 do
 		id = ( Prefix + "Dim" ) + i;
 		dimIndex = i - 1;
@@ -597,12 +598,22 @@ Procedure setDims ( Data, Prefix )
 			if ( dim.UserSettingID = "" ) then
 				toggleSetting ( dim, id );
 			endif; 
+		elsif ( emptyAccountSupported ) then
+			dim.UserSettingPresentation = Metadata.Documents.VendorInvoice.TabularSections.Accounts.Attributes [ "Dim" + i ].Presentation ();
 		else
 			toggleSetting ( dim, "" );
 		endif; 
 	enddo; 
 	
 EndProcedure 
+
+&AtServer
+Function emptyAccountSupported ()
+
+	name = Object.ReportName;
+	return name = "BalanceSheet";
+
+EndFunction
 
 &AtServer
 Procedure setCurrency ( Data, Prefix )

@@ -20,7 +20,9 @@ EndProcedure
 &AtClient
 Procedure RunClient ( Command )
 	
-	Execute ( Progam );
+	#if ( not WebClient ) then
+		Execute ( Progam );
+	#endif
 	
 EndProcedure
 

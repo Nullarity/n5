@@ -1,7 +1,13 @@
+&AtServer
+var Env export;
 &AtClient
 var AdjustmentsRow export;
 &AtClient
 var ReceiverRow export;
+&AtClient
+var AccountingRow export;
+&AtClient
+var AccountingReceiverRow export;
 &AtServer
 var AccountData export;
 
@@ -12,6 +18,14 @@ var AccountData export;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	AdjustDebtsForm.OnReadAtServer ( ThisObject );
+	updateChangesPermission ();
+
+EndProcedure
+
+&AtServer
+Procedure updateChangesPermission ()
+
+	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -30,13 +44,6 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 			or Parameter = BegOfDay ( Object.Date ) ) ) then
 		updateChangesPermission ();
 	endif;
-
-EndProcedure
-
-&AtServer
-Procedure updateChangesPermission ()
-
-	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
 
@@ -130,14 +137,14 @@ EndProcedure
 &AtClient
 Procedure ContractRateOnChange ( Item )
 	
-	AdjustDebtsForm.CalcPaymentAmount ( Object );
+	AdjustDebtsForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ContractFactorOnChange ( Item )
 	
-	AdjustDebtsForm.CalcPaymentAmount ( Object );
+	AdjustDebtsForm.ApplyContractRate ( ThisObject );
 	
 EndProcedure
 
@@ -229,6 +236,13 @@ EndProcedure
 Procedure applyReceiverContract () 
 
 	AdjustDebtsForm.ApplyReceiverContract ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure ApplyVATOnChange ( Item )
+
+	AdjustDebtsForm.ApplyVATOnChange ( ThisObject );
 
 EndProcedure
 
@@ -329,6 +343,20 @@ Procedure AdjustmentsAmountOnChange ( Item )
 	
 EndProcedure
 
+&AtClient
+Procedure AdjustmentsVATCodeOnChange ( Item )
+	
+	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AdjustmentsRow );
+
+EndProcedure
+
+&AtClient
+Procedure AdjustmentsItemOnChange ( Item )
+	
+	AdjustDebtsForm.AdjustmentsItemOnChange ( Object, AdjustmentsRow );
+	
+EndProcedure
+
 // *****************************************
 // *********** Table Receiver Documents
 
@@ -423,5 +451,81 @@ EndProcedure
 Procedure ReceiverDebtsAmountOnChange ( Item )
 	
 	AdjustDebtsForm.ReceiverDebtsAmountOnChange ( ThisObject );
+	
+EndProcedure
+
+// *****************************************
+// *********** Table Accounting
+
+&AtClient
+Procedure AccountingOnActivateRow ( Item )
+	
+	AccountingRow = Item.CurrentData;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAfterDeleteRow ( Item )
+	
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
+	
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure AccountingItemOnChange ( Item )
+	
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAmountOnChange ( Item )
+	
+	AdjustDebtsForm.AccountingAmountOnChange ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingVATCodeOnChange ( Item )
+	
+	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AccountingRow );
+	
+EndProcedure
+
+// *****************************************
+// *********** Table AccountingReceiver
+
+&AtClient
+Procedure AccountingReceiverOnActivateRow ( Item )
+	
+	AccountingReceiverRow = Item.CurrentData;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingReceiverAfterDeleteRow ( Item )
+
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingReceiverOnEditEnd ( Item, NewRow, CancelEdit )
+
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingReceiverItemOnChange ( Item )
+	
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
 	
 EndProcedure

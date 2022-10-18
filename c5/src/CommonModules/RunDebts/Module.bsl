@@ -223,7 +223,6 @@ Function detailPayments ( Env )
 				row.Option, Conversion.NumberToMoney ( amount, Env.Fields.Currency ) ), , ref );
 			return false;
 		endif; 
-		bill = Min ( amount, row.Bill );
 		document = row.Document;
 		paymentKey = row.PaymentKey;
 		movement = recordset.Add ();
@@ -232,7 +231,6 @@ Function detailPayments ( Env )
 		movement.Document = document;
 		movement.PaymentKey = paymentKey;
 		movement.Payment = - amount;
-		movement.Bill = - bill;
 		movement = recordset.Add ();
 		movement.Period = date;
 		movement.Contract = contract;
@@ -246,7 +244,6 @@ Function detailPayments ( Env )
 		movement.Amount = amount;
 		movement.Accounting = row.AmountAccounting;
 		movement.Payment = amount;
-		movement.Bill = bill;
 	enddo; 
 	return true;
 	
@@ -601,14 +598,17 @@ Procedure sqlDocuments ( Env )
 		endif;
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		s = "
-		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount
+		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount,
+		|	sum ( Documents.AmountAccounting ) as AmountAccounting
 		|into Documents
 		|from (
-		|	select Items.SalesOrder as Document, Items.Invoice as Detail, Items.ContractAmount + Items.ContractVAT as Amount
+		|	select Items.SalesOrder as Document, Items.Invoice as Detail, Items.ContractAmount + Items.ContractVAT as Amount,
+		|		Items.AmountGeneral + Items.VAT as AmountAccounting
 		|	from Items as Items
 		|	where Items.SalesOrder <> value ( Document.SalesOrder.EmptyRef )
 		|	union all
-		|	select Items.Invoice, undefined, Items.ContractAmount + Items.ContractVAT as Amount
+		|	select Items.Invoice, undefined, Items.ContractAmount + Items.ContractVAT,
+		|		Items.AmountGeneral + Items.VAT
 		|	from Items as Items
 		|	where Items.SalesOrder = value ( Document.SalesOrder.EmptyRef )
 		|) as Documents
@@ -616,41 +616,48 @@ Procedure sqlDocuments ( Env )
 		|index by Document, Detail
 		|;
 		|// #Documents
-		|select Documents.Amount as Amount, Documents.Document as Document, Documents.Detail as Detail
+		|select Documents.Amount as Amount, Documents.Document as Document, Documents.Detail as Detail,
+		|	Documents.AmountAccounting as AmountAccounting
 		|from Documents as Documents
 		|";
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		s = "
 		|// #Documents
-		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount
+		|select Documents.Document as Document, Documents.Detail as Detail, sum ( Documents.Amount ) as Amount,
+		|	sum ( Documents.AmountAccounting ) as AmountAccounting
 		|into Documents
 		|from (
-		|	select Items.PurchaseOrder as Document, Items.VendorInvoice as Detail, Items.ContractAmount + Items.ContractVAT as Amount
+		|	select Items.PurchaseOrder as Document, Items.VendorInvoice as Detail, Items.ContractAmount + Items.ContractVAT as Amount,
+		|		Items.Total as AmountAccounting
 		|	from Items as Items
 		|	where Items.PurchaseOrder <> value ( Document.PurchaseOrder.EmptyRef )
 		|	union all
-		|	select Items.VendorInvoice, undefined, Items.ContractAmount + Items.ContractVAT
+		|	select Items.VendorInvoice, undefined, Items.ContractAmount + Items.ContractVAT, Items.Total
 		|	from Items as Items
 		|	where Items.PurchaseOrder = value ( Document.PurchaseOrder.EmptyRef )
 		|	union all
-		|	select FixedAssets.VendorInvoice, undefined, FixedAssets.ContractAmount + FixedAssets.ContractVAT
+		|	select FixedAssets.VendorInvoice, undefined, FixedAssets.ContractAmount + FixedAssets.ContractVAT,
+		|		FixedAssets.Total
 		|	from FixedAssets as FixedAssets
 		|	union all
-		|	select IntangibleAssets.VendorInvoice, undefined, IntangibleAssets.ContractAmount + IntangibleAssets.ContractVAT
+		|	select IntangibleAssets.VendorInvoice, undefined, IntangibleAssets.ContractAmount + IntangibleAssets.ContractVAT,
+		|		IntangibleAssets.Total
 		|	from IntangibleAssets as IntangibleAssets
 		|	union all
-		|	select Accounts.VendorInvoice, undefined, Accounts.ContractAmount + Accounts.ContractVAT
+		|	select Accounts.VendorInvoice, undefined, Accounts.ContractAmount + Accounts.ContractVAT, Accounts.Total
 		|	from Accounts as Accounts
 		|) as Documents
 		|group by Documents.Document, Documents.Detail
 		|;
 		|// #Documents
-		|select Documents.Amount as Amount, Documents.Document as Document, Documents.Detail as Detail
+		|select Documents.Amount as Amount, Documents.Document as Document, Documents.Detail as Detail,
+		|	Documents.AmountAccounting as AmountAccounting
 		|from Documents as Documents
 		|";
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
-		s = "// #Documents
-		|select sum ( Documents.Amount ) as Amount, undefined as Document
+		s = "
+		|// #Documents
+		|select sum ( Documents.Amount ) as Amount, undefined as Document, sum ( Documents.Amount ) as AmountAccounting
 		|from ( select Charges.Amount as Amount
 		|		from Charges as Charges ) as Documents
 		|";
@@ -693,7 +700,7 @@ Procedure sqlPayments ( Env )
 		s = s + "
 		|;
 		|// #Payments
-		|select Debts.Document as Document, Debts.PaymentKey as PaymentKey, Debts.Payment as Amount, Debts.Bill as Bill,
+		|select Debts.Document as Document, Debts.PaymentKey as PaymentKey, Debts.Payment as Amount,
 		|	Debts.PaymentDate as PaymentDate, Debts.Option as Option
 		|from Debts
 		|where Debts.Detail = undefined
@@ -731,7 +738,7 @@ Procedure sqlDebts ( Env )
 	s = "
 	|// #Debts
 	|select Debts.Document as Document, Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
-	|	Debts.AmountBalance as Amount, Debts.Accounting as AmountAccounting
+	|	Debts.AmountBalance as Amount
 	|from AccumulationRegister." + Env.PaymentsRegister + ".Balance ( &Timestamp,
 	|	Contract = &Contract
 	|	and ( Document, Detail ) in ( " + source + " ) ) as Debts

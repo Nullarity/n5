@@ -381,76 +381,22 @@ EndProcedure
 Procedure AdjustmentsAmountOnChange ( Item )
 	
 	AdjustDebtsForm.AdjustmentsAmountOnChange ( ThisObject );
-	if ( Object.ApplyVAT ) then
-		calcVAT ( AdjustmentsRow );
-	endif;
 	
 EndProcedure
 
 &AtClient
 Procedure AdjustmentsVATCodeOnChange ( Item )
 	
-	setVATRate ( AdjustmentsRow );
-	calcVAT ( AdjustmentsRow );
-
-EndProcedure
-
-&AtClient
-Procedure setVATRate ( Row )
-	
-	Row.VATRate = DF.Pick ( Row.VATCode, "Rate", 0 );
-
-EndProcedure
-
-&AtClient
-Procedure calcVAT ( Row )
-	
-	Row.VAT = Row.Amount - Row.Amount * ( 100 / ( 100 + Row.VATRate ) );
+	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AdjustmentsRow );
 
 EndProcedure
 
 &AtClient
 Procedure AdjustmentsItemOnChange ( Item )
 	
-	applyItem ( AdjustmentsRow );
-	if ( Object.ApplyVAT ) then
-		calcVAT ( AdjustmentsRow );
-	endif;
-
-EndProcedure
-
-&AtClient
-Procedure applyItem ( Row )
+	AdjustDebtsForm.AdjustmentsItemOnChange ( Object, AdjustmentsRow );
 	
-	p = new Structure ();
-	p.Insert ( "Company", Object.Company );
-	p.Insert ( "Item", Row.Item );
-	applyVAT = Object.ApplyVAT;
-	p.Insert ( "ApplyVAT", applyVAT );
-	data = getItemData ( p );
-	Row.Description = data.FullDescription;
-	if ( ApplyVAT ) then
-		Row.VATCode = data.VAT;
-		Row.VATRate = data.Rate;
-		Row.VATAccount = data.VATAccount;
-	endif;
-
 EndProcedure
-
-&AtClientAtServerNoContext
-Function getItemData ( val Params )
-	
-	item = Params.Item;
-	if ( Params.ApplyVAT ) then
-		data = DF.Values ( item, "FullDescription, VAT, VAT.Rate as Rate" );
-		accounts = AccountsMap.Item ( item, Params.Company, , "VAT" );
-		data.Insert ( "VATAccount", accounts.VAT );
-	else
-		data = DF.Values ( item, "FullDescription" );
-	endif;
-	return data;
-
-EndFunction
 
 // *****************************************
 // *********** Table Receiver Documents
@@ -576,27 +522,21 @@ EndProcedure
 &AtClient
 Procedure AccountingItemOnChange ( Item )
 	
-	applyItem ( AccountingRow );
-	if ( Object.ApplyVAT ) then
-		calcVAT ( AccountingRow );
-	endif;
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
 
 EndProcedure
 
 &AtClient
 Procedure AccountingAmountOnChange ( Item )
 	
-	if ( Object.ApplyVAT ) then
-		calcVAT ( AccountingRow );
-	endif;
+	AdjustDebtsForm.AccountingAmountOnChange ( ThisObject );
 
 EndProcedure
 
 &AtClient
 Procedure AccountingVATCodeOnChange ( Item )
 	
-	setVATRate ( AccountingRow );
-	calcVAT ( AccountingRow );
+	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AccountingRow );
 	
 EndProcedure
 
@@ -623,3 +563,11 @@ Procedure AccountingReceiverOnEditEnd ( Item, NewRow, CancelEdit )
 	AdjustDebtsForm.ChahgeApplied ( ThisObject );
 
 EndProcedure
+
+&AtClient
+Procedure AccountingReceiverItemOnChange ( Item )
+
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingReceiverRow );
+
+EndProcedure
+

@@ -24,7 +24,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		fillNew ();
 		InvoiceForm.SetLocalCurrency ( ThisObject );
 		DocumentForm.Init ( Object );
-		PaymentForm.SetRates ( Object );
+		setRates ();
 		updateChangesPermission ();
 	endif;
 	StandardButtons.Arrange ( ThisObject );
@@ -103,6 +103,15 @@ Procedure setAccountTo ( Object )
 	
 EndProcedure
 
+&AtServer
+Procedure setRates ()
+	
+	info = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+	Object.Rate = info.Rate;
+	Object.Factor = info.Factor;
+	
+EndProcedure 
+
 &AtClient
 Procedure NotificationProcessing ( EventName, Parameter, Source )
 	
@@ -155,7 +164,7 @@ EndProcedure
 &AtServer
 Procedure applyCurrency ()
 
-	PaymentForm.SetRates ( Object );
+	setRates ();
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 
 EndProcedure

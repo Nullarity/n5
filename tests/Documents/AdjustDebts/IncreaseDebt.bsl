@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0T6" );
+id = Call ( "Common.ScenarioID", "A0ZM" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -17,6 +17,7 @@ if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
 else
 	Commando ( "e1cib/command/Document.AdjustDebts.Create" );
 	Set ( "#Customer", this.Customer );
+	Click ( "#ApplyVAT" );
 	Pick ( "#Option", "Custom Account (Cr)" );
 	Set ( "#Account", "6111" );
 	Set ( "#Amount", 150 );
@@ -80,7 +81,7 @@ Procedure createEnv ()
 	#region acceptPrepayment
 	Commando ( "e1cib/command/Document.Payment.Create" );
 	Set ( "#Date", CurrentDate () - 86400 );
-	Pick ( "#Customer", this.Customer );
+	Put ( "#Customer", this.Customer );
 	Set ( "#Amount", 100 );
 	Next ();
 	Click ( "#FormPostAndClose" );

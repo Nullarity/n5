@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>Group4</name>
     <id>40</id>
@@ -1575,9 +1575,6 @@
           <horizontalStretch>true</horizontalStretch>
           <verticalStretch>true</verticalStretch>
           <enableStartDrag>true</enableStartDrag>
-          <rowPictureDataPath xsi:type="form:DataPath">
-            <segments>FeaturesList.DefaultPicture</segments>
-          </rowPictureDataPath>
           <searchStringLocation>None</searchStringLocation>
           <viewStatusLocation>None</viewStatusLocation>
           <searchControlLocation>None</searchControlLocation>
@@ -2189,9 +2186,6 @@
           <horizontalStretch>true</horizontalStretch>
           <verticalStretch>true</verticalStretch>
           <enableStartDrag>true</enableStartDrag>
-          <rowPictureDataPath xsi:type="form:DataPath">
-            <segments>PackagesList.DefaultPicture</segments>
-          </rowPictureDataPath>
           <searchStringLocation>None</searchStringLocation>
           <viewStatusLocation>None</viewStatusLocation>
           <searchControlLocation>None</searchControlLocation>
@@ -6055,9 +6049,6 @@
     <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
       <segments>ItemsList.Service</segments>
     </notDefaultUseAlwaysAttributes>
-    <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
-      <segments>ItemsList.OnePackage</segments>
-    </notDefaultUseAlwaysAttributes>
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>//
 // Reserves
@@ -6182,9 +6173,6 @@ from AccumulationRegister.Items.Balance ( &amp;Period, {Item.* AS Item} ) as Bal
     <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
       <segments>FeaturesList.Ref</segments>
     </notDefaultUseAlwaysAttributes>
-    <notDefaultUseAlwaysAttributes xsi:type="form:DataPath">
-      <segments>FeaturesList.OnePackage</segments>
-    </notDefaultUseAlwaysAttributes>
     <extInfo xsi:type="form:DynamicListExtInfo">
       <queryText>//
 // Reserves
@@ -6286,7 +6274,7 @@ select Reserves.DocumentOrder as DocumentOrder, Reserves.RowKey as RowKey, Reser
 into Reserves
 from AccumulationRegister.Reserves.Balance ( &amp;Period, Warehouse = &amp;Warehouse ) as Reserves
 where Reserves.QuantityBalance > 0
-index by Reserves.DocumentOrder, Reserves.RowKey
+index by DocumentOrder, RowKey
 ;
 //
 // ReservesAmount
@@ -6318,7 +6306,7 @@ from (
 	where InternalOrderItems.Item = &amp;Item
 	{where InternalOrderItems.Feature = &amp;Feature} ) as Reserves
 group by Reserves.Package	
-index by Reserves.Package	
+index by Package	
 ;
 //
 // Packages
@@ -6330,8 +6318,9 @@ from Catalog.Packages as Packages
 	//
 	// Balances
 	//
-	left join AccumulationRegister.Items.Balance ( &amp;Period, {Feature = &amp;Feature} Item = &amp;Item 
-	and &amp;Warehouse = case when &amp;Warehouse = value ( Catalog.Warehouses.EmptyRef ) then &amp;Warehouse else Warehouse end ) as Balances
+	left join AccumulationRegister.Items.Balance ( &amp;Period, Item = &amp;Item 
+	and &amp;Warehouse = case when &amp;Warehouse = value ( Catalog.Warehouses.EmptyRef ) then &amp;Warehouse else Warehouse end
+	{Feature = &amp;Feature} ) as Balances
 	on Balances.Package = Packages.Ref
 	//
 	// ReservesAmount
@@ -6341,12 +6330,146 @@ from Catalog.Packages as Packages
 where Packages.Owner = &amp;Item
 
 </queryText>
-      <mainTable>Catalog.Packages</mainTable>
-      <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Predefined</dataPath>
+        <field>Predefined</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Owner</dataPath>
+        <field>Owner</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Description</dataPath>
+        <field>Description</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Capacity</dataPath>
+        <field>Capacity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Unit</dataPath>
+        <field>Unit</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Weight</dataPath>
+        <field>Weight</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Reserve</dataPath>
+        <field>Reserve</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DocumentOrder</dataPath>
+        <field>DocumentOrder</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>RowKey</dataPath>
+        <field>RowKey</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Warehouse</dataPath>
+        <field>Warehouse</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Item</dataPath>
+        <field>Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Feature</dataPath>
+        <field>Feature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Package</dataPath>
+        <field>Package</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Series</dataPath>
+        <field>Series</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Quantity</dataPath>
+        <field>Quantity</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Quantity</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <parameters>
+        <name>Period</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Period</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>Date</types>
+          <dateQualifiers/>
+        </valueType>
+      </parameters>
+      <parameters>
+        <name>Item</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Item</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>CatalogRef.Items</types>
+        </valueType>
+        <useRestriction>true</useRestriction>
+      </parameters>
+      <parameters>
+        <name>Feature</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Feature</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>Boolean</types>
+          <types>CatalogRef.Features</types>
+        </valueType>
+      </parameters>
+      <parameters>
+        <name>Warehouse</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Warehouse</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>CatalogRef.Warehouses</types>
+        </valueType>
+        <useRestriction>true</useRestriction>
+      </parameters>
     </extInfo>
   </attributes>
   <attributes>

@@ -1,55 +1,50 @@
-﻿// Will accept advance payment 2000 lei (with rate = 19) from Customer1
-// and then transfer this advance to Customer2
+﻿// Will receive an advance from customer1 and then transfer that advance to customer2
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0TB" );
+id = Call ( "Common.ScenarioID", "A0Z5" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
 
-#region adjustDebts
+#region adjustments
 Call ( "Documents.AdjustDebts.ListByMemo", id );
-With ();
-if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
+try
 	Click ( "#FormChange" );
 	With ();
-else
-	Commando ( "e1cib/command/Document.AdjustDebts.Create" );
-	Set ( "#Customer", this.Customer1 );
+	try
+		Click ( "#FormUndoPosting" );
+	except
+	endtry;	
+except
+	With ();
+	Click ( "#FormCreate" );
+	With ();
 	Pick ( "#Option", "Customer" );
+	Set ( "#Customer", this.Customer1 );
 	Pick ( "#Type", "Advance" );
-	Put ( "#Currency", "mdl" );
-	Set ( "#ContractRate", 19 );
-	Set ( "#Amount", 2100 );
 	Set ( "#Receiver", this.Customer2 );
-	Put ( "#Memo", id );
-	Click ( "#AccountingAdd" );
-	Accounting = Get ( "#Accounting" );
-	Accounting.EndEditRow ();
-	Set ( "#AccountingItem [ 1 ]", this.Service, Accounting );
-	Set ( "#AccountingAmount [ 1 ]", 5.27, Accounting ); // 5.26 = 100 / 19
-endif;
+	Set ( "#Memo", id );
+	Set ( "#Amount", 100 );
+	AccountingReceiver = Get ( "#AccountingReceiver" );
+	Click ( "#AccountingReceiverAdd" );
+	Set ( "#AccountingReceiverItem", this.Advance, AccountingReceiver );
+	Set ( "#AccountingReceiverAmount", 100, AccountingReceiver );
+endtry;
 Click ( "#FormPost" );
-
-return;
-
+#endregion
 
 Click ( "#FormReportRecordsShow" );
 With ();
 CheckTemplate ( "#TabDoc" );
-Close ();
-With ();
-#endregion
 
 Procedure getEnv ()
 
 	id = this.ID;
-	this.Insert ( "Date", CurrentDate () );
 	this.Insert ( "Customer1", "Customer1 " + id );
 	this.Insert ( "Customer2", "Customer2 " + id );
-	this.Insert ( "Service", "Service " + id );
+	this.Insert ( "Advance", "Advance " + id );
 
 EndProcedure
 
@@ -60,30 +55,26 @@ Procedure createEnv ()
 		return;
 	endif;
 	
-	#region createCustomer
+	#region createCustomers
 	p = Call ( "Catalogs.Organizations.CreateCustomer.Params" );
 	p.Description = this.Customer1;
-	p.Currency = "usd";
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	p.Description = this.Customer2;
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
 	#endregion
-
-	#region createService
-	p = Call ( "Catalogs.Items.Create.Params" );
-	p.Description = this.Service;
-	p.Service = true;
-	Call ( "Catalogs.Items.Create", p );
+	
+	#region advanceFromCustomer
+	Commando ( "e1cib/command/Document.Payment.Create" );
+	Set ( "#Customer", this.Customer1 );
+	Set ( "#Amount", 100 );
+	Click ( "#FormPostAndClose" );
 	#endregion
 
-	#region acceptPayment
-	Commando ( "e1cib/command/Document.Payment.Create" );
-	Set ( "#Date", CurrentDate () - 86400 );
-	Pick ( "#Customer", this.Customer1 );
-	Set ( "#ContractRate", 19 );
-	Set ( "#Amount", 2000 );
-	Next ();
-	Click ( "#FormPostAndClose" );
+	#region createAdvanceItem
+	p = Call ( "Catalogs.Items.Create.Params" );
+	p.Description = this.Advance;
+	p.Service = true;
+	Call ( "Catalogs.Items.Create", p );
 	#endregion
 
 	RegisterEnvironment ( id );

@@ -267,7 +267,6 @@
       <value>0</value>
     </minValue>
     <maxValue xsi:type="core:UndefinedValue"/>
-    <fillChecking>ShowError</fillChecking>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -1120,7 +1119,7 @@
     <choiceParameters>
       <name>Filter.Class</name>
       <value xsi:type="core:ReferenceValue">
-        <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+        <value>Enum.Accounts.EnumValue.OtherCurrentAssets</value>
       </value>
     </choiceParameters>
     <choiceParameters>
@@ -1938,6 +1937,7 @@
         <key>ro</key>
         <value>Suma TVA</value>
       </toolTip>
+      <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
@@ -2273,7 +2273,7 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="d89b400c-a99e-4442-98e6-82ccae314f7b">
+    <attributes uuid="5b7a35f7-8082-429b-a891-675917a05e1d">
       <name>Description</name>
       <synonym>
         <key>en</key>
@@ -2306,7 +2306,7 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
-    <attributes uuid="948f0499-db10-4ee2-823a-1d9fd7634c8a">
+    <attributes uuid="5b3f1490-1dca-422b-b189-5b88ba3d8ae7">
       <name>Item</name>
       <synonym>
         <key>en</key>
@@ -2446,6 +2446,7 @@
         <key>ro</key>
         <value>Suma TVA</value>
       </toolTip>
+      <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
@@ -2672,6 +2673,40 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
     </standardAttributes>
+    <attributes uuid="80ff6e94-4510-46be-91fc-21d0abc2f48b">
+      <name>Accounting</name>
+      <synonym>
+        <key>en</key>
+        <value>Accounting Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма, б/у</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The actual amount of debt (including overpayments) in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма фактической задолженности (включая авансовые платежи) в региональной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valoarea reală a datoriei (inclusiv plățile în avans) în monedă locală</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="ff685726-19cf-4b98-a6c1-78a933248d26">
       <name>Adjust</name>
       <synonym>
@@ -2704,6 +2739,40 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="79a2966b-77eb-47fa-832f-a45e0a2f596d">
+      <name>Advance</name>
+      <synonym>
+        <key>en</key>
+        <value>Accounting Advance or Overpayment in local currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Аванс или переплата, б/у</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Avans sau supraplată, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount of advance or overpayment from the Customer in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма полученного от покупателя аванса/переплаты в региональной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma primită în avans de la client / supraplată în monedă locală</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="fb09f025-5d87-4b01-9f88-b8214b696e3c">
@@ -3210,6 +3279,7 @@
         <key>ro</key>
         <value>Suma TVA</value>
       </toolTip>
+      <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
@@ -3507,6 +3577,80 @@
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
+    <attributes uuid="a62b3556-3e13-44ad-9aec-7a3832a29047">
+      <name>AmountDocument</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Document Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в валюте документа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Applied in document currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в валюте документа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Aplicat în valuta documentului</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="721329c8-f3d1-48ea-a838-14a9b27d3156">
+      <name>AmountLocal</name>
+      <synonym>
+        <key>en</key>
+        <value>Applied in Local Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Зачтено в национальной валюте</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Aplicat în valuta națională</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount applied in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Зачтенная сумма в национальной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma aplicata în valuta națională</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:StringValue">
+        <value>0</value>
+      </minValue>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="5bfa4983-0681-493f-9210-f16049c31aa1">
       <name>Applied</name>
       <synonym>
@@ -3641,6 +3785,9 @@
         <types>DocumentRef.Return</types>
         <types>DocumentRef.VendorDebts</types>
         <types>DocumentRef.Debts</types>
+        <types>DocumentRef.AdjustVendorDebts</types>
+        <types>DocumentRef.VendorRefund</types>
+        <types>DocumentRef.VendorReturn</types>
       </type>
       <toolTip>
         <key>en</key>
@@ -3724,6 +3871,9 @@
         <types>DocumentRef.Return</types>
         <types>DocumentRef.VendorDebts</types>
         <types>DocumentRef.Debts</types>
+        <types>DocumentRef.AdjustVendorDebts</types>
+        <types>DocumentRef.VendorRefund</types>
+        <types>DocumentRef.VendorReturn</types>
       </type>
       <toolTip>
         <key>en</key>

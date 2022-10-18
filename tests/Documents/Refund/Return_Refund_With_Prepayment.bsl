@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2BDA7159" );
+id = Call ( "Common.ScenarioID", "A0V9" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -77,6 +77,7 @@ With ();
 Click ( "#FormDocumentRefundCreateBasedOn" );
 
 With ( "Refund to *" );
+Put ( "#Amount", env.Amount );
 Put ( "#Account", env.Account );
 Click ( "#FormPost" );
 

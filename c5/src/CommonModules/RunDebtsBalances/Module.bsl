@@ -130,10 +130,12 @@ Procedure makeDebts ( Env )
 		endif;	
 		if ( advances ) then
 			movement.Overpayment = row.ContractAdvance;
+			movement.Advance = row.Advance;
 		else
 			amount = row.ContractAmount;
 			movement.Amount = amount;
 			movement.Payment = amount;
+			movement.Accounting = row.Amount;
 		endif;
 	enddo;
 	
