@@ -22,7 +22,6 @@ Procedure OnDetail ( Menu, StandardMenu, UseMainAction, Filters ) export
 	Reporter.AddReport ( Menu, "DebtDetails" );
 	Reporter.AddReport ( Menu, "AnalyticTransactions" );
 	Reporter.AddReport ( Menu, "BalanceSheet" );
-	Reporter.AddReport ( Menu, "DebtsUnits" );
 	
 EndProcedure
 

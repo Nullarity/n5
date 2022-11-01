@@ -607,7 +607,7 @@ from Calendar as Calendar
 // LocationGaps
 select Location.Employee as Employee, Location.Department as Department,
 	Location.Position as Position, Location.Schedule as Schedule, Location.Expenses as Expenses,
-	Location.Day as DateStart, endofperiod ( min  ( NextPeriods.Day ), day ) as DateEnd
+	Location.Day as DateStart, beginofperiod ( min  ( NextPeriods.Day ), day ) as DateEnd
 into LocationGaps
 from LocationByDays as Location
 	//
@@ -653,7 +653,7 @@ group by Bottom.Day, Bottom.Employee, Bottom.Department, Bottom.Position, Bottom
 union
 select Up.Day, endofperiod ( max ( Location.Day ), day ), Up.Employee, Up.Department, Up.Position, Up.Schedule, Up.Expenses
 from (
-	select beginofperiod ( max ( Gaps.DateEnd ), day ) as Day, Gaps.Employee as Employee, Gaps.Department as Department,
+	select max ( Gaps.DateEnd ) as Day, Gaps.Employee as Employee, Gaps.Department as Department,
 		Gaps.Position as Position, Gaps.Schedule as Schedule, Gaps.Expenses as Expenses
 	from LocationGaps as Gaps
 	group by Gaps.Employee, Gaps.Department, Gaps.Position, Gaps.Schedule, Gaps.Expenses
@@ -662,7 +662,7 @@ from (
 	// Location
 	//
 	join LocationByDays as Location
-	on Location.Day &gt; Up.Day
+	on Location.Day &gt;= Up.Day
 	and Location.Employee = Up.Employee
 	and Location.Department = Up.Department
 	and Location.Position = Up.Position
@@ -671,7 +671,7 @@ from (
 	and not Location.Absence
 group by Up.Day, Up.Employee, Up.Department, Up.Position, Up.Schedule, Up.Expenses
 union
-select beginofperiod ( Previous.DateEnd, day ), endofperiod ( min ( Next.DateStart ), day ),
+select Previous.DateEnd, endofperiod ( min ( Next.DateStart ), day ),
 	Previous.Employee, Previous.Department, Previous.Position, Previous.Schedule, Previous.Expenses
 from LocationGaps as Previous
 	//

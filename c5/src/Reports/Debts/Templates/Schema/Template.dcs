@@ -363,132 +363,26 @@
 				<order>true</order>
 			</useRestriction>
 		</field>
-		<dataSource>DataSource1</dataSource>
-		<query>// CurrencyRates
-select Rates.Currency as Currency, Rates.Rate as Rate, Rates.Factor as Factor
-into Rates
-from InformationRegister.ExchangeRates.SliceLast ( , &amp;LocalCurrency ) as Rates
-;
-//
-// Main selection
-//
-select &amp;StrTotalsGroup as StrTotalsGroup, &amp;StrPayment as StrPayment, &amp;StrOverduePayment as StrOverduePayment,
-	Balances.PaymentKey as PaymentKey, Balances.Contract.Owner as Customer,
-	Balances.Contract as Contract, Balances.Document as Document, Balances.Detail as Detail,
-	PaymentDetails.Option as Option,
-	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
-	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
-		&amp;DebtsOnDate, day ) as BalanceDays,
-	Intervals.Presentation as OverduePeriods, Intervals.LineNumber as Interval, Intervals.LineNumber is null as CurrentDebt,
-	case when &amp;LocalCurrency then Balances.PaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.PaymentBalance
-	end as PaymentBalance,
-	case when &amp;LocalCurrency then Balances.AmountBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.AmountBalance
-	end as AmountDebt,
-	case when &amp;LocalCurrency then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.OverpaymentBalance
-	end as Overpayment
-	{select StrTotalsGroup, StrPayment, StrOverduePayment, Customer.* as Customer, Contract.*, Document.*, Detail.*, PaymentDate, PaymentBalance, BalanceDays,
-	OverduePeriods, AmountDebt, Overpayment, PaymentKey, Option.*, Interval, CurrentDebt}
-from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Company, Contract.Owner.* as Customer, Contract.* as Contract, Document.* as Document,
-	Detail.* as Detail, Contract.Currency.* as Currency} ) as Balances
-	//
-	// PaymentDetails
-	//
-	left join InformationRegister.PaymentDetails as PaymentDetails
-	on PaymentDetails.PaymentKey = Balances.PaymentKey
-	//
-	// Rates
-	//
-	left join Rates as Rates
-	on Rates.Currency = Balances.Contract.Currency
-	//
-	// LocalCurrency
-	//
-	left join Constants as Constants
-	on true
-	//
-	// Intervals
-	//
-	left join Catalog.Intervals.Intervals as Intervals
-	on Intervals.Ref = &amp;Interval
-	and datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
-		&amp;DebtsOnDate, day ) between Intervals.Start and Intervals.Finish
-{where Balances.PaymentBalance as PaymentBalance, PaymentDetails.Option.* as Option,
-	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
-	case when &amp;LocalCurrency then Balances.AmountBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.AmountBalance
-	end as AmountDebt,
-	case when &amp;LocalCurrency then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
-		else Balances.OverpaymentBalance
-	end as Overpayment,
-	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
-		&amp;DebtsOnDate, day ) as BalanceDays,
-	Intervals.LineNumber is null as CurrentDebt}
-</query>
-		<autoFillFields>false</autoFillFields>
-	</dataSet>
-	<dataSet xsi:type="DataSetQuery">
-		<name>Accounting</name>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>Customer</dataPath>
-			<field>Customer</field>
-			<role>
-				<dcscom:dimension>true</dcscom:dimension>
-				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
-			</role>
-			<valueType>
-				<v8:Type xmlns:d5p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d5p1:CatalogRef.Organizations</v8:Type>
-			</valueType>
-			<inputParameters>
-				<dcscor:item>
-					<dcscor:parameter>ChoiceParameters</dcscor:parameter>
-					<dcscor:value xsi:type="dcscor:ChoiceParameters">
-						<dcscor:item>
-							<dcscor:choiceParameter>Filter.Customer</dcscor:choiceParameter>
-							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-						</dcscor:item>
-					</dcscor:value>
-				</dcscor:item>
-				<dcscor:item>
-					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
-					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
-				</dcscor:item>
-			</inputParameters>
-		</field>
-		<field xsi:type="DataSetFieldField">
-			<dataPath>Company</dataPath>
-			<field>Company</field>
-		</field>
-		<field xsi:type="DataSetFieldField">
-			<dataPath>Contract</dataPath>
-			<field>Contract</field>
-			<role>
-				<dcscom:dimension>true</dcscom:dimension>
-				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
-			</role>
-			<valueType>
-				<v8:Type xmlns:d5p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d5p1:CatalogRef.Contracts</v8:Type>
-			</valueType>
-		</field>
-		<field xsi:type="DataSetFieldField">
-			<dataPath>Balance</dataPath>
-			<field>Balance</field>
+			<dataPath>Difference</dataPath>
+			<field>Difference</field>
 			<title xsi:type="v8:LocalStringType">
 				<v8:item>
 					<v8:lang>en</v8:lang>
-					<v8:content>Acc Debt</v8:content>
+					<v8:content>Amount Difference</v8:content>
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
-					<v8:content>Datorie contabilă</v8:content>
+					<v8:content>Diferența de sumă</v8:content>
 				</v8:item>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Долг БУ</v8:content>
+					<v8:content>Суммовая Разница</v8:content>
 				</v8:item>
 			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
 			<appearance>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>Format</dcscor:parameter>
@@ -507,68 +401,241 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 						</v8:item>
 					</dcscor:value>
 				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Balance</dataPath>
+			<field>Balance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Acc Debt</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datorie contabilă</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг БУ</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Debt</dataPath>
+			<field>Debt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt - Overpayment (contract currency)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datorie - Avans (valuta contractului)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг - Аванс (валюта договора)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ReportDebt</dataPath>
+			<field>ReportDebt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt - Overpayment (report currency)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datorie - Avans (valută de raport)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг - Аванс (валюта отчета)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
 			</appearance>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>select Balances.ExtDimension1 as Customer, Balances.ExtDimension2 as Contract, Balances.AmountBalance as Balance
-{select Customer.* as Customer, Contract.*, Balance}
-from AccountingRegister.General.Balance ( &amp;Asof,
-	Account in hierarchy ( &amp;Accounts ), ,
-	{Company.* as Company, ExtDimension1.* as Customer, ExtDimension2.* as Contract} ) as Balances
-
+		<query>// CurrencyRates
+select Rates.Currency as Currency, Rates.Rate as Rate, Rates.Factor as Factor
+into Rates
+from InformationRegister.ExchangeRates.SliceLast ( &amp;DebtsOnDate, &amp;ShowData = 1 ) as Rates
+;
+//
+// Main selection
+//
+select allowed &amp;StrTotalsGroup as StrTotalsGroup, &amp;StrPayment as StrPayment, &amp;StrOverduePayment as StrOverduePayment,
+	Balances.PaymentKey as PaymentKey, Balances.Contract.Owner as Customer,
+	Balances.Contract as Contract, Balances.Document as Document, Balances.Detail as Detail,
+	PaymentDetails.Option as Option,
+	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
+	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) as BalanceDays,
+	Intervals.Presentation as OverduePeriods, Intervals.LineNumber as Interval, Intervals.LineNumber is null as CurrentDebt,
+	case &amp;ShowData
+		when 1 then Balances.PaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.PaymentBalance
+	end as PaymentBalance,
+	case &amp;ShowData
+		when 0 then Balances.AmountBalance - Balances.OverpaymentBalance
+		when 1 then ( Balances.AmountBalance - Balances.OverpaymentBalance )
+			* isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AccountingBalance - Balances.AdvanceBalance
+	end as ReportDebt,
+	case &amp;ShowData
+		when 0 then Balances.AmountBalance
+		when 1 then Balances.AmountBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AccountingBalance
+	end as AmountDebt,
+	case &amp;ShowData
+		when 0 then Balances.OverpaymentBalance
+		when 1 then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AdvanceBalance
+	end as Overpayment,
+	Balances.AmountBalance - Balances.OverpaymentBalance as Debt,
+	case when &amp;ShowData = 1 then Balances.AccountingBalance - Balances.AdvanceBalance else 0 end as Balance,
+	case when &amp;ShowData = 1 then
+			( Balances.AmountBalance - Balances.OverpaymentBalance ) * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+			- ( Balances.AccountingBalance - Balances.AdvanceBalance )
+		else 0
+	end as Difference
+	{select StrTotalsGroup, StrPayment, StrOverduePayment, Customer.* as Customer, Contract.*, Document.*, Detail.*, PaymentDate, PaymentBalance, BalanceDays,
+	OverduePeriods, AmountDebt, Overpayment, PaymentKey, Option.*, Interval, CurrentDebt, Difference, Balance, Debt,
+	ReportDebt}
+from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Company, Contract.Owner.* as Customer, Contract.* as Contract, Document.* as Document,
+	Detail.* as Detail, Contract.Currency.* as Currency} ) as Balances
+	//
+	// PaymentDetails
+	//
+	left join InformationRegister.PaymentDetails as PaymentDetails
+	on PaymentDetails.PaymentKey = Balances.PaymentKey
+	//
+	// Intervals
+	//
+	left join Catalog.Intervals.Intervals as Intervals
+	on Intervals.Ref = &amp;Interval
+	and datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) between Intervals.Start and Intervals.Finish
+	//
+	// Rates
+	//
+	left join Rates as Rates
+	on Rates.Currency = Balances.Contract.Currency
+{where Balances.PaymentBalance as PaymentBalance, PaymentDetails.Option.* as Option,
+	case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end as PaymentDate,
+	case &amp;ShowData
+		when 0 then Balances.AmountBalance
+		when 1 then Balances.AmountBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AccountingBalance
+	end as AmountDebt,
+	case &amp;ShowData
+		when 0 then Balances.OverpaymentBalance
+		when 1 then Balances.OverpaymentBalance * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AdvanceBalance
+	end as Overpayment,
+	datediff ( case when &amp;OperationDate then Balances.Document.Date else PaymentDetails.Date end,
+		&amp;DebtsOnDate, day ) as BalanceDays,
+	Intervals.LineNumber is null as CurrentDebt,
+	case when &amp;ShowData = 1 then Balances.AccountingBalance - Balances.AdvanceBalance else 0 end as Balance,
+	case when &amp;ShowData = 1 then
+			( Balances.AmountBalance - Balances.OverpaymentBalance ) * isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+			- ( Balances.AccountingBalance - Balances.AdvanceBalance )
+		else 0
+	end as Difference,
+	Balances.AmountBalance - Balances.OverpaymentBalance as Debt,
+		case &amp;ShowData
+		when 0 then Balances.AmountBalance - Balances.OverpaymentBalance
+		when 1 then ( Balances.AmountBalance - Balances.OverpaymentBalance )
+			* isnull ( Rates.Rate, 1 ) / isnull ( Rates.Factor, 1 )
+		else Balances.AccountingBalance - Balances.AdvanceBalance
+	end as ReportDebt}
 </query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
-	<dataSetLink>
-		<sourceDataSet>Debts</sourceDataSet>
-		<destinationDataSet>Accounting</destinationDataSet>
-		<sourceExpression>Customer</sourceExpression>
-		<destinationExpression>Customer</destinationExpression>
-	</dataSetLink>
-	<dataSetLink>
-		<sourceDataSet>Debts</sourceDataSet>
-		<destinationDataSet>Accounting</destinationDataSet>
-		<sourceExpression>Contract</sourceExpression>
-		<destinationExpression>Contract</destinationExpression>
-		<required>false</required>
-	</dataSetLink>
-	<calculatedField>
-		<dataPath>Difference</dataPath>
-		<expression>cast ( sum ( AmountDebt ) - sum ( Overpayment ) -sum ( Balance ), "Number(15,2)" )</expression>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Amount Difference</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ro</v8:lang>
-				<v8:content>Diferența de sumă</v8:content>
-			</v8:item>
-			<v8:item>
-				<v8:lang>ru</v8:lang>
-				<v8:content>Суммовая Разница</v8:content>
-			</v8:item>
-		</title>
-		<appearance>
-			<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-				<dcscor:parameter>Format</dcscor:parameter>
-				<dcscor:value xsi:type="v8:LocalStringType">
-					<v8:item>
-						<v8:lang>en</v8:lang>
-						<v8:content>NFD=2</v8:content>
-					</v8:item>
-					<v8:item>
-						<v8:lang>ro</v8:lang>
-						<v8:content>NFD=2</v8:content>
-					</v8:item>
-					<v8:item>
-						<v8:lang>ru</v8:lang>
-						<v8:content>NFD=2</v8:content>
-					</v8:item>
-				</dcscor:value>
-			</dcscor:item>
-		</appearance>
-	</calculatedField>
 	<totalField>
 		<dataPath>AmountDebt</dataPath>
 		<expression>Sum(AmountDebt)</expression>
@@ -583,33 +650,26 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 	</totalField>
 	<totalField>
 		<dataPath>Difference</dataPath>
-		<expression>Difference</expression>
-		<group>Contract</group>
-		<group>Contract Hierarchy</group>
-		<group>Customer</group>
-		<group>Customer Hierarchy</group>
-		<group>Overall</group>
+		<expression>Sum(Difference)</expression>
 	</totalField>
 	<totalField>
 		<dataPath>Balance</dataPath>
 		<expression>Sum(Balance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>ReportDebt</dataPath>
+		<expression>Sum(ReportDebt)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>Debt</dataPath>
+		<expression>Sum(Debt)</expression>
 		<group>Contract</group>
-		<group>Contract Hierarchy</group>
-		<group>Customer</group>
-		<group>Customer Hierarchy</group>
-		<group>Overall</group>
+		<group>Detail</group>
+		<group>Document</group>
 	</totalField>
 	<totalField>
-		<dataPath>Balance</dataPath>
+		<dataPath>Debt</dataPath>
 		<expression>0</expression>
-		<group>Balance</group>
-		<group>Difference</group>
-	</totalField>
-	<totalField>
-		<dataPath>Difference</dataPath>
-		<expression>0</expression>
-		<group>Balance</group>
-		<group>Difference</group>
 	</totalField>
 	<parameter>
 		<name>ReportDate</name>
@@ -801,42 +861,83 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 		<useRestriction>false</useRestriction>
 	</parameter>
 	<parameter>
-		<name>LocalCurrency</name>
+		<name>ShowData</name>
 		<title xsi:type="v8:LocalStringType">
 			<v8:item>
 				<v8:lang>en</v8:lang>
-				<v8:content>Local currency</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type>xs:boolean</v8:Type>
-		</valueType>
-		<value xsi:type="xs:boolean">false</value>
-		<useRestriction>false</useRestriction>
-		<use>Always</use>
-	</parameter>
-	<parameter>
-		<name>Accounts</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>en</v8:lang>
-				<v8:content>Accounts</v8:content>
+				<v8:content>Show Data</v8:content>
 			</v8:item>
 			<v8:item>
 				<v8:lang>ro</v8:lang>
-				<v8:content>Conturi</v8:content>
+				<v8:content>Afișați datele</v8:content>
 			</v8:item>
 			<v8:item>
 				<v8:lang>ru</v8:lang>
-				<v8:content>Счета</v8:content>
+				<v8:content>Показывать данные</v8:content>
 			</v8:item>
 		</title>
 		<valueType>
-			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfAccountsRef.General</v8:Type>
+			<v8:Type>xs:decimal</v8:Type>
+			<v8:NumberQualifiers>
+				<v8:Digits>0</v8:Digits>
+				<v8:FractionDigits>0</v8:FractionDigits>
+				<v8:AllowedSign>Any</v8:AllowedSign>
+			</v8:NumberQualifiers>
 		</valueType>
-		<value xsi:nil="true"/>
+		<value xsi:type="xs:decimal">0</value>
 		<useRestriction>false</useRestriction>
-		<valueListAllowed>true</valueListAllowed>
+		<availableValue>
+			<value xsi:nil="true"/>
+			<presentation xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>In Contract Currency</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>În valuta contractului</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>В валюте договора</v8:content>
+				</v8:item>
+			</presentation>
+		</availableValue>
+		<availableValue>
+			<value xsi:type="xs:decimal">1</value>
+			<presentation xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>In Local Currency</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>În valută locală</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>В региональной валюте</v8:content>
+				</v8:item>
+			</presentation>
+		</availableValue>
+		<availableValue>
+			<value xsi:type="xs:decimal">2</value>
+			<presentation xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>According to the accounting data</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Conform datelor contabile</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>По данным б/у</v8:content>
+				</v8:item>
+			</presentation>
+		</availableValue>
+		<use>Always</use>
 	</parameter>
 	<parameter>
 		<name>OperationDate</name>
@@ -860,6 +961,21 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 		<value xsi:type="xs:boolean">false</value>
 		<useRestriction>false</useRestriction>
 		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>LocalCurrency</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Local currency</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Currencies</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+		<expression>Application.Currency ()</expression>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -1270,43 +1386,23 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 						<dcsat:value xsi:type="v8:LocalStringType">
 							<v8:item>
 								<v8:lang>en</v8:lang>
-								<v8:content>Debt</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Долг</v8:content>
+								<v8:content>Contract Debt</v8:content>
 							</v8:item>
 							<v8:item>
 								<v8:lang>ro</v8:lang>
-								<v8:content>Datorie</v8:content>
+								<v8:content>Datorie contractuală</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Долг по договору</v8:content>
 							</v8:item>
 						</dcsat:value>
 					</dcsat:item>
 					<dcsat:appearance>
 						<dcscor:item>
-							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
-							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
 						</dcscor:item>
-					</dcsat:appearance>
-				</dcsat:tableCell>
-				<dcsat:tableCell>
-					<dcsat:item xsi:type="dcsat:Field">
-						<dcsat:value xsi:type="v8:LocalStringType">
-							<v8:item>
-								<v8:lang>en</v8:lang>
-								<v8:content>Overpayment</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Аванс</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ro</v8:lang>
-								<v8:content>Avans</v8:content>
-							</v8:item>
-						</dcsat:value>
-					</dcsat:item>
-					<dcsat:appearance>
 						<dcscor:item>
 							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
 							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
@@ -1327,6 +1423,30 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 							<v8:item>
 								<v8:lang>ru</v8:lang>
 								<v8:content>Долг БУ</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Debt</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Долг</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Datorie</v8:content>
 							</v8:item>
 						</dcsat:value>
 					</dcsat:item>
@@ -1520,19 +1640,521 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcsset:userSettingID>41aa7e20-c39b-4df9-aae4-415fd4e607de</dcsset:userSettingID>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>LocalCurrency</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Accounts</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
+					<dcscor:parameter>ShowData</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">1</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>OperationDate</dcscor:parameter>
 					<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>3fed2038-baa5-444e-9817-8460b198c239</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>bf18b777-8b92-4dd7-8526-b9351426c716</dcsset:userSettingID>
+			</dcsset:order>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Взаиморасчеты с покупателями</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Accounts Receivable</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Decontări cu cumpărători</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemTable">
+				<dcsset:column>
+					<dcsset:name>Debts</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>StrTotalsGroup</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountDebt</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Overpayment</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:name>Current</dcsset:name>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
+							<dcsset:comparisonType>Equal</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:boolean">true</dcsset:right>
+						</dcsset:item>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Current</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Текущая</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Curent</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>StrPayment</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
+							<dcsset:comparisonType>Equal</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>LessOrEqual</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+						</dcsset:item>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Итого</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+					<dcsset:item>
+						<dcsset:groupItems>
+							<dcsset:item xsi:type="dcsset:GroupItemField">
+								<dcsset:field>OverduePeriods</dcsset:field>
+								<dcsset:groupType>Items</dcsset:groupType>
+								<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+								<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+							</dcsset:item>
+						</dcsset:groupItems>
+						<dcsset:order>
+							<dcsset:item xsi:type="dcsset:OrderItemField">
+								<dcsset:field>Interval</dcsset:field>
+								<dcsset:orderType>Desc</dcsset:orderType>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+						</dcsset:order>
+						<dcsset:selection>
+							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>PaymentBalance</dcsset:field>
+								<dcsset:lwsTitle>
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>Overdue</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Просрочено</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>Expirat</v8:content>
+									</v8:item>
+								</dcsset:lwsTitle>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+					</dcsset:item>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>StrOverduePayment</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
+							<dcsset:comparisonType>Equal</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>Greater</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+						</dcsset:item>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Итого</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Total</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+					<dcsset:item>
+						<dcsset:groupItems>
+							<dcsset:item xsi:type="dcsset:GroupItemField">
+								<dcsset:field>OverduePeriods</dcsset:field>
+								<dcsset:groupType>Items</dcsset:groupType>
+								<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+								<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+							</dcsset:item>
+						</dcsset:groupItems>
+						<dcsset:order>
+							<dcsset:item xsi:type="dcsset:OrderItemField">
+								<dcsset:field>Interval</dcsset:field>
+								<dcsset:orderType>Asc</dcsset:orderType>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+						</dcsset:order>
+						<dcsset:selection>
+							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+							<dcsset:item xsi:type="dcsset:SelectedItemField">
+								<dcsset:field>PaymentBalance</dcsset:field>
+								<dcsset:lwsTitle>
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>Overdue</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Просрочено</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>Expirat</v8:content>
+									</v8:item>
+								</dcsset:lwsTitle>
+							</dcsset:item>
+						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
+								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+					</dcsset:item>
+				</dcsset:column>
+				<dcsset:row>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Customer</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemGroup">
+							<dcsset:groupType>OrGroup</dcsset:groupType>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>FilterOutput</dcscor:parameter>
+							<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+					<dcsset:item>
+						<dcsset:use>false</dcsset:use>
+						<dcsset:groupItems>
+							<dcsset:item xsi:type="dcsset:GroupItemField">
+								<dcsset:field>Contract</dcsset:field>
+								<dcsset:groupType>Items</dcsset:groupType>
+								<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+								<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+							</dcsset:item>
+						</dcsset:groupItems>
+						<dcsset:order>
+							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+						</dcsset:order>
+						<dcsset:selection>
+							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						</dcsset:selection>
+						<dcsset:item>
+							<dcsset:groupItems>
+								<dcsset:item xsi:type="dcsset:GroupItemField">
+									<dcsset:field>Document</dcsset:field>
+									<dcsset:groupType>Items</dcsset:groupType>
+									<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+									<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:GroupItemField">
+									<dcsset:field>Detail</dcsset:field>
+									<dcsset:groupType>Items</dcsset:groupType>
+									<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+									<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+								</dcsset:item>
+							</dcsset:groupItems>
+							<dcsset:order>
+								<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+							</dcsset:order>
+							<dcsset:selection>
+								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+							</dcsset:selection>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>984ab7ee-816c-4397-98d5-3db97c032b55</dcsset:userSettingID>
+						<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Выводить договора и документы</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Show contracts and documents</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Afișați de contracte și documente</v8:content>
+							</v8:item>
+						</dcsset:userSettingPresentation>
+					</dcsset:item>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+				</dcsset:row>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>VerticalOverallPlacement</dcscor:parameter>
+						<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">End</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
+			</dcsset:item>
+			<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+		</dcsset:settings>
+	</settingsVariant>
+	<settingsVariant>
+		<dcsset:name>Accounting</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Accounting</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Contabilitate</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Бухгалтерский учет</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Customer</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Organizations.EmptyRef</dcsset:right>
+					<dcsset:userSettingID>1c69382d-afee-489d-b94d-75e0e4a285c1</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Currencies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>e9b6d09d-c59d-4c3e-95bd-759ebb743163</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Companies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>37fedbc8-864e-4f59-a0c9-2e4367da7982</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>86af2b6e-c0a3-4d3f-997f-f40fa9511c65</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>ReportDate</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Catalog.Calendar.EmptyRef</dcscor:value>
+					<dcsset:userSettingID>3432531d-f38e-4f99-9372-0f0dabbe7a89</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Interval</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Catalog.Intervals.Standard</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>ea7c5de3-775f-414f-b583-c55c920f6001</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>StrTotalsGroup</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Overall</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>StrPayment</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Estimated</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>StrOverduePayment</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Outstanding</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>PaymentDatePeriod</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+						<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+						<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+					</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>41aa7e20-c39b-4df9-aae4-415fd4e607de</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>ShowData</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">2</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>OperationDate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>3fed2038-baa5-444e-9817-8460b198c239</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>LocalCurrency</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
@@ -2025,8 +2647,8 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcsset:userSettingID>41aa7e20-c39b-4df9-aae4-415fd4e607de</dcsset:userSettingID>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>LocalCurrency</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
+					<dcscor:parameter>ShowData</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">0</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>15398b1d-4c2b-4bf9-ac95-97dadf2599af</dcsset:userSettingID>
 				</dcscor:item>
@@ -2035,6 +2657,11 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>75b0cc26-4c75-486d-a920-333d65e8f7f9</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>LocalCurrency</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
@@ -2554,6 +3181,27 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>37fedbc8-864e-4f59-a0c9-2e4367da7982</dcsset:userSettingID>
 				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
+					<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:Field">DataParameters.LocalCurrency</dcsset:right>
+					<dcsset:presentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Only for foreign currency</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Numai pentru valută străină</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Только для иностранной валюты</v8:content>
+						</v8:item>
+					</dcsset:presentation>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>2035b182-ac93-46fa-bb78-12190992c12c</dcsset:userSettingID>
+				</dcsset:item>
 				<dcsset:viewMode>Normal</dcsset:viewMode>
 				<dcsset:userSettingID>86af2b6e-c0a3-4d3f-997f-f40fa9511c65</dcsset:userSettingID>
 			</dcsset:filter>
@@ -2573,11 +3221,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>StrTotalsGroup</dcscor:parameter>
 					<dcscor:value xsi:type="xs:string">Overall</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>StrOver</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">Over</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
@@ -2601,15 +3244,9 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcsset:userSettingID>41aa7e20-c39b-4df9-aae4-415fd4e607de</dcsset:userSettingID>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>LocalCurrency</dcscor:parameter>
-					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Accounts</dcscor:parameter>
-					<dcscor:value xsi:type="dcscor:DesignTimeValue">ChartOfAccounts.General._221</dcscor:value>
-					<dcscor:value xsi:type="dcscor:DesignTimeValue">ChartOfAccounts.General._523</dcscor:value>
+					<dcscor:parameter>ShowData</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">1</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
-					<dcsset:userSettingID>220181db-92a2-40b5-ac06-42d9e972b5e5</dcsset:userSettingID>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>OperationDate</dcscor:parameter>
@@ -2666,13 +3303,13 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 					<dcsset:selection>
 						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>AmountDebt</dcsset:field>
-						</dcsset:item>
-						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>Overpayment</dcsset:field>
+							<dcsset:field>Debt</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Balance</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>ReportDebt</dcsset:field>
 						</dcsset:item>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
 							<dcsset:field>Difference</dcsset:field>
@@ -2831,12 +3468,17 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 						<dcsset:item xsi:type="dcsset:FilterItemGroup">
 							<dcsset:groupType>OrGroup</dcsset:groupType>
 							<dcsset:item xsi:type="dcsset:FilterItemComparison">
-								<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+								<dcsset:left xsi:type="dcscor:Field">Debt</dcsset:left>
 								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
 								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
 							</dcsset:item>
 							<dcsset:item xsi:type="dcsset:FilterItemComparison">
-								<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+								<dcsset:left xsi:type="dcscor:Field">Balance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">ReportDebt</dcsset:left>
 								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
 								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
 							</dcsset:item>
@@ -2856,7 +3498,6 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 						</dcscor:item>
 					</dcsset:outputParameters>
 					<dcsset:item>
-						<dcsset:use>false</dcsset:use>
 						<dcsset:groupItems>
 							<dcsset:item xsi:type="dcsset:GroupItemField">
 								<dcsset:field>Contract</dcsset:field>
@@ -2873,16 +3514,10 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						</dcsset:selection>
 						<dcsset:item>
+							<dcsset:use>false</dcsset:use>
 							<dcsset:groupItems>
 								<dcsset:item xsi:type="dcsset:GroupItemField">
 									<dcsset:field>Document</dcsset:field>
-									<dcsset:groupType>Items</dcsset:groupType>
-									<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
-									<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
-									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
-								</dcsset:item>
-								<dcsset:item xsi:type="dcsset:GroupItemField">
-									<dcsset:field>Detail</dcsset:field>
 									<dcsset:groupType>Items</dcsset:groupType>
 									<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
 									<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
@@ -2895,23 +3530,23 @@ from AccountingRegister.General.Balance ( &amp;Asof,
 							<dcsset:selection>
 								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							</dcsset:selection>
+							<dcsset:viewMode>Normal</dcsset:viewMode>
+							<dcsset:userSettingID>ca513ea6-7e2c-4016-a39b-6aeb90077024</dcsset:userSettingID>
+							<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Show documents</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>Afișați de documente</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Выводить документы</v8:content>
+								</v8:item>
+							</dcsset:userSettingPresentation>
 						</dcsset:item>
-						<dcsset:viewMode>Normal</dcsset:viewMode>
-						<dcsset:userSettingID>984ab7ee-816c-4397-98d5-3db97c032b55</dcsset:userSettingID>
-						<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
-							<v8:item>
-								<v8:lang>ru</v8:lang>
-								<v8:content>Выводить договора и документы</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>en</v8:lang>
-								<v8:content>Show contracts and documents</v8:content>
-							</v8:item>
-							<v8:item>
-								<v8:lang>ro</v8:lang>
-								<v8:content>Afișați de contracte și documente</v8:content>
-							</v8:item>
-						</dcsset:userSettingPresentation>
 					</dcsset:item>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>

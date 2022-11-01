@@ -246,6 +246,13 @@ Procedure ApplyVATOnChange ( Item )
 
 EndProcedure
 
+&AtClient
+Procedure ReferenceOnChange ( Item )
+
+	InvoiceForm.ExtractSeries ( Object );
+
+EndProcedure
+
 // *****************************************
 // *********** Table Documents
 
@@ -267,7 +274,7 @@ Procedure AdjustmentDataUpdateConfirmation ( Answer, Refilling ) export
 EndProcedure
 
 &AtServer
-Procedure applyAdjustmentDataUpdate ( Refilling ) 
+Procedure applyAdjustmentDataUpdate ( val Refilling ) 
 
 	AdjustDebtsForm.AdjustmentDataUpdateConfirmation ( ThisObject, Refilling );
 
@@ -474,7 +481,7 @@ EndProcedure
 &AtClient
 Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	AdjustDebtsForm.AccountingOnEditEnd ( ThisObject );
 	
 EndProcedure
 
@@ -525,7 +532,7 @@ EndProcedure
 
 &AtClient
 Procedure AccountingReceiverItemOnChange ( Item )
-	
-	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
-	
+        
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingReceiverRow );
+
 EndProcedure

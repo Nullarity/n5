@@ -14,10 +14,9 @@ EndProcedure
 Procedure hideParams ()
 	
 	list = Params.HiddenParams;
-	list.Add ( "LocalCurrency" );
+	list.Add ( "ShowData" );
 	list.Add ( "Interval" );
 	list.Add ( "OperationDate" );
-	list.Add ( "Accounts" );
 	
 EndProcedure 
 

@@ -559,9 +559,6 @@
             <chooseType>true</chooseType>
             <typeDomainEnabled>true</typeDomainEnabled>
             <textEdit>true</textEdit>
-            <minValue xsi:type="core:NumberValue">
-              <value>0</value>
-            </minValue>
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
@@ -1386,6 +1383,7 @@
         <type>CommandBar</type>
         <extInfo xsi:type="form:CommandBarExtInfo">
           <horizontalAlign>Left</horizontalAlign>
+          <commandSource>Item.Adjustments</commandSource>
         </extInfo>
       </items>
       <items xsi:type="form:Table">
@@ -1661,7 +1659,7 @@
             <segments>Object.Adjustments.TotalDebt</segments>
           </footerDataPath>
           <extInfo xsi:type="form:InputFieldExtInfo">
-            <width>11</width>
+            <width>7</width>
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
@@ -1717,7 +1715,139 @@
             <segments>Object.Adjustments.TotalOverpayment</segments>
           </footerDataPath>
           <extInfo xsi:type="form:InputFieldExtInfo">
-            <width>11</width>
+            <width>7</width>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>AdjustmentsAccounting</name>
+          <id>650</id>
+          <title>
+            <key>en</key>
+            <value>Debt</value>
+          </title>
+          <title>
+            <key>ru</key>
+            <value>Долг</value>
+          </title>
+          <title>
+            <key>ro</key>
+            <value>Datorie</value>
+          </title>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Adjustments.Accounting</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>AdjustmentsAccountingExtendedTooltip</name>
+            <id>652</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>AdjustmentsAccountingContextMenu</name>
+            <id>651</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <readOnly>true</readOnly>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <footerDataPath xsi:type="form:DataPath">
+            <segments>Object.Adjustments.TotalAccounting</segments>
+          </footerDataPath>
+          <extInfo xsi:type="form:InputFieldExtInfo">
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <wrap>true</wrap>
+            <chooseType>true</chooseType>
+            <typeDomainEnabled>true</typeDomainEnabled>
+            <textEdit>true</textEdit>
+          </extInfo>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>AdjustmentsAdvance</name>
+          <id>653</id>
+          <title>
+            <key>en</key>
+            <value>Overpayment</value>
+          </title>
+          <title>
+            <key>ru</key>
+            <value>Переплата</value>
+          </title>
+          <title>
+            <key>ro</key>
+            <value>Supraplată</value>
+          </title>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Adjustments.Advance</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>AdjustmentsAdvanceExtendedTooltip</name>
+            <id>655</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>AdjustmentsAdvanceContextMenu</name>
+            <id>654</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>InputField</type>
+          <readOnly>true</readOnly>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <footerDataPath xsi:type="form:DataPath">
+            <segments>Object.Adjustments.TotalAdvance</segments>
+          </footerDataPath>
+          <extInfo xsi:type="form:InputFieldExtInfo">
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
@@ -1767,6 +1897,7 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>InputField</type>
+          <editMode>EnterOnInput</editMode>
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
@@ -1774,7 +1905,7 @@
             <segments>Object.Adjustments.TotalAmount</segments>
           </footerDataPath>
           <extInfo xsi:type="form:InputFieldExtInfo">
-            <width>11</width>
+            <width>7</width>
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
             <wrap>true</wrap>
@@ -1904,20 +2035,20 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>AdjustmentsVATAccount</name>
-          <id>532</id>
+          <name>AdjustmentsVAT</name>
+          <id>529</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
             <common>true</common>
           </userVisible>
           <dataPath xsi:type="form:DataPath">
-            <segments>Object.Adjustments.VATAccount</segments>
+            <segments>Object.Adjustments.VAT</segments>
           </dataPath>
           <skipOnInput>true</skipOnInput>
           <extendedTooltip>
-            <name>AdjustmentsVATAccountExtendedTooltip</name>
-            <id>534</id>
+            <name>AdjustmentsVATExtendedTooltip</name>
+            <id>531</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -1931,8 +2062,8 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>AdjustmentsVATAccountContextMenu</name>
-            <id>533</id>
+            <name>AdjustmentsVATContextMenu</name>
+            <id>530</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -1945,11 +2076,16 @@
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
+          <footerDataPath xsi:type="form:DataPath">
+            <segments>Object.Adjustments.TotalVAT</segments>
+          </footerDataPath>
           <extInfo xsi:type="form:InputFieldExtInfo">
             <width>7</width>
             <autoMaxWidth>true</autoMaxWidth>
             <autoMaxHeight>true</autoMaxHeight>
+            <horizontalStretch>false</horizontalStretch>
             <wrap>true</wrap>
+            <openButton>false</openButton>
             <chooseType>true</chooseType>
             <typeDomainEnabled>true</typeDomainEnabled>
             <textEdit>true</textEdit>
@@ -2265,20 +2401,20 @@
           </extInfo>
         </items>
         <items xsi:type="form:FormField">
-          <name>AdjustmentsVAT</name>
-          <id>529</id>
+          <name>AdjustmentsVATAccount</name>
+          <id>532</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
             <common>true</common>
           </userVisible>
           <dataPath xsi:type="form:DataPath">
-            <segments>Items.Adjustments.CurrentData.VAT</segments>
+            <segments>Items.Adjustments.CurrentData.VATAccount</segments>
           </dataPath>
           <skipOnInput>true</skipOnInput>
           <extendedTooltip>
-            <name>AdjustmentsVATExtendedTooltip</name>
-            <id>531</id>
+            <name>AdjustmentsVATAccountExtendedTooltip</name>
+            <id>534</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -2292,8 +2428,8 @@
             </extInfo>
           </extendedTooltip>
           <contextMenu>
-            <name>AdjustmentsVATContextMenu</name>
-            <id>530</id>
+            <name>AdjustmentsVATAccountContextMenu</name>
+            <id>533</id>
             <visible>true</visible>
             <enabled>true</enabled>
             <userVisible>
@@ -2306,9 +2442,6 @@
           <showInHeader>true</showInHeader>
           <headerHorizontalAlign>Left</headerHorizontalAlign>
           <showInFooter>true</showInFooter>
-          <footerDataPath xsi:type="form:DataPath">
-            <segments>Object.Adjustments.TotalVAT</segments>
-          </footerDataPath>
           <extInfo xsi:type="form:InputFieldExtInfo">
             <width>7</width>
             <autoMaxWidth>true</autoMaxWidth>
@@ -5660,6 +5793,110 @@
         <headerHorizontalAlign>Left</headerHorizontalAlign>
         <showInFooter>true</showInFooter>
         <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+      </items>
+      <items xsi:type="form:FormField">
+        <name>Reference</name>
+        <id>656</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>Object.Reference</segments>
+        </dataPath>
+        <handlers>
+          <event>OnChange</event>
+          <name>ReferenceOnChange</name>
+        </handlers>
+        <extendedTooltip>
+          <name>ReferenceExtendedTooltip</name>
+          <id>658</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>ReferenceContextMenu</name>
+          <id>657</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>InputField</type>
+        <editMode>Enter</editMode>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:InputFieldExtInfo">
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <wrap>true</wrap>
+          <chooseType>true</chooseType>
+          <typeDomainEnabled>true</typeDomainEnabled>
+          <textEdit>true</textEdit>
+        </extInfo>
+      </items>
+      <items xsi:type="form:FormField">
+        <name>ReferenceDate</name>
+        <id>659</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>Object.ReferenceDate</segments>
+        </dataPath>
+        <extendedTooltip>
+          <name>ReferenceDateExtendedTooltip</name>
+          <id>661</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>ReferenceDateContextMenu</name>
+          <id>660</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>InputField</type>
+        <editMode>Enter</editMode>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:InputFieldExtInfo">
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <wrap>true</wrap>
+          <chooseType>true</chooseType>
+          <typeDomainEnabled>true</typeDomainEnabled>
+          <textEdit>true</textEdit>
+        </extInfo>
       </items>
       <items xsi:type="form:FormField">
         <name>VATAccount</name>

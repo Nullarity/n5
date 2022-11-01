@@ -515,7 +515,7 @@ EndProcedure
 &AtClient
 Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	AdjustDebtsForm.AccountingOnEditEnd ( ThisObject );
 	
 EndProcedure
 

@@ -18,7 +18,7 @@ else
 	Commando ( "e1cib/command/Document.AdjustVendorDebts.Create" );
 	Set ( "#Vendor", this.Vendor );
 	Click ( "#ApplyVAT" );
-	Pick ( "#Option", "Custom Account (Dr)" );
+	Pick ( "#Option", "Custom Account (Cr)" );
 	Set ( "#Account", "6111" );
 	Set ( "#Amount", 100 );
 	Put ( "#Memo", id );

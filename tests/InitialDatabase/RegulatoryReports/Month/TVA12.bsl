@@ -198,6 +198,38 @@
 	|and Table.Ref.Company = &Company
 	|and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	|and Table.Ref.VATUse <> 0
+	|union all
+	|select Table.VATLocal, Table.AmountLocal - Table.VATLocal, Table.VATCode, VATCode.Type, Table.Ref.Series,
+	|		Table.Ref.Reference, Table.Ref.ReferenceDate, 1, Table.Ref.Vendor.CodeFiscal
+	|from Document.AdjustVendorDebts.Accounting as Table
+	|where Table.Ref.Posted
+	|and Table.Ref.Date between &DateStart and &DateEnd
+	|and Table.Ref.Company = &Company
+	|and Table.Ref.ApplyVAT
+	|and Table.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|and Table.Ref.Reference <> ""
+	|and Table.Ref.ReferenceDate <> datetime ( 1, 1, 1 )
+	|and Table.Ref.Option in (
+	|	value ( Enum.AdjustmentOptions.CustomAccountDr ),
+	|	value ( Enum.AdjustmentOptions.AccountingDr ),
+	|	value ( Enum.AdjustmentOptions.AccountingCr )
+	|)
+	|union all
+	|select Table.VATLocal, Table.AmountLocal - Table.VATLocal, Table.VATCode, VATCode.Type, Table.Ref.Series,
+	|		Table.Ref.Reference, Table.Ref.ReferenceDate, 1, Table.Ref.Vendor.CodeFiscal
+	|from Document.AdjustVendorDebts.Adjustments as Table
+	|where Table.Ref.Posted
+	|and Table.Ref.Date between &DateStart and &DateEnd
+	|and Table.Ref.Company = &Company
+	|and Table.Ref.ApplyVAT
+	|and Table.VATCode <> value ( Catalog.VAT.EmptyRef )
+	|and Table.Ref.Reference <> ""
+	|and Table.Ref.ReferenceDate <> datetime ( 1, 1, 1 )
+	|and Table.Ref.Option in (
+	|	value ( Enum.AdjustmentOptions.CustomAccountDr ),
+	|	value ( Enum.AdjustmentOptions.AccountingDr ),
+	|	value ( Enum.AdjustmentOptions.AccountingCr )
+	|)
 	|;
 	|// #VATs
 	|select sum ( VATs.Amount ), sum ( VATs.VAT ) as VAT, VATs.Rate as Rate, VATs.Type as Type, VATs.Operation as Operation,
@@ -309,44 +341,44 @@
 			for j = pageTableStarts to pageTableStarts + pageSize do
 				id = Format(k, "NG=0");
 				a = newPage.Area ( j, 2, j, 2 ); // c-index in the template
-				name = "A" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "A" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 4, j, 4 );
-				name = "B" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "B" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 12, j, 12 );
-				name = "C" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "C" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 19, j, 19 );
-				name = "D" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "D" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 24, j, 24 );
-				name = "E" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "E" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 31, j, 31 );
-				name = "F" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "F" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 39, j, 39 );
-				name = "G" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "G" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				k = k + 1;
 			enddo;
 			a = newPage.Area ( j, 31, j, 31 );
 			id = Format(k, "NG=0");
-			name = "F" + id;
-			a.Parameter = name;
-			a.DetailsParameter = "_Detail_" + name;
+			_name = "F" + id;
+			a.Parameter = _name;
+			a.DetailsParameter = "_Detail_" + _name;
 			a = newPage.Area ( j, 39, j, 39 );
-			name = "G" + id;
-			a.Parameter = name;
-			a.DetailsParameter = "_Detail_" + name;
+			_name = "G" + id;
+			a.Parameter = _name;
+			a.DetailsParameter = "_Detail_" + _name;
 			areaName = "R" + Format ( ( pagesStart + ( pageHeight * pagesCount ) ), "NG=0" );
 			T.InsertArea ( newPage.Area (), T.Area ( areaName ), SpreadsheetDocumentShiftType.Vertical, false );
 			pagesCount = pagesCount + 1;
@@ -398,45 +430,45 @@
 			for j = pageTableStarts to pageTableStarts + pageSize do
 				id = Format(k, "NG=0");
 				a = newPage.Area ( j, 2, j, 2 ); // c-index in the template
-				name = "AA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "AA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 4, j, 4 );
-				name = "BA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "BA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 12, j, 12 );
-				name = "CA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "CA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 19, j, 19 );
-				name = "DA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "DA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 24, j, 24 );
-				name = "EA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "EA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a.Format = undefined;
 				a = newPage.Area ( j, 31, j, 31 );
-				name = "FA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "FA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				a = newPage.Area ( j, 39, j, 39 );
-				name = "GA" + id;
-				a.Parameter = name;
-				a.DetailsParameter = "_Detail_" + name;
+				_name = "GA" + id;
+				a.Parameter = _name;
+				a.DetailsParameter = "_Detail_" + _name;
 				k = k + 1;
 			enddo;
 			a = newPage.Area ( j, 31, j, 31 );
 			id = Format(k, "NG=0");
-			name = "FA" + id;
-			a.Parameter = name;
-			a.DetailsParameter = "_Detail_" + name;
+			_name = "FA" + id;
+			a.Parameter = _name;
+			a.DetailsParameter = "_Detail_" + _name;
 			a = newPage.Area ( j, 39, j, 39 );
-			name = "GA" + id;
-			a.Parameter = name;
-			a.DetailsParameter = "_Detail_" + name;
+			_name = "GA" + id;
+			a.Parameter = _name;
+			a.DetailsParameter = "_Detail_" + _name;
 			areaName = "R" + Format ( ( pagesStart + ( pageHeight * pagesCount ) ), "NG=0" );
 			T.InsertArea ( newPage.Area (), T.Area ( areaName ), SpreadsheetDocumentShiftType.Vertical, false );
 			pagesCount = pagesCount + 1;

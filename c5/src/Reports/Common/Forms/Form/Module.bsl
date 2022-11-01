@@ -599,7 +599,7 @@ Procedure setDims ( Data, Prefix )
 				toggleSetting ( dim, id );
 			endif; 
 		elsif ( emptyAccountSupported ) then
-			dim.UserSettingPresentation = Metadata.Documents.VendorInvoice.TabularSections.Accounts.Attributes [ "Dim" + i ].Presentation ();
+			dim.UserSettingPresentation = Output.Dimension ( new Structure ( "Level", i ) );
 		else
 			toggleSetting ( dim, "" );
 		endif; 

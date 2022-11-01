@@ -387,6 +387,40 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
+	union all
+	select Table.VATLocal, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
+		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
+		Table.Ref, Table.Ref.Date, Table.Ref.Number
+	from Document.AdjustVendorDebts.Accounting as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.ApplyVAT
+	and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+	and Table.Ref.Reference &lt;&gt; ""
+	and Table.Ref.ReferenceDate &lt;&gt; datetime ( 1, 1, 1 )
+	and Table.Ref.Option in (
+		value ( Enum.AdjustmentOptions.CustomAccountDr ),
+		value ( Enum.AdjustmentOptions.AccountingDr ),
+		value ( Enum.AdjustmentOptions.AccountingCr )
+	)
+	union all
+	select Table.VAT, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
+		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
+		Table.Ref, Table.Ref.Date, Table.Ref.Number
+	from Document.AdjustVendorDebts.Adjustments as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.ApplyVAT
+	and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+	and Table.Ref.Reference &lt;&gt; ""
+	and Table.Ref.ReferenceDate &lt;&gt; datetime ( 1, 1, 1 )
+	and Table.Ref.Option in (
+		value ( Enum.AdjustmentOptions.CustomAccountDr ),
+		value ( Enum.AdjustmentOptions.AccountingDr ),
+		value ( Enum.AdjustmentOptions.AccountingCr )
+	)
 ) as VATPurchase</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -487,7 +521,16 @@ union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.VendorInvoice.Discounts as Table
 where Table.Ref in ( &amp;Documents )
-</query>
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.AdjustVendorDebts.Adjustments as Table
+where Table.Ref in ( &amp;Documents )
+and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.AdjustVendorDebts.Accounting as Table
+where Table.Ref in ( &amp;Documents )
+and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )</query>
 	</dataSet>
 	<dataSetLink>
 		<sourceDataSet>Invoices</sourceDataSet>

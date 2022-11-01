@@ -76,7 +76,6 @@ Procedure setReceiverOptions ( Form )
 
 EndProcedure
 
-&AtServer
 Function isAdjustDebts ( Object ) 
 
 	return TypeOf ( Object.Ref ) = Type ( "DocumentRef.AdjustDebts" );
@@ -207,6 +206,7 @@ Procedure readAppearance ( Form )
 		|GroupFillDocuments GroupFillReceiver MarkAll1 UnmarkAll1 MarkAllReceiver1 UnmarkAllReceiver1
 		|	disable Object.Posted;
 		|AccountingPaymentDate AccountingPaymentOption show Object.Type = Enum.TypesAdjustDebts.Advance;
+		|Reference ReferenceDate show Object.ApplyVAT;
 		|" );
 	endif;
 	Appearance.Read ( Form, rules );
@@ -472,21 +472,29 @@ Procedure distributeAmount ( Object )
 		amount = Object.ContractAmount - Object.Accounting.Total ( "Amount" );
 	endif;
 	isDebt = isDebt ( Object.Type );
-	for each row in Object.Adjustments do
-		applied = Min ( amount, appliedAmountRow ( row, isDebt, accounting ) );
+	table = Object.Adjustments;
+	total = 0; 
+	for each row in table do
+		applied = appliedAmountRow ( row, isDebt, accounting );
 		row.Amount = applied;
-		toggleAdjust ( row );
 		calcVAT ( row );
-		amount = amount - applied;
-	enddo; 
+		toggleAdjust ( row );
+		total = total + applied;
+	enddo;
+	i = table.Count ();
+	while ( i > 0 and total <> amount ) do
+		i = i - 1;
+		outstanding = total - amount;
+		row = table [ i ];
+		applied = row.Amount;
+		correction = ? ( applied > 0, Min ( applied, Max ( outstanding, 0 ) ), Max ( applied, Min ( outstanding, 0 ) ) );
+		row.Amount = applied - correction; 
+		total = total - correction;
+		calcVAT ( row );
+		toggleAdjust ( row );
+	enddo;
 
 EndProcedure
-
-Function isDebt ( Type ) 
-
-	return Type = PredefinedValue ( "Enum.TypesAdjustDebts.Debt" );
-
-EndFunction
 
 Function isAccounting ( Object )
 	
@@ -494,6 +502,12 @@ Function isAccounting ( Object )
 	return option = PredefinedValue ( "Enum.AdjustmentOptions.AccountingDr" )
 		or option = PredefinedValue ( "Enum.AdjustmentOptions.AccountingCr" );
 	
+EndFunction
+	
+Function isDebt ( Type ) 
+
+	return Type = PredefinedValue ( "Enum.TypesAdjustDebts.Debt" );
+
 EndFunction
 
 Function appliedAmountRow ( TableRow, IsDebt, Accounting ) 
@@ -652,7 +666,7 @@ Function sqlPayments ( Type, TableName, Accounting )
 		|select Balances.Document as Document, Balances.PaymentKey as PaymentKey,
 		|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
 		|	Balances.AccountingBalance as Accounting, Balances.AdvanceBalance as Advance,
-		|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
+		|	Balances.Detail as Detail, PaymentDetails.Option as Option, Balances.Document.Date as Date
 		|into Balances
 		|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
 		|	//
@@ -1147,8 +1161,12 @@ Procedure ApplyOption ( Form ) export
 		object.AccountingReceiver.Clear ();
 		AdjustDebtsForm.CalcTotalsReceiver ( Form );
 		option = object.Option;
-		if ( option = Enums.AdjustmentOptions.CustomAccountDr
-			or option = Enums.AdjustmentOptions.AccountingDr ) then
+		customer = isAdjustDebts ( object );
+		debt = ( customer and ( option = Enums.AdjustmentOptions.CustomAccountDr
+			or option = Enums.AdjustmentOptions.AccountingDr ) )
+		or ( not customer and ( option = Enums.AdjustmentOptions.CustomAccountCr
+			or option = Enums.AdjustmentOptions.AccountingCr ) );
+		if ( debt ) then
 			newType = Enums.TypesAdjustDebts.Debt;
 		else
 			newType = Enums.TypesAdjustDebts.Advance;
@@ -1618,7 +1636,7 @@ Procedure ReceiverDebtsAmountOnChange ( Form ) export
 EndProcedure
 
 &AtClient
-Procedure AccountingOnEditEnd ( Form, Item, CancelEdit ) export
+Procedure AccountingOnEditEnd ( Form ) export
 	
 	AdjustDebtsForm.ChahgeApplied ( Form );
 
@@ -1627,6 +1645,13 @@ EndProcedure
 &AtClient
 Procedure ApplyVATOnChange ( Form ) export
 
+	object = Form.Object;
+	if ( not isAdjustDebts ( object )
+		and not object.ApplyVAT ) then
+		object.Reference = "";
+		object.ReferenceDate = undefined;
+		InvoiceForm.ExtractSeries ( object );
+	endif;
 	Appearance.Apply ( Form, "Object.ApplyVAT" );
 
 EndProcedure

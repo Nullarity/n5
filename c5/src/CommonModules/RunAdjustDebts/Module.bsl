@@ -5,20 +5,15 @@ Function Post ( Env ) export
 	PaymentDetails.Init ( Env );
 	fields = Env.Fields;
 	option = fields.Option;
-	if ( option = Enums.AdjustmentOptions.CustomAccountDr
-		or option = Enums.AdjustmentOptions.CustomAccountCr
-		or option = Enums.AdjustmentOptions.Customer
-		or option = Enums.AdjustmentOptions.Vendor
-		or option = Enums.AdjustmentOptions.AccountingDr
-		or option = Enums.AdjustmentOptions.AccountingCr
-	) then
-		decreaseDebt ( Env, Env.Adjustments, false );
-		increaseDebt ( Env, Env.Accounting, false );
-		if ( option = Enums.AdjustmentOptions.Customer
-			or option = Enums.AdjustmentOptions.Vendor ) then
-			decreaseDebt ( Env, Env.AdjustmentsReceiver, true );
-			increaseDebt ( Env, Env.AccountingReceiver, true );
-		endif;
+	decreaseDebt ( Env, Env.Adjustments, false );
+	increaseDebt ( Env, Env.Accounting, false );
+	if ( option = Enums.AdjustmentOptions.Customer
+		or option = Enums.AdjustmentOptions.Vendor ) then
+		decreaseDebt ( Env, Env.AdjustmentsReceiver, true );
+		increaseDebt ( Env, Env.AccountingReceiver, true );
+	endif;
+	if ( fields.IsExpense ) then
+		makeExpenses ( Env );
 	endif;
 	flagRegisters ( Env );
 	PaymentDetails.Save ( Env );
@@ -83,7 +78,7 @@ Procedure sqlFields ( Env )
 	|	Documents.ContractCurrency as ContractCurrency, Documents.Currency as Currency,
 	|	Constants.Currency as LocalCurrency, Documents.ContractRate as ContractRate,
 	|	Documents.ContractFactor as ContractFactor,  
-	|	Documents.Account.Class in (
+	|	isnull ( Documents.Account.Class, undefined ) in (
 	|		value ( Enum.Accounts.Expenses ),
 	|		value ( Enum.Accounts.OtherExpenses ),
 	|		value ( Enum.Accounts.CostOfGoodsSold )
@@ -464,13 +459,14 @@ Procedure decreaseDebt ( Env, Table, ForReceiver )
 		amount = row.AmountDebts;
 		amountAccounting = row.AmountLocal;
 		if ( row.Debt = 0 ) then
-			movement.Advance = coef * amountAccounting;
+			movement.Advance = coef * amountAccounting * ? ( regularAdjustment, 1, -1 );
 			if ( regularAdjustment ) then
 				movement.Overpayment = coef * amount;
 				if ( row.ByOrder ) then
 					record = register.Add ();
 					movement.Period = fields.date;
-					FillPropertyValues ( record, movement, "Period, RecordType, Contract, Document, PaymentKey" );
+					FillPropertyValues ( record, movement,
+						"Period, RecordType, Contract, Document, PaymentKey" );
 					record.Payment = - amount * coef;
 				endif;
 			endif;
@@ -493,18 +489,22 @@ EndProcedure
 Procedure increaseDebt ( Env, Table, ForReceiver )
 	
 	fields = Env.Fields;
+	increaseDebt = fields.Type = Enums.TypesAdjustDebts.Advance;
+	customerDebts = Env.Customer;
 	if ( ForReceiver ) then
-		isCustomer = fields.Option = Enums.AdjustmentOptions.Customer;
+		option = fields.Option;
+		isCustomer = option = Enums.AdjustmentOptions.Customer;
 		contract = fields.ReceiverContract;
+		direct = ( customerDebts and option = Enums.AdjustmentOptions.Customer )
+			or not ( customerDebts or option = Enums.AdjustmentOptions.Customer );
+		if ( direct ) then
+			increaseDebt = not increaseDebt;
+		endif;
 	else
-		isCustomer = Env.Customer;
+		isCustomer = customerDebts;
 		contract = fields.Contract;
 	endif;
 	regiter = ? ( isCustomer, Env.Registers.Debts, Env.Registers.VendorDebts );
-	increaseDebt = fields.Type = Enums.TypesAdjustDebts.Advance;
-	if ( ForReceiver ) then
-		increaseDebt = not increaseDebt;
-	endif;
 	date = fields.Date;
 	ref = Env.Ref;
 	reversal = fields.Reversal;
@@ -620,11 +620,13 @@ Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 		organization = fields.Receiver;
 		contract = fields.ReceiverContract;
 		contractCurrency = fields.ReceiverContractCurrency;
+		isCustomer = ( fields.Option = Enums.AdjustmentOptions.Customer );
 	else
 		advanceDr = drcr.AdvanceDr;
 		organization = fields.Organization;
 		contract = fields.Contract;
 		contractCurrency = fields.ContractCurrency;
+		isCustomer = Env.Customer;
 	endif;
 	if ( advanceDr ) then
 		sideOrganization = "Cr";
@@ -636,12 +638,12 @@ Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 	if ( Closing ) then
 		organizationAccount = Row.OrganizationAccount;
 		advanceAccount = Row.AdvanceAccount;
-		operation = Enums.Operations.AdvanceApplied;
+		operation = ? ( isCustomer, Enums.Operations.AdvanceApplied, Enums.Operations.AdvanceGivenApplied );
 		dependency = Row.PrepaymentRef;
 	else
 		organizationAccount = fields.OrganizationAccount;
 		advanceAccount = fields.AdvanceAccount;
-		operation = Enums.Operations.AdvanceAfterAdjustments;
+		operation = ? ( isCustomer, Enums.Operations.AdvanceTakenAfterAdjustments, Enums.Operations.AdvanceGivenAfterAdjustments );
 		dependency = undefined;
 	endif;
 	p = GeneralRecords.GetParams ();
@@ -731,9 +733,6 @@ EndProcedure
 Procedure makeExpenses ( Env ) 
 
 	fields = Env.Fields;
-	if ( not fields.IsExpense ) then
-		return;
-	endif;
 	movement = Env.Registers.Expenses.Add ();
 	movement.Period = fields.Date;
 	movement.Account = fields.Account;
@@ -746,7 +745,8 @@ Procedure makeExpenses ( Env )
 		movement.Department = value;
 	endif;
 	movement.Document = Env.Ref;
-	movement.AmountDr = Env.Adjustments.Total ( "Amount" );
+	movement.AmountDr = Env.Adjustments.Total ( "AmountLocal" )
+		+ Env.Accounting.Total ( "AmountLocal" );
 
 EndProcedure
 

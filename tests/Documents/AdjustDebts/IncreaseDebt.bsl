@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0ZM" );
+id = Call ( "Common.ScenarioID", "A10F" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -28,7 +28,8 @@ else
 	Click ( "#Button0" );
 	With ();
 	Click ( "#MarkAll" );
-	Set ( "#AdjustmentsItem", this.Discounts );
+	table = Get ( "#Adjustments" );
+	Set ( "#AdjustmentsItem", this.Discounts, table );
 	Click ( "#AccountingAdd" );
 	Accounting = Get ( "#Accounting" );
 	Accounting.EndEditRow ();

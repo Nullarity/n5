@@ -193,43 +193,49 @@
 			<field>Description</field>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>select General.Recorder as Recorder,
-	sum (
-		case General.Operation
-			when value ( Enum.Operations.AdvanceTaken ) then General.Amount
-			when value ( Enum.Operations.AdvanceApplied ) then - General.Amount
+		<query>select Advances.Recorder as Recorder, sum ( Advances.Amount ) as Amount, sum ( Advances.VAT ) as VAT,
+	Advances.VATCode as VATCode, Advances.Customer as Customer
+into Advances
+from (
+	select General.Recorder as Recorder,
+		case
+			when General.Operation in (
+				value ( Enum.Operations.AdvanceTaken ),
+				value ( Enum.Operations.AdvanceTakenAfterAdjustments ) ) then General.Amount
+			when General.Operation = value ( Enum.Operations.AdvanceApplied ) then - General.Amount
 			else 0
-		end
-	) as Amount,
-	sum (
+		end as Amount,
 		case when General.Operation in (
 			value ( Enum.Operations.VATAdvances ),
 			value ( Enum.Operations.VATAdvancesReverse ) ) then General.Amount
 			else 0
-		end
-	) as VAT,
-	case valuetype ( General.Recorder )
-		when type ( Document.Payment ) then cast ( General.Recorder as Document.Payment ).VATAdvance
-		when type ( Document.Invoice ) then
-			case valuetype ( General.Dependency )
-				when type ( Document.Payment ) then cast ( General.Dependency as Document.Payment ).VATAdvance
-			end
-		when type ( Document.VendorReturn ) then
-			case valuetype ( General.Dependency )
-				when type ( Document.Payment ) then cast ( General.Dependency as Document.Payment ).VATAdvance
-			end
-	end as VATCode
-into Advances
-from AccountingRegister.General as General
-where General.Period between &amp;DateStart and &amp;DateEnd
-and General.Company = &amp;Company
-and General.Operation in (
-	value ( Enum.Operations.AdvanceTaken ),
-	value ( Enum.Operations.AdvanceApplied ),
-	value ( Enum.Operations.VATAdvances ),
-	value ( Enum.Operations.VATAdvancesReverse )
-)
-group by General.Recorder, General.Dependency
+		end as VAT,
+		case
+			when valuetype ( General.Recorder ) = type ( Document.Payment ) then cast ( General.Recorder as Document.Payment ).VATAdvance
+			when valuetype ( General.Recorder ) = type ( Document.AdjustDebts ) then cast ( General.Recorder as Document.AdjustDebts ).VATAdvance
+			when valuetype ( General.Recorder ) = type ( Document.AdjustVendorDebts ) then cast ( General.Recorder as Document.AdjustVendorDebts ).VATAdvance
+			when valuetype ( General.Dependency ) = type ( Document.Payment ) then cast ( General.Dependency as Document.Payment ).VATAdvance
+			when valuetype ( General.Dependency ) = type ( Document.AdjustDebts ) then cast ( General.Dependency as Document.AdjustDebts ).VATAdvance
+			when valuetype ( General.Dependency ) = type ( Document.AdjustVendorDebts ) then cast ( General.Dependency as Document.AdjustVendorDebts ).VATAdvance
+			when valuetype ( General.Dependency ) = type ( Document.Debts ) then cast ( General.Dependency as Document.Debts ).VATAdvance
+		end as VATCode,
+		case
+			when General.Operation in (
+				value ( Enum.Operations.AdvanceApplied ),
+				value ( Enum.Operations.VATAdvances ),
+				value ( Enum.Operations.VATAdvancesReverse ) ) then General.ExtDimensionDr1
+			else General.ExtDimensionCr1
+		end as Customer
+	from AccountingRegister.General.RecordsWithExtDimensions ( &amp;DateStart, &amp;DateEnd, Company = &amp;Company ) as General
+	where General.Operation in (
+		value ( Enum.Operations.AdvanceApplied ),
+		value ( Enum.Operations.AdvanceTaken ),
+		value ( Enum.Operations.AdvanceTakenAfterAdjustments ),
+		value ( Enum.Operations.VATAdvances ),
+		value ( Enum.Operations.VATAdvancesReverse )
+	)
+) as Advances
+group by Advances.Recorder, Advances.VATCode, Advances.Customer
 index by Recorder
 ;
 // Main selection
@@ -301,8 +307,8 @@ from (
 	and Table.Ref.Company = &amp;Company
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
-		CustomerPayments.Number, CustomerPayments.Date, CustomerPayments.Customer.CodeFiscal,
-		CustomerPayments.Customer, CustomerPayments.Ref, value ( Enum.Operations.VATAdvances ), undefined
+		CustomerPayments.Number, CustomerPayments.Date, Advances.Customer.CodeFiscal,
+		Advances.Customer, CustomerPayments.Ref, value ( Enum.Operations.VATAdvances ), undefined
 	from Document.Payment as CustomerPayments
 		//
 		// CustomerPayments Advances
@@ -311,8 +317,8 @@ from (
 		on Advances.Recorder = CustomerPayments.Ref
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
-		Invoices.Number, Invoices.Date, Invoices.Customer.CodeFiscal,
-		Invoices.Customer, Invoices.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
+		Invoices.Number, Invoices.Date, Advances.Customer.CodeFiscal,
+		Advances.Customer, Invoices.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
 	from Document.Invoice as Invoices
 		//
 		// Invoices Advances
@@ -321,14 +327,24 @@ from (
 		on Advances.Recorder = Invoices.Ref
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
-		Returns.Number, Returns.Date, Returns.Vendor.CodeFiscal,
-		Returns.Vendor, Returns.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
-	from Document.VendorReturn as Returns
+		AdjustDebts.Number, AdjustDebts.Date, Advances.Customer.CodeFiscal,
+		Advances.Customer, AdjustDebts.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
+	from Document.AdjustDebts as AdjustDebts
 		//
-		// VendorReturn Advances
+		// AdjustDebts Advances
 		//
 		join Advances as Advances
-		on Advances.Recorder = Returns.Ref
+		on Advances.Recorder = AdjustDebts.Ref
+	union all
+	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
+		AdjustVendorDebts.Number, AdjustVendorDebts.Date, Advances.Customer.CodeFiscal,
+		Advances.Customer, AdjustVendorDebts.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
+	from Document.AdjustVendorDebts as AdjustVendorDebts
+		//
+		// AdjustVendorDebts Advances
+		//
+		join Advances as Advances
+		on Advances.Recorder = AdjustVendorDebts.Ref
 	union all
 	select Advances.VATAmount, case when Advances.CloseAdvance then -1 else 1 end
 		* Advances.Amount - Advances.VATAmount,

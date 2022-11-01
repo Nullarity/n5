@@ -8479,3 +8479,11 @@ Function NewReportAccessDefinition ( Params = undefined ) export
 	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.No, title );
 
 EndFunction
+
+&AtServer
+Function Dimension ( Params = undefined ) export
+
+	text = NStr ( "en = 'Dimension %Level';ro = 'Dimensiune %Level';ru = 'Субконто %Level'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction

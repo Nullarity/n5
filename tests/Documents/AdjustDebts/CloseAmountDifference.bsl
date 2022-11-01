@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A106" );
+id = Call ( "Common.ScenarioID", "A107" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -22,6 +22,9 @@ else
 	Set ( "#Customer", this.Customer );
 	Click ( "#ApplyVAT" );
 	Click ( "#Reversal" );
+	Click ( "#AccountingAdd" );
+	table = Get ( "#Adjustments" );
+	Set ( "#AdjustmentsItem [ 1 ]", this.Discounts, table );
 	Set ( "#Account", "6111" );
 	Set ( "#ContractRate", 19 ); // the same rate as payment is
 	Put ( "#Memo", id );

@@ -204,7 +204,7 @@ Function sqlPayments ( Object )
 	|and Balances.Document.Date <= &Period
 	|and isnull ( Balances.Detail.Date, &Period ) <= &Period
 	|and valuetype ( Balances.Document ) in ( &Types )
-	|order by PaymentDetails.Date
+	|order by PaymentDetails.Date, Balances.Document.Date
 	|";
 	return s;
 	

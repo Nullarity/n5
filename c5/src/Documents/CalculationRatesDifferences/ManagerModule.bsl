@@ -17,6 +17,7 @@ EndProcedure
 Function Post ( Env ) export
 	
 	getData ( Env );
+	adjustDebts ( Env );
 	commitRecords ( Env );
 	makeExpenses ( Env );
 	flagRegisters ( Env );
@@ -56,29 +57,69 @@ EndProcedure
 Procedure sqlRecords ( Env )
 	
 	s = "
-	|// #Records
+	|select case Rates.Rate when 0 then 1 else Rates.Rate end as Rate,
+	|	case Rates.Factor when 0 then 1 else Rates.Factor end as Factor,
+	|	Rates.Currency as Currency
+	|into Rates
+	|from InformationRegister.ExchangeRates.SliceLast ( &Date ) as Rates
+	|;
 	|select Records.Account as Account, Records.Dim1 as Dim1, Records.Currency as Currency, 
-	|	case when Records.Difference < 0 then true else false end as Expense, 
-	|	case when Records.Difference < 0 then -Records.Difference else Records.Difference end as Difference
+	|	Records.Difference < 0 as Expense,
+	|	case when Records.Difference < 0 then - Records.Difference else Records.Difference end as Difference
+	|into Records
 	|from ( 
 	|	select Records.Account as Account, Records.ExtDimension1 as Dim1, Records.Currency as Currency,
-	|		case
-	|			when ( Rates.Rate = 0 ) or ( Rates.Rate is null ) then
-	|				CurrencyAmountBalance - AmountBalance
-	|			when ( Rates.Factor = 0 ) or ( Rates.Factor is null ) then
-	|				CurrencyAmountBalance * Rates.Rate - AmountBalance
-	|			else
-	|				CurrencyAmountBalance / Rates.Factor * Rates.Rate - AmountBalance
-	|		end as Difference 
+	|		cast ( CurrencyAmountBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AmountBalance
+	|			as Number ( 15, 2 ) ) as Difference 
 	|	from AccountingRegister.General.Balance ( &Date, Account.Currency, , Company = &Company ) as Records
-	|   	//
+	|		//
 	|		// Rates
 	|		//
-	|		left join InformationRegister.ExchangeRates.SliceLast ( &Date ) as Rates
-    |		on Rates.Currency = Records.Currency 
-	|		) as Records
-	|where Difference <> 0
-	|and Records.Account not in ( select distinct Account from Document.CalculationRatesDifferences.Accounts where Ref = &Ref )
+	|		left join Rates as Rates
+	|		on Rates.Currency = Records.Currency 
+	|	) as Records
+	|where Records.Difference <> 0
+	|and Records.Account not in (
+	|	select distinct Account from Document.CalculationRatesDifferences.Accounts where Ref = &Ref
+	|)
+	|;
+	|// #Records
+	|select Records.Account as Account, Records.Dim1 as Dim1, Records.Currency as Currency, 
+	|	Records.Expense as Expense, Records.Difference as Difference
+	|from Records as Records
+	|;
+	|// #Debts
+	|select Debts.Customer as Customer, Debts.Contract as Contract, Debts.Document as Document,
+	|	Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
+	|	Debts.AmountDifference as Accounting, Debts.AdvanceDifference as Advance
+	|from (
+	|	select true as Customer, Debts.Contract as Contract, Debts.Document as Document,
+	|		Debts.Detail as Detail, Debts.PaymentKey as PaymentKey,
+	|		cast ( AmountBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AccountingBalance
+	|			as Number ( 15, 2 ) ) as AmountDifference,
+	|		cast ( OverpaymentBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AdvanceBalance
+	|			as Number ( 15, 2 ) ) as AdvanceDifference
+	|	from AccumulationRegister.Debts.Balance ( &Date, Contract.Owner in ( select Dim1 from Records ) ) as Debts
+	|		//
+	|		// Rates
+	|		//
+	|		left join Rates as Rates
+	|		on Rates.Currency = Debts.Contract.Currency 
+	|	union all
+	|	select false, Debts.Contract, Debts.Document, Debts.Detail, Debts.PaymentKey,
+	|		cast ( AmountBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AccountingBalance
+	|			as Number ( 15, 2 ) ),
+	|		cast ( OverpaymentBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AdvanceBalance
+	|			as Number ( 15, 2 ) )
+	|	from AccumulationRegister.VendorDebts.Balance ( &Date, Contract.Owner in ( select Dim1 from Records ) ) as Debts
+	|		//
+	|		// Rates
+	|		//
+	|		left join Rates as Rates
+	|		on Rates.Currency = Debts.Contract.Currency
+	|	) as Debts
+	|where Debts.AmountDifference <> 0
+	|or Debts.AdvanceDifference <> 0
 	|";
 	Env.Selection.Add ( s );
 	
@@ -93,6 +134,20 @@ Procedure getRecords ( Env )
 	SQL.Perform ( Env );
 
 EndProcedure
+
+Procedure adjustDebts ( Env )
+	
+	date = Env.Fields.Date;
+	registers = Env.Registers;
+	debts = registers.Debts;
+	vendorDebts = registers.VendorDebts;
+	for each row in Env.Debts do
+		r = ? ( row.Customer, debts.Add (), vendorDebts.Add () );
+		FillPropertyValues ( r, row );
+		r.Period = date;
+	enddo;
+
+EndProcedure 
 
 Procedure commitRecords ( Env )
 	
@@ -161,6 +216,8 @@ Procedure flagRegisters ( Env )
 	registers = Env.Registers;
 	registers.General.Write = true;
 	registers.Expenses.Write = true;
+	registers.Debts.Write = true;
+	registers.VendorDebts.Write = true;
 	
 EndProcedure
 

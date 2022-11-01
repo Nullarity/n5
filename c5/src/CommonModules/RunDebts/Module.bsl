@@ -42,6 +42,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "ReverseVAT", not Env.Fields.AdvancesMonthly );
 		Env.Insert ( "Return", false );
 		Env.Insert ( "DiscountsAfterDelivery", fields.DiscountsAfterDelivery );
+		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceApplied );
 	elsif ( type = Type ( "DocumentRef.VendorInvoice" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", Env.PurchaseOrderExists );
@@ -49,6 +50,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", false );
 		Env.Insert ( "DiscountsAfterDelivery", fields.DiscountsAfterDelivery );
+		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceGivenApplied );
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
 		Env.Insert ( "PaymentsRegister", "Debts" );
 		Env.Insert ( "OrderExists", Env.SalesOrderExists );
@@ -56,6 +58,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", true );
 		Env.Insert ( "DiscountsAfterDelivery", false );
+		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceApplied );
 	elsif ( type = Type ( "DocumentRef.VendorReturn" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", Env.PurchaseOrderExists );
@@ -63,6 +66,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", true );
 		Env.Insert ( "DiscountsAfterDelivery", false );
+		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceGivenApplied );
 	elsif ( type = Type ( "DocumentRef.CustomsDeclaration" ) ) then
 		Env.Insert ( "PaymentsRegister", "VendorDebts" );
 		Env.Insert ( "OrderExists", false );
@@ -70,6 +74,7 @@ Procedure setContext ( Env )
 		Env.Insert ( "ReverseVAT", false );
 		Env.Insert ( "Return", false );
 		Env.Insert ( "DiscountsAfterDelivery", false );
+		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceGivenApplied );
 	endif;
 	Env.Insert ( "NewPaymentDate", Env.Fields.PaymentDate <> Date ( 3999, 12, 31 ) );
 	
@@ -370,7 +375,8 @@ Procedure commitOverpayment ( Env, Payments )
 	currency = fields.ContractCurrency;
 	p.CurrencyDr = currency;
 	p.CurrencyCr = currency;
-	operationAdvance = String ( Enums.Operations.AdvanceApplied ) + ": ";
+	appliedAdvance = Env.AppliedAdvance;
+	operationAdvance = String ( appliedAdvance ) + ": ";
 	operationVAT = String ( Enums.Operations.VATAdvancesReverse ) + ": ";
 	localCurrency = fields.LocalCurrency;
 	rate = fields.Rate;
@@ -399,7 +405,7 @@ Procedure commitOverpayment ( Env, Payments )
 			currencyFactor = factor;
 		endif;
 		p.Amount = Currencies.Convert ( overpayment, currency, localCurrency, date, currencyRate, currencyFactor );
-		p.Operation = Enums.Operations.AdvanceApplied;
+		p.Operation = appliedAdvance;
 		p.Content = operationAdvance + payment;
 		reverse = reverseVAT and data.VAT <> undefined and data.VAT.VAT <> 0;
 		if ( reverse ) then
@@ -766,10 +772,15 @@ Procedure SyncRecords ( Debts ) export
 		invoices.Add ( Type ( "DocumentRef.CustomsDeclaration" ) );
 	endif;
 	recorder = Debts.Filter.Recorder.Value;
+	meta = recorder.Metadata ().RegisterRecords;
+	if ( not ( meta.Contains ( invoicesRegister.Metadata () )
+		and meta.Contains ( ordersRegister.Metadata () ) ) ) then
+		return;
+	endif; 
 	invoicesRegister.Filter.Recorder.Set ( recorder );
 	ordersRegister.Filter.Recorder.Set ( recorder );
 	if ( Debts.Count () > 0 ) then
-		for each row in groupRecordset ( Debts ) do
+		for each row in prepareRecordset ( Debts ) do
 			document = row.Document;
 			type = TypeOf ( document ); 
 			if ( type = order ) then
@@ -788,10 +799,18 @@ Procedure SyncRecords ( Debts ) export
 	
 EndProcedure
 
-Function groupRecordset ( Recordset )
+Function prepareRecordset ( Recordset )
 
 	table = Recordset.Unload ( , "Period, RecordType, Document, Detail, Amount, Payment, Overpayment" );
 	table.GroupBy ( "Period, RecordType, Document, Detail", "Amount, Payment, Overpayment" );
+	i = table.Count ();
+	while ( i > 0 ) do
+		i = i - 1;
+		row = table [ i ];
+		if ( row.Amount = 0 and row.Payment = 0 and row.Overpayment = 0 ) then
+			table.Delete ( i );
+		endif;
+	enddo;
 	return table;
 
 EndFunction

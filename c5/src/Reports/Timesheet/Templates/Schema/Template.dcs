@@ -511,7 +511,7 @@ from (
 	// Location
 	//
 	join LocationByDays as Location
-	on Location.Day &gt; Up.Day
+	on Location.Day &gt;= Up.Day
 	and Location.Employee = Up.Employee
 	and Location.Department = Up.Department
 	and Location.Position = Up.Position

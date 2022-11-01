@@ -255,9 +255,7 @@
       <key>ro</key>
       <value>Sumă rectificării</value>
     </toolTip>
-    <minValue xsi:type="core:StringValue">
-      <value>0</value>
-    </minValue>
+    <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
@@ -1294,6 +1292,80 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="7669401e-9309-4b78-a7f3-7b47d5f31266">
+    <name>Reference</name>
+    <synonym>
+      <key>en</key>
+      <value>Reference</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вх. номер</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Număr intrare</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Reference</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Number of incoming documents (invoice, receipt and others)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Номер входящего документа от поставщика, например, в этом поле может быть указан номер налоговой накладной</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul documentului primit de la furnizor, de exemplu, în acest câmp poate fi, numărul facturii fiscale</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c56cf11e-03ca-4593-84d3-11eb8d98c1d2">
+    <name>ReferenceDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Ref Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вх. дата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ref data</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date of incoming document (invoice, receipt, etc)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата входящего документа от поставщика, например, в этом поле может быть указана дата налоговой накладной</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data primirii documentului (factură, chitanță etc.)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="f4838029-b287-45db-813e-252cc8af9d16">
     <name>Reversal</name>
     <synonym>
@@ -1328,6 +1400,41 @@
     <fillValue xsi:type="core:BooleanValue">
       <value>true</value>
     </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f6d9a3e7-234a-456a-a2e8-1eade718103d">
+    <name>Series</name>
+    <synonym>
+      <key>en</key>
+      <value>Series</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Серия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Serie</value>
+    </synonym>
+    <type>
+      <types>DefinedType.ReferenceSeries</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Series of incoming document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Серия входящего документа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Seriile de documente primite</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -1672,6 +1779,7 @@
       <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -2181,6 +2289,7 @@
       <markNegatives>true</markNegatives>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -2658,6 +2767,40 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
     </standardAttributes>
+    <attributes uuid="d3285eaa-1d6d-44a0-bee9-89c15c2fa745">
+      <name>Accounting</name>
+      <synonym>
+        <key>en</key>
+        <value>Accounting Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма, б/у</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The actual amount of debt (including overpayments) in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма фактической задолженности (включая авансовые платежи) в региональной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valoarea reală a datoriei (inclusiv plățile în avans) în monedă locală</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="18543641-9456-4ede-a913-b45da49a00d4">
       <name>Adjust</name>
       <synonym>
@@ -2690,6 +2833,40 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="3d18a1b4-6342-4b43-ba46-9eee165f7eff">
+      <name>Advance</name>
+      <synonym>
+        <key>en</key>
+        <value>Accounting Advance or Overpayment in local currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Аванс или переплата, б/у</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Avans sau supraplată, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount of advance or overpayment from the Customer in local currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма полученного от покупателя аванса/переплаты в региональной валюте</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma primită în avans de la client / supraplată în monedă locală</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="a7837a28-d437-4b2c-b916-7852bec7a688">
