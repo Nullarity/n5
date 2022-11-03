@@ -9,6 +9,8 @@ var Production;
 &AtClient
 var Series;
 &AtClient
+var WaybillManualWriteOff;
+&AtClient
 var AccountingRow;
 &AtClient
 var StayOpen;
@@ -147,6 +149,7 @@ EndProcedure
 Procedure init ()
 	
 	StayOpen = false;
+	WaybillAutoWriteOff = not Object.WaybillManualWriteOff;
 	Pages = new Map ();
 	Pages [ 0 ] = Items.MainPage;
 	Pages [ 1 ] = Items.FeaturesPage;
@@ -165,9 +168,7 @@ Procedure readOptions ()
 	Packages = Object.Packages;
 	Production = Object.Production;
 	Series = Object.Series;
-	if ( Logins.Sysadmin () ) then
-		License = Object.License;
-	endif;
+	WaybillManualWriteOff = Object.WaybillManualWriteOff;
 	
 EndProcedure 
 
@@ -183,6 +184,7 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	endif; 
 	LicenseChanged = Logins.Sysadmin () and Object.License <> Constants.License.Get ();
 	setNoPackages ();
+	saveWaybillAutoWriteOff ( CurrentObject );
 	setTenantTimeZone ();
 	saveAddresses ();
 	Constants.FirstStart.Set ( false );
@@ -195,6 +197,13 @@ Procedure setNoPackages ()
 	Constants.NoPackages.Set ( not Object.Packages );
 	
 EndProcedure 
+
+&AtServer
+Procedure saveWaybillAutoWriteOff ( CurrentObject )
+	
+	CurrentObject.WaybillManualWriteOff = not WaybillAutoWriteOff;
+		
+EndProcedure
 
 &AtServer
 Procedure setTenantTimeZone ()
@@ -277,7 +286,8 @@ Function optionsChanged ()
 	return Features <> Object.Features
 		or Packages <> Object.Packages
 		or Production <> Object.Production
-		or Series <> Object.Series;
+		or Series <> Object.Series
+		or WaybillManualWriteOff <> Object.WaybillManualWriteOff;
 	
 EndFunction 
 

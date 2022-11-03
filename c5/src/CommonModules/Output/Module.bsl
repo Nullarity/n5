@@ -7584,13 +7584,24 @@ Procedure CarAccountingDataError ( Params = undefined, Field = "", DataKey = und
 	
 EndProcedure
 
-&AtClient
-Procedure WaybillWriteOffError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+&AtServer
+Function WaybillWriteOffError () export
 	
 	text = NStr ("en='The waybill does not have fuel inventory data';ro='În foaie de parcurs nu sunt specificate datele privind inventarierea combustibilului';ru='В путевом листе не указаны данные по инвентаризации топлива'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	return text;
 	
-EndProcedure
+EndFunction
+
+&AtServer
+Function WaybillWriteOffPostingError ( Params = undefined ) export
+	
+	s = NStr ("en = 'Error of generating of Write Off document:
+			  |%Error';ro = 'Eroare de generare a documentului de casare:
+			  |%Error';ru = 'Ошибка при формировании документа-cписания:
+			  |%Error'" );
+	return Output.FormatStr ( s, Params );
+	
+EndFunction
 
 &AtServer
 Function IncomeTaxRetained ( Params = undefined ) export

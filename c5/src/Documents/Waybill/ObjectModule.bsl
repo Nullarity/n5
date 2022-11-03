@@ -38,6 +38,7 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	checkFuelHours ( CheckedAttributes );
 	checkFuelEquipment ( CheckedAttributes );
 	checkFuelOther ( CheckedAttributes );
+	checkAccount ( CheckedAttributes );
 
 EndProcedure
 
@@ -145,6 +146,14 @@ Procedure checkFuelOther ( CheckedAttributes )
 	
 	if ( OtherFuelExpense <> 0 ) then
 		CheckedAttributes.Add ( "FuelOther" );
+	endif; 
+	
+EndProcedure 
+
+Procedure checkAccount ( CheckedAttributes )
+	
+	if ( FuelInventory ) then
+		CheckedAttributes.Add ( "Account" );
 	endif; 
 	
 EndProcedure 

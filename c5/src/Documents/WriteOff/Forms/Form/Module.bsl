@@ -81,11 +81,10 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			baseType = TypeOf ( Base );
 			if ( baseType = Type ( "DocumentRef.Inventory" ) ) then
 				fillByInventory ();
-			elsif ( baseType = Type ( "DocumentRef.Waybill" ) ) then
-				fillByWaybill ();
 			elsif ( baseType = Type ( "DocumentRef.ShipmentStockman" ) ) then
 				fillByShipmentStockman ();
 			endif;
+			fillStakeholders ();
 			setCurrency ();
 		endif;
 		updateChangesPermission ();
@@ -280,93 +279,6 @@ Procedure itemsByInventory ()
 		raise Output.FillingDataNotFoundError ();
 	endif;
 	Object.Items.Load ( Env.Items );
-	
-EndProcedure
-
-&AtServer
-Procedure fillByWaybill ()
-	
-	setEnv ();
-	sqlFields ();
-	getFields ();
-	sqlWaybill ();
-	getTables ();
-	headerByWaybill ();
-	itemsByWaybill ();
-	
-EndProcedure
-
-&AtServer
-Procedure sqlFields ()
-	
-	s = "
-	|// @Fields
-	|select Document.Company as Company, Document.Car as Car,
-	|	Document.Car.Warehouse as Warehouse, dateadd ( Document.Date, second, 1 ) as InventoryDate
-	|from Document.Waybill as Document
-	|where Document.Ref = &Base
-	|";
-	Env.Selection.Add ( s );
-	
-EndProcedure
-
-&AtServer
-Procedure getFields ()
-	
-	SQL.Perform ( Env );
-	
-EndProcedure
-
-&AtServer
-Procedure sqlWaybill ()
-	
-	s = "
-	|// #Items
-	|select Items.Fuel as Item, Items.QuantityBalance as Quantity, 
-	|	Items.Fuel.Package as Package, isnull ( Items.Fuel.Package.Capacity, 1 ) as Capacity
-	|from AccumulationRegister.FuelToExpense.Balance(&InventoryDate, Car = &Car) as Items
-	|";
-	Env.Selection.Add ( s );
-	
-EndProcedure
-
-&AtServer
-Procedure getTables ()
-	
-	fields = Env.Fields;
-	q = Env.Q;
-	q.SetParameter ( "InventoryDate", fields.InventoryDate );
-	q.SetParameter ( "Car", fields.Car );
-	SQL.Perform ( Env );	
-	
-EndProcedure
-
-&AtServer
-Procedure headerByWaybill ()
-	
-	FillPropertyValues ( Object, Env.Fields );
-	Object.Base = Base;
-	Object.Currency = Application.Currency ();
-	
-EndProcedure 
-
-&AtServer
-Procedure itemsByWaybill ()
-	
-	if ( Env.Items.Count () = 0 ) then
-		raise Output.FillingDataNotFoundError ();
-	endif;
-	company = Object.Company;
-	warehouse = Object.Warehouse;
-	table = Object.Items;
-	for each row in Env.Items do
-		newRow = table.Add ();
-		FillPropertyValues ( newRow, row );
-		accounts = AccountsMap.Item ( newRow.Item, company, warehouse, "Account, VAT" );
-		newRow.Account = accounts.Account;
-		newRow.VATAccount = accounts.VAT;
-		Computations.Packages ( newRow );
-	enddo;
 	
 EndProcedure
 

@@ -129,6 +129,63 @@
   <registerRecords>AccumulationRegister.FuelToExpense</registerRecords>
   <registerRecords>AccumulationRegister.WaybillWorksByWorkTypes</registerRecords>
   <registerRecords>AccumulationRegister.FuelExcessTurnovers</registerRecords>
+  <attributes uuid="a0b2bb25-b0b3-49cb-93c4-abcea08e8c32">
+    <name>Account</name>
+    <synonym>
+      <key>en</key>
+      <value>Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Expense account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета затрат</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cont de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.CostOfGoodsSold</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.Expenses</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherExpenses</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="d30d2a0e-8b3a-4e27-a9df-f2ce7adce17d">
     <name>AdditionalEquipmentsWork</name>
     <synonym>
@@ -505,6 +562,143 @@
     <fillChecking>ShowError</fillChecking>
     <fillValue xsi:type="core:UndefinedValue"/>
     <indexing>IndexWithAdditionalOrder</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3e9cce2f-6f28-41bd-a5b2-583e1f360915">
+    <name>Dim1</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 1</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 1</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 1</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The first analytics of expense account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Первая аналитика счета списания</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Primele Analytics cont de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.Waybill.Attribute.Company</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>1</linkItem>
+      <field>Document.Waybill.Attribute.Account</field>
+    </linkByType>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="bcd13503-c94c-47b3-8ebc-de9d384ddc7a">
+    <name>Dim2</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 2</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 2</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 2</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The second analytics of expense account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вторая аналитика счета списания</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Al doilea Analytics cont de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.Waybill.Attribute.Dim1</field>
+    </choiceParameterLinks>
+    <choiceParameterLinks>
+      <name>Filter.Company</name>
+      <field>Document.Waybill.Attribute.Company</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>2</linkItem>
+      <field>Document.Waybill.Attribute.Account</field>
+    </linkByType>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="7aabde8d-b8c3-44c0-9a7a-d6464c227520">
+    <name>Dim3</name>
+    <synonym>
+      <key>en</key>
+      <value>Dimension 3</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Субконто 3</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dimensiune 3</value>
+    </synonym>
+    <type>
+      <types>Characteristic.Dimensions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The third analytics of expense account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Третья аналитика счета списания</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Al treilea Analytics cont de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Filter.Company</name>
+      <field>Document.Waybill.Attribute.Company</field>
+    </choiceParameterLinks>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.Waybill.Attribute.Dim2</field>
+    </choiceParameterLinks>
+    <linkByType>
+      <linkItem>3</linkItem>
+      <field>Document.Waybill.Attribute.Account</field>
+    </linkByType>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
@@ -1591,6 +1785,80 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f3016f67-71ec-4d50-8dd9-6fa2b8dae0c4">
+    <name>Product</name>
+    <synonym>
+      <key>en</key>
+      <value>Product</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Изделие</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Produs</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Items</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Product which collects expenses</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Изделие, на которое относятся затраты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Produsul care include cheltuielile</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="51c5f628-bb0e-4e3f-a939-c2f6f9f7a6ed">
+    <name>ProductFeature</name>
+    <synonym>
+      <key>en</key>
+      <value>Product Feature</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Характеристика изделия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Caracteristica produsului</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Features</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Product feature</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Характеристика изделия</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Caracteristica produsului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameterLinks>
+      <name>Item</name>
+      <field>Document.Waybill.Attribute.Product</field>
+    </choiceParameterLinks>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -2921,37 +3189,5 @@
     <picture xsi:type="core:PictureRef">
       <picture>StdPicture.Print</picture>
     </picture>
-  </commands>
-  <commands uuid="601362f2-5ed7-4cc5-946b-8388b56e04a5">
-    <name>WriteOff</name>
-    <synonym>
-      <key>en</key>
-      <value>Write Off</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Списание</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Casare</value>
-    </synonym>
-    <group>FormCommandBarCreateBasedOn</group>
-    <commandParameterType>
-      <types>DocumentRef.Waybill</types>
-    </commandParameterType>
-    <representation>Auto</representation>
-    <toolTip>
-      <key>en</key>
-      <value>Enter the document Write-off</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Ввести документ Списание ТМЗ</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Introduceți documentul Casarea </value>
-    </toolTip>
   </commands>
 </mdclass:Document>

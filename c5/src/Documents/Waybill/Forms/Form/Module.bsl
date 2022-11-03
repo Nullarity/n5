@@ -6,6 +6,8 @@ var At7h;
 var At19h;
 &AtServer
 var ViewWriteOff;
+&AtServer
+var AccountData;
 
 // *****************************************
 // *********** Form events
@@ -13,6 +15,8 @@ var ViewWriteOff;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
+	readAccount ();
+	labelDims ();
 	markVersoErrors ( ThisObject );
 	setCarType ();
 	setNormative ();
@@ -21,6 +25,25 @@ Procedure OnReadAtServer ( CurrentObject )
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
+
+&AtServer
+Procedure readAccount ()
+	
+	AccountData = GeneralAccounts.GetData ( Object.Account );
+	DimLevel = AccountData.Fields.Level;
+	
+EndProcedure 
+
+&AtServer
+Procedure labelDims ()
+	
+	i = 1;
+	for each dim in AccountData.Dims do
+		Items [ "Dim" + i ].Title = dim.Presentation;
+		i = i + 1;
+	enddo; 
+	
+EndProcedure 
 
 &AtServer
 Procedure updateChangesPermission ()
@@ -119,6 +142,10 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|FuelBalances enable Object.FuelInventory;
+	|Account Product ProductFeature show Object.FuelInventory;
+	|Dim1 show DimLevel > 0 and Object.FuelInventory;
+	|Dim2 show DimLevel > 1 and Object.FuelInventory;
+	|Dim3 show DimLevel > 2 and Object.FuelInventory;
 	|MileageTrailerI MileageTrailerII MileageTrailerWithoutI MileageTrailerWithoutII CoefficientTrailerI CoefficientTrailerII enable filled ( Object.Trailer );
 	|EquipmentWorkTime enable
 	|CarType <> Enum.CarTypes.Truck
@@ -139,7 +166,7 @@ Procedure readAppearance ()
 	|CoefficientConsumption enable CarType <> Enum.CarTypes.Truck;
 	|PageTrips show CarType = Enum.CarTypes.Truck and Object.CoefficientCar > 0.5;
 	|LoadFactors enable ( filled ( Object.Trailer ) or CarType = Enum.CarTypes.Truck );
-	|Links show ShowLinks
+	|Links show ShowLinks;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -521,7 +548,6 @@ Procedure sqlLinks ()
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
 		|from Document.WriteOff as Documents
 		|where Documents.Base = &Ref
-		|and Documents.Posted
 		|and not Documents.DeletionMark
 		|";
 		Env.Selection.Add ( s );
@@ -559,22 +585,25 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
-&AtClient
-Procedure BeforeWrite ( Cancel, WriteParameters )
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	Object.Verso.Sort ( "DateStart" );
-	calcWorkTime ();
-
+	adjustVerso ( CurrentObject );
+	if ( not Object.FuelInventory ) then
+		cleanAccount ( CurrentObject );
+	endif;
+	
 EndProcedure
 
-&AtClient
-Procedure calcWorkTime ()
+&AtServer
+Procedure adjustVerso ( CurrentObject )
 
-	Object.WorkTime = 0;
+	CurrentObject.Verso.Sort ( "DateStart" );
+	CurrentObject.WorkTime = 0;
 	lunchStart = 12 * 60 * 60 + 30 * 60;
 	lunchEnd = 13 * 60 * 60 + 30 * 60;
 	absenteeism = PredefinedValue ( "Enum.CarWorkTypes.Absenteeism" );
-	for each row in Object.Verso do
+	for each row in CurrentObject.Verso do
 		dateStart = BegOfMinute ( row.DateStart );
 		row.DateStart = dateStart;
 		dateEnd = BegOfMinute ( row.DateEnd );
@@ -589,11 +618,108 @@ Procedure calcWorkTime ()
 			row.WorkTime = row.WorkTime - Int ( ( workLunchEnd - workLunchStart ) / 60 );
 		endif; 
 		if ( row.Work <> absenteeism ) then
-			Object.WorkTime = Object.WorkTime + row.WorkTime;
+			CurrentObject.WorkTime = CurrentObject.WorkTime + row.WorkTime;
 		endif; 
 	enddo; 
+
+EndProcedure
+
+&AtServer
+Procedure cleanAccount ( CurrentObject )
 	
-EndProcedure 
+	CurrentObject.Account = undefined;
+	CurrentObject.Dim1 = undefined;
+	CurrentObject.Dim2 = undefined;
+	CurrentObject.Dim3 = undefined;
+	
+EndProcedure
+
+&AtServer
+Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
+	
+	withException = undefined;
+	if ( updateWriteOff ( WriteParameters, withException ) ) then
+		setLinks ();
+	endif;
+	if ( withException <> undefined ) then
+		raise withException;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Function updateWriteOff ( WriteParameters, Exception )
+	
+	if ( WriteParameters.WriteMode <> DocumentWriteMode.Posting
+		or Application.WaybillManualWriteOff () ) then
+		return false;
+	endif;
+	SetPrivilegedMode ( true );
+	obj = getWriteOff ();
+	if ( obj = undefined ) then
+		return false;
+	endif;
+	if ( obj.Posted ) then
+		try
+			obj.Write ( DocumentWriteMode.UndoPosting );
+		except
+			Exception = exceptionDescription ( ErrorInfo () );
+			return false;
+		endtry;
+	endif;
+	try
+		obj.Fill ( Object.Ref );
+	except
+		Exception = exceptionDescription ( ErrorInfo () );
+		return false;
+	endtry;
+	try
+		obj.Write ();
+	except
+		Exception = exceptionDescription ( ErrorInfo () );
+		return false;
+	endtry;
+	try
+		if ( obj.CheckFilling () ) then
+			obj.Write ( DocumentWriteMode.Posting );
+		else
+			raise Output.OperationError ();
+		endif;
+	except
+		Exception = exceptionDescription ( ErrorInfo () );
+		return false;
+	endtry;
+	return true;
+	
+EndFunction
+
+&AtServer
+Function getWriteOff ()
+	
+	q = new Query ( "
+	|select top 1 Documents.Ref as Ref
+	|from Document.WriteOff as Documents
+	|where Documents.Base = &Ref
+	|" );
+	q.SetParameter ( "Ref", Object.Ref );
+	table = q.Execute ().Unload ();
+	if ( table.Count () = 0 ) then
+		if ( Object.FuelInventory ) then
+			return Documents.WriteOff.CreateDocument ();
+		endif;
+	else
+		return table [ 0 ].Ref.GetObject ();
+	endif;
+
+EndFunction
+
+&AtServer
+Function exceptionDescription ( Error )
+	
+	error = ErrorProcessing.BriefErrorDescription ( Error );
+	return Output.WaybillWriteOffPostingError ( new Structure ( "Error", error ) );
+	
+EndFunction
 
 // *****************************************
 // *********** Form
@@ -804,6 +930,49 @@ Procedure FuelBalancesBeforeDeleteRow ( Item, Cancel )
 	
 	Cancel = true;
 	
+EndProcedure
+
+&AtClient
+Procedure AccountOnChange ( Item )
+	
+	applyAccount ();
+
+EndProcedure
+
+&AtServer
+Procedure applyAccount ()
+	
+	readAccount ();
+	adjustDims ( AccountData, Object );
+	labelDims ();
+	Appearance.Apply ( ThisObject, "DimLevel" );
+	      	
+EndProcedure 
+
+&AtServer
+Procedure adjustDims ( Data, Target )
+	
+	fields = Data.Fields;
+	dims = Data.Dims;
+	level = fields.Level;
+	if ( level = 0 ) then
+		Target.Dim1 = null;
+		Target.Dim2 = null;
+		Target.Dim3 = null;
+	elsif ( level = 1 ) then
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = null;
+		Target.Dim3 = null;
+	elsif ( level = 2 ) then
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
+		Target.Dim3 = null;
+	else
+		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
+		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
+		Target.Dim3 = dims [ 2 ].ValueType.AdjustValue ( Target.Dim3 );
+	endif; 
+
 EndProcedure
 
 // *****************************************

@@ -6,7 +6,8 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0O2" );
+id = Call ( "Common.ScenarioID", "A10U" );
+
 env = getEnv ( id );
 createEnv ( env );
 
@@ -28,7 +29,7 @@ Put ( "#OdometerEnd", 100 );
 Put ( "#MileageCity", 100 );
 
 Activate ( "#PageMore" );
-Put ( "#WaybillType", "!!!" );
+Put ( "#WaybillType", "11" );
 
 Click ( "#FormPost" );
 Close ( form );
@@ -50,6 +51,7 @@ Put ( "#OdometerEnd", 300 );
 Put ( "#MileageCity", 100 );
 
 Click ( "#FuelInventory" );
+Put ( "#Account", "7111" );
 table = Get ( "#FuelBalances" );
 GotoRow ( table, "Fuel", "Fuel: " + Env.ID );
 Put ( "#FuelBalancesQuantity", 30, table );
@@ -113,6 +115,7 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "Catalogs.Items.Create.Params" );
 	p.Description = Env.Fuel;
+	p.CreatePackage = false;
 	Call ( "Catalogs.Items.Create", p );
 	
 	// *************************

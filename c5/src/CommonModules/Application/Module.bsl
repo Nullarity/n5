@@ -75,3 +75,9 @@ Function ReceipsFolder () export
 	return Logins.Settings ( "ReceiptsFolder" ).ReceiptsFolder;
 
 EndFunction
+
+Function WaybillManualWriteOff () export
+	
+	return Constants.WaybillManualWriteOff.Get ();
+
+EndFunction
