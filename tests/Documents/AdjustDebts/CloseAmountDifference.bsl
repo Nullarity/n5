@@ -18,7 +18,7 @@ if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
 	With ();
 else
 	Commando ( "e1cib/command/Document.AdjustDebts.Create" );
-	Set ( "#Option", "Accounting (Dr)" );
+	Set ( "#Option", "Amount Difference (Dr)" );
 	Set ( "#Customer", this.Customer );
 	Click ( "#ApplyVAT" );
 	Click ( "#Reversal" );
