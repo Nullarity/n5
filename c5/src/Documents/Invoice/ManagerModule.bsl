@@ -141,8 +141,10 @@ Procedure sqlFields ( Env )
 		|		select top 1 true as Exists
 		|		from Document.Invoice.Discounts
 		|		where Ref = &Ref
-		|		and Detail = undefined
-		|		and Document refs Document.SalesOrder
+		|		and (
+		|			valuetype ( Document ) = type ( Document.Payment )
+		|			or valuetype ( Detail ) = type ( Document.Payment )
+		|		)
 		|	) as DiscountsBefore
 		|	on true
 		|	//
@@ -152,8 +154,10 @@ Procedure sqlFields ( Env )
 		|		select top 1 true as Exists
 		|		from Document.Invoice.Discounts
 		|		where Ref = &Ref
-		|		and ( Detail <> undefined
-		|			or not Document refs Document.SalesOrder )
+		|		and (
+		|			valuetype ( Document ) = type ( Document.Invoice )
+		|			or valuetype ( Detail ) = type ( Document.Invoice )
+		|		)
 		|	) as DiscountsAfter
 		|	on true
 		|";
@@ -927,24 +931,31 @@ Procedure makeDiscounts ( Env )
 	fields = Env.Fields;
 	date = fields.Date;
 	ref = Env.Ref;
+	discountDebts = Env.Registers.DiscountDebts;
 	discounts = Env.Registers.Discounts;
 	department = fields.Department;
 	customer = fields.Customer;
+	contract = fields.Contract;
 	sales = Env.Registers.Sales;
 	salesTable = Env.SalesTable;
 	for each row in Env.Discounts do
 		if ( row.ItemKey = null ) then
 			row.ItemKey = ItemDetails.GetKey ( Env, row.Item );
 		endif; 
+		movement = discountDebts.AddExpense ();
+		movement.Period = date;
+		movement.Contract = contract;
+		FillPropertyValues ( movement, row, "Document, Detail" );
+		amount = row.Total;
+		movement.Amount = amount;
 		movement = discounts.Add ();
 		movement.Period = date;
-		movement.Amount = row.Total;
+		movement.Amount = amount;
 		if ( row.BeforeDelivery ) then
 			movement.Document = ref;
 			movement.Detail = row.Document;
 		else
-			movement.Document = row.Document;
-			movement.Detail = row.Detail;
+			FillPropertyValues ( movement, row, "Document, Detail" );
 		endif;
 		movement = sales.Add ();
 		movement.Period = date;
@@ -1248,7 +1259,8 @@ Procedure sqlDiscounts ( Env )
 	|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
 	|	Discounts.VATCode as VATCode, Discounts.VATAccount as VATAccount, Discounts.Income as Income,
 	|	Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount,
-	|	Discounts.Detail = undefined and Discounts.Document refs Document.SalesOrder as BeforeDelivery,
+	|	valuetype ( Discounts.Document ) = type ( Document.Payment )
+	|		or valuetype ( Discounts.Detail ) = type ( Document.Payment ) as BeforeDelivery,
 	|	Discounts.Amount as Total, "
 	+ amount + " as Amount,"
 	+ vat + " as VAT"

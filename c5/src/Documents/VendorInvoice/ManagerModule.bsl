@@ -158,8 +158,10 @@ Procedure sqlFields ( Env )
 	|		select top 1 true as Exists
 	|		from Document.VendorInvoice.Discounts
 	|		where Ref = &Ref
-	|		and Detail = undefined
-	|		and Document refs Document.PurchaseOrder
+	|		and (
+	|			valuetype ( Document ) = type ( Document.VendorPayment )
+	|			or valuetype ( Detail ) = type ( Document.VendorPayment )
+	|		)
 	|	) as DiscountsBefore
 	|	on true
 	|	//
@@ -169,8 +171,10 @@ Procedure sqlFields ( Env )
 	|		select top 1 true as Exists
 	|		from Document.VendorInvoice.Discounts
 	|		where Ref = &Ref
-	|		and ( Detail <> undefined
-	|			or not Document refs Document.PurchaseOrder )
+	|		and (
+	|			valuetype ( Document ) = type ( Document.VendorInvoice )
+	|			or valuetype ( Detail ) = type ( Document.VendorInvoice )
+	|		)
 	|	) as DiscountsAfter
 	|	on true
 	|	//
@@ -423,7 +427,8 @@ Procedure sqlDiscounts ( Env )
 	|select Discounts.LineNumber as LineNumber, Document as Document, Discounts.Detail as Detail, Discounts.Item as Item,
 	|	Discounts.VATCode as VATCode, Discounts.VATAccount as VATAccount, Discounts.Income as Income,
 	|	Details.ItemKey as ItemKey, Discounts.VAT as ContractVAT, Discounts.Amount - Discounts.VAT as ContractAmount,
-	|	Discounts.Detail = undefined and Discounts.Document refs Document.PurchaseOrder as BeforeDelivery,
+	|	valuetype ( Discounts.Document ) = type ( Document.VendorPayment )
+	|		or valuetype ( Discounts.Detail ) = type ( Document.VendorPayment ) as BeforeDelivery,
 	|	Discounts.Amount as Total, "
 	+ amount + " as Amount,"
 	+ vat + " as VAT"
@@ -1710,32 +1715,6 @@ Procedure writeDistribution ( Env )
 	
 EndProcedure 
 
-Procedure flagRegisters ( Env )
-	
-	registers = Env.Registers;
-	registers.General.Write = true;
-	registers.Expenses.Write = true;
-	registers.Items.Write = true;
-	registers.Cost.Write = true;
-	registers.Reserves.Write = true;
-	registers.VendorDebts.Write = true;
-	registers.Provision.Write = true;
-	registers.VendorServices.Write = true;
-	registers.ItemExpenses.Write = true;
-	registers.Amortization.Write = true;
-	registers.Depreciation.Write = true;
-	registers.FixedAssetsLocation.Write = true;
-	registers.IntangibleAssetsLocation.Write = true;
-	registers.ProducerPrices.Write = true;
-	registers.RangeLocations.Write = true;
-	registers.RangeStatuses.Write = true;
-	registers.VendorDiscounts.Write = true;
-	registers.Sales.Write = true;
-	registers.Commissioning.Write = true;
-	registers.IntangibleAssetsCommissioning.Write = true;
-	
-EndProcedure
-
 Procedure sqlDelivery ( Env )
 	
 	s = "
@@ -1848,32 +1827,40 @@ Procedure makeDiscounts ( Env )
 	ref = Env.Ref;
 	department = fields.Department;
 	vendor = fields.Vendor;
+	contract = fields.Contract;
+	discountDebts = Env.Registers.VendorDiscountDebts;
 	discounts = Env.Registers.VendorDiscounts;
 	sales = Env.Registers.Sales;
 	for each row in Env.Discounts do
 		if ( row.ItemKey = null ) then
 			row.ItemKey = ItemDetails.GetKey ( Env, row.Item );
 		endif;
+		movement = discountDebts.AddExpense ();
+		movement.Period = date;
+		movement.Contract = contract;
+		FillPropertyValues ( movement, row, "Document, Detail" );
+		amount = row.Total;
+		movement.Amount = amount;
 		movement = discounts.Add ();
 		movement.Period = date;
-		movement.Amount = row.Total;
+		movement.Amount = amount;
 		if ( row.BeforeDelivery ) then
 			movement.Document = ref;
 			movement.Detail = row.Document;
 		else
-			movement.Document = row.Document;
-			movement.Detail = row.Detail;
+			FillPropertyValues ( movement, Row, "Document, Detail" );
 			movement = sales.Add ();
 			movement.Period = date;
 			movement.Customer = vendor;
 			movement.ItemKey = row.ItemKey;
 			movement.Department = department;
 			movement.Account = row.Income;
-			movement.Amount = row.Amount;
+			amount = row.Amount;
+			movement.Amount = amount;
 			movement.VAT = row.VAT;
 			rowSales = salesTable ( Env ).Add ();
 			rowSales.Income = row.Income;
-			rowSales.Amount = row.Amount;
+			rowSales.Amount = amount;
 			rowSales.ContractAmount = row.ContractAmount;
 		endif;
 	enddo;
@@ -1973,6 +1960,33 @@ Procedure makeProducerPrices ( Env )
 		movement.Price = row.Price;
 	enddo;
 
+EndProcedure
+
+Procedure flagRegisters ( Env )
+	
+	registers = Env.Registers;
+	registers.General.Write = true;
+	registers.Expenses.Write = true;
+	registers.Items.Write = true;
+	registers.Cost.Write = true;
+	registers.Reserves.Write = true;
+	registers.VendorDebts.Write = true;
+	registers.Provision.Write = true;
+	registers.VendorServices.Write = true;
+	registers.ItemExpenses.Write = true;
+	registers.Amortization.Write = true;
+	registers.Depreciation.Write = true;
+	registers.FixedAssetsLocation.Write = true;
+	registers.IntangibleAssetsLocation.Write = true;
+	registers.ProducerPrices.Write = true;
+	registers.RangeLocations.Write = true;
+	registers.RangeStatuses.Write = true;
+	registers.VendorDiscounts.Write = true;
+	registers.VendorDiscountDebts.Write = true;
+	registers.Sales.Write = true;
+	registers.Commissioning.Write = true;
+	registers.IntangibleAssetsCommissioning.Write = true;
+	
 EndProcedure
 
 #endregion

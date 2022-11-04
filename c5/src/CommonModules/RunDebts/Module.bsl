@@ -77,8 +77,21 @@ Procedure setContext ( Env )
 		Env.Insert ( "AppliedAdvance", Enums.Operations.AdvanceGivenApplied );
 	endif;
 	Env.Insert ( "NewPaymentDate", Env.Fields.PaymentDate <> Date ( 3999, 12, 31 ) );
+	Env.Insert ( "PaymentsTable", paymentsTable () );
 	
 EndProcedure
+
+Function paymentsTable ()
+	
+	table = new ValueTable ();
+	columns = table.Columns;
+	columns.Add ( "Payment" );
+	columns.Add ( "Amount", new TypeDescription ( "Number" ) );
+	columns.Add ( "Rate", new TypeDescription ( "Number" ) );
+	columns.Add ( "Factor", new TypeDescription ( "Number" ) );
+	return table;
+
+EndFunction
 
 Procedure clearRecords ( Env )
 	
@@ -102,11 +115,30 @@ Procedure closeOverpayments ( Env )
 	if ( table.Count () = 0 ) then
 		return;
 	endif;
+	decreaseOverpayments ( Env, table );
+	if ( not Env.Fields.AdvancesMonthly ) then
+		commitOverpayment ( Env );
+	endif;
+	
+EndProcedure
+
+Function closeResource ( Env, Table )
+	
+	p = new Structure ();
+	if ( not Env.Return ) then
+		p.Insert ( "OptionalFilterColumns", "Document" );
+	endif;
+	p.Insert ( "KeyColumn", "Amount" );
+	p.Insert ( "DecreasingColumns2", "Amount, AmountAccounting" );
+	result = CollectionsSrv.Decrease ( Table, Env.Documents, p );
+	return result;
+	
+EndFunction
+
+Procedure decreaseOverpayments ( Env, Table )
+	
 	fields = Env.Fields;
 	commitAdvances = not fields.AdvancesMonthly;
-	if ( commitAdvances ) then
-		payments = paymentsTable ();
-	endif;
 	date = fields.Date;
 	contract = fields.Contract;
 	recordset = Env.Registers [ Env.PaymentsRegister ];
@@ -125,39 +157,11 @@ Procedure closeOverpayments ( Env )
 		movement.Overpayment = row.Amount;
 		movement.Advance = row.AmountAccounting;
 		if ( commitAdvances ) then
-			registerOverpayment ( payments, movement, row );
+			registerOverpayment ( Env.PaymentsTable, movement, row );
 		endif;
 	enddo; 
-	if ( commitAdvances ) then
-		commitOverpayment ( Env, payments );
-	endif;
 	
 EndProcedure
-
-Function closeResource ( Env, Table )
-	
-	p = new Structure ();
-	if ( not Env.Return ) then
-		p.Insert ( "OptionalFilterColumns", "Document" );
-	endif;
-	p.Insert ( "KeyColumn", "Amount" );
-	p.Insert ( "DecreasingColumns2", "Amount, AmountAccounting" );
-	result = CollectionsSrv.Decrease ( Table, Env.Documents, p );
-	return result;
-	
-EndFunction
-
-Function paymentsTable ()
-	
-	table = new ValueTable ();
-	columns = table.Columns;
-	columns.Add ( "Payment" );
-	columns.Add ( "Amount", new TypeDescription ( "Number" ) );
-	columns.Add ( "Rate", new TypeDescription ( "Number" ) );
-	columns.Add ( "Factor", new TypeDescription ( "Number" ) );
-	return table;
-
-EndFunction
 
 Procedure closeDebts ( Env )
 	
@@ -196,8 +200,14 @@ Function closeDiscounts ( Env )
 	p.Insert ( "FilterColumns", "Document, Detail" );
 	p.Insert ( "KeyColumn", "Amount" );
 	p.Insert ( "DecreasingColumns2", "Amount, AmountAccounting" );
-	table = CollectionsSrv.Decrease ( Env.Debts, Env.DiscountsTable, p );
-	if ( Env.DiscountsTable.Count () > 0 ) then
+	discounts = Env.DiscountsTable;
+	table = CollectionsSrv.Decrease ( Env.Debts, discounts, p );
+	decreaseDebts ( Env, table );
+	if ( discounts.Count () > 0 ) then
+		table = CollectionsSrv.Decrease ( Env.Overpayments, discounts, p );
+		decreaseOverpayments ( Env, table );
+	endif;
+	if ( discounts.Count () > 0 ) then
 		ref = Env.Ref;
 		currency = Env.Fields.ContractCurrency;
 		for each error in Env.DiscountsTable do
@@ -206,7 +216,6 @@ Function closeDiscounts ( Env )
 		enddo;
 		return false;
 	endif;
-	decreaseDebts ( Env, table );
 	return true;
 	
 EndFunction
@@ -337,7 +346,7 @@ Procedure registerOverpayment ( Payments, Record, Row )
 	
 EndPRocedure
 
-Procedure commitOverpayment ( Env, Payments )
+Procedure commitOverpayment ( Env )
 	
 	p = GeneralRecords.GetParams ();
 	p.Recordset = Env.Registers.General;
@@ -382,9 +391,10 @@ Procedure commitOverpayment ( Env, Payments )
 	rate = fields.Rate;
 	factor = fields.factor;
 	exchangeRate = rate / factor;
-	Payments.GroupBy ( "Payment, Rate, Factor", "Amount" );
+	payments = Env.PaymentsTable;
+	payments.GroupBy ( "Payment, Rate, Factor", "Amount" );
 	reverseVAT = Env.ReverseVAT;
-	for each row in Payments do
+	for each row in payments do
 		payment = row.Payment;
 		data = paymentInfo ( Env, payment );
 		if ( debtor ) then
@@ -528,7 +538,7 @@ Procedure sqlDocuments ( Env )
 		if ( fields.DiscountsBeforeDelivery ) then
 			s = s + "
 			|union all
-			|select Discounts.Document, - Discounts.Total, Discounts.Amount + Discounts.VAT
+			|select Discounts.Document, - Discounts.Total, - ( Discounts.Amount + Discounts.VAT )
 			|from Discounts as Discounts
 			|where BeforeDelivery
 			|";
@@ -577,9 +587,9 @@ Procedure sqlDocuments ( Env )
 		if ( fields.DiscountsBeforeDelivery ) then
 			s = s + "
 			|union all
-			|select Discounts.Document, - Discounts.Total, Discounts.Amount + Discounts.VAT
+			|select Discounts.Document, - Discounts.Total, - ( Discounts.Amount + Discounts.VAT )
 			|from Discounts as Discounts
-			|where BeforeDelivery
+			|where Discounts.BeforeDelivery
 			|";
 		endif;
 		s = s + "
@@ -599,7 +609,7 @@ Procedure sqlDocuments ( Env )
 			|select Discounts.LineNumber as LineNumber, Discounts.Document as Document, Discounts.Detail as Detail,
 			|	Discounts.Total as Amount, Discounts.Amount + Discounts.VAT as AmountAccounting
 			|from Discounts as Discounts
-			|where not BeforeDelivery
+			|where not Discounts.BeforeDelivery
 			|";
 		endif;
 	elsif ( type = Type ( "DocumentRef.Return" ) ) then
