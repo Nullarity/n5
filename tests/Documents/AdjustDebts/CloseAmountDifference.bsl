@@ -1,11 +1,11 @@
-// Will sell services for 2000 lei (100$ x 20), then accept the payment 1900 ley (100$ x 19).
+﻿// Will sell services for 2000 lei (100$ x 20), then accept the payment 1900 ley (100$ x 19).
 // Will accept prepayment 2000 lei (100$ x 20), then sell services for 1960 lei (100$ x 19.6).
 // Finally, will adjust our 100 lei debt and his 40 lei debt.
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A107" );
+id = Call ( "Common.ScenarioID", "A11Q" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
