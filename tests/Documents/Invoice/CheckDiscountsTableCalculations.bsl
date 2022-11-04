@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A02U" );
+id = Call ( "Common.ScenarioID", "A11C" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -115,6 +115,7 @@ Procedure createEnv ()
 	With ();
 	Click ( "#FormDocumentPaymentCreateBasedOn" );
 	With ();
+	Set("#Amount", 392 );
 	Set("#Account", "2421" );
 	Click ( "!FormPostAndClose" );
 	#endregion

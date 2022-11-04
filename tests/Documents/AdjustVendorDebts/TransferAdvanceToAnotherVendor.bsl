@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0Z0" );
+id = Call ( "Common.ScenarioID", "B0Z0" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -29,7 +29,6 @@ except
 	Set ( "#Amount", 100 );
 	AccountingReceiver = Get ( "#AccountingReceiver" );
 	Click ( "#AccountingReceiverAdd" );
-	Set ( "#AccountingReceiverItem", this.Advance, AccountingReceiver );
 	Set ( "#AccountingReceiverAmount", 100, AccountingReceiver );
 endtry;
 Click ( "#FormPost" );

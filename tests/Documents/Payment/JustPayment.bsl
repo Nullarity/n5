@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0W3" );
+id = Call ( "Common.ScenarioID", "B0W4" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -15,7 +15,7 @@ Commando ( "e1cib/data/Document.Payment" );
 With ( "Customer Payment (cre*" );
 Set ( "#Customer", env.Customer );
 Set ( "#Amount", "100" );
-Put ( "#AdvanceAccount", "11000" );
+Put ( "#AdvanceAccount", "5232" );
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
 With ( "Records: *" );

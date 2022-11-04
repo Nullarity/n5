@@ -7,7 +7,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0YX" );
+id = Call ( "Common.ScenarioID", "B0YX" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -35,7 +35,6 @@ except
 	Put ( "#Amount", 400 );
 	AccountingReceiver = Get ( "#AccountingReceiver" );
 	Click ( "#AccountingReceiverAdd" );
-	Set ( "#AccountingReceiverItem", env.Service, AccountingReceiver );
 	Set ( "#AccountingReceiverAmount", 400, AccountingReceiver );
 endtry;
 

@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0YQ" );
+id = Call ( "Common.ScenarioID", "A10X" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -24,6 +24,7 @@ else
 	Set ( "#Amount", 2000 );
 	Set ( "#Receiver", this.Customer2 );
 	Put ( "#ReceiverAccount", "2212" );
+	Put ( "#ReceiverContractRate", 21.1879 );
 	Put ( "#Memo", id );
 endif;
 

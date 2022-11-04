@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0O9" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A11N" ) );
 getEnv ();                                            
 createEnv ();
 
@@ -42,6 +42,7 @@ Click ( "!Links[1]" );
 With ( "Sales Order *" );
 Click ( "!FormPayment" );
 With ();
+Set ( "#Amount", 9.31 );
 Click ( "!FormPostAndClose" );
 #endregion
 

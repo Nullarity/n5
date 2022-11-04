@@ -11,8 +11,8 @@ form = With ( "Commissioning (cr*" );
 table = Activate ( "#Items" );
 Close ( "Fixed Asset" );
 
-Set ( "#Warehouse", env.Warehouse );
-Set ( "#Department", env.Department );
+Put ( "#Warehouse", env.Warehouse );
+Put ( "#Department", env.Department );
 Put ( "#Employee", env.Responsible );
 
 Click ( "#ItemsAdd" );
@@ -37,7 +37,7 @@ IgnoreErrors = false;
 
 Function getEnv ()
 
-	id = Call ( "Common.ScenarioID", "A0PS" );
+	id = Call ( "Common.ScenarioID", "B111" );
 	env = new Structure ();
 	env.Insert ( "ID", id );
 	env.Insert ( "Warehouse", "Main" );

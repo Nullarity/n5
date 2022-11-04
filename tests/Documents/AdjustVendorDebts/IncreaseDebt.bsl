@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A10C" );
+id = Call ( "Common.ScenarioID", "B10C" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -16,7 +16,7 @@ if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
 	With ();
 else
 	Commando ( "e1cib/command/Document.AdjustVendorDebts.Create" );
-	Set ( "#Vendor", this.Vendor );
+	Put ( "#Vendor", this.Vendor );
 	Click ( "#ApplyVAT" );
 	Pick ( "#Option", "Custom Account (Dr)" );
 	Set ( "#Account", "6111" );
@@ -28,7 +28,7 @@ else
 	Click ( "#Button0" );
 	With ();
 	Click ( "#MarkAll" );
-	Set ( "#AdjustmentsItem", this.Discounts );
+	Set ( "#AdjustmentsItem", this.Discounts, Get("#Adjustments") );
 	Click ( "#AccountingAdd" );
 	Accounting = Get ( "#Accounting" );
 	Accounting.EndEditRow ();

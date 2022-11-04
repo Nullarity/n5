@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0RD" );
+id = Call ( "Common.ScenarioID", "B0RG" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -118,6 +118,7 @@ Procedure createEnv ()
 	With ();
 	Set("#Location", this.Location);
 	Set("#Method", "Cash");
+	Set("#Amount", 50);
 	Click("#FormPostAndClose");
 	#endregion
 

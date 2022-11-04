@@ -5,7 +5,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A0F2" );
+id = Call ( "Common.ScenarioID", "A11K" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -27,6 +27,7 @@ Click("#FormPost");
 Click("#CreatePayment");
 With();
 Set("#Account", "2421");
+Set("#Amount", 150);
 Click("#FormPostAndClose");
 
 // Check if Invoice shows link to the Payment
