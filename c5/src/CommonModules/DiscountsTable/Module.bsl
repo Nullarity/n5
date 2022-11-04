@@ -84,7 +84,13 @@ EndFunction
 &AtServer
 Function getBase ( Row )
 	
-	base = ? ( Row.Detail = undefined, Row.Document, Row.Detail );
+	type = TypeOf ( Row.Detail );
+	if ( type = Type ( "DocumentRef.Invoice" )
+		or type = Type ( "DocumentRef.VendorInvoice" ) ) then
+		base = Row.Detail;
+	else
+		base = Row.Document;
+	endif;
 	name = base.Metadata ().FullName ();
 	s = "
 	|select Items.VATCode as VATCode, Items.VATCode.Rate as VATRate, sum ( Items.Total ) as Total
