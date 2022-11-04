@@ -64,25 +64,33 @@ Procedure ApplyAccount ( Form ) export
 	account = object.Account;
 	type = DF.Pick ( account, "Type" );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.VendorDebts" ) ) then
+		data = AccountsMap.Organization ( Catalogs.Organizations.EmptyRef (), object.Company,
+			"VendorAccount, AdvanceGiven" );
 		advances = ( type = AccountType.Active );
 		object.Advances = advances;
 		if ( advances ) then
 			object.AdvanceAccount = account;
+			object.VendorAccount = data.VendorAccount;
 		else
 			object.VendorAccount = account;
+			object.AdvanceAccount = data.AdvanceGiven;
 		endif;
 	else
+		data = AccountsMap.Organization ( Catalogs.Organizations.EmptyRef (), object.Company,
+			"CustomerAccount, AdvanceTaken" );
 		advances = ( type = AccountType.Passive );
 		object.Advances = advances;
 		if ( advances ) then
 			PaymentForm.SetVATAdvance ( object );
 			object.VATAdvance = Constants.ItemsVAT.Get ();
 			object.AdvanceAccount = account;
+			object.CustomerAccount = data.CustomerAccount;
 		else
 			object.VATAccount = undefined;
 			object.ReceivablesVATAccount = undefined;
 			object.VATAdvance = undefined;
 			object.CustomerAccount = account;
+			object.AdvanceAccount = data.AdvanceTaken;
 		endif;
 	endif;
 	Appearance.Apply ( Form, "Object.Advances" );
