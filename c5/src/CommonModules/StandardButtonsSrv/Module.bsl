@@ -20,7 +20,10 @@ Procedure fillValues ( Values, Items )
 		if ( type = filterType
 			and item.Use 
 			and item.ComparisonType = DataCompositionComparisonType.Equal ) then
-			Values.Insert ( String ( item.LeftValue ), item.RightValue );
+			try
+				Values.Insert ( String ( item.LeftValue ), item.RightValue );
+			except
+			endtry;
 		elsif ( type = groupType
 			 and item.User ) then
 		    fillValues ( Values, item );
