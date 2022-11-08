@@ -69,7 +69,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 				or debtDetails ) then
 				if ( balanceSheet ) then
 					DC.AddFilter ( Composer, "Dim1", filter.Item.Value, , true );
-					DC.SetParameter ( Composer, "ShowDimensions", 1 );
+					DC.SetParameter ( Composer, "ShowDimensions", Enums.Dimensions._1 );
 				elsif ( analyticTransactions ) then
 					DC.SetParameter ( Composer, "DimType1", ChartsOfCharacteristicTypes.Dimensions.Organizations );
 					DC.SetParameter ( Composer, "Dim1", filter.Item.Value );
@@ -80,7 +80,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 				or debtDetails ) then
 				if ( balanceSheet ) then
 					DC.AddFilter ( Composer, "Dim2", filter.Item.Value, , true );
-					DC.SetParameter ( Composer, "ShowDimensions", 2 );
+					DC.SetParameter ( Composer, "ShowDimensions", Enums.Dimensions._2 );
 				elsif ( analyticTransactions ) then
 					DC.SetParameter ( Composer, "DimType2", ChartsOfCharacteristicTypes.Dimensions.Contracts );
 					DC.SetParameter ( Composer, "Dim2", filter.Item.Value );
