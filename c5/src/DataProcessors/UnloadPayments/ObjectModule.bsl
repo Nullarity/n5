@@ -2,6 +2,7 @@
 
 var Env;
 var BankingProgram;
+var BankingApplication;
 var PaymentOrder;
 var JobKey;
 var ProcessingError;
@@ -50,6 +51,7 @@ Procedure init(Params)
 	Files = new Array();
 	SQL.Init(Env);
 	PaymentOrder = Documents.PaymentOrder;
+	BankingApplication = Params.BankingApp;
 	BankingProgram = DF.Pick ( Params.BankingApp, "Application" );
 	JobKey = Params.JobKey;
 	FileAddresses = new Array();
@@ -71,7 +73,9 @@ EndProcedure
 Procedure getRows(Orders)
 	
 	SQL.Init(Env);
-	Env.Q.SetParameter("Orders", Orders);
+	q = Env.Q;
+	q.SetParameter("BankingApplication", BankingApplication);
+	q.SetParameter("Orders", Orders);
 	sqlRows();
 	SQL.Perform(Env);
 	
@@ -108,6 +112,7 @@ Procedure sqlRows()
 	|	select distinct Base
 	|	from Document.PaymentOrder
 	|	where Ref in ( &Orders )
+	|	and Ref.RecipientBankAccount.Bank.Application = &BankingApplication
 	|)
 	|and Totals.Net > 0
 	|";
