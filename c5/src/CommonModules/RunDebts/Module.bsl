@@ -306,7 +306,7 @@ Procedure addDebt ( Env )
 		movement.Contract = Env.Fields.Contract;
 		amount = reverse * row.Amount;
 		movement.Amount = amount;
-		movement.Accounting = row.AmountAccounting;
+		movement.Accounting = reverse * row.AmountAccounting;
 		movement.Payment = amount;
 		document = row.Document;
 		details = ValueIsFilled ( document );
