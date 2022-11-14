@@ -2233,7 +2233,7 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 					<dcsset:selection>
 						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:field>AmountDebt</dcsset:field>
 							<dcsset:lwsTitle>
 								<v8:item>
 									<v8:lang>en</v8:lang>
@@ -2286,7 +2286,7 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 					<dcsset:selection>
 						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:field>AmountDebt</dcsset:field>
 							<dcsset:lwsTitle>
 								<v8:item>
 									<v8:lang>en</v8:lang>
@@ -2329,7 +2329,7 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							<dcsset:item xsi:type="dcsset:SelectedItemField">
-								<dcsset:field>PaymentBalance</dcsset:field>
+								<dcsset:field>AmountDebt</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
 										<v8:lang>en</v8:lang>
@@ -2383,7 +2383,7 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 					<dcsset:selection>
 						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						<dcsset:item xsi:type="dcsset:SelectedItemField">
-							<dcsset:field>PaymentBalance</dcsset:field>
+							<dcsset:field>AmountDebt</dcsset:field>
 							<dcsset:lwsTitle>
 								<v8:item>
 									<v8:lang>en</v8:lang>
@@ -2426,7 +2426,7 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							<dcsset:item xsi:type="dcsset:SelectedItemField">
-								<dcsset:field>PaymentBalance</dcsset:field>
+								<dcsset:field>AmountDebt</dcsset:field>
 								<dcsset:lwsTitle>
 									<v8:item>
 										<v8:lang>en</v8:lang>
@@ -2808,6 +2808,11 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcsset:comparisonType>Equal</dcsset:comparisonType>
 							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
 						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>Greater</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+						</dcsset:item>
 					</dcsset:filter>
 					<dcsset:order>
 						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
@@ -2949,6 +2954,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 						</dcsset:order>
@@ -3377,6 +3389,11 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcsset:left xsi:type="dcscor:Field">CurrentDebt</dcsset:left>
 							<dcsset:comparisonType>Equal</dcsset:comparisonType>
 							<dcsset:right xsi:type="xs:boolean">false</dcsset:right>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">BalanceDays</dcsset:left>
+							<dcsset:comparisonType>Greater</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
 						</dcsset:item>
 					</dcsset:filter>
 					<dcsset:order>

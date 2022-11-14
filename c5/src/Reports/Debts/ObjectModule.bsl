@@ -53,7 +53,7 @@ Procedure filterPaymentPeriods ()
 		DC.DeleteFilter ( group, "PaymentBalance" );
 		DC.AddFilter ( group, "PaymentDate", dateStart, DataCompositionComparisonType.GreaterOrEqual );
 		DC.AddFilter ( group, "PaymentDate", dateEnd, DataCompositionComparisonType.LessOrEqual );
-		DC.SetFilter ( group, "PaymentBalance", 0, DataCompositionComparisonType.Greater );
+		DC.SetFilter ( group, "PaymentBalance", 0, DataCompositionComparisonType.NotEqual );
 	endif; 
 	
 EndProcedure
