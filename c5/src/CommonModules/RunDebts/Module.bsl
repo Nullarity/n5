@@ -9,6 +9,7 @@ Function FromInvoice ( Env ) export
 	PaymentDetails.Init ( Env );
 	lockPayments ( Env );
 	getPayments ( Env );
+	adjustTables ( Env );
 	if ( Env.Return ) then
 		closeDebts ( Env );
 	elsif ( Env.DiscountsAfterDelivery ) then
@@ -515,6 +516,19 @@ Procedure getPayments ( Env )
 	q.SetParameter ( "Contract", fields.Contract );
 	q.SetParameter ( "Return", ? ( Env.Return, -1, 1 ) );
 	SQL.Perform ( Env );
+	
+EndProcedure
+
+Procedure adjustTables ( Env )
+	
+	table = Env.Documents;
+	amountType = Metadata.AccountingRegisters.General.Resources.Amount.Type;
+	CollectionsSrv.Adjust ( table, "Amount", amountType );
+	CollectionsSrv.Adjust ( table, "AmountAccounting", amountType );
+	if ( Env.Property ( "DiscountsTable", table ) ) then	
+		CollectionsSrv.Adjust ( table, "Amount", amountType );
+		CollectionsSrv.Adjust ( table, "AmountAccounting", amountType );
+	endif;
 	
 EndProcedure
 

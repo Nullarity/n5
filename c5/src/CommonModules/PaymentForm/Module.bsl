@@ -446,7 +446,7 @@ Procedure loadContract ( Object )
 	if ( Object.CashFlow.IsEmpty () ) then
 		Object.CashFlow = data.CashFlow;
 	endif;
-	currency = contractCurrency ( Object, data );
+	currency = CurrenciesSrv.Get ( Object.ContractCurrency, Object.Date );
 	Object.ContractRate = currency.Rate;
 	Object.ContractFactor = currency.Factor;
 	
@@ -479,21 +479,6 @@ Function contractData ( Object )
 		fields.Add ( "CustomerVATAdvance as VATAdvance" );
 	endif;
 	return DF.Values ( Object.Contract, fields );
-	
-EndFunction
-
-&AtServer
-Function contractCurrency ( Object, Fields )
-	
-	result = undefined;
-	if ( Fields.ContractRateType = Enums.CurrencyRates.Fixed ) then
-		if ( ValueIsFilled ( Object.Base ) ) then
-			result = DF.Values ( Object.Base, "Rate, Factor" );
-		elsif ( Fields.ContractRate <> 0 ) then
-			result = new Structure ( "Rate, Factor", Fields.ContractRate, Fields.ContractFactor )
-		endif;
-	endif;
-	return ? ( result = undefined, CurrenciesSrv.Get ( Object.ContractCurrency, Object.Date ), result );
 	
 EndFunction
 
