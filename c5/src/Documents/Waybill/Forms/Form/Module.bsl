@@ -335,8 +335,8 @@ Procedure sqlFuel ()
 	
 	s = "
 	|// @Fuel
-	|select Cars.CarType.FuelMain as FuelMain, Cars.CarType.FuelHours as FuelHours, Cars.CarType.FuelEquipment as FuelEquipment,
-	|	Cars.CarType.FuelOther as FuelOther
+	|select Cars.CarType.FuelMain as FuelMain, Cars.CarType.FuelHours as FuelHours,
+	|	Cars.CarType.FuelEquipment as FuelEquipment, Cars.CarType.FuelOther as FuelOther
 	|from Catalog.Cars as Cars
 	|where Cars.Ref = &Car
 	|";
@@ -651,6 +651,7 @@ EndProcedure
 Function updateWriteOff ( WriteParameters, Exception )
 	
 	if ( WriteParameters.WriteMode <> DocumentWriteMode.Posting
+		or not Object.FuelInventory
 		or Application.WaybillManualWriteOff () ) then
 		return false;
 	endif;
