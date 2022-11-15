@@ -78,13 +78,15 @@ Function Decrease ( Table1, Table2, Parameters ) export
 	roundColumns2 = new Structure;
 	if ( Parameters.Property ( "DecreasingColumns2" ) ) then
 		for each column in Conversion.StringToArray ( Parameters.DecreasingColumns2 ) do
-			if ( resultTable.Columns.Find ( column ) = undefined ) then
-				resultTable.Columns.Add ( column );
-			endif;
 			decreasingColumns2.Insert ( column );
-			if ( Table2.Columns.Find ( column + "Accuracy" ) <> undefined ) then
+			accuracyDefined = Table2.Columns.Find ( column + "Accuracy" ) <> undefined;
+			if ( accuracyDefined ) then
 				roundColumns2.Insert ( column, column + "Accuracy" );
 			endif; 
+			if ( resultTable.Columns.Find ( column ) = undefined ) then
+				resultTable.Columns.Add ( column, ? ( accuracyDefined, undefined,
+					Table2.Columns [ column ].ValueType ) );
+			endif;
 		enddo; 
 	endif; 
 	// Define filter columns
