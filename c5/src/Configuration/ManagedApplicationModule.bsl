@@ -283,23 +283,10 @@ Function SessionDate ( Date = undefined ) export
 	
 EndFunction 
 
-Procedure DemoSessionWarning1 () export
-	
-	showWarning ( 1 );
-	
-EndProcedure
-
-Procedure showWarning ( Stage )
+Procedure DemoSessionWarning () export
 	
 	//@skip-warning
-	OpenForm ( "CommonForm.DemoVersion", new Structure ( "Stage", Stage ), , , , ,
-		new NotifyDescription ( "DemoSessionExpired", Starting, Stage ) );
-
-EndProcedure
-
-Procedure DemoSessionWarning2 () export
-	
-	showWarning ( 2 );
+	OpenForm ( "CommonForm.DemoVersion" );
 	
 EndProcedure
 

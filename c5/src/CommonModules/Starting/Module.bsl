@@ -299,17 +299,7 @@ EndProcedure
 Procedure runDemo ()
 	
 	Output.SystemInDemoMode ();
-	AttachIdleHandler ( "DemoSessionWarning1", 3300, true );
-	
-EndProcedure
-
-Procedure DemoSessionExpired ( Result, Stage ) export
-	
-	if ( Stage = 1 ) then
-		AttachIdleHandler ( "DemoSessionWarning2", 300, true );
-	else
-		Terminate ();
-	endif;
+	AttachIdleHandler ( "DemoSessionWarning", 6, true );
 	
 EndProcedure
 
