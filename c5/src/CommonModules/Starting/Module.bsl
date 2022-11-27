@@ -299,7 +299,7 @@ EndProcedure
 Procedure runDemo ()
 	
 	Output.SystemInDemoMode ();
-	AttachIdleHandler ( "DemoSessionWarning", 6, true );
+	AttachIdleHandler ( "DemoSessionWarning", 6000, true );
 	
 EndProcedure
 
