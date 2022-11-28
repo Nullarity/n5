@@ -1152,6 +1152,7 @@ from (
 		//
 		join VacationsToCalculate as Vacations
 		on Vacations.Ref = Compensations.Ref
+		and Vacations.Employee = Compensations.Employee
 		and Vacations.Compensation = BaseCompensations.Ref
 	group by Vacations.Ref, Compensations.Employee, Compensations.Schedule
 	) as Compensations
