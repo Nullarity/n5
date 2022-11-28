@@ -5874,15 +5874,6 @@ Procedure ExportDataCompleted ( Module = undefined, CallbackParams = undefined, 
 EndProcedure
 
 &AtClient
-Procedure SystemInDemoMode ( Params = undefined, NavigationLink = undefined ) export
-
-	text = NStr ( "en='Warning'; ro='Avertizare'; ru='Внимание'" );
-	explanation = NStr ( "en='System works in demo-mode and will be close in an hour. To get license key please call Contabilizare, phone: 22-54-88'; ro='Sistemul funcționează în regimul demo și va fi de o oră. Pentru a obține cheia de licență, vă rugăm să sunați la oficiul companiei Contabilizare, telefon: 22-54-88'; ru='За получением лицензии на использование конфигурации, обращайтесь в офис фирмы Contabilizare, телефон 22-54-88. Через час приложение будет закрыто'" );
-	putUserNotification ( text, Params, NavigationLink, explanation, PictureLib.Warning );
-
-EndProcedure
-
-&AtClient
 Procedure RestartSystem ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "RestartSystem" ) export
 
 	text = NStr ( "en='Changes to the license necessitate a restart of the application. 

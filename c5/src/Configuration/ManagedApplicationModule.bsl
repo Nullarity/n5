@@ -283,13 +283,6 @@ Function SessionDate ( Date = undefined ) export
 	
 EndFunction 
 
-Procedure DemoSessionWarning () export
-	
-	//@skip-warning
-	OpenForm ( "CommonForm.DemoVersion" );
-	
-EndProcedure
-
 Procedure ErrorDisplayProcessing ( ErrorInfo, SessionTerminationRequired, StandardProcessing )
 	
 	id = ErrorInfo.Description;

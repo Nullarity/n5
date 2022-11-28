@@ -273,9 +273,6 @@ EndProcedure
 Procedure checkLicense ()
 	
 	status = StartingSrv.CheckLicense ();
-	if ( status <> Enum.LicensingOK () ) then
-		runDemo ();
-	endif;
 	if ( status = Enum.LicensingError ()
 		or status = Enum.LicensingLicenseNotFound () ) then
 		if ( SessionInfo.SysAdmin ) then
@@ -295,13 +292,6 @@ Procedure checkLicense ()
 	endif;
 	
 EndProcedure 
-
-Procedure runDemo ()
-	
-	Output.SystemInDemoMode ();
-	AttachIdleHandler ( "DemoSessionWarning", 6000, true );
-	
-EndProcedure
 
 Procedure AfterKeyResetting ( Applied, Params ) export
 	
