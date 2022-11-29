@@ -4,7 +4,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A054" );
+id = Call ( "Common.ScenarioID", "A11S" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -46,7 +46,7 @@ Click ( "!Button0" );
 With ();
 Click ( "#FormDocumentPaymentCreateBasedOn" );
 With ();
-Check("#ContractRate", 15);
+Assert("#ContractRate").NotEqual (15);
 #endregion
 
 // *************************
