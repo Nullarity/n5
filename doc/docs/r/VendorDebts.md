@@ -4,6 +4,6 @@
 
 См. также:
 
-- [Кредиторы](/r/VendorDebts)
+- [Дебиторы](/r/Debts)
 - [Акт сверки](/r/Reconciliation)
 - [Договора](/c/Contracts)
