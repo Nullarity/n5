@@ -140,7 +140,7 @@ Procedure OnWrite ( Cancel )
 	
 EndProcedure
 
-Procedure Posting ( Cancel, PostingMode )
+Procedure Posting ( Cancel,  PostingMode )
 	
 	Env = Posting.GetParams ( Ref, RegisterRecords );
 	Env.Reposted = Reposted;

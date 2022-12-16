@@ -24,19 +24,23 @@ Procedure fillNew ( Form )
 		return;
 	endif; 
 	object = Form.Object;
+	settings = Logins.Settings ( "Company, Warehouse, Department" );
 	if ( object.Warehouse.IsEmpty () ) then
-		settings = Logins.Settings ( "Company, Warehouse" );
 		object.Company = settings.Company;
 		object.Warehouse = settings.Warehouse;
 	else
 		object.Company = DF.Pick ( object.Warehouse, "Owner" );
 	endif;
+	company = object.Company;
 	department = object.Department;
-	if ( not department.IsEmpty () ) then
-		if ( DF.Pick ( department, "Owner" ) <> object.Company ) then
-			object.Department = undefined;
-		endif; 
+	if ( department.IsEmpty () ) then
+		department = settings.Department;
 	endif;
+	if ( DF.Pick ( department, "Owner", company ) = company ) then
+		object.Department = department;
+	else
+		object.Department = undefined;
+	endif; 
 	fillStakeholders ( Form )
 	
 EndProcedure

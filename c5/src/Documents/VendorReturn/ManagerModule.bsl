@@ -20,10 +20,10 @@ Function Post ( Env ) export
 	restoreCost = Env.RestoreCost;
 	costOnline = Env.CostOnline;
 	realTime = Env.Realtime;
+	if ( invalidRows ( Env ) ) then
+		return false;		
+	endif; 
 	if ( not restoreCost ) then
-		if ( invalidRows ( Env ) ) then
-			return false;		
-		endif; 
 		if ( not makeFixedAssets ( Env ) )
 			or ( not makeIntangibleAssets ( Env ) ) then
 			return false;			
@@ -47,15 +47,14 @@ Function Post ( Env ) export
 	endif;
 	if ( not restoreCost ) then
 		makeVAT ( Env );		
+		attachSequence ( Env );
+		if ( not realTime ) then
+			SequenceCost.Rollback ( Env.Ref, Env.Fields.Company, Env.Fields.Timestamp );
+		endif;
+		if ( not checkBalances ( Env ) ) then
+			return false;				
+		endif;
 	endif; 
-	if ( not restoreCost
-		and not realTime ) then
-		SequenceCost.Rollback ( Env.Ref, Env.Fields.Company, Env.Fields.Timestamp );
-	endif;
-	if ( not restoreCost
-		and not checkBalances ( Env ) ) then
-		return false;				
-	endif;
 	flagRegisters ( Env );
 	return true;
 	
@@ -70,8 +69,8 @@ Function getData ( Env )
 	sqlItems ( Env );
 	restoreCost = Env.RestoreCost;
 	costOnline = Env.CostOnline;
+	sqlInvalidRows ( Env );
 	if ( not restoreCost ) then
-		sqlInvalidRows ( Env );
 		sqlFixedAssets ( Env );
 		sqlIntangibleAssets ( Env );
 		sqlAccounts ( Env );
@@ -82,6 +81,8 @@ Function getData ( Env )
 		sqlPurchaseOrders ( Env );
 		sqlProvision ( Env );
 		sqlContractAmount ( Env );
+		sqlVAT ( Env );
+		sqlSequence ( Env );		
 	endif;
 	if ( restoreCost
 		or costOnline ) then
@@ -89,9 +90,6 @@ Function getData ( Env )
 		sqlItemsAndKeys ( Env );
 		sqlCost ( Env );
 	endif;
-	if ( not restoreCost ) then
-		sqlVAT ( Env );		
-	endif; 
 	getTables ( Env );
 	if ( not restoreCost ) then
 		amount = Env.ContractAmount;
@@ -224,27 +222,28 @@ EndProcedure
 
 Procedure sqlInvalidRows ( Env )
 	
-	sqlDifferentPackages ( Env );
+	sqlInvoiceChanged ( Env );
 	sqlExcessQuantity ( Env );
 	
 EndProcedure
 
-Procedure sqlDifferentPackages ( Env )
+Procedure sqlInvoiceChanged ( Env )
 
 	s = "
-	|// ^DifferentPackages
-	|select Items.LineNumber as LineNumber, Receipt.Package as PackageReceipt,
-	|	Items.Package as Package
+	|// ^InvoiceChanged
+	|select Items.LineNumber as LineNumber
 	|from Items
 	|	//
 	|	// Receipt
 	|	//
-	|	join Document.VendorInvoice.Items as Receipt
+	|	left join Document.VendorInvoice.Items as Receipt
 	|	on Receipt.Ref = Items.VendorInvoice
 	|	and Receipt.Item = Items.Item
 	|	and Receipt.Feature = Items.Feature
 	|	and Receipt.Series = Items.Series
-	|	and case when Items.CountPackages then Receipt.Package <> Items.Package else false end
+	|	and Receipt.Package = Items.Package
+	|	and Receipt.Price = Items.Price
+	|where Receipt.Ref is null
 	|";
 	Env.Selection.Add ( s );
 	
@@ -264,9 +263,9 @@ Procedure sqlExcessQuantity ( Env )
 	|group by Returns.VendorInvoice, Returns.Item, Returns.Feature, Returns.Series
 	|;
 	|// ^ExcessQuantity
-	|select Items.LineNumber as LineNumber, Items.Item as Item, Items.VendorInvoice as VendorInvoice,
-	|	Receipts.Quantity - isnull ( Returns.Quantity, 0 ) as QuantityBalance,
-	|	Items.Quantity - Receipts.Quantity - isnull ( Returns.Quantity, 0 ) as Quantity
+	|select min ( Items.LineNumber ) as LineNumber, Items.Item as Item, Items.VendorInvoice as VendorInvoice,
+	|	sum ( Receipts.Quantity - isnull ( Returns.Quantity, 0 ) ) as QuantityBalance,
+	|	sum ( Items.Quantity - Receipts.Quantity - isnull ( Returns.Quantity, 0 ) ) as Quantity
 	|from Items as Items
 	|	//
 	|	// Receipts
@@ -284,7 +283,8 @@ Procedure sqlExcessQuantity ( Env )
 	|	and Returns.Item = Items.Item
 	|	and Returns.Feature = Items.Feature
 	|	and Returns.Series = Items.Series
-	|where Receipts.Quantity < Items.Quantity + isnull ( Returns.Quantity, 0 ) 
+	|group by Items.Item, Items.VendorInvoice
+	|having sum ( Receipts.Quantity ) < sum ( Items.Quantity + isnull ( Returns.Quantity, 0 ) )
 	|";
 	Env.Selection.Add ( s );
 	
@@ -697,6 +697,17 @@ Procedure sqlVAT ( Env )
 	
 EndProcedure
 
+Procedure sqlSequence ( Env )
+	
+	s = "
+	|// ^SequenceCost
+	|select distinct Items.Item as Item
+	|from Items
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
 Procedure getTables ( Env )
 	
 	fields = Env.Fields;
@@ -712,7 +723,7 @@ EndProcedure
 
 Function invalidRows ( Env )
 	
-	if ( differentPackages ( Env )
+	if ( invoiceChanged ( Env )
 		or excessQuantity ( Env ) ) then
 		return true;				
 	endif;
@@ -720,14 +731,12 @@ Function invalidRows ( Env )
 	
 EndFunction
 
-Function differentPackages ( Env )
+Function invoiceChanged ( Env )
 	
-	table = SQL.Fetch ( Env, "$DifferentPackages" );
-	msg = new Structure ( "Package, PackageReceipt" );
+	table = SQL.Fetch ( Env, "$InvoiceChanged" );
 	ref = Env.Ref;
 	for each row in table do
-		FillPropertyValues ( msg, row );
-		Output.VendorReturnDifferentPackages ( msg, Output.Row ( "Items", row.LineNumber, "Package" ), ref );
+		Output.VendorReturnInvoiceChanged ( , Output.Row ( "Items", row.LineNumber, "Item" ), ref );
 	enddo;
 	return table.Count () > 0; 
 	
@@ -736,7 +745,7 @@ EndFunction
 Function excessQuantity ( Env )
 	
 	table = SQL.Fetch ( Env, "$ExcessQuantity" );
-	msg = new Structure ( "Item, Quantity, VendorInvoice, QuantityBalance" );
+	msg = new Structure ( "Item, Quantity, VendorInvoice, QuantityBalance, Price" );
 	ref = Env.Ref;
 	for each row in table do
 		FillPropertyValues ( msg, row );
@@ -1148,6 +1157,25 @@ Function checkBalances ( Env )
 	
 EndFunction
 
+Procedure attachSequence ( Env )
+
+	recordset = Sequences.Cost.CreateRecordSet ();
+	//@skip-warning
+	recordset.Filter.Recorder.Set ( Env.Ref );
+	table = SQL.Fetch ( Env, "$SequenceCost" );
+	fields = Env.Fields;
+	date = fields.Date;
+	company = fields.Company;
+	for each row in table do
+		movement = recordset.Add ();
+		movement.Period = date;
+		movement.Company = company;
+		movement.Item = row.Item;
+	enddo;
+	recordset.Write ();
+	
+EndProcedure
+	
 Procedure flagRegisters ( Env )
 	
 	registers = Env.Registers;

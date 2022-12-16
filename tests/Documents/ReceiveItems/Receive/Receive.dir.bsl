@@ -8,18 +8,23 @@ if ( _.Company <> undefined ) then
 	Put ( "#Company", _.Company );
 endif;
 
-Choose ( "#Warehouse" );
-
-p = Call ( "Common.Select.Params" );
-p.Object = Meta.Catalogs.Warehouses;
-p.Search = _.Warehouse;
-p.CreateScenario = "Catalogs.Warehouses.Create";
-Call ( "Common.Select", p );
-
-With ( form );
-Set ( "#Warehouse", _.Warehouse );
+if ( _.Warehouse <> undefined ) then
+	Choose ( "#Warehouse" );
+	
+	p = Call ( "Common.Select.Params" );
+	p.Object = Meta.Catalogs.Warehouses;
+	p.Search = _.Warehouse;
+	p.CreateScenario = "Catalogs.Warehouses.Create";
+	Call ( "Common.Select", p );
+	
+	With ( form );
+	Set ( "#Warehouse", _.Warehouse );
+endif;
 Set ( "#Account", _.Account );
 form.GotoNextItem ();
+if ( _.Memo <> undefined ) then
+	Set ( "#Memo", _.Memo );
+endif;
 
 if ( _.Expenses <> undefined ) then
 	Choose ( "#Dim1" );

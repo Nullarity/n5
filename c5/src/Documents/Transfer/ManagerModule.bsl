@@ -493,7 +493,7 @@ Procedure commitCost ( Env, Table )
 	p = GeneralRecords.GetParams ();
 	p.Date = Env.Fields.Date;
 	p.Company = Env.Fields.Company;
-	p.Operation = Enums.Operations.ItemsRetirement;
+	p.Operation = Enums.Operations.Transfer;
 	p.DimDr1Type = "Items";
 	p.DimDr2Type = "Warehouses";
 	p.DimCr1Type = "Items";

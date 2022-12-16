@@ -2,6 +2,6 @@
 
 p = new Structure ();
 p.Insert ( "Description" );
-p.Insert ( "Account" );
-p.Insert ( "Expense" );
+p.Insert ( "Account", "7180" );
+p.Insert ( "Expense", "Others" );
 return p;

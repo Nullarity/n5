@@ -5,8 +5,8 @@ Function Post ( Env ) export
 	fields = Env.Fields;
 	if ( not Env.RestoreCost ) then
 		makeItems ( Env );
+		makeAssets ( Env );
 	endif;
-	makeAssets ( Env );
 	ItemDetails.Init ( Env );
 	if ( Env.RestoreCost
 		or Env.CostOnline ) then
@@ -39,8 +39,8 @@ Procedure getData ( Env )
 	if ( not Env.RestoreCost ) then
 		sqlSequence ( Env );
 		sqlQuantity ( Env );
+		sqAssets ( Env );
 	endif;
-	sqAssets ( Env );
 	if ( Env.RestoreCost
 		or Env.CostOnline ) then
 		sqlItemKeys ( Env );
@@ -537,16 +537,16 @@ Procedure flagRegisters ( Env )
 	registers = Env.Registers;
 	registers.Cost.Write = true;
 	registers.General.Write = true;
-	if ( Env.FixedAssets ) then
-		registers.Depreciation.Write = true;
-		registers.FixedAssetsLocation.Write = true;
-		registers.Commissioning.Write = true;
-	else
-		registers.Amortization.Write = true;
-		registers.IntangibleAssetsLocation.Write = true;
-		registers.IntangibleAssetsCommissioning.Write = true;
-	endif; 
 	if ( not Env.RestoreCost ) then
+		if ( Env.FixedAssets ) then
+			registers.Depreciation.Write = true;
+			registers.FixedAssetsLocation.Write = true;
+			registers.Commissioning.Write = true;
+		else
+			registers.Amortization.Write = true;
+			registers.IntangibleAssetsLocation.Write = true;
+			registers.IntangibleAssetsCommissioning.Write = true;
+		endif; 
 		if ( not Env.CheckBalances ) then
 			registers.Items.Write = true;
 		endif; 

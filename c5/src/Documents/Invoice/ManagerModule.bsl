@@ -112,10 +112,10 @@ Procedure sqlFields ( Env )
 	|select Documents.Date as Date, Documents.Warehouse as Warehouse, Documents.Company as Company,
 	|	Documents.Department as Department, Documents.PointInTime as Timestamp, Documents.Currency as Currency,
 	|	Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
-	|	Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly";
+	|	Documents.Customer as Customer, Documents.Contract.CustomerAdvancesMonthly as AdvancesMonthly";
 	if ( not Env.RestoreCost ) then
 		s = s + ", Documents.Contract as Contract, Documents.CustomerAccount as CustomerAccount,
-		|	Documents.CloseAdvances as CloseAdvances, Documents.Customer as Customer,
+		|	Documents.CloseAdvances as CloseAdvances,
 		|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 		|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey,
 		|	Documents.Contract.Currency as ContractCurrency,
@@ -218,8 +218,10 @@ Procedure setContext ( Env )
 	
 	Env.Insert ( "SalesOrderExists", Env.SalesOrderExists <> undefined and Env.SalesOrderExists.Exist );
 	Env.Insert ( "TimeEntryExists", Env.TimeEntryExists <> undefined and Env.TimeEntryExists.Exist );
-	fields = Env.Fields;
-	Env.Insert ( "PaymentDiscounts", fields.DiscountsBeforeDelivery or fields.DiscountsAfterDelivery );
+	if ( not Env.RestoreCost ) then
+		fields = Env.Fields;
+		Env.Insert ( "PaymentDiscounts", fields.DiscountsBeforeDelivery or fields.DiscountsAfterDelivery );
+	endif;
 
 EndProcedure
 
@@ -267,11 +269,13 @@ Procedure sqlItems ( Env )
 	
 	fields = Env.AmountFields;
 	amount = fields.Amount;
-	contractAmount = fields.ContractAmount;
-	contractVAT = fields.ContractVAT;
-	vat = fields.VAT;
 	amountGeneral = fields.AmountGeneral;
 	usual = not Env.RestoreCost;
+	if ( usual ) then
+		contractAmount = fields.ContractAmount;
+		contractVAT = fields.ContractVAT;
+		vat = fields.VAT;
+	endif;
 	s = "
 	|select ""Items"" as Table, Items.LineNumber as LineNumber, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
 	|	Items.Quantity as Quantity, Items.Price as Price, Items.DiscountRate as DiscountRate,
@@ -283,12 +287,12 @@ Procedure sqlItems ( Env )
 	|	Items.Account as Account, Items.Income as Income, Items.SalesCost as SalesCost,
 	|	case when Items.SalesOrder = value ( Document.SalesOrder.EmptyRef ) then Items.Ref.SalesOrder else Items.SalesOrder end as SalesOrder,
 	|	case when Items.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Items.Ref.TimeEntry else Items.TimeEntry end as TimeEntry,
-	|	Items.RowKey as RowKey, Items.TimeEntryRow as TimeEntryRow,
-	|" + amount + " as Amount";
+	|	Items.RowKey as RowKey, Items.TimeEntryRow as TimeEntryRow,"
+	+ amount + " as Amount, "
+	+ amountGeneral + " as AmountGeneral";
 	if ( usual ) then
 		s = s + ", Items.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
-		+ amountGeneral + " as AmountGeneral, "
 		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
@@ -302,12 +306,12 @@ Procedure sqlItems ( Env )
 	|	Services.Price as Price, Services.Quantity as Quantity, Services.DiscountRate as DiscountRate,
 	|	Services.Income as Income, Services.RowKey as RowKey, Services.TimeEntryRow as TimeEntryRow,
 	|	case when Services.SalesOrder = value ( Document.SalesOrder.EmptyRef ) then Services.Ref.SalesOrder else Services.SalesOrder end as SalesOrder,
-	|	case when Services.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Services.Ref.TimeEntry else Services.TimeEntry end as TimeEntry,
-	|" + amount + " as Amount";
+	|	case when Services.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Services.Ref.TimeEntry else Services.TimeEntry end as TimeEntry,"
+	+ amount + " as Amount,"
+	+ amountGeneral + " as AmountGeneral";
 	if ( usual ) then
 		s = s + ", Services.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
-		+ amountGeneral + " as AmountGeneral, "
 		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
@@ -328,8 +332,13 @@ Procedure sqlSales ( Env )
 	|select value ( Catalog.Warehouses.EmptyRef ) as Warehouse, Services.Item as Item, Services.Feature as Feature,
 	|	value ( Catalog.Series.EmptyRef ) as Series, value ( ChartOfAccounts.General.EmptyRef ) as Account,
 	|	Services.Income as Income, Services.Quantity as Quantity, Services.Amount as Amount,
-	|	Services.ContractAmount as ContractAmount, Services.SalesOrder as SalesOrder, Details.ItemKey as ItemKey,
-	|	Services.AmountGeneral as AmountGeneral
+	|	Services.SalesOrder as SalesOrder, Details.ItemKey as ItemKey,
+	|	Services.AmountGeneral as AmountGeneral";
+	usual = not Env.RestoreCost;
+	if ( usual ) then
+		s = s + ", Services.ContractAmount as ContractAmount";
+	endif;
+	s = s + "
 	|from Services as Services
 	|	//
 	|	// Details
@@ -343,14 +352,19 @@ Procedure sqlSales ( Env )
 	|	and Details.Account = value ( ChartOfAccounts.General.EmptyRef )
 	|";
 	if ( not Env.CostOnline
-		and not Env.RestoreCost ) then
+		and usual ) then
 		s = s + "
 		|union all
 		|//
 		|// Items sales without cost
 		|//
 		|select Items.Warehouse, Items.Item, Items.Feature, Items.Series, Items.Account,
-		|	Items.Income, Items.Quantity, Items.Amount, Items.ContractAmount, Items.SalesOrder, Details.ItemKey, Items.AmountGeneral
+		|	Items.Income, Items.Quantity, Items.Amount, Items.SalesOrder, Details.ItemKey,
+		|	Items.AmountGeneral";
+		if ( usual ) then
+			s = s + ", Items.ContractAmount";
+		endif;
+		s = s + "
 		|from Items as Items
 		|	//
 		|	// Details
@@ -616,9 +630,13 @@ Procedure sqlItemsAndKeys ( Env )
 	|// ^ItemsAndKeys
 	|select Items.LineNumber as LineNumber, Items.Warehouse as Warehouse, Items.Item as Item,
 	|	Items.Package as Package, Items.Item.Unit as Unit, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Account as Account, Items.Income as Income, Items.SalesCost as SalesCost, Items.AmountGeneral as AmountGeneral,
+	|	Items.Account as Account, Items.Income as Income, Items.SalesCost as SalesCost,
 	|	Items.QuantityPkg as Quantity, Items.Amount as Amount, Details.ItemKey as ItemKey,
-	|	Items.SalesOrder as SalesOrder, Items.ContractAmount as ContractAmount, Items.Capacity as Capacity
+	|	Items.SalesOrder as SalesOrder, Items.Capacity as Capacity, Items.AmountGeneral as AmountGeneral";
+	if ( not Env.RestoreCost ) then
+		s = s + ", Items.ContractAmount as ContractAmount";
+	endif;
+	s = s + "
 	|from Items as Items
 	|	//
 	|	// Details
@@ -722,8 +740,15 @@ Function getCost ( Env, Items )
 	p.Insert ( "KeyColumn", "Quantity" );
 	p.Insert ( "KeyColumnAvailable", "QuantityBalance" );
 	p.Insert ( "DecreasingColumns", "Cost" );
-	p.Insert ( "DecreasingColumns2", "Amount, ContractAmount, AmountGeneral" );
-	p.Insert ( "AddInTable1FromTable2", "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral" );
+	if ( Env.RestoreCost ) then
+		decrease = "Amount, AmountGeneral";
+		attach = "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral";
+	else
+		decrease = "Amount, ContractAmount, AmountGeneral";
+		attach = "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral";
+	endif;
+	p.Insert ( "DecreasingColumns2", decrease );
+	p.Insert ( "AddInTable1FromTable2", attach );
 	return CollectionsSrv.Decrease ( cost, Items, p );
 	
 EndFunction 
@@ -861,9 +886,9 @@ Procedure makeItemsSales ( Env, Table )
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
 		movement.Amount = row.Amount;
-		movement.VAT = row.Amount - row.AmountGeneral;
 		movement.Cost = row.Cost;
 		movement.SalesOrder = row.SalesOrder;
+		movement.VAT = row.Amount - row.AmountGeneral;
 		if ( usual ) then
 			rowSales = sales.Add ();
 			rowSales.Operation = Enums.Operations.Sales;
@@ -898,6 +923,7 @@ Procedure makeSales ( Env )
 	department = fields.Department;
 	customer = fields.Customer;
 	sales = Env.SalesTable;
+	usual = not Env.RestoreCost;
 	for each row in table do
 		if ( row.ItemKey = null ) then
 			row.ItemKey = ItemDetails.GetKey ( Env, row.Item, , row.Feature, row.Series, row.Warehouse, row.Account );
@@ -910,9 +936,9 @@ Procedure makeSales ( Env )
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
 		movement.Amount = row.Amount;
-		movement.VAT = row.Amount - row.AmountGeneral;
 		movement.SalesOrder = row.SalesOrder;
-		if ( not Env.RestoreCost ) then
+		movement.VAT = row.Amount - row.AmountGeneral;
+		if ( usual ) then
 			rowSales = sales.Add ();
 			rowSales.Operation = Enums.Operations.Sales;
 			rowSales.Income = row.Income;

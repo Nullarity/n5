@@ -38,18 +38,55 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
-Procedure Restore ( Command )
+Procedure Reset ( Command )
 	
-	restoreSequence ();
-	Items.Boundaries.Refresh ();
+	resetSequence ();
 	
 EndProcedure
 
 &AtServer
-Procedure restoreSequence ()
+Procedure resetSequence ()
 	
-	SequenceCost.Restore ( Object.Bound, Object.Company );
+	q = new Query ( "select Item from Sequence.Cost where Company = &Company" );
+	company = Object.Company;
+	q.SetParameter ( "Company", company );
+	selection = q.Execute ().Select ();
+	while ( selection.Next () ) do
+		Sequences.Cost.SetBound ( CurrentSessionDate (),
+			new Structure ( "Company, Item", company, selection.Item ) );
+	enddo;
 	
+EndProcedure
+
+&AtClient
+Procedure Restore ( Command )
+	
+	run ();
+	Progress.Open ( UUID, ThisObject, new NotifyDescription ( "Restored", ThisObject ), true );
+
+EndProcedure
+
+&AtServer
+Procedure run () 
+
+	p = DataProcessors.Cost.GetParams ();
+	p.Bound = Object.Bound;
+	p.Company = Object.Company;
+	args = new Array ();
+	args.Add ( "Cost" );
+	args.Add ( p );
+	Jobs.Run ( "Jobs.ExecProcessor", args, UUID, , TesterCache.Testing () );
+
+EndProcedure
+
+&AtClient
+Procedure Restored ( Result, Params ) export
+	
+	if ( not Result ) then
+		return;
+	endif;
+	Items.Boundaries.Refresh ();
+
 EndProcedure
 
 &AtClient
