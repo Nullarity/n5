@@ -56,7 +56,7 @@ Function FormatStr ( Str, Params ) export
 
 EndFunction
 
-Procedure PutMessage ( Text, Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+Procedure PutMessage ( Text, Params = undefined, Field = "", DataKey = undefined, DataPath = "Object", Help = "" ) export
 
 	msg = new UserMessage ();
 	s = Output.FormatStr ( Text, Params );
@@ -84,10 +84,35 @@ Procedure PutMessage ( Text, Params = undefined, Field = "", DataKey = undefined
 			s = StrConcat ( prefix, ", " ) + ": " + s;
 		endif;
 	endif;
+	if ( Help <> "" ) then
+		s = addHelp ( s, Help );
+	endif;
 	msg.Text = s;
 	msg.Message ();
 
 EndProcedure
+
+Function addHelp ( val Str, Help )
+	
+	if ( not StrEndsWith ( Str, "." ) ) then
+		Str = Str + ". ";
+	endif;
+	return Str + seeAlso () + " " + helpWebsite () + Help;
+	
+EndFunction
+
+Function helpWebsite ()
+	
+	return "https://cont.help";
+	
+EndFunction
+
+Function seeAlso ()
+	
+	text = NStr ( "en = 'See also';ro = 'A se vedea și';ru = 'См. также'" );
+	return text;
+	
+EndFunction
 
 &AtServer
 Procedure putExchangeMessage ( Text, Params = Undefined, Status = undefined, Log = true, Protocol = false, EventName = "ScheduledJob.Exchange" )
@@ -2218,7 +2243,8 @@ EndProcedure
 Procedure DocumentOrderItemsNotValid ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='The row cannot be reconciled with the document %DocumentOrder'; ro='Linia nu este în concordanță cu documentul %DocumentOrder'; ru='Строка не согласована с документом %DocumentOrder'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_8";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -5311,7 +5337,8 @@ EndProcedure
 Procedure UnexpectedPayments ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en = 'There is no planned %Amount payments in the %Document for this invoice';ro = 'Nu există %Amount plăți planificate în %Document pentru această factură';ru = 'В %Document нет запланированных %Amount платежей для этой накладной'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_9";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -5558,7 +5585,8 @@ EndFunction
 Procedure ObjectNotOriginal ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='%Value already exists!'; ro='Valoarea% există deja!'; ru='%Value уже существует!'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_7";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -6542,7 +6570,8 @@ EndFunction
 Procedure InvoiceCheckFillingErrors ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ("en = 'Check filling errors have been found. Invoice can’t be produced'; ro = 'Vânzarea nu poate fi vlidată din cauza unor erori la cmpletarea documentului'; ru = 'Реализация не может быть проведена из-за наличия ошибок заполнения документа'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#-";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -6810,7 +6839,8 @@ EndProcedure
 Procedure CannotCloseDiscount ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en = 'The registered discount is exceeded by %Amount';ro = 'Reducerea înregistrată este depășită cu %Amount';ru = 'Превышена зарегистрированная скидка на %Amount'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_10";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7310,6 +7340,8 @@ EndFunction
 Function RangeInactive ( Params ) export
 
 	s = NStr ("en='The range %Range is not active yet';ro='Diapazonul %Range nu este încă activat';ru='Диапазон %Range еще не активирован'" );
+	help = "/messages/#_2";
+	s = addHelp ( s, help );
 	return Output.FormatStr ( s, Params );
 
 EndFunction
@@ -7318,6 +7350,8 @@ EndFunction
 Function RangeError ( Params ) export
 
 	s = NStr ("en='The %Series %Number does not belong to the range %Range';ro='%Series %Number nu aparține diapazonului %Range';ru='%Series %Number не принадлежит диапазону %Range'" );
+	help = "/messages/#_4";
+	s = addHelp ( s, help );
 	return Output.FormatStr ( s, Params );
 
 EndFunction
@@ -7326,6 +7360,8 @@ EndFunction
 Function RangeJumpstart ( Params ) export
 
 	s = NStr ("en='The %Number is out of order of range %Range';ro='%Number este în afara ordinii diapazonului %Range';ru='%Number идет не по порядку согласно диапазона %Range'" );
+	help = "/messages/#_3";
+	s = addHelp ( s, help );
 	return Output.FormatStr ( s, Params );
 
 EndFunction
@@ -7374,7 +7410,8 @@ EndProcedure
 Procedure RangeNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ("en='The range %Range is not registered in the warehouse %Warehouse';ro='La depozit %Warehouse nu este inregistrat diapazonul %Range';ru='На складе %Warehouse не числится диапазон %Range'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_6";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7382,7 +7419,8 @@ EndProcedure
 Procedure RangeIsBroken ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ("en='It is not allowed to transfer or write off %Quantity elements from range %Range partially. The number of elements listed for %Warehouse is %Balance';ro='Nu este permisă transferul sau casarea parțială %Quantity a formularelor din depozit %Warehouse. În diapaxonul %Range sunt enumerate %Balance elemente';ru='Нельзя частично переместить или списать %Quantity элементов со склада %Warehouse. В диапазоне %Range числится %Balance элементов'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_5";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7390,7 +7428,8 @@ EndProcedure
 Procedure RangeIncomplete ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ("en='The size of the range does not equal to quantity of receiving forms';ro='Dimensiunea diapazonului nu corespunde numărului de formulare primite';ru='Размер диапазона не совпадает с количеством поступающих бланков'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_1";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7590,6 +7629,8 @@ Function WaybillWriteOffPostingError ( Params = undefined ) export
 			  |%Error';ro = 'Eroare de generare a documentului de casare:
 			  |%Error';ru = 'Ошибка при формировании документа-cписания:
 			  |%Error'" );
+	help = "/messages/#-c";
+	s = addHelp ( s, help );
 	return Output.FormatStr ( s, Params );
 	
 EndFunction
@@ -7651,10 +7692,11 @@ Procedure EmployeeAlreadyOnVacation ( Params = undefined, Field = "", DataKey = 
 EndProcedure
 
 &AtServer
-Procedure VendorReturnDifferentPackages ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+Procedure VendorReturnInvoiceChanged ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
-	text = NStr ("en = 'Packaging on return (%Package) is different from packaging on receipt (%PackageReceipt)'; ro = 'Ambalajul de retur (%Package) diferă de ambalajul de primire (%PackageReceipt)'; ru = 'Упаковка при возврате (%Package) отличается от упаковки при поступлении (%PackageReceipt)'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	text = NStr ("en = 'The item returned is different from the original Vendor Invoice';ro = 'Marfa returnată este diferită de factura originală a furnizorului';ru = 'Возвращаемый товар отличается от оригинала поступления поставщика'" );
+	help = "/messages/#_13";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7910,7 +7952,8 @@ EndFunction
 Procedure AdditionalCompensationBroken ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en = 'The additional compensation is not found in the calculations';ro = 'Compensația suplimentară nu se regăsește în calcule';ru = 'Дополнительное начисление не отражено в расчетах'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_11";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
@@ -7950,7 +7993,8 @@ EndFunction
 Procedure UndefinedSeries ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en = 'Series should be defined';ro = 'Ar trebui să se definească seriile';ru = 'Серия должна быть задана'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+	help = "/messages/#_12";
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath, help );
 
 EndProcedure
 
