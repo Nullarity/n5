@@ -56,9 +56,9 @@ Procedure initDataReader()
 	|	isnull ( Invoices.CustomerAccount.AccountNumber, """" ) as CustomerAccountNumber,
 	|	isnull ( Invoices.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal, Invoices.Carrier.FullDescription as Carrier,
 	|	isnull ( Invoices.Carrier.PaymentAddress.Address, """" ) as CarrierAddress,
-	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank, """" ) as CarrierBank,
-	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.Bank.Code, """" ) as CarrierBankCode,
-	|	isnull ( Invoices.Carrier.VendorContract.VendorBank.AccountNumber, """" ) as CarrierAccountNumber,
+	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.Bank.Description else Invoices.Carrier.VendorContract.VendorBank.Bank end, """") as CarrierBank,
+	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.Bank.Code else Invoices.Carrier.VendorContract.VendorBank.Bank.Code end, """") as CarrierBankCode,
+	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.AccountNumber else Invoices.Carrier.VendorContract.VendorBank.AccountNumber end, """") as CarrierAccountNumber,
 	|	isnull ( Invoices.LoadingAddress.Address, """" ) as LoadingAddress,
 	|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress
 	|from Document.InvoiceRecord as Invoices
