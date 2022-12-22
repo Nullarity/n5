@@ -25,6 +25,7 @@ Procedure groupsByName ( Container, Name, SearchInFields, Groups )
 	
 	groupType = Type ( "DataCompositionGroup" );
 	tableType = Type ( "DataCompositionTable" );
+	tableGroupType = Type ( "DataCompositionTableGroup" );
 	for each item in Container do
 		type = TypeOf ( item ); 
 		if ( type = tableType ) then
@@ -34,7 +35,8 @@ Procedure groupsByName ( Container, Name, SearchInFields, Groups )
 			for each element in items do
 				groupsByName ( element, Name, SearchInFields, Groups );
 			enddo; 
-		elsif ( type = groupType ) then
+		elsif ( type = groupType
+			or type = tableGroupType ) then
 			if ( item.Name = Name ) then
 				Groups.Add ( item );
 			endif;
