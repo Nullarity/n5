@@ -839,14 +839,14 @@
 	Documents.DepositLiabilities, Documents.Dirty, Documents.Location, Documents.Memo, Documents.Method, Documents.Reference,
 	Documents.ReferenceDate, Documents.Compensations, Documents.Taxes, Documents.Totals, Documents.PointInTime,
 	TasksList.Progress as TaskProgress, TasksList.Completed as TaskCompleted, TasksList.Status as TaskStatus, TasksList.Task as TaskRef, TasksList.Observation as Observation
-from Document.PayEmployees as Documents
+from Document.PayAdvances as Documents
 	//
 	// Tasks
 	//
 	{left join InformationRegister.Tasks as TasksList
 	on TasksList.Source = Documents.Ref
 	and TasksList.User = &amp;Performer}</queryText>
-      <mainTable>Document.PayEmployees</mainTable>
+      <mainTable>Document.PayAdvances</mainTable>
       <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
@@ -1095,6 +1095,18 @@ from Document.PayEmployees as Documents
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Observation</dataPath>
         <field>Observation</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Individual</dataPath>
+        <field>Compensations.Individual</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.Result</dataPath>
+        <field>Compensations.Result</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Compensations.InHand</dataPath>
+        <field>Compensations.InHand</field>
       </fields>
       <parameters>
         <name>Performer</name>
