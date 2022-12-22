@@ -445,7 +445,7 @@ from &amp;Additions as Rates
 // Rates
 select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Period as Period,
 	Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
-into Rates
+into RatesWithoutAdvances
 from (
 	select Rates.Employee as Employee, Rates.Compensation as Compensation, &amp;DateStart as Period,
 		Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
@@ -460,13 +460,49 @@ from (
 	and Rates.Employee in ( select distinct Employee from Employees )
 ) as Rates
 union all
-select Additions.Employee, Additions.Compensation, &amp;DateStart, true, Additions.Currency, Additions.Rate,
+select Additions.Employee, Additions.Compensation, Employment.Date, true, Additions.Currency, Additions.Rate,
 	Additions.InHand
 from Additions as Additions
+	//
+	// Employment
+	//
+	join (
+		select Employment.Employee as Employee, beginofperiod ( max ( Employment.DateEnd ), day ) as Date
+		from Employment as Employment
+		where Employment.Employee in ( select distinct Employee from Additions )
+		group by Employment.Employee
+	) as Employment
+	on Employment.Employee = Additions.Employee
+;
+// Advances. We also need them to calculate salary in hand (advances has to be taken away from amount in hand)
+select Balances.Employee as Employee, Balances.Compensation as Compensation,
+	Balances.Account as Account, Balances.Document as Document, Balances.PaidBalance as Paid,
+	Balances.AmountBalance as Amount, Constants.Currency as Currency
+into AdvancesBalance
+from AccumulationRegister.PayAdvances.Balance ( dateadd ( &amp;PaymentDate, second, 1 ),
+	Employee in ( select distinct Employee from RatesWithoutAdvances ) ) as Balances
+	//
+	// Constants
+	//
+	join Constants as Constants
+	on true
+where not &amp;TaxesOnly
+;
+// Rates
+select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Period as Period,
+	Rates.Actual as Actual, Rates.Currency as Currency, Rates.Rate as Rate, Rates.InHand as InHand
+into Rates
+from RatesWithoutAdvances as Rates
+union
+select Advances.Employee, Advances.Compensation, Advances.Document.Date, true, Advances.Currency, Advances.Amount,
+	false 
+from AdvancesBalance as Advances
+where Advances.Compensation.Method = value ( Enum.Calculations.FixedAmount )
 ;
 // CompensationPeriods
-select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Rate as Rate, Rates.InHand as InHand,
-	Rates.Currency as Currency, Rates.Period as DateStart, min ( isnull ( Changes.Period, Employment.DateEnd ) ) as DateEnd
+select Rates.Employee as Employee, Rates.Compensation as Compensation, Rates.Rate as Rate,
+	Rates.InHand as InHand, Rates.Currency as Currency, Rates.Period as DateStart,
+	min ( isnull ( Changes.Period, Employment.DateEnd ) ) as DateEnd
 into CompensationPeriods
 from Rates as Rates
 	//
@@ -497,7 +533,7 @@ from CompensationPeriods as Compensations
 	// AllPeriods
 	//
 	join (
-		select Rates.Employee as Employee, Rates.Period as DateStart,
+		select Rates.Employee as Employee, Rates.Compensation, Rates.Period as DateStart,
 			isnull ( min ( dateadd ( Changes.Period, day, -1 ) ), min ( Employment.DateEnd ) ) as DateEnd
 		from Rates as Rates
 			//
@@ -511,11 +547,13 @@ from CompensationPeriods as Compensations
 			//
 			left join Rates as Changes
 			on Changes.Employee = Rates.Employee
+			and Changes.Compensation = Rates.Compensation
 			and Changes.Period &gt; Rates.Period
 			and Changes.Period &lt; Employment.DateEnd
-		group by Rates.Employee, Rates.Period
+		group by Rates.Employee, Rates.Compensation, Rates.Period
 	) as AllPeriods
 	on AllPeriods.Employee = Compensations.Employee
+	and AllPeriods.Compensation = Compensations.Compensation
 	and AllPeriods.DateStart &gt;= Compensations.DateStart
 	and AllPeriods.DateEnd &lt;= Compensations.DateEnd
 index by Employee
@@ -2737,7 +2775,8 @@ select Compensations.Edit as Edit, Compensations.Employee as Employee, Compensat
 	Compensations.Bonuses as Bonuses, Compensations.BasePeriod as BasePeriod, Compensations.BaseHolidays as BaseHolidays,
 	Compensations.Reference as Reference, Compensations.AnnualBonuses as BaseAnnualBonuses,
 	Compensations.QuarterlyBonuses as BaseQuarterlyBonuses, Compensations.Holidays as Holidays,
-	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.OnCompany as OnCompany, recordautonumber () as Key
+	Compensations.BaseScheduledDays as BaseScheduledDays, Compensations.OnCompany as OnCompany,
+	recordautonumber () as Key
 into ActualCompensations
 from AllCompensations as Compensations
 	//
@@ -2765,17 +2804,15 @@ into ReversedSalary
 where false
 ;
 // Advances. We also need them to calculate salary in hand (advances has to be taken away from amount in hand)
-select Balances.Employee as Employee, Balances.Compensation as Compensation,
+select Balances.Employee.Individual as Employee, Balances.Compensation as Compensation,
 	Balances.Account as Account, Balances.Document as Document,
-	Balances.PaidBalance as Paid, Balances.AmountBalance as Amount	
+	sum ( Balances.Paid ) as Paid, sum ( Balances.Amount ) as Amount	
 into Advances
-from AccumulationRegister.PayAdvances.Balance ( dateadd ( &amp;PaymentDate, second, 1 ),
-	( Employee, Compensation, Account ) in (
-		select distinct Compensations.Individual, Compensations.Compensation, Compensations.Account 
-		from ActualCompensations as Compensations
-	)
-) as Balances
-where not &amp;TaxesOnly
+from AdvancesBalance as Balances
+where ( Balances.Employee, Balances.Compensation, Balances.Account ) in (
+		select distinct Compensations.Employee, Compensations.Compensation, Compensations.Account 
+		from ActualCompensations as Compensations )
+group by Balances.Employee.Individual, Balances.Compensation, Balances.Account, Balances.Document
 ;
 // Advances
 select Advances.Employee as Employee, Advances.Compensation as Compensation,

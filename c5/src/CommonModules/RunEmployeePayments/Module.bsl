@@ -55,10 +55,10 @@ Procedure sqlCompensations ( Env )
 	s = "
 	|// #Compensations
 	|select Compensations.LineNumber as LN, Compensations.Account as AccountDr,
-	|	Compensations.Compensation as Compensation, Compensations." + Env.EmployeeField + " as Employee,
+	|	Compensations.Compensation as Compensation, Compensations." + Env.EmployeeField + " as Individual,
 	|";
 	if ( Env.Advances ) then
-		s = s + "case when Compensations.InHand then Compensations.Result else Compensations.Amount end as Amount";
+		s = s + "case when Compensations.InHand then Compensations.Result else Compensations.Amount end as Amount, Compensations.Employee as Employee";
 	else
 		s = s + "Compensations.Amount as Amount";
 	endif;
@@ -92,7 +92,7 @@ Procedure sqlTaxes ( Env )
 	
 	s = "
 	|// #Taxes
-	|select Taxes.Account as AccountCr, Taxes.Compensation as Compensation, Taxes.Employee as Employee,
+	|select Taxes.Account as AccountCr, Taxes.Compensation as Compensation, Taxes.Employee as Individual,
 	|	Taxes.Result as Result, Taxes.Base as Amount, Taxes.Tax.Method as Method,
 	|	Taxes.Tax.Description as Description
 	|from Document." + Env.Document + ".Taxes as Taxes
@@ -100,7 +100,7 @@ Procedure sqlTaxes ( Env )
 	|and Taxes.Tax.Method <> value ( Enum.Calculations.IncomeTax )
 	|;
 	|// #IncomeTax
-	|select Taxes.Account as AccountCr, Taxes.Employee as Employee, Taxes.Result as Result,
+	|select Taxes.Account as AccountCr, Taxes.Employee as Individual, Taxes.Result as Result,
 	|	Taxes.Tax.Description as Description
 	|from Document." + Env.Document + ".Taxes as Taxes
 	|where Taxes.Ref = &Ref
@@ -114,7 +114,7 @@ Procedure sqlTotals ( Env )
 	
 	s = "
 	|// #Totals
-	|select Totals.Employee as Employee, Totals.Net as Amount
+	|select Totals.Employee as Individual, Totals.Net as Amount
 	|from Document." + Env.Document + ".Totals as Totals
 	|where Totals.Ref = &Ref
 	|";
@@ -141,11 +141,11 @@ EndProcedure
 Function distributeTaxes ( Env )
 	
 	p = new Structure ();
-	p.Insert ( "FilterColumns", "Employee, Compensation" );
+	p.Insert ( "FilterColumns", "Individual, Compensation" );
 	p.Insert ( "DistribColumnsTable1", "Result" );
 	p.Insert ( "KeyColumn", "Amount" );
 	p.Insert ( "AssignСоlumnsTаble1", "AccountCr, Method, Description" );
-	p.Insert ( "AssignColumnsTable2", "LN" );
+	p.Insert ( "AssignColumnsTable2", "LN" + ? ( Env.Advances, ", Employee", "" ) );
 	p.Insert ( "DistributeTables" );
 	compensations = Env.Compensations;
 	base = compensations.Copy ();
@@ -153,7 +153,7 @@ Function distributeTaxes ( Env )
 	amountType = Metadata.AccountingRegisters.General.Resources.Amount.Type;
 	CollectionsSrv.Adjust ( taxes, "Result", amountType );
 	result = CollectionsSrv.Combine ( taxes, base, p );
-	p.FilterColumns = "Employee";
+	p.FilterColumns = "Individual";
 	p.AssignСоlumnsTаble1 = "AccountCr, Description";
 	base = compensations.Copy ( new Structure ( "IncomeTax", true ) );
 	taxes = Env.IncomeTax;
@@ -199,7 +199,7 @@ Procedure commitTaxes ( Env )
 		p.AccountDr = compensationRow.AccountDr;
 		compensationRow.Amount = compensationRow.Amount - amount;
 		p.AccountCr = taxRow.AccountCr;
-		employee = compensationRow.Employee;
+		employee = compensationRow.Individual;
 		p.Amount = amount;
 		p.DimDr1 = employee;
 		p.DimDr2 = compensationRow.Compensation;
@@ -224,9 +224,9 @@ Procedure commitNet ( Env )
 		for each row in Env.Compensations do
 			p.AccountDr = row.AccountDr;
 			p.Amount = row.Amount;
-			p.DimDr1 = row.Employee;
+			p.DimDr1 = row.Individual;
 			p.DimDr2 = row.Compensation;
-			p.DimCr1 = row.Employee;
+			p.DimCr1 = row.Individual;
 			GeneralRecords.Add ( p );
 		enddo; 
 	else
@@ -239,7 +239,7 @@ Procedure commitNet ( Env )
 		for each row in Env.Compensations do
 			p.AccountDr = row.AccountDr;
 			p.Amount = row.Amount;
-			p.DimDr1 = row.Employee;
+			p.DimDr1 = row.Individual;
 			p.DimDr2 = row.Compensation;
 			GeneralRecords.Add ( p );
 		enddo; 
