@@ -2,7 +2,9 @@
 
 Function Events () export
 	
-	return Reporter.Events ();
+	p = Reporter.Events ();
+	p.OnCompose = true;
+	return p;
 	
 EndFunction 
 

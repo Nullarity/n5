@@ -1057,3 +1057,28 @@ Procedure DisableMenu ( Menu ) export
 	Menu = null;
 	
 EndProcedure
+
+Procedure AdjustGroupping ( Object, Name ) export
+	
+	group = DCsrv.GetGroup ( Object.Params.Settings, Name );
+	if ( group = undefined ) then
+		return;
+	endif;
+	groupFields = group.GroupFields.Items;
+	fieldType = Type ( "DataCompositionSelectedField" );
+	groupFieldType = Type ( "DataCompositionGroupField" );
+	for each field in group.Selection.Items do
+		if ( TypeOf ( field ) <> fieldType ) then
+			continue;
+		endif;
+		dataField = field.Field;
+		for each groupField in groupFields do
+			if ( TypeOf ( groupField ) = groupFieldType
+				and groupField.Field = dataField ) then
+				groupField.Use = field.Use;
+				break;
+			endif; 
+		enddo;
+	enddo;
+	
+EndProcedure

@@ -7,6 +7,7 @@ Procedure OnCompose () export
 	setPeriod ();
 	verticalTotal ();
 	horizontalTotal ();
+	Reporter.AdjustGroupping ( ThisObject, "Item" );
 	
 EndProcedure
 

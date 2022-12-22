@@ -6,6 +6,7 @@ Procedure OnCompose () export
 	
 	hideParams ();
 	titleReport ();
+	Reporter.AdjustGroupping ( ThisObject, "Item" );
 	
 EndProcedure
 

@@ -372,6 +372,42 @@
 				</v8:item>
 			</title>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Series</dataPath>
+			<field>Series</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>Item</dcscom:parentDimension>
+			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceParameterLinks</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:ChoiceParameterLinks">
+						<dcscor:item>
+							<dcscor:choiceParameter>Filter.Owner</dcscor:choiceParameter>
+							<dcscor:value>Item</dcscor:value>
+							<dcscor:mode xmlns:d8p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d8p1:LinkedValueChangeMode">Clear</dcscor:mode>
+						</dcscor:item>
+					</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Feature</dataPath>
+			<field>Feature</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>Item</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Package</dataPath>
+			<field>Package</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>Item</dcscom:parentDimension>
+			</role>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>//
 // Warehouses
@@ -386,11 +422,13 @@ index by Warehouse
 //
 // Details
 //
-select distinct Details.Item as Item,  Details.Warehouse as Warehouse, Details.ItemKey as ItemKey
+select distinct Details.Item as Item,  Details.Warehouse as Warehouse, Details.ItemKey as ItemKey,
+	Details.Package as Package, Details.Feature as Feature, Details.Series as Series
 into Details
 from InformationRegister.ItemDetails as Details
 where case when Item.Service then true else Details.Warehouse in ( select Warehouse from Warehouses ) end
-{where Details.Warehouse.* as Warehouse, Details.Item.* as Item}	
+{where Details.Warehouse.* as Warehouse, Details.Item.* as Item, Details.Package.* as Package,
+Details.Feature.* as Feature, Details.Series.* as Series}
 index by ItemKey
 ;
 //
@@ -413,9 +451,10 @@ select Turnovers.Department as Department, Details.Item as Item,  Details.Wareho
 	( Turnovers.AmountTurnover - Turnovers.VATTurnover ) - Turnovers.CostTurnover as Profit, 
 	Turnovers.QuantityTurnover as Quantity, Details.ItemKey as ItemKey, Turnovers.Customer as Customer,
 	case when Turnovers.CostTurnover = 0 then 100 else ( ( Turnovers.AmountTurnover - Turnovers.VATTurnover ) - Turnovers.CostTurnover ) * 100 / Turnovers.CostTurnover end as PercentProfit,
-	Turnovers.MonthPeriod AS MonthPeriod, Turnovers.Department.Owner as Company, Turnovers.Recorder as Recorder
+	Turnovers.MonthPeriod AS MonthPeriod, Turnovers.Department.Owner as Company, Turnovers.Recorder as Recorder,
+	Details.Package as Package, Details.Feature as Feature, Details.Series as Series
 {select Department.*, Item.*, Warehouse.*, Company, Total, Amount, Cost, Quantity, ItemKey,
-	PercentProfit, Customer.*, Profit, MonthPeriod, Recorder.* , VAT}
+	PercentProfit, Customer.*, Profit, MonthPeriod, Recorder.* , VAT, Package.*, Feature.*, Series.*}
 from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, { Department.* as Department, 
 	Department.Owner.* as Company, Customer.* as Customer } ) as Turnovers
 	//
@@ -712,9 +751,31 @@ from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 				</dcsset:selection>
 				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:name>Item</dcsset:name>
 					<dcsset:groupItems>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>Item</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Feature</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Package</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Series</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
@@ -726,6 +787,17 @@ from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 					</dcsset:order>
 					<dcsset:selection>
 						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Feature</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Package</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Series</dcsset:field>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>ee7a50c1-b7d6-4f73-8641-371ef103de71</dcsset:userSettingID>
 					</dcsset:selection>
 				</dcsset:item>
 			</dcsset:item>
@@ -1188,6 +1260,22 @@ from AccumulationRegister.Sales.Turnovers ( {&amp;DateStart}, {&amp;DateEnd}, au
 					<dcsset:groupItems>
 						<dcsset:item xsi:type="dcsset:GroupItemField">
 							<dcsset:field>Item</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:use>false</dcsset:use>
+							<dcsset:field>Feature</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:use>false</dcsset:use>
+							<dcsset:field>Series</dcsset:field>
 							<dcsset:groupType>Items</dcsset:groupType>
 							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
 							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>

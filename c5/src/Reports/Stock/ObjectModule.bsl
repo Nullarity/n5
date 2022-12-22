@@ -7,7 +7,7 @@ Procedure OnCompose () export
 	filterWarehouses ();
 	hideParams ();
 	setPeriod ();
-	SetPrivilegedMode ( true );
+	Reporter.AdjustGroupping ( ThisObject, "Item" );
 	
 EndProcedure
 

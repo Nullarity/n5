@@ -23,16 +23,18 @@ EndFunction
  
 Procedure groupsByName ( Container, Name, SearchInFields, Groups )
 	
+	groupType = Type ( "DataCompositionGroup" );
 	tableType = Type ( "DataCompositionTable" );
 	for each item in Container do
-		if ( TypeOf ( item ) = tableType ) then
+		type = TypeOf ( item ); 
+		if ( type = tableType ) then
 			items = new Array ();
 			items.Add ( item.Rows );
 			items.Add ( item.Columns );
 			for each element in items do
 				groupsByName ( element, Name, SearchInFields, Groups );
 			enddo; 
-		else
+		elsif ( type = groupType ) then
 			if ( item.Name = Name ) then
 				Groups.Add ( item );
 			endif;
