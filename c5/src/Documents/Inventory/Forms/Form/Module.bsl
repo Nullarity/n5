@@ -325,8 +325,9 @@ Procedure fillTable ()
 			itemsRow = foundRows [ 0 ];
 			FillPropertyValues ( itemsRow, row, , "Quantity, QuantityPkg" );
 			itemsRow.Price = row.PriceBalance;
-			calcDifference ( itemsRow );
 		endif; 
+		calcAmount ( itemsRow );
+		calcDifference ( itemsRow );
 	enddo; 
 	
 EndProcedure 
@@ -384,17 +385,7 @@ Function getTable ()
 	|	Items.Account as Account, Items.Capacity as Capacity, Items.Price as PriceBalance,
 	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
 	|	Items.QuantityBalance as QuantityBalance, Items.QuantityPkgBalance as QuantityPkgBalance,
-	|	Items.Quantity - Items.QuantityBalance as QuantityDifference,
-	|	Items.QuantityPkg - Items.QuantityPkgBalance as QuantityPkgDifference,
-	|	Items.AmountBalance as AmountBalance,
-	|	case
-	|		when Items.Quantity = Items.QuantityBalance then Items.AmountBalance
-	|		else Items.Price * Items.Quantity
-	|	end as Amount,
-	|	case when Items.Quantity = 0 then - Items.AmountBalance
-	|		when Items.Quantity = Items.QuantityBalance then 0
-	|		else Items.Price * ( Items.Quantity - Items.QuantityBalance )
-	|	end as AmountDifference
+	|	Items.AmountBalance as AmountBalance
 	|from (
 	|	select Items.Item as Item, Items.Package as Package, Items.Feature as Feature, Items.Series as Series,
 	|		Items.Account as Account, Items.Capacity as Capacity,
@@ -439,6 +430,24 @@ Function getTable ()
 	return table;
 	
 EndFunction
+
+&AtClientAtServerNoContext
+Procedure calcAmount ( Row )
+	
+	if ( Row.Quantity = 0 ) then
+		Row.Amount = 0;
+	elsif ( Row.Price = Row.PriceBalance ) then
+		if ( Row.Quantity = Row.QuantityBalance ) then
+			Row.Amount = Row.AmountBalance;
+		else
+			Row.Amount = ? ( Row.QuantityBalance = 0, Row.Price, Row.AmountBalance / Row.QuantityBalance )
+			* Row.Quantity;
+		endif;
+	else
+		Row.Amount = Row.Price * Row.Quantity;
+	endif;
+
+EndProcedure
 
 &AtClient
 Procedure ItemsOnActivateRow ( Item )
@@ -506,24 +515,6 @@ Procedure ItemsQuantityPkgOnChange ( Item )
 	calcAmount ( ItemsRow );
 	calcDifference ( ItemsRow );
 	
-EndProcedure
-
-&AtClient
-Procedure calcAmount ( Row )
-	
-	if ( Row.Quantity = 0 ) then
-		Row.Amount = 0;
-	elsif ( Row.Price = Row.PriceBalance ) then
-		if ( Row.Quantity = Row.QuantityBalance ) then
-			Row.Amount = Row.AmountBalance;
-		else
-			Row.Amount = ? ( Row.QuantityBalance = 0, Row.Price, Row.AmountBalance / Row.QuantityBalance )
-			* Row.Quantity;
-		endif;
-	else
-		Row.Amount = Row.Price * Row.Quantity;
-	endif;
-
 EndProcedure
 
 &AtClient
