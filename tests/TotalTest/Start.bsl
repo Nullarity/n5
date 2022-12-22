@@ -47,6 +47,14 @@ exceptions.Add("Documents.ExpenseReport.Start");
 exceptions.Add("Documents.ExpenseReport.TestCurrency");
 exceptions.Add("Documents.ExpenseReport.TestCurrencyCopy");
 exceptions.Add("Documents.Inventory.TestCreation.Start");
+exceptions.Add("DataProcessors.Cost.Commissioning" );
+exceptions.Add("DataProcessors.Cost.Disassembling" );
+exceptions.Add("DataProcessors.Cost.Invoice" );
+exceptions.Add("DataProcessors.Cost.Retail" );
+exceptions.Add("DataProcessors.Cost.Transfer" );
+exceptions.Add("DataProcessors.Cost.VendorReturn" );
+exceptions.Add("DataProcessors.Cost.WriteOff" );
+exceptions.Add("DataProcessors.Cost.Assembling" );
 
 // Regulatory reports
 exceptions.Add("Reports.RegulatoryReports.1_Invest" );
