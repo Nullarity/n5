@@ -205,7 +205,8 @@ Procedure sqlItems ( Env )
 	|	case when ( Items.Warehouse = value ( Catalog.Warehouses.EmptyRef ) ) then &Warehouse else Items.Warehouse end as Warehouse,
 	|	Items.Account as Account, Items.DocumentOrder as DocumentOrder, Items.DocumentOrderRowKey as DocumentOrderRowKey,
 	|	Items.Social as Social, Items.Price as Price, Items.ProducerPrice as ProducerPrice, Items.Capacity as Capacity, 
-	|	Items.PurchaseOrder as PurchaseOrder, Items.VendorInvoice as VendorInvoice,"
+	|	Items.PurchaseOrder as PurchaseOrder, Items.VendorInvoice as VendorInvoice,
+	|	Items.Package as VendorPackage,"
 	+ amount.Amount + " as Amount,"
 	+ amount.ContractAmount + " as ContractAmount,"
 	+ amount.ContractVAT + " as ContractVAT,"
@@ -241,7 +242,7 @@ Procedure sqlInvoiceChanged ( Env )
 	|	and Receipt.Item = Items.Item
 	|	and Receipt.Feature = Items.Feature
 	|	and Receipt.Series = Items.Series
-	|	and Receipt.Package = Items.Package
+	|	and Receipt.Package = Items.VendorPackage
 	|	and Receipt.Price = Items.Price
 	|where Receipt.Ref is null
 	|";
