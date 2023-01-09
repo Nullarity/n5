@@ -10,24 +10,34 @@ Procedure OnReadAtServer ( CurrentObject )
 EndProcedure
 
 &AtServer
-Procedure readAccess ( Book )
+Procedure readAccess ( Document )
 	
 	s = "
 	|select Access.UserGroup as UserGroup, Access.Read as Read, Access.Write as Write
-	|from InformationRegister.GroupsAccessBooks as Access
-	|where Access.Book in ( select AccessBook from InformationRegister.EffectiveRights where Book = &Book )
+	|from InformationRegister.GroupsAccess as Access
+	|where Access.Document = &Document
 	|order by Access.UserGroup.Description
 	|;
+	|select allowed Users.Ref as Ref, Users.Description as Name
+	|into Users
+	|from Catalog.Users as Users
+	|index by Ref
+	|;
 	|select Access.User as User, Access.Read as Read, Access.Write as Write
-	|from InformationRegister.UsersAccessBooks as Access
-	|where Access.Book in ( select AccessBook from InformationRegister.EffectiveRights where Book = &Book )
-	|order by Access.User.Description
+	|from InformationRegister.UsersAccess as Access
+	|	//
+	|	// Users
+	|	//
+	|	left join Users as Users
+	|	on Users.Ref = Access.User
+	|where Access.Document = &Document
+	|order by isnull ( Users.Name, """" )
 	|";
 	q = new Query ( s );
-	q.SetParameter ( "Book", Book );
+	q.SetParameter ( "Document", Document );
 	data = q.ExecuteBatch ();
 	Tables.UsersGroupsRights.Load ( data [ 0 ].Unload () );
-	Tables.UsersRights.Load ( data [ 1 ].Unload () );
+	Tables.UsersRights.Load ( data [ 2 ].Unload () );
 	
 EndProcedure 
 	
