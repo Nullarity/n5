@@ -24,7 +24,7 @@ else
 	Put ( "#Memo", id );
 	Activate ( "#GroupDocuments" );
 	Click ( "#Update" );
-	With ( "Contabilizare" );
+	With ( "Nullarity" );
 	Click ( "#Button0" );
 	With ();
 	Click ( "#MarkAll" );

@@ -1,11 +1,11 @@
-﻿// Will sell services for 2000 lei (100$ x 20), then accept the payment 1900 ley (100$ x 19).
-// Will accept prepayment 2000 lei (100$ x 20), then sell services for 1960 lei (100$ x 19.6).
-// Finally, will adjust our 100 lei debt and his 40 lei debt.
+﻿// Will sell services for 1900 lei (100$ x 19), then accept the payment 2000 ley (100$ x 20).
+// Will accept prepayment 1900 lei (100$ x 19), then sell services for 2060 lei (100$ x 20.6).
+// Finally, will move his debt to another contract
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A14C" );
+id = Call ( "Common.ScenarioID", "A143" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -18,32 +18,25 @@ if ( Call ( "Table.Count", Get ( "#List" ) ) ) then
 	With ();
 else
 	Commando ( "e1cib/command/Document.AdjustDebts.Create" );
-	Set ( "#Option", "Custom Account Dr" );
+	Set ( "#Option", "Customer" );
 	Click ( "#AmountDifference" );
 	Set ( "#Customer", this.Customer );
-	Click ( "#ApplyVAT" );
-	Click ( "#Reversal" );
-	table = Get ( "#Adjustments" );
-	Set ( "#AdjustmentsItem [ 1 ]", this.Discounts, table );
-	Set ( "#Account", "6111" );
-	Set ( "#ContractRate", 19 ); // the same rate as payment is
+	Set ( "#Receiver", this.Customer );
+	Set ( "#ReceiverContract", this.LocalContract );
+	Set ( "#ContractRate", 20 ); // the same rate as payment was
 	Put ( "#Memo", id );
 	Set ( "#Amount", 60 );
+	Click ( "#AccountingReceiverAdd" );
+	Accounting = Get ( "#AccountingReceiver" );
+	Accounting.EndEditRow ();
+	Set ( "#AccountingReceiverAmount [ 1 ]", 60, Accounting );
+	Set ( "#AccountingReceiverPaymentOption [ 1 ]", "no discounts", Accounting );
 endif;
+
 Click ( "#FormPost" );
 Click ( "#FormReportRecordsShow" );
 With ();
 CheckTemplate ( "#TabDoc" );
-Close ();
-With ();
-#endregion
-
-#region taxInvoice
-Click ( "#NewInvoiceRecord" );
-With ();
-Clear ( "#Range" );
-Set ( "#Number", id );
-Click ( "#FormPrint" );
 #endregion
 
 Procedure getEnv ()
@@ -53,6 +46,7 @@ Procedure getEnv ()
 	this.Insert ( "Customer", "Customer " + id );
 	this.Insert ( "Service", "Service " + id );
 	this.Insert ( "Discounts", "Discounts " + id );
+	this.Insert ( "LocalContract", "Local Currency" );
 
 EndProcedure
 
@@ -69,6 +63,19 @@ Procedure createEnv ()
 	p.Currency = "usd";
 	p.MonthlyAdvances = true;
 	Call ( "Catalogs.Organizations.CreateCustomer", p );
+	Commando ( "e1cib/list/Catalog.Organizations" );
+	p = Call ( "Common.Find.Params" );
+	p.Where = "Name";
+	p.What = this.Customer;
+	Call ( "Common.Find", p );
+	Click ( "#FormChange" );
+	With ();
+	Click ( "Contracts", GetLinks () ); 
+	With ();
+	Click ( "#FormCreate" );
+	With ();
+	Put ( "#Description", this.LocalContract );
+	Click ( "#FormWriteAndClose" );
 	#endregion
 
 	#region createService
@@ -90,7 +97,7 @@ Procedure createEnv ()
 	Put("#Date", this.Date-86400*2);
 	Put("#Customer", this.Customer);
 	Put("#Memo", id);
-	Set("#Rate", 20);
+	Set("#Rate", 19);
 	table = Get ( "#Services" );
 	Click ( "#ServicesAdd" );
 	table.EndEditRow ();
@@ -104,8 +111,8 @@ Procedure createEnv ()
 	Commando ( "e1cib/command/Document.Payment.Create" );
 	Set ( "#Date", CurrentDate () - 86400 );
 	Put ( "#Customer", this.Customer );
-	Set ( "#ContractRate", 19 );
-	Set ( "#Amount", 1900 );
+	Set ( "#ContractRate", 20 );
+	Set ( "#Amount", 2000 );
 	Next ();
 	Click ( "#FormPostAndClose" );
 	#endregion
@@ -114,8 +121,8 @@ Procedure createEnv ()
 	Commando ( "e1cib/command/Document.Payment.Create" );
 	Set ( "#Date", CurrentDate () - 86300 );
 	Put ( "#Customer", this.Customer );
-	Set ( "#ContractRate", 20 );
-	Set ( "#Amount", 2000 );
+	Set ( "#ContractRate", 19 );
+	Set ( "#Amount", 1900 );
 	Next ();
 	Click ( "#FormPostAndClose" );
 	#endregion
@@ -125,7 +132,7 @@ Procedure createEnv ()
 	Put("#Date", this.Date-86000);
 	Put("#Customer", this.Customer);
 	Put("#Memo", id);
-	Set("#Rate", 19.6);
+	Set("#Rate", 20.6);
 	table = Get ( "#Services" );
 	Click ( "#ServicesAdd" );
 	table.EndEditRow ();

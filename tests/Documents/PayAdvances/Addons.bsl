@@ -116,7 +116,7 @@ Procedure createEnv ()
 	Click ( "#FormOK" );
 	With ();
 	Click ( "#Calculate1" );
-	With ( "Contabilizare" );
+	With ( "Nullarity" );
 	Click ( "#Button0", DialogsTitle );
 	Pause ( __.Performance * 3 );
 	With ();
