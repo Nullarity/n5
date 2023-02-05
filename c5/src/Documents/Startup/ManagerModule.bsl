@@ -343,22 +343,19 @@ Procedure makeMovements ( Env, Table )
 	Env.Insert ( "Features", Options.Features () );
 	Env.Insert ( "Details" );
 	Env.Insert ( "Price" );
-	Env.Insert ( "CostLimit", Currencies.Convert ( fields.CostLimit, fields.Currency, fields.LocalCurrency, fields.Date, fields.Rate, fields.Factor ) );
-	Env.Insert ( "IsExploitation" );
+	Env.Insert ( "CostLimit", Currencies.Convert ( fields.CostLimit, fields.Currency, fields.LocalCurrency,
+		fields.Date, fields.Rate, fields.Factor ) );
+	Env.Insert ( "FullDepreciation" );
 	for each row in Table do
 		if ( row.Cost = undefined ) then
 			row.Cost = 0;
 		endif;
 		Env.Price = row.Cost / ? ( row.Quantity > 0, row.Quantity, 1 );
 		curResidualValue = Min ( Env.Price, row.ResidualValue ) * row.Quantity;
-		coefficent = 1;
 		fillDetails ( Env, Row );
-		Env.IsExploitation = true;
-		if ( Env.CostLimit <= Env.price ) then
-			coefficent = 0.5;
-		else
-			if ( Env.CostLimit <> 0 ) and ( Env.Price < Env.CostLimit ) then
-				Env.IsExploitation = false;
+		fullDepreciation = Env.Price <= Env.CostLimit;
+		if ( not fullDepreciation ) then
+			if ( Env.CostLimit <> 0 ) then
 				if ( curResidualValue <> 0 ) then
 					residualIgnored ( Env, row );
 					curResidualValue = 0;
@@ -367,15 +364,14 @@ Procedure makeMovements ( Env, Table )
 				priceLess ( Env, row );
 			endif;
 		endif;
-		if ( Env.IsExploitation ) or ( row.KeepOnBalance ) then
-			makeGeneralExploitation ( Env, row );
+		commitTransfer ( Env, row );
+		if ( Row.Cost = 0 ) then
+			continue;
 		endif;
-		if ( Row.Cost <> 0 ) then
-			amount = ( Row.Cost - curResidualValue ) * coefficent;
-			makeExpenses ( Env, row, amount );
-			if ( amount <> 0 ) then
-				makeGeneralExpenses ( Env, row, amount );
-			endif;
+		depreciationAmount = Row.Cost - curResidualValue;
+		makeDepreciation ( Env, Row, depreciationAmount );
+		if ( fullDepreciation ) then
+			finishExploitation ( Env, Row, depreciationAmount );
 		endif;
 	enddo;
 
@@ -409,7 +405,7 @@ Procedure priceLess ( Env, Row )
 
 EndProcedure
 
-Procedure makeGeneralExploitation ( Env, Row ) 
+Procedure commitTransfer ( Env, Row ) 
 
 	if ( Env.RestoreCost ) then
 		cleanCost ( Env );
@@ -427,9 +423,6 @@ Procedure makeGeneralExploitation ( Env, Row )
 	p.DimDr2Type = "Departments";
 	p.DimDr3Type = "Employees";
 	p.Amount = Row.Cost;
-	if ( Env.Price < Env.CostLimit ) then
-		p.Amount = 0;
-	endif;
 	p.QuantityCr = Row.Quantity;
 	p.QuantityDr = Row.Quantity;
 	p.DimCr1 = Row.Item;
@@ -456,6 +449,15 @@ Procedure cleanCost ( Env )
 	
 EndProcedure
 
+Procedure makeDepreciation ( Env, Row, Amount ) 
+
+	makeExpenses ( Env, Row, Amount );
+	if ( Amount <> 0 ) then
+		commitExpenses ( Env, row, Amount );
+	endif;
+
+EndProcedure
+
 Procedure makeExpenses ( Env, Row, Amount ) 
 
 	movement = Env.Registers.Expenses.Add ();
@@ -472,7 +474,7 @@ Procedure makeExpenses ( Env, Row, Amount )
 
 EndProcedure
 
-Procedure makeGeneralExpenses ( Env, Row, Amount ) 
+Procedure commitExpenses ( Env, Row, Amount ) 
 
 	if ( Amount = 0 ) then
 		return;
@@ -485,24 +487,39 @@ Procedure makeGeneralExpenses ( Env, Row, Amount )
 	p.Company = Env.Fields.Company;
 	p.Recordset = Env.Registers.General;
 	p.AccountDr = Row.ExpenseAccount;
-	p.DimDr1Type = "Expenses";
-	p.DimDr2Type = "Departments";
-	p.DimCr1Type = "Items";
 	p.DimDr1 = Row.Expense;
 	department = Row.Department;
 	p.DimDr2 = department;
 	p.DimCr1 = Row.Item;
 	p.Amount = Amount;
-	if ( Env.IsExploitation ) then
-		p.Operation = Enums.Operations.LVIExploitation;
-		p.AccountCr = Env.Fields.AmortizationAccount;
-		p.DimCr2Type = "Departments";
-		p.DimCr2 = department;
-	else
-		p.Operation = Enums.Operations.LVIWriteOff;
-		p.AccountCr = Row.Account;
-		p.DimCr2Type = "Warehouses";
-		p.DimCr2 = Row.Warehouse;
+	p.Operation = Enums.Operations.LVIExploitation;
+	p.AccountCr = Env.Fields.AmortizationAccount;
+	p.DimCr2Type = "Departments";
+	p.DimCr2 = department;
+	GeneralRecords.Add ( p );
+	
+EndProcedure
+
+Procedure finishExploitation ( Env, Row, Amount ) 
+
+	if ( Amount = 0 ) then
+		return;
+	endif;
+	p = GeneralRecords.GetParams ();
+	p.Date = Env.Fields.Date;
+	p.Company = Env.Fields.Company;
+	p.Recordset = Env.Registers.General;
+	p.AccountDr = Env.Fields.AmortizationAccount;
+	p.DimDr1 = Row.Item;
+	p.DimDr2 = Row.Department;
+	p.AccountCr = Env.Fields.ExploitationAccount;
+	p.DimCr1 = Row.Item;
+	p.DimCr2 = Row.Department;
+	p.DimCr3 = Row.Employee;
+	p.Amount = Amount;
+	p.Operation = Enums.Operations.LVIWriteOff;
+	if ( not Row.KeepOnBalance ) then
+		p.QuantityCr = Row.Quantity;
 	endif;
 	GeneralRecords.Add ( p );
 	

@@ -18,12 +18,14 @@ Function CheckDepreciation ( Object, Table ) export
 	empty = Date ( 1, 1, 1 );
 	begin = BegOfMonth ( Object.Date );
 	ref = Object.Ref;
+	introduction = introduction ( Object );
 	for each row in Object [ Table ] do
 		if ( row.Charge ) then
 			starting = row.Starting;
 			line = row.LineNumber;
-			if ( starting = empty
-				or starting < begin ) then
+			if ( not introduction
+				and ( starting = empty
+				or starting < begin ) ) then
 				error = true;
 				Output.InvalidAssetsAmortizationDate ( , Output.Row ( Table, line, "Starting" ), ref );
 			endif; 
@@ -34,8 +36,16 @@ Function CheckDepreciation ( Object, Table ) export
 		endif; 
 	enddo; 
 	return not error;
-	
+
 EndFunction 
+
+Function introduction ( Object )
+
+	type = TypeOf ( Object.Ref );
+	return type = Type ( "DocumentRef.AssetsBalances" )
+	or type = Type ( "DocumentRef.IntangibleAssetsBalances" );
+	
+EndFunction
 
 Function CheckItemsFields ( Object ) export
 	

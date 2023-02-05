@@ -281,7 +281,7 @@ Procedure sendEmails ()
 	p.Insert ( "Process", Process );
 	args = new Array ();
 	args.Add ( p );
-	Jobs.Run ( "InternalOrderMailing.Send", args );
+	Jobs.Run ( "InternalOrderMailing.Send", args, , , TesterCache.Testing () );
 	
 EndProcedure 
 

@@ -33,13 +33,13 @@ Procedure fillNew ()
 			setDefaults ();
 		else
 			FillPropertyValues ( Object, Object.Parent, ,
-			"Code, Description, DataVersion, Parent, Predefined, PredefinedDataName, Items, Services, VendorItems,
-			|VendorServices" );
+			"Code, Description, DataVersion, Parent, Predefined, PredefinedDataName,
+			|Items, Services, VendorItems, VendorServices, Creator" );
 		endif;
 	else
 		Object.Signed = false;
-		Object.DateStart = CurrentSessionDate ();
 	endif;
+	Object.Creator = SessionParameters.User;
 	
 EndProcedure
 
@@ -89,6 +89,9 @@ EndProcedure
 &AtServer
 Procedure setDefaults ()
 
+	today = BegOfDay ( CurrentSessionDate () );
+	Object.DateStart = today;
+	Object.DateEnd = EndOfYear ( today );
 	customer = Object.Customer;
 	vendor = Object.Vendor;
 	if ( not ( customer or vendor ) ) then
@@ -199,7 +202,9 @@ EndProcedure
 &AtServer
 Procedure setNumber ( CurrentObject )
 	
-	CurrentObject.SetNewCode ();
+	if ( IsBlankString ( Object.Code ) ) then
+		CurrentObject.SetNewCode ();
+	endif;
 	CurrentObject.Description = DF.Pick ( SessionParameters.User, "Code" )
 	+ "-"
 	+ ? ( CurrentObject.DateStart = Date ( 1, 1, 1 ), "", Right ( "" + Year ( CurrentObject.DateStart ), 2 ) )
@@ -227,6 +232,7 @@ Procedure applyCurrency ()
 	endif;
 	resetRateType ( true, true );
 	setCurrencyRate ( true, true );
+	defaultAdvancesMonthly ();
 	Appearance.Apply ( ThisObject, "Object.Currency" );
 	
 EndProcedure
@@ -274,6 +280,24 @@ Procedure setCurrencyRate ( Customer, Vendor )
 	if ( changeVendor ) then
 		Object.VendorRate = rates.Rate;
 		Object.VendorFactor = rates.Factor;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure defaultAdvancesMonthly ()
+	
+	if ( Object.Currency = LocalCurrency
+		or Object.Currency.IsEmpty () ) then
+		return;
+	endif;
+	if ( Object.Customer and not Object.CustomerAdvancesMonthly ) then
+		Object.CustomerAdvancesMonthly = true;
+		Appearance.Apply ( ThisObject, "Object.CustomerAdvancesMonthly" );
+	endif;
+	if ( Object.Vendor and not Object.VendorAdvancesMonthly ) then
+		Object.VendorAdvancesMonthly = true;
+		Appearance.Apply ( ThisObject, "Object.VendorAdvancesMonthly" );
 	endif;
 	
 EndProcedure

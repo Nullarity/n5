@@ -85,16 +85,26 @@ Procedure readAccess ( Document )
 	|where Access.Document = &Document
 	|order by Access.UserGroup.Description
 	|;
+	|select allowed Users.Ref as Ref, Users.Description as Name
+	|into Users
+	|from Catalog.Users as Users
+	|index by Ref
+	|;
 	|select Access.User as User, Access.Read as Read, Access.Write as Write
 	|from InformationRegister.UsersAccess as Access
+	|	//
+	|	// Users
+	|	//
+	|	left join Users as Users
+	|	on Users.Ref = Access.User
 	|where Access.Document = &Document
-	|order by Access.User.Description
+	|order by isnull ( Users.Name, """" )
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Document", Document );
 	data = q.ExecuteBatch ();
 	Tables.UsersGroupsRights.Load ( data [ 0 ].Unload () );
-	Tables.UsersRights.Load ( data [ 1 ].Unload () );
+	Tables.UsersRights.Load ( data [ 2 ].Unload () );
 	
 EndProcedure 
 
@@ -515,7 +525,7 @@ Procedure getBookSubscribers ( Table )
 		return;
 	endif; 
 	s = "
-	|select Access.UserGroup as Object, Access.UserGroup.Description as Description
+	|select allowed Access.UserGroup as Object, Access.UserGroup.Description as Description
 	|from InformationRegister.GroupsAccessBooks as Access
 	|where Access.Book in ( select AccessBook from InformationRegister.EffectiveRights where Book = &Book )
 	|union

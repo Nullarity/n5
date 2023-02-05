@@ -151,7 +151,17 @@ EndProcedure
 &AtClient
 Procedure AmountOnChange ( Item )
 	
+	if ( UseReceiver and Object.AmountDifference ) then
+		adjustTypes ();
+	endif;
 	AdjustDebtsForm.AmountOnChange ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure adjustTypes ()
+	
+	AdjustDebtsForm.AdjustTypes ( ThisObject );
 	
 EndProcedure
 
@@ -181,6 +191,13 @@ Procedure applyOption ()
 
 	AdjustDebtsForm.ApplyOption ( ThisObject );
 
+EndProcedure
+
+&AtClient
+Procedure AmountDifferenceOnChange ( Item )
+	
+	applyOption ();
+	
 EndProcedure
 
 &AtClient

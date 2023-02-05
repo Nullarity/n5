@@ -103,7 +103,7 @@ EndFunction
 
 Function helpWebsite ()
 	
-	return "https://cont.help";
+	return "http://nullarity.com";
 	
 EndFunction
 
@@ -214,7 +214,7 @@ EndFunction
 &AtClient
 Function MetadataPresentation () export
 
-	text = NStr ( "en='Contabilizare'; ro='Contabilizare'; ru='Contabilizare'" );
+	text = NStr ( "en='Nullarity'; ro='Nullarity'; ru='Nullarity'" );
 	return text;
 
 EndFunction
@@ -3223,21 +3223,21 @@ EndProcedure
 &AtServer
 Function ApplicationShortcut ( Params ) export
 
-	text = NStr ( "en='[Contabilizare]
+	text = NStr ( "en='[Nullarity]
 				|Connect=ws=""%ApplicationURL/%TenantCode"";
 				|External=0
 				|UseProxy=0
 				|App=Auto
 				|WA=1
 				|Version=8.3
-				|WSA=1'; ro='[Contabilizare]
+				|WSA=1'; ro='[Nullarity]
 				|Connect=ws=""%ApplicationURL/%TenantCode"";
 				|External=0
 				|UseProxy=0
 				|App=Auto
 				|WA=1
 				|Version=8.3
-				|WSA=1'; ru='[Contabilizare]
+				|WSA=1'; ru='[Nullarity]
 				|Connect=ws=""%ApplicationURL/%TenantCode"";
 				|External=0
 				|UseProxy=0
@@ -3283,7 +3283,7 @@ Function EndOfLicensePeriodBody ( Params ) export
 
 	text = NStr ( "en='Hello,
 				|
-				|You have received this e-mail because you are a Contabilizare service user.
+				|You have received this e-mail because you are a Nullarity service user.
 				|Your order #%OrderNumber expire in %CountDays. There are %UsersCount users.
 				|
 				|To pay for the service, please go to:
@@ -3298,7 +3298,7 @@ Function EndOfLicensePeriodBody ( Params ) export
 				|Best regards,
 				|Development team
 				|%Website'; ro='Bună ziua!
-				|Ați primit acest e-mail deoarece utilizați serviciul Contabilizare.
+				|Ați primit acest e-mail deoarece utilizați serviciul Nullarity.
 				|După %CountOfDays, perioada de acțiune a comenzii se termină #%OrderNumber, numărul de utilizatori: %UsersCount.
 				|
 				|Pentru a plăti serviciul, utilizați linkul:
@@ -3310,7 +3310,7 @@ Function EndOfLicensePeriodBody ( Params ) export
 				|Vă mulțumim pentru cooperarea dvs.!
 				|Dacă aveți întrebări sau sugestii, scrieți-ne la %Info.
 				|Cu stimă, echipa de specialiști %Website'; ru='Доброго времени суток!
-				|Вы получили это письмо, потому что используете сервис Contabilizare.
+				|Вы получили это письмо, потому что используете сервис Nullarity.
 				|Через %CountOfDays дней заканчивается период действия заказа #%OrderNumber, количество пользователей: %UsersCount.
 				|
 				|Для оплаты сервиса, воспользуйтесь ссылкой:
@@ -3329,7 +3329,7 @@ EndFunction
 &AtServer
 Function EndOfLicensePeriodSubject ( Params ) export
 
-	text = NStr ( "en='Access to Contabilizare system will expire in %CountOfDays days'; ro='Până la sfârșitul perioadei de acces la Contabilizare, rămân %CountOfDays zile'; ru='До окончания периода доступа к Contabilizare осталось %CountOfDays дней'" );
+	text = NStr ( "en='Access to Nullarity system will expire in %CountOfDays days'; ro='Până la sfârșitul perioadei de acces la Nullarity, rămân %CountOfDays zile'; ru='До окончания периода доступа к Nullarity осталось %CountOfDays дней'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -3339,12 +3339,12 @@ Function EndOfTrialPeriodBody ( Params ) export
 
 	text = NStr ( "en='Hello,
 				|
-				|You have received this e-mail because you are now a registered Contabilizare service user.
+				|You have received this e-mail because you are now a registered Nullarity service user.
 				|Your trial period will expire in %CountOfDays days.
 				|You can order the full version of our software by following this link:
 				|%TenantOrder
 				|
-				|If you want to stop using the Contabilizare service, you can remove your profile.
+				|If you want to stop using the Nullarity service, you can remove your profile.
 				|In order to do this please follow the link:
 				|%DeactivateProfile
 				|
@@ -3353,24 +3353,24 @@ Function EndOfTrialPeriodBody ( Params ) export
 				|
 				|Sincerely,
 				|%Website'; ro='Bună ziua!
-				|Ați primit acest e-mail deoarece ați fost înregistrat la serviciul Contabilizare.
+				|Ați primit acest e-mail deoarece ați fost înregistrat la serviciul Nullarity.
 				|Perioada de familiarizare cu programul se termină în %CountOfDays.
 				|Dacă v-a plăcut serviciul nostru, puteți face o comandă și puteți plăti prin linkul:
 				|%TenantOrder
 				|
-				|Dacă nu mai plănuiți să lucrați în Contabilizare, puteți șterge profilul.
+				|Dacă nu mai plănuiți să lucrați în Nullarity, puteți șterge profilul.
 				|Pentru aceasta, faceți clic pe link-ul:
 				|%DeactivateProfile
 				|
 				|Vă mulțumim pentru interesul față de resursele noastre.
 				|Dacă aveți întrebări, scrieți-ne la %Info.
 				|Cu stimă, echipa de specialiști %Website'; ru='Доброго времени суток!
-				|Вы получили это письмо, потому что были зарегистрированы в сервисе Contabilizare.
+				|Вы получили это письмо, потому что были зарегистрированы в сервисе Nullarity.
 				|Период ознакомления с программой заканчивается через %CountOfDays дней.
 				|Если вам понравился наш сервис, Вы можете произвести заказ и оплату по ссылке:
 				|%TenantOrder
 				|
-				|Если вы больше не планируете работать в Contabilizare, Вы можете удалить свой профайл.
+				|Если вы больше не планируете работать в Nullarity, Вы можете удалить свой профайл.
 				|Для этого нужно перейти по ссылке:
 				|%DeactivateProfile
 				|
@@ -3384,7 +3384,7 @@ EndFunction
 &AtServer
 Function EndOfTrialPeriodSubject ( Params ) export
 
-	text = NStr ( "en='The trial period will expire in %CountOfDays days'; ro='Până la sfârșitul perioadei de familiarizare cu Contabilizare, au mai rămas %CountOfDays zile'; ru='До окончания периода ознакомления с Contabilizare осталось %CountOfDays дней'" );
+	text = NStr ( "en='The trial period will expire in %CountOfDays days'; ro='Până la sfârșitul perioadei de familiarizare cu Nullarity, au mai rămas %CountOfDays zile'; ru='До окончания периода ознакомления с Nullarity осталось %CountOfDays дней'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -3508,7 +3508,7 @@ Function RegistrationDataEmailBody ( Params ) export
 	text = NStr ( "en='Hello,
 				|
 				|
-				|You received registration data from %AdminEmail to access Contabilizare System %Website:
+				|You received registration data from %AdminEmail to access Nullarity System %Website:
 				|
 				|Tenant code: %TenantCode
 				|User name: %User
@@ -3540,7 +3540,7 @@ Function RegistrationDataEmailBody ( Params ) export
 				|Best regards,
 				|Development team
 				|%Website'; ro='Salut!
-				|Ați primit date de înregistrare de la %AdminEmail pentru a accesa Sistemul Contabilizare %Website:
+				|Ați primit date de înregistrare de la %AdminEmail pentru a accesa Sistemul Nullarity %Website:
 				|
 				|Codul chiriașului: %TenantCode
 				|Nume utilizator: %User
@@ -3569,7 +3569,7 @@ Function RegistrationDataEmailBody ( Params ) export
 				|Vă mulțumim pentru interesul acordat resurselor noastre.
 				|Vom fi bucuroși dacă serviciul nostru vă va fi de ajutor!
 				|Cu stimă, echipa de specialiști %Website'; ru='Доброго времени суток!
-				|Вы получили от пользователя %AdminEmail регистрационные данные для доступа в систему Contabilizare на сайте %Website:
+				|Вы получили от пользователя %AdminEmail регистрационные данные для доступа в систему Nullarity на сайте %Website:
 				|
 				|Код арендатора:  %TenantCode
 				|Пользователь: %User
@@ -3603,7 +3603,7 @@ EndFunction
 &AtServer
 Function RegistrationDataEmailSubject ( Params ) export
 
-	text = NStr ( "en='""%Company"" e-mailed you registration data to access Contabilizare'; ro='""%Company"" v-a trimis prin e-mail datele de înregistrare pentru a accesa Contabilizare'; ru='""%Company"" выслал вам регистрационные данные для доступа в Contabilizare'" );
+	text = NStr ( "en='""%Company"" e-mailed you registration data to access Nullarity'; ro='""%Company"" v-a trimis prin e-mail datele de înregistrare pentru a accesa Nullarity'; ru='""%Company"" выслал вам регистрационные данные для доступа в Nullarity'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -3858,7 +3858,7 @@ EndProcedure
 &AtServer
 Function ApplicationItemName ( Params ) export
 
-	text = NStr ( "en='Access to Contabilizare, Users: %UsersCount, Months: %MonthsCount'; ro='Acces la Contabilizare, Utilizatori: %UsersCount, Luni: %MonthsCount'; ru='Доступ к Contabilizare, пользователи: %UsersCount, месяцы: %MonthsCount'" );
+	text = NStr ( "en='Access to Nullarity, Users: %UsersCount, Months: %MonthsCount'; ro='Acces la Nullarity, Utilizatori: %UsersCount, Luni: %MonthsCount'; ru='Доступ к Nullarity, пользователи: %UsersCount, месяцы: %MonthsCount'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -6335,9 +6335,9 @@ EndProcedure
 Procedure LicenseExpired ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "LicenseExpired" ) export
 
 	text = NStr ( "en='Unfortunately, your subscription has been expired in %Expired. New release dated %Issued can’t be installed.
-				|To renew your subscription, please call Contabilizare, phone: 22-54-88'; ro='Din păcate, abonamentul dvs. a expirat în %Expired. Noua versiune din %Issued nu poate fi instalată.
-				|Pentru a vă reînnoi abonamentul, vă rugăm să sunați la Contabilizare, telefon: 22-54-88'; ru='К сожалению, ваш срок подписки истек %Expired и обновление вышедшее %Issued не может быть установлено!
-				|Для продления подписки, обращайтесь в офис фирмы Contabilizare по телефону 22-54-88'" );
+				|To renew your subscription, please contact nullarity@gmail.com'; ro='Din păcate, abonamentul dvs. a expirat în %Expired. Noua versiune din %Issued nu poate fi instalată.
+				|Pentru a vă reînnoi abonamentul, vă rugăm să sunați la nullarity@gmail.com'; ru='К сожалению, ваш срок подписки истек %Expired и обновление вышедшее %Issued не может быть установлено!
+				|Для продления подписки, обращайтесь по адресу nullarity@gmail.com'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
 
@@ -8531,5 +8531,14 @@ Function Dimension ( Params = undefined ) export
 
 	text = NStr ( "en = 'Dimension %Level';ro = 'Dimensiune %Level';ru = 'Субконто %Level'" );
 	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtClient
+Function SetDefaultContractConfirmation ( Params = undefined ) export
+
+	text = NStr ( "en = 'Do you want to set this contract as the default?';ro = 'Doriți să setați acest contract ca fiind cel implicit?';ru = 'Вы хотите установить этот договор по умолчанию?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
 EndFunction

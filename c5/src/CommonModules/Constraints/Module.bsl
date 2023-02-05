@@ -48,6 +48,9 @@ EndProcedure
 
 Function getSalesData ( Object )
 
+	if ( IsInRole ( Metadata.Roles.ModifyIssuedInvoices ) ) then
+		return undefined;
+	endif;
 	context = getContext ( Object );
 	if ( context = undefined ) then
 		return undefined;

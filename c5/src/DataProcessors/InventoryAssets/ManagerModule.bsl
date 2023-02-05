@@ -5,7 +5,7 @@ Function Print ( Params, Env ) export
 	Print.SetFooter ( Params.TabDoc );
 	setPageSettings ( Params, Env );
 	getData ( Params, Env );
-	DataProcessors.Inventory.PutTable ( Params, Env );
+	DataProcessors.Inventory.PutTable ( Params, Env, true );
 	return true;
 	
 EndFunction

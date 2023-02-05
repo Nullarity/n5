@@ -6,10 +6,6 @@ var Base;
 var LVIInventoryExists;
 &AtClient
 var ItemsRow;
-&AtServer
-var AccountData;
-&AtClient
-var AccountData;
 
 // *****************************************
 // *********** Form events
@@ -18,8 +14,6 @@ var AccountData;
 Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
-	readAccount ();
-	labelDims ();
 	updateChangesPermission ();
 	Appearance.Apply ( ThisObject );
 	
@@ -31,25 +25,6 @@ Procedure updateChangesPermission ()
 	Constraints.ShowAccess ( ThisObject );
 
 EndProcedure
-
-&AtServer
-Procedure readAccount ()
-	
-	AccountData = GeneralAccounts.GetData ( Object.ExpenseAccount );
-	ExpensesLevel = AccountData.Fields.Level;
-	
-EndProcedure 
-
-&AtServer
-Procedure labelDims ()
-	
-	i = 1;
-	for each dim in AccountData.Dims do
-		Items [ "Dim" + i ].Title = dim.Presentation;
-		i = i + 1;
-	enddo; 
-	
-EndProcedure 
 
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
@@ -70,7 +45,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	endif; 
 	setAccuracy ();
 	setLinks ();
-	setAccounts ();
+	setAmortizationAccount ();
 	Options.Company ( ThisObject, Object.Company );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
@@ -83,15 +58,10 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|ItemsShowDetails press Object.Detail;
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Prices Amount VATUse show Object.ShowPrices;
-	|Dim1 show ExpensesLevel > 0;
-	|Dim2 show ExpensesLevel > 1;
-	|Dim3 show ExpensesLevel > 2;
 	|Links show ShowLinks;
 	|VAT show ( Object.ShowPrices and Object.VATUse > 0 );
-	|ItemsDim1 ItemsDim2 ItemsDim3 ItemsProduct ItemsProductFeature ItemsExpenseAccount show Object.Detail;
 	|ItemsAmount ItemsPrice ItemsPrices show Object.ShowPrices;
 	|ItemsVATCode ItemsVAT ItemsTotal show ( Object.ShowPrices and Object.VATUse > 0 )
 	|" );
@@ -213,33 +183,23 @@ Procedure setLinks ()
 EndProcedure 
 
 &AtServer
-Procedure setAccounts ()
+Procedure setAmortizationAccount ()
 	
-	table = getSettings ();
-	amortizationAccount = ChartsOfCharacteristicTypes.Settings.LVIAmortizationAccount;
-	for each row in table do
-		value = row.Value;
-		if ( row.Parameter = amortizationAccount ) then 
-			Object.AmortizationAccount = value;
-		else
-			Account = value;
-		endif; 
-	enddo; 
+	Object.AmortizationAccount = getAmortizationAccount ();
 	
 EndProcedure 
 
 &AtServer
-Function getSettings ()
+Function getAmortizationAccount ()
 	
-	accounts = new Array ();
-	accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.LVIAmortizationAccount )" );
-	accounts.Add ( "value ( ChartOfCharacteristicTypes.Settings.LVIExploitationAccount )" );
 	s = "
 	|select Settings.Parameter as Parameter, Settings.Value as Value
-	|from InformationRegister.Settings.SliceLast ( , Parameter in ( " + StrConcat ( accounts, "," ) + ") ) as Settings
+	|from InformationRegister.Settings.SliceLast ( ,
+	|	Parameter = value ( ChartOfCharacteristicTypes.Settings.LVIAmortizationAccount ) ) as Settings
 	|";
 	q = new Query ( s );
-	return q.Execute ().Unload ();
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Value );
 	
 EndFunction 
 
@@ -361,68 +321,6 @@ Procedure ShowPricesOnChange ( Item )
 EndProcedure
 
 &AtClient
-Procedure ExpenseAccountOnChange ( Item )
-	
-	applyExpenseAccount ();
-	
-EndProcedure
-
-&AtServer
-Procedure applyExpenseAccount ()
-	
-	readAccount ();
-	adjustDims ( AccountData, Object );
-	labelDims ();
-	setDepartment ( Object, Object );
-	Appearance.Apply ( ThisObject, "ExpensesLevel" );
-	      	
-EndProcedure 
-
-&AtClientAtServerNoContext
-Procedure adjustDims ( Data, Target )
-	
-	fields = Data.Fields;
-	dims = Data.Dims;
-	level = fields.Level;
-	if ( level = 0 ) then
-		Target.Dim1 = null;
-		Target.Dim2 = null;
-		Target.Dim3 = null;
-	elsif ( level = 1 ) then
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = null;
-		Target.Dim3 = null;
-	elsif ( level = 2 ) then
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
-		Target.Dim3 = null;
-	else
-		Target.Dim1 = dims [ 0 ].ValueType.AdjustValue ( Target.Dim1 );
-		Target.Dim2 = dims [ 1 ].ValueType.AdjustValue ( Target.Dim2 );
-		Target.Dim3 = dims [ 2 ].ValueType.AdjustValue ( Target.Dim3 );
-	endif; 
-
-EndProcedure 
-
-&AtClientAtServerNoContext
-Procedure setDepartment ( Object, Target ) 
-
-	department = Object.Department;
-	if ( department.IsEmpty () ) then
-		return;
-	endif;
-	typeDepartments = Type ( "CatalogRef.Departments" );
-	if ( TypeOf ( Target.Dim1 ) = typeDepartments ) then
-		Target.Dim1 = department;
-	elsif ( TypeOf ( Target.Dim2 ) = typeDepartments ) then
-		Target.Dim2 = department;
-	elsif ( TypeOf ( Target.Dim3 ) = typeDepartments ) then
-		Target.Dim3 = department;
-	endif;
-
-EndProcedure
-
-&AtClient
 Procedure VATUseOnChange ( Item )
 	
 	applyVATUse ();
@@ -446,90 +344,6 @@ EndProcedure
 // *********** Table Items
 
 &AtClient
-Procedure ShowDetails ( Command )
-	
-	if ( Object.Detail
-		and detailsExist () ) then
-		Output.RemoveDetails ( ThisObject );
-	else
-		switchDetail ();
-	endif; 
-	
-EndProcedure
-
-&AtClient
-Function detailsExist ()
-	
-	for each row in Object.Items do
-		if ( not row.ExpenseAccount.IsEmpty () ) then
-			return true;
-		endif; 
-	enddo; 
-	return false;
-	
-EndFunction 
-
-&AtClient
-Procedure switchDetail ()
-	
-	Object.Detail = not Object.Detail;
-	Appearance.Apply ( ThisObject, "Object.Detail" );
-	
-EndProcedure 
-
-&AtClient
-Procedure RemoveDetails ( Answer, Params ) export
-	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif; 
-	clearDetails ();
-	switchDetail ();
-	
-EndProcedure 
-
-&AtClient
-Procedure clearDetails ()
-	
-	for each row in Object.Items do
-		row.ExpenseAccount = undefined;
-		row.Dim1 = undefined;
-		row.Dim2 = undefined;
-		row.Dim3 = undefined;
-		row.Product = undefined;
-		row.ProductFeature = undefined;
-	enddo; 
-	
-EndProcedure 
-
-&AtClient
-Procedure ItemsBeforeRowChange ( Item, Cancel )
-	
-	readTableAccount ();
-	enableDims ();
-	
-EndProcedure
-
-&AtClient
-Procedure readTableAccount ()
-	
-	AccountData = GeneralAccounts.GetData ( ItemsRow.ExpenseAccount );
-	
-EndProcedure 
-
-&AtClient
-Procedure enableDims ()
-	
-	fields = AccountData.Fields;
-	level = fields.Level;
-	for i = 1 to 3 do
-		disable = ( level < i );
-		Items [ "ItemsDim" + i ].ReadOnly = disable;
-	enddo; 
-	
-EndProcedure
-
-&AtClient
 Procedure ItemsOnActivateRow ( Item )
 	
 	ItemsRow = Item.CurrentData;
@@ -539,19 +353,9 @@ EndProcedure
 &AtClient
 Procedure ItemsOnEditEnd ( Item, NewRow, CancelEdit )
 	
-	resetAnalytics ();
 	calcTotals ( Object );
 	
 EndProcedure
-
-&AtClient
-Procedure resetAnalytics ()
-	
-	Items.ItemsDim1.ReadOnly = false;
-	Items.ItemsDim2.ReadOnly = false;
-	Items.ItemsDim3.ReadOnly = false;
-	
-EndProcedure 
 
 &AtClient
 Procedure ItemsAfterDeleteRow ( Item )
@@ -580,7 +384,6 @@ Procedure applyItem ()
 	ItemsRow.Package = data.Package;
 	ItemsRow.Capacity = data.Capacity;
 	ItemsRow.Price = data.Price;
-	ItemsRow.Account = Account;
 	ItemsRow.VATCode = data.VAT;
 	ItemsRow.VATRate = data.Rate;
 	Computations.Units ( ItemsRow );
@@ -700,50 +503,6 @@ Procedure ItemsPricesOnChange ( Item )
 	priceItem ();
 	Computations.Amount ( ItemsRow );
 	Computations.Total ( ItemsRow, Object.VATUse );
-	
-EndProcedure
-
-&AtClient
-Procedure ItemsExpenseAccountOnChange ( Item )
-	
-	readTableAccount ();
-	adjustDims ( AccountData, ItemsRow );
-	enableDims ();
-	setDepartment ( Object, ItemsRow );
-	
-EndProcedure
-
-&AtClient
-Procedure ItemsDim1StartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	chooseDim ( Item, 1, StandardProcessing );
-	
-EndProcedure
-
-&AtClient
-Procedure chooseDim ( Item, Level, StandardProcessing )
-	
-	p = Dimensions.GetParams ();
-	p.Company = Object.Company;
-	p.Level = Level;
-	p.Dim1 = ItemsRow.Dim1;
-	p.Dim2 = ItemsRow.Dim2;
-	p.Dim3 = ItemsRow.Dim3;
-	Dimensions.Choose ( p, Item, StandardProcessing );
-	
-EndProcedure 
-
-&AtClient
-Procedure ItemsDim2StartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	chooseDim ( Item, 2, StandardProcessing );
-	
-EndProcedure
-
-&AtClient
-Procedure ItemsDim3StartChoice ( Item, ChoiceData, StandardProcessing )
-	
-	chooseDim ( Item, 3, StandardProcessing );
 	
 EndProcedure
 

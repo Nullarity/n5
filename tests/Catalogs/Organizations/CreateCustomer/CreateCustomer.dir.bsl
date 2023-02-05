@@ -133,7 +133,8 @@ endif;
 if (terms <> undefined) then
 	Set("#CustomerTerms", terms);
 endif;
-if ( monthlyAdvances ) then
+advancesEnabled = Fetch("#CustomerAdvancesMonthly") = "Yes";
+if ( ( advancesEnabled and not monthlyAdvances ) or ( not advancesEnabled and monthlyAdvances ) ) then
 	Click ( "#CustomerAdvancesMonthly" );
 endif;
 if (clearTerms) then

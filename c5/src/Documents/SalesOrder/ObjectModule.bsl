@@ -300,7 +300,7 @@ Procedure sendEmails ()
 	p.Insert ( "Process", Process );
 	args = new Array ();
 	args.Add ( p );
-	Jobs.Run ( "SalesOrderMailing.Send", args );
+	Jobs.Run ( "SalesOrderMailing.Send", args, , , TesterCache.Testing () );	
 	
 EndProcedure 
 

@@ -14,7 +14,7 @@ Set("#Range", env.Range);
 Next();
 Set("#Splitter", 150);
 Click("#FormPost");
-Click("Yes", "Contabilizare");
+Click("Yes", "Nullarity");
 
 // Check records
 Click("#FormShowRecords");

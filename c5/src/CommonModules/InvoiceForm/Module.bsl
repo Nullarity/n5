@@ -244,7 +244,18 @@ Procedure SetPayment ( Object ) export
 		Object.PaymentDate = undefined;
 	else
 		Object.PaymentOption = option.Value;
-		Object.PaymentDate = Periods.GetDocumentDate ( Object ) + option.Due * 86400;
+		documentDate = Periods.GetDocumentDate ( Object );
+		due = option.Due * 86400;
+		if ( option.Before ) then
+			date = DF.Pick ( Object.Contract, "DateEnd" ) - due;
+			if ( date >= documentDate ) then
+				Object.PaymentDate = date;
+			else
+				Object.PaymentDate = undefined;
+			endif;
+		else
+			Object.PaymentDate = documentDate + due;
+		endif;
 	endif; 
 	
 EndProcedure 
@@ -262,7 +273,8 @@ Function getPaymentOption ( Object, Vendor )
 	list = InvoiceForm.GetOrders ( Object, Vendor );
 	if ( list.Count () = 0 ) then
 		s = "
-		|select top 1 Payments.Option as Value, Payments.Option.Due as Due
+		|select top 1 Payments.Option as Value, Payments.Option.Due as Due,
+		|	Payments.Option.Before as Before
 		|from Catalog.Terms.Payments as Payments
 		|where Payments.Ref in ( select " + terms + " from Catalog.Contracts where Ref = &Contract )
 		|and Payments.Variant = value ( Enum.PaymentVariants.OnDelivery )
@@ -283,7 +295,8 @@ Function getPaymentOption ( Object, Vendor )
 		|and Payments.Date = datetime ( 3999, 12, 31 )
 		|index by Key
 		|;
-		|select Payments.Option as Value, Payments.Option.Due as Due
+		|select Payments.Option as Value, Payments.Option.Due as Due,
+		|	Payments.Option.Before as Before
 		|from AccumulationRegister." + register + ".Balance ( &Date,
 		|	Contract = &Contract
 		|	and PaymentKey in ( select Key from Keys )

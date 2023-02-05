@@ -1,24 +1,13 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 	
-var UseReceiver;
-
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
-	setUseReceiver ();
 	if ( not checkAmount () ) then
 		Cancel = true;
 		return;
 	endif;
 	checkAttributes ( CheckedAttributes );
 	
-EndProcedure
-
-Procedure setUseReceiver () 
-
-	adjustmentOptions = Enums.AdjustmentOptions;
-	UseReceiver = ( Option = adjustmentOptions.Customer
-	or Option = adjustmentOptions.Vendor );
-
 EndProcedure
 
 Function checkAmount ()
@@ -33,7 +22,8 @@ EndFunction
 
 Procedure checkAttributes ( CheckedAttributes ) 
 
-	if ( UseReceiver ) then
+	if ( Option = Enums.AdjustmentOptions.Customer
+		or Option = Enums.AdjustmentOptions.Vendor ) then
 		CheckedAttributes.Add ( "Receiver" );
 		CheckedAttributes.Add ( "ReceiverContract" );
 		CheckedAttributes.Add ( "ReceiverContractFactor" );
@@ -42,8 +32,7 @@ Procedure checkAttributes ( CheckedAttributes )
 	else
 		CheckedAttributes.Add ( "Account" );
 	endif;
-	if ( not ( Option = Enums.AdjustmentOptions.AccountingDr
-			or Option = Enums.AdjustmentOptions.AccountingCr ) ) then
+	if ( not AmountDifference ) then
 		CheckedAttributes.Add ( "Amount" );
 	endif;
 

@@ -1,6 +1,6 @@
 Procedure Send ( Document, Reason ) export
 	
-	profile = MailboxesSrv.SystemProfile ();
+ 	profile = MailboxesSrv.SystemProfile ();
 	for each receiver in getReceivers () do
 		message = createMessage ( Document, Reason, receiver );
 		try
@@ -38,13 +38,27 @@ EndFunction
 
 Function getReceivers ()
 	
+	access = """" + Metadata.Roles.ApproveSales.Name + """";
 	s = "
 	|select min ( Users.Ref ) as Ref, min ( Users.Code ) as Login, Users.Email as Email
 	|from Catalog.Users as Users
 	|where not Users.DeletionMark
 	|and not Users.AccessDenied
-	|and not Users.AccessRevoked
-	|and Users.Rights.RoleName = """ + Metadata.Roles.ApproveSales.Name + """
+	|and not Users.AccessRevoked               
+	|and Users.Ref in (
+	|	select Rights.Ref as User
+	|	from Catalog.Users.Rights as Rights
+	|	where Rights.RoleName = " + access + "
+	|	union
+	|	select Memberships.User
+	|	from InformationRegister.Membership as Memberships
+	|	//
+	|	// Group Rights
+	|	//
+	|	join Catalog.Membership.Rights as GroupRights
+	|	on GroupRights.Ref = Memberships.Membership
+	|	and GroupRights.RoleName = " + access + "
+	|)
 	|group by Users.Email
 	|";
 	q = new Query ( s );

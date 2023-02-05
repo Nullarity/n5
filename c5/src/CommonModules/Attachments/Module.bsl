@@ -314,7 +314,7 @@ async Procedure SelectUploadingFiles ( Files, Params ) export
 		endif; 
 	enddo;
 	#if ( WebClient ) then
-		// https://github.com/Contabilizare/c5/issues/25
+		// https://github.com/Nullarity/c5/issues/25
 		control.Refresh ();
 	#endif
 	

@@ -193,10 +193,11 @@ Procedure drawValue ( Parameter, Value )
 	var set;
 	if ( MakeComplete ) then
 		if ( Areas.Property ( Parameter, set ) ) then
+			valueType = TypeOf ( Value );
 			for each areaName in set do
 				Area = TabDoc.Area ( areaName );
 				if ( Area.ContainsValue ) then
-					Area.Value = Value;
+					Area.Value = ? ( Area.ValueType.ContainsType ( valueType ), Value, undefined );
 				else
 					Area.Text = Value;
 				endif; 

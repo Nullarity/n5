@@ -36,7 +36,6 @@ Procedure getData ( Params, Env )
 	Env.Q.SetParameter ( "Noreply", Cloud.Noreply () );
 	Env.Q.SetParameter ( "EmptyMemo", Output.EmptyMemo () );
 	SQL.Perform ( Env );
-	Env.Insert ( "Discounts", Options.Discounts ( Env.Fields.Company ) );
 
 EndProcedure 
 
@@ -48,7 +47,7 @@ Procedure sqlFields ( Env )
 	|	Document.Creator.Description as Responsible, Document.Amount as Amount,
 	|	Document.Currency.Description as Currency, Document.Creator.Email as CreatorEmail,
 	|	Document.Creator.Description as Creator, Senders.Email as SenderEmail, Senders.Description as Sender
-	|from Document.SalesOrder as Document
+	|from Document.InternalOrder as Document
 	|	//
 	|	// Senders
 	|	//
@@ -66,15 +65,15 @@ Procedure sqlItems ( Env )
 	|// #Items
 	|select Items.LineNumber as LineNumber, Items.Item.Description as Item,
 	|	Items.Package.Description as Package, Items.QuantityPkg as Quantity,
-	|	Items.Price as Price, Items.Amount as Amount, Items.Discount as Discount
-	|from Document.SalesOrder.Items as Items
+	|	Items.Price as Price, Items.Amount as Amount
+	|from Document.InternalOrder.Items as Items
 	|where Items.Ref = &Ref
 	|;
 	|// #Services
 	|select Services.LineNumber as LineNumber, Services.Description as Item,
 	|	Services.Item.Unit.Code as Package, Services.Quantity as Quantity,
-	|	Services.Price as Price, Services.Amount as Amount, Services.Discount as Discount
-	|from Document.SalesOrder.Services as Services
+	|	Services.Price as Price, Services.Amount as Amount
+	|from Document.InternalOrder.Services as Services
 	|where Services.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );	
@@ -104,7 +103,7 @@ Procedure sqlReceivers ( Params, Env )
 	|		on BPRouter.Activity
 	|		and BPRouter.Role = Tasks.Role
 	|		and BPRouter.Department = Tasks.Department
-	|		and Tasks.RoutePoint = value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution )
+	|		and Tasks.RoutePoint = value ( BusinessProcess.InternalOrder.RoutePoint.DepartmentHeadResolution )
 	|		and BPRouter.User.Email <> """"
 	|	where not Tasks.Executed
 	|	and not Tasks.DeletionMark
@@ -116,16 +115,15 @@ Procedure sqlReceivers ( Params, Env )
 	|	//
 	|	left join (
 	|		select top 1 Memos.Memo as Memo, Memos.User as User
-	|		from InformationRegister.SalesOrderResolutions as Memos
+	|		from InformationRegister.InternalOrderResolutions as Memos
 	|		where Memos.Document = &Ref
 	|		order by Memos.Date desc
 	|	) as Memos
 	|	on Memos.User = &Sender
-	|where Receivers.RoutePoint in ( value ( BusinessProcess.SalesOrder.RoutePoint.DepartmentHeadResolution ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Reject ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Rework ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Shipping ),
-	|	value ( BusinessProcess.SalesOrder.RoutePoint.Invoicing )
+	|where Receivers.RoutePoint in ( value ( BusinessProcess.InternalOrder.RoutePoint.DepartmentHeadResolution ),
+	|	value ( BusinessProcess.InternalOrder.RoutePoint.Reject ),
+	|	value ( BusinessProcess.InternalOrder.RoutePoint.Rework ),
+	|	value ( BusinessProcess.InternalOrder.RoutePoint.Delivery )
 	|	)
 	|";
 	Env.Selection.Add ( s );
@@ -146,7 +144,7 @@ Procedure fillMessage ( Params, Env, Receiver, Message )
 	routePoint = Receiver.RoutePoint;
 	lastRoutePoint = Params.LastRoutePoint;
 	parts = new Structure ();
-	parts.Insert ( "SalesOrderURL", Conversion.ObjectToURL ( Params.Ref ) );
+	parts.Insert ( "InternalOrderURL", Conversion.ObjectToURL ( Params.Ref ) );
 	parts.Insert ( "Department", Env.Fields.Department );
 	parts.Insert ( "Number", Env.Fields.Number );
 	parts.Insert ( "Sender", Env.Fields.Sender );
@@ -157,7 +155,7 @@ Procedure fillMessage ( Params, Env, Receiver, Message )
 	parts.Insert ( "RoutePoint", routePoint );
 	parts.Insert ( "Items", getItems ( Env, "Items", Receiver ) );
 	parts.Insert ( "Services", getItems ( Env, "Services", Receiver ) );
-	routePoints = BusinessProcesses.SalesOrder.RoutePoints;
+	routePoints = BusinessProcesses.InternalOrder.RoutePoints;
 	if ( rework ( routePoint, lastRoutePoint ) ) then
 		Message.Subject = Output.ReworkSubject ( parts );
 		Message.Texts.Add ( Output.ReworkBody ( parts ) );
@@ -166,17 +164,13 @@ Procedure fillMessage ( Params, Env, Receiver, Message )
 		Message.Subject = Output.RejectSubject ( parts );
 		Message.Texts.Add ( Output.RejectBody ( parts ) );
 		Message.From = Env.Fields.SenderEmail;
-	elsif ( routePoint = routePoints.Invoicing ) then
-		Message.Subject = Output.InvoicingSubject ( parts );
-		Message.Texts.Add ( Output.InvoicingBody ( parts ) );
-		Message.From = Env.Fields.SenderEmail;
 	elsif ( routePoint = routePoints.DepartmentHeadResolution
-		or routePoint = routePoints.Shipping ) then
-		if ( lastRoutePoint = Enums.SalesOrderPoints.Rework ) then
+		or routePoint = routePoints.Delivery ) then
+		if ( lastRoutePoint = Enums.InternalOrderPoints.Rework ) then
 			Message.Subject = Output.AgainApprovalSubject ( parts );
 			Message.Texts.Add ( Output.AgainApprovalBody ( parts ) );
 		else
-			if ( lastRoutePoint = Enums.SalesOrderPoints.New ) then
+			if ( lastRoutePoint = Enums.InternalOrderPoints.New ) then
 				parts.Insert ( "Performer", "" );
 			else
 				parts.Insert ( "Performer", Output.PreviousPerformer ( new Structure ( "Performer", Env.Fields.Sender ) ) );
@@ -191,7 +185,7 @@ EndProcedure
 
 Function rework ( RoutePoint, LastRoutePoint )
 	
-	routePoints = BusinessProcesses.SalesOrder.RoutePoints;
+	routePoints = BusinessProcesses.InternalOrder.RoutePoints;
 	return RoutePoint = routePoints.Rework;
 		
 EndFunction 
@@ -203,17 +197,14 @@ Function getItems ( Env, TableName, Receiver )
 		return "";
 	endif; 
 	items = new Array ();
-	items.Add ( Metadata.Documents.SalesOrder.TabularSections [ TableName ].Presentation () + ":" );
-	p = new Structure ( "LineNumber, Item, Quantity, Price, Discount, Amount, Comment" );
+	items.Add ( Metadata.Documents.InternalOrder.TabularSections [ TableName ].Presentation () + ":" );
+	p = new Structure ( "LineNumber, Item, Quantity, Price, Amount, Comment" );
 	currency = Env.Fields.Currency;
 	for each row in table do
 		p.LineNumber = row.LineNumber;
 		p.Item = row.Item;
 		p.Quantity = Conversion.NumberToQuantity ( row.Quantity, row.Package );
 		p.Price = Conversion.NumberToMoney ( row.Price, currency );
-		if ( Env.Discounts ) then
-			p.Discount = ", " + Output.Discount ( new Structure ( "Discount", Conversion.NumberToMoney ( row.Discount, currency ) ) );
-		endif; 
 		p.Amount = Conversion.NumberToMoney ( row.Amount, currency );
 		items.Add ( Output.ItemsRow ( p ) );
 	enddo; 

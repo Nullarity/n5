@@ -33,9 +33,6 @@ Procedure getData ( Env )
 	getFields ( Env );
 	fields = Env.Fields;
 	option = fields.Option;
-	Env.Insert ( "IsAccounting",
-		( fields.Option = Enums.AdjustmentOptions.AccountingDr
-		or fields.Option = Enums.AdjustmentOptions.AccountingCr ) );
 	sqlAdjustments ( Env );
 	sqlAccounting ( Env );
 	if ( option = Enums.AdjustmentOptions.Customer
@@ -60,8 +57,9 @@ Procedure sqlFields ( Env )
 	|// @Fields
 	|select Documents.Date as Date, Documents.Company as Company, Documents.Contract as Contract,
 	|	Documents.Option as Option, Documents.ApplyVAT as ApplyVAT,
-	|	Documents.AdvanceAccount as AdvanceAccount, Documents.VATAdvance.Rate as VATAdvanceRate,
-	|	Documents.VATAccount as PrepaymentVATAccount, Documents.ReceivablesVATAccount as ReceivablesVATAccount";
+	|	Documents.AmountDifference as AmountDifference, Documents.AdvanceAccount as AdvanceAccount,
+	|	Documents.VATAdvance.Rate as VATAdvanceRate, Documents.VATAccount as PrepaymentVATAccount,
+	|	Documents.ReceivablesVATAccount as ReceivablesVATAccount";
 	if ( Env.Customer ) then
 		s = s + ",
 		|Documents.CustomerAccount as OrganizationAccount, Documents.Customer as Organization,
@@ -166,7 +164,7 @@ Procedure sqlAdjustments ( Env )
 	|// #Adjustments
 	|select Adjustments.Document as Document, Adjustments.Amount as Amount, Adjustments.Payment as Payment
 	|";
-	if ( Env.IsAccounting ) then
+	if ( Env.Fields.AmountDifference ) then
 		s = s + ",
 		|	Adjustments.Accounting as Debt, Adjustments.Advance as Overpayment,
 		|	case
@@ -388,8 +386,15 @@ Function drcr ( Env )
 	fields = Env.Fields;
 	advance = ( fields.Type = Enums.TypesAdjustDebts.Advance );
 	customer = Env.Customer;
-	if ( Env.IsAccounting ) then
-		organizationDr = ( fields.Option = Enums.AdjustmentOptions.AccountingCr );
+	if ( fields.AmountDifference ) then
+		option = fields.Option;
+		if ( option = Enums.AdjustmentOptions.CustomAccountCr ) then
+			organizationDr = true;
+		elsif ( option = Enums.AdjustmentOptions.CustomAccountDr ) then
+			organizationDr = false;
+		else
+			organizationDr = ( customer and advance ) or not ( customer or advance );
+		endif;
 		operation = Enums.Operations.AdjustDebts;
 		straight = ( customer and organizationDr )
 			or not ( customer or organizationDr );
@@ -397,9 +402,11 @@ Function drcr ( Env )
 	else
 		organizationDr = ( customer and advance ) or not ( customer or advance );
 		if ( customer ) then
-			operation = ? ( advance, Enums.Operations.AdjustAdvances, Enums.Operations.AdjustDebts );
+			operation = ? ( advance,
+				Enums.Operations.AdjustAdvances, Enums.Operations.AdjustDebts );
 		else
-			operation = ? ( advance, Enums.Operations.AdjustVendorAdvances, Enums.Operations.AdjustVendorDebts );
+			operation = ? ( advance,
+				Enums.Operations.AdjustVendorAdvances, Enums.Operations.AdjustVendorDebts );
 		endif;
 		direction = 1;
 	endif;
@@ -439,7 +446,7 @@ Procedure decreaseDebt ( Env, Table, ForReceiver )
 	endif;
 	date = fields.Date;
 	reversal = fields.Reversal;
-	regularAdjustment = not Env.IsAccounting;
+	regularAdjustment = ForReceiver or not fields.AmountDifference;
 	for each row in Table do
 		if ( not ForReceiver ) then
 			commitDebt ( Env, row );
@@ -504,20 +511,20 @@ Procedure increaseDebt ( Env, Table, ForReceiver )
 		isCustomer = customerDebts;
 		contract = fields.Contract;
 	endif;
-	regiter = ? ( isCustomer, Env.Registers.Debts, Env.Registers.VendorDebts );
+	register = ? ( isCustomer, Env.Registers.Debts, Env.Registers.VendorDebts );
 	date = fields.Date;
 	ref = Env.Ref;
 	reversal = fields.Reversal;
-	regularAdjustment = not Env.IsAccounting;
+	regularAdjustment = ForReceiver or not fields.AmountDifference;
 	for each row in Table do
 		if ( not ForReceiver ) then
 			commitDebt ( Env, row );
 		endif;
 		if ( reversal ) then
-			movement = regiter.AddExpense ();
+			movement = register.AddExpense ();
 			coef = -1;
 		else
-			movement = regiter.AddReceipt ();
+			movement = register.AddReceipt ();
 			coef = 1;
 		endif;
 		movement.Period = date;
@@ -610,7 +617,7 @@ EndProcedure
 
 Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 	
-	if ( advancesApplied ( Env, ForReceiver ) ) then
+	if ( monthlyAdvances ( Env, ForReceiver ) ) then
 		return;
 	endif;
 	fields = Env.Fields;
@@ -671,7 +678,7 @@ Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 	
 EndProcedure
 
-Function advancesApplied ( Env, ForReceiver )
+Function monthlyAdvances ( Env, ForReceiver )
 
 	fields = Env.Fields;
 	return ( ForReceiver and fields.ReceiverAdvancesMonthly )

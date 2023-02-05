@@ -83,7 +83,7 @@ Procedure sqlItems ( Params, Env )
 	
 EndProcedure
 
-Procedure PutTable ( Params, Env ) export
+Procedure PutTable ( Params, Env, Assets = false ) export
 
 	t = Env.T;
 	header1 = header1 ( Env );
@@ -108,7 +108,7 @@ Procedure PutTable ( Params, Env ) export
 	footer2Params = footer2.Parameters;
 	for i = 0 to lastIndex do
 		row = table [ i ];
-		areaRow = getAreaRow ( t, row );
+		areaRow = getAreaRow ( t, row, Assets );
 		fillTotals ( totals, row );
 		pageRows.Add ( row );
 		areas.Insert ( areas.UBound (), areaRow );
@@ -179,12 +179,16 @@ Function getPageTotals ( Totals )
 
 EndFunction
 
-Function getAreaRow ( Template, Row )
+Function getAreaRow ( Template, Row, Assets )
 
 	area = Template.GetArea ( "Row" );
 	p = area.Parameters;
 	p.Fill ( Row );
-	p.Item = Print.FormatItem ( Row.Item, , Row.Feature, Row.Series );
+	if ( Assets ) then
+		p.Asset = Row.Asset;
+	else
+		p.Item = Print.FormatItem ( Row.Item, , Row.Feature, Row.Series );
+	endif;
 	return area;
 
 EndFunction

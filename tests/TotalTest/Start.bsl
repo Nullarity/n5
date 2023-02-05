@@ -23,7 +23,7 @@ p.Workspace = "/home/dmitry/" + AppName;
 p.GitFolder = "/home/dmitry/git/" + AppName;
 p.GitUser = "nullarity";
 p.GitPassword = Call ("Tools.GitPassword", , "System");
-p.GitRepo = "github.com/contabilizare/c5";
+p.GitRepo = "github.com/nullarity/n5";
 p.TestingOnly = _ <> undefined and _ = "TestingOnly";
 exceptions = new Array();
 exceptions.Add("Documents.Document.ChangeBook");
@@ -133,7 +133,7 @@ while ( stillWorking ( Job ) ) do
 enddo;
 params.Folder = "DataProcessors.Cost";
 list = Call ( "Tester.Scenarios", params );
-NewJob ( "Tester", list, , , , , , job );
+NewJob ( "Tester", list, , , "tc30", , , job );
 
 // Disconnect all after testing
 for i = 1 to agents do

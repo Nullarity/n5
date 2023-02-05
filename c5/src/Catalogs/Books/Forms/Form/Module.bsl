@@ -10,12 +10,12 @@ Procedure OnReadAtServer ( CurrentObject )
 EndProcedure
 
 &AtServer
-Procedure readAccess ( Document )
+Procedure readAccess ( Book )
 	
 	s = "
 	|select Access.UserGroup as UserGroup, Access.Read as Read, Access.Write as Write
-	|from InformationRegister.GroupsAccess as Access
-	|where Access.Document = &Document
+	|from InformationRegister.GroupsAccessBooks as Access
+	|where Access.Book in ( select AccessBook from InformationRegister.EffectiveRights where Book = &Book )
 	|order by Access.UserGroup.Description
 	|;
 	|select allowed Users.Ref as Ref, Users.Description as Name
@@ -24,21 +24,21 @@ Procedure readAccess ( Document )
 	|index by Ref
 	|;
 	|select Access.User as User, Access.Read as Read, Access.Write as Write
-	|from InformationRegister.UsersAccess as Access
+	|from InformationRegister.UsersAccessBooks as Access
 	|	//
 	|	// Users
 	|	//
 	|	left join Users as Users
 	|	on Users.Ref = Access.User
-	|where Access.Document = &Document
+	|where Access.Book in ( select AccessBook from InformationRegister.EffectiveRights where Book = &Book )
 	|order by isnull ( Users.Name, """" )
 	|";
 	q = new Query ( s );
-	q.SetParameter ( "Document", Document );
+	q.SetParameter ( "Book", Book );
 	data = q.ExecuteBatch ();
 	Tables.UsersGroupsRights.Load ( data [ 0 ].Unload () );
 	Tables.UsersRights.Load ( data [ 2 ].Unload () );
-	
+
 EndProcedure 
 	
 &AtServer

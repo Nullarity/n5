@@ -225,6 +225,7 @@ Procedure createContract ( CurrentObject, Ref )
 	Metafields.Constructor ( obj );
 	obj.DataExchange.Load = true;
 	obj.Owner = ref;
+	obj.Creator = SessionParameters.User;
 	obj.Description = Output.General ();
 	obj.Company = settings.Company;
 	obj.Currency = Application.Currency ();

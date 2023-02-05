@@ -648,20 +648,107 @@
           <currentRowUse>Auto</currentRowUse>
         </extInfo>
       </items>
-      <items xsi:type="form:FormField">
-        <name>Reversal</name>
-        <id>415</id>
+      <items xsi:type="form:FormGroup">
+        <name>Group2</name>
+        <id>662</id>
+        <items xsi:type="form:FormField">
+          <name>Reversal</name>
+          <id>415</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.Reversal</segments>
+          </dataPath>
+          <extendedTooltip>
+            <name>ReversalExtendedTooltip</name>
+            <id>417</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>ReversalContextMenu</name>
+            <id>416</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>CheckBoxField</type>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+        </items>
+        <items xsi:type="form:FormField">
+          <name>AmountDifference</name>
+          <id>664</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <dataPath xsi:type="form:DataPath">
+            <segments>Object.AmountDifference</segments>
+          </dataPath>
+          <handlers>
+            <event>OnChange</event>
+            <name>AmountDifferenceOnChange</name>
+          </handlers>
+          <extendedTooltip>
+            <name>AmountDifferenceExtendedTooltip</name>
+            <id>666</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <type>Label</type>
+            <autoMaxWidth>true</autoMaxWidth>
+            <autoMaxHeight>true</autoMaxHeight>
+            <extInfo xsi:type="form:LabelDecorationExtInfo">
+              <horizontalAlign>Left</horizontalAlign>
+            </extInfo>
+          </extendedTooltip>
+          <contextMenu>
+            <name>AmountDifferenceContextMenu</name>
+            <id>665</id>
+            <visible>true</visible>
+            <enabled>true</enabled>
+            <userVisible>
+              <common>true</common>
+            </userVisible>
+            <autoFill>true</autoFill>
+          </contextMenu>
+          <type>CheckBoxField</type>
+          <editMode>Enter</editMode>
+          <showInHeader>true</showInHeader>
+          <headerHorizontalAlign>Left</headerHorizontalAlign>
+          <showInFooter>true</showInFooter>
+          <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+        </items>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
           <common>true</common>
         </userVisible>
-        <dataPath xsi:type="form:DataPath">
-          <segments>Object.Reversal</segments>
-        </dataPath>
         <extendedTooltip>
-          <name>ReversalExtendedTooltip</name>
-          <id>417</id>
+          <name>Group2ExtendedTooltip</name>
+          <id>663</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
@@ -674,22 +761,15 @@
             <horizontalAlign>Left</horizontalAlign>
           </extInfo>
         </extendedTooltip>
-        <contextMenu>
-          <name>ReversalContextMenu</name>
-          <id>416</id>
-          <visible>true</visible>
-          <enabled>true</enabled>
-          <userVisible>
-            <common>true</common>
-          </userVisible>
-          <autoFill>true</autoFill>
-        </contextMenu>
-        <type>CheckBoxField</type>
-        <editMode>Enter</editMode>
-        <showInHeader>true</showInHeader>
-        <headerHorizontalAlign>Left</headerHorizontalAlign>
-        <showInFooter>true</showInFooter>
-        <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+        <type>UsualGroup</type>
+        <extInfo xsi:type="form:UsualGroupExtInfo">
+          <group>HorizontalIfPossible</group>
+          <behavior>Auto</behavior>
+          <showLeftMargin>true</showLeftMargin>
+          <united>true</united>
+          <throughAlign>Auto</throughAlign>
+          <currentRowUse>Auto</currentRowUse>
+        </extInfo>
       </items>
       <visible>true</visible>
       <enabled>true</enabled>
@@ -796,16 +876,6 @@
           <choiceList>
             <value xsi:type="core:ReferenceValue">
               <value>Enum.AdjustmentOptions.EnumValue.CustomAccountCr</value>
-            </value>
-          </choiceList>
-          <choiceList>
-            <value xsi:type="core:ReferenceValue">
-              <value>Enum.AdjustmentOptions.EnumValue.AccountingDr</value>
-            </value>
-          </choiceList>
-          <choiceList>
-            <value xsi:type="core:ReferenceValue">
-              <value>Enum.AdjustmentOptions.EnumValue.AccountingCr</value>
             </value>
           </choiceList>
         </extInfo>
