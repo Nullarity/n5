@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="6904947c-ea82-4483-85e8-a78cca09dbe2">
+  <producedTypes>
+    <selectionType typeId="7407240a-3ebe-4f48-83b0-0e9f1b203e87" valueTypeId="f5eb0766-61c0-426e-a46c-6496b79ef356"/>
+    <listType typeId="96e33f31-e30a-4be2-abc8-82fdf76838f4" valueTypeId="4c67c874-c1dc-40ec-b067-e76f37fc7bbe"/>
+    <managerType typeId="b6afe356-883b-46d2-8564-e7f96264ddd3" valueTypeId="1c7fd5fe-32f3-43bf-a491-66ef8adfc1a3"/>
+    <recordSetType typeId="2d71613b-ebf5-479f-9ba8-98e0547656d9" valueTypeId="f691f973-f3b0-444c-af68-a64bbbbdec54"/>
+    <recordKeyType typeId="3e67d0a0-fcce-42c7-99b1-cc327455aaea" valueTypeId="a8047bf6-789c-417b-bfda-393f59f56e33"/>
+    <recordType typeId="a55915f8-e310-46c3-b7b0-58bd0e92ef93" valueTypeId="99ab516c-2eb2-49c7-8656-cfd132a5e1bc"/>
+    <recordManagerType typeId="26610854-3f5c-4f03-9f71-c5d495797878" valueTypeId="b35dc7fb-5477-4ff5-a621-973dca77bff0"/>
+  </producedTypes>
+  <name>IPN</name>
+  <synonym>
+    <key>en</key>
+    <value>IPN</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>IPN</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>IPN</value>
+  </synonym>
+  <editType>InDialog</editType>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Service data register to store IPN messages</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Служебный регистр сведений для хранения сообщений IPN</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul de date de serviciu pentru stocarea mesajelor IPN</value>
+  </explanation>
+  <resources uuid="dfd6e6a7-0c7d-4ebe-816e-94b677a7277c">
+    <name>Date</name>
+    <synonym>
+      <key>en</key>
+      <value>Date of Action</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Date of action</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Date of action</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date of action</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Date of action</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Date of action</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="a6e569a7-ff84-4864-9e67-68bcb1feaa78">
+    <name>txn_id</name>
+    <synonym>
+      <key>en</key>
+      <value>Transaction Identification Number</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Transaction identification number</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Transaction identification number</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>20</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The identification number of the merchant’s transaction with the buyer, against whom a case has been opened</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>The merchant’s original transaction identification number for the payment from the buyer, against which the case was registered</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>The merchant’s original transaction identification number for the payment from the buyer, against which the case was registered</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <resources uuid="7a91ee02-4020-40d7-93bc-1651950e5026">
+    <name>payer_email</name>
+    <synonym>
+      <key>en</key>
+      <value>Payer Email</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Payer email</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Payer email</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>128</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Customer’s primary email address. Use this email to provide any credits</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Customer’s primary email address. Use this email to provide any credits</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Customer’s primary email address. Use this email to provide any credits</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <dimensions uuid="932f0daf-4bc0-48b7-953f-7b9cd4ea1039">
+    <name>TenantOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenant Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda chiriaș</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.TenantOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Tenant order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Заказ организации</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Comanda chiriaș</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

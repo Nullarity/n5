@@ -1,0 +1,1769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="caf659ff-0294-479b-8c52-6ed40eb4fe51">
+  <producedTypes>
+    <objectType typeId="587da93e-93b3-4094-82f2-5b8ab5ea2e94" valueTypeId="cef29927-63c2-49aa-ad7e-12a24611cf33"/>
+    <refType typeId="ae755b25-3263-4cb9-8ed5-70fa6a12c9cb" valueTypeId="122d501c-8850-476f-915c-85aa822ce48f"/>
+    <selectionType typeId="6f439b39-de9e-499e-a188-3a62aa1a1c6e" valueTypeId="1853930f-bb27-4316-a802-f0dbc71bdad4"/>
+    <listType typeId="34cad879-6d7c-48ee-98d4-c0dccfbeb60a" valueTypeId="85b1da31-ef8d-4f4b-84b5-c8223c0a538a"/>
+    <managerType typeId="eb908520-086d-4568-932e-5d00ebb8a5de" valueTypeId="2f2ec7f6-0492-4798-ae4e-12eb076378fb"/>
+  </producedTypes>
+  <name>Projects</name>
+  <synonym>
+    <key>en</key>
+    <value>Projects</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Проекты</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Proiecte</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.Projects.StandardAttribute.Description</inputByString>
+  <inputByString>Catalog.Projects.StandardAttribute.Code</inputByString>
+  <searchStringModeOnInputByString>AnyPart</searchStringModeOnInputByString>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>PredefinedDataName</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Predefined</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>IsFolder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Owner</name>
+    <synonym>
+      <key>en</key>
+      <value>Customer</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Клиент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Client</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Organization which this project is associated with</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Контрагент, с которым связан проект</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Terț la care este asociat proiectul</value>
+    </toolTip>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Catalog.Organizations.EmptyRef</value>
+    </fillValue>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Customer</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Parent</name>
+    <synonym>
+      <key>en</key>
+      <value>Folder</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Этап, блок</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Etapa, blok</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Project's group, stage, block or projects folder</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Группа проектов, этап, блок или просто папка с проектами</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Grup de proiect, etapă, bloc sau doar un dosar de proiect</value>
+    </toolTip>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Catalog.Projects.EmptyRef</value>
+    </fillValue>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Catalog.Projects.StandardAttribute.Owner</field>
+    </choiceParameterLinks>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Description</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Code</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <createOnInput>Use</createOnInput>
+  <includeHelpInContents>true</includeHelpInContents>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockFields>Catalog.Projects.StandardAttribute.Owner</dataLockFields>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <explanation>
+    <key>en</key>
+    <value>Key hierarchical directory. Used to account for the projects</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Ключевой иерархический справочник. Используется для учета проектов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Directorul ierarhic cheie. Folosit pentru a ține cont de proiecte</value>
+  </explanation>
+  <hierarchical>true</hierarchical>
+  <levelCount>4</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <owners>Catalog.Organizations</owners>
+  <codeLength>9</codeLength>
+  <descriptionLength>150</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <defaultObjectForm>Catalog.Projects.Form.Form</defaultObjectForm>
+  <defaultFolderForm>Catalog.Projects.Form.Folder</defaultFolderForm>
+  <defaultListForm>Catalog.Projects.Form.List</defaultListForm>
+  <defaultChoiceForm>Catalog.Projects.Form.Choice</defaultChoiceForm>
+  <attributes uuid="51209e85-43fd-420e-9cfa-c4cce9b08109">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Project Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма проекта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma proiectului</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="1bc6c5db-1707-45e8-8a6a-4004d5f3dd12">
+    <name>Appearance</name>
+    <synonym>
+      <key>en</key>
+      <value>Color</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Цвет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Culoare</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.CalendarAppearance</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The color scheme used for placing projects in calendar</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Цветовое оформление используется при выводе проекта в календарь</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Designul de culoare este utilizat atunci când proiectul este trimis în calendar</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Catalog.CalendarAppearance.EmptyRef</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="74f28c51-d1a0-4763-a781-3c5efd7aa40b">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Our company</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Наша компания</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea noastră</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d989f749-6703-4b4b-ac79-3df397116d59">
+    <name>Completed</name>
+    <synonym>
+      <key>en</key>
+      <value>Complete</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Завершен</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Finalizat</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project completion attribute</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Признак, что по данному проекту все работы завершены</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Un semn că pe acest proiect toate lucrările sunt finalizate</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="45107485-8482-416a-ac5f-04a18f7f4b68">
+    <name>CompletionDate</name>
+    <synonym>
+      <key>en</key>
+      <value>Actual Completion Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Фактическая дата завершения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data de finalizare reală</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Actual project completion date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Фактическая дата завершения работ по проекту</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data finală a proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="92917984-8b4a-412f-9639-ad7677eb5946">
+    <name>Content</name>
+    <synonym>
+      <key>en</key>
+      <value>Text</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Текст</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Text</value>
+    </synonym>
+    <type>
+      <types>ValueStorage</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project text</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Текст проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Textul proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c734a875-f672-468e-aba8-84212b4ead99">
+    <name>Cost</name>
+    <synonym>
+      <key>en</key>
+      <value>Project Cost</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Себестоимость проекта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Costul proiectului</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>15</precision>
+        <scale>2</scale>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project cost</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Себестоимость проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Costul proiectului</value>
+    </toolTip>
+    <markNegatives>true</markNegatives>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="47e74182-4943-48d2-ac8d-4a9c3923cb0e">
+    <name>Currency</name>
+    <synonym>
+      <key>en</key>
+      <value>Currency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Валюта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Valută</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Currencies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project currency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Валюта проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valuta proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <use>ForFolderAndItem</use>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="543c2fa3-2861-469e-9db5-455a80d3c98f">
+    <name>Data</name>
+    <synonym>
+      <key>en</key>
+      <value>Data</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Данные</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Date</value>
+    </synonym>
+    <type>
+      <types>ValueStorage</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project detail description</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Детальное описание проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Descrierea detaliată a proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3696c43a-3043-40d4-a54e-d519146bed82">
+    <name>DateEnd</name>
+    <synonym>
+      <key>en</key>
+      <value>End Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата окончания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data de încheiere</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project management completion date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата окончания ведения проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data finalizării proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="7cfb5f4e-dc37-42b3-83c3-ddc915d12182">
+    <name>DateStart</name>
+    <synonym>
+      <key>en</key>
+      <value>Start Date</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дата начала</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Data de începere</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project management beginning date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата начала ведения проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data de începere a proiectului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c13cde06-0c5d-4609-a179-ee04431be649">
+    <name>Duration</name>
+    <synonym>
+      <key>en</key>
+      <value>Time</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Время</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Timp</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>7</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>The projected number of hours. It is used to control the project status and service cost calculation</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Предполагаемый объем часов. Используется для контроля состояния проекта и расчета суммы услуг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul estimat de ore. Se utilizează pentru a monitoriza starea proiectului și a calcula cantitatea de servicii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="303f310f-a632-4ba8-a0ad-6284938cd4a2">
+    <name>Email</name>
+    <synonym>
+      <key>en</key>
+      <value>Email</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Письмо</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Scrisoare</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.IncomingEmail</types>
+      <types>DocumentRef.OutgoingEmail</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Email message</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Электронное письмо</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Mesaj de e-mail</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="34816882-41dd-459f-9d87-5f79f1cd0196">
+    <name>Folder</name>
+    <synonym>
+      <key>en</key>
+      <value>Folder</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Папка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dosar</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>36</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The project document's unique folder name on the hard drive</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный идентификатор имени папки проекта на жестком диске</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Identificatorul unic al numelui de folder al proiectului pe hard disk</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="dc79253d-0ea8-4fda-b0be-791fe12645db">
+    <name>FolderID</name>
+    <synonym>
+      <key>en</key>
+      <value>Folder ID</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Идентификатор папки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>ID-ul dosarului</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>36</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Folder ID</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Идентификатор папки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>ID-ul dosarului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <use>ForFolderAndItem</use>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="deeeae8d-3620-433e-ab05-ac9e70ca4f3e">
+    <name>HourlyRate</name>
+    <synonym>
+      <key>en</key>
+      <value>Hourly Rate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Часовой тариф</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Tarif pe ore</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Rate</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Hourly rate is used to calculate the project cost by fixed hourly rate</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Часовой тариф используется в расчете проекта по фиксированной часовой ставке</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tariful pe oră este folosit la calcularea proiectului la o rată fixă orară</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="fa4c3468-bdb1-4b15-bd38-efef4062830f">
+    <name>Manager</name>
+    <synonym>
+      <key>en</key>
+      <value>Manager</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Руководитель</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Conducătorul</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Employees</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project manager</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Руководитель проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Manager de proiect</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="bfba0e19-dd14-427f-9993-d0b0e834ddba">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Arbitrary additional information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольная дополнительная информация</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <multiLine>true</multiLine>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="7d8d5c23-4460-4436-b11e-531d65899fbe">
+    <name>Minutes</name>
+    <synonym>
+      <key>en</key>
+      <value>The Amount of Hours In Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Объем часов в минутах</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Volumul orelor în minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount of hours recalculated in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Объем часов пересчитанный в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Volumul de ore recalculat în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="de283597-3ab5-4bd8-a496-85c683fc2bc1">
+    <name>ObligatoryTasks</name>
+    <synonym>
+      <key>en</key>
+      <value>Strong Tasks Control</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Обязательный учет задач по проекту</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Evidența obligatorie a sarcinilor proiectului</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Indication of mandatory work registration for the project in the tasks layer</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Признак обязательного учета работ по проекту в разрезе задач</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Semnul de înregistrare obligatorie a lucrărilor asupra proiectului în contextul sarcinilor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="18cb467b-a8d8-4b91-b3e8-44e2f14d9946">
+    <name>PaidMinutes</name>
+    <synonym>
+      <key>en</key>
+      <value>The Amount of Paid Time In Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Объем оплачиваемых часов в минутах</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Volumul orelor plătite în minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount of paid hours recalculated in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Объем оплачиваемых часов пересчитанный в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma orelor plătite recalculat în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="10813bc1-2cba-48f1-9cbe-13f127875645">
+    <name>Pricing</name>
+    <synonym>
+      <key>en</key>
+      <value>Pricing</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ценообразование</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Stabilirea prețului</value>
+    </synonym>
+    <type>
+      <types>EnumRef.ProjectsPricing</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Service provided calculation method</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Способ расчета объема предоставляемых услуг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Metodă de calcul a volumului de servicii prestate</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.ProjectsPricing.EnumValue.Employees</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="7389e38b-c40c-433d-a219-8c0185139853">
+    <name>ProjectType</name>
+    <synonym>
+      <key>en</key>
+      <value>Project Type</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вид проекта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Tip de proiect</value>
+    </synonym>
+    <type>
+      <types>EnumRef.ProjectTypes</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project type</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вид проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tip de proiect</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.ProjectTypes.EnumValue.Regular</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="0c90d326-f13b-4c0b-8d55-97c61b09ca5a">
+    <name>UseApprovingProcess</name>
+    <synonym>
+      <key>en</key>
+      <value>Approval Required</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Требуется утверждение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Aprobarea este necesară</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Used to set up the timesheet approval procedure</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Используется для организации процедуры утверждения табелей</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizat pentru organizarea procedurii de aprobare a foilor de pontaj</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <tabularSections uuid="872c6886-97f8-44cf-81bd-e422ed0d0b0f">
+    <producedTypes>
+      <objectType typeId="bfd1f012-1f41-4f51-9589-4767110e493e" valueTypeId="5d9648b4-9450-4a73-a06b-e694de9918d7"/>
+      <rowType typeId="ef55b458-937d-4654-860a-cf03b3bb09b7" valueTypeId="0f132c0c-dd32-45f7-b14e-184289885e65"/>
+    </producedTypes>
+    <name>ApprovalList</name>
+    <synonym>
+      <key>en</key>
+      <value>Approvers List</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Список утверждающих лиц</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Lista aprobatorilor</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Timesheet approvers for this project</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Список пользователей утверждающих табеля по этому проекту</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Lista de utilizatori care aprobă foaia de pontaj pentru acest proiect</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="0c1b615f-eb10-4701-b562-ef18ab99d8e7">
+      <name>User</name>
+      <synonym>
+        <key>en</key>
+        <value>User</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Пользователь</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Utilizator</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Users</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>User</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Пользователь</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Utilizator</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <indexing>Index</indexing>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="8fe3ae51-af07-4d82-b9a4-dd27e4b25a33">
+      <name>Priority</name>
+      <synonym>
+        <key>en</key>
+        <value>Priority</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Приоритет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Prioritate</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>2</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>User's priority. The user(s) with the lowest priority will be the last to give approval</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Приоритет пользователя. Последним будет одобрять пользователь(и) с максимальным значением приоритета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Prioritatea utilizatorului. Utilizatorul (utilizatorii) cu prioritate maximă va fi ultimul care va aproba</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="60f51035-1a38-4d37-8e8a-48d08ff798b7">
+    <producedTypes>
+      <objectType typeId="ee729266-58f1-402a-8494-90378df39d16" valueTypeId="8576237a-dd49-4a05-ae5e-841495c1f669"/>
+      <rowType typeId="6a0364bc-21a1-4faa-8a7f-48131f1f89bf" valueTypeId="c00f2967-3c90-4a62-b64e-147a19b5f12e"/>
+    </producedTypes>
+    <name>Tasks</name>
+    <synonym>
+      <key>en</key>
+      <value>Tasks</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Задачи</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sarcine</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Tasks, performers, tariffs</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Задачи, участники, тарифы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sarcini, participanți, tarife</value>
+    </toolTip>
+    <attributes uuid="cbc06a99-3215-4944-997c-bb28e434af78">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>The amount of work</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма работ</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cuantumul muncii</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ec69dfbb-0671-4cde-a18f-fb19cfa753ba">
+      <name>Description</name>
+      <synonym>
+        <key>en</key>
+        <value>Description</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Описание</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descriere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>300</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Additional description of the task</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дополнительное описание задачи</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Descrierea suplimentară a sarcinii</value>
+      </toolTip>
+      <multiLine>true</multiLine>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="700e99bc-f295-43be-b933-7c8cd5288018">
+      <name>Duration</name>
+      <synonym>
+        <key>en</key>
+        <value>Hours</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Часы</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Ore</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>7</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>The projected number of hours. It is used to control the project status and service cost calculation</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Предполагаемый объем часов. Используется для контроля состояния проекта и расчета суммы услуг</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul estimat de ore. Se utilizează pentru a monitoriza starea proiectului și a calcula cantitatea de servicii</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="65c8f1f8-8906-4671-9c1a-729a1983c811">
+      <name>Employee</name>
+      <synonym>
+        <key>en</key>
+        <value>Performer</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Исполнитель</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Executant</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Employees</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Member of the project, implementer</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Участник проекта, исполнитель</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Membru al proiectului, implementator</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <indexing>Index</indexing>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="654463a9-b938-4f13-94f2-4cf0b2b17950">
+      <name>HourlyCost</name>
+      <synonym>
+        <key>en</key>
+        <value>Hourly Cost</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Себестоимость за час</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Costul pe oră</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>15</precision>
+          <scale>4</scale>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Cost of labor (Hourly rate)</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Себестоимость (часовой тариф) работ</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Costul (tarif orar) lucrări</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="fefd9044-e6c8-4175-8002-5649c300cb8b">
+      <name>HourlyRate</name>
+      <synonym>
+        <key>en</key>
+        <value>Hourly Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Часовой тариф</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Tarif pe ore</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Rate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Hourly rate. This value has meaning for paid time only</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Часовой тариф. Значение имеет смысл только для оплачиваемого времени</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Tarif pe ore. Valoarea este semnificativă numai pentru timpul plătit</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="d3940ca0-e42e-46a4-b0dc-ea3d1c68f478">
+      <name>Minutes</name>
+      <synonym>
+        <key>en</key>
+        <value>The Amount of Hours In Minutes</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Объем часов в минутах</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Volumul orelor în minute</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>10</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount of hours recalculated in minutes</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Объем часов пересчитанный в минуты</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Volumul de ore recalculat în minute</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ea7fb831-abe0-4a5a-895d-1f7fa14698e2">
+      <name>Task</name>
+      <synonym>
+        <key>en</key>
+        <value>Task</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Задача</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sarcină</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Tasks</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Project task</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Задача в рамках проекта</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Sarcina în cadrul proiectului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a12deaf6-5a7c-4477-aa49-c6f35886f02f">
+      <name>TimeType</name>
+      <synonym>
+        <key>en</key>
+        <value>Time Type</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Тип времени</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Tip de timp</value>
+      </synonym>
+      <type>
+        <types>EnumRef.Time</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Type of time</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Тип времени</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Tip de timp</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <forms uuid="636df8f7-be3d-47d5-a7ad-21a8f26cdb45">
+    <name>Choice</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="bd1cc783-7c40-4125-9ec3-e0fd643790bd">
+    <name>Folder</name>
+    <synonym>
+      <key>ru</key>
+      <value>Folder</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="e7b0d411-d532-43c3-85c3-573790afc4eb">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="22997dbd-b0a4-4fea-8f99-976432894eb5">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <templates uuid="4a14f596-b2eb-412d-a735-0b62ec58e0ab">
+    <name>Project</name>
+    <synonym>
+      <key>en</key>
+      <value>Project</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проект</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiect</value>
+    </synonym>
+    <templateType>DataCompositionSchema</templateType>
+  </templates>
+  <commands uuid="679b3706-6e63-4dbc-a34a-d96f54979d3e">
+    <name>List</name>
+    <synonym>
+      <key>en</key>
+      <value>Projects</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проекты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiecte</value>
+    </synonym>
+    <group>NavigationPanelImportant</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Projects</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Проекты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Proiecte</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.Projects</picture>
+    </picture>
+  </commands>
+  <commands uuid="75df73b6-6767-40cd-af7e-e46242c7b27f">
+    <name>New</name>
+    <synonym>
+      <key>en</key>
+      <value>Project</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проект</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiect</value>
+    </synonym>
+    <group>FormCommandBarImportant</group>
+    <commandParameterType>
+      <types>DocumentRef.IncomingEmail</types>
+      <types>DocumentRef.OutgoingEmail</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Create project</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Создать проект</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Creați un proiect</value>
+    </toolTip>
+  </commands>
+  <commands uuid="630e108d-01f8-4ca7-895e-bcb5fbbfd99b">
+    <name>Project</name>
+    <synonym>
+      <key>en</key>
+      <value>Project</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проект</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiect</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>CatalogRef.Projects</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>PictureAndText</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Printed project form</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печатная форма проекта</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Forma tipărită a proiectului</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>StdPicture.Print</picture>
+    </picture>
+  </commands>
+</mdclass:Catalog>

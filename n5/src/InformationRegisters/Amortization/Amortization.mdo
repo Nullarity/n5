@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="aef96cce-6420-4d12-95de-18c53be00d29">
+  <producedTypes>
+    <selectionType typeId="cbbf6105-2ff7-4be2-9f74-bd0ea2a8bde4" valueTypeId="0cdee612-f926-4a4b-9bb1-a76b3ff3aef2"/>
+    <listType typeId="3839a43a-51dd-473e-ad72-e5c0341a3fef" valueTypeId="3265253f-9f10-469a-86ef-0950d46fe40b"/>
+    <managerType typeId="5b5528d7-837b-4e7d-b8d2-cb629ba6fa72" valueTypeId="158b5d0c-0afd-4f17-9ff1-5ae937d58c41"/>
+    <recordSetType typeId="25223b01-100d-4f4b-aed2-cdab5c6267ab" valueTypeId="a20c0f45-5bcd-4320-a842-79ffa1b204b4"/>
+    <recordKeyType typeId="d73e3359-5c64-4edf-911b-a0fc09f0bf39" valueTypeId="3e09e5af-8877-4085-9ead-5a78e7c3af2f"/>
+    <recordType typeId="47e381d1-7cd7-418d-8544-538c22b6fe40" valueTypeId="01b5f779-c7b5-4061-97a5-814d06f503d9"/>
+    <recordManagerType typeId="e04850aa-cf26-4fac-9521-9a1e1f7c3510" valueTypeId="b6ccfe2a-b311-476f-8365-c8e95bb16dde"/>
+  </producedTypes>
+  <name>Amortization</name>
+  <synonym>
+    <key>en</key>
+    <value>Amortization</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Амортизация НМА</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Amortizarea activelor necorporale</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <informationRegisterPeriodicity>RecorderPosition</informationRegisterPeriodicity>
+  <writeMode>RecorderSubordinate</writeMode>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Data for calculating amortization</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Данные для амортизации нематериальных активов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Datele pentru amortizarea activelor necorporale</value>
+  </explanation>
+  <resources uuid="e3108ad7-6425-44ad-8224-54f7bbae7c23">
+    <name>Acceleration</name>
+    <synonym>
+      <key>en</key>
+      <value>Acceleration Rate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Коэффициент ускорения</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Coeficientul de accelerare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <scale>3</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Acceleration rate for the reducing balance method</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Коэффициент ускорения, используется при начислении амортизации методами: Уменьшающегося остатка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Coeficientul de accelerare este utilizat în calculul metodelor de amortizare: Amortizarea degresivă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="934fe813-aef3-4956-a116-07529ec4ad65">
+    <name>Charge</name>
+    <synonym>
+      <key>en</key>
+      <value>Charge</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Амортизировать</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Amortizează</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>If the flag is enabled, the amortization will be calculated</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Признак амортизации. Если флаг включен, значит амортизация будет начисляться</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Semn de amortizare. Dacă bifa este setată, se calculează amortizarea</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="00ee09cc-bb36-417d-82e8-d256c9182b01">
+    <name>Expenses</name>
+    <synonym>
+      <key>en</key>
+      <value>Expenses</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Расходы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cheltuieli</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.ExpenseMethods</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amortization expenses</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Способ отражения расходов по амортизации</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Metoda de reflectare a cheltuielilor privind amortizarea</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="c7bc8da3-25f3-40b8-be52-04ceb891d29f">
+    <name>Method</name>
+    <synonym>
+      <key>en</key>
+      <value>Method</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Метод амортизации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Metoda de amortizare</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Amortization</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amortization method</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Метод начисления амортизации</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Metoda de amortizare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="560e4026-fca8-4d5b-b32c-a9e6e6b8fd7d">
+    <name>Starting</name>
+    <synonym>
+      <key>en</key>
+      <value>Starting from</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Начиная с</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Începând de la</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amortization starting month</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Месяц начала начисления износа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Luna de început a amortizării </value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="6dc39a48-18ac-43bd-b9c6-c2353f5e0a68">
+    <name>UsefulLife</name>
+    <synonym>
+      <key>en</key>
+      <value>Lifetime Months</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Месяцев полезного использования</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Luni de utilizare utilă</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Remaining useful life (months)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Срок полезного использования, задается справочно, в месяцах</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata de viață utilă este stabilită prin referință, în luni</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <dimensions uuid="9705620c-6b59-4a3e-a84c-2eb845ca688a">
+    <name>Asset</name>
+    <synonym>
+      <key>en</key>
+      <value>Intangible Asset</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Нематериальный актив</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Imobilizări necorporale</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.IntangibleAssets</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Intangible asset</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Нематериальный актив</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imobilizări necorporale</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

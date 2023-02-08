@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="b1725cc3-ad1b-43b1-83d6-1e0457955362">
+  <producedTypes>
+    <objectType typeId="cbcc4a44-c549-4737-a030-b76a3593abfb" valueTypeId="90f410e3-37ea-4246-ab54-8ca3ea824837"/>
+    <refType typeId="568bee62-0f88-4825-97b3-0954dd893e6d" valueTypeId="a18fd28e-88a8-4185-9aae-54401f6186bb"/>
+    <selectionType typeId="c6b6368c-16db-48ab-a62a-ef0e5e8cfdb3" valueTypeId="1e21ecea-969f-47a5-84b8-2aa5decc3a7f"/>
+    <listType typeId="3fd6be0b-a5ad-426b-815e-24a36c7d7d57" valueTypeId="c53b1e66-28ae-4c61-a8f9-ca40e78d1b71"/>
+    <managerType typeId="1fc4ea05-50b0-48c8-bf6b-d8897e3e6526" valueTypeId="0a667e34-aa12-44b4-af97-eff550c56b9f"/>
+  </producedTypes>
+  <name>Inventory</name>
+  <synonym>
+    <key>en</key>
+    <value>Inventory</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Инвентаризация</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Inventarierea</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Document.Inventory.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Posted</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Date</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </format>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Number</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <createOnInput>Use</createOnInput>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Inventories</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Инвентаризации</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Inventariere</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>Inventories of items and materials</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Инвентаризации товаров, материалов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Inventarierea mărfurilor, a materialelor</value>
+  </explanation>
+  <dataHistory>Use</dataHistory>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.Inventory.Form.Form</defaultObjectForm>
+  <defaultListForm>Document.Inventory.Form.List</defaultListForm>
+  <realTimePosting>Deny</realTimePosting>
+  <postInPrivilegedMode>true</postInPrivilegedMode>
+  <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
+  <attributes uuid="8fbda740-f2aa-433d-a9c2-bbd2e38b1583">
+    <name>Action</name>
+    <synonym>
+      <key>en</key>
+      <value>Action</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Команда</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Acțiune</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Actions</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User action</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользовательская команда</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Acțiune utilizator</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5119a348-65ce-4aa8-baff-263ecc66c19a">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Document amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма документа</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma documentului</value>
+    </toolTip>
+    <markNegatives>true</markNegatives>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b1fa91f3-d9cf-47f4-96e9-f3bf51ce802c">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea în numele căreia este introdus documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c2476419-a000-4ee5-a6cc-ddab53bc743c">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Creator of the document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="15c7b37e-1221-4dd9-b73b-f1443eb4561e">
+    <name>Folder</name>
+    <synonym>
+      <key>en</key>
+      <value>Folder</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Группа</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dosar</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Items</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Filter by Items folder</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Фильтр по группе товаров</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Filtrează după dosarul de mărfuri</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceFoldersAndItems>Folders</choiceFoldersAndItems>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b153b78a-b389-4712-9844-cbae7f127156">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="26fd69e0-182b-4596-bd30-96098b9e989f">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Warehouse which receives items</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, на который поступают товары</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul, care primește marfă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>Document.Inventory.Attribute.Company</field>
+    </choiceParameterLinks>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="d7bdcbb3-2a17-4ac3-8db3-010999331eb4">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="14028558-f3d9-4f95-a383-f18337b5e76c">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <tabularSections uuid="fd9b2d4a-cf5e-4e89-b100-50730900f42d">
+    <producedTypes>
+      <objectType typeId="1c8e56c8-8df8-4fb5-93f3-3f57889a5ff6" valueTypeId="f5e7fa92-a00a-4135-b4ed-b3af7a5a991e"/>
+      <rowType typeId="141fc8d7-fd59-4897-b7c0-70f8c3e8ebef" valueTypeId="878160ef-9e38-4a22-8d45-b877d083f302"/>
+    </producedTypes>
+    <name>Items</name>
+    <synonym>
+      <key>en</key>
+      <value>Items</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товары</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <fillChecking>ShowError</fillChecking>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="aa49e15a-c42a-40b8-9d9c-8f44627bb2e6">
+      <name>Account</name>
+      <synonym>
+        <key>en</key>
+        <value>Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul de bunuri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentAssets</value>
+        </value>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.Folder</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.Offline</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="fa4e6142-cc4c-41d9-bf64-be33c0e0246f">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Real Amt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сум. факт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma fapt</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Real amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма по факту</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma în realitate</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="0feb48ac-476d-4a5f-ba4c-2d180d3c5f3b">
+      <name>AmountBalance</name>
+      <synonym>
+        <key>en</key>
+        <value>Amt Balance</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма, учет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma, evidență</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount from database</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Учетная сумма</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma de evidență</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="38eb33ef-8658-4905-8cd2-143240642650">
+      <name>AmountDifference</name>
+      <synonym>
+        <key>en</key>
+        <value>Amt Diff</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма, разница</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma, diferență</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount difference</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Суммовая разница</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma diferență</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="df7d8e50-1230-4ec8-9b12-18e120a4f298">
+      <name>Capacity</name>
+      <synonym>
+        <key>en</key>
+        <value>Capacity</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вместимость</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Capacitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity of units in package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество единиц товара в упаковке</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de unități din cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f2e946cb-8000-467c-98d3-8de7826180bc">
+      <name>Feature</name>
+      <synonym>
+        <key>en</key>
+        <value>Feature</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Характеристика</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Caracteristică</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Features</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item feature</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Характеристика товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Caracteristica mărfii</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Item</name>
+        <field>Document.Inventory.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="520b39f2-f49f-42c4-9c12-ae71f9066126">
+      <name>Inventory</name>
+      <synonym>
+        <key>en</key>
+        <value>Inventory Stockman</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Инвентаризация кладовщика</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Inventarul depozitarului</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.InventoryStockman</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Inventory stockman</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Инвентаризация кладовщика</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Inventarul depozitarului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a56bc2cd-d1e4-4142-bf53-1cb438e094e2">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Item</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Товар</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Marfă</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Товар</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Marfă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.Service</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6103347c-d356-4e27-91b9-c096bb924be8">
+      <name>Package</name>
+      <synonym>
+        <key>en</key>
+        <value>Pkg</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Уп.</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cut.</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Packages</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Упаковка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.Inventory.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c11674aa-bcdd-4c78-b94e-932e44982664">
+      <name>Price</name>
+      <synonym>
+        <key>en</key>
+        <value>Real Price</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Цена, факт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Pret, fapt</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Price</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Real price</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Цена, факт</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Pret, fapt</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="bd6f564e-c013-4348-b977-568f657faec7">
+      <name>PriceBalance</name>
+      <synonym>
+        <key>en</key>
+        <value>Price Balance</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Цена, учет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Preț, evidență</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Price</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Price from database</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Учетная цена</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Preț de evidență</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c5d37cab-ac49-4a39-bec6-27e698fd9413">
+      <name>Quantity</name>
+      <synonym>
+        <key>en</key>
+        <value>Real Units</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Единиц, факт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Unități fapt</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Real units</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Единиц по факту</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Unități fapt</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5656b2cc-207d-4fa6-8eef-04609091f392">
+      <name>QuantityBalance</name>
+      <synonym>
+        <key>en</key>
+        <value>Units Balance</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Единиц, учет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Unități, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Units from database</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Единиц по учету</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Unități, contabilitate</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="12963b72-d358-4131-a385-434d9693db3b">
+      <name>QuantityDifference</name>
+      <synonym>
+        <key>en</key>
+        <value>Units Diff</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во, разница</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cantitate, diferență</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Units difference</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Разница в количестве единиц</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Diferența dintre numărul de unități</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5a74f6fc-8c8b-4956-bdfd-8052c43cc58c">
+      <name>QuantityPkg</name>
+      <synonym>
+        <key>en</key>
+        <value>Real Qty</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во, факт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cantitate, fapt</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Real quantity</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество по факту</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate fapt</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="af8c4c93-8819-45f4-ae5b-aba3fa9990bf">
+      <name>QuantityPkgBalance</name>
+      <synonym>
+        <key>en</key>
+        <value>Qty Balance</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во, учет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cantitate, contabilitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity from database</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество по учету</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate, contabilitate</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="aa8370e1-14c2-40d4-b58d-9e30c7b8eaf8">
+      <name>QuantityPkgDifference</name>
+      <synonym>
+        <key>en</key>
+        <value>Qty Diff</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кол-во, разница</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cantitate, diferență</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Quantity</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity difference</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Разница в количестве</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cantitate, diferență</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="28fcf075-967b-419d-8d60-ad4bf4f19620">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serie</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Series</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item's series</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Seria marfa</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Owner</name>
+        <field>Document.Inventory.TabularSection.Items.Attribute.Item</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+</mdclass:Document>

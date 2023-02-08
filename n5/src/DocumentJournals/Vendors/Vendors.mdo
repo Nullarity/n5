@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DocumentJournal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="7df17cd8-0454-48ab-83cc-ee1210ccfa8a">
+  <producedTypes>
+    <selectionType typeId="472f0a78-0db1-4c34-8ace-743d600e67b5" valueTypeId="53739307-3361-44f3-bae0-dcf7e9fdf7ff"/>
+    <listType typeId="69499e5b-7239-4ffa-8228-b183da63a2de" valueTypeId="dfa716f4-7bdf-4605-8d65-3754c23c7fa3"/>
+    <managerType typeId="ad50f2db-6352-44ee-93d1-69412786e49a" valueTypeId="b66757ef-8729-4620-ae57-d1c9f8a42c13"/>
+  </producedTypes>
+  <name>Vendors</name>
+  <synonym>
+    <key>en</key>
+    <value>Vendor Operations</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Журнал поставщика</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Jurnalul furnizorilor</value>
+  </synonym>
+  <defaultForm>DocumentJournal.Vendors.Form.List</defaultForm>
+  <useStandardCommands>true</useStandardCommands>
+  <registeredDocuments>Document.VendorInvoice</registeredDocuments>
+  <registeredDocuments>Document.VendorPayment</registeredDocuments>
+  <registeredDocuments>Document.PurchaseOrder</registeredDocuments>
+  <registeredDocuments>Document.AdjustVendorDebts</registeredDocuments>
+  <registeredDocuments>Document.VendorRefund</registeredDocuments>
+  <registeredDocuments>Document.VendorReturn</registeredDocuments>
+  <registeredDocuments>Document.Event</registeredDocuments>
+  <registeredDocuments>Document.AdjustDebts</registeredDocuments>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Type</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Date</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Posted</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Number</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <explanation>
+    <key>en</key>
+    <value>List of operations by vendors</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Журнал операций по поставщику</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Jurnal de tranzacții de către furnizor</value>
+  </explanation>
+  <columns uuid="38463464-de2a-46c3-a4f3-5e03b9b616e2">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Amount</references>
+    <references>Document.VendorInvoice.Attribute.Amount</references>
+    <references>Document.VendorPayment.Attribute.Amount</references>
+    <references>Document.AdjustVendorDebts.Attribute.Amount</references>
+    <references>Document.VendorRefund.Attribute.Amount</references>
+    <references>Document.VendorReturn.Attribute.Amount</references>
+    <references>Document.AdjustDebts.Attribute.Amount</references>
+  </columns>
+  <columns uuid="1abb850e-0cdf-408c-ae16-68cc1b38df9a">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Company</references>
+    <references>Document.VendorInvoice.Attribute.Company</references>
+    <references>Document.VendorPayment.Attribute.Company</references>
+    <references>Document.AdjustVendorDebts.Attribute.Company</references>
+    <references>Document.VendorRefund.Attribute.Company</references>
+    <references>Document.VendorReturn.Attribute.Company</references>
+    <references>Document.Event.Attribute.Company</references>
+    <references>Document.AdjustDebts.Attribute.Company</references>
+  </columns>
+  <columns uuid="a665bf1b-d6f1-4fb8-a89a-d98198ba0326">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Creator</references>
+    <references>Document.VendorInvoice.Attribute.Creator</references>
+    <references>Document.VendorPayment.Attribute.Creator</references>
+    <references>Document.AdjustVendorDebts.Attribute.Creator</references>
+    <references>Document.VendorRefund.Attribute.Creator</references>
+    <references>Document.VendorReturn.Attribute.Creator</references>
+    <references>Document.Event.Attribute.Creator</references>
+    <references>Document.AdjustDebts.Attribute.Creator</references>
+  </columns>
+  <columns uuid="04783a87-c7df-4879-be28-00a91bbfc7aa">
+    <name>Currency</name>
+    <synonym>
+      <key>en</key>
+      <value>Currency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Валюта</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Valută</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Currency</references>
+    <references>Document.VendorInvoice.Attribute.Currency</references>
+    <references>Document.VendorPayment.Attribute.Currency</references>
+    <references>Document.AdjustVendorDebts.Attribute.Currency</references>
+    <references>Document.VendorRefund.Attribute.Currency</references>
+    <references>Document.VendorReturn.Attribute.Currency</references>
+    <references>Document.AdjustDebts.Attribute.Currency</references>
+  </columns>
+  <columns uuid="02d8c893-0d70-403e-884e-3a15f4eda48e">
+    <name>Duration</name>
+    <synonym>
+      <key>en</key>
+      <value>Duration</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Время</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Durata</value>
+    </synonym>
+    <references>Document.Event.Attribute.Duration</references>
+  </columns>
+  <columns uuid="32056dbd-536d-471b-aff2-d4049075842d">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Memo</references>
+    <references>Document.VendorInvoice.Attribute.Memo</references>
+    <references>Document.VendorPayment.Attribute.Memo</references>
+    <references>Document.AdjustVendorDebts.Attribute.Memo</references>
+    <references>Document.VendorRefund.Attribute.Memo</references>
+    <references>Document.VendorReturn.Attribute.Memo</references>
+    <references>Document.Event.Attribute.Content</references>
+    <references>Document.AdjustDebts.Attribute.Memo</references>
+  </columns>
+  <columns uuid="b3873cf0-e119-4fa3-822a-5e5999844929">
+    <name>Subject</name>
+    <synonym>
+      <key>en</key>
+      <value>Subject</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Тема</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Subiect</value>
+    </synonym>
+    <references>Document.Event.Attribute.Subject</references>
+  </columns>
+  <columns uuid="d1cc739c-38d1-4e89-87f3-ad37fc0a1b4d">
+    <name>Vendor</name>
+    <synonym>
+      <key>en</key>
+      <value>Vendor</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поставщик</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Furnizor</value>
+    </synonym>
+    <references>Document.PurchaseOrder.Attribute.Vendor</references>
+    <references>Document.VendorInvoice.Attribute.Vendor</references>
+    <references>Document.VendorPayment.Attribute.Vendor</references>
+    <references>Document.AdjustVendorDebts.Attribute.Vendor</references>
+    <references>Document.VendorRefund.Attribute.Vendor</references>
+    <references>Document.VendorReturn.Attribute.Vendor</references>
+    <references>Document.Event.Attribute.Organization</references>
+    <references>Document.AdjustDebts.Attribute.Receiver</references>
+  </columns>
+  <forms uuid="08bbfbe4-1fd7-419d-8895-df98ab524afe">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <commands uuid="0101c7ee-2598-49fd-8ddc-4ac240cf9eb7">
+    <name>List</name>
+    <synonym>
+      <key>en</key>
+      <value>Vendor Operations</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Журнал поставщика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Jurnalul furnizorilor</value>
+    </synonym>
+    <group>ActionsPanelTools</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>List of operations by vendor</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Журнал операций по поставщику</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Jurnal de tranzacții de către furnizor</value>
+    </toolTip>
+  </commands>
+  <commands uuid="300d8495-57fc-4067-a52f-08275fbec17f">
+    <name>Show</name>
+    <synonym>
+      <key>en</key>
+      <value>Vendor Operations</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Журнал поставщика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Jurnalul furnizorilor</value>
+    </synonym>
+    <group>FormNavigationPanelImportant</group>
+    <commandParameterType>
+      <types>CatalogRef.Organizations</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>List of operations by vendor</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Журнал операций по поставщику</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Jurnal de tranzacții de către furnizor</value>
+    </toolTip>
+  </commands>
+</mdclass:DocumentJournal>

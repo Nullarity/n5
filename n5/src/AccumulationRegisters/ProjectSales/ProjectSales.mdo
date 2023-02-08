@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="5671243c-109e-49f1-9d60-e66da3640074">
+  <producedTypes>
+    <selectionType typeId="fb3c90e2-10c8-474f-ba78-d31f80cc05e8" valueTypeId="01672e61-6793-4a8a-9f14-e3fb9a2e3080"/>
+    <listType typeId="836809d0-fc8a-4d2f-bf80-b78f0b95da00" valueTypeId="74b7e897-2195-4d8a-9ffa-dd2b0dc7bc21"/>
+    <managerType typeId="caeae1c1-ed35-4e09-9b25-85ae7763e90a" valueTypeId="fbb678f9-edc8-408c-9b1b-f643cfb08146"/>
+    <recordSetType typeId="99d3615c-6fc1-49c4-b456-6598a964adc6" valueTypeId="7470e3b2-d3f6-44f6-a439-d103edebaefa"/>
+    <recordKeyType typeId="18b43923-ed52-4efc-9edc-785d10c58a9c" valueTypeId="bed51b25-0077-4b17-8958-93849892a05a"/>
+    <recordType typeId="e642f55e-542e-41fc-86c7-3e6f16931777" valueTypeId="c4d47ce5-d688-4f19-8152-65434f96356e"/>
+  </producedTypes>
+  <name>ProjectSales</name>
+  <synonym>
+    <key>en</key>
+    <value>Project Sales</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Продажи</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Vânzarea</value>
+  </synonym>
+  <registerType>Turnovers</registerType>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Accumulates information about sales of services</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Накапливает информацию о продажах услуг</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Accumulează informații despre vânzările de servicii</value>
+  </explanation>
+  <resources uuid="5b37e887-6725-4685-a411-8463482938a0">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount past due</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма задолженности</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma restante</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="aaf4351f-ed26-4294-a435-28115829a889">
+    <name>Minutes</name>
+    <synonym>
+      <key>en</key>
+      <value>Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Минуты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Services volume re-calculated into minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Объем услуг пересчитанный в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Volumul serviciilor calculat în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="c91f98bb-90ca-4ccb-b606-b9fb24d7c42d">
+    <name>Project</name>
+    <synonym>
+      <key>en</key>
+      <value>Project</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Проект</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Proiect</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Projects</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Project</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Проект</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Proiect</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="6af5c8b3-74d1-4c7e-a9be-cc6d92d72ef8">
+    <name>Employee</name>
+    <synonym>
+      <key>en</key>
+      <value>Employee</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сотрудник</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Angajat</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Employees</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Person responsible for executing tasks</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Исполнитель работ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Executantul lucrărilor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

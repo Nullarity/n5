@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="caaa3f04-fb9d-4c0f-b6b9-5cb5b76835f4">
+  <producedTypes>
+    <selectionType typeId="ddafe57a-b296-4909-8311-284ad77dd2db" valueTypeId="5f2f022c-5c6d-44b1-aa89-1ee61e645596"/>
+    <listType typeId="c41a3759-1e11-48e4-b0b8-1139db377dde" valueTypeId="b700177e-a9b5-4a63-9d60-dc6fe977278a"/>
+    <managerType typeId="c68666fd-f078-47b7-bfc0-da88a2bbda11" valueTypeId="b2b6a939-0b3b-4fd1-8bc0-6737e0e51f84"/>
+    <recordSetType typeId="88e0c36d-0f70-49ff-ab3b-538082753f3d" valueTypeId="92cf8224-91b5-41e2-912c-9f415bf1eba9"/>
+    <recordKeyType typeId="425a4d67-7005-40c8-8996-6b8fb8ab9ede" valueTypeId="50fb4dfe-8d7f-40d4-b061-bf3a3dd93665"/>
+    <recordType typeId="5bc3d878-baf1-44f4-91b7-a65fd4744a98" valueTypeId="63116f95-b052-413b-8a38-fa35e59fa4e0"/>
+  </producedTypes>
+  <name>Debts</name>
+  <synonym>
+    <key>en</key>
+    <value>Customer Debts</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Взаиморасчеты с покупателями</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Decontări cu cumpărători</value>
+  </synonym>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>RecordType</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Customer debts (Accounts Receivable)</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Задолженность покупателей</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Datorii ale clienților</value>
+  </explanation>
+  <resources uuid="1458f2d9-8703-4bb4-8819-adf41b88c206">
+    <name>Accounting</name>
+    <synonym>
+      <key>en</key>
+      <value>Accounting Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма, б/у</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma, contabilitate</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The actual amount of debt (including overpayments) in local currency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма фактической задолженности (включая авансовые платежи) в региональной валюте</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valoarea reală a datoriei (inclusiv plățile în avans) în monedă locală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="8f4bdcc5-9bc1-434e-9037-4ca1993b8f34">
+    <name>Advance</name>
+    <synonym>
+      <key>en</key>
+      <value>Accounting Advance or Overpayment in local currency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Аванс или переплата, б/у</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avans sau supraplată, contabilitate</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount of advance or overpayment from the Customer in local currency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма полученного от покупателя аванса/переплаты в региональной валюте</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma primită în avans de la client / supraplată în monedă locală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="6d60bb45-ab55-437f-b465-6ae14325fb21">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The actual amount of debt. Overpayments are allocated to a separate resource</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма фактической задолженности. Авансовые платежи выделяются в отдельном ресурсе</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valoarea datoriei reale. Plățile în avans sunt alocate într-o resursă separată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="45c0ba49-19b3-4854-b2e0-67c3616062bf">
+    <name>Overpayment</name>
+    <synonym>
+      <key>en</key>
+      <value>Advance or Overpayment</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Аванс или переплата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avans sau supraplată</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount of advance or overpayment from the Customer</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма полученного от покупателя аванса/переплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma primită în avans de la client / supraplată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="15737677-f2ce-49aa-9f85-3fa187511e58">
+    <name>Payment</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount to Pay</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма к оплате</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma de plată</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payable Amount according to payment stages</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма к оплате согласно этапов оплат</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma de plată în funcție de stadiul plății</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="77e5e900-e1f1-4124-a803-e489cb262300">
+    <name>Contract</name>
+    <synonym>
+      <key>en</key>
+      <value>Contract</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Договор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contract</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Contracts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Contract</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Договор</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contract</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="7394c989-d19a-49f8-8244-57ca02b00b00">
+    <name>PaymentKey</name>
+    <synonym>
+      <key>en</key>
+      <value>Payment Key</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ключ оплаты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cheie de plată</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.PaymentKeys</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payment key</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ключ оплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cheie de plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="fec1c49a-62b6-4863-9d5a-a1eca8ba0df6">
+    <name>Document</name>
+    <synonym>
+      <key>en</key>
+      <value>Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Document</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.Payment</types>
+      <types>DocumentRef.Invoice</types>
+      <types>DocumentRef.SalesOrder</types>
+      <types>DocumentRef.AdjustDebts</types>
+      <types>DocumentRef.Refund</types>
+      <types>DocumentRef.Return</types>
+      <types>DocumentRef.Debts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Document according to scheduled payments or accumulated debts</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Документ, согласно которого планируется оплата или сформировался фактический долг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Document conform căruia se planifică plata sau se generează datorii reale</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="da5e1680-3e4b-4a18-b3ad-a2826b1d5237">
+    <name>Detail</name>
+    <synonym>
+      <key>en</key>
+      <value>Detailing Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Детализирующий документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Documentul detaliat</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.Payment</types>
+      <types>DocumentRef.Invoice</types>
+      <types>DocumentRef.AdjustDebts</types>
+      <types>DocumentRef.Refund</types>
+      <types>DocumentRef.Return</types>
+      <types>DocumentRef.Debts</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Detailing document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Детализирующий документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Documentul detaliat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="34ff6231-984a-4548-b9f6-18ebaa1dbdf2">
+  <producedTypes>
+    <selectionType typeId="4efefe59-25e6-46a0-b2a2-75a46baa8333" valueTypeId="e235ec94-f700-4dab-ba20-0cbb92ca3eb8"/>
+    <listType typeId="d90f9a34-8d0b-4d4b-b489-40996ab61238" valueTypeId="bc36addd-a369-45d8-92d3-b19ca933686d"/>
+    <managerType typeId="a6770b59-6ab4-43fa-9e6b-24f0cc821fa5" valueTypeId="27d708f9-2fcb-4b71-973d-601b07704a73"/>
+    <recordSetType typeId="7327b7a9-d95c-472f-a51c-7dd39967666b" valueTypeId="ed8e0646-8d65-40bf-ba87-fc8254aa9606"/>
+    <recordKeyType typeId="72ae520a-d493-4cc8-b484-ac104d833cd2" valueTypeId="1a943a97-03ad-48d7-b836-d161c1205243"/>
+    <recordType typeId="74caf150-2f67-4265-bc96-f2a1eb18e8d2" valueTypeId="685d9f46-00da-436a-80e6-c1089e54779d"/>
+  </producedTypes>
+  <name>VendorDiscounts</name>
+  <synonym>
+    <key>en</key>
+    <value>Vendor Discounts</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Скидки поставщиков</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Reduceri ale vânzătorilor</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <registerType>Turnovers</registerType>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Discount for early payments</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Скидки за срочность платежа</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Reduceri pentru plata urgentă</value>
+  </explanation>
+  <resources uuid="381b5a6f-6f24-48ea-8c61-65e217c7bc4d">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sumă</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Discount amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма скидки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma reducerii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <attributes uuid="cfc35d65-b291-43db-b333-8c1efb70138f">
+    <name>Detail</name>
+    <synonym>
+      <key>en</key>
+      <value>Detailing Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Детализирующий документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Documentul detaliat</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.VendorReturn</types>
+      <types>DocumentRef.VendorInvoice</types>
+      <types>DocumentRef.PurchaseOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Detailing document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Детализирующий документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Documentul detaliat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <indexing>Index</indexing>
+    <fullTextSearch>Use</fullTextSearch>
+  </attributes>
+  <dimensions uuid="55438b8e-192a-4739-b3cc-5b663028747b">
+    <name>Document</name>
+    <synonym>
+      <key>en</key>
+      <value>Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Document</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.ExpenseReport</types>
+      <types>DocumentRef.VendorInvoice</types>
+      <types>DocumentRef.PurchaseOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Document</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

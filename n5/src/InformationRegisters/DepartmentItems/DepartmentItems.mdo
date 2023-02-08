@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="43e06573-f1e0-47e8-bb11-ce90e7bb1431">
+  <producedTypes>
+    <selectionType typeId="b363654a-05d6-458b-85d3-c3964a105b51" valueTypeId="5ca48dfe-9cf5-4274-bfaa-88e5a0315866"/>
+    <listType typeId="2716c335-451e-4983-92bb-976a5939b9a0" valueTypeId="b17d5ec0-3b4b-4adc-8072-fe19b297590e"/>
+    <managerType typeId="57fc9b36-5de0-4ed6-9856-36f89d8343a5" valueTypeId="4a2065de-42ee-4b2f-972f-25a943a59de7"/>
+    <recordSetType typeId="b0d892fc-f325-4b1a-87be-dd103864dd24" valueTypeId="eb41fa7b-8c05-493e-ab98-91431e4d3b57"/>
+    <recordKeyType typeId="aad275db-aeed-4f4e-8180-0cb6fdfbb233" valueTypeId="c6e333ec-ff30-4d05-a4da-cf7347185439"/>
+    <recordType typeId="a6dd07d4-2fcb-4189-aae4-8d75c8e051f4" valueTypeId="f443ac8c-5c33-4dbc-9852-e2284468fb22"/>
+    <recordManagerType typeId="1adbe66e-439e-4ea9-9f49-5f6c4463fe35" valueTypeId="f8b65d71-fdf3-48b5-8a0a-9defd43aa14f"/>
+  </producedTypes>
+  <name>DepartmentItems</name>
+  <synonym>
+    <key>en</key>
+    <value>Department Items</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Товары подразделений</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Active ele diviziunilor</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <editType>InDialog</editType>
+  <defaultRecordForm>InformationRegister.DepartmentItems.Form.Form</defaultRecordForm>
+  <defaultListForm>InformationRegister.DepartmentItems.Form.List</defaultListForm>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Produced products by production departments</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Товары производимые производственными подразделениями</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Active produse în diviziunea de producție</value>
+  </explanation>
+  <dimensions uuid="d78c167d-b8a9-4a2b-a1fb-8a191e72a102">
+    <name>Department</name>
+    <synonym>
+      <key>en</key>
+      <value>Department</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Departments</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Department</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подразделение</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Subdiviziune</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Production</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="c9984fa7-6edc-4309-807f-5269bccbb7f6">
+    <name>Item</name>
+    <synonym>
+      <key>en</key>
+      <value>Item</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товар</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Items</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Item</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товар</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Product</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <forms uuid="6bd70e9f-87e0-4f7c-90f5-6310020a7b47">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="a6282496-36ed-4d6a-af13-8f10af1ea47b">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:InformationRegister>

@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Forms</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Type</dataPath>
+			<field>Type</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Type</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Tip</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тип</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Series</dataPath>
+			<field>Series</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DocumentStatus</dataPath>
+			<field>DocumentStatus</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Document status</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Starea documentului</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Статус документа</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<attributeUseRestriction>
+				<group>true</group>
+			</attributeUseRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Document</dataPath>
+			<field>Document</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Document</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Document</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Документ</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<attributeUseRestriction>
+				<group>true</group>
+			</attributeUseRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DocumentNumber</dataPath>
+			<field>DocumentNumber</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Document #</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content># documentului</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>№ документа</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Number</dataPath>
+			<field>Number</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>#</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>№</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>№</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select value ( Enum.Forms.Invoices ) as Type, Documents.Ref as Document, Documents.Number as DocumentNumber,
+	Documents.Series as Series, Documents.FormNumber as Number, Documents.Status as DocumentStatus
+{select Type.*, Document.*, DocumentNumber, Series, Number, DocumentStatus.*}
+from Document.InvoiceRecord as Documents
+where not Documents.DeletionMark
+and Documents.Range = value ( Catalog.Ranges.EmptyRef )
+{where value ( Enum.Forms.Invoices ) as Type, Documents.Ref.* as Document, Documents.Series as Series,
+Documents.Company.* as Company, Documents.Date between &amp;DateStart and &amp;DateEnd}
+union all
+select value ( Enum.Forms.ItemsPurchase ), Documents.Ref, Documents.Number, Documents.Series,
+	Documents.FormNumber, Documents.Status
+from Document.ItemsPurchase as Documents
+where not Documents.DeletionMark
+and Documents.Range = value ( Catalog.Ranges.EmptyRef )
+{where value ( Enum.Forms.ItemsPurchase ) as Type, Documents.Ref.* as Document, Documents.Series as Series,
+Documents.Company.* as Company, Documents.Date between &amp;DateStart and &amp;DateEnd}
+union all
+select value ( Enum.Forms.ServicesPurchase ), Documents.Ref, Documents.Number, Documents.Series,
+	Documents.FormNumber, Documents.Status
+from Document.ServicesPurchase as Documents
+where not Documents.DeletionMark
+and Documents.Range = value ( Catalog.Ranges.EmptyRef )
+{where value ( Enum.Forms.ServicesPurchase ) as Type, Documents.Ref.* as Document, Documents.Series as Series,
+Documents.Company.* as Company, Documents.Date between &amp;DateStart and &amp;DateEnd}
+</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Gaps</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>StartGap</dataPath>
+			<field>StartGap</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Start Gap</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Inceputul divergentei</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Начало пропуска</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>FinishGap</dataPath>
+			<field>FinishGap</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Finish Gap</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Sfârșitul divergentei</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Конец пропуска</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>GapType</dataPath>
+			<field>GapType</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Missed Form</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Formularul pierdut</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Пропущенная форма</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>GapSeries</dataPath>
+			<field>GapSeries</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Gap in Series</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Divergenta in Serie</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Пропуск в серии</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select value ( Enum.Forms.Invoices ) as GapType, Documents.Series as GapSeries, Documents.FormNumber as Number
+into Documents
+from Document.InvoiceRecord as Documents
+where not Documents.DeletionMark
+and not Documents.Range.Online
+{where value ( Enum.Forms.Invoices ) as GapType, Documents.Company.* as Company, Documents.Series as GapSeries,
+Documents.Date between &amp;DateStart and &amp;DateEnd}
+union all
+select value ( Enum.Forms.ItemsPurchase ), Documents.Series, Documents.FormNumber
+from Document.ItemsPurchase as Documents
+where not Documents.DeletionMark
+{where value ( Enum.Forms.ItemsPurchase ) as GapType, Documents.Company.* as Company, Documents.Series as GapSeries,
+Documents.Date between &amp;DateStart and &amp;DateEnd}
+union all
+select value ( Enum.Forms.ServicesPurchase ), Documents.Series, Documents.FormNumber
+from Document.ServicesPurchase as Documents
+where not Documents.DeletionMark
+{where value ( Enum.Forms.ServicesPurchase ) as GapType, Documents.Company.* as Company, Documents.Series as GapSeries,
+Documents.Date between &amp;DateStart and &amp;DateEnd}
+;
+select Documents.GapSeries as GapSeries, Documents.GapType as GapType,
+	Documents.Number + 1 as StartGap, min ( Gaps.Number ) - 1 as FinishGap
+{select GapType, GapSeries, StartGap, FinishGap}
+from Documents as Documents
+	//
+	// Gaps
+	//
+	join Documents as Gaps
+	on Gaps.GapType = Documents.GapType
+	and Gaps.GapSeries = Documents.GapSeries
+	and Gaps.Number &gt; Documents.Number
+group by Documents.GapType, Documents.GapSeries, Documents.Number
+having min ( Gaps.Number ) - Documents.Number &gt; 2</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<parameter>
+		<name>DateEnd</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>false</useRestriction>
+		<expression>&amp;Period.EndDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>DateStart</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date start</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Start Date</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Data de începere</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>false</useRestriction>
+		<expression>&amp;Period.StartDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>Period</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Period</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Perioadă</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Период</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>v8:StandardPeriod</v8:Type>
+		</valueType>
+		<value xsi:type="v8:StandardPeriod">
+			<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+			<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+			<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+		</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<settingsVariant>
+		<dcsset:name>Default</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Default</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De bază</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Основной</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Type</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>91eccd59-7a3b-4eee-b6c7-0b018de66339</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>79988839-3ef8-4b42-b175-a266339fc850</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>f4e7d74e-0165-406d-b2bc-c85a168ad9fe</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Period</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">ThisYear</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>6061aa8e-67a8-4ab8-90b3-efd992a08bda</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Forms without ranges. Gaps in Intervals</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>FRS fara diapazon. Divergente in numere</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>БСО без диапазонов. Пропуски номеров</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Type</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>Number</dcsset:field>
+							<dcsset:orderType>Asc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>SystemFields.GroupSerialNumber</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>#</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>№</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>№</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Document</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>DocumentStatus</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:conditionalAppearance>
+						<dcsset:item>
+							<dcsset:selection/>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">DocumentStatus</dcsset:left>
+									<dcsset:comparisonType>Equal</dcsset:comparisonType>
+									<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.FormStatuses.Canceled</dcsset:right>
+								</dcsset:item>
+							</dcsset:filter>
+							<dcsset:appearance>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>TextColor</dcscor:parameter>
+									<dcscor:value xsi:type="v8ui:Color">style:SpecialTextColor</dcscor:value>
+								</dcscor:item>
+							</dcsset:appearance>
+						</dcsset:item>
+						<dcsset:item>
+							<dcsset:selection/>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">DocumentStatus</dcsset:left>
+									<dcsset:comparisonType>InList</dcsset:comparisonType>
+									<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.FormStatuses.Printed</dcsset:right>
+									<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.FormStatuses.Submitted</dcsset:right>
+									<dcsset:right xsi:type="dcscor:DesignTimeValue">Enum.FormStatuses.Returned</dcsset:right>
+								</dcsset:item>
+							</dcsset:filter>
+							<dcsset:appearance>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>TextColor</dcscor:parameter>
+									<dcscor:value xsi:type="v8ui:Color">#008000</dcscor:value>
+								</dcscor:item>
+							</dcsset:appearance>
+						</dcsset:item>
+					</dcsset:conditionalAppearance>
+				</dcsset:item>
+			</dcsset:item>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>GapType</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>GapSeries</dcsset:field>
+							<dcsset:orderType>Asc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>StartGap</dcsset:field>
+							<dcsset:orderType>Asc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>SystemFields.GroupSerialNumber</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>#</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>№</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>№</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>GapSeries</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>StartGap</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>FinishGap</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:item>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>DataSet1</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DocumentOrder</dataPath>
+			<field>DocumentOrder</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Заказ</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Order</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Comandă</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Feature</dataPath>
+			<field>Feature</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>RowKey</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Item</dataPath>
+			<field>Item</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>RowKey</dcscom:parentDimension>
+			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Package</dataPath>
+			<field>Package</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>RowKey</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityBalance</dataPath>
+			<field>QuantityBalance</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityPkgBalance</dataPath>
+			<field>QuantityPkgBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Quantity</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Количество</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Cantitate</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Customer</dataPath>
+			<field>Customer</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Заказчик</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Client</v8:content>
+				</v8:item>
+			</title>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceParameters</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:ChoiceParameters">
+						<dcscor:item>
+							<dcscor:choiceParameter>Filter.Customer</dcscor:choiceParameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>RowKey</dataPath>
+			<field>RowKey</field>
+			<useRestriction>
+				<group>true</group>
+				<order>true</order>
+			</useRestriction>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DeliveryDate</dataPath>
+			<field>DeliveryDate</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>RowKey</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Department</dataPath>
+			<field>Department</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Подразделение</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Department</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Subdiviziune</v8:content>
+				</v8:item>
+			</title>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CustomerOrDepartment</dataPath>
+			<field>CustomerOrDepartment</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer or Department</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Заказчик или Подразделение</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Client sau Subdiviziune</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>DocumentOrder</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Company</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Компания</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Companie</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>SalesOrder</dataPath>
+			<field>SalesOrder</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Sales Order</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Заказ покупателя</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>InternalOrder</dataPath>
+			<field>InternalOrder</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Internal Order</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Внутренняя заявка</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Capacity</dataPath>
+			<field>Capacity</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Amount</dataPath>
+			<field>Amount</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Amount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Price</dataPath>
+			<field>Price</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Warehouse</dataPath>
+			<field>Warehouse</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Warehouse</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Склад</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Depozit</v8:content>
+				</v8:item>
+			</title>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Taxable</dataPath>
+			<field>Taxable</field>
+			<useRestriction>
+				<group>true</group>
+				<order>true</order>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>TaxCode</dataPath>
+			<field>TaxCode</field>
+			<useRestriction>
+				<group>true</group>
+				<order>true</order>
+			</useRestriction>
+			<attributeUseRestriction>
+				<field>true</field>
+				<group>true</group>
+				<order>true</order>
+			</attributeUseRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Description</dataPath>
+			<field>Description</field>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>//
+// Departments &amp; Items
+//
+select &amp;Production as Department, Items.Item as Item
+into DepartmentItems
+from InformationRegister.DepartmentItems as Items
+index by Department, Item
+{where Items.Department = &amp;Production}
+;
+//
+// Allocation
+//
+select Allocation.DocumentOrder as DocumentOrder, Allocation.RowKey as RowKey, Allocation.QuantityBalance as QuantityBalance,
+	case when DocumentOrder refs Document.SalesOrder then DocumentOrder.Customer else DocumentOrder.Department end as CustomerOrDepartment
+into Allocation
+from AccumulationRegister.Allocation.Balance ( {&amp;Asof}, {DocumentOrder.* as DocumentOrder, DocumentOrder.Company.* as Company,
+	DocumentOrder.Warehouse.* as Warehouse,
+	cast ( DocumentOrder as Document.SalesOrder ).* as SalesOrder,
+	cast ( DocumentOrder as Document.InternalOrder ).* as InternalOrder,
+	cast ( DocumentOrder as Document.SalesOrder ).Customer.* as Customer,
+	cast ( DocumentOrder as Document.InternalOrder ).Department.* as Department} ) as Allocation
+index by DocumentOrder, RowKey
+;
+//
+// Main selection
+//
+select Items.RowKey as RowKey, Items.Item as Item, Items.Feature as Feature, Items.Package as Package,
+	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end as DeliveryDate,
+	Allocation.DocumentOrder as DocumentOrder, Allocation.QuantityBalance as QuantityBalance,
+	Allocation.QuantityBalance / Items.Capacity as QuantityPkgBalance,
+	Allocation.CustomerOrDepartment as CustomerOrDepartment, Items.Capacity as Capacity,
+	0 as Price, 0 as Amount, Items.TaxCode as TaxCode, Items.Taxable as Taxable, "" as Description
+{select Item.*, Feature.*, Package.*, DeliveryDate, RowKey, DocumentOrder.*, QuantityBalance, QuantityPkgBalance, CustomerOrDepartment.*, Capacity,
+	Price, Amount, TaxCode.*, Taxable, Description}
+from Document.SalesOrder.Items as Items
+	//
+	// Allocation
+	//
+	join Allocation as Allocation
+	on Allocation.DocumentOrder = Items.Ref
+	and Allocation.RowKey = Items.RowKey
+	//
+	// Filter by DepartmentItems
+	//
+	{join DepartmentItems as DepartmentItems
+	on DepartmentItems.Item = Items.Item}
+{where Items.Item.* as Item, Items.Feature.* as Feature, Items.Package.* as Package, Allocation.DocumentOrder.* as DocumentOrder,
+	Allocation.QuantityBalance as QuantityBalance, Allocation.QuantityBalance / Items.Capacity as QuantityPkgBalance,
+	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end between &amp;DeliveryDateStart and &amp;DeliveryDateEnd,
+	DepartmentItems.Department = &amp;Production}
+union all
+select Services.RowKey, Services.Item, Services.Feature, null,
+	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end,
+	Allocation.DocumentOrder, Allocation.QuantityBalance,
+	Allocation.QuantityBalance, Allocation.CustomerOrDepartment, 1, 0, 0, Services.TaxCode, Services.Taxable,
+	Services.Description
+from Document.SalesOrder.Services as Services
+	//
+	// Allocation
+	//
+	join Allocation as Allocation
+	on Allocation.DocumentOrder = Services.Ref
+	and Allocation.RowKey = Services.RowKey
+	//
+	// Filter by DepartmentItems
+	//
+	{join DepartmentItems as DepartmentItems
+	on DepartmentItems.Item = Services.Item
+	and DepartmentItems.Department = &amp;Production}
+{where Services.Item.* as Item, Services.Feature.* as Feature, null as Package, Allocation.DocumentOrder.* as DocumentOrder,
+	Allocation.QuantityBalance as QuantityBalance, Allocation.QuantityBalance,
+	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end between &amp;DeliveryDateStart and &amp;DeliveryDateEnd, DepartmentItems.Department = &amp;Production}
+union all
+select Items.RowKey, Items.Item, Items.Feature, Items.Package,
+	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end,
+	Allocation.DocumentOrder, Allocation.QuantityBalance,
+	Allocation.QuantityBalance / Items.Capacity, Allocation.CustomerOrDepartment, Items.Capacity,
+	Items.Price, case when Allocation.QuantityBalance = Items.Quantity then Items.Amount else Items.Amount / Items.Quantity * Allocation.QuantityBalance end,
+	Items.TaxCode, Items.Taxable, ""
+from Document.InternalOrder.Items as Items
+	//
+	// Allocation
+	//
+	join Allocation as Allocation
+	on Allocation.DocumentOrder = Items.Ref
+	and Allocation.RowKey = Items.RowKey
+	//
+	// Filter by DepartmentItems
+	//
+	{join DepartmentItems as DepartmentItems
+	on DepartmentItems.Item = Items.Item
+	and DepartmentItems.Department = &amp;Production}
+{where Items.Item.* as Item, Items.Feature.* as Feature, Items.Package.* as Package, Allocation.DocumentOrder.* as DocumentOrder,
+	Allocation.QuantityBalance as QuantityBalance, Allocation.QuantityBalance / Items.Capacity as QuantityPkgBalance,
+	case when Items.DeliveryDate = datetime ( 1, 1, 1 ) then Items.Ref.DeliveryDate else Items.DeliveryDate end between &amp;DeliveryDateStart and &amp;DeliveryDateEnd, DepartmentItems.Department = &amp;Production}
+union all
+select Services.RowKey, Services.Item, Services.Feature, null,
+	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end,
+	Allocation.DocumentOrder, Allocation.QuantityBalance,
+	Allocation.QuantityBalance, Allocation.CustomerOrDepartment, 1,
+	Services.Price, case when Allocation.QuantityBalance = Services.Quantity then Services.Amount else Services.Amount / case when Services.Quantity = 0 then 1 else Services.Quantity end * Allocation.QuantityBalance end,
+	Services.TaxCode, Services.Taxable, Services.Description
+from Document.InternalOrder.Services as Services
+	//
+	// Allocation
+	//
+	join Allocation as Allocation
+	on Allocation.DocumentOrder = Services.Ref
+	and Allocation.RowKey = Services.RowKey
+	//
+	// Filter by DepartmentItems
+	//
+	{join DepartmentItems as DepartmentItems
+	on DepartmentItems.Item = Services.Item
+	and DepartmentItems.Department = &amp;Production}
+{where Services.Item.* as Item, Services.Feature.* as Feature, null as Package, Allocation.DocumentOrder.* as DocumentOrder,
+	Allocation.QuantityBalance as QuantityBalance, Allocation.QuantityBalance,
+	case when Services.DeliveryDate = datetime ( 1, 1, 1 ) then Services.Ref.DeliveryDate else Services.DeliveryDate end as DeliveryDate,
+	DepartmentItems.Department = &amp;Production}
+</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<totalField>
+		<dataPath>QuantityPkgBalance</dataPath>
+		<expression>Sum(QuantityBalance)</expression>
+		<group>Feature</group>
+		<group>Item</group>
+		<group>Package</group>
+	</totalField>
+	<parameter>
+		<name>DeliveryPeriod</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Период доставки</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Delivery Period</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Perioada de livrare</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>v8:StandardPeriod</v8:Type>
+		</valueType>
+		<value xsi:type="v8:StandardPeriod">
+			<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+			<v8:startDate>2010-05-31T00:00:00</v8:startDate>
+			<v8:endDate>2010-06-06T23:59:59</v8:endDate>
+		</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>DeliveryDateEnd</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Delivery date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Delivery date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Data expirării datei</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;DeliveryPeriod.EndDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>DeliveryDateStart</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Delivery date start</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Delivery date start</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Delivery date start</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;DeliveryPeriod.StartDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>ReportDate</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>As of</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>По дату</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Până la</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Calendar</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+		<inputParameters>
+			<dcscor:item>
+				<dcscor:use>false</dcscor:use>
+				<dcscor:parameter>EditFormat</dcscor:parameter>
+				<dcscor:value xsi:type="v8:LocalStringType">
+					<v8:item>
+						<v8:lang>en</v8:lang>
+						<v8:content>DLF=D</v8:content>
+					</v8:item>
+					<v8:item>
+						<v8:lang>ru</v8:lang>
+						<v8:content>DLF=D</v8:content>
+					</v8:item>
+					<v8:item>
+						<v8:lang>ro</v8:lang>
+						<v8:content>DLF=D</v8:content>
+					</v8:item>
+				</dcscor:value>
+			</dcscor:item>
+		</inputParameters>
+	</parameter>
+	<parameter>
+		<name>Asof</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>As of</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>На дату</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De la</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Production</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Production</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Производство</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Producere</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Departments</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+		<inputParameters>
+			<dcscor:item>
+				<dcscor:parameter>ChoiceParameters</dcscor:parameter>
+				<dcscor:value xsi:type="dcscor:ChoiceParameters">
+					<dcscor:item>
+						<dcscor:choiceParameter>Filter.Production</dcscor:choiceParameter>
+						<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					</dcscor:item>
+				</dcscor:value>
+			</dcscor:item>
+		</inputParameters>
+	</parameter>
+	<settingsVariant>
+		<dcsset:name>Default</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Основной</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Default</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De bază</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>QuantityPkgBalance</dcsset:field>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Customer</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>6acdb0de-5fd0-4bfa-bc4f-d3ad1d131f69</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">DocumentOrder.Warehouse</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Warehouses.EmptyRef</dcsset:right>
+					<dcsset:userSettingID>c56bed48-8bff-4316-8d81-204fe0417e67</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Склад</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Warehouse</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Depozit</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Department</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>4ab423c7-fba4-4cc1-b90d-1d1ec7856869</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>5593ff5f-32a5-41e3-914f-61810f5039cd</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>8dfb9a31-baeb-4c10-852f-b8de3808fc6f</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>DeliveryPeriod</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">NextWeek</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>9dc086f4-6937-4a05-b38b-68adb1e97d5f</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>ReportDate</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>93e432d3-a2ec-4cda-8c7b-380cb5464b21</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Production</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:userSettingID>fcf9e193-2660-4bb2-8a1f-3eafa9049759</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:item xsi:type="dcsset:OrderItemField">
+					<dcsset:field>DeliveryDate</dcsset:field>
+					<dcsset:orderType>Asc</dcsset:orderType>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>f24c98d8-1054-4963-8715-eef3dd8f362c</dcsset:userSettingID>
+			</dcsset:order>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>TotalsPlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AttributePlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcsset:DataCompositionAttributesPlacement">Separately</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>VerticalOverallPlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Товары к размещению</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Items for Allocation</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Mărfuri pentru plasare</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Item</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Feature</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Item</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Item.Unit</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Feature</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Item.Code</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Код</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>Code</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:placement>Together</dcsset:placement>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:use>false</dcscor:use>
+						<dcscor:parameter>AttributePlacement</dcscor:parameter>
+						<dcscor:value xsi:type="dcsset:DataCompositionAttributesPlacement">Together</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CustomerOrDepartment</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>DocumentOrder</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>DeliveryDate</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Package</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:item>
+			</dcsset:item>
+			<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+		</dcsset:settings>
+	</settingsVariant>
+	<settingsVariant>
+		<dcsset:name>#Fill</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Allocation</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Размещение</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Plasare</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Warehouse</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>0ac32077-1079-43cf-a643-2e100516ac99</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">SalesOrder</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>230c27f0-a7bd-4b43-a3a4-dbad3329d1ad</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">InternalOrder</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>8d531cd0-43b1-44d4-bed0-3cbced8bf7f4</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>8dfb9a31-baeb-4c10-852f-b8de3808fc6f</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>DeliveryPeriod</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">NextWeek</v8:variant>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Asof</dcscor:parameter>
+					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>cb90f6db-4dab-4076-9697-7ebb649aa3b1</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Production</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:userSettingID>12ab9def-3980-472a-80d5-2cb115e74c14</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:item xsi:type="dcsset:OrderItemField">
+					<dcsset:field>DeliveryDate</dcsset:field>
+					<dcsset:orderType>Asc</dcsset:orderType>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:order>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>TotalsPlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>VerticalOverallPlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>TitleOutput</dcscor:parameter>
+					<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType"/>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Item</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Item.Service</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Description</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Package</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Capacity</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Feature</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>DocumentOrder</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>RowKey</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>QuantityPkgBalance</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>QuantityBalance</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Price</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Amount</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Taxable</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>TaxCode</dcsset:field>
+					</dcsset:item>
+				</dcsset:selection>
+			</dcsset:item>
+			<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

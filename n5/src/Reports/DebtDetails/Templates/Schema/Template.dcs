@@ -1,0 +1,1902 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>DataSet1</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Company</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Компания</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Companie</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>PaymentMethod</dcscom:parentDimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Detail</dataPath>
+			<field>Detail</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Document</dataPath>
+			<field>Document</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Contract</dataPath>
+			<field>Contract</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Recorder</dataPath>
+			<field>Recorder</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Recorder</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Document</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Регистратор</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:periodNumber>1</dcscom:periodNumber>
+				<dcscom:periodType>Main</dcscom:periodType>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>SecondPeriod</dataPath>
+			<field>SecondPeriod</field>
+			<useRestriction>
+				<field>true</field>
+				<group>true</group>
+				<order>true</order>
+			</useRestriction>
+			<role>
+				<dcscom:periodNumber>2</dcscom:periodNumber>
+				<dcscom:periodType>Main</dcscom:periodType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Customer</dataPath>
+			<field>Customer</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Покупатель</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Cumpãrãtor</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:parentDimension>PaymentMethod</dcscom:parentDimension>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">25</dcscor:value>
+				</dcscor:item>
+			</appearance>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceParameters</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:ChoiceParameters">
+						<dcscor:item>
+							<dcscor:choiceParameter>Filter.Customer</dcscor:choiceParameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountClosingBalance</dataPath>
+			<field>AmountClosingBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг покупателя на конец периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer debt at the end of the period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datoria cumpărătorului la sfârșitul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountExpense</dataPath>
+			<field>AmountExpense</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уменьшение долга</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt reduction</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Scăderea datoriilor</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountOpeningBalance</dataPath>
+			<field>AmountOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг покупателя на начало периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer debt at the beginning of the period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datoria cumpărătorului la începutul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OverpaymentClosingBalance</dataPath>
+			<field>OverpaymentClosingBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма аванса на конец периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment amount at the end of period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma avansului la sfârșitul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Overpayment</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OverpaymentExpense</dataPath>
+			<field>OverpaymentExpense</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уменьшение аванса</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment reduction</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Micșorarea avansului</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OverpaymentOpeningBalance</dataPath>
+			<field>OverpaymentOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма аванса на начало периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment amount at the beginning of period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma avansului la începutul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Overpayment</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>OverpaymentReceipt</dataPath>
+			<field>OverpaymentReceipt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Увеличение аванса</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Increase of overpayment</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Creșterea avansului</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountReceipt</dataPath>
+			<field>AmountReceipt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Увеличение долга</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt increase</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Creșterea datoriei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>PaymentClosingBalance</dataPath>
+			<field>PaymentClosingBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма к оплате на конец периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer payment amount at the end of period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma care trebuie plătită la sfârșitul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Payment</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>PaymentExpense</dataPath>
+			<field>PaymentExpense</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уменьшение суммы к оплате</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Reduction to the payable amount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Micșorarea sumei pentru plată</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>PaymentOpeningBalance</dataPath>
+			<field>PaymentOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма к оплате на начало периода</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer payment amount at the beginning of period</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma care trebuie plătită la începutul perioadei</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Payment</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>PaymentReceipt</dataPath>
+			<field>PaymentReceipt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Увеличение суммы к оплате</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Increase of amount to be paid</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Creșterea sumei care trebuie plătită</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AdvanceClosingBalance</dataPath>
+			<field>AdvanceClosingBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment amount at the end of period (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma avansului la sfârșitul perioadei (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма аванса на конец периода (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Advance</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AdvanceExpense</dataPath>
+			<field>AdvanceExpense</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment reduction (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Micșorarea avansului (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уменьшение аванса (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AdvanceReceipt</dataPath>
+			<field>AdvanceReceipt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Increase of overpayment (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Creșterea avansului (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Увеличение аванса (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AdvanceOpeningBalance</dataPath>
+			<field>AdvanceOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Overpayment amount at the beginning of period (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma avansului la începutul perioadei (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма аванса на начало периода (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Advance</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AccountingOpeningBalance</dataPath>
+			<field>AccountingOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer debt at the beginning of the period (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datoria cumpărătorului la începutul perioadei (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг покупателя на начало периода (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Accounting</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AccountingClosingBalance</dataPath>
+			<field>AccountingClosingBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer debt at the end of the period (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Datoria cumpărătorului la sfârșitul perioadei (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг покупателя на конец периода (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Accounting</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AccountingExpense</dataPath>
+			<field>AccountingExpense</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt reduction (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Scăderea datoriilor (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уменьшение долга (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AccountingReceipt</dataPath>
+			<field>AccountingReceipt</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Debt increase (accounting)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Creșterea datoriei (contabilitate)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Увеличение долга (бу)</v8:content>
+				</v8:item>
+			</title>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>//
+// Main selection
+//
+select allowed Payments.SecondPeriod as SecondPeriod, case when ( Payments.Recorder = undefined ) then null else Payments.Recorder end as Recorder,
+	Payments.Contract as Contract, Payments.Document as Document,
+	Payments.Detail as Detail, Payments.Contract.Company as Company, Payments.Contract.Owner as Customer, 
+	Payments.AmountOpeningBalance AmountOpeningBalance, Payments.AmountReceipt as AmountReceipt, Payments.AmountExpense as AmountExpense,
+	Payments.AmountClosingBalance as AmountClosingBalance, Payments.PaymentOpeningBalance PaymentOpeningBalance,
+	Payments.PaymentReceipt as PaymentReceipt, Payments.PaymentExpense as PaymentExpense,
+	Payments.PaymentClosingBalance as PaymentClosingBalance, Payments.OverpaymentOpeningBalance as OverpaymentOpeningBalance,
+	Payments.OverpaymentReceipt as OverpaymentReceipt, Payments.OverpaymentExpense as OverpaymentExpense,
+	Payments.OverpaymentClosingBalance as OverpaymentClosingBalance,
+	Payments.AccountingReceipt as AccountingReceipt, Payments.AccountingExpense as AccountingExpense,
+	Payments.AccountingOpeningBalance as AccountingOpeningBalance, Payments.AccountingClosingBalance as AccountingClosingBalance,
+	Payments.AdvanceOpeningBalance as AdvanceOpeningBalance, Payments.AdvanceReceipt as AdvanceReceipt, Payments.AdvanceExpense as AdvanceExpense,
+	Payments.AdvanceClosingBalance as AdvanceClosingBalance
+	{select SecondPeriod, Recorder.*, Contract.*, Company.*, Customer.*, Document.*, Detail.*, AmountOpeningBalance, AmountReceipt, AmountExpense,
+	AmountClosingBalance, PaymentOpeningBalance, PaymentReceipt, PaymentExpense, PaymentClosingBalance, OverpaymentOpeningBalance,
+	OverpaymentReceipt, OverpaymentExpense, OverpaymentClosingBalance,
+	AccountingOpeningBalance, AccountingReceipt, AccountingExpense, AccountingClosingBalance,
+	AdvanceOpeningBalance, AdvanceReceipt, AdvanceExpense, AdvanceClosingBalance
+}
+from AccumulationRegister.Debts.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto, , {Contract.* as Contract, Document.* as Document,
+	Detail.* as Detail, Contract.Company.* as Company, Contract.Owner.* as Customer} ) as Payments
+</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<totalField>
+		<dataPath>AmountClosingBalance</dataPath>
+		<expression>Sum(AmountClosingBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountExpense</dataPath>
+		<expression>Sum(AmountExpense)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountOpeningBalance</dataPath>
+		<expression>Sum(AmountOpeningBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>OverpaymentClosingBalance</dataPath>
+		<expression>Sum(OverpaymentClosingBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>OverpaymentExpense</dataPath>
+		<expression>Sum(OverpaymentExpense)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>OverpaymentOpeningBalance</dataPath>
+		<expression>Sum(OverpaymentOpeningBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>OverpaymentReceipt</dataPath>
+		<expression>Sum(OverpaymentReceipt)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountReceipt</dataPath>
+		<expression>Sum(AmountReceipt)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>PaymentClosingBalance</dataPath>
+		<expression>Sum(PaymentClosingBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>PaymentExpense</dataPath>
+		<expression>Sum(PaymentExpense)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>PaymentOpeningBalance</dataPath>
+		<expression>Sum(PaymentOpeningBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>PaymentReceipt</dataPath>
+		<expression>Sum(PaymentReceipt)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AccountingClosingBalance</dataPath>
+		<expression>Sum(AccountingClosingBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AccountingExpense</dataPath>
+		<expression>Sum(AccountingExpense)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AccountingOpeningBalance</dataPath>
+		<expression>Sum(AccountingOpeningBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AccountingReceipt</dataPath>
+		<expression>Sum(AccountingReceipt)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AdvanceClosingBalance</dataPath>
+		<expression>Sum(AdvanceClosingBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AdvanceExpense</dataPath>
+		<expression>Sum(AdvanceExpense)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AdvanceOpeningBalance</dataPath>
+		<expression>Sum(AdvanceOpeningBalance)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AdvanceReceipt</dataPath>
+		<expression>Sum(AdvanceReceipt)</expression>
+	</totalField>
+	<parameter>
+		<name>DateEnd</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Sfârșitul datei</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.EndDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>DateStart</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date start</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Start Date</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Data de începere</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.StartDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>Period</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Период</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Period</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Perioadă</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>v8:StandardPeriod</v8:Type>
+		</valueType>
+		<value xsi:type="v8:StandardPeriod">
+			<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+			<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+			<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+		</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<settingsVariant>
+		<dcsset:name>Default</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Default</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De bază</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Основной</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Debt</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Долг</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Datorie</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Accounting</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Бухгалтерский учет</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Contabilitate</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Overpayment</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Аванс</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Avans</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Advance (Accounting)</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Аванс (бухгалтерия)</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Avans (contabilitate)</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>For payment</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>К оплате</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Spre plata</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>2cedff62-64f7-4f03-b74e-8bfa72a689e9</dcsset:userSettingID>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Customer</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Organizations.EmptyRef</dcsset:right>
+					<dcsset:userSettingID>5a8908ef-b194-4708-8856-29750c3f7d1f</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Companies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>91a0ee78-129a-44c5-8031-080134d0362a</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>3b8ca066-0a2b-4cc1-9526-ae0b4b59808d</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Period</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">ThisMonth</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>e5da7a03-fc04-4397-942f-9c2bc38c655d</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>206e3736-34de-48c4-869f-41edb460bdea</dcsset:userSettingID>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Customer Debt Details</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Анализ взаиморасчетов с покупателями</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Analiza decontărilor reciproce cu cumpărătorii</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Customer</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Document</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+					</dcsset:selection>
+					<dcsset:userSettingID>9d7983d2-9e5a-4110-a1d8-de642fc04eca</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить по документам</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show by documents</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișați pe documente</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcsset:item>
+				<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+				<dcsset:itemsUserSettingID>7a700b1a-de6a-4115-ae57-200971401cae</dcsset:itemsUserSettingID>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+	<settingsVariant>
+		<dcsset:name>Accounting</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Accounting</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Contabilitate</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Бухучет</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Debt</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Долг</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Datorie</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AmountClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Accounting</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Бухгалтерский учет</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Contabilitate</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AccountingClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Overpayment</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Аванс</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Avans</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>OverpaymentClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Advance (Accounting)</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Аванс (бухгалтерия)</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Avans (contabilitate)</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>AdvanceClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>For payment</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>К оплате</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Spre plata</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentOpeningBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the beginning</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На начало</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La început</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentReceipt</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Increase</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Увеличение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Crește</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentExpense</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Reduction</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Уменьшение</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Micșorarea</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>PaymentClosingBalance</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>At the end</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>На конец</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>La sfârșit</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Auto</dcsset:placement>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>2cedff62-64f7-4f03-b74e-8bfa72a689e9</dcsset:userSettingID>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Customer</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Organizations.EmptyRef</dcsset:right>
+					<dcsset:userSettingID>5a8908ef-b194-4708-8856-29750c3f7d1f</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Companies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>91a0ee78-129a-44c5-8031-080134d0362a</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>3b8ca066-0a2b-4cc1-9526-ae0b4b59808d</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Period</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">ThisMonth</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>e5da7a03-fc04-4397-942f-9c2bc38c655d</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>206e3736-34de-48c4-869f-41edb460bdea</dcsset:userSettingID>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Customer Debt Details</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Анализ взаиморасчетов с покупателями</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Analiza decontărilor reciproce cu cumpărătorii</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Customer</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Document</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+					</dcsset:selection>
+					<dcsset:userSettingID>9d7983d2-9e5a-4110-a1d8-de642fc04eca</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить по документам</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show by documents</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișați pe documente</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcsset:item>
+				<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+				<dcsset:itemsUserSettingID>7a700b1a-de6a-4115-ae57-200971401cae</dcsset:itemsUserSettingID>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

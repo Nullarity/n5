@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Report xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="8b5600d2-0576-492e-8227-39f8260e28c1">
+  <producedTypes>
+    <objectType typeId="6cf07474-30f1-4ad2-8edd-8e9b09775113" valueTypeId="61a419db-a6c2-4251-977e-4c466fa6ff9e"/>
+    <managerType typeId="66152815-338d-4756-831a-fd72b5fffb79" valueTypeId="e50dd9b0-4517-4ea1-9a71-a532c2ea5b6d"/>
+  </producedTypes>
+  <name>VendorDebtDetails</name>
+  <synonym>
+    <key>en</key>
+    <value>Vendor Debt Details</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Взаиморасчеты с поставщиками</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Decontări cu furnizorii</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <mainDataCompositionSchema>Report.VendorDebtDetails.Template.Schema</mainDataCompositionSchema>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>This report provides information about settlements with the supplier in context of orders and account documents</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Отчет предоставляет информацию о взаиморасчетах с поставщиками в разрезе заказов и расчетных документов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Raportul oferă informații despre decontări cu furnizorul în contextul comenzilor și documentelor de decontare</value>
+  </explanation>
+  <templates uuid="bea7a49d-db06-4de2-851b-fefc85071132">
+    <name>Schema</name>
+    <templateType>DataCompositionSchema</templateType>
+  </templates>
+  <commands uuid="53ee00a9-b6dc-401c-961b-2726a5969de6">
+    <name>Show</name>
+    <synonym>
+      <key>en</key>
+      <value>Vendor Debt Details</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ведомость по взаиморасчетам с поставщиками</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Detalii privind datoriile furnizorului</value>
+    </synonym>
+    <group>CommandGroup.Reports</group>
+    <commandParameterType>
+      <types>CatalogRef.Organizations</types>
+      <types>DocumentRef.PurchaseOrder</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>This report reveals settlements with suppliers for a given period in the context of orders and accounting documents</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Отчет раскрывает за период взаиморасчеты с поставщиками в разрезе заказов и расчетных документов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Raportul relevă pentru perioada decontările reciproce cu furnizorii în contextul comenzilor și documentelor de decontare</value>
+    </toolTip>
+  </commands>
+</mdclass:Report>

@@ -1,0 +1,2200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="b1a780b3-eb37-4d0a-9118-ff2865753a5b">
+  <producedTypes>
+    <objectType typeId="2374286b-3923-4766-b50d-8eb1cb4d5506" valueTypeId="714f6f9d-eaa2-44ca-a28d-af1ec8d63c95"/>
+    <refType typeId="c0d6e30a-971d-486e-9776-91c3b4a06c82" valueTypeId="6d326055-ab7c-41c0-bcce-81030fb0739a"/>
+    <selectionType typeId="96e33c1f-4f0e-4344-a5f7-276044cf724a" valueTypeId="bad3212d-8664-4ad9-b381-6920984ede4e"/>
+    <listType typeId="b1fb11ad-d108-497b-99a2-6da9be20af76" valueTypeId="70c7a864-c509-4a21-90be-df5f03067573"/>
+    <managerType typeId="2abdde2d-8562-42fc-b07f-12c91d32e6c4" valueTypeId="93618c84-86de-4410-aa2b-1c3ee4cebc45"/>
+  </producedTypes>
+  <name>Schedules</name>
+  <synonym>
+    <key>en</key>
+    <value>Schedules</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Графики</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Orare</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.Schedules.StandardAttribute.Description</inputByString>
+  <inputByString>Catalog.Schedules.StandardAttribute.Code</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <includeHelpInContents>true</includeHelpInContents>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <explanation>
+    <key>en</key>
+    <value>Used to determine an employee's basic work time parameters</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Используется для определения основных параметров рабочего времени сотрудников</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Folosit pentru determinarea parametrilor de bază ai timpului de lucru al angajaților</value>
+  </explanation>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <descriptionLength>150</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <defaultObjectForm>Catalog.Schedules.Form.Form</defaultObjectForm>
+  <defaultListForm>Catalog.Schedules.Form.List</defaultListForm>
+  <attributes uuid="ef645f0f-e6af-4b73-bd28-36a7d6d3199d">
+    <name>AverageDays</name>
+    <synonym>
+      <key>en</key>
+      <value>The average number of working days in a month</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Среднее количество рабочих дней в месяце</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Numărul mediu de zile lucrătoare într-o lună</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The average number of working days in a month</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Среднее количество рабочих дней в месяце</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul mediu de zile lucrătoare într-o lună</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="a8808819-378d-496e-95c8-b337a2df4f46">
+    <name>DayOff1</name>
+    <synonym>
+      <key>en</key>
+      <value>Day Off 1</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Первый выходной</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Prima zi liberă</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Week</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>First day off</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Первый выходной день</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Prima zi liberă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.Week.EnumValue.Saturday</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="dc1df679-de0b-4fe4-9716-669ca9e736a1">
+    <name>DayOff2</name>
+    <synonym>
+      <key>en</key>
+      <value>Day Off 2</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Второй выходной</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>A doua zi liberă</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Week</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Second day off</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Второй выходной день</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>A doua zi liberă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.Week.EnumValue.Sunday</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="2e04be38-c87f-41d1-8626-fe7b682e3ebf">
+    <name>DaysOffCoef</name>
+    <synonym>
+      <key>en</key>
+      <value>Days Off</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Праздники и выходные</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sărbătorile și weekend</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Bonus rate for work during leave days or holidays</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Коэффициент надбавки за работу в праздники и выходные дни</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Coeficientul de alocații pentru munca în zilele de sărbătoare și în weekend</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:NumberValue">
+      <value>2</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="0f6d2a71-2b00-489e-82fc-1869d932629f">
+    <name>Finish</name>
+    <synonym>
+      <key>en</key>
+      <value>End</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Окончание</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Final</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Time</dateFractions>
+      </dateQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>DF='hh:mm t'</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DF=HH:mm</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DF=HH:mm</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>DF='hh:mm t'</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>DF=HH:mm</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>DF=HH:mm</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>End of work day</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Окончание рабочего дня</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sfârșitul zilei de lucru</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:DateValue">
+      <value>0001-01-01T17:00:00</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="44ee595f-0a20-49ee-a217-3f3d1526b8e4">
+    <name>Holidays</name>
+    <synonym>
+      <key>en</key>
+      <value>Holidays</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Праздники</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sărbători</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Holidays</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Holidays calendar</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Календарь праздничных дней</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Calendarul sărbătorilor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="fdca129b-63d2-4823-85a7-3d468ba04cf4">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Random text record or note</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольная текстовая запись, заметка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="65c9464b-5b68-4149-9237-f527236c21c4">
+    <name>OvertimeCoef1</name>
+    <synonym>
+      <key>en</key>
+      <value>First Overtime Rate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Первый коэф. сверхурочных</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Primul coeficient. ore suplimentare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Overtime calculation, first rate</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Первый коэффициент расчета часов сверхурочных</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Primul coeficient pentru calculul orelor de ore suplimentare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d4337b73-b339-438a-85b0-682d557bb24e">
+    <name>OvertimeCoef2</name>
+    <synonym>
+      <key>en</key>
+      <value>Second Overtime Rate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Второй коэф. сверхурочных</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Al doilea coeficient. ore suplimentare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>5</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Overtime calculation, second rate</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Второй коэффициент расчета часов сверхурочных</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Al doilea coeficient pentru calculul orelor de ore suplimentare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="6f0df96a-6059-4726-8c2b-2347285f722b">
+    <name>OvertimeLimit</name>
+    <synonym>
+      <key>en</key>
+      <value>Overtime Limit</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Лимит сверхурочных</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Limita orelor suplimentare</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Overtime hours are being calculated by first coefficient</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество часов переработки для расчета по первому коэффициенту</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Orele suplimentare se calculează cu primul coeficient</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="edcc1738-754b-4a42-95c5-1cff2394ecba">
+    <name>Preholidays</name>
+    <synonym>
+      <key>en</key>
+      <value>One hour less on the day before the holiday</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Уменьшать на час предпраздничный день</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cu o oră mai puțin în ziua dinaintea sărbătorii</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The duration of the working day preceding a public holiday will be reduced by one hour</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Продолжительность рабочего дня, предшествующего нерабочему праздничному дню, будет уменьшаться на час</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata zilei de lucru care precede o zi de sărbătoare legală va fi redusă cu o oră.</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="99b08004-9074-4fe4-b122-16d9611efdac">
+    <name>Start</name>
+    <synonym>
+      <key>en</key>
+      <value>Start</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Начало</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Început</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Time</dateFractions>
+      </dateQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>DF='hh:mm t'</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DF=HH:mm</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DF=HH:mm</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>DF='hh:mm t'</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>DF=HH:mm</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>DF=HH:mm</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Start of work day</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Начало рабочего дня</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Începutul zilei de lucru</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:DateValue">
+      <value>0001-01-01T09:00:00</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="b961f2a7-a5fc-44d1-80fc-15bdfa15fe34">
+    <name>TimesheetDays</name>
+    <synonym>
+      <key>en</key>
+      <value>Days In Timesheet</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Дней в табеле</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Zilele În evidența timpului de lucru</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>2</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Quantity of Timesheet Days. It is used when the timesheet period is set arbitrarily</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество дней табеля. Указывается в случае, когда период табеля задается произвольно</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Număr de zile pentru foaia de pontaj Folosit când perioada de pontaj este setată arbitrar</value>
+    </toolTip>
+    <minValue xsi:type="core:StringValue">
+      <value>1</value>
+    </minValue>
+    <maxValue xsi:type="core:StringValue">
+      <value>31</value>
+    </maxValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="6b0a912d-41fb-4168-96bc-fc5900157376">
+    <name>TimesheetPeriod</name>
+    <synonym>
+      <key>en</key>
+      <value>Timesheet Period</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Период табеля</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Perioada Pontaj</value>
+    </synonym>
+    <type>
+      <types>EnumRef.TimesheetPeriods</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Hours worked during a given time period</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Временной период, за который вводится табель отработанного времени</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Perioada de timp pentru a introduce orele lucrate in foaia de pontaj</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.TimesheetPeriods.EnumValue.Week</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="59035c7f-ee57-4ada-b3b7-1401dba4d4aa">
+    <name>UseOvertime</name>
+    <synonym>
+      <key>en</key>
+      <value>Allow Overtime</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Учитывать сверхурочные</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Luați în considerare orele suplimentare</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Allow overtime</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Учитывать сверхурочные</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Luați în considerare orele suplimentare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="8625926e-0436-48c6-ba53-6b592e66b826">
+    <name>WeekStart</name>
+    <synonym>
+      <key>en</key>
+      <value>Week Start</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Начало недели</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Începutul săptămânii</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Week</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>First day of the week. Also used to set reporting period for weekly timesheets</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>День начала недели. Для недельных табелей также задает начало отчетного периода табеля</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Prima zi a săptămânii. Pentru a seta perioada de raportare pentru evidența timpului de lucru săptămânală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.Week.EmptyRef</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <tabularSections uuid="4a1ae4bf-66d7-456f-a9b9-111fea2597a6">
+    <producedTypes>
+      <objectType typeId="a673d7d2-8c25-4037-9570-1d60c935e754" valueTypeId="3142a421-4b15-4c17-a848-d270b8e67927"/>
+      <rowType typeId="535a40c2-72a5-4216-85fd-98e1d1a797a7" valueTypeId="3381963f-dea3-430a-8454-0a1688c7e9fd"/>
+    </producedTypes>
+    <name>Years</name>
+    <synonym>
+      <key>en</key>
+      <value>Years</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Года</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Anii</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Evening and Night hours should be included in work hours</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Общее время работы должно включать в себя ночные и вечерние часы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul total de ore de lucru ar trebui să includă orele de noapte și seara</value>
+    </toolTip>
+    <fillChecking>ShowError</fillChecking>
+    <attributes uuid="401d6054-1eb0-4b43-858c-80e9c122c80a">
+      <name>Friday</name>
+      <synonym>
+        <key>en</key>
+        <value>Fri</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Пт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Vineri</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Friday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в пятницу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru vineri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="83ceefa3-2dac-448e-8a2d-662cbe04d982">
+      <name>FridayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Friday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в пятницу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de vineri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="338c6284-e40b-4b1f-ae79-a40b7420a4f3">
+      <name>FridayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Friday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в пятницу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte vineri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="3eac3172-b636-4a11-a994-7f9d27c54ede">
+      <name>ManualChanges</name>
+      <synonym>
+        <key>en</key>
+        <value>Manual Schedule Changes</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ручные изменения графика</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Modificările manuale de program</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Schedule manual changes</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Признак ручных корректировок в графике</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Indicarea ajustărilor manuale în grafic</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="e0ba29e1-51bd-48c6-9171-dae97bfd1afb">
+      <name>Monday</name>
+      <synonym>
+        <key>en</key>
+        <value>Mon</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Пн</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Ln</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Quantity of Work Hours on Monday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в понедельник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru luni</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a896bc99-fed0-4381-baf1-ac9fbeea7057">
+      <name>MondayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Monday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в понедельник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de luni</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="fcc7a395-da5d-4884-8d95-7cf6686747a9">
+      <name>MondayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Monday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в понедельник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte luni</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="4d4314df-9934-438c-ae9a-eec3ff6ed1dd">
+      <name>Saturday</name>
+      <synonym>
+        <key>en</key>
+        <value>Sat</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сб</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Smb</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Saturday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в субботу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru sâmbătă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="65688972-d462-412b-8de6-dc5dbb22c1d3">
+      <name>SaturdayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Saturday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в субботу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de sâmbătă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="be0ed46d-4585-4dca-880a-b2e9cc1cbfec">
+      <name>SaturdayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Saturday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в субботу</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte sâmbătă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f2213cb8-0595-4f37-8406-8d2527733eb7">
+      <name>Sunday</name>
+      <synonym>
+        <key>en</key>
+        <value>Sun</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вс</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dum</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Sunday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в воскресенье</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru duminică</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5b702a6e-20ff-420b-b323-07d4d3cbf11b">
+      <name>SundayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Sunday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в воскресенье</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de duminică</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="0693e199-5aa2-4f03-b8b6-70603ce2179a">
+      <name>SundayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Sunday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в воскресенье</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte duminică</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="26f59743-1f76-4cca-839d-a75da4f9c8d5">
+      <name>Thursday</name>
+      <synonym>
+        <key>en</key>
+        <value>Thu</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Чт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Joi</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Thursday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в четверг</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru joi</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="02da5dda-1d94-4369-ad29-1aa59bcd5bdf">
+      <name>ThursdayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Thursday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в четверг</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de joi</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="c345fb01-3b85-4211-80a7-098c6f2455dc">
+      <name>ThursdayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Thursday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в четверг</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte joi</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="a2f4ee24-aadf-4021-ba55-49b4d827a4b9">
+      <name>Tuesday</name>
+      <synonym>
+        <key>en</key>
+        <value>Tue</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Вт</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Marți</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Tuesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов во вторник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru marți</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="32173964-5971-4402-9d12-42f2f907d44c">
+      <name>TuesdayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Tuesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в вторник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de marți</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="2b5c9c19-0975-4765-a9be-c0289411eeb1">
+      <name>TuesdayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Tuesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в вторник</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte marți</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="10dadaef-d63e-45dc-85a9-77a427082033">
+      <name>Wednesday</name>
+      <synonym>
+        <key>en</key>
+        <value>Wed</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ср</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Mi</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Work hours on Wednesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество рабочих часов в среду</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de ore de lucru miercuri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="ab7ed607-71fe-4931-8e96-ee889392adfd">
+      <name>WednesdayEvening</name>
+      <synonym>
+        <key>en</key>
+        <value>Ev</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Веч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Seara</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Evening work hours on Wednesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество вечерних рабочих часов в среду</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru în cursul serii de miercuri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="46f623b1-3222-408c-bb14-76cea3873874">
+      <name>WednesdayNight</name>
+      <synonym>
+        <key>en</key>
+        <value>Nt</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ноч</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Noapte</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <scale>2</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>ND=4; NFD=2; NDS=:</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Night work hours on Wednesday</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество ночных рабочих часов в среду</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul orelor de lucru de noapte miercuri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9d196246-ee5c-4b60-b27a-283d1a7b6942">
+      <name>Year</name>
+      <synonym>
+        <key>en</key>
+        <value>Year</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Год</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>An</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>4</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <format>
+        <key>en</key>
+        <value>NG=0</value>
+      </format>
+      <format>
+        <key>ru</key>
+        <value>NG=0</value>
+      </format>
+      <format>
+        <key>ro</key>
+        <value>NG=0</value>
+      </format>
+      <editFormat>
+        <key>en</key>
+        <value>NG=0</value>
+      </editFormat>
+      <editFormat>
+        <key>ru</key>
+        <value>NG=0</value>
+      </editFormat>
+      <editFormat>
+        <key>ro</key>
+        <value>NG=0</value>
+      </editFormat>
+      <toolTip>
+        <key>en</key>
+        <value>Calendar year of the schedule</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Календарный год, за который вводится график</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Anul calendaristic pentru care este introdus programul</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <forms uuid="2c33c0bd-f609-43df-93a2-eb490d0d477e">
+    <name>Form</name>
+    <synonym>
+      <key>ru</key>
+      <value>Item form</value>
+    </synonym>
+    <synonym>
+      <key>en</key>
+      <value>Item form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="fa2565ba-e4b7-44e2-ba95-41c0d51715bc">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:Catalog>

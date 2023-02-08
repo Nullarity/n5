@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="82d9a23d-6e31-423f-8090-77c04e997c41">
+  <producedTypes>
+    <objectType typeId="6ca51d33-9ad4-4dc1-a26f-7dbbbe581ee9" valueTypeId="fbf52bd5-213a-4cc1-a563-daeaa765c91f"/>
+    <managerType typeId="aeb96610-65f1-4b02-be7c-3277de315173" valueTypeId="4ef52579-0e83-4826-ac87-7271e5068c98"/>
+  </producedTypes>
+  <name>PickupOrder</name>
+  <synonym>
+    <key>en</key>
+    <value>Order Fulfilment Creation</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Подготовка к отгрузке</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Pregătirea pentru expediere</value>
+  </synonym>
+  <defaultForm>DataProcessor.PickupOrder.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>Order fulfilment creation process</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Процесс подготовка к отгрузки товаров</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Procesul de pregătire pentru expedierea mărfurilor</value>
+  </explanation>
+  <attributes uuid="b156b6ac-0c2d-46e3-ab1b-e51511a27c20">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea în numele căreia este introdus documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="ba226ea1-7144-4f73-8edb-218178ea5864">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <attributes uuid="cf2fff51-279c-4ab5-8b7e-5e0b09c8a705">
+    <name>Required</name>
+    <synonym>
+      <key>en</key>
+      <value>Required</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Требуется</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Necesar</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date when items should be picked up</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата, на которую груз уже должен быть готов к погрузке</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data la care mărfurile urmează să fie gata pentru încărcare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <attributes uuid="87c55fe7-586d-49a3-8d5c-92f457efb465">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>A scheduled pickup was performed at this Warehouse</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, на котором выполняется подготовка груза</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul unde este pregătită încărcătura</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Owner</name>
+      <field>DataProcessor.PickupOrder.Attribute.Company</field>
+    </choiceParameterLinks>
+  </attributes>
+  <tabularSections uuid="127591d7-2622-4ed9-8b5f-746cf93284de">
+    <producedTypes>
+      <objectType typeId="beecbd1b-0ab5-4a16-947b-ba6014012d9e" valueTypeId="3700ab14-6cdb-4b30-a788-e506d1611c6b"/>
+      <rowType typeId="d541b2ff-51ac-4590-b91e-2cf81483a7ff" valueTypeId="c88621b0-ead8-4746-a7bd-497ab28d417c"/>
+    </producedTypes>
+    <name>Shipments</name>
+    <synonym>
+      <key>en</key>
+      <value>Shipments</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Отгрузки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Expedierile</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Shipments</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Отгрузки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Expedierile</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="53c9f5ba-2145-43ca-ac14-2ccb35d81e2f">
+      <name>Address</name>
+      <synonym>
+        <key>en</key>
+        <value>Address</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Адрес</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Adresa</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Shipping address</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Адрес доставки</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Adresa de livrare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="3bd7a52d-8895-4f8f-a1a2-72ab17f65d75">
+      <name>Customer</name>
+      <synonym>
+        <key>en</key>
+        <value>Customer</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Покупатель</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cumpãrãtor</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Customer</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Покупатель</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cumpãrãtor</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:StringValue">
+        <value></value>
+      </fillValue>
+    </attributes>
+    <attributes uuid="8a745ca0-4556-495b-8127-b826861d3c86">
+      <name>DeliveryDate</name>
+      <synonym>
+        <key>en</key>
+        <value>Delivery</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Нужно</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Data livrării</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Date</dateFractions>
+        </dateQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Estimated delivery date</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ожидаемая дата получения товара и/или оказания услуг</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Data preconizată de primire a bunurilor și / sau a serviciilor</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="c1e174a0-f186-464e-815e-7a22a145f590">
+      <name>Shipment</name>
+      <synonym>
+        <key>en</key>
+        <value>Shipment</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Отгрузка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Expediere</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Shipment</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Отгрузка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Expediere</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:StringValue">
+        <value></value>
+      </fillValue>
+    </attributes>
+    <attributes uuid="9ea1198d-6b04-42d0-a887-6ddd0aceb308">
+      <name>ShipmentRef</name>
+      <synonym>
+        <key>en</key>
+        <value>Shipment</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Отгрузка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Expediere</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.Shipment</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Shipment</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Отгрузка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Expediere</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="59f7c851-fe62-4be4-b96b-2dde7bf32a91">
+      <name>Use</name>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Include this Shipment in Order fulfilment</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Включить эту отгрузку в задание на Подготовку к отгрузке</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Includeți acest transfer în Pregătirea pentru expediere</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+  </tabularSections>
+  <forms uuid="619ac2ac-e560-46c6-8349-11400689626b">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

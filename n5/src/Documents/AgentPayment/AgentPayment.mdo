@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="08829350-2e49-4830-a179-7888646a4b59">
+  <producedTypes>
+    <objectType typeId="2339254e-19a9-41cd-8fab-f7e31b8eb999" valueTypeId="1d35c069-19b0-4870-8c04-eb688f07054a"/>
+    <refType typeId="615df42c-a720-4d60-8c09-71a42fc2ac5b" valueTypeId="db116a5b-94ce-4800-8638-f7d9eac48b11"/>
+    <selectionType typeId="f0b148c9-1fc5-495a-827e-7c0e142e9ab4" valueTypeId="ad6d81fd-fcc0-4aa3-9b58-c7d251b3a613"/>
+    <listType typeId="458e8f1e-171e-44a6-89d9-578a0d3236fd" valueTypeId="1fcdd8ed-3f68-4a71-93e5-d07268e3ad5a"/>
+    <managerType typeId="c44fd5cd-3360-4352-9817-74db1e953093" valueTypeId="93a9ea6a-86c2-4211-a049-ac741f2417a4"/>
+  </producedTypes>
+  <name>AgentPayment</name>
+  <synonym>
+    <key>en</key>
+    <value>Payment to Agent</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Выплата агентам</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Plata către agenți</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Document.AgentPayment.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <listPresentation>
+    <key>en</key>
+    <value>Payment to Agents</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Выплаты агентам</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Plăți către agenți</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>Bonus payments to commercial agent</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Выплата бонусов агенту</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Plata bonusurilor agentului</value>
+  </explanation>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.AgentPayment.Form.Form</defaultObjectForm>
+  <realTimePosting>Deny</realTimePosting>
+  <registerRecords>AccumulationRegister.Agents</registerRecords>
+  <postInPrivilegedMode>true</postInPrivilegedMode>
+  <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
+  <attributes uuid="4e279c52-4e6e-4bc4-a0ee-048af4a3a3ef">
+    <name>Bonus</name>
+    <synonym>
+      <key>en</key>
+      <value>Bonus</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Бонус</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Bonus</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>15</precision>
+        <scale>2</scale>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Bonus amount</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма бонуса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma bonusului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="cd7c21f2-97b8-44c9-927c-4b276109e922">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>User who created the document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="d65d9d68-5ddb-4699-bb26-a7004c440f80">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Random text record or note</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольная текстовая запись, заметка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="30d9814a-23a0-4de7-a842-70c764e34b7c">
+    <name>TenantOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenant Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda chiriaș</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.TenantOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Tenant order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Заказ организации</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Comanda chiriaș</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceForm>Document.TenantOrder.Form.Bonuses</choiceForm>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="b95323f8-8658-498f-ba1e-c1d88cba7225">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:Document>

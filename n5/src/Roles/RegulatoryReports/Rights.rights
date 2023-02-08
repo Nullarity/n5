@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://v8.1c.ru/8.2/roles" xsi:type="Rights">
+	<setForNewObjects>false</setForNewObjects>
+	<setForAttributesByDefault>true</setForAttributesByDefault>
+	<independentRightsOfChildObjects>false</independentRightsOfChildObjects>
+	<object>
+		<name>InformationRegister.ReportDetails</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Catalog.Reports.Command.Show</name>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.UserFields</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.ReportFields</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>InformationRegister.FieldsDependency</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Catalog.Reports</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>Insert</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Delete</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveInsert</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveSetDeletionMark</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveClearDeletionMark</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveDeleteMarked</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveSetDeletionMarkPredefinedData</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveClearDeletionMarkPredefinedData</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveDeleteMarkedPredefinedData</name>
+			<value>true</value>
+		</right>
+	</object>
+	<restrictionTemplate>
+		<name>Companies</name>
+		<condition>// #Parameter(1) - Reference Field
+
+select value ( Catalog.Companies.EmptyRef )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Undefined )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Allow )
+and #Parameter(1) in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+union all
+select #Parameter(1)
+where &amp;CompanyAccess = value ( Enum.Access.Forbid )
+and #Parameter(1) not in ( select Company from Catalog.Users.Companies where Ref = &amp;User )
+</condition>
+	</restrictionTemplate>
+</Rights>

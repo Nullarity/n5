@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://v8.1c.ru/8.2/roles" xsi:type="Rights">
+	<setForNewObjects>false</setForNewObjects>
+	<setForAttributesByDefault>false</setForAttributesByDefault>
+	<independentRightsOfChildObjects>true</independentRightsOfChildObjects>
+	<object>
+		<name>Catalog.Books</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Books</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>Insert</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Books</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>Update</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#Books</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InteractiveInsert</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>Edit</name>
+			<value>true</value>
+		</right>
+	</object>
+	<restrictionTemplate>
+		<name>Books</name>
+		<condition>T
+where
+#if #ИмяТекущегоПраваДоступа = "Insert" #then
+	T.Parent in (
+	select value ( Catalog.Books.EmptyRef )
+	union all
+#else
+	T.Ref in (
+#endif
+	select EffectiveRights.Book
+	from InformationRegister.EffectiveRights as EffectiveRights
+	where EffectiveRights.AccessBook in (
+		select GroupsAccess.Book
+		from InformationRegister.GroupsAccessBooks as GroupsAccess
+			//
+			// Groups
+			//
+			join InformationRegister.UsersAndGroupsDocuments as Groups
+			on Groups.UserGroup = GroupsAccess.UserGroup
+			and Groups.User = &amp;User
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			where GroupsAccess.Write
+		#endif
+		union all
+		select UsersAccess.Book
+		from InformationRegister.UsersAccessBooks as UsersAccess
+		where UsersAccess.User = &amp;User
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			and UsersAccess.Write
+		#endif
+		union all
+		select GroupsAccess.Book
+		from InformationRegister.GroupsAccessBooks as GroupsAccess
+		where GroupsAccess.UserGroup = value ( Catalog.UserGroupsDocuments.Everybody )
+		#if #ИмяТекущегоПраваДоступа &lt;&gt; "Read" #then
+			and GroupsAccess.Write
+		#endif
+		) )
+</condition>
+	</restrictionTemplate>
+</Rights>

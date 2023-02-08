@@ -1,8 +1,0 @@
-WScript.Sleep 2000
-Set WshShell = CreateObject ( "WScript.Shell" )
-WshShell.Run """%Path%1cv8.exe"" CONFIG %StringDataBase% /N ""%ExchangeUser%"" /P ""%ExchangePassword%"" /UC ""%PermissionCode%"" /UpdateDBCfg",0,true
-WshShell.Run """%Path%1cv8c.exe"" ENTERPRISE %StringDataBase% /N ""%User%"" /P ""%Password%"" /Z+%DataSeparation% /UC ""%PermissionCode%"" /Execute ""%PathFileDataProcessor%"" ",0,false 
-WScript.Sleep 2000
-Set FSOFileScript = CreateObject ( "Scripting.FileSystemObject" )
-Set FileScript = FSOFileScript.GetFile ( WScript.ScriptFullName )
-FileScript.Delete    

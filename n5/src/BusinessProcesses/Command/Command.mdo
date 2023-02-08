@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:BusinessProcess xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="ae28ed90-4364-4729-a394-33d2be4b4d69">
+  <producedTypes>
+    <objectType typeId="610bca02-a28b-4579-8cb5-a2c5d7821647" valueTypeId="6f95f3a0-97ed-4c84-bab4-7f688f00dc2f"/>
+    <refType typeId="26348b88-2c63-464a-82a0-f8490d60e61c" valueTypeId="839727c4-91e9-4ea4-a456-f312c7bfe1f7"/>
+    <selectionType typeId="1d446865-2738-427c-ad97-4ca664244da8" valueTypeId="e6be1989-09c9-43ac-9e2a-33262ab33924"/>
+    <listType typeId="6cdb42de-8ab2-41c7-b50e-c972a59073b3" valueTypeId="8b68421f-3606-41a6-ad45-9c01b67e8252"/>
+    <managerType typeId="0eba2bae-c23d-4392-8204-e655995490cb" valueTypeId="7b05ea97-3180-4d3d-bf8e-258b161553ff"/>
+    <routePointRef typeId="e386de76-3761-4b1e-831f-81cf1277e8dc" valueTypeId="a6ceca0f-6447-4f54-979a-65d81bdd8042"/>
+  </producedTypes>
+  <name>Command</name>
+  <synonym>
+    <key>en</key>
+    <value>Command</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Распоряжение</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Dispoziție</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>BusinessProcess.Command.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Started</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>HeadTask</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Completed</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Ref</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>DeletionMark</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Date</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <format>
+      <key>en</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>DLF=D</value>
+    </editFormat>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Number</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <createOnInput>DontUse</createOnInput>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Internal Commands</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Служебные распоряжения</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Dispoziții de serviciu</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>Internal command process</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Процесс служебных распоряжений</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Procesul dispozițiilor de serviciu</value>
+  </explanation>
+  <editType>InDialog</editType>
+  <defaultObjectForm>BusinessProcess.Command.Form.Form</defaultObjectForm>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <task>Task.UserTask</task>
+  <createTaskInPrivilegedMode>true</createTaskInPrivilegedMode>
+  <attributes uuid="b289ba75-7a31-435a-9f53-a8d17de29a5d">
+    <name>Appearance</name>
+    <synonym>
+      <key>en</key>
+      <value>Color</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Цвет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Culoare</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.CalendarAppearance</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The color scheme used for placing records in the calendar </value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Цветовое оформление используется при выводе записи в календарь</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Înregistrarea culorilor este utilizată când se afișează o înregistrare în calendar</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Catalog.CalendarAppearance.EmptyRef</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f44d3c23-464b-4476-9e4e-b89389e1b2c3">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf the document is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, от имени которой вводится документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea în numele căreia este introdus documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="edf430fd-9774-4c3b-8db0-23b58b0a12f8">
+    <name>Control</name>
+    <synonym>
+      <key>en</key>
+      <value>Control</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Контроль</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Control</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Check process tasks</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Контролировать исполнение распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Controlați executarea ordinului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:BooleanValue">
+      <value>true</value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3a495af7-ec4e-4576-832e-264905b47b01">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Process creator</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Создатель процесса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Creator al procesului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="28ef882b-ff54-46aa-a1cc-a4230a813a05">
+    <name>Description</name>
+    <synonym>
+      <key>en</key>
+      <value>Description</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Описание</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Descriere</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>250</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Brief command description</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Краткое описание распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Scurtă descriere a comenzii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+  </attributes>
+  <attributes uuid="644d5516-8be4-461e-ba74-1092208db9ad">
+    <name>Display</name>
+    <synonym>
+      <key>en</key>
+      <value>Presentation</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Представление</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Prezentare</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>150</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Command presentation</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Представление распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Prezentarea dispoziției</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f2037740-2033-4522-bd33-763561744525">
+    <name>Duration</name>
+    <synonym>
+      <key>en</key>
+      <value>Duration</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Продолжительность</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Durata</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>25</length>
+      </stringQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Total duration</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Общая продолжительность</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata totală</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3b7d61ab-da85-4652-989a-a0708883b683">
+    <name>Explanation</name>
+    <synonym>
+      <key>en</key>
+      <value>Explanation</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Детально</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>În detalii</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Detailed command description</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Полное описание распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Descrierea completă a dispoziției</value>
+    </toolTip>
+    <multiLine>true</multiLine>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+  </attributes>
+  <attributes uuid="293f1897-53ed-4c09-b03f-e03c63aa5bce">
+    <name>Finish</name>
+    <synonym>
+      <key>en</key>
+      <value>Finish</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Закончить</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Finalizați</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Deadline</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Выполнить до указанного срока включительно</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Pentru a executa până la perioada specificată inclusiv</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="4c28fe83-0bb9-468c-a2fa-f630c87168df">
+    <name>Minutes</name>
+    <synonym>
+      <key>en</key>
+      <value>Duration in minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Продолжительность в минутах</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Durata în minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>10</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Duration in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Продолжительность пересчитанная в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Durata convertită în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="aa5753ab-88f0-42b1-9bc5-93d3634c1172">
+    <name>Source</name>
+    <synonym>
+      <key>en</key>
+      <value>Source</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Источник</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sursă</value>
+    </synonym>
+    <type>
+      <types>DefinedType.CommandSources</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Reference to an infobase object for the current command</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ссылка на объект системы, лежащий в основе данного распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Referința la obiectul sistemului care stă la baza acestei ordini</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="79fd5d70-973b-4ccc-a7ea-5c66a8474fb7">
+    <name>Start</name>
+    <synonym>
+      <key>en</key>
+      <value>Start</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Начать</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Începe</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Task start date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата начала процесса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data începerii procesului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e89ac110-b5a4-47a0-8828-3ea2ddbc86fb">
+    <name>Template</name>
+    <synonym>
+      <key>en</key>
+      <value>Template</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Шаблон</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Model</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Commands</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Command template</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Шаблон распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Șablon de dispoziție</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <tabularSections uuid="10b40c0b-cea1-4d39-9605-fcab2bca5281">
+    <producedTypes>
+      <objectType typeId="a3807a52-f060-4696-b4e1-4bf87d48f20d" valueTypeId="278e0c55-a54a-4ac3-a5c1-765d18051e1a"/>
+      <rowType typeId="5d32316b-c218-4c8b-b2eb-688db7ac48c7" valueTypeId="66587bf0-f588-43d7-b494-a1211177bcd3"/>
+    </producedTypes>
+    <name>Performers</name>
+    <synonym>
+      <key>en</key>
+      <value>Performers</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Исполнители</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Executori</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Performers list</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Список исполнителей распоряжения</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Lista executorilor ordinului</value>
+    </toolTip>
+    <fillChecking>ShowError</fillChecking>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="32a12db8-4b68-4855-a513-e45acdba728e">
+      <name>Mandatory</name>
+      <synonym>
+        <key>en</key>
+        <value>Mandatory</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Обязательно</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Obligatoriu</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Use this flag if a performer’s participation is mandatory. If the flag is disabled, then the first performer of the current stage will be able to complete this task</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Обязательное участие выбранного исполнителя. Используется в случае, когда этап выполняют несколько участников. Если флаг выключен, первый, кто выполнит этап, будет считаться исполнителем этапа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Participarea obligatorie a executorului selectat. Folosit în cazul în care o etapă este efectuată de mai mulți participanți. Dacă steagul este oprit, primul care execută scena va fi considerat executor al scenei</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="9ddb3d0f-190d-477a-ad6f-2e25721a6323">
+      <name>Note</name>
+      <synonym>
+        <key>en</key>
+        <value>Note</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Заметки</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Comentarii</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>250</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Additional Performer Information</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дополнительная информация для исполнителя</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Informații suplimentare pentru executant</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="4df85108-2284-4706-bd60-26efcfbd7f26">
+      <name>Performer</name>
+      <synonym>
+        <key>en</key>
+        <value>Performer</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Исполнитель</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Executant</value>
+      </synonym>
+      <type>
+        <types>EnumRef.Roles</types>
+        <types>CatalogRef.Users</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Certain Performer or Performer Role</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Список исполнителей поручения. Может включать пользователей и/или роли</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Lista executanților ai ordinului. Pot include utilizatori și / sau roluri</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameters>
+        <name>Filter.AccessDenied</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="65ea3c32-3c46-434e-91c6-162f1766de22">
+      <name>Stage</name>
+      <synonym>
+        <key>en</key>
+        <value>Stage</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Этап</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Etapă</value>
+      </synonym>
+      <type>
+        <types>DefinedType.CommandStages</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Process stage</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Этап выполнения процесса</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Etapa de execuție a procesului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <forms uuid="46fe7148-332b-4654-bd32-047e5ec3e59b">
+    <name>ExistedCommands</name>
+    <synonym>
+      <key>en</key>
+      <value>Commands List</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Список распоряжений</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Lista dispozițiilor</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="16e231ff-d2d8-4c55-b2bf-760c40277a85">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <commands uuid="a6006c51-5014-495b-bdb5-50b116414aba">
+    <name>Add</name>
+    <synonym>
+      <key>en</key>
+      <value>Command</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Распоряжение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dispoziție</value>
+    </synonym>
+    <group>ActionsPanelCreate</group>
+    <commandParameterType/>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>New Command</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Создать распоряжение</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Creați o comandă</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.Horn</picture>
+    </picture>
+  </commands>
+  <commands uuid="af9829d1-893c-4c4f-b5f6-a50c270975d0">
+    <name>New</name>
+    <synonym>
+      <key>en</key>
+      <value>Command</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Распоряжение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Dispoziție</value>
+    </synonym>
+    <group>FormCommandBarCreateBasedOn</group>
+    <commandParameterType>
+      <types>DefinedType.CommandSources</types>
+    </commandParameterType>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Create a сommand with reference to this object</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Создать  распоряжение со ссылкой на данный объект</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Creați o dispoziție cu un link către acest obiect</value>
+    </toolTip>
+    <picture xsi:type="core:PictureRef">
+      <picture>CommonPicture.Horn</picture>
+    </picture>
+  </commands>
+</mdclass:BusinessProcess>

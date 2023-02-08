@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="078f9324-933b-464e-8e18-1aabe9e6b1da">
+  <producedTypes>
+    <selectionType typeId="8d8cf58e-f05e-4a00-831f-2cabfc8068b7" valueTypeId="d6917664-eae7-476a-aec3-068ccff6ce60"/>
+    <listType typeId="92cf2404-7bb0-4c3c-ad45-5c084c0d1122" valueTypeId="8f476a6b-cd3a-4340-b424-2959b6b20a68"/>
+    <managerType typeId="bebeca20-1672-4f2a-ad3f-b9d0cb3f0e03" valueTypeId="dd4669bc-3af3-4765-b31b-2a5b32dda1dd"/>
+    <recordSetType typeId="dbeb6461-9ab4-491f-81d9-86fd78506783" valueTypeId="d34326c8-8550-4a69-9c0c-f932d029f6d5"/>
+    <recordKeyType typeId="9b0a826a-5937-4562-b7dd-e939612c18e7" valueTypeId="5543f128-25dc-4e76-be6a-330580507401"/>
+    <recordType typeId="8d4293ec-3ea0-4a4e-8727-abc33a2f4519" valueTypeId="2d6bc7cb-c3d7-4769-a65f-14f1a27f3dab"/>
+    <recordManagerType typeId="df51d732-e16d-48dc-8ea2-ac81628a0f5f" valueTypeId="60468776-d50f-4faf-9767-7e622e717976"/>
+  </producedTypes>
+  <name>ReportDetails</name>
+  <synonym>
+    <key>en</key>
+    <value>Report Details</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Расшифровка затрат, регл. отчетность</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Descifrarea cheltuielilor, raportare de reglementare </value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <editType>InDialog</editType>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Service register is used for filling regulatory reports fields</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Расшифровка затрат статистических регламентированных отчетов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Descifrarea cheltuielilor a rapoartelor de reglementare</value>
+  </explanation>
+  <dimensions uuid="ba19fb06-d923-444a-9d15-20f910794725">
+    <name>Expense</name>
+    <synonym>
+      <key>en</key>
+      <value>Expense Article</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Статья затрат</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Articol de cheltuieli</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Expenses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Expense article</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Статья затрат</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Articol de cheltuieli</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="529a262f-3b0f-432f-815d-984d31828064">
+    <name>Report</name>
+    <synonym>
+      <key>en</key>
+      <value>Report</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Отчет</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Raport</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Reports</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Regulatory report</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Регламентированный отчет</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Raport de reglementare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Master</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="4fef4584-7150-4350-acf2-478f15dba9b0">
+    <name>Row</name>
+    <synonym>
+      <key>en</key>
+      <value>Row Code</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Код строки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Codul rândului</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>10</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Row in regulatory report</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Строка регламентированного отчета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Linia raportului reglementat</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

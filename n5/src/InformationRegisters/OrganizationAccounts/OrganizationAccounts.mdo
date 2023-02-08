@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="cf6bfad6-04b3-425f-a0e8-6c1fade1f6b7">
+  <producedTypes>
+    <selectionType typeId="cfa1eba9-f48c-454a-84ff-08e2dc640e32" valueTypeId="8309075c-4ba0-404a-8920-31da08c68e08"/>
+    <listType typeId="80fafced-cd78-4194-a262-06a85157a2d2" valueTypeId="368ccd31-afa7-42e3-b963-06d7ab5f5161"/>
+    <managerType typeId="9fb6cb0b-d81b-4ded-be6e-fe0f178a5549" valueTypeId="06d6b101-aadf-486c-81aa-1ffc702c83de"/>
+    <recordSetType typeId="3a2baf98-5245-4b09-8a49-c175d95a491c" valueTypeId="bac1b597-c854-4350-9b05-d04acabaf6d0"/>
+    <recordKeyType typeId="2e32213e-d29f-44e4-98e7-70e7f4e47d19" valueTypeId="ce791590-3b63-4df8-ba57-24d16e71436b"/>
+    <recordType typeId="14d1ce79-65fe-4f37-b63e-cd8d6b6dcde8" valueTypeId="4aa9e109-736b-45f9-93aa-bdd02cedd62e"/>
+    <recordManagerType typeId="66e074f3-c769-4574-9bd6-58459b29dfe6" valueTypeId="b928c4d0-d195-4211-8a9a-3d5f2608e8d2"/>
+  </producedTypes>
+  <name>OrganizationAccounts</name>
+  <synonym>
+    <key>en</key>
+    <value>Organizations</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Контрагенты</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Terți</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <editType>InDialog</editType>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Default values of organization accounts</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Регистр сведений по счетам бухгалтерского учета, заданных для учета контрагентов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul de informații privind conturile contabile, stabilite pentru evidența terților</value>
+  </explanation>
+  <resources uuid="e995f243-4c80-42aa-971a-8f73a7c72223">
+    <name>AdvanceGiven</name>
+    <synonym>
+      <key>en</key>
+      <value>Advance Given</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Аванс выданный</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avans acordat</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Given advance account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета выданного аванса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul plății în avans </value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.LongTermLiability</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="8288e12d-34c2-4bf3-968a-38ca6552b72a">
+    <name>AdvanceTaken</name>
+    <synonym>
+      <key>en</key>
+      <value>Advance Taken</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Аванс полученный</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avans incasat</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Received advance account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета полученного аванса</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul avansului primit</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.LongTermLiability</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="cbbe4fe5-9cd1-4656-acf3-36dd8b2aa391">
+    <name>CustomerAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Customer Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет учета покупателя</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul cumpărătorului</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Customer account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета покупателя</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul cumpărătorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.AccountsReceivable</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="c2269de4-58aa-4b69-b2af-34bde4581c01">
+    <name>IncomeTax</name>
+    <synonym>
+      <key>en</key>
+      <value>Income Tax</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Подоходный налог</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Impozit pe venit</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Income tax withheld at source of payment</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подоходный налог у источника выплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Impozitul pe venit reţinut la sursa de plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="6081108c-714f-4286-8186-f6521aa5104c">
+    <name>VendorAccount</name>
+    <synonym>
+      <key>en</key>
+      <value>Vendor Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет учета поставщика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Contul de evidență furnizor</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Vendor account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета поставщика</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul de evidență furnizor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:FixedArrayValue">
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.AccountsPayable</value>
+        </values>
+        <values xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+        </values>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <dimensions uuid="6d66ed79-fb62-470c-bb54-7182614b749a">
+    <name>Organization</name>
+    <synonym>
+      <key>en</key>
+      <value>Organization</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Контрагент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Terț</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Organizations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Organization for which accounts are set</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Контрагент, для которого задаются счета учета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Terț pentru care sunt specificate conturile de cont</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceFoldersAndItems>FoldersAndItems</choiceFoldersAndItems>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="16d5df94-caf5-4c0e-bb5d-10b05b6df15c">
+    <name>Company</name>
+    <synonym>
+      <key>en</key>
+      <value>Company</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Компания</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Companie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Companies</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The company on whose behalf accounts are set</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Компания, для которой задаются счета учета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Întreprinderea pentru care sunt specificate conturile de cont</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="9a8e547a-dd2d-4f90-b4e9-7286dcfdb64a">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Warehouse for which an account has been set</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад, для которого задаются счета учета</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul pentru care sunt specificate conturile contabile</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

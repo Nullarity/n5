@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="be38bbf2-172a-4c47-a814-016d7981987d">
+  <producedTypes>
+    <selectionType typeId="ff4b44fe-dd59-4354-a293-92b06f679cc8" valueTypeId="218a04b9-1009-4ecd-9aba-b07ef9ae2d07"/>
+    <listType typeId="7509ae64-0bd2-4bfc-b29b-6c3c816d6ae4" valueTypeId="f2d7cc18-bed4-4a8b-95f5-b227df818c5d"/>
+    <managerType typeId="844f76a4-c744-4d43-b428-c36eebbdb231" valueTypeId="92cdc44f-60ab-4904-ae7a-cc7748ee908f"/>
+    <recordSetType typeId="aded0ec8-3d9d-4bd8-b775-fd83bb6fc19f" valueTypeId="9dd7f162-fbb5-4ba3-a778-dc6e17ada12a"/>
+    <recordKeyType typeId="52a8bcc4-0991-42ad-a411-416409d369de" valueTypeId="03892934-8e8d-4d54-b32e-b8eadbc89089"/>
+    <recordType typeId="be7285a3-7d5a-45e1-9205-e2b7220744dc" valueTypeId="375055f4-a5e3-4eb6-b632-937bcdf7f935"/>
+  </producedTypes>
+  <name>Items</name>
+  <synonym>
+    <key>en</key>
+    <value>Available Stock In Warehouses</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Остатки товаров на складах</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Stocul disponibil în depozite</value>
+  </synonym>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>RecordType</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Accumulated record of stock available in warehouses. 
+The balance determines the amount of items that are in stock, 
+with the exception of resevations (reservation data is not present). 
+The stock of reserved items determines their actual availability in warehouses</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Регистр накопления для учета остатков товаров на складах. Остаток по данному регистру определяет объем товаров, находящихся в остатке, за исключением резева (резерв не присутствует в остатках данного регистра). Данный остаток, в совокупности с регистром резервов товаров на складах определяет фактическое наличие товаров на складах</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul acumulării în contul restului bunurilor din depozite. Soldul din acest registru determină cantitatea de bunuri care este în balanță, cu excepția denumirii (rezerva nu este prezentă în restul acestui registru). Acest echilibru, coroborat cu registrul de rezerve de bunuri în depozite, determină disponibilitatea reală a mărfurilor în depozite</value>
+  </explanation>
+  <resources uuid="a1aab655-a184-4626-8b59-cc1d8f955710">
+    <name>Quantity</name>
+    <synonym>
+      <key>en</key>
+      <value>Quantity</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Количество</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cantitate</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Quantity</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Quantity of base units (if the items are stored individually) or packs (if the items are stored in packs)</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Количество в базовых единицах или упаковках (если для товара ведется учет остатков по упаковкам)</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cantitatea de unități de bază sau cutii (dacă elementele se păstrează în cutii)</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="e9398cdd-917a-4f1f-8a7b-4dc614dc3c23">
+    <name>Item</name>
+    <synonym>
+      <key>en</key>
+      <value>Item</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товар</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Items</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Item</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товар</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="52e8c26d-e28b-48c3-b08d-90d97d3bf82d">
+    <name>Feature</name>
+    <synonym>
+      <key>en</key>
+      <value>Feature</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Характеристика</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Caracteristică</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Features</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Item feature</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Характеристика товара</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Caracteristica mărfii</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="52cedf4b-b050-45ce-8cb6-b18eb7e12575">
+    <name>Package</name>
+    <synonym>
+      <key>en</key>
+      <value>Pkg</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Уп.</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cut.</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Packages</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Package</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Упаковка</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Cutie</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="3f91ae92-77eb-4ba0-9909-0faa779288b3">
+    <name>Warehouse</name>
+    <synonym>
+      <key>en</key>
+      <value>Warehouse</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Склад</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Warehouses</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Warehouse</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Склад</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozit</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+  <dimensions uuid="b956a5da-b45b-451f-8535-0f2682790488">
+    <name>Series</name>
+    <synonym>
+      <key>en</key>
+      <value>Series</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Серия</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Serie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Series</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Item's series</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Серия товара</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Seria marfa</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

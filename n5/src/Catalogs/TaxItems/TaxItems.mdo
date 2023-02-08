@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="b94bdc3a-bcff-4438-a99f-b7b4e9195bfe">
+  <producedTypes>
+    <objectType typeId="4aacce6e-1279-41c7-b4b1-e8f42f0791a6" valueTypeId="59e65a39-2b5a-4e47-a44c-9fc0ea413896"/>
+    <refType typeId="87440d15-7bb8-4894-9a10-aa9d12c8784e" valueTypeId="03cf5bb0-5d93-451e-b149-76f79f110a99"/>
+    <selectionType typeId="81b84641-1a44-45cb-9f2d-afcc62be3ba1" valueTypeId="b7a2a366-7849-49a5-ad7b-f8119e2a8663"/>
+    <listType typeId="dba341f5-b9ff-4562-8227-65d633b7d8a5" valueTypeId="eb60d08c-e487-4541-a950-c2e8333b7779"/>
+    <managerType typeId="eb1eac8a-5011-40fa-ad54-5b87892827a6" valueTypeId="47a7e898-11d0-409a-a993-db9444e08e5f"/>
+  </producedTypes>
+  <name>TaxItems</name>
+  <synonym>
+    <key>en</key>
+    <value>Tax Items</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Налоги с продаж</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Impozite pe vânzări</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.TaxItems.StandardAttribute.Description</inputByString>
+  <inputByString>Catalog.TaxItems.StandardAttribute.Code</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <explanation>
+    <key>en</key>
+    <value>Used to classify taxes and calculate document amounts</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Используется для классификации налогов и расчета сумм документов</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Se utilizează pentru a clasifica taxele și a calcula sumele documentelor</value>
+  </explanation>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <descriptionLength>100</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <quickChoice>true</quickChoice>
+  <choiceMode>BothWays</choiceMode>
+  <defaultObjectForm>Catalog.TaxItems.Form.Form</defaultObjectForm>
+  <attributes uuid="85695c72-5a33-4b1a-a443-29f3d60a5879">
+    <name>Account</name>
+    <synonym>
+      <key>en</key>
+      <value>Account</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Счет налога</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Cont de impozit</value>
+    </synonym>
+    <type>
+      <types>ChartOfAccountsRef.General</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Tax account</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Счет учета налога</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Contul impozitului </value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <choiceParameters>
+      <name>Filter.Class</name>
+      <value xsi:type="core:ReferenceValue">
+        <value>Enum.Accounts.EnumValue.OtherCurrentLiability</value>
+      </value>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Folder</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <choiceParameters>
+      <name>Filter.Offline</name>
+      <value xsi:type="core:BooleanValue"/>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f6bfd842-b089-4717-8a9a-48c74584ef2d">
+    <name>Agency</name>
+    <synonym>
+      <key>en</key>
+      <value>Agency</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Агентство</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Agenţie</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Organizations</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Agency</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Агентство</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Agenţie</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <choiceParameters>
+      <name>Filter.Vendor</name>
+      <value xsi:type="core:BooleanValue">
+        <value>true</value>
+      </value>
+    </choiceParameters>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="cbd6e9b5-449a-4200-8670-2880634e9e07">
+    <name>Details</name>
+    <synonym>
+      <key>en</key>
+      <value>Details</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Детали</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Detalii</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>250</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Tax details</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дополнительное описание</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Descrierea suplimentară</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="c3c2b8cd-d249-4b2f-a20c-7351227c64d6">
+    <name>Print</name>
+    <synonym>
+      <key>en</key>
+      <value>Print</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>10</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Print presentation</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="6485b0f6-ae1b-48bb-829b-0a024a5ece7b">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:Catalog>

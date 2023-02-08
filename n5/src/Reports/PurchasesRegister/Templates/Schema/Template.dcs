@@ -1,0 +1,2300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Invoices</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Rate</dataPath>
+			<field>Rate</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>VAT Rate</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Ставка НДС</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Cota TVA</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Total</dataPath>
+			<field>Total</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Итого</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Total</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Total</v8:content>
+				</v8:item>
+			</title>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Vendor</dataPath>
+			<field>Vendor</field>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CodeFiscal</dataPath>
+			<field>CodeFiscal</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Code Fiscal</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Фискальный код</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Amount</dataPath>
+			<field>Amount</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Amount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Облагаемая база</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Baza impozabilă</v8:content>
+				</v8:item>
+			</title>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>VAT</dataPath>
+			<field>VAT</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>VAT</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма НДС</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma TVA</v8:content>
+				</v8:item>
+			</title>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2; NDS=,; NGS=' '; NZ=0,00; NG=3,0</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Date</dataPath>
+			<field>Date</field>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>DF=dd.MM.yyyy</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>DF=dd.MM.yyyy</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>DF=dd.MM.yyyy</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Number</dataPath>
+			<field>Number</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Ref</dataPath>
+			<field>Ref</field>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select VATPurchase.VAT as VAT, VATPurchase.Amount as Amount, VATPurchase.Ref as Ref,
+	( VATPurchase.VAT + VATPurchase.Amount ) as Total, VATPurchase.Rate as Rate,
+	VATPurchase.CodeFiscal as CodeFiscal, VATPurchase.Vendor as Vendor,
+	case when VATPurchase.Date = datetime ( 1, 1, 1 ) then VATPurchase.DocumentDate else VATPurchase.Date end as Date, 
+	case when VATPurchase.Number = "" then VATPurchase.DocumentNumber else VATPurchase.Number end as Number
+{select VAT, Amount, Total, Rate.*, CodeFiscal, Vendor.*, Number, Date, Ref.*}
+from (
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
+		Table.VATCode as Rate, Table.Ref.Reference as Number, Table.Ref.ReferenceDate as Date, 
+		Table.Ref.Vendor.CodeFiscal as CodeFiscal, Table.Ref.Vendor as Vendor, Table.Ref as Ref,
+		Table.Ref.Date as DocumentDate, Table.Ref.Number as DocumentNumber
+	from Document.VendorInvoice.Accounts as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.FixedAssets as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.IntangibleAssets as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.Items as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.Services as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	union all
+	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorInvoice.Discounts as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and not Table.Ref.Import
+	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
+	union all
+	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT,
+		case Table.Ref.Reference when "" then Table.Ref.Number else Table.Ref.Reference end,
+		case Table.Ref.ReferenceDate when datetime ( 1, 1, 1 ) then Table.Ref.Date else Table.Ref.ReferenceDate end, Items.CodeFiscal, Items.Vendor, Table.Ref, null, null
+	from Document.CustomsDeclaration.Charges as Table
+		//
+		// Custom Groups
+		//
+		join Document.CustomsDeclaration.CustomsGroups as Groups
+		on Groups.Ref = Table.Ref
+		and Groups.ID = Table.ID
+		//
+		// Invoice
+		//
+		left join (
+			select Items.Invoice.Vendor.CodeFiscal as CodeFiscal, Items.Invoice.Vendor as Vendor, 
+				Items.Ref as Ref, Items.ID as ID
+			from Document.CustomsDeclaration.Items as Items
+			where Items.Ref.Posted
+			and Items.Ref.Date between &amp;DateStart and &amp;DateEnd
+			and Items.Ref.Company = &amp;Company
+			group by Items.Ref, Items.Invoice.Vendor, Items.ID 
+				) as Items
+		on Items.Ref = Table.Ref
+		and Items.ID = Table.ID
+		//
+		// VAT
+		//
+		left join (
+			select sum ( case when Table.VAT then Table.Amount else 0 end ) as VAT, 
+				sum ( case when Table.VAT then 0 else Table.Amount end ) as Amount, Table.Ref as Ref,
+				Table.ID as ID
+			from Document.CustomsDeclaration.Charges as Table
+			where Table.Ref.Posted
+			and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+			and Table.Ref.Company = &amp;Company
+			group by Table.Ref, Table.ID
+			) as Charges
+		on Charges.Ref = Table.Ref
+		and Charges.ID = Table.ID
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.VAT
+	union all
+	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Number, Table.Date, 
+		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref, null, null
+	from Document.VATPurchases as Table
+	where not Table.Ref.DeletionMark
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.ExpenseReport.Items as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.ExpenseReport.Services as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.ExpenseReport.FixedAssets as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.ExpenseReport.IntangibleAssets as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.ExpenseReport.Accounts as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	union all
+	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
+		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
+		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
+		Table.Ref.Date, Table.Ref.Number
+	from Document.VendorReturn.Items as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	union all
+	select Table.VATLocal, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
+		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
+		Table.Ref, Table.Ref.Date, Table.Ref.Number
+	from Document.AdjustVendorDebts.Accounting as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.ApplyVAT
+	and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+	and Table.Ref.Reference &lt;&gt; ""
+	and Table.Ref.ReferenceDate &lt;&gt; datetime ( 1, 1, 1 )
+	and Table.Ref.Option in (
+		value ( Enum.AdjustmentOptions.CustomAccountDr ),
+		value ( Enum.AdjustmentOptions.AccountingDr ),
+		value ( Enum.AdjustmentOptions.AccountingCr )
+	)
+	union all
+	select Table.VAT, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
+		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
+		Table.Ref, Table.Ref.Date, Table.Ref.Number
+	from Document.AdjustVendorDebts.Adjustments as Table
+	where Table.Ref.Posted
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.ApplyVAT
+	and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+	and Table.Ref.Reference &lt;&gt; ""
+	and Table.Ref.ReferenceDate &lt;&gt; datetime ( 1, 1, 1 )
+	and Table.Ref.Option in (
+		value ( Enum.AdjustmentOptions.CustomAccountDr ),
+		value ( Enum.AdjustmentOptions.AccountingDr ),
+		value ( Enum.AdjustmentOptions.AccountingCr )
+	)
+) as VATPurchase</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Signatures</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Accountant</dataPath>
+			<field>Accountant</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Director</dataPath>
+			<field>Director</field>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select Accountant.Name as Accountant, Director.Name as Director
+{select Accountant, Director}
+from Catalog.Companies as Company
+	//
+	// Accountant
+	//
+	left join (
+		select top 1 Roles.User.Employee.Individual.Description as Name
+		from Document.Roles as Roles
+		where Roles.Role = value ( Enum.Roles.AccountantChief )
+		and not Roles.DeletionMark
+		and Roles.Action = value ( Enum.AssignRoles.Assign )
+		and Roles.Company = &amp;Company
+		order by Roles.Date desc
+			) as Accountant
+	on true
+	//
+	// Director
+	//
+	left join (
+		select top 1 Roles.User.Employee.Individual.Description as Name
+		from Document.Roles as Roles
+		where Roles.Role = value ( Enum.Roles.GeneralManager )
+		and not Roles.DeletionMark
+		and Roles.Action = value ( Enum.AssignRoles.Assign )
+		and Roles.Company = &amp;Company
+		order by Roles.Date desc
+			) as Director
+	on true
+where Company.Ref = &amp;Company</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Descriptions</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DescriptionsRef</dataPath>
+			<field>DescriptionsRef</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Content</dataPath>
+			<field>Content</field>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select Table.Ref as DescriptionsRef, Table.Content as Content
+from Document.VendorInvoice.Accounts as Table
+where Table.Ref in ( &amp;Documents )
+union                                                     
+select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
+from Document.VendorInvoice.FixedAssets as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
+from Document.VendorInvoice.IntangibleAssets as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.VendorInvoice.Items as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.VendorInvoice.Services as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref as DescriptionsRef, Table.Content as Content
+from Document.ExpenseReport.Accounts as Table
+where Table.Ref in ( &amp;Documents )
+union                                                     
+select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
+from Document.ExpenseReport.FixedAssets as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, cast ( Table.Item.AssetType.Name as String ( 250 )  )
+from Document.ExpenseReport.IntangibleAssets as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.ExpenseReport.Items as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.ExpenseReport.Services as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.VendorInvoice.Discounts as Table
+where Table.Ref in ( &amp;Documents )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.AdjustVendorDebts.Adjustments as Table
+where Table.Ref in ( &amp;Documents )
+and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.AdjustVendorDebts.Accounting as Table
+where Table.Ref in ( &amp;Documents )
+and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )</query>
+	</dataSet>
+	<dataSetLink>
+		<sourceDataSet>Invoices</sourceDataSet>
+		<destinationDataSet>Signatures</destinationDataSet>
+		<sourceExpression>true</sourceExpression>
+		<destinationExpression>true</destinationExpression>
+	</dataSetLink>
+	<dataSetLink>
+		<sourceDataSet>Invoices</sourceDataSet>
+		<destinationDataSet>Descriptions</destinationDataSet>
+		<sourceExpression>Ref</sourceExpression>
+		<destinationExpression>DescriptionsRef</destinationExpression>
+		<parameter>Documents</parameter>
+		<parameterListAllowed>true</parameterListAllowed>
+	</dataSetLink>
+	<calculatedField>
+		<dataPath>TotalAmount</dataPath>
+		<expression>""</expression>
+	</calculatedField>
+	<calculatedField>
+		<dataPath>Totals</dataPath>
+		<expression>""</expression>
+	</calculatedField>
+	<calculatedField>
+		<dataPath>PurchaseDescription</dataPath>
+		<expression>case when isnull ( Ref.Description, "" ) = "" then Content else Ref.Description end</expression>
+	</calculatedField>
+	<totalField>
+		<dataPath>Amount</dataPath>
+		<expression>Sum(Amount)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>Total</dataPath>
+		<expression>Sum(Total)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>VAT</dataPath>
+		<expression>Sum(VAT)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>PurchaseDescription</dataPath>
+		<expression>Conversion.ValuesToString ( ValueType ( Ref ), String ( array ( distinct PurchaseDescription ) )</expression>
+	</totalField>
+	<parameter>
+		<name>Period</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Period</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Период</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Perioadă</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>v8:StandardPeriod</v8:Type>
+		</valueType>
+		<value xsi:type="v8:StandardPeriod">
+			<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+			<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+			<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+		</value>
+		<useRestriction>false</useRestriction>
+		<denyIncompleteValues>true</denyIncompleteValues>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>Company</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Company</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Компания</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Companie</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Companies</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+		<denyIncompleteValues>true</denyIncompleteValues>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>DateEnd</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.EndDate</expression>
+	</parameter>
+	<parameter>
+		<name>DateStart</name>
+		<title xsi:type="xs:string">Date start</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.StartDate</expression>
+	</parameter>
+	<parameter>
+		<name>Currency</name>
+		<title xsi:type="xs:string">Currency</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Currencies</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<expression>Application.Currency ()</expression>
+	</parameter>
+	<parameter>
+		<name>Documents</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Documents</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Documente</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:DocumentRef.ExpenseReport</v8:Type>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:DocumentRef.VendorInvoice</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<valueListAllowed>true</valueListAllowed>
+	</parameter>
+	<template>
+		<name>Template1</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>#</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>№ п/п</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>№ п / п</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Invoice</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Налоговая накладная</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Factura fiscala</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Date</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Дата</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Data</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Number</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Номер</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Code Fiscal</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Фискальный код</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Vendor</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Наименование (имя) поставщика</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Numele furnizorului (nume)</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Description</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Descrierea</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Описание</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+	</template>
+	<template>
+		<name>Template2</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Amount</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Общая стоимость поставки без НДС</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Costul total de livrare fără TVA</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+	</template>
+	<template>
+		<name>Template3</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Rate</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Amount</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Облагаемая база</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Baza impozabilă</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>VAT</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Сумма НДС</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Suma TVA</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Rate</dcsat:name>
+			<dcsat:expression>Presentation(Rate)</dcsat:expression>
+		</parameter>
+	</template>
+	<template>
+		<name>Template4</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>VAT</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Всего НДС к зачету, леев</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>TVA totală de încasat, lei</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Total</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Итого стоимость товаров</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Valoarea totală a mărfurilor</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:HorizontalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>VerticalAlign</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:VerticalAlign">Center</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>VerticalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>VerticalMerge</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+	</template>
+	<template>
+		<name>Template5</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Director</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Директор</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Director</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Director</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="v8:LocalStringType">
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Accountant</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Гл. бухгалтер</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Contabil șef</v8:content>
+							</v8:item>
+						</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">13.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">12.125</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>BorderStyle</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Line" width="0" gap="false">
+								<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">None</v8ui:style>
+							</dcscor:value>
+							<dcscor:item>
+								<dcscor:parameter>BorderStyle.Bottom</dcscor:parameter>
+								<dcscor:value xsi:type="v8ui:Line" width="1" gap="false">
+									<v8ui:style xsi:type="v8ui:SpreadsheetDocumentCellLineType">Solid</v8ui:style>
+								</dcscor:value>
+							</dcscor:item>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">11</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Accountant</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.625</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">10.25</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>BackColor</dcscor:parameter>
+							<dcscor:value xmlns:d8p1="http://v8.1c.ru/8.1/data/ui/style" xsi:type="v8ui:Color">d8p1:FieldBackColor</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Font</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Font" faceName="Arial" height="10" bold="true" italic="false" underline="false" strikeout="false" kind="Absolute" scale="100"/>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Director</dcsat:name>
+			<dcsat:expression>Director</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Accountant</dcsat:name>
+			<dcsat:expression>Accountant</dcsat:expression>
+		</parameter>
+	</template>
+	<template>
+		<name>Template7</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Line</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">4.875</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Date</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>DF=dd.MM.yyyy</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>DF=dd.MM.yyyy</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>DF=dd.MM.yyyy</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Number</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">CodeFiscal</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">16.75</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Vendor</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Description</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">21.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">21.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>ColumnSizeChangeMode</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:SizeChangeMode">QuickChange</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Date</dcsat:name>
+			<dcsat:expression>Date</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Number</dcsat:name>
+			<dcsat:expression>Number</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>CodeFiscal</dcsat:name>
+			<dcsat:expression>CodeFiscal</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Vendor</dcsat:name>
+			<dcsat:expression>Presentation(Vendor)</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Line</dcsat:name>
+			<dcsat:expression>SystemFields.SerialNumber</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>Ref</dcsat:name>
+			<dcsat:fieldExpression>
+				<dcsat:field>Ref</dcsat:field>
+				<dcsat:expression>Ref</dcsat:expression>
+			</dcsat:fieldExpression>
+			<dcsat:mainAction>OpenValue</dcsat:mainAction>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Description</dcsat:name>
+			<dcsat:expression>Presentation(PurchaseDescription)</dcsat:expression>
+		</parameter>
+	</template>
+	<template>
+		<name>Template8</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Amount</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MarkNegatives</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Amount</dcsat:name>
+			<dcsat:expression>Amount</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>Ref</dcsat:name>
+			<dcsat:fieldExpression>
+				<dcsat:field>Ref</dcsat:field>
+				<dcsat:expression>Ref</dcsat:expression>
+			</dcsat:fieldExpression>
+			<dcsat:mainAction>OpenValue</dcsat:mainAction>
+		</parameter>
+	</template>
+	<template>
+		<name>Template9</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">VAT</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MarkNegatives</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>VAT</dcsat:name>
+			<dcsat:expression>Presentation(VAT)</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>Ref</dcsat:name>
+		</parameter>
+	</template>
+	<template>
+		<name>Template10</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Total</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>NFD=2; NZ=</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>MarkNegatives</dcscor:parameter>
+							<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">Ref</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Total</dcsat:name>
+			<dcsat:expression>Total</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>Ref</dcsat:name>
+		</parameter>
+	</template>
+	<fieldTemplate>
+		<field>Amount</field>
+		<template>Template8</template>
+	</fieldTemplate>
+	<fieldTemplate>
+		<field>VAT</field>
+		<template>Template9</template>
+	</fieldTemplate>
+	<fieldTemplate>
+		<field>Total</field>
+		<template>Template10</template>
+	</fieldTemplate>
+	<groupTemplate>
+		<groupName>TotalAmount</groupName>
+		<templateType>Header</templateType>
+		<template>Template2</template>
+	</groupTemplate>
+	<groupTemplate>
+		<groupName>Rate</groupName>
+		<templateType>Header</templateType>
+		<template>Template3</template>
+	</groupTemplate>
+	<groupTemplate>
+		<groupName>Totals</groupName>
+		<templateType>Header</templateType>
+		<template>Template4</template>
+	</groupTemplate>
+	<groupTemplate>
+		<groupName>Footer</groupName>
+		<templateType>Header</templateType>
+		<template>Template5</template>
+	</groupTemplate>
+	<groupTemplate>
+		<groupName>Row</groupName>
+		<templateType>Header</templateType>
+		<template>Template7</template>
+	</groupTemplate>
+	<groupHeaderTemplate>
+		<groupName>Row</groupName>
+		<templateType>Header</templateType>
+		<template>Template1</template>
+	</groupHeaderTemplate>
+	<settingsVariant>
+		<dcsset:name>Default</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Default</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Основной</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De bază</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Period</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">ThisMonth</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>fb25ac60-f72c-4c77-bfa6-08e06e5a482f</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Company</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>4785e747-692c-475a-b792-339d73561cf5</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Documents</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:item xsi:type="dcsset:OrderItemField">
+					<dcsset:field>Date</dcsset:field>
+					<dcsset:orderType>Asc</dcsset:orderType>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:OrderItemField">
+					<dcsset:field>Rate.Rate</dcsset:field>
+					<dcsset:orderType>Asc</dcsset:orderType>
+				</dcsset:item>
+			</dcsset:order>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalOverallPlacement</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Purchases Register</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Книга покупок</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Jurnal cumparari</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>DataParametersOutput</dcscor:parameter>
+					<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">Output</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemTable">
+				<dcsset:column>
+					<dcsset:name>TotalAmount</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>TotalAmount</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Amount</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:name>Rate</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Rate</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Rate</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Amount</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>VAT</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:column>
+				<dcsset:column>
+					<dcsset:name>Totals</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Totals</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>VAT</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>Total</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+				</dcsset:column>
+				<dcsset:row>
+					<dcsset:name>Row</dcsset:name>
+					<dcsset:groupItems>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Date</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Number</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>CodeFiscal</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Vendor</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:GroupItemField">
+							<dcsset:field>Ref</dcsset:field>
+							<dcsset:groupType>Items</dcsset:groupType>
+							<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+							<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+							<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+						</dcsset:item>
+					</dcsset:groupItems>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>Date</dcsset:field>
+							<dcsset:orderType>Asc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>Rate.Rate</dcsset:field>
+							<dcsset:orderType>Asc</dcsset:orderType>
+						</dcsset:item>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>SystemFields.SerialNumber</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>PurchaseDescription</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:outputParameters>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+							<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+						</dcscor:item>
+					</dcsset:outputParameters>
+				</dcsset:row>
+			</dcsset:item>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:name>Footer</dcsset:name>
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Accountant</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Director</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Accountant</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Director</dcsset:field>
+					</dcsset:item>
+				</dcsset:selection>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+						<dcscor:value xsi:type="xs:string">None</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

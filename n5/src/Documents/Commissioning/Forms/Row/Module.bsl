@@ -1,0 +1,218 @@
+&AtClient
+var TableRow export;
+&AtClient
+var SelectedValue;
+
+// *****************************************
+// *********** Form events
+
+&AtServer
+Procedure OnCreateAtServer ( Cancel, StandardProcessing )
+	
+	loadParams ();
+	Options.Company ( ThisObject, Object.Company );
+	CommissioningForm.FixedAssetAppearance ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure loadParams ()
+	
+	Object.Company = Parameters.Company;
+	
+EndProcedure 
+
+&AtClient
+Procedure OnOpen ( Cancel )
+	
+	loadData ();
+	Appearance.Apply ( ThisObject );
+	CommissioningForm.SetReadOnly ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure loadData ()
+	
+	owner = FormOwner.Object;
+	Object.Date = owner.Date;
+	Object.Warehouse = owner.Warehouse;
+	TableRow = Object.Items.Add ();
+	data = FormOwner.Items.Items.CurrentData;
+	Inventory = data.Item;
+	FillPropertyValues ( TableRow, data );
+	if ( TableRow.Method.IsEmpty () ) then
+		TableRow.Method = PredefinedValue ( "Enum.Amortization.Linear" );
+	endif; 
+
+EndProcedure
+
+&AtClient
+Procedure BeforeClose ( Cancel, Exit, MessageText, StandardProcessing )
+	
+	if ( SelectedValue = undefined ) then
+		Cancel = true;
+		pickValue ( Enum.ChoiceOperationsFixedAsset (), undefined );
+	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure pickValue ( Operation, Value )
+	
+	SelectedValue = new Structure ();
+	SelectedValue.Insert ( "Operation", Operation );
+	SelectedValue.Insert ( "Value", Value );
+	SelectedValue.Insert ( "NewRow", Parameters.NewRow );
+	#if ( WebClient ) then
+		// Bug workaround 8.3.14.1592. NotifyChoice () will not close the form.
+		// Idle handler is required
+		AttachIdleHandler ( "startChoosing", 0.01, true );
+	#else
+		NotifyChoice ( SelectedValue );
+	#endif
+	
+EndProcedure
+
+&AtClient
+Procedure startChoosing ()
+	
+	NotifyChoice ( SelectedValue );
+	
+EndProcedure
+
+// *****************************************
+// *********** Group Form
+
+&AtClient
+Procedure OK ( Command )
+	
+	applyCommand ( Enum.ChoiceOperationsFixedAsset () );
+	
+EndProcedure
+
+&AtClient
+Procedure applyCommand ( Command )
+	
+	FormOwner.Modified = true;
+	pickValue ( Command, TableRow );
+	
+EndProcedure 
+
+&AtClient
+Procedure SaveAndNew ( Command )
+	
+	applyCommand ( Enum.ChoiceOperationsFixedAssetSaveAndNew () );
+	
+EndProcedure
+
+&AtClient
+Procedure MethodOnChange ( Item )
+	
+	CommissioningForm.MethodOnChage ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure ItemOnChange ( Item )
+	
+	applyItem ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyItem ()
+	
+	Inventory = TableRow.Item;
+	p = new Structure ();
+	p.Insert ( "Company", Object.Company );
+	p.Insert ( "Warehouse", Object.Warehouse );
+	p.Insert ( "Item", Inventory );
+	data = getItemData ( p );
+	TableRow.Package = data.Package;
+	TableRow.Capacity = data.Capacity;
+	TableRow.Account = data.Account;
+	TableRow.Feature = undefined;
+	TableRow.Series = undefined;
+	Computations.Units ( TableRow );
+	
+EndProcedure 
+
+&AtServerNoContext
+Function getItemData ( val Params )
+	
+	data = DF.Values ( Params.Item, "Package, Package.Capacity as Capacity" );
+	accounts = AccountsMap.Item ( Params.Item, Params.Company, Params.Warehouse, "Account" );
+	data.Insert ( "Account", accounts.Account );
+	if ( data.Capacity = 0 ) then
+		data.Capacity = 1;
+	endif; 
+	return data;
+	
+EndFunction 
+
+&AtClient
+Procedure PackageOnChange ( Item )
+
+	TableRow.Capacity = DF.Pick ( TableRow.Package, "Capacity", 1 );
+	Computations.Units ( TableRow );
+	
+EndProcedure
+
+&AtClient
+Procedure QuantityPkgOnChange ( Item )
+	
+	Computations.Units ( TableRow );
+	
+EndProcedure
+
+&AtClient
+Procedure QuantityOnChange ( Item )
+
+	Computations.Packages ( TableRow );
+	
+EndProcedure
+
+&AtClient
+Procedure FixedAssetCreating ( Item, StandardProcessing )
+	
+	StandardProcessing = false;
+	newAsset ( Item );
+	
+EndProcedure
+
+&AtClient
+Procedure newAsset ( Item )
+	
+	p = new Structure ();
+	p.Insert ( "ChoiceMode", true );
+	p.Insert ( "FillingText", ? ( Item.EditText = "", String ( Inventory ), Item.EditText ) );
+	OpenForm ( "Catalog.FixedAssets.ObjectForm", p, Item, , , , , FormWindowOpeningMode.LockOwnerWindow );
+		
+EndProcedure 
+
+&AtClient
+Procedure ChargeOnChange ( Item )
+	
+	resetDate ();
+	Appearance.Apply ( ThisObject, "TableRow.Charge" );
+	
+EndProcedure
+
+&AtClient
+Procedure resetDate ()
+	
+	if ( TableRow.Charge ) then
+		TableRow.Starting = BegOfMonth ( AddMonth ( Object.Date, 1 ) );
+	else
+		TableRow.Starting = undefined;
+	endif; 
+	
+EndProcedure 
+
+&AtClient
+Procedure StartingOnChange ( Item )
+	
+	TableRow.Starting = BegOfMonth ( TableRow.Starting );
+	
+EndProcedure

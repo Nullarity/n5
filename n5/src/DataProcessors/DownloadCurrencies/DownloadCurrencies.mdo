@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="3945cce1-98a5-49f7-a157-f85053f2cf55">
+  <producedTypes>
+    <objectType typeId="f9f033a9-5607-4dde-a3a3-7117f083356c" valueTypeId="f0fabc8c-a0b1-4ff1-be58-febad27c878c"/>
+    <managerType typeId="71e8e56b-5e4e-432a-ba60-3244e884ffe2" valueTypeId="1e5b0fce-7493-4e0b-afe6-f6e0b09a53cc"/>
+  </producedTypes>
+  <name>DownloadCurrencies</name>
+  <synonym>
+    <key>en</key>
+    <value>Download Currencies</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Загрузка валют</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Încărcarea valutelor</value>
+  </synonym>
+  <defaultForm>DataProcessor.DownloadCurrencies.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <explanation>
+    <key>en</key>
+    <value>Download currencies rates</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Загрузка курсов валют</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Încărcați cursurile de schimb</value>
+  </explanation>
+  <attributes uuid="52081b59-96cd-4b25-ae3d-9edbfe069eb2">
+    <name>DateEnd</name>
+    <synonym>
+      <key>en</key>
+      <value>to</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>по</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>până la</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>End Date</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата конца</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data de încheiere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <attributes uuid="5d83b40b-325a-4046-8414-aeaca11346d7">
+    <name>DateStart</name>
+    <synonym>
+      <key>en</key>
+      <value>From</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>За период с</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Pentru perioada de la</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date of beginning</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата начала</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data de începere</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <attributes uuid="df235a63-cc59-4dfb-bdcb-31c4d955c422">
+    <name>RefreshRates</name>
+    <synonym>
+      <key>en</key>
+      <value>Refresh Rates</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Обновлять курсы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Actualizați cursurile</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Updates current rates</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Обновлять текущие курсы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Actualizați cursurile actuale</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </attributes>
+  <tabularSections uuid="93ce936a-e08a-4bd9-91d5-0ec2dc495e8c">
+    <producedTypes>
+      <objectType typeId="1fb2c2c9-48c1-4992-9992-a2ecca1c6e6e" valueTypeId="d53ec9d2-6a6c-45a5-932f-c312ed14cc8c"/>
+      <rowType typeId="6c2862a5-a622-45ec-adbd-e410a3fa252e" valueTypeId="05facefd-029a-4b61-9be7-3e31df86b5a6"/>
+    </producedTypes>
+    <name>List</name>
+    <synonym>
+      <key>en</key>
+      <value>Currencies List</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Список валют</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Lista de valute</value>
+    </synonym>
+    <fillChecking>ShowError</fillChecking>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="5f10b218-e113-47f8-b0b3-a42b6dc21a62">
+      <name>Currency</name>
+      <synonym>
+        <key>en</key>
+        <value>Currency</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Валюта</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Valută</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Currencies</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Валюта</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valută</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="a80529f5-9a7a-4496-b54b-3bb195ecf1cb">
+      <name>Download</name>
+      <synonym>
+        <key>en</key>
+        <value>Download</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Скачивать</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Descarcă</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Download currency rates from the internet</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Загружать курсы валют из интернета</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Încărcați cursurile valutare de pe internet</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="99823f39-6fae-42fa-8f8f-a22978dac0a5">
+      <name>Factor</name>
+      <synonym>
+        <key>en</key>
+        <value>Factor</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Кратность</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Multiplicitate</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Factor</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Factor</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Кратность</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Multiplicitate</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="369f8c70-48d6-4429-87c1-75c993e57901">
+      <name>Period</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate Date</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Дата курса</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Data cursului</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Date</dateFractions>
+        </dateQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Rate Date</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Дата курса</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Data cursului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="037bda81-2a46-48ff-89d7-840a784a9a3f">
+      <name>Rate</name>
+      <synonym>
+        <key>en</key>
+        <value>Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Курс</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Curs</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Rate</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Currency rate</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Курс валют</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cursul valutar</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+  </tabularSections>
+  <forms uuid="ae8b0488-86bd-4467-b713-3769e6d2a36c">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Form</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Form</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:AccumulationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="ef9f05c4-3ae1-44a1-87b3-209d3dff22d7">
+  <producedTypes>
+    <selectionType typeId="9cc2ce73-27f4-4a67-bc2f-dcfc8c28ee2e" valueTypeId="c170938c-e1db-4cc0-beab-020f78e1b9d6"/>
+    <listType typeId="cabc3f6f-d7f1-49f1-916e-8e1a41fc7d9c" valueTypeId="c27d03b7-2eaa-4558-84e6-7a74e9eff429"/>
+    <managerType typeId="497dd14b-f89c-40db-926e-4fba11de1f11" valueTypeId="71718d61-7276-4171-8fde-714ab584ee4f"/>
+    <recordSetType typeId="03b97b12-4306-4aff-a38f-8b107d69db55" valueTypeId="e5796bba-767a-4540-960a-6e65a427c9da"/>
+    <recordKeyType typeId="1fca8ecd-8429-4d73-bcf8-df83474d5fc0" valueTypeId="d98630ad-68a8-4c58-aa59-6c010026adc7"/>
+    <recordType typeId="56e1ab7d-260c-4361-bd22-a999ccf1a82a" valueTypeId="98a7904d-d470-4f42-a8d7-a8664d9ea34a"/>
+  </producedTypes>
+  <name>PurchaseOrderDebts</name>
+  <synonym>
+    <key>en</key>
+    <value>Purchase Order Debts</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Взаиморасчеты по заказам поставщикам</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Decontări conform comenzile către furnizori</value>
+  </synonym>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>RecordType</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Active</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>LineNumber</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Recorder</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <standardAttributes>
+    <dataHistory>Use</dataHistory>
+    <name>Period</name>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+  </standardAttributes>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <enableTotalsSplitting>true</enableTotalsSplitting>
+  <explanation>
+    <key>en</key>
+    <value>Mutual settlement of orders to suppliers (Accounts Payable)</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Взаиморасчеты по заказам поставщикам</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Decontarea reciprocă a comenzilor către furnizori</value>
+  </explanation>
+  <resources uuid="72db642a-56fb-419d-89ad-6e2ef7018448">
+    <name>Amount</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>The actual amount of debt. Overpayments are allocated to a separate resource</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма фактической задолженности. Авансовые платежи выделяются в отдельном ресурсе</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valoarea datoriei reale. Plățile în avans sunt alocate într-o resursă separată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="e9f1cfff-9e68-4931-8cf4-e022d4ce6356">
+    <name>Payment</name>
+    <synonym>
+      <key>en</key>
+      <value>Amount Payable</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Сумма к оплате</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Suma către plată</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Payable Amount according to payment stages</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма к оплате согласно этапов оплат</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Suma plătibilă în conformitate cu etapele de plată</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <resources uuid="68431662-c534-4664-9925-e158e34f08ea">
+    <name>Overpayment</name>
+    <synonym>
+      <key>en</key>
+      <value>Advance or Overpayment</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Аванс или переплата</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Avans sau plată în plus</value>
+    </synonym>
+    <type>
+      <types>DefinedType.Amount</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Amount of advance or overpayment to the Supplier</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сумма выданного поставщику аванса/переплаты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Valoarea avansului sau a plății excedentare către furnizor</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+  </resources>
+  <dimensions uuid="ae1e7e36-35e6-4c31-87ff-4d0cb563c899">
+    <name>Document</name>
+    <synonym>
+      <key>en</key>
+      <value>Document</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Документ</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Document</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.PurchaseOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Document according to scheduled payments or accumulated debts </value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Документ, согласно которого планируется оплата или сформировался фактический долг</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Documentul conform căruia se planifică plata sau a generat datoria</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <useInTotals>true</useInTotals>
+  </dimensions>
+</mdclass:AccumulationRegister>

@@ -1,0 +1,1745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>DataSet1</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Account</dataPath>
+			<field>Account</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Account</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Счет</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Contul</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:account>true</dcscom:account>
+				<dcscom:accountTypeExpression>Account.Type</dcscom:accountTypeExpression>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Company</dataPath>
+			<field>Company</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Currency</dataPath>
+			<field>Currency</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Dim1</dataPath>
+			<field>Dim1</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MaximumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">25</dcscor:value>
+				</dcscor:item>
+			</appearance>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>TypeLink</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:TypeLink">
+						<dcscor:field>DataParameters.Account</dcscor:field>
+						<dcscor:linkItem>1</dcscor:linkItem>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Dim2</dataPath>
+			<field>Dim2</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>TypeLink</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:TypeLink">
+						<dcscor:field>DataParameters.Account</dcscor:field>
+						<dcscor:linkItem>2</dcscor:linkItem>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Dim3</dataPath>
+			<field>Dim3</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>TypeLink</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:TypeLink">
+						<dcscor:field>DataParameters.Account</dcscor:field>
+						<dcscor:linkItem>3</dcscor:linkItem>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceFoldersAndItems</dcscor:parameter>
+					<dcscor:value xmlns:d6p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d6p1:FoldersAndItemsUse">FoldersAndItems</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityClosingBalanceCr</dataPath>
+			<field>QuantityClosingBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Quantity</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityClosingBalanceDr</dataPath>
+			<field>QuantityClosingBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Quantity</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityOpeningBalanceCr</dataPath>
+			<field>QuantityOpeningBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Quantity</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityOpeningBalanceDr</dataPath>
+			<field>QuantityOpeningBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Quantity</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityTurnoverCr</dataPath>
+			<field>QuantityTurnoverCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>QuantityTurnoverDr</dataPath>
+			<field>QuantityTurnoverDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>HorizontalAlign</dcscor:parameter>
+					<dcscor:value xsi:type="v8ui:HorizontalAlign">Left</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=3</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Recorder</dataPath>
+			<field>Recorder</field>
+			<role>
+				<dcscom:periodNumber>1</dcscom:periodNumber>
+				<dcscom:periodType>Main</dcscom:periodType>
+				<dcscom:ignoreNullValues>true</dcscom:ignoreNullValues>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>SecondPeriod</dataPath>
+			<field>SecondPeriod</field>
+			<useRestriction>
+				<field>true</field>
+				<group>true</group>
+				<order>true</order>
+			</useRestriction>
+			<role>
+				<dcscom:periodNumber>2</dcscom:periodNumber>
+				<dcscom:periodType>Main</dcscom:periodType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountClosingBalanceCr</dataPath>
+			<field>AmountClosingBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountClosingBalanceDr</dataPath>
+			<field>AmountClosingBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountClosingBalanceCr</dataPath>
+			<field>CurrencyAmountClosingBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>CurrencyAmount</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountClosingBalanceDr</dataPath>
+			<field>CurrencyAmountClosingBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>CurrencyAmount</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountOpeningBalanceCr</dataPath>
+			<field>CurrencyAmountOpeningBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>CurrencyAmount</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountOpeningBalanceDr</dataPath>
+			<field>CurrencyAmountOpeningBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>CurrencyAmount</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountTurnoverCr</dataPath>
+			<field>CurrencyAmountTurnoverCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>CurrencyAmountTurnoverDr</dataPath>
+			<field>CurrencyAmountTurnoverDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountOpeningBalanceCr</dataPath>
+			<field>AmountOpeningBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Credit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountOpeningBalanceDr</dataPath>
+			<field>AmountOpeningBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Amount</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountingBalanceType>Debit</dcscom:accountingBalanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountTurnoverCr</dataPath>
+			<field>AmountTurnoverCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountTurnoverDr</dataPath>
+			<field>AmountTurnoverDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">NFD=2</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MinimumWidth</dcscor:parameter>
+					<dcscor:value xsi:type="xs:decimal">12</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>DayPeriod</dataPath>
+			<field>DayPeriod</field>
+			<role>
+				<dcscom:periodNumber>3</dcscom:periodNumber>
+				<dcscom:periodType>Additional</dcscom:periodType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>MonthPeriod</dataPath>
+			<field>MonthPeriod</field>
+			<role>
+				<dcscom:periodNumber>4</dcscom:periodNumber>
+				<dcscom:periodType>Additional</dcscom:periodType>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountOpeningSplittedBalanceCr</dataPath>
+			<field>AmountOpeningSplittedBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>AmountCr</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountOpeningSplittedBalanceDr</dataPath>
+			<field>AmountOpeningSplittedBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>AmountDr</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountClosingSplittedBalanceCr</dataPath>
+			<field>AmountClosingSplittedBalanceCr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>AmountCr</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmountClosingSplittedBalanceDr</dataPath>
+			<field>AmountClosingSplittedBalanceDr</field>
+			<useRestriction>
+				<group>true</group>
+			</useRestriction>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>AmountDr</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+				<dcscom:accountField>Account</dcscom:accountField>
+			</role>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>select allowed Balances.DayPeriod as DayPeriod, Balances.MonthPeriod as MonthPeriod, Balances.SecondPeriod as SecondPeriod,
+	case when ( Balances.Recorder = undefined ) then null else Balances.Recorder end as Recorder, Balances.Company as Company, Balances.Currency as Currency,
+	Balances.Account as Account, Balances.ExtDimension1 as Dim1, Balances.ExtDimension2 as Dim2, Balances.ExtDimension3 as Dim3,
+	Balances.AmountOpeningBalanceDr as AmountOpeningBalanceDr,
+	Balances.AmountOpeningBalanceCr as AmountOpeningBalanceCr,
+	Balances.AmountClosingBalanceDr as AmountClosingBalanceDr,
+	Balances.AmountClosingBalanceCr as AmountClosingBalanceCr,
+	Balances.AmountTurnoverDr as AmountTurnoverDr, Balances.AmountTurnoverCr as AmountTurnoverCr,
+	Balances.QuantityOpeningBalanceDr as QuantityOpeningBalanceDr, Balances.QuantityOpeningBalanceCr as QuantityOpeningBalanceCr,
+	Balances.QuantityTurnoverDr as QuantityTurnoverDr, Balances.QuantityTurnoverCr as QuantityTurnoverCr, Balances.QuantityClosingBalanceDr as QuantityClosingBalanceDr,
+	Balances.QuantityClosingBalanceCr as QuantityClosingBalanceCr, Balances.CurrencyAmountOpeningBalanceDr as CurrencyAmountOpeningBalanceDr,
+	Balances.CurrencyAmountOpeningBalanceCr as CurrencyAmountOpeningBalanceCr, Balances.CurrencyAmountTurnoverDr as CurrencyAmountTurnoverDr,
+	Balances.CurrencyAmountTurnoverCr as CurrencyAmountTurnoverCr, Balances.CurrencyAmountClosingBalanceDr as CurrencyAmountClosingBalanceDr,
+	Balances.CurrencyAmountClosingBalanceCr as CurrencyAmountClosingBalanceCr,
+	case
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountOpeningSplittedBalanceDr &gt; 0 then
+			Balances.AmountOpeningSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountOpeningSplittedBalanceCr &gt; 0 then
+			- Balances.AmountOpeningSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountOpeningSplittedBalanceDr
+		else
+			0
+	end as AmountOpeningSplittedBalanceDr,
+	case
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountOpeningSplittedBalanceCr &gt; 0 then
+			Balances.AmountOpeningSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountOpeningSplittedBalanceDr &gt; 0 then
+			- Balances.AmountOpeningSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountOpeningSplittedBalanceCr
+		else
+			0
+	end as AmountOpeningSplittedBalanceCr,
+	case
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountClosingSplittedBalanceDr &gt; 0 then
+			Balances.AmountClosingSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountClosingSplittedBalanceCr &gt; 0 then
+			- Balances.AmountClosingSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountClosingSplittedBalanceDr
+		else
+			0
+	end as AmountClosingSplittedBalanceDr,
+	case
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountClosingSplittedBalanceCr &gt; 0 then
+			Balances.AmountClosingSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountClosingSplittedBalanceDr &gt; 0 then
+			- Balances.AmountClosingSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountClosingSplittedBalanceCr
+		else
+			0
+	end as AmountClosingSplittedBalanceCr
+{select DayPeriod, MonthPeriod, SecondPeriod, Recorder.*, Company.*, Currency.*, Account.*, Dim1.*, Dim2.*, Dim3.*,
+	AmountOpeningBalanceDr, AmountOpeningBalanceCr, AmountClosingBalanceDr, AmountClosingBalanceCr, AmountTurnoverDr, AmountTurnoverCr, 
+	QuantityOpeningBalanceDr, QuantityOpeningBalanceCr, QuantityTurnoverDr, QuantityTurnoverCr, QuantityClosingBalanceDr, QuantityClosingBalanceCr,
+	CurrencyAmountOpeningBalanceDr, CurrencyAmountOpeningBalanceCr, CurrencyAmountTurnoverDr, CurrencyAmountTurnoverCr, CurrencyAmountClosingBalanceDr,
+	CurrencyAmountClosingBalanceCr, AmountClosingSplittedBalanceCr, AmountClosingSplittedBalanceDr,
+	AmountOpeningSplittedBalanceCr, AmountOpeningSplittedBalanceDr}
+from AccountingRegister.General.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, Auto, ,
+	Account = &amp;Account, , {Company.* as Company, Currency.* as Currency,
+	ExtDimension1.* as Dim1, ExtDimension2.* as Dim2, ExtDimension3.* as Dim3} ) as Balances
+{where Recorder.* as Recorder,
+	Balances.AmountOpeningBalanceDr as AmountOpeningBalanceDr,
+	Balances.AmountOpeningBalanceCr as AmountOpeningBalanceCr,
+	Balances.AmountClosingBalanceDr as AmountClosingBalanceDr,
+	Balances.AmountClosingBalanceCr as AmountClosingBalanceCr,
+	Balances.AmountTurnoverDr as AmountTurnoverDr, Balances.AmountTurnoverCr as AmountTurnoverCr,
+	Balances.QuantityOpeningBalanceDr as QuantityOpeningBalanceDr, Balances.QuantityOpeningBalanceCr as QuantityOpeningBalanceCr,
+	Balances.QuantityTurnoverDr as QuantityTurnoverDr, Balances.QuantityTurnoverCr as QuantityTurnoverCr, Balances.QuantityClosingBalanceDr as QuantityClosingBalanceDr,
+	Balances.QuantityClosingBalanceCr as QuantityClosingBalanceCr, Balances.CurrencyAmountOpeningBalanceDr as CurrencyAmountOpeningBalanceDr,
+	Balances.CurrencyAmountOpeningBalanceCr as CurrencyAmountOpeningBalanceCr, Balances.CurrencyAmountTurnoverDr as CurrencyAmountTurnoverDr,
+	Balances.CurrencyAmountTurnoverCr as CurrencyAmountTurnoverCr, Balances.CurrencyAmountClosingBalanceDr as CurrencyAmountClosingBalanceDr,
+	Balances.CurrencyAmountClosingBalanceCr as CurrencyAmountClosingBalanceCr,
+	case
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountOpeningSplittedBalanceDr &gt; 0 then
+			Balances.AmountOpeningSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountOpeningSplittedBalanceCr &gt; 0 then
+			- Balances.AmountOpeningSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountOpeningSplittedBalanceDr
+		else
+			0
+	end as AmountOpeningSplittedBalanceDr,
+	case
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountOpeningSplittedBalanceCr &gt; 0 then
+			Balances.AmountOpeningSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountOpeningSplittedBalanceDr &gt; 0 then
+			- Balances.AmountOpeningSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountOpeningSplittedBalanceCr
+		else
+			0
+	end as AmountOpeningSplittedBalanceCr,
+	case
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountClosingSplittedBalanceDr &gt; 0 then
+			Balances.AmountClosingSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.Active ) and Balances.AmountClosingSplittedBalanceCr &gt; 0 then
+			- Balances.AmountClosingSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountClosingSplittedBalanceDr
+		else
+			0
+	end as AmountClosingSplittedBalanceDr,
+	case
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountClosingSplittedBalanceCr &gt; 0 then
+			Balances.AmountClosingSplittedBalanceCr
+		when Balances.Account.Type = value ( AccountType.Passive ) and Balances.AmountClosingSplittedBalanceDr &gt; 0 then
+			- Balances.AmountClosingSplittedBalanceDr
+		when Balances.Account.Type = value ( AccountType.ActivePassive ) then Balances.AmountClosingSplittedBalanceCr
+		else
+			0
+	end as AmountClosingSplittedBalanceCr
+}</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<totalField>
+		<dataPath>QuantityClosingBalanceCr</dataPath>
+		<expression>Sum(QuantityClosingBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>QuantityClosingBalanceDr</dataPath>
+		<expression>Sum(QuantityClosingBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>QuantityOpeningBalanceCr</dataPath>
+		<expression>Sum(QuantityOpeningBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>QuantityOpeningBalanceDr</dataPath>
+		<expression>Sum(QuantityOpeningBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>QuantityTurnoverCr</dataPath>
+		<expression>Sum(QuantityTurnoverCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>QuantityTurnoverDr</dataPath>
+		<expression>Sum(QuantityTurnoverDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountClosingBalanceCr</dataPath>
+		<expression>Sum(AmountClosingBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountClosingBalanceDr</dataPath>
+		<expression>Sum(AmountClosingBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountClosingBalanceCr</dataPath>
+		<expression>Sum(CurrencyAmountClosingBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountClosingBalanceDr</dataPath>
+		<expression>Sum(CurrencyAmountClosingBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountOpeningBalanceCr</dataPath>
+		<expression>Sum(CurrencyAmountOpeningBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountOpeningBalanceDr</dataPath>
+		<expression>Sum(CurrencyAmountOpeningBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountTurnoverCr</dataPath>
+		<expression>Sum(CurrencyAmountTurnoverCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>CurrencyAmountTurnoverDr</dataPath>
+		<expression>Sum(CurrencyAmountTurnoverDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountOpeningBalanceCr</dataPath>
+		<expression>Sum(AmountOpeningBalanceCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountOpeningBalanceDr</dataPath>
+		<expression>Sum(AmountOpeningBalanceDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountTurnoverCr</dataPath>
+		<expression>Sum(AmountTurnoverCr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountTurnoverDr</dataPath>
+		<expression>Sum(AmountTurnoverDr)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>AmountClosingBalanceCr</dataPath>
+		<expression>Sum(AmountClosingSplittedBalanceCr)</expression>
+		<group>Overall</group>
+	</totalField>
+	<totalField>
+		<dataPath>AmountClosingBalanceDr</dataPath>
+		<expression>Sum(AmountClosingSplittedBalanceDr)</expression>
+		<group>Overall</group>
+	</totalField>
+	<totalField>
+		<dataPath>AmountOpeningBalanceCr</dataPath>
+		<expression>Sum(AmountOpeningSplittedBalanceCr)</expression>
+		<group>Overall</group>
+	</totalField>
+	<totalField>
+		<dataPath>AmountOpeningBalanceDr</dataPath>
+		<expression>Sum(AmountOpeningSplittedBalanceDr)</expression>
+		<group>Overall</group>
+	</totalField>
+	<parameter>
+		<name>Period</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Period</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Период</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Perioadă</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>v8:StandardPeriod</v8:Type>
+		</valueType>
+		<value xsi:type="v8:StandardPeriod">
+			<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+			<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+			<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+		</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Account</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Account</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Счет</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Contul</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:ChartOfAccountsRef.General</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+		<inputParameters>
+			<dcscor:item>
+				<dcscor:parameter>ChoiceParameters</dcscor:parameter>
+				<dcscor:value xsi:type="dcscor:ChoiceParameters">
+					<dcscor:item>
+						<dcscor:choiceParameter>Filter.Offline</dcscor:choiceParameter>
+						<dcscor:value xsi:type="xs:boolean">false</dcscor:value>
+					</dcscor:item>
+				</dcscor:value>
+			</dcscor:item>
+		</inputParameters>
+		<denyIncompleteValues>true</denyIncompleteValues>
+		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>DateEnd</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Date end</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Sfârșitul datei</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.EndDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>DateStart</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Date start</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Start Date</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Data de începere</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Period.StartDate</expression>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>AccountsHierarchy</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Account Hierarchy</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить иерархию счетов</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișați o ierarhie de conturi</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>ShowDimensions</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить аналитику</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Analytics</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișați detalii</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.Dimensions</v8:Type>
+		</valueType>
+		<value xsi:type="dcscor:DesignTimeValue">Enum.Dimensions._1</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>DimsHierarchy</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить аналитику иерархически</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Analytics Hierarchically</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișați detaliile ierarhic</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>ShowCurrency</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить валюты</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Currencies</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișați valute</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>ShowQuantity</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить количество</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Quantity</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișează cantitate</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<parameter>
+		<name>ShowRecorders</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Show Recorders</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Выводить документы</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Afișează documente</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">false</value>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<template>
+		<name>Template1</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Recorder</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MinimumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">15.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>MaximumWidth</dcscor:parameter>
+							<dcscor:value xsi:type="xs:decimal">15.125</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">DetailParameter</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Recorder</dcsat:name>
+			<dcsat:expression>ValueType ( Recorder )</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>DetailParameter</dcsat:name>
+			<dcsat:fieldExpression>
+				<dcsat:field>Recorder</dcsat:field>
+				<dcsat:expression>Recorder</dcsat:expression>
+			</dcsat:fieldExpression>
+		</parameter>
+	</template>
+	<template>
+		<name>Template3</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Number</dcsat:value>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">DetailParameter</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Number</dcsat:name>
+			<dcsat:expression>case when isnull ( Recorder.Reference, "" ) = "" then Recorder.Number else Recorder.Reference end</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>DetailParameter</dcsat:name>
+			<dcsat:fieldExpression>
+				<dcsat:field>Recorder</dcsat:field>
+				<dcsat:expression>Recorder</dcsat:expression>
+			</dcsat:fieldExpression>
+		</parameter>
+	</template>
+	<template>
+		<name>Template4</name>
+		<template xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:AreaTemplate">
+			<dcsat:item xsi:type="dcsat:TableRow">
+				<dcsat:tableCell>
+					<dcsat:item xsi:type="dcsat:Field">
+						<dcsat:value xsi:type="dcscor:Parameter">Date</dcsat:value>
+						<dcsat:appearance>
+							<dcscor:item>
+								<dcscor:parameter>Format</dcscor:parameter>
+								<dcscor:value xsi:type="v8:LocalStringType">
+									<v8:item>
+										<v8:lang>en</v8:lang>
+										<v8:content>DLF=D</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>DLF=D</v8:content>
+									</v8:item>
+									<v8:item>
+										<v8:lang>ro</v8:lang>
+										<v8:content>DLF=D</v8:content>
+									</v8:item>
+								</dcscor:value>
+							</dcscor:item>
+						</dcsat:appearance>
+					</dcsat:item>
+					<dcsat:appearance>
+						<dcscor:item>
+							<dcscor:parameter>Placement</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:DataCompositionTextPlacementType">Wrap</dcscor:value>
+						</dcscor:item>
+						<dcscor:item>
+							<dcscor:parameter>Details</dcscor:parameter>
+							<dcscor:value xsi:type="dcscor:Parameter">DetailParameter</dcscor:value>
+						</dcscor:item>
+					</dcsat:appearance>
+				</dcsat:tableCell>
+			</dcsat:item>
+		</template>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:ExpressionAreaTemplateParameter">
+			<dcsat:name>Date</dcsat:name>
+			<dcsat:expression>case when isnull ( Recorder.ReferenceDate, datetime ( 1, 1, 1 ) ) = datetime ( 1, 1, 1 ) then Recorder.Date else Recorder.ReferenceDate end</dcsat:expression>
+		</parameter>
+		<parameter xmlns:dcsat="http://v8.1c.ru/8.1/data-composition-system/area-template" xsi:type="dcsat:DetailsAreaTemplateParameter">
+			<dcsat:name>DetailParameter</dcsat:name>
+			<dcsat:fieldExpression>
+				<dcsat:field>Recorder</dcsat:field>
+				<dcsat:expression>Recorder</dcsat:expression>
+			</dcsat:fieldExpression>
+		</parameter>
+	</template>
+	<fieldTemplate>
+		<field>Recorder</field>
+		<template>Template1</template>
+	</fieldTemplate>
+	<fieldTemplate>
+		<field>Recorder.Number</field>
+		<template>Template3</template>
+	</fieldTemplate>
+	<fieldTemplate>
+		<field>Recorder.Date</field>
+		<template>Template4</template>
+	</fieldTemplate>
+	<settingsVariant>
+		<dcsset:name>Default</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Основной</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Default</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>De bază</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Opening</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>На начало</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>La început</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Dr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Дт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Dt</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountOpeningBalanceDr</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountOpeningBalanceDr</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityOpeningBalanceDr</dcsset:field>
+							<dcsset:lwsTitle>
+								<v8:item>
+									<v8:lang>en</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>ro</v8:lang>
+									<v8:content>#hideRow</v8:content>
+								</v8:item>
+							</dcsset:lwsTitle>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Cr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Кт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Ct</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountOpeningBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountOpeningBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityOpeningBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:placement>Horizontally</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Turnovers</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Обороты</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Rulaje</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Dr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Дт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Dt</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountTurnoverDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountTurnoverDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityTurnoverDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Cr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Кт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Ct</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountTurnoverCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountTurnoverCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityTurnoverCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:placement>Horizontally</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Closing</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>На конец</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>La sfârșit</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Dr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Дт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Dt</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountClosingBalanceDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountClosingBalanceDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityClosingBalanceDr</dcsset:field>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>en</v8:lang>
+								<v8:content>Cr</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Кт</v8:content>
+							</v8:item>
+							<v8:item>
+								<v8:lang>ro</v8:lang>
+								<v8:content>Ct</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>AmountClosingBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>CurrencyAmountClosingBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:item xsi:type="dcsset:SelectedItemField">
+							<dcsset:field>QuantityClosingBalanceCr</dcsset:field>
+						</dcsset:item>
+						<dcsset:placement>Vertically</dcsset:placement>
+					</dcsset:item>
+					<dcsset:placement>Horizontally</dcsset:placement>
+				</dcsset:item>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Dim1</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>a0d5673b-d735-4ad2-882c-4210c6a32cb0</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Dim2</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>fe648199-6eb7-4554-9ede-46d4d646cc57</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Dim3</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>6e2b9d18-0635-4a64-b9b9-60366ad07806</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Currencies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>46737708-5991-48b5-9767-b8dec3848849</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Company</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:right xsi:type="dcscor:DesignTimeValue">Catalog.Companies.EmptyRef</dcsset:right>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>9debecdf-c325-42a7-a7bb-d44a0180a034</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>33e7460e-342a-4473-9d40-abb20960dd85</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Period</dcscor:parameter>
+					<dcscor:value xsi:type="v8:StandardPeriod">
+						<v8:variant xsi:type="v8:StandardPeriodVariant">ThisMonth</v8:variant>
+					</dcscor:value>
+					<dcsset:userSettingID>88c03cd3-76c5-4771-92e4-127e607014fc</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Account</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+					<dcsset:userSettingID>6f67bcb2-9878-4c41-b651-564f40ea2c9e</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>AccountsHierarchy</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>5014717d-222b-493e-aab0-09d389a16062</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show Account Hierarchy</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить иерархию счетов</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișați o ierarhie de conturi</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>ShowDimensions</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Dimensions._1</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>5055970f-34dd-4335-8240-d76def40373c</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>DimsHierarchy</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>0a79e966-437b-4d27-ab1c-5d4a92ec586c</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show Analytics Hierarchically</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить аналитику иерархически</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișați detaliile ierarhic</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>ShowCurrency</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>2749ff02-3993-4866-861b-fcd7e2d7cee6</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show Currencies</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить валюты</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișați valute</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>ShowQuantity</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>8d1e71b0-94cb-44a2-bde9-6dac97c2bacf</dcsset:userSettingID>
+					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выводить количество</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Show Quantity</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Afișează cantitate</v8:content>
+						</v8:item>
+					</dcsset:userSettingPresentation>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>ShowRecorders</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>72864aa2-0dec-467c-af19-1e6815782481</dcsset:userSettingID>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>21f7a98a-1f10-44c2-a3e8-aaebb2564683</dcsset:userSettingID>
+			</dcsset:order>
+			<dcsset:conditionalAppearance>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>1fb04083-d051-42df-b38e-e7e048e70311</dcsset:userSettingID>
+			</dcsset:conditionalAppearance>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>Account Balance</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Оборотно-сальдовая ведомость по счету</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>Balanța contului</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:name>Account</dcsset:name>
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>Account</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+			</dcsset:item>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:use>false</dcsset:use>
+				<dcsset:name>Recorder</dcsset:name>
+				<dcsset:filter>
+					<dcsset:item xsi:type="dcsset:FilterItemComparison">
+						<dcsset:left xsi:type="dcscor:Field">Recorder</dcsset:left>
+						<dcsset:comparisonType>Filled</dcsset:comparisonType>
+					</dcsset:item>
+				</dcsset:filter>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Recorder.Date</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Recorder.Number</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Recorder</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>Dim1</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:outputParameters>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>AttributePlacement</dcscor:parameter>
+						<dcscor:value xsi:type="dcsset:DataCompositionAttributesPlacement">Separately</dcscor:value>
+					</dcscor:item>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>FieldsTitleType</dcscor:parameter>
+						<dcscor:value xsi:type="dcscor:DataCompositionFieldsTitleType">Short</dcscor:value>
+					</dcscor:item>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>FilterOutput</dcscor:parameter>
+						<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+					</dcscor:item>
+				</dcsset:outputParameters>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

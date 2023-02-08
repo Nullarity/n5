@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="b34d5062-c6ee-45f7-b963-c14ade3cf8b8">
+  <producedTypes>
+    <objectType typeId="6c1221a4-20bb-4f73-8dc2-ce12bbfe5fd8" valueTypeId="e360df62-6b3d-4790-acd9-31327ed43ff3"/>
+    <refType typeId="df81acf2-1d53-4d90-b665-2fe0d661b2f6" valueTypeId="8075df83-62eb-4947-8a4b-eb01d658e3a5"/>
+    <selectionType typeId="c875a699-6e15-441f-a624-66de1070bab8" valueTypeId="88f00504-fa12-4531-b99f-20e04c8f3468"/>
+    <listType typeId="eaf5e9b9-fda3-4bb9-9b7e-02a969699ed3" valueTypeId="a2582f9a-a855-4609-b2a1-4065408577ff"/>
+    <managerType typeId="c42ebabb-4402-469f-85f8-2b707db87879" valueTypeId="d3b3f204-63c5-4a3d-9e99-ca25a225ce1c"/>
+  </producedTypes>
+  <name>Membership</name>
+  <synonym>
+    <key>en</key>
+    <value>Membership</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Группы пользователей</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Grupuri de utilizatori</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.Membership.StandardAttribute.Description</inputByString>
+  <inputByString>Catalog.Membership.StandardAttribute.Code</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <includeHelpInContents>true</includeHelpInContents>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Groups</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Группы</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Grupuri</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>User groups required to assign access rights</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Группы пользователей используются для назначения прав доступа</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Grupurile de utilizatori sunt utilizate pentru a atribui drepturi de acces</value>
+  </explanation>
+  <dataHistory>Use</dataHistory>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <descriptionLength>150</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <predefined>
+    <items id="397ea2db-3bdc-4340-a6fd-f1021d89c662">
+      <name>Users</name>
+      <description>Users</description>
+      <code xsi:type="core:StringValue">
+        <value>000000001</value>
+      </code>
+    </items>
+  </predefined>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <defaultObjectForm>Catalog.Membership.Form.Form</defaultObjectForm>
+  <attributes uuid="94d60c8d-b6d2-43c5-aa0e-8e869d8a6ac2">
+    <name>TenantAccess</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenants</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Chiriaș</value>
+    </synonym>
+    <type>
+      <types>EnumRef.Access</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Allow or deny access to values specified in the directory</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Запрещать или разрешать доступ к значениям, указанным в списке</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Permite sau refuza accesul la valorile specificate în listă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <tabularSections uuid="8965ddff-533a-4fa6-868b-41a7cf62defb">
+    <producedTypes>
+      <objectType typeId="4bfc278a-441a-45c3-a33f-fd20c7c32f0d" valueTypeId="dd1bdaed-7166-4b89-a2b5-605a9aa34a4f"/>
+      <rowType typeId="72b340c3-9a2a-4ab1-922f-b8ff4e39a224" valueTypeId="55d19d84-c11e-4db2-a3e1-e6afa6c6e503"/>
+    </producedTypes>
+    <name>Rights</name>
+    <synonym>
+      <key>en</key>
+      <value>Rights</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Права</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Drepturi</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Users group rights assignment table</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Таблица прав пользователей группы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tabelul grupurilor de drepturi ale utilizatorilor</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="6720e90f-f4f3-4c94-b0b8-61b93bfddf6e">
+      <name>RoleName</name>
+      <synonym>
+        <key>en</key>
+        <value>Role Name</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Имя права (роли)</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Nume drepturi (roluri)</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>150</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Name of the permission (role) as it is set in the configuration</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Имя права (роли) как оно задано в конфигурации</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numele dreptului (rolului) specificat în configurație</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="508a2356-e22c-4a54-82e9-8c17c5e9e1b0">
+    <producedTypes>
+      <objectType typeId="bbbad80b-584b-4d9c-a89e-0ea3f2261325" valueTypeId="fab66d23-9056-41c5-ab61-0dcfecc90cfd"/>
+      <rowType typeId="e346afef-391d-4805-b225-97b11138eb38" valueTypeId="8eb09edf-8408-4f6b-aab7-0a7c22cab3e9"/>
+    </producedTypes>
+    <name>Tenants</name>
+    <synonym>
+      <key>en</key>
+      <value>Tenants</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Организации</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Chiriaș</value>
+    </synonym>
+    <attributes uuid="6d7a31b5-f795-422b-8195-24d08ff3d2c9">
+      <name>Tenant</name>
+      <synonym>
+        <key>en</key>
+        <value>Tenant</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Организация</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Chiriaş</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Tenants</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Tenant</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Организация</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Chiriaş</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <forms uuid="aa8414cb-75ff-43dd-b47d-0e7b847abee5">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:Catalog>

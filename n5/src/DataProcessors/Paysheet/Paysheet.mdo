@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="e98c6399-fd09-4cc3-8354-7610b6b01c1f">
+  <producedTypes>
+    <objectType typeId="1a506877-ae73-44a9-95fc-2e0b3b6b72a2" valueTypeId="fa78e5e3-a8a5-4c84-8846-9df6b5a6ea24"/>
+    <managerType typeId="3517ab95-af38-4acc-81e4-60cc1e285a81" valueTypeId="c1245d56-338b-4073-a4c9-cf269c5351dc"/>
+  </producedTypes>
+  <name>Paysheet</name>
+  <useStandardCommands>true</useStandardCommands>
+  <templates uuid="54188122-59b7-4a6f-b27a-f3d186979011">
+    <name>PaysheetEn</name>
+  </templates>
+  <templates uuid="522fc247-75d5-47b9-b679-56d36891b01f">
+    <name>PaysheetRo</name>
+  </templates>
+  <templates uuid="0121b1a8-2846-4a8f-ac67-23d9eed1a661">
+    <name>PaysheetRu</name>
+  </templates>
+  <templates uuid="7d3453f4-63b0-4866-b945-7f1d00e643fc">
+    <name>StatementEn</name>
+  </templates>
+  <templates uuid="30608a96-7326-4ca8-a9a0-1c288d270d41">
+    <name>StatementRo</name>
+  </templates>
+  <templates uuid="95274fef-cd5a-429d-8960-fb2f9f27c76b">
+    <name>StatementRu</name>
+  </templates>
+  <commands uuid="215f9c5d-9abb-4cf7-ae08-44a16c40763a">
+    <name>Paysheet</name>
+    <synonym>
+      <key>en</key>
+      <value>Paysheet</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Выплата ЗП</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Plata salariilor</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.PayEmployees</types>
+      <types>DocumentRef.PayAdvances</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print Paysheet</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать направления на выплату заработной платы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimarea plata salariilor</value>
+    </toolTip>
+  </commands>
+  <commands uuid="12bea9b4-d42e-4c66-8da9-351b3b632b26">
+    <name>Statement</name>
+    <synonym>
+      <key>en</key>
+      <value>Statement</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Платежная ведомость</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Stat de plată</value>
+    </synonym>
+    <group>CommandGroup.Print</group>
+    <commandParameterType>
+      <types>DocumentRef.PayEmployees</types>
+      <types>DocumentRef.PayAdvances</types>
+    </commandParameterType>
+    <parameterUseMode>Multiple</parameterUseMode>
+    <representation>Auto</representation>
+    <toolTip>
+      <key>en</key>
+      <value>Print paysheet statement</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Печать платежной ведомости</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Imprimarea stat de plată</value>
+    </toolTip>
+  </commands>
+</mdclass:DataProcessor>

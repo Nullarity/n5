@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="47ec4f5c-81a8-49c6-8511-99071c17fc8c">
+  <producedTypes>
+    <selectionType typeId="55e992f7-a177-4208-b584-5f57bba385e9" valueTypeId="3a46d727-e05f-4d92-b321-1fde2993e6ca"/>
+    <listType typeId="2145550c-2c28-489a-9557-0003b2c382ff" valueTypeId="487f50ca-2a9e-418b-af6e-d7cc57f6f479"/>
+    <managerType typeId="50ec39cc-c655-4e2d-8095-ef6c01491c2d" valueTypeId="ce0a54c2-f178-4169-9533-b70a146a53e7"/>
+    <recordSetType typeId="20cfdd5f-e544-4969-b410-d4b18be8e1c5" valueTypeId="b5e410df-feaf-4d7b-8da4-5cf5f6ebc215"/>
+    <recordKeyType typeId="7cd4c4f3-e32f-4f25-a1b0-7671460fa09e" valueTypeId="b88c1e28-03e8-404a-afed-9be4baeea214"/>
+    <recordType typeId="a1c5288e-24e1-4733-95ea-60f13931a6ba" valueTypeId="c6d40b41-3475-4617-9bc8-a1345916dd1f"/>
+    <recordManagerType typeId="8bd0d9e3-633f-46cb-b24f-f0687231a055" valueTypeId="ab06336f-a420-40d6-a246-58b730298d0b"/>
+  </producedTypes>
+  <name>Schedules</name>
+  <synonym>
+    <key>en</key>
+    <value>Schedules</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Графики работы</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Program de lucru</value>
+  </synonym>
+  <editType>InDialog</editType>
+  <defaultRecordForm>InformationRegister.Schedules.Form.Form</defaultRecordForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>A record of the number of work hours for each day. It is used to calculate standard work times</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Регистр содержит на каждый день количество рабочих часов. Используется для расчета нормы рабочего времени</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Registrul conține pentru fiecare zi numărul de ore de lucru. Se folosește pentru calcularea ratei timpului de lucru</value>
+  </explanation>
+  <resources uuid="ebd7df54-f161-4e00-b198-93b5dcde3e7f">
+    <name>Duration</name>
+    <synonym>
+      <key>en</key>
+      <value>Hours</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Часы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ore</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled work hours</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма рабочих часов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma orelor de lucru</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="28bd5622-92cb-4c14-ade3-da95fa72b1d0">
+    <name>DurationEvening</name>
+    <synonym>
+      <key>en</key>
+      <value>Evening Hours</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вечерние часы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ore de seara</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled evening hours</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма вечерних часов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma orelor de seară</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="01de4438-b04d-4215-b154-89b6b8986502">
+    <name>DurationNight</name>
+    <synonym>
+      <key>en</key>
+      <value>Night Hours</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ночные часы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ore de noapte</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <format>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <format>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </format>
+    <editFormat>
+      <key>en</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ru</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <editFormat>
+      <key>ro</key>
+      <value>ND=4; NFD=2; NDS=:</value>
+    </editFormat>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled night hours</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма ночных часов</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma orelor de noapte</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="b0e5bd44-5db0-4a12-8709-de0398b69b5e">
+    <name>Minutes</name>
+    <synonym>
+      <key>en</key>
+      <value>Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Минуты</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Minute</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled time in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма пересчитанная в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma convertită în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="fdac812e-a110-4c3c-bf50-2273d6285fc1">
+    <name>MinutesEvening</name>
+    <synonym>
+      <key>en</key>
+      <value>Evening Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Минуты, вечер</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Minute, seara</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled evening time in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма вечерних часов, пересчитанная в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma orelor de seară, convertite în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <resources uuid="84d1daaf-162c-448d-8331-69a2f7e6b93c">
+    <name>MinutesNight</name>
+    <synonym>
+      <key>en</key>
+      <value>Night Minutes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Минуты, ночь</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Minute, noaptea</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>4</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Scheduled night time in minutes</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Норма ночных часов, пересчитанная в минуты</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Norma orelor de noapte, convertite în minute</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>24</value>
+    </maxValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <dimensions uuid="5bdd99fa-7c04-4368-ad8f-1e3bb61172c8">
+    <name>Schedule</name>
+    <synonym>
+      <key>en</key>
+      <value>Schedule</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>График</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Orar</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Schedules</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Work schedule</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>График работы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Program de lucru</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <denyIncompleteValues>true</denyIncompleteValues>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <dimensions uuid="92755a7a-4a50-4d5d-bf74-16d923896148">
+    <name>Day</name>
+    <synonym>
+      <key>en</key>
+      <value>Day</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>День</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Ziua</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers>
+        <dateFractions>Date</dateFractions>
+      </dateQualifiers>
+    </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+  <forms uuid="c0ca2d39-3e5a-4270-809c-903733b811a9">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:InformationRegister>

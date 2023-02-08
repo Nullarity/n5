@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:EventSubscription xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="2ab902d9-8c56-401a-a216-c93b5d3a3e05">
+  <name>CheckInvoice</name>
+  <source>
+    <types>DocumentObject.WriteOff</types>
+    <types>DocumentObject.Transfer</types>
+    <types>DocumentObject.Invoice</types>
+    <types>DocumentObject.VendorReturn</types>
+    <types>DocumentObject.LVITransfer</types>
+    <types>DocumentObject.Sale</types>
+    <types>DocumentObject.Return</types>
+    <types>DocumentObject.AdjustDebts</types>
+  </source>
+  <event>BeforeWrite</event>
+  <handler>CommonModule.DocumentEvents.CheckInvoice</handler>
+</mdclass:EventSubscription>
