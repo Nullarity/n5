@@ -179,7 +179,7 @@ Procedure createEnv ( Env )
 		rng = new RandomNumberGenerator ();
 		Set ( "#InventoryNo", rng.RandomNumber ( 100, 100000 ) );
 		Set ( "#CertificateNo", 444444 );
-		if ( AppName <> "c5" ) then
+		if ( AppName <> "n5" ) then
 			Set ( "#TaxGroup", "Group1" );
 		endif;
 		Choose ( "#AssetType" );

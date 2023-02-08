@@ -6,7 +6,7 @@ p.Insert ( "Description" );
 p.Insert ( "Shipments", false );
 p.Insert ( "Production", false );
 p.Insert ( "Products" ); // Optional. Comma-separated string of production items
-if ( AppName = "c5" ) then
+if ( AppName = "n5" ) then
 	p.Insert ( "Division" );
 endif; 
 

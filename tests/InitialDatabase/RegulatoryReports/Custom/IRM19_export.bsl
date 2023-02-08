@@ -106,7 +106,7 @@ Procedure writeDinamicRow ( Env, XMLWriter, RowNumber )
 	writeStringValue ( Env, XMLWriter, "c2", "B" + row );
 	writeStringValue ( Env, XMLWriter, "c3", "C" + row );
 	writeNumericValue ( Env, XMLWriter, "c4", "D" + row );
-	writeStringValue ( Env, XMLWriter, "c5", "E" + row );
+	writeStringValue ( Env, XMLWriter, "n5", "E" + row );
 	writeDateValue ( Env, XMLWriter, "c6", "F" + row );
 	writeDateValue ( Env, XMLWriter, "c7", "G" + row );
 	writeStringValue ( Env, XMLWriter, "c8", "H" + row );

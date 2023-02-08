@@ -13,7 +13,7 @@ MainWindow.ExecuteCommand ( "e1cib/data/Catalog.IntangibleAssets" );
 With ( "Intangible Assets (cr*" );
 Set ( "#Description", name );
 
-if ( AppName = "c5" ) then
+if ( AppName = "n5" ) then
 	value = _.VAT;
 	if ( value <> undefined ) then
 		Put ( "#VAT", value );

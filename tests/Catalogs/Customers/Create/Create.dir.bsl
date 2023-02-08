@@ -1,6 +1,6 @@
 ﻿Commando("e1cib/command/Catalog.Organizations.Create");
 Set("Name", _.Name);
-if ( AppName = "c5" ) then
+if ( AppName = "n5" ) then
 	Set("#CodeFiscal", "1234567890123");
 endif;
 if ( Fetch ( "#Customer" ) = "No" ) then

@@ -15,7 +15,7 @@ p.Insert ( "Capacity" );
 p.Insert ( "Series", false );
 p.Insert ( "Barcode" );
 p.Insert ( "CreatePackage", true );
-if ( AppName = "c5" ) then
+if ( AppName = "n5" ) then
 	p.Insert ( "VAT", "20%" );
 	p.Insert ( "Social", false );
 	p.Insert ( "OfficialCode" );

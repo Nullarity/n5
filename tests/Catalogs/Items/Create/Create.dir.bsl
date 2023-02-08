@@ -56,7 +56,7 @@ if ( itemType <> undefined ) then
 	Set ( "#ItemType", itemType );
 endif;
 
-if ( AppName = "c5" ) then
+if ( AppName = "n5" ) then
 	if ( _ <> undefined ) then
 		value = _.VAT;
 		if ( value <> undefined ) then
