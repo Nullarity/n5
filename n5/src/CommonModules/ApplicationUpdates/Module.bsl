@@ -41,7 +41,7 @@ Function LastVersion ( Error = undefined ) export
 	
 	version = Format ( ApplicationUpdatesSrv.MyRelease (), "NG=" );
 	request = new HTTPRequest ( "/ls/hs/Version/Latest?Application=" + Enum.ConstantsApplicationCode () + "&Version=" + version + "&License=" + ApplicationUpdatesSrv.License () );
-	connection = new HTTPConnection ( "www.mycont.md" );
+	connection = new HTTPConnection ( "nullarity.com" );
 	try
 		response = Connection.Get ( request );
 	except
@@ -71,7 +71,7 @@ EndFunction
 
 Function SubscriptionExpired ( License, Error ) export
 	
-	connection = new HTTPConnection ( "www.mycont.md" );
+	connection = new HTTPConnection ( "nullarity.com" );
 	request = new HTTPRequest ( "/ls/hs/License/Expired?License=" + License );
 	try
 		response = Connection.Get ( request );
