@@ -419,7 +419,7 @@ EndProcedure
 &AtClient
 Procedure downloadUpdate ( File, Callback )
 	
-	connection = new HTTPConnection ( "nullarity.com" );
+	connection = new HTTPConnection ( "nullarity.com", , , , , , new OpenSSLSecureConnection () );
 	request = new HTTPRequest ( "/ls/hs/Version/Download?Application=" + Enum.ConstantsApplicationCode () + "&Version=" + Format ( LastRelease, "NG=" ) + "&License=" + License );
 	try
 		response = Connection.Get ( request );

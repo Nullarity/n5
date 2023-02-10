@@ -103,7 +103,7 @@ EndFunction
 
 Function helpWebsite ()
 	
-	return "http://nullarity.com";
+	return "https://nullarity.com";
 	
 EndFunction
 
