@@ -253,6 +253,7 @@ from (
 	from Document.InvoiceRecord.Items as Table
 	where not Table.Ref.DeletionMark
 	and not Table.Ref.Transfer
+	and not Table.Ref.Base refs Document.VendorReturn
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
@@ -380,7 +381,7 @@ from (
 				select Goods.Ref as Ref, Goods.Item as Item, Goods.VATCode as VATCode,
 					Goods.Package as Package, Goods.Feature as Feature, Goods.Series as Series,
 					sum ( Goods.VAT ) as VAT, sum ( Goods.Total - Goods.VAT ) as Amount,
-					beginofperiod ( Goods.Ref.Date, day ) as Day
+					beginofperiod ( Goods.Ref.Date, day ) as Day, Goods.Price as Price
 				from Document.Sale.Items as Goods
 				//
 				// Only Invoice Records
@@ -398,7 +399,7 @@ from (
 				and Goods.Ref.Date between &amp;DateStart and &amp;DateEnd
 				and Goods.Ref.Company = &amp;Company
 				and Goods.Ref.VATUse &lt;&gt; 0
-				group by Goods.Ref, Goods.VATCode, Goods.Item, Goods.Package, Goods.Feature, Goods.Series
+				group by Goods.Ref, Goods.VATCode, Goods.Item, Goods.Package, Goods.Feature, Goods.Series, Goods.Price
 			) as Goods
 			on Goods.Ref.Location = Table.Ref.Location
 			and Goods.Ref.Warehouse = Table.Ref.Warehouse
@@ -408,6 +409,7 @@ from (
 			and Goods.Package = Table.Package
 			and Goods.Feature = Table.Feature
 			and Goods.Series = Table.Series
+			and Goods.Price = Table.Price
 			and Goods.Day = beginofperiod ( Table.Ref.Date, day )
 		where Table.Ref.Posted
 		and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
