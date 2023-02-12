@@ -419,7 +419,7 @@ EndProcedure
 &AtClient
 Procedure downloadUpdate ( File, Callback )
 	
-	connection = new HTTPConnection ( "nullarity.com", , , , , , new OpenSSLSecureConnection () );
+	connection = new HTTPConnection ( "www.mycont.md" );
 	request = new HTTPRequest ( "/ls/hs/Version/Download?Application=" + Enum.ConstantsApplicationCode () + "&Version=" + Format ( LastRelease, "NG=" ) + "&License=" + License );
 	try
 		response = Connection.Get ( request );
@@ -596,6 +596,15 @@ EndProcedure
 
 &AtClient
 Procedure Download ( Command )
+	
+	#if ( not WebClient ) then
+		LocalFiles.SetTempFolder ( new NotifyDescription ( "PrepareDownloading", ThisObject ) );
+	#endif
+	
+EndProcedure
+
+&AtClient
+Procedure PrepareDownloading ( OK, Params ) export
 	
 	#if ( not WebClient ) then
 		checkForUpdates ();
