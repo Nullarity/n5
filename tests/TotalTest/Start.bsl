@@ -133,7 +133,7 @@ while ( stillWorking ( Job ) ) do
 enddo;
 params.Folder = "DataProcessors.Cost";
 list = Call ( "Tester.Scenarios", params );
-NewJob ( "Tester", list, , , "tc30", , , job );
+NewJob ( "Tester", list, , , "tc1", , , job );
 
 // Disconnect all after testing
 for i = 1 to agents do
