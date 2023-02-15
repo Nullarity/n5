@@ -4,7 +4,7 @@
 
 // Parameters
 platform = "8.3.20.1789";
-edt = "edt@2021.3.4:x86_64";
+edt = "edt@2022.2.3:x86_64";
 
 // Routine
 p = Call("Tester.Execute.Params");
@@ -13,14 +13,14 @@ p.EDT = edt;
 p.Application = AppName;
 p.Server = "localhost";
 p.ServerIBName = AppName;
-p.IBName = AppName;
+p.IBName = AppName + ", local, server";
 p.IBUser = "root";
 p.PermissionCode = "ConfigurationUpdate";
 p.Restore = "/home/dmitry/testing/" + AppName + "/init.dt";
 p.TestEnvironment = "TotalTest.TestEnvironment";
 p.Project = AppName;
-p.Workspace = "/home/dmitry/" + AppName;
-p.GitFolder = "/home/dmitry/git/" + AppName;
+p.Workspace = "/home/dmitry/testing/" + AppName + "/workspace";
+p.GitFolder = "/home/dmitry/testing/" + AppName + "/sources";
 p.GitUser = "nullarity";
 p.GitPassword = Call ("Tools.GitPassword", , "System");
 p.GitRepo = "github.com/nullarity/n5";
@@ -81,7 +81,7 @@ params.Insert ( "Folder", p.Folder );
 params.Insert ( "Exceptions", p.Exceptions );
 list = Call ( "Tester.Scenarios", params );
 
-agents = 30;
+agents = 5;
 batch = 1;
 
 StoreScenarios ();
@@ -94,7 +94,7 @@ Pause (60);
 // Restore & update database 
 if ( not p.TestingOnly ) then
 	Call ( "Tester.Infobase.Deploy", p );
-endif;   
+endif;
 
 if ( p.UpdateOnly ) then
 	return;
