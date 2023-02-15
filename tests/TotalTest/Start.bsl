@@ -129,7 +129,7 @@ enddo;
 
 // Test cost-sensitive scenarios
 while ( stillWorking ( Job ) ) do
-	Pause ( 10 );
+	Pause ( 30 );
 enddo;
 params.Folder = "DataProcessors.Cost";
 list = Call ( "Tester.Scenarios", params );
