@@ -190,6 +190,16 @@
 			<dataPath>Ref</dataPath>
 			<field>Ref</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Import</dataPath>
+			<field>Import</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Import</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>select VATPurchase.VAT as VAT, VATPurchase.Amount as Amount, VATPurchase.Ref as Ref,
 	( VATPurchase.VAT + VATPurchase.Amount ) as Total, VATPurchase.Rate as Rate,
@@ -209,6 +219,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -221,6 +232,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -233,6 +245,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -245,6 +258,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -257,6 +271,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
+	{where not &amp;Import}
 	union all
 	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -270,6 +285,7 @@ from (
 	and Table.Ref.VATUse &lt;&gt; 0
 	and not Table.Ref.Import
 	and ( Table.Detail &lt;&gt; undefined or not Table.Document refs Document.PurchaseOrder )
+	{where not &amp;Import}
 	union all
 	select Charges.VAT, Charges.Amount + Groups.Base, Table.Charge.VAT,
 		case Table.Ref.Reference when "" then Table.Ref.Number else Table.Ref.Reference end,
@@ -314,6 +330,7 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.VAT
+	{where &amp;Import}
 	union all
 	select Table.VAT, Table.Total - Table.VAT, Table.VATCode, Table.Number, Table.Date, 
 		Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref, null, null
@@ -321,6 +338,7 @@ from (
 	where not Table.Ref.DeletionMark
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -332,6 +350,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -343,6 +362,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -354,6 +374,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -365,6 +386,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	{where not &amp;Import}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -376,6 +398,7 @@ from (
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
+	{where not &amp;Import}
 	union all
 	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
 		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
@@ -387,6 +410,7 @@ from (
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
+	{where not &amp;Import}
 	union all
 	select Table.VATLocal, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
 		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
@@ -404,6 +428,7 @@ from (
 		value ( Enum.AdjustmentOptions.AccountingDr ),
 		value ( Enum.AdjustmentOptions.AccountingCr )
 	)
+	{where not &amp;Import}
 	union all
 	select Table.VAT, Table.AmountLocal - Table.VATLocal, Table.VATCode, Table.Ref.Reference,
 		Table.Ref.ReferenceDate, Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor,
@@ -421,6 +446,7 @@ from (
 		value ( Enum.AdjustmentOptions.AccountingDr ),
 		value ( Enum.AdjustmentOptions.AccountingCr )
 	)
+	{where not &amp;Import}
 ) as VATPurchase</query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -686,6 +712,28 @@ and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )</query>
 		<value xsi:nil="true"/>
 		<useRestriction>true</useRestriction>
 		<valueListAllowed>true</valueListAllowed>
+	</parameter>
+	<parameter>
+		<name>Import</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Import Only</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Numai pentru import</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Только импорт</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">true</value>
+		<useRestriction>false</useRestriction>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -2080,6 +2128,13 @@ and Table.VATCode &lt;&gt; value ( Catalog.VAT.EmptyRef )</query>
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>Documents</dcscor:parameter>
 					<dcscor:value xsi:nil="true"/>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Import</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>fc14e2ce-0699-4f45-b85a-d4ba7d403cdf</dcsset:userSettingID>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>
