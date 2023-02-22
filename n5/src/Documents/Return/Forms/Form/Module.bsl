@@ -810,6 +810,20 @@ Procedure ItemsQuantityOnChange ( Item )
 	
 EndProcedure
 
+&AtClient
+Procedure ItemsAmountOnChange ( Item )
+
+	updateTotals ( ThisObject, ItemsRow, false );
+
+EndProcedure
+
+&AtClient
+Procedure ItemsVATOnChange ( Item )
+
+	updateTotals ( ThisObject, ItemsRow, false );
+
+EndProcedure
+
 // *****************************************
 // *********** Group More
 

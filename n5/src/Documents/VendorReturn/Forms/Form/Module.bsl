@@ -944,6 +944,20 @@ Procedure applySocial ()
 EndProcedure
 
 &AtClient
+Procedure ItemsAmountOnChange ( Item )
+
+	updateTotals ( ThisObject, ItemsRow, false );
+
+EndProcedure
+
+&AtClient
+Procedure ItemsVATOnChange ( Item )
+
+	updateTotals ( ThisObject, ItemsRow, false );
+
+EndProcedure
+
+&AtClient
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
 	Computations.Units ( ItemsRow );
@@ -995,6 +1009,20 @@ Procedure FixedAssetsAfterDeleteRow ( Item )
 	
 EndProcedure
 
+&AtClient
+Procedure FixedAssetsAmountOnChange ( Item )
+
+	updateTotals ( ThisObject, FixedAssetsRow, false );
+
+EndProcedure
+
+&AtClient
+Procedure FixedAssetsVATOnChange ( Item )
+
+	updateTotals ( ThisObject, FixedAssetsRow, false );
+
+EndProcedure
+
 // *****************************************
 // *********** Group IntangibleAssets
 
@@ -1027,6 +1055,20 @@ Procedure IntangibleAssetsAfterDeleteRow ( Item )
 	updateTotals ( ThisObject );
 	applyInvoices ();
 	
+EndProcedure
+
+&AtClient
+Procedure IntangibleAssetsAmountOnChange(Item)
+
+	updateTotals ( ThisObject, IntangibleAssetsRow, false );
+
+EndProcedure
+
+&AtClient
+Procedure IntangibleAssetsVATOnChange(Item)
+
+	updateTotals ( ThisObject, IntangibleAssetsRow, false );
+
 EndProcedure
 
 // *****************************************
@@ -1068,6 +1110,20 @@ Procedure AccountsAfterDeleteRow ( Item )
 	updateTotals ( ThisObject );
 	applyInvoices ();
 	
+EndProcedure
+
+&AtClient
+Procedure AccountsAmountOnChange ( Item )
+
+	updateTotals ( ThisObject, AccountsRow, false );
+
+EndProcedure
+
+&AtClient
+Procedure AccountsVATOnChange ( Item )
+	
+	updateTotals ( ThisObject, AccountsRow, false );
+
 EndProcedure
 
 // *****************************************
