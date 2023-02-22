@@ -254,6 +254,7 @@ from (
 	where not Table.Ref.DeletionMark
 	and not Table.Ref.Transfer
 	and not Table.Ref.Base refs Document.VendorReturn
+	and not Table.Ref.Base refs Document.WriteOff
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
 	and Table.Ref.VATUse &lt;&gt; 0
