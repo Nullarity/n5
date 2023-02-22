@@ -137,6 +137,20 @@
 	|and Table.Ref.VATUse <> 0
 	|union all
 	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
+	|	Table.Ref.Series, Table.Ref.Number, Table.Ref.Date, 3, cast ( Table.Ref.Base as Document.WriteOff ).Customer.CodeFiscal
+	|from Document.InvoiceRecord.Items as Table
+	|" + conditions + "
+	|and not Table.Ref.DeletionMark
+	|and Table.Ref.Base refs Document.WriteOff
+	|and Table.Ref.VATUse <> 0
+	|and Table.Ref.Status in (
+	|	value ( Enum.FormStatuses.Unloaded ),
+	|	value ( Enum.FormStatuses.Printed ),
+	|	value ( Enum.FormStatuses.Submitted ),
+	|	value ( Enum.FormStatuses.Returned )
+	|)
+	|union all
+	|select Table.VAT, Table.Total - Table.VAT,	Table.VATCode.Rate, Table.VATCode.Type,
 	|	Table.Series, Table.Series + Table.FormNumber, Table.Date, 0, Table.Customer.CodeFiscal
 	|from Document.VATSales as Table
 	|where not Table.Ref.DeletionMark
@@ -307,6 +321,11 @@
 	table = vats.Copy ( new Structure ( "Operation", 2 ) );
 	FieldsValues [ "A31" ] = table.Total ( "Amount" );
 	FieldsValues [ "B31" ] = table.Total ( "VAT" );
+
+	//****************** WriteOff
+	//***************************
+	table = vats.Copy ( new Structure ( "Operation", 3 ) );
+	FieldsValues [ "B32" ] = table.Total ( "VAT" );
 	
 	//****************** Annex1
 	//*************************
