@@ -660,14 +660,14 @@ Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 	p [ "Dim" + sideReceiver + "1" ] = organization;
 	p [ "Dim" + sideReceiver + "2" ] = contract;
 	p [ "Currency" + sideReceiver ] =  contractCurrency;
-	amount = Row.Amount * drcr.DebtDirection;
+	amount = Row.Amount;
 	p [ "CurrencyAmount" + sideReceiver ] = amount;
 	p [ "Account" + sideOrganization ] = advanceAccount;
 	p [ "Dim" + sideOrganization + "1" ] = organization;
 	p [ "Dim" + sideOrganization + "2" ] = contract;
 	p [ "Currency" + sideOrganization ] = contractCurrency;
 	p [ "CurrencyAmount" + sideOrganization ] = amount;
-	p.Amount = Row.AmountLocal * drcr.DebtDirection;
+	p.Amount = Row.AmountLocal;
 	p.Operation = operation;
 	p.Dependency = dependency;
 	p.Recordset = Env.Buffer;
