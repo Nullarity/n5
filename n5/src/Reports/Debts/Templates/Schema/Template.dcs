@@ -1819,6 +1819,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -1850,6 +1857,15 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:use>false</dcscor:use>
+								<dcscor:parameter>TitleOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -1916,6 +1932,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -1947,6 +1970,10 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -2001,12 +2028,33 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemGroup">
+								<dcsset:groupType>OrGroup</dcsset:groupType>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 						</dcsset:order>
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
 						<dcsset:item>
 							<dcsset:groupItems>
 								<dcsset:item xsi:type="dcsset:GroupItemField">
@@ -2024,12 +2072,33 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 								</dcsset:item>
 							</dcsset:groupItems>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemGroup">
+									<dcsset:groupType>OrGroup</dcsset:groupType>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+								</dcsset:item>
+							</dcsset:filter>
 							<dcsset:order>
 								<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 							</dcsset:order>
 							<dcsset:selection>
 								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							</dcsset:selection>
+							<dcsset:outputParameters>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>FilterOutput</dcscor:parameter>
+									<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+								</dcscor:item>
+							</dcsset:outputParameters>
 						</dcsset:item>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
 						<dcsset:userSettingID>984ab7ee-816c-4397-98d5-3db97c032b55</dcsset:userSettingID>
@@ -2320,6 +2389,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -2351,6 +2427,10 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -2417,6 +2497,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -2448,6 +2535,10 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -2502,12 +2593,33 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemGroup">
+								<dcsset:groupType>OrGroup</dcsset:groupType>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 						</dcsset:order>
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
 						<dcsset:item>
 							<dcsset:groupItems>
 								<dcsset:item xsi:type="dcsset:GroupItemField">
@@ -2525,12 +2637,33 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 								</dcsset:item>
 							</dcsset:groupItems>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemGroup">
+									<dcsset:groupType>OrGroup</dcsset:groupType>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+								</dcsset:item>
+							</dcsset:filter>
 							<dcsset:order>
 								<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 							</dcsset:order>
 							<dcsset:selection>
 								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							</dcsset:selection>
+							<dcsset:outputParameters>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>FilterOutput</dcscor:parameter>
+									<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+								</dcscor:item>
+							</dcsset:outputParameters>
 						</dcsset:item>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
 						<dcsset:userSettingID>984ab7ee-816c-4397-98d5-3db97c032b55</dcsset:userSettingID>
@@ -2849,6 +2982,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -2880,6 +3020,10 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -3055,6 +3199,24 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							</dcsset:item>
 						</dcsset:groupItems>
 						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemGroup">
+								<dcsset:groupType>OrGroup</dcsset:groupType>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+							</dcsset:item>
 							<dcsset:viewMode>Normal</dcsset:viewMode>
 							<dcsset:userSettingID>f957f4e1-9953-42b5-a987-051d8bce5680</dcsset:userSettingID>
 							<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
@@ -3078,6 +3240,12 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
 						<dcsset:item>
 							<dcsset:use>false</dcsset:use>
 							<dcsset:groupItems>
@@ -3089,12 +3257,38 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 								</dcsset:item>
 							</dcsset:groupItems>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemGroup">
+									<dcsset:groupType>OrGroup</dcsset:groupType>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+								</dcsset:item>
+							</dcsset:filter>
 							<dcsset:order>
 								<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 							</dcsset:order>
 							<dcsset:selection>
 								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							</dcsset:selection>
+							<dcsset:outputParameters>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>FilterOutput</dcscor:parameter>
+									<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+								</dcscor:item>
+							</dcsset:outputParameters>
 							<dcsset:item>
 								<dcsset:groupItems>
 									<dcsset:item xsi:type="dcsset:GroupItemField">
@@ -3112,12 +3306,38 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 										<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 									</dcsset:item>
 								</dcsset:groupItems>
+								<dcsset:filter>
+									<dcsset:item xsi:type="dcsset:FilterItemGroup">
+										<dcsset:groupType>OrGroup</dcsset:groupType>
+										<dcsset:item xsi:type="dcsset:FilterItemComparison">
+											<dcsset:left xsi:type="dcscor:Field">AmountDebt</dcsset:left>
+											<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+											<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+										</dcsset:item>
+										<dcsset:item xsi:type="dcsset:FilterItemComparison">
+											<dcsset:left xsi:type="dcscor:Field">Overpayment</dcsset:left>
+											<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+											<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+										</dcsset:item>
+										<dcsset:item xsi:type="dcsset:FilterItemComparison">
+											<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+											<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+											<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+										</dcsset:item>
+									</dcsset:item>
+								</dcsset:filter>
 								<dcsset:order>
 									<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 								</dcsset:order>
 								<dcsset:selection>
 									<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 								</dcsset:selection>
+								<dcsset:outputParameters>
+									<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+										<dcscor:parameter>FilterOutput</dcscor:parameter>
+										<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+									</dcscor:item>
+								</dcsset:outputParameters>
 							</dcsset:item>
 							<dcsset:viewMode>Normal</dcsset:viewMode>
 							<dcsset:userSettingID>8f0de83a-1754-4867-b4d6-5aa2c61eea2a</dcsset:userSettingID>
@@ -3431,6 +3651,13 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemComparison">
+								<dcsset:left xsi:type="dcscor:Field">PaymentBalance</dcsset:left>
+								<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+								<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemField">
 								<dcsset:field>Interval</dcsset:field>
@@ -3462,6 +3689,10 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 								<dcscor:parameter>OverallsPlacement</dcscor:parameter>
 								<dcscor:value xsi:type="dcscor:DataCompositionTotalPlacement">None</dcscor:value>
+							</dcscor:item>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
 							</dcscor:item>
 						</dcsset:outputParameters>
 						<dcsset:viewMode>Normal</dcsset:viewMode>
@@ -3520,12 +3751,38 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 								<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 							</dcsset:item>
 						</dcsset:groupItems>
+						<dcsset:filter>
+							<dcsset:item xsi:type="dcsset:FilterItemGroup">
+								<dcsset:groupType>OrGroup</dcsset:groupType>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">Debt</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">Balance</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+								<dcsset:item xsi:type="dcsset:FilterItemComparison">
+									<dcsset:left xsi:type="dcscor:Field">ReportDebt</dcsset:left>
+									<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+									<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+								</dcsset:item>
+							</dcsset:item>
+						</dcsset:filter>
 						<dcsset:order>
 							<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 						</dcsset:order>
 						<dcsset:selection>
 							<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 						</dcsset:selection>
+						<dcsset:outputParameters>
+							<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+								<dcscor:parameter>FilterOutput</dcscor:parameter>
+								<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+							</dcscor:item>
+						</dcsset:outputParameters>
 						<dcsset:item>
 							<dcsset:use>false</dcsset:use>
 							<dcsset:groupItems>
@@ -3537,12 +3794,38 @@ from AccumulationRegister.Debts.Balance ( &amp;Asof, {Contract.Company.* as Comp
 									<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
 								</dcsset:item>
 							</dcsset:groupItems>
+							<dcsset:filter>
+								<dcsset:item xsi:type="dcsset:FilterItemGroup">
+									<dcsset:groupType>OrGroup</dcsset:groupType>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">Debt</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">Balance</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+									<dcsset:item xsi:type="dcsset:FilterItemComparison">
+										<dcsset:left xsi:type="dcscor:Field">ReportDebt</dcsset:left>
+										<dcsset:comparisonType>NotEqual</dcsset:comparisonType>
+										<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+									</dcsset:item>
+								</dcsset:item>
+							</dcsset:filter>
 							<dcsset:order>
 								<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
 							</dcsset:order>
 							<dcsset:selection>
 								<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
 							</dcsset:selection>
+							<dcsset:outputParameters>
+								<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+									<dcscor:parameter>FilterOutput</dcscor:parameter>
+									<dcscor:value xsi:type="dcsset:DataCompositionTextOutputType">DontOutput</dcscor:value>
+								</dcscor:item>
+							</dcsset:outputParameters>
 							<dcsset:viewMode>Normal</dcsset:viewMode>
 							<dcsset:userSettingID>ca513ea6-7e2c-4016-a39b-6aeb90077024</dcsset:userSettingID>
 							<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
