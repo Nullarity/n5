@@ -382,6 +382,51 @@ Procedure AdjustmentsItemOnChange ( Item )
 EndProcedure
 
 // *****************************************
+// *********** Table Accounting
+
+&AtClient
+Procedure AccountingOnActivateRow ( Item )
+	
+	AccountingRow = Item.CurrentData;
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAfterDeleteRow ( Item )
+	
+	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
+	
+	AdjustDebtsForm.AccountingOnEditEnd ( ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure AccountingItemOnChange ( Item )
+	
+	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingAmountOnChange ( Item )
+	
+	AdjustDebtsForm.AccountingAmountOnChange ( ThisObject );
+
+EndProcedure
+
+&AtClient
+Procedure AccountingVATCodeOnChange ( Item )
+	
+	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AccountingRow );
+	
+EndProcedure
+
+// *****************************************
 // *********** Table Receiver Documents
 
 &AtClient
@@ -479,51 +524,6 @@ Procedure ReceiverDebtsAmountOnChange ( Item )
 EndProcedure
 
 // *****************************************
-// *********** Table Accounting
-
-&AtClient
-Procedure AccountingOnActivateRow ( Item )
-	
-	AccountingRow = Item.CurrentData;
-
-EndProcedure
-
-&AtClient
-Procedure AccountingAfterDeleteRow ( Item )
-	
-	AdjustDebtsForm.ChahgeApplied ( ThisObject );
-
-EndProcedure
-
-&AtClient
-Procedure AccountingOnEditEnd ( Item, NewRow, CancelEdit )
-	
-	AdjustDebtsForm.AccountingOnEditEnd ( ThisObject );
-	
-EndProcedure
-
-&AtClient
-Procedure AccountingItemOnChange ( Item )
-	
-	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingRow );
-
-EndProcedure
-
-&AtClient
-Procedure AccountingAmountOnChange ( Item )
-	
-	AdjustDebtsForm.AccountingAmountOnChange ( ThisObject );
-
-EndProcedure
-
-&AtClient
-Procedure AccountingVATCodeOnChange ( Item )
-	
-	AdjustDebtsForm.AdjustmentsVATCodeOnChange ( AccountingRow );
-	
-EndProcedure
-
-// *****************************************
 // *********** Table AccountingReceiver
 
 &AtClient
@@ -536,20 +536,20 @@ EndProcedure
 &AtClient
 Procedure AccountingReceiverAfterDeleteRow ( Item )
 
-	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	AdjustDebtsForm.CalcTotalsReceiver ( ThisObject );
 
 EndProcedure
 
 &AtClient
 Procedure AccountingReceiverOnEditEnd ( Item, NewRow, CancelEdit )
 
-	AdjustDebtsForm.ChahgeApplied ( ThisObject );
+	AdjustDebtsForm.CalcTotalsReceiver ( ThisObject );
 
 EndProcedure
 
 &AtClient
 Procedure AccountingReceiverItemOnChange ( Item )
-        
+
 	AdjustDebtsForm.AccountingItemOnChange ( Object, AccountingReceiverRow );
 
 EndProcedure

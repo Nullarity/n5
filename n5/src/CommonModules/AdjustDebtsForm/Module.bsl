@@ -119,17 +119,29 @@ EndProcedure
 Procedure updateInfoReceiver ( Form )
 	
 	object = Form.Object;
-	difference = adjustingAmount ( object ) - object.AppliedReceiver;
+	difference = ReceiverDifference ( object );
 	if ( difference = 0 ) then
 		Form.InfoReceiver = "";
 	else
-		Form.InfoReceiver = Output.AdjustDebtsDifference ( new Structure ( "Amount", Conversion.NumberToMoney ( difference, object.Currency ) ) );
+		Form.InfoReceiver = Output.AdjustDebtsDifference (
+			new Structure ( "Amount", Conversion.NumberToMoney ( difference, object.Currency ) ) );
 	endif;
 	
 EndProcedure
 
-Function adjustingAmount ( Object )
+Function ReceiverDifference ( Object ) export
+	
+	if ( Object.Option = PredefinedValue ( "Enum.AdjustmentOptions.Customer" )
+		or Object.Option = PredefinedValue ( "Enum.AdjustmentOptions.Vendor" ) ) then
+		return adjustmentAmount ( Object ) - Object.AppliedReceiver;
+	else
+		return 0;
+	endif;
+	
+EndFunction
 
+Function adjustmentAmount ( Object )
+	
 	amount = Object.Amount;
 	if ( Object.AmountDifference
 		and Object.Type = PredefinedValue ( "Enum.TypesAdjustDebts.Advance" ) ) then
@@ -540,30 +552,28 @@ EndProcedure
 Procedure applyReceiverRate ( Form )
 	
 	object = Form.Object;
-	calcReceiverContract ( object, 1 );
-	calcAppliedReceiver ( object, 1 );
+	calcReceiverContract ( object );
 	distributeReceiverAmount ( object );
+	calcAppliedReceiver ( object );
 	updateInfoReceiver ( Form );
 	
 EndProcedure
 
-Procedure calcReceiverContract ( Object, Method )
+Procedure calcReceiverContract ( Object )
 	
-	if ( Method = 1
-		or Object.ReceiverDebts.Count () = 0 ) then
-		Object.ReceiverContractAmount = Currencies.Convert ( Object.Amount, Object.Currency, Object.ReceiverContractCurrency, Object.Date, Object.Rate, Object.Factor, Object.ReceiverContractRate, Object.ReceiverContractFactor );
-	elsif ( Method = 2 ) then
-		Object.ReceiverContractAmount = Object.ReceiverDebts.Total ( "Amount" );
-	endif;
+	Object.ReceiverContractAmount =
+		Currencies.Convert ( adjustmentAmount ( Object ), Object.Currency, Object.ReceiverContractCurrency,
+		Object.Date, Object.Rate, Object.Factor, Object.ReceiverContractRate, Object.ReceiverContractFactor );
 
 EndProcedure 
 
-Procedure calcAppliedReceiver ( Object, Method )
+Procedure calcAppliedReceiver ( Object )
 	
-	if ( Method = 1 ) then
-		Object.AppliedReceiver = Object.Amount;
-	elsif ( Method = 2 ) then
-		Object.AppliedReceiver = Currencies.Convert ( Object.ReceiverContractAmount, Object.ReceiverContractCurrency,
+	applied = Object.ReceiverDebts.Total ( "Amount" ) + Object.AccountingReceiver.Total ( "Amount" );
+	if ( Object.ReceiverContractAmount = applied ) then
+		Object.AppliedReceiver = adjustmentAmount ( Object );
+	else
+		Object.AppliedReceiver = Currencies.Convert ( applied, Object.ReceiverContractCurrency,
 			Object.Currency, Object.Date, Object.ReceiverContractRate, Object.ReceiverContractFactor,
 			Object.Rate, Object.Factor );
 	endif;
@@ -577,20 +587,15 @@ Procedure distributeReceiverAmount ( Object )
 	if ( j = -1 ) then
 		return;
 	endif; 
-	amount = Object.ReceiverContractAmount;
+	amount = Object.ReceiverContractAmount - Object.AccountingReceiver.Total ( "Amount" );
 	isDebt = isDebt ( Object.TypeReceiver );
 	for i = 0 to j do
 		row = table [ i ];
-		applied = Min ( amount, appliedAmountRow ( row, isDebt, false ) );
+		appliedRow = appliedAmountRow ( row, isDebt, false );
+		applied = ? ( amount <= 0, appliedRow, Max ( 0, Min ( amount, appliedRow ) ) );
 		row.Amount = applied;
-		row.Applied = applied;
-		amount = amount - applied;
-		if ( i = j ) then
-			row.Amount = row.Amount + amount;
-			row.Difference = amount;
-		else
-			row.Difference = 0;
-		endif; 
+		applyReceiverRowAmount ( object, row );
+		amount = amount - Row.Applied;
 		toggleAdjust ( row );
 	enddo; 
 
@@ -1022,7 +1027,7 @@ Procedure calcTablesReceiver ( Object )
 		enddo;
 	enddo;
 	if ( biggestRow <> undefined ) then
-		amount = adjustingAmount ( Object );
+		amount = adjustmentAmount ( Object );
 		biggestRow.AmountDocument = biggestRow.AmountDocument + (
 			amount
 			- Object.ReceiverDebts.Total ( "AmountDocument" )
@@ -1245,7 +1250,9 @@ EndProcedure
 Procedure refillReceiver ( Form )
 	
 	fillReceiverDebts ( Form );
-	distributeReceiverAmount ( Form.Object );
+	object = Form.Object;
+	distributeReceiverAmount ( object );
+	calcAppliedReceiver ( object );
 	
 EndProcedure
 
@@ -1405,7 +1412,7 @@ Procedure update ( Form )
 	tableAdjustments = object.Adjustments;
 	adjustments = fetchAdjustments ( tableAdjustments );
 	fillTable ( Form );
-	applyAdjustments ( adjustments, tableAdjustments, false );
+	applyAdjustments ( object, adjustments, tableAdjustments, false );
 	calcApplied ( object );
 
 EndProcedure
@@ -1426,18 +1433,19 @@ Function fetchAdjustments ( TableAdjustments )
 EndFunction
 
 &AtServer
-Procedure applyAdjustments ( Adjustments, TableAdjustments, ForReceiver )
+Procedure applyAdjustments ( Object, OldAdjustments, NewAdjustments, ForReceiver )
 	
-	forSender = not ForReceiver;
-	for each adjustment in Adjustments do
-		rows = TableAdjustments.FindRows ( adjustment.Key );
+	for each adjustment in OldAdjustments do
+		rows = NewAdjustments.FindRows ( adjustment.Key );
 		if ( rows.Count () = 0 ) then
 			adjustmentNotFound ( adjustment );
 		else
 			row = rows [ 0 ];
 			row.Amount = adjustment.Amount;
-			if ( forSender ) then
-				calcVAT ( row );
+			if ( forReceiver ) then
+				applyReceiverRowAmount ( Object, row );
+			else
+				applyRowAmount ( Object, row );
 			endif;
 			toggleAdjust ( row );
 		endif;
@@ -1535,13 +1543,17 @@ EndProcedure
 &AtClient
 Procedure AdjustmentsAmountOnChange ( Form ) export
 	
-	object = Form.Object;
-	Form.AdjustmentsRow.Amount = Min ( Form.AdjustmentsRow.Amount,
-		appliedAmountRow ( Form.AdjustmentsRow, isDebt ( object.Type ), object.AmountDifference ) );
-	if ( object.ApplyVAT ) then
-		calcVAT ( Form.AdjustmentsRow );
-	endif;
+	applyRowAmount ( Form.Object, Form.AdjustmentsRow );
 	
+EndProcedure
+
+Procedure applyRowAmount ( Object, Row )
+
+	Row.Amount = Min ( Row.Amount, appliedAmountRow ( Row, isDebt ( Object.Type ), Object.AmountDifference ) );
+	if ( Object.ApplyVAT ) then
+		calcVAT ( Row );
+	endif;
+
 EndProcedure
 
 &AtServer
@@ -1564,9 +1576,8 @@ Procedure updateReceiverDebts ( Form )
 	tableAdjustments = object.ReceiverDebts;
 	adjustments = fetchAdjustments ( tableAdjustments );
 	fillReceiverDebts ( Form );
-	applyAdjustments ( adjustments, tableAdjustments, true );
-	calcReceiverContract ( object, 2 );
-	calcAppliedReceiver ( object, 2 );
+	applyAdjustments ( object, adjustments, tableAdjustments, true );
+	calcAppliedReceiver ( object );
 
 EndProcedure
 
@@ -1582,9 +1593,8 @@ Procedure MarkReceiver ( Form, Flag ) export
 		row.Adjust = Flag;
 		Form.ReceiverRow = row;
 		AdjustDebtsForm.ApplyReceiverAdjust ( Form );
-		calcReceiverContract ( object, 2 );
-		calcAppliedReceiver ( object, 2 );
 	enddo;
+	calcAppliedReceiver ( object );
 	updateInfoReceiver ( Form );
 	Form.ReceiverRow = tempRow;
 
@@ -1645,8 +1655,7 @@ EndProcedure
 Procedure CalcTotalsReceiver ( Form ) export
 	
 	object = Form.Object;
-	calcReceiverContract ( object, 2 );
-	calcAppliedReceiver ( object, 2 );
+	calcAppliedReceiver ( object );
 	updateInfoReceiver ( Form );
 	
 EndProcedure
@@ -1654,12 +1663,16 @@ EndProcedure
 &AtClient
 Procedure ReceiverDebtsAmountOnChange ( Form ) export
 	
-	receiverRow = Form.ReceiverRow;
-	amount = receiverRow.Amount;
-	object = Form.Object;
-	applied = Min ( amount, appliedAmountRow ( receiverRow, isDebt ( object.TypeReceiver ), false ) );
-	receiverRow.Applied = applied;
-	receiverRow.Difference = Max ( 0, amount - applied );
+	applyReceiverRowAmount ( Form.Object, Form.ReceiverRow );
+	
+EndProcedure
+
+Procedure applyReceiverRowAmount ( Object, Row )
+	
+	amount = Row.Amount;
+	applied = Min ( amount, appliedAmountRow ( Row, isDebt ( Object.TypeReceiver ), false ) );
+	Row.Applied = applied;
+	Row.Difference = Max ( 0, Row.Amount - Row.Applied );
 	
 EndProcedure
 
@@ -1771,6 +1784,59 @@ Procedure AccountingAmountOnChange ( Form ) export
 
 	if ( Form.Object.ApplyVAT ) then
 		calcVAT ( Form.AccountingRow );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure FillCheckProcessing ( Object, Cancel, CheckedAttributes ) export
+	
+	if ( checkAmount ( Object ) ) then
+		checkAttributes ( Object, CheckedAttributes );
+	else
+		Cancel = true;
+	endif;
+	
+EndProcedure
+
+&AtServer
+Function checkAmount ( Object )
+	
+	if ( Object.Amount <> Object.Applied ) then
+		Output.AdjustDebtsError ( , "Amount" );
+		return false;
+	endif;
+	difference = AdjustDebtsForm.ReceiverDifference ( Object );
+	if ( difference <> 0 ) then
+		Output.AdjustDebtsReceiverError (
+			new Structure ( "Amount", Conversion.NumberToMoney ( difference, Object.Currency ) ), "ReceiverDebts" );
+		return false;
+	endif;
+	return true;
+	
+EndFunction
+
+&AtServer
+Procedure checkAttributes ( Object, CheckedAttributes ) 
+
+	if ( Object.Option = Enums.AdjustmentOptions.Customer
+		or Object.Option = Enums.AdjustmentOptions.Vendor ) then
+		CheckedAttributes.Add ( "Receiver" );
+		CheckedAttributes.Add ( "ReceiverContract" );
+		CheckedAttributes.Add ( "ReceiverContractFactor" );
+		CheckedAttributes.Add ( "ReceiverContractRate" );
+		CheckedAttributes.Add ( "ReceiverAccount" );
+		if ( not isAdjustDebts ( Object )
+			and Object.Option = Enums.AdjustmentOptions.Customer ) then
+			CheckedAttributes.Add ( "VATAccount" );
+			CheckedAttributes.Add ( "ReceivablesVATAccount" );
+			CheckedAttributes.Add ( "VATAdvance" );
+		endif;
+	else
+		CheckedAttributes.Add ( "Account" );
+	endif;
+	if ( not Object.AmountDifference ) then
+		CheckedAttributes.Add ( "Amount" );
 	endif;
 
 EndProcedure

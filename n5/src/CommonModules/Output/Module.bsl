@@ -5698,6 +5698,14 @@ Function AdjustDebtsDifference ( Params = undefined ) export
 EndFunction
 
 &AtServer
+Procedure AdjustDebtsReceiverError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = Output.AdjustDebtsDifference ( Params );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
 Procedure AdjustmentNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='Amount due: <%Adjustment>,  was not found. Adjustment of %Amount to this row has not been applied'; ro='Datoria pe <%Adjustment> nu a fost găsit, suma %Amount nu a fost aplicată'; ru='Задолженность по <%Adjustment> не найдена, сумма %Amount не применена'" );
