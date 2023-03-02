@@ -479,7 +479,7 @@ Procedure decreaseDebt ( Env, Table, ForReceiver )
 			endif;
 			registerAdvance ( Env, row, ForReceiver, true );
 		else
-			movement.Accounting = coef * amountAccounting;
+			movement.Accounting = coef * amountAccounting * ? ( amount < 0, - 1, 1 );
 			if ( regularAdjustment ) then
 				movement.Amount = coef * amount;
 				if ( amount < 0 ) then
