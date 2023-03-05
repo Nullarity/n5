@@ -30,7 +30,14 @@ EndProcedure
 &AtClient
 Procedure runFolder ( Folder )
 	
-	RunAppAsync ( Folder );
+	if ( Framework.IsLinux () ) then
+		try
+			RunAppAsync ( "xdg-open " + Folder );
+		except
+		endtry;
+	else
+		RunAppAsync ( Folder );
+	endif;
 	
 EndProcedure 
 
