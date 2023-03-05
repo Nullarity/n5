@@ -39,8 +39,7 @@ Function AddFile ( val Reference, val Name, val Size, val FolderID ) export
 			AttachmentsSrv.UpdateFileNames ( Reference );
 		endif;
 		AttachmentsSrv.CommitDownloading ( Reference, data.File );
-		Count = info.Count;
-		saveCount ( Reference, Count + 1 );
+		saveCount ( Reference, info.Count + 1 );
 	endif; 
 	return data;
 	
