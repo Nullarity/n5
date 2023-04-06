@@ -60,13 +60,9 @@ Procedure fillNew ()
 EndProcedure 
 
 &AtClient
-Procedure NotificationProcessing ( EventName, Parameter, Source )
+Procedure BeforeWrite ( Cancel, WriteParameters )
 	
-	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
-		and ( Parameter = Object.Ref
-			or Parameter = BegOfDay ( Object.Date ) ) ) then
-		updateChangesPermission ();
-	endif;
+	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
 
 EndProcedure
 
@@ -75,6 +71,17 @@ Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
 	Appearance.Apply ( ThisObject );
 	
+EndProcedure
+
+&AtClient
+Procedure NotificationProcessing ( EventName, Parameter, Source )
+	
+	if ( EventName = Enum.MessageChangesPermissionIsSaved ()
+		and ( Parameter = Object.Ref
+			or Parameter = BegOfDay ( Object.Date ) ) ) then
+		updateChangesPermission ();
+	endif;
+
 EndProcedure
 
 // *****************************************

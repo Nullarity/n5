@@ -119,6 +119,13 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
+&AtClient
+Procedure BeforeWrite ( Cancel, WriteParameters )
+	
+	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
+
+EndProcedure
+
 &AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
