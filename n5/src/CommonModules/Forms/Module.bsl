@@ -192,13 +192,15 @@ Function NewRow ( Form, Table, Clone ) export
 	
 EndFunction 
 
-Function Check ( Form, Items ) export
+Function Check ( Form, Items, Silently = false ) export
 	
 	errors = getErrors ( Form.Object, Items );
 	if ( errors.Count () = 0 ) then
 		return true;
 	else
-		showObjectErrors ( Form, errors );
+		if ( not Silently ) then
+			showObjectErrors ( Form, errors );
+		endif;
 		return false;
 	endif; 
 	
