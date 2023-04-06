@@ -63,12 +63,13 @@ Procedure sqlRecords ( Env )
 	|into Rates
 	|from InformationRegister.ExchangeRates.SliceLast ( &Date ) as Rates
 	|;
-	|select Records.Account as Account, Records.Dim1 as Dim1, Records.Currency as Currency, 
+	|select Records.Account as Account, Records.Dim1 as Dim1, Records.Dim2 as Dim2, Records.Currency as Currency, 
 	|	Records.Difference < 0 as Expense,
 	|	case when Records.Difference < 0 then - Records.Difference else Records.Difference end as Difference
 	|into Records
 	|from ( 
-	|	select Records.Account as Account, Records.ExtDimension1 as Dim1, Records.Currency as Currency,
+	|	select Records.Account as Account, Records.ExtDimension1 as Dim1, Records.ExtDimension2 as Dim2,
+	|		Records.Currency as Currency,
 	|		cast ( CurrencyAmountBalance / isnull ( Rates.Factor, 1 ) * isnull ( Rates.Rate, 1 ) - AmountBalance
 	|			as Number ( 15, 2 ) ) as Difference 
 	|	from AccountingRegister.General.Balance ( &Date, Account.Currency, , Company = &Company ) as Records
@@ -84,8 +85,9 @@ Procedure sqlRecords ( Env )
 	|)
 	|;
 	|// #Records
-	|select Records.Account as Account, Records.Dim1 as Dim1, Records.Currency as Currency, 
-	|	Records.Expense as Expense, Records.Difference as Difference
+	|select Records.Account as Account, Records.Dim1 as Dim1,
+	|	case when Records.Dim2 refs Catalog.CashFlows then &CashFlow else Records.Dim2 end as Dim2,
+	|	Records.Currency as Currency, Records.Expense as Expense, Records.Difference as Difference
 	|from Records as Records
 	|;
 	|// #Debts
@@ -131,6 +133,7 @@ Procedure getRecords ( Env )
 	fields = Env.Fields;
 	q.SetParameter ( "Date", fields.Date );
 	q.SetParameter ( "Company", fields.Company );
+	q.SetParameter ( "CashFlow", fields.CashFlow );
 	SQL.Perform ( Env );
 
 EndProcedure
@@ -158,7 +161,6 @@ Procedure commitRecords ( Env )
 	p.Recordset = Env.Registers.General;
 	accountNegative = fields.AccountNegative;
 	accountPositive = fields.AccountPositive;
-	cashFlow = fields.CashFlow;
 	dim1 = fields.Dim1;
 	dim2 = fields.Dim2;
 	dim3 = fields.Dim3;
@@ -181,7 +183,7 @@ Procedure commitRecords ( Env )
 		p.Amount = row.Difference;
 		p [ "Account" + account ] = row.Account;
 		p [ "Dim" + account + "1" ] = row.Dim1;
-		p [ "Dim" + account + "2" ] = cashFlow;
+		p [ "Dim" + account + "2" ] = row.Dim2;
 		p [ "Currency" + account ] = row.Currency;
 		GeneralRecords.Add ( p );
 	enddo; 
