@@ -1,5 +1,4 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
-
 	
 Procedure PresentationFieldsGetProcessing ( Fields, StandardProcessing )
 	
@@ -205,8 +204,9 @@ Procedure sqlAssets ( Env )
 	|	AssetsBalances.Amount - isnull ( AmortizationBalances.Amount, 0 ) - Assets.LiquidationValue as Limit,
 	|	case when Assets.Schedule = value ( Catalog.DepreciationSchedules.EmptyRef ) then false else true end as UseShedule,
 	|	case when year ( Assets.EndAmortization ) = year ( &Period ) then true else false end as LastYear,
-	|	year ( Assets.EndAmortization ) - year ( &Period ) + 1 as YearsLeft, Assets.EndAmortization as EndAmortization,
-	|	year ( Assets.EndAmortization ) - year ( Assets.Starting ) + 1 as Years,
+	|	Assets.EndAmortization as EndAmortization,
+	|	( datediff ( &Period, Assets.EndAmortization, month ) + 1 ) / 12 as YearsLeft,
+	|	( datediff ( Assets.Starting, Assets.EndAmortization, month ) + 1 ) / 12 as Years,
 	|	datediff ( &Period, dateadd ( Assets.Starting, month, Assets.UsefulLife ), month ) as MonthsLeft,
 	|	case when Assets.EndAmortization = &Period then true else false end as LastMonth,
 	|	case when year ( Assets.Starting ) = year ( &Period ) then AssetsBalances.Amount 
