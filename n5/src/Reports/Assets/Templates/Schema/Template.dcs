@@ -302,10 +302,19 @@
 					<v8:content>Total amortization</v8:content>
 				</v8:item>
 				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Amortizarea pentru întreaga perioadă</v8:content>
+				</v8:item>
+				<v8:item>
 					<v8:lang>ru</v8:lang>
 					<v8:content>Амортизация за весь период</v8:content>
 				</v8:item>
 			</title>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Group2</dcscom:balanceGroupName>
+				<dcscom:balanceType>ClosingBalance</dcscom:balanceType>
+			</role>
 			<appearance>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>Format</dcscor:parameter>
@@ -414,6 +423,52 @@
 				</v8:item>
 			</title>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>AmortizationOpeningBalance</dataPath>
+			<field>AmortizationOpeningBalance</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Amortization opening balance</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Amortizare sold inițial</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Амортизация начальный остаток</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:balance>true</dcscom:balance>
+				<dcscom:balanceGroupName>Group2</dcscom:balanceGroupName>
+				<dcscom:balanceType>OpeningBalance</dcscom:balanceType>
+			</role>
+			<appearance>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>Format</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType">
+						<v8:item>
+							<v8:lang>en</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ro</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>NFD=2</v8:content>
+						</v8:item>
+					</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>MarkNegatives</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+				</dcscor:item>
+			</appearance>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Asset Accounts
 select distinct Assets.Account as Account
@@ -438,14 +493,17 @@ from Catalog.IntangibleAssets as Assets
 // Assets
 select Balances.Company as Company, Balances.Asset as Asset, sum ( OpeningBalance ) as OpeningBalance,
 	sum ( TurnoverDr ) as TurnoverDr, sum ( TurnoverCr ) as TurnoverCr,
-	sum ( ClosingBalance ) as ClosingBalance, sum ( TotalAmortization ) as TotalAmortization,
+	sum ( ClosingBalance ) as ClosingBalance,
+	sum ( AmortizationOpeningBalance ) as AmortizationOpeningBalance,
+	sum ( TotalAmortization ) as TotalAmortization,
 	sum ( AmortizationDr ) as AmortizationDr, sum ( AmortizationCr ) as AmortizationCr, sum ( Cost ) as Cost
 into Assets
 from (
 	select Assets.Company as Company, Assets.ExtDimension1 as Asset, Assets.AmountOpeningBalance as OpeningBalance,
  		Assets.AmountTurnoverDr as TurnoverDr, Assets.AmountTurnoverCr as TurnoverCr,
-		Assets.AmountClosingBalance	as ClosingBalance, 0 as TotalAmortization,
-		0 as AmortizationDr, 0 as AmortizationCr, Assets.AmountClosingBalance as Cost
+		Assets.AmountClosingBalance	as ClosingBalance, 0 as AmortizationOpeningBalance,
+		0 as TotalAmortization, 0 as AmortizationDr, 0 as AmortizationCr,
+		Assets.AmountClosingBalance as Cost
 	from AccountingRegister.General.BalanceAndTurnovers ( &amp;DateStart, &amp;DateEnd, , ,
 		Account in ( select Account from Accounts ), ,
 		{ExtDimension1.* as Asset, Company.*} ) as Assets
@@ -454,19 +512,11 @@ from (
 		cast ( Assets.ExtDimension1 as Catalog.IntangibleAssets ).Account
 	)
 	union all
-	select Depreciation.Company, Depreciation.ExtDimension1, 0, 0, 0, 0, 0,
+	select Depreciation.Company, Depreciation.ExtDimension1, 0, 0, 0, 0,
+		Depreciation.AmountOpeningBalanceCr, Depreciation.AmountClosingBalanceCr,
 		Depreciation.AmountTurnoverDr, Depreciation.AmountTurnoverCr,
 		- Depreciation.AmountClosingBalanceCr
 	from AccountingRegister.General.BalanceAndTurnovers ( &amp;DateStart, &amp;DateEnd, , ,
-		Account in ( select Account from DepreciationAccounts ), ,
-		{ExtDimension1.* as Asset, Company.*} ) as Depreciation
-	where Depreciation.Account in (
-		cast ( Depreciation.ExtDimension1 as Catalog.FixedAssets ).DepreciationAccount,
-		cast ( Depreciation.ExtDimension1 as Catalog.IntangibleAssets ).AmortizationAccount
-	)
-	union all
-	select Depreciation.Company, Depreciation.ExtDimension1, 0, 0, 0, 0, AmountTurnoverCr, 0, 0, 0
-	from AccountingRegister.General.BalanceAndTurnovers ( , &amp;DateEnd, , ,
 		Account in ( select Account from DepreciationAccounts ), ,
 		{ExtDimension1.* as Asset, Company.*} ) as Depreciation
 	where Depreciation.Account in (
@@ -495,14 +545,15 @@ from InformationRegister.IntangibleAssetsLocation.SliceLast  ( &amp;DateEnd, {As
 // Main selection
 select Assets.Company as Company, Assets.Asset as Asset, Assets.OpeningBalance as OpeningBalance,
 	Assets.TurnoverDr as TurnoverDr, Assets.TurnoverCr as TurnoverCr, Assets.ClosingBalance as ClosingBalance,
+	Assets.AmortizationOpeningBalance as AmortizationOpeningBalance,
 	Assets.TotalAmortization as TotalAmortization, Assets.AmortizationDr as AmortizationDr,
 	Assets.AmortizationCr as AmortizationCr, Assets.Cost as Cost, Assets.Asset.Account as Account,
 	Locations.Department as Department, Locations.Employee as Employee,
 	Depreciation.Charge as Charge, Depreciation.UsefulLife as UsefulLife,
 	isnull ( Commissioning.Date, IntangibleAssetsCommissioning.Date ) as CommissioningDate
 {select Company.*, Asset.*, Account.*, OpeningBalance, TurnoverDr as TurnoverDr, TurnoverCr, ClosingBalance,
-	TotalAmortization, AmortizationDr, AmortizationCr, Cost, Department, Employee, UsefulLife, Charge,
-	CommissioningDate}
+	AmortizationOpeningBalance, TotalAmortization, AmortizationDr, AmortizationCr, Cost, Department,
+	Employee, UsefulLife, Charge, CommissioningDate}
 from Assets as Assets
 	//
 	// Locations
@@ -586,6 +637,10 @@ from Assets as Assets
 		<dataPath>CommissioningDate</dataPath>
 		<expression>CommissioningDate</expression>
 		<group>Asset</group>
+	</totalField>
+	<totalField>
+		<dataPath>AmortizationOpeningBalance</dataPath>
+		<expression>Sum(AmortizationOpeningBalance)</expression>
 	</totalField>
 	<parameter>
 		<name>Period</name>
@@ -736,13 +791,16 @@ from Assets as Assets
 					<dcsset:field>ClosingBalance</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>AmortizationOpeningBalance</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>AmortizationDr</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>AmortizationCr</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>TotalAmortization</dcsset:field>
-				</dcsset:item>
-				<dcsset:item xsi:type="dcsset:SelectedItemField">
-					<dcsset:field>AmortizationDr</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Cost</dcsset:field>
