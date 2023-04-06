@@ -458,21 +458,20 @@ from (
 	where Rates.Rate &lt;&gt; 0
 	and Rates.Period &gt; &amp;DateStart and Rates.Period &lt;= &amp;DateEnd
 	and Rates.Employee in ( select distinct Employee from Employees )
+	union all
+	select Rates.Employee, Rates.Compensation, Employment.Date, true, Rates.Currency, Rates.Rate, Rates.InHand
+	from Additions as Rates
+		//
+		// Employment
+		//
+		join (
+			select Employment.Employee as Employee, beginofperiod ( max ( Employment.DateStart ), day ) as Date
+			from Employment as Employment
+			where Employment.Employee in ( select distinct Employee from Additions )
+			group by Employment.Employee
+		) as Employment
+		on Employment.Employee = Rates.Employee
 ) as Rates
-union all
-select Additions.Employee, Additions.Compensation, Employment.Date, true, Additions.Currency, Additions.Rate,
-	Additions.InHand
-from Additions as Additions
-	//
-	// Employment
-	//
-	join (
-		select Employment.Employee as Employee, beginofperiod ( max ( Employment.DateEnd ), day ) as Date
-		from Employment as Employment
-		where Employment.Employee in ( select distinct Employee from Additions )
-		group by Employment.Employee
-	) as Employment
-	on Employment.Employee = Additions.Employee
 ;
 // Advances. We also need them to calculate salary in hand (advances has to be taken away from amount in hand)
 select Balances.Employee as Employee, Balances.Compensation as Compensation,
