@@ -218,10 +218,20 @@ Procedure sqlTaxes ()
 	|group by Taxes.Employee, Taxes.Ref, Taxes.Date
 	|;
 	|// #Taxes
-	|select Taxes.Employee as Employee, Taxes.Date as Date, Compensations.Amount as Income, 1 as Months,
+	|select Taxes.Employee as Employee, Taxes.Date as Date, Compensations.Amount as Income,
+	|	1 + datediff ( FirstMonth.Date, Taxes.Date, month ) as Months,
 	|	Taxes.Deductions as Deductions, Taxes.MedicalBase as MedicalBase, Taxes.Medical as Medical,
 	|	Taxes.IncomeTaxBase as IncomeTaxBase, Taxes.IncomeTax as IncomeTax 
 	|from Taxes as Taxes
+	|	//
+	|	// First Month
+	|	//
+	|	join (
+	|		select Taxes.Employee as Employee, min ( Taxes.Date ) as Date
+	|		from Taxes as Taxes
+	|		group by Taxes.Employee
+	|	) as FirstMonth
+	|	on FirstMonth.Employee = Taxes.Employee
 	|	//
 	|	//	Compensations
 	|	//
@@ -527,11 +537,14 @@ EndProcedure
 Procedure putDeductionsPeriods ( Params ) 
 
 	i = 1;
+	total = 0;
 	for each row in DeductionsPeriods do
 		Params [ "DeductionDate" + i ] = row.Date;
 		Params [ "DeductionsAmount" + i ] = row.Amount;
 		i = i + 1;
+		total = total + row.Amount;
 	enddo;
+	Params.TotalDeductions = total;
 
 EndProcedure
 
