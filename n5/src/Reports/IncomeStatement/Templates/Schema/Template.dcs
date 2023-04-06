@@ -177,6 +177,7 @@ select allowed
 	Turnovers.ExtDimension1 as Dim1
 {select Period, Account.*, Company.*, Currency.*, Amount, Class.*, Dim1.* }
 from AccountingRegister.General.Turnovers ( {&amp;StartDate}, {&amp;EndDate}, auto, {Account.* as Account}, , {Company.* as Company, Currency.* as Currency} ) as Turnovers
+where not Turnovers.Recorder refs Document.YearClose
 {where 
 	case when &amp;Periodicity = 1 then Turnovers.DayPeriod when &amp;Periodicity = 2 then Turnovers.WeekPeriod 
 	when &amp;Periodicity = 3 then Turnovers.TenDaysPeriod when &amp;Periodicity = 4 then Turnovers.MonthPeriod 
