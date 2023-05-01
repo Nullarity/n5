@@ -1,4 +1,5 @@
 ﻿// Test cost-sensitive scenarios
+
 while ( stillWorking ( _.Job ) ) do
 	Pause ( 30 );
 enddo;
