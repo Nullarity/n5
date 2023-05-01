@@ -8,7 +8,8 @@ Procedure Distribute ( DistributedAmount, Table, KeyColumn, ResultColumn, Overwr
 			endif; 
 		endif; 
 	#endif
-	if ( Table.Count () = 0 ) then
+	if ( DistributedAmount = 0
+		or Table.Count () = 0 ) then
 		return;
 	endif; 
 	totalsByKeyColumn = Table.Total ( KeyColumn );
