@@ -259,6 +259,7 @@ Procedure readAppearance ()
 	|Header GroupItems GroupServices GroupFixedAssets GroupIntangibleAssets GroupAccounts GroupDiscounts GroupAdditional Footer lock ChangesDisallowed; 
 	|ItemsTableCommandBar ServicesCommandBar FixedAssetsCommandBar IntangibleItemsCommandBar AccountsCommandBar DiscountsCommandBar
 	|	disable ChangesDisallowed;
+	|ShippingAmount ShippingAccount ShippingPercent unlock Object.Shipping;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -2341,4 +2342,53 @@ Procedure ImportOnChange  (Item )
 	
 	applyReference ();
 
+EndProcedure
+
+&AtClient
+Procedure ShippingOnChange ( Item )
+
+	applyShipping ();
+
+EndProcedure
+
+&AtClient
+Procedure applyShipping ()
+	
+	if ( not Object.Shipping ) then
+		Object.ShippingAccount = undefined;
+		Object.ShippingAmount = 0;
+		Object.ShippingPercent = 0;
+	endif;
+	Appearance.Apply ( ThisObject, "Object.Shipping" );
+	
+EndProcedure
+
+&AtClient
+Procedure ShippingPercentOnChange ( Item )
+	
+	calcShippingAmount ();
+	
+EndProcedure
+
+&AtClient
+Procedure calcShippingAmount ()
+	
+	amount = Object.Amount - Object.VAT;
+	Object.ShippingAmount = amount / 100 * Object.ShippingPercent; 
+	
+EndProcedure
+
+&AtClient
+Procedure ShippingAmountOnChange ( Item )
+
+	calcShippingPercent ();
+
+EndProcedure
+
+&AtClient
+Procedure calcShippingPercent ()
+	
+	amount = Object.Amount - Object.VAT;
+	Object.ShippingPercent = 100 * Object.ShippingAmount / amount; 
+	
 EndProcedure

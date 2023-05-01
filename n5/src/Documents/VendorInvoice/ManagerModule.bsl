@@ -27,6 +27,7 @@ Function Post ( Env ) export
 	if ( not checkRows ( Env ) ) then
 		return false;
 	endif;
+	includeShipping ( Env );
 	if ( not distributeDiscounts ( Env ) ) then
 		return false;
 	endif;
@@ -138,7 +139,11 @@ Procedure sqlFields ( Env )
 	|	case when Documents.PaymentDate = datetime ( 1, 1, 1 ) then datetime ( 3999, 12, 31 ) else Documents.PaymentDate end as PaymentDate,
 	|	Documents.PaymentOption as PaymentOption, PaymentDetails.PaymentKey as PaymentKey, Documents.Import as Import,
 	|	isnull ( Distribution.Exist, false ) as DistributionExists, isnull ( Forms.Exists, false ) as Forms, Documents.Department as Department,
-	|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery, isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery
+	|	isnull ( DiscountsBefore.Exists, false ) as DiscountsBeforeDelivery, isnull ( DiscountsAfter.Exists, false ) as DiscountsAfterDelivery,
+	|	Documents.ShippingAccount as ShippingAccount,
+	|	cast ( case when Documents.Currency = Constants.Currency then Documents.ShippingAmount
+	|		else Documents.ShippingAmount * Documents.Rate / Documents.Factor
+	|	end as Number ( 15, 2 ) ) ShippingAmount
 	|from Document.VendorInvoice as Documents
 	|	//
 	|	// Lots
@@ -953,6 +958,15 @@ Function checkRows ( Env )
 	
 EndFunction
 
+Procedure includeShipping ( Env )
+	
+	table = Env.Cost;
+	type = Metadata.Documents.VendorInvoice.TabularSections.Items.Attributes.Amount.Type;
+	CollectionsSrv.Adjust ( table, "Amount", type );
+	Collections.Distribute ( Env.Fields.ShippingAmount, table, "Amount", "Shipping" );
+	
+EndProcedure
+	
 Function distributeDiscounts ( Env )
 	
 	if ( not Env.PaymentDiscounts ) then
@@ -1055,7 +1069,7 @@ Procedure makeCost ( Env )
 			movement.Lot = lot;
 		endif; 
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount;
+		movement.Amount = row.Amount + row.Shipping;
 		commitCost ( Env, p, row );
 	enddo; 
 	
@@ -1089,6 +1103,14 @@ Procedure commitCost ( Env, Params, Row )
 	Params.CurrencyAmountCr = row.ContractAmount;
 	Params.Recordset = Env.Registers.General;
 	GeneralRecords.Add ( Params );
+	shipping = Row.Shipping;
+	if ( shipping <> 0 ) then
+		Params.AccountCr = fields.ShippingAccount;
+		Params.Operation = Enums.Operations.Shipping;
+		Params.Amount = row.Shipping;
+		Params.QuantityDr = 0;
+		GeneralRecords.Add ( Params );
+	endif;
 
 EndProcedure
 

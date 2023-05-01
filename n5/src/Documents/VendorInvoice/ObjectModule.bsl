@@ -29,6 +29,7 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	endif;
 	checkWarehouse ( CheckedAttributes );
 	checkAdvanceAccount ( CheckedAttributes );
+	checkShipping ( CheckedAttributes );
 
 EndProcedure
 
@@ -109,6 +110,16 @@ Procedure checkAdvanceAccount ( CheckedAttributes )
 	
 	if ( CloseAdvances ) then
 		CheckedAttributes.Add ( "AdvanceAccount" );
+	endif; 
+	
+EndProcedure 
+
+Procedure checkShipping ( CheckedAttributes )
+	
+	if ( Shipping ) then
+		CheckedAttributes.Add ( "ShippingPercent" );
+		CheckedAttributes.Add ( "ShippingAmount" );
+		CheckedAttributes.Add ( "ShippingAccount" );
 	endif; 
 	
 EndProcedure 
