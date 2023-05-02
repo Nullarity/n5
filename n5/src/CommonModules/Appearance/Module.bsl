@@ -42,24 +42,34 @@ Procedure applyAppearance ( Form, Value, IsItemUpdate, CanBeDisallowed )
 	for each item in Form.AppearanceData do
 		directive = item.Directive;
 		if ( directive <> "" ) then
-			#if ( Server or ExternalConnection ) then
-				if ( directive = "c"
-					or directive = "к" ) then
-					continue;
-				endif;
-			#endif
-			#if ( Client ) then
-				if ( directive = "s"
-					or directive = "с" ) then // 'c' is Russian
-					continue;
-				endif;
+			#if ( not ThickClientManagedApplication ) then
+				#if ( Server or ExternalConnection ) then
+					if ( directive = "c"
+						or directive = "к" ) then
+						continue;
+					endif;
+				#endif
+				#if ( Client ) then
+					if ( directive = "s"
+						or directive = "с" ) then // 'c' is Russian
+						continue;
+					endif;
+				#endif
 			#endif
 		endif;
 		if ( not appearanceDependsOn ( item, Value, IsItemUpdate ) ) then
 			continue;
 		endif; 
 		dependencyFound = true;
-		result = eval ( item.Expression );
+		#if ( ThickClientManagedApplication ) then
+			try
+				result = eval ( item.Expression );
+			except
+				continue;
+			endtry;
+		#else
+			result = eval ( item.Expression );
+		#endif
 		formatFields ( Form, items, item, result );
 	enddo;
 	if ( Value = undefined or CanBeDisallowed or dependencyFound ) then
