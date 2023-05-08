@@ -9,7 +9,7 @@ CloseAll ();
 
 StandardProcessing = false;
 
-id = Call ( "Common.ScenarioID", "2C04559E" );
+id = Call ( "Common.ScenarioID", "A15B" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -33,7 +33,6 @@ Put ( "#Memo", id );
 
 Call ( "Common.CheckCurrency", form );
 
-Put ( "#ExpenseAccount", "7141" );
 Put ( "#Department", env.Department );
 if ( Fetch ( "#ShowPrices" ) = "No" ) then
 	Click ( "#ShowPrices" );
@@ -44,21 +43,14 @@ Call ( "Table.Clear", table );
 
 Click ( "#ItemsAdd" );
 
-Try
-	Put ( "#ItemsExpenseAccount", "7141", table );
-Except
-	Click ( "#ItemsShowDetails" );
-EndTry;
-
 Put ( "#ItemsItem", env.LVI, table );
 Next ();
 Put ( "#ItemsQuantity", 2, table );// must show error
 Next ();
 Put ( "#ItemsAmount", 100, table );
-Put ( "#ItemsExpenseAccount", "7141", table );
 Next ();
 Put ( "#ItemsEmployee", env.Employee, table );
-Put ( "#ItemsDim1", env.Expense, table );
+Put ( "#ItemsAccount", "2132", table );
 
 With ( form );
 Click ( "#FormPost" );
@@ -199,6 +191,7 @@ Procedure createEnv ( Env )
 	
 	Put ( "#ResidualValue", 100 );
 	Put ( "#ExpenseAccount", "7141" );
+	Click ( "#KeepOnBalance" );
 	Click ( "#FormOK" );
 	
 	With ( form );
