@@ -234,15 +234,16 @@ Procedure sqlItems(Env)
 	document = Env.Document;
 	s = "
 	|// Items
-	|select presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
+	|select 1 as Table, Items.LineNumber as LN,
+	|	presentation ( case when Items.Package = value ( Catalog.Packages.EmptyRef ) then Items.Item.Unit else Items.Package end ) as Unit,
 	|	Items.QuantityPkg as Quantity,
 	|	" + total + " as Total, " + vat + " as VAT, " + amount + " as Amount, " + discount + " as Discount, " + price + " as Price,
 	|	Items.Feature.Description as Feature, Items.Item.FullDescription as Item, " + discountRate + " as DiscountRate
 	|into Items
 	|from Document." + document + ".Items as Items
-	|where Items.Ref = &Ref 
+	|where Items.Ref = &Ref
 	|union all
-	|select Services.Item.Unit.Code, Services.Quantity, " + total + ", " + vat + ", " + amount + ", " + discount + ", " + price + ", 
+	|select 2, Services.LineNumber, Services.Item.Unit.Code, Services.Quantity, " + total + ", " + vat + ", " + amount + ", " + discount + ", " + price + ", 
 	|	Services.Feature.Description, Services.Description, " + discountRate + "
 	|from Document." + document + ".Services as Services
 	|where Services.Ref = &Ref 
@@ -251,6 +252,7 @@ Procedure sqlItems(Env)
 	|select Items.Unit as Unit, Items.Quantity as Quantity, Items.Total as Total, Items.VAT as VAT, Items.Amount as Amount, Items.Feature as Feature,
 	|	Items.Price as Price, Items.Item as Item, Items.DiscountRate as DiscountRate, Items.Discount as Discount
 	|from Items as Items
+	|order by Items.Table, Items.LN
 	|";
 	Env.Selection.Add(s);
 	
