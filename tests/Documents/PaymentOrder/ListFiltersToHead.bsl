@@ -8,7 +8,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2B8A8C66" );
+id = Call ( "Common.ScenarioID", "A14Y" );
 
 form = Call ( "Common.OpenList", Meta.Documents.PaymentOrder );
 

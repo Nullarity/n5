@@ -129,4 +129,4 @@ enddo;
 
 params.Insert ( "Agents", agents );
 params.Insert ( "Job", job );
-NewJob ( "Tester", "TotalTest.OneThread", , job, , , , job );
+NewJob ( "Tester", "TotalTest.OneThread", "n5", job, , , , job );
