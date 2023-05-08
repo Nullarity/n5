@@ -397,6 +397,7 @@ Procedure setBarcode(Area, Barcode)
 	
 	picture = Area.Drawings.Barcode;
 	p = PrintBarcodes.GetParams();
+	p.ShowText = false;
 	p.Width = picture.Width;
 	p.Height = picture.Height;
 	p.Barcode = Barcode;
@@ -494,10 +495,6 @@ Procedure putHeaderAttachment(Params, Env)
 	p.Number = number;
 	p.Date = fields.Date;
 	p.VATCode = fields.VATCode;
-	if (fields.ElectronicPortrait
-			or fields.ElectronicLandscape) then
-		setLogo(area, fields);
-	endif;
 	Params.TabDoc.Put(area);
 	
 EndProcedure
