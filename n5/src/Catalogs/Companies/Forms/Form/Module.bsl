@@ -392,15 +392,3 @@ Procedure removeStamp ()
 	NewStamp = true;
 	
 EndProcedure
-
-
-
-&AtClient
-Procedure BeforeWrite(Cancel, WriteParameters)
-	
-	if ( Object.Description = "ABC Distributions"
-		and String ( Object.BankAccount ) = "local B10E" ) then
-		raise "Company Bank Account has been changed";
-	endif;
-	
-EndProcedure
