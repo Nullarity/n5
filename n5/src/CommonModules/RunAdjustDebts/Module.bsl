@@ -200,6 +200,7 @@ Procedure sqlAdjustments ( Env )
 	s = s + "
 	|from " + table + ".Adjustments as Adjustments
 	|where Adjustments.Ref = &Ref
+	|order by Adjustments.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	
@@ -324,6 +325,7 @@ Procedure sqlAdjustmentsReceiver ( Env )
 	|" + documentAccounts ( Env, true ) + vatAccounts () + "
 	|from " + table + " as Adjustments
 	|where Adjustments.Ref = &Ref
+	|order by Adjustments.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	
@@ -350,6 +352,7 @@ Procedure sqlAccounting ( Env )
 	|			else Accounting.PaymentDate
 	|		end
 	|where Accounting.Ref = &Ref
+	|order by Accounting.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	
@@ -376,6 +379,7 @@ Procedure sqlAccountingReceiver ( Env )
 	|			else Accounting.PaymentDate
 	|		end
 	|where Accounting.Ref = &Ref
+	|order by Accounting.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	
