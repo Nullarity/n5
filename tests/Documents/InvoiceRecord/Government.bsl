@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0FY" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A15E" ) );
 getEnv ();
 createEnv ();
 
@@ -16,6 +16,7 @@ Click("#JustSave");
 #region generateTaxInvoice
 Click("#NewInvoiceRecord");
 With ();
+Clear ( "#Range" );
 Set ( "#Number", this.ID + this.ID );
 Click ("#FormPrint");
 if ( FindMessages ( "*government organization*").Count () = 0 ) then
