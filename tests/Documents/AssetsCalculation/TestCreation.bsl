@@ -2,7 +2,7 @@
 CloseAll ();
 
 env = getEnv ();
-//createEnv ( env );
+createEnv ( env );
 
 // test november 2016 must be empty calculation
 date = env.Date;
@@ -38,7 +38,7 @@ EndProcedure
 
 Function getEnv ()
 
-	id = " " + Call ( "Common.ScenarioID", "A15U" ) + "#";
+	id = " " + Call ( "Common.ScenarioID", "A15W" ) + "#";
 	p = new Structure ();
 	p.Insert ( "ID", id );
 	p.Insert ( "Department", "_Department" + id );
