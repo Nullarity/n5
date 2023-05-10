@@ -375,10 +375,11 @@ EndFunction
 Function amountCumulative ( Env, Data )
 	
 	years = 0;
-	for i = 1 to Data.Years do
+	for i = 1 to Max ( 1, Data.Years ) do
 		years = years + i;				
 	enddo;
-	return ( Data.YearsLeft / years ) * Data.Basis / monthsThisYear ( Env, Data ); 
+	yearsLeft = Max ( 1, Data.YearsLeft );
+	return ( yearsLeft / years ) * Data.Basis / monthsThisYear ( Env, Data ); 
 	
 EndFunction
 
