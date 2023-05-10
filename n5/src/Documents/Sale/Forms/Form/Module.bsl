@@ -744,10 +744,21 @@ Procedure ReturnOnChange ( Item )
 EndProcedure
  
 &AtClient
-Procedure MethodOnChange ( Item )
+Procedure LocationOnChange ( Item )
 	
-	applyMethod ();
+	applyLocation ();
+	
+EndProcedure
 
+&AtClient
+Procedure applyLocation ()
+	
+	method = DF.Pick ( Object.Location, "Method", undefined );
+	if ( ValueIsFilled ( method ) ) then
+		Object.Method = method;
+		applyMethod ();
+	endif;
+	
 EndProcedure
 
 &AtClient
@@ -762,6 +773,13 @@ Procedure applyMethod ()
 	if ( cash ) then
 		CurrentItem = Items.Taken;
 	endif;
+
+EndProcedure
+
+&AtClient
+Procedure MethodOnChange ( Item )
+	
+	applyMethod ();
 
 EndProcedure
 

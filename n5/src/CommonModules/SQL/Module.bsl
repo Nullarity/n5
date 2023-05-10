@@ -41,16 +41,18 @@ EndProcedure
 Procedure Unload ( Env, Data = undefined ) export
 
 	q = Env.Q;
+	tables = CoreLibrary.QueryTables ( q.Text );
 	result = ? ( Data = undefined, q.ExecuteBatch (), Data );
-	extractData ( q, Env, result );
+	if ( tables <> undefined ) then
+		extractData ( tables, Env, result );
+	endif;
 	
 EndProcedure
 
-Procedure extractData ( Q, Env, Data )
+Procedure extractData ( Tables, Env, Data )
 	
 	indexExists = false;
-	list = CoreLibrary.QueryTables ( Q.Text );
-	for each table in list do
+	for each table in Tables do
 		type = table.Type;
 		name = table.Name;
 		index = table.Index;
@@ -99,7 +101,8 @@ Function Exec ( Q, CheckAccess = true ) export
 	endif;
 	SQL.DefineTempManager ( Q );
 	env = new Structure ();
-	extractData ( Q, env, Q.ExecuteBatch () );
+	tables = CoreLibrary.QueryTables ( q.Text );
+	extractData ( tables, env, Q.ExecuteBatch () );
 	return env;
 	
 EndFunction 
