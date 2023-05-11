@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A14V" );
+id = Call ( "Common.ScenarioID", "A16J" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -29,6 +29,7 @@ Procedure getEnv ()
 	id = this.ID;
 	this.Insert ( "Date", CurrentDate () );
 	this.Insert ( "Vendor", "Vendor " + id );
+	this.Insert ( "Warehouse", "Warehouse " + id );
 	this.Insert ( "Item1", "Item1 " + id );
 	this.Insert ( "Item2", "Item2 " + id );
 
@@ -45,6 +46,12 @@ Procedure createEnv ()
 	p = Call ( "Catalogs.Organizations.CreateVendor.Params" );
 	p.Description = this.Vendor;
 	Call ( "Catalogs.Organizations.CreateVendor", p );
+	#endregion
+	
+	#region newWarehouse
+	p = Call ( "Catalogs.Warehouses.Create.Params" );
+	p.Description = this.Warehouse;
+	Call ( "Catalogs.Warehouses.Create", p );
 	#endregion
 	
 	#region vendorInvoice
