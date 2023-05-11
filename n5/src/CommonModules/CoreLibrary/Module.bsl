@@ -33,6 +33,13 @@ Function QueryTables ( Query ) export
 	
 EndFunction
 
+Procedure AugmentQuery ( Query ) export
+	
+	//@skip-warning
+	module ().GetLibrary ( "Root" ).AugmentQuery ( SessionParameters.License, Query );
+	
+EndProcedure
+
 Function VersionToNumber ( Version ) export
 	
 	//@skip-warning

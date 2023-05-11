@@ -22,6 +22,7 @@ Procedure Prepare ( Env ) export
 	
 	q = Env.Q;
 	q.Text = StrConcat ( Env.Selection, ";" );
+	CoreLibrary.AugmentQuery ( q.Text );
 	SQL.DefineTempManager ( q );
 	Env.Selection = new Array ();
 
@@ -41,8 +42,13 @@ EndProcedure
 Procedure Unload ( Env, Data = undefined ) export
 
 	q = Env.Q;
+	if ( Data = undefined ) then
+		CoreLibrary.AugmentQuery ( q.Text );
+		result = q.ExecuteBatch ();
+	else
+		result = Data;
+	endif;
 	tables = CoreLibrary.QueryTables ( q.Text );
-	result = ? ( Data = undefined, q.ExecuteBatch (), Data );
 	if ( tables <> undefined ) then
 		extractData ( tables, Env, result );
 	endif;
@@ -101,6 +107,7 @@ Function Exec ( Q, CheckAccess = true ) export
 	endif;
 	SQL.DefineTempManager ( Q );
 	env = new Structure ();
+	CoreLibrary.AugmentQuery ( q.Text );
 	tables = CoreLibrary.QueryTables ( q.Text );
 	extractData ( tables, env, Q.ExecuteBatch () );
 	return env;
