@@ -224,6 +224,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|from Charges as Charges
 	|where Charges.Cost
 	|and not Charges.VAT
+	|// :order by Charges.ChargesLineNumber
 	|;
 	|// Accepters
 	|select distinct Items.Invoice as Document, isnull ( ExchangeRates.Rate, 1 ) as Rate, isnull ( ExchangeRates.Factor, 1 ) as Factor, Items.Item as Item,
@@ -268,6 +269,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|	left join Catalog.Lots as Lots
 	|	on Lots.Document = Goods.Ref
 	|where Goods.Ref.Posted
+	|// :order by Goods.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	

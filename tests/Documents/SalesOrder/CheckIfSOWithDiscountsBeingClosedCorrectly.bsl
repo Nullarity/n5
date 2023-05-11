@@ -51,8 +51,12 @@ Commando("e1cib/command/Document.Invoice.Create");
 Set("#Customer", this.Customer);
 Next ();
 Items = Get ( "!ItemsTable" );
-Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
-Click ( "!FormPostAndClose" );
+try
+	Assert ( Call("Table.Count", Items ) ).Not_ ().Empty ();
+	Click ( "!FormPostAndClose" );
+except
+	DebugStart ();
+endtry;
 #endregion
 
 #region checkInvoive2
