@@ -224,7 +224,7 @@ Procedure sqlDistributingExpenses ( Env )
 	|from Charges as Charges
 	|where Charges.Cost
 	|and not Charges.VAT
-	|// :order by Charges.ChargesLineNumber
+	|// :order by Charges.LineNumber
 	|;
 	|// Accepters
 	|select distinct Items.Invoice as Document, isnull ( ExchangeRates.Rate, 1 ) as Rate, isnull ( ExchangeRates.Factor, 1 ) as Factor, Items.Item as Item,
