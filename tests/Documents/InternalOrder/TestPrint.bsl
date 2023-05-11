@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-this.Insert ( "ID", Call ( "Common.ScenarioID", "A0SK" ) );
+this.Insert ( "ID", Call ( "Common.ScenarioID", "A16T" ) );
 getEnv ();
 createEnv ();
 
@@ -12,6 +12,9 @@ p = Call("Common.Find.Params");
 p.Where = "Memo";
 p.What = this.ID;
 Call("Common.Find", p);
+Clear ( "#ItemFilter" );
+Clear ( "#WarehouseFilter" );
+Clear ( "#DepartmentFilter" );
 Click ( "#FormDataProcessorPrintInternalOrder" );
 With ();
 Put("#Language", "Default");
