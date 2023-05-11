@@ -2,7 +2,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2D090785" );
+id = Call ( "Common.ScenarioID", "A16H" );
 itemName = "Item " + id;
 featureName = "feature " + id;
 prices = "Cost";
@@ -54,6 +54,8 @@ if ( flag = "No" ) then
 	Click ( "#ShowPrices" );
 endif;
 
+Put ( "#Filter", "None" );
+
 // *************************************
 // Search Item and Feature
 // *************************************
@@ -78,7 +80,7 @@ Call ( "Common.Find", p );
 
 table = Activate ( "#Prices" );
 search = new Map ();
-search [ "Prices" ] = prices + ", USD";
+search [ "Prices" ] = prices + ", MDL";
 table.GotoFirstRow ();
 Pause ( 1 );
 table.GotoRow ( search );

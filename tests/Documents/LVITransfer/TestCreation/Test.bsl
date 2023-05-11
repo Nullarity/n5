@@ -9,7 +9,7 @@ CloseAll ();
 
 StandardProcessing = false;
 
-id = Call ( "Common.ScenarioID", "2C00A4A1" );
+id = Call ( "Common.ScenarioID", "A16C" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -185,6 +185,7 @@ Procedure createEnv ( Env )
 	Put ( "#Employee", env.EmployeeSender );
 	Put ( "#ItemsExpense", env.Expense );
 	Put ( "#Department", env.DepartmentSender );
+	Click ( "#KeepOnBalance" );
 	
 	Put ( "#ResidualValue", 100 );
 	Put ( "#ExpenseAccount", "7141" );
