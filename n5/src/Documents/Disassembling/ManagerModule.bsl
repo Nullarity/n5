@@ -200,6 +200,7 @@ Procedure sqlItemsAndKeys ( Env )
 	|	and Details.Series = Items.Series
 	|	and Details.Warehouse = Items.Warehouse
 	|	and Details.Account = Items.Account
+	|// :order by Items.LineNumber
 	|";
 	Env.Selection.Add ( s );
 	
