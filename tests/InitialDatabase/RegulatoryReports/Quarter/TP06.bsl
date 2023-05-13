@@ -15,6 +15,7 @@
 	|from Catalog.Divisions as Divisions
 	|where not Divisions.DeletionMark
 	|and Divisions.Owner = &Company
+	|order by Divisions.Code
 	|";
 	Env.Selection.Add ( str );	
 	getData ();
