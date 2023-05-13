@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A16S" );
+id = Call ( "Common.ScenarioID", "A16X" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -29,7 +29,7 @@ Procedure getEnv ()
 	id = this.ID;
 	this.Insert ( "Date", CurrentDate () );
 	this.Insert ( "Vendor", "Vendor " + id );
-	this.Insert ( "Warehouse", "Warehouse " + id );
+	this.Insert ( "Warehouse", "Warehouse: " + id );
 	this.Insert ( "Item1", "Item1 " + id );
 	this.Insert ( "Item2", "Item2 " + id );
 
@@ -58,6 +58,7 @@ Procedure createEnv ()
 	p = Call ( "Documents.VendorInvoice.Buy.Params" );
 	p.Date = this.Date - 86400*2;
 	p.Vendor = this.Vendor;
+	p.Warehouse = this.Warehouse;
 	items = new Array ();
 	row = Call ( "Documents.VendorInvoice.Buy.ItemsRow" );
 	row.Item = this.Item1;
