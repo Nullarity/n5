@@ -342,7 +342,7 @@ EndProcedure
 Function receiveItems ( Env, Cost )
 	
 	items = SQL.Fetch ( Env, "$ItemsAndKeys" );
-	items.Columns.Add ( "Cost", Metadata.DefinedTypes.Quantity.Type );
+	items.Columns.Add ( "Cost", Metadata.DefinedTypes.Amount.Type );
 	Collections.Distribute ( Cost.Total ( "Cost" ), items, "CostRate", "Cost" );
 	fields = Env.Fields;
 	lot = fields.Lot;
