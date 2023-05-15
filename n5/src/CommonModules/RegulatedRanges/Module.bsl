@@ -265,7 +265,7 @@ Procedure shiftRange ( Range, Series, Number, Data )
 	if ( data.Status = null ) then
 		raise Output.RangeInactive ( new Structure ( "Range", Range ) );
 	endif;
-	ok = Series = data.Prefix
+	ok = TrimAll ( Series ) = data.Prefix
 	and Number >= data.Start
 	and Number <= data.Finish;
 	if ( not ok ) then
