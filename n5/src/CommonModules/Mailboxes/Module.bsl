@@ -215,3 +215,12 @@ Function GetAddressPresentation ( Email, Name, Full = true ) export
 	endif; 
 	
 EndFunction 
+
+&AtServer
+Function SystemMailReady () export
+	
+	SetPrivilegedMode ( true );
+	return Cloud.SMTPServer () <> ""
+	and Cloud.SMTPUser () <> "";
+	
+EndFunction

@@ -8550,3 +8550,90 @@ Function SetDefaultContractConfirmation ( Params = undefined ) export
 	return Output.AskUser ( text, Params, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
 EndFunction
+
+&AtServer
+Procedure SendingPayslipsIsOutdated ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'The posting date is outdated';ro = 'Data trimiterii este depășită';ru = 'Дата отправки устарела'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Function PayslipSubject ( Params = undefined ) export
+
+	text = NStr ( "en = 'Fluturașul salarial / Расчётный листок / Payslip %Month';ro = 'Fluturașul salarial / Расчётный листок / Payslip %Month';ru = 'Fluturașul salarial / Расчётный листок / Payslip %Month'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function PayslipBody ( Params = undefined ) export
+
+	text = NStr ( "en = 'Bună, %Employee,
+				  |Fluturașul tău de salariu pentru %Month se găsește în atașament.
+				  |Acesta este un email automat; te rugăm să nu răspunzi.
+				  |Mulțumesc.
+				  |
+				  |---
+				  |
+				  |Здравствуйте, %Employee,
+				  |Во вложении к письму вы найдете ваш расчётный листок за %Month.
+				  |Это автоматическое письмо; пожалуйста, не отвечайте.
+				  |Спасибо.
+				  |
+				  |---
+				  |
+				  |Hi %Employee,
+				  |Your payslip for %Month can be found in the attachment.
+				  |This is an automatic email; please do not reply.
+				  |Thank you.
+				  |';ro = 'Bună, %Employee,
+				  |Fluturașul tău de salariu pentru %Month se găsește în atașament.
+				  |Acesta este un email automat; te rugăm să nu răspunzi.
+				  |Mulțumesc.
+				  |
+				  |---
+				  |
+				  |Здравствуйте, %Employee,
+				  |Во вложении к письму вы найдете ваш расчётный листок за %Month.
+				  |Это автоматическое письмо; пожалуйста, не отвечайте.
+				  |Спасибо.
+				  |
+				  |---
+				  |
+				  |Hi %Employee,
+				  |Your payslip for %Month can be found in the attachment.
+				  |This is an automatic email; please do not reply.
+				  |Thank you.
+				  |';ru = 'Bună, %Employee,
+				  |Fluturașul tău de salariu pentru %Month se găsește în atașament.
+				  |Acesta este un email automat; te rugăm să nu răspunzi.
+				  |Mulțumesc.
+				  |
+				  |---
+				  |
+				  |Здравствуйте, %Employee,
+				  |Во вложении к письму вы найдете ваш расчётный листок за %Month.
+				  |Это автоматическое письмо; пожалуйста, не отвечайте.
+				  |Спасибо.
+				  |
+				  |---
+				  |
+				  |Hi %Employee,
+				  |Your payslip for %Month can be found in the attachment.
+				  |This is an automatic email; please do not reply.
+				  |Thank you.
+				  |'" );
+	return Output.FormatStr ( text, Params );
+
+EndFunction
+
+&AtClient
+Procedure SystemProfileEmpty ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SystemProfileEmpty" ) export
+
+	text = NStr ( "en = 'The System Mail Profile is not set up. Please fill in the required fields in the menu path: Settings > System > System Mail. Make sure you are logged in with System Administrator access rights.';ro = 'Profilul de email al sistemului nu este setat. Vă rugăm să completați câmpurile necesare în calea meniului: Setări > Sistem > Mail de sistem. Asigurați-vă că v-ați autentificat cu drepturile de acces ale Administratorului de Sistem.';ru = 'Профиль системной почты не настроен. Пожалуйста, заполните необходимые поля в меню: Настройки > Система > Системная почта. Убедитесь, что вы вошли в систему с правами доступа системного администратора.'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
