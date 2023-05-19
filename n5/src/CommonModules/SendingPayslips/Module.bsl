@@ -1,6 +1,5 @@
 Procedure Send ( Ref ) export
 
-	SetPrivilegedMode ( true );
 	env = getData ( Ref );
 	initComposer ( env );
 	initFolder ( env );
@@ -95,20 +94,3 @@ Procedure releaseFile ( Message )
 	Message = undefined;
 
 EndProcedure
-
-Procedure Write ( Object ) export
-	
-	SetPrivilegedMode ( true );
-	p = new Array ();
-	p.Add ( Object.Ref );
-	job = ScheduledJobs.CreateScheduledJob ( Metadata.ScheduledJobs.TimeReminder );
-	job.UserName = DF.Pick ( Object.Ref, "Creator.Description" );
-	job.Parameters = p;
-	job.Key = Object.Ref.UUID ();
-	sessionDate = CurrentSessionDate ();
-	timeOffset = sessionDate - CurrentDate ();
-	job.Schedule.BeginDate = Object.ReminderDate - timeOffset;
-	job.Schedule.BeginTime = Object.ReminderDate - timeOffset;
-	job.Write ();
-	
-EndProcedure 

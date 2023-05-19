@@ -46,18 +46,19 @@ Procedure removeTask ()
 EndProcedure 
 	
 Procedure Posting ( Cancel, PostingMode )
-	
+
 	p = new Array ();
 	p.Add ( Ref );
 	job = ScheduledJobs.CreateScheduledJob ( Metadata.ScheduledJobs.SendingPayslips );
-	job.UserName = Creator;
+	job.UserName = DF.Pick ( Creator, "Description" );
 	job.Parameters = p;
 	job.Key = Ref.UUID ();
 	sessionDate = CurrentSessionDate ();
 	timeOffset = sessionDate - CurrentDate ();
 	jobDate = Date - timeOffset;
-	job.Schedule.BeginDate = jobDate;
-	job.Schedule.BeginTime = jobDate;
+	schedule = job.Schedule;
+	schedule.BeginDate = jobDate;
+	schedule.BeginTime = jobDate;
 	job.Write ();
 	
 EndProcedure
