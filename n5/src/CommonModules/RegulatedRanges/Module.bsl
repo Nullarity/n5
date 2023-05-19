@@ -61,7 +61,8 @@ Procedure makeStatuses ( Object, RangeData )
 	r.Filter.Recorder.Set ( Object.Ref );
 	range = Object.Range;
 	if ( not range.IsEmpty () ) then
-		if ( Object.FormNumber = RangeData.Finish ) then
+		if ( not RangeData.Online
+			and ( Object.FormNumber = RangeData.Finish ) ) then
 			movement = r.Add ();
 			movement.Period = Object.Date;
 			movement.Range = range;

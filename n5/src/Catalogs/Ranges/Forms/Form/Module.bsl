@@ -126,9 +126,9 @@ Procedure readAppearance ()
 	|Source show filled ( Object.Source );
 	|Print show Object.Type = Enum.Forms.Invoices;
 	|ProposeEnrollment show
-	|ProposeEnrollment
-	|and empty ( Object.Item )
-	|and empty ( Object.Ref )
+	|	ProposeEnrollment
+	|	and empty ( Object.Item )
+	|	and empty ( Object.Ref )
 	|" );
 	Appearance.Read ( ThisObject, rules );
 

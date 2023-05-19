@@ -56,9 +56,6 @@ Procedure initDataReader()
 	|	isnull ( Invoices.CustomerAccount.AccountNumber, """" ) as CustomerAccountNumber,
 	|	isnull ( Invoices.Carrier.CodeFiscal, """" ) as CarrierCodeFiscal, Invoices.Carrier.FullDescription as Carrier,
 	|	isnull ( Invoices.Carrier.PaymentAddress.Address, """" ) as CarrierAddress,
-	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.Bank.Description else Invoices.Carrier.VendorContract.VendorBank.Bank end, """") as CarrierBank,
-	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.Bank.Code else Invoices.Carrier.VendorContract.VendorBank.Bank.Code end, """") as CarrierBankCode,
-	|	isnull ( case when Invoices.Carrier refs Catalog.Companies then Invoices.Account.AccountNumber else Invoices.Carrier.VendorContract.VendorBank.AccountNumber end, """") as CarrierAccountNumber,
 	|	isnull ( Invoices.LoadingAddress.Address, """" ) as LoadingAddress,
 	|	isnull ( Invoices.UnloadingAddress.Address, """" ) as UnloadingAddress
 	|from Document.InvoiceRecord as Invoices
@@ -88,7 +85,7 @@ EndProcedure
 Procedure initXML()
 	
 	XML = new XMLWriter();
-	XML.OpenFile(TempFile, "windows-1251");
+	XML.OpenFile(TempFile, , false);
 	XML.WriteXMLDeclaration();
 	XML.WriteStartElement("Documents");
 	
@@ -122,6 +119,9 @@ Procedure unload()
 	writeAttribute("BranchTitle", Fields.CompanyBank);
 	writeAttribute("BranchCode", TrimR(Fields.CompanyBankCode));
 	writeAttribute("Account", Fields.CompanyAccountNumber);
+	XML.WriteStartElement("IsManual");
+	XML.WriteText("false");
+	XML.WriteEndElement();
 	XML.WriteEndElement();
 	XML.WriteEndElement();
 	XML.WriteStartElement("Buyer");
@@ -132,6 +132,9 @@ Procedure unload()
 	writeAttribute("BranchTitle", Fields.CustomerBank);
 	writeAttribute("BranchCode", TrimR(Fields.CustomerBankCode));
 	writeAttribute("Account", Fields.CustomerAccountNumber);
+	XML.WriteStartElement("IsManual");
+	XML.WriteText("false");
+	XML.WriteEndElement();
 	XML.WriteEndElement();
 	XML.WriteEndElement();
 	if (Object.Carrier <> undefined) then
@@ -140,9 +143,12 @@ Procedure unload()
 		writeAttribute("Title", Fields.Carrier);
 		writeAttribute("Address", Fields.CarrierAddress);
 		XML.WriteStartElement("BankAccount");
-		writeAttribute("BranchTitle", Fields.CarrierBank);
-		writeAttribute("BranchCode", TrimR(Fields.CarrierBankCode));
-		writeAttribute("Account", Fields.CarrierAccountNumber);
+		writeAttribute("BranchTitle", "", true);
+		writeAttribute("BranchCode", "", true);
+		writeAttribute("Account", "", true);
+		XML.WriteStartElement("IsManual");
+		XML.WriteText("false");
+		XML.WriteEndElement();
 		XML.WriteEndElement();
 		XML.WriteEndElement();
 	endif;
