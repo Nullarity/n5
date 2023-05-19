@@ -51,6 +51,6 @@ EndProcedure
 &AtClient
 Procedure filterByStatus ()
 	
-	DC.ChangeFilter ( List, "Status", StatusFilter, not StatusFilter.IsEmpty () );
+	DC.ChangeFilter ( List, "DocumentStatus", StatusFilter, not StatusFilter.IsEmpty () );
 	
 EndProcedure

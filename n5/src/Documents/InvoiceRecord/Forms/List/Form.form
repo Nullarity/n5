@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <items xsi:type="form:FormGroup">
     <name>ListSettingsComposerUserSettings</name>
     <id>1</id>
@@ -1149,7 +1149,7 @@
 	Documents.ShowServices, Documents.Storekeeper, Documents.Transfer, Documents.Type, 
 	Documents.UnloadingAddress, Documents.UnloadingPoint, Documents.VAT, Documents.VATUse, Documents.WaybillDate, 
 	Documents.WaybillNumber, Documents.WaybillSeries, Documents.Discounts.*, Documents.Items.*,
-	Documents.Services.*, Documents.PointInTime,
+	Documents.Services.*, Documents.PointInTime, Documents.Status as DocumentStatus,
 	case Documents.Status
 		when value ( Enum.FormStatuses.Saved ) then 1
 		when value ( Enum.FormStatuses.Printed ) then 2
@@ -1167,6 +1167,406 @@ from Document.InvoiceRecord as Documents</queryText>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Status</dataPath>
+        <field>Status</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Status</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Services</dataPath>
+        <field>Services</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.VATCode</dataPath>
+        <field>Services.VATCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Total</dataPath>
+        <field>Services.Total</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Prices</dataPath>
+        <field>Services.Prices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Price</dataPath>
+        <field>Services.Price</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Description</dataPath>
+        <field>Services.Description</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Amount</dataPath>
+        <field>Services.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Ref</dataPath>
+        <field>Services.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Items</dataPath>
+        <field>Items</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VATRate</dataPath>
+        <field>Items.VATRate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VAT</dataPath>
+        <field>Items.VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Total</dataPath>
+        <field>Items.Total</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Item</dataPath>
+        <field>Services.Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Series</dataPath>
+        <field>Items.Series</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.QuantityPkg</dataPath>
+        <field>Items.QuantityPkg</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.ProducerPrice</dataPath>
+        <field>Items.ProducerPrice</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Prices</dataPath>
+        <field>Items.Prices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Price</dataPath>
+        <field>Items.Price</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Package</dataPath>
+        <field>Items.Package</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.VATRate</dataPath>
+        <field>Services.VATRate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.OtherInfo</dataPath>
+        <field>Items.OtherInfo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Feature</dataPath>
+        <field>Items.Feature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Amount</dataPath>
+        <field>Items.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PowerAttorneyNumber</dataPath>
+        <field>PowerAttorneyNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Item</dataPath>
+        <field>Items.Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>WaybillNumber</dataPath>
+        <field>WaybillNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Capacity</dataPath>
+        <field>Items.Capacity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PowerAttorneyDate</dataPath>
+        <field>PowerAttorneyDate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.ExtraCharge</dataPath>
+        <field>Items.ExtraCharge</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PrintBack</dataPath>
+        <field>PrintBack</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>LoadingPoint</dataPath>
+        <field>LoadingPoint</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeliveryDate</dataPath>
+        <field>DeliveryDate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.VAT</dataPath>
+        <field>Discounts.VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Factor</dataPath>
+        <field>Factor</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Amount</dataPath>
+        <field>Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dispatcher</dataPath>
+        <field>Dispatcher</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Feature</dataPath>
+        <field>Services.Feature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>CustomerAccount</dataPath>
+        <field>CustomerAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Base</dataPath>
+        <field>Base</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Type</dataPath>
+        <field>Type</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.VAT</dataPath>
+        <field>Services.VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Quantity</dataPath>
+        <field>Items.Quantity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Posted</dataPath>
+        <field>Posted</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>FormNumber</dataPath>
+        <field>FormNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Date</dataPath>
+        <field>Date</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Customer</dataPath>
+        <field>Customer</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>AttachedDocuments</dataPath>
+        <field>AttachedDocuments</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>FirstPageRows</dataPath>
+        <field>FirstPageRows</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Currency</dataPath>
+        <field>Currency</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Transfer</dataPath>
+        <field>Transfer</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Driver</dataPath>
+        <field>Driver</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Series</dataPath>
+        <field>Series</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Redirects</dataPath>
+        <field>Redirects</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.Detail</dataPath>
+        <field>Discounts.Detail</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PowerAttorneySeries</dataPath>
+        <field>PowerAttorneySeries</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Range</dataPath>
+        <field>Range</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>WaybillSeries</dataPath>
+        <field>WaybillSeries</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Carrier</dataPath>
+        <field>Carrier</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.Document</dataPath>
+        <field>Discounts.Document</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.VATCode</dataPath>
+        <field>Items.VATCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Account</dataPath>
+        <field>Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Prices</dataPath>
+        <field>Prices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.LineNumber</dataPath>
+        <field>Services.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.VATRate</dataPath>
+        <field>Discounts.VATRate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Storekeeper</dataPath>
+        <field>Storekeeper</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Number</dataPath>
+        <field>Number</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.Item</dataPath>
+        <field>Discounts.Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ShowServices</dataPath>
+        <field>ShowServices</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Rate</dataPath>
+        <field>Rate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>UnloadingAddress</dataPath>
+        <field>UnloadingAddress</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Social</dataPath>
+        <field>Items.Social</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>UnloadingPoint</dataPath>
+        <field>UnloadingPoint</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.Ref</dataPath>
+        <field>Discounts.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Delegated</dataPath>
+        <field>Delegated</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VAT</dataPath>
+        <field>VAT</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>VATUse</dataPath>
+        <field>VATUse</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.LineNumber</dataPath>
+        <field>Discounts.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>LoadingAddress</dataPath>
+        <field>LoadingAddress</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>AttachmentRows</dataPath>
+        <field>AttachmentRows</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.Amount</dataPath>
+        <field>Discounts.Amount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.Quantity</dataPath>
+        <field>Services.Quantity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.Ref</dataPath>
+        <field>Items.Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Description</dataPath>
+        <field>Description</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Discounts.VATCode</dataPath>
+        <field>Discounts.VATCode</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PointInTime</dataPath>
+        <field>PointInTime</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaNestedDataSet">
+        <dataPath>Discounts</dataPath>
+        <field>Discounts</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Services.OtherInfo</dataPath>
+        <field>Services.OtherInfo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>WaybillDate</dataPath>
+        <field>WaybillDate</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Items.LineNumber</dataPath>
+        <field>Items.LineNumber</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DocumentStatus</dataPath>
+        <field>DocumentStatus</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Document status</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
     </extInfo>
   </attributes>
   <attributes>
