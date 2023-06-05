@@ -146,16 +146,16 @@ Procedure defineAmount(Env)
 	Env.Insert("AmountFields", list);
 	fields = Env.Fields;
 	foreign = fields.Currency <> fields.LocalCurrency;
-	total = "Total";
+	amount = "( Total - VAT )";
 	vat = "VAT";
 	producerPrice = "ProducerPrice";
 	if (foreign) then
 		rate = " * &Rate / &Factor";
-		total = total + rate;
+		amount = amount + rate;
 		vat = vat + rate;
 		producerPrice = producerPrice + rate;
 	endif;
-	list.Insert("Total", "cast ( " + total + " as Number ( 15, 2 ) )");
+	list.Insert("Amount", "cast ( " + amount + " as Number ( 15, 2 ) )");
 	list.Insert("VAT", "cast ( " + vat + " as Number ( 15, 2 ) )");
 	list.Insert("ProducerPrice", "cast ( " + producerPrice + " as Number ( 15, 2 ) )");
 	
@@ -164,9 +164,9 @@ EndProcedure
 Procedure sqlItems(Env)
 	
 	amountFields = Env.AmountFields;
-	total = amountFields.Total;
+	amount = amountFields.Amount;
 	vat = amountFields.VAT;
-	amount = total + " - " + vat;
+	total = amount + " + " + vat;
 	producerPrice = amountFields.ProducerPrice;
 	s = "
 	|// #Items

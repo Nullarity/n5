@@ -208,8 +208,8 @@
 	case when VATPurchase.Number = "" then VATPurchase.DocumentNumber else VATPurchase.Number end as Number
 {select VAT, Amount, Total, Rate.*, CodeFiscal, Vendor.*, Number, Date, Ref.*}
 from (
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end as VAT, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end as Amount, 
 		Table.VATCode as Rate, Table.Ref.Reference as Number, Table.Ref.ReferenceDate as Date, 
 		Table.Ref.Vendor.CodeFiscal as CodeFiscal, Table.Ref.Vendor as Vendor, Table.Ref as Ref,
 		Table.Ref.Date as DocumentDate, Table.Ref.Number as DocumentNumber
@@ -221,8 +221,8 @@ from (
 	and not Table.Ref.Import
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
@@ -234,8 +234,8 @@ from (
 	and not Table.Ref.Import
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
@@ -247,8 +247,8 @@ from (
 	and not Table.Ref.Import
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
@@ -260,8 +260,8 @@ from (
 	and not Table.Ref.Import
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
@@ -273,8 +273,8 @@ from (
 	and not Table.Ref.Import
 	{where not &amp;Import}
 	union all
-	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select - case when Table.Ref.Contract.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		- case when Table.Ref.Contract.Currency = &amp;Currency then Table.Amount - Table.VAT else cast ( ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
@@ -340,8 +340,8 @@ from (
 	and Table.Ref.Company = &amp;Company
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Items as Table
@@ -352,8 +352,8 @@ from (
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Services as Table
@@ -364,8 +364,8 @@ from (
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.FixedAssets as Table
@@ -376,8 +376,8 @@ from (
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.IntangibleAssets as Table
@@ -388,8 +388,8 @@ from (
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	{where not &amp;Import}
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Number, Table.Date, Table.Vendor.CodeFiscal, Table.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number
 	from Document.ExpenseReport.Accounts as Table
@@ -400,8 +400,8 @@ from (
 	and Table.Type = value ( Enum.DocumentTypes.Invoice )
 	{where not &amp;Import}
 	union all
-	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		- case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Reference, Table.Ref.ReferenceDate, 
 		Table.Ref.Vendor.CodeFiscal, Table.Ref.Vendor, Table.Ref,
 		Table.Ref.Date, Table.Ref.Number

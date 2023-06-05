@@ -223,9 +223,9 @@ Procedure unload()
 		writeAttribute("Name", name, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
 		qty = row.Quantity;
-		total = row.Total * rate / factor;
-		vat = row.VAT * rate / factor;;
-		amount = total - vat;
+		vat = Round ( row.VAT * rate / factor, 2 );
+		amount = Round ( ( row.Total - row.VAT ) * rate / factor, 2 );
+		total = amount + vat;
 		writeAttribute("Quantity", qty, true, "NFD=3; NDS=.; NZ=0; NG=");
 		writeAttribute("UnitPriceWithoutTVA", amount / qty, true, "NFD=2; NDS=.; NZ=0; NG=");
 		writeAttribute("TotalPriceWithoutTVA", amount, true, "NFD=2; NDS=.; NZ=0; NG=");
@@ -245,9 +245,9 @@ Procedure unload()
 		writeAttribute("Name", details.Item, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
 		qty = row.Quantity;
-		total = row.Total * rate / factor;;
-		vat = row.VAT * rate / factor;;
-		amount = total - vat;
+		vat = Round ( row.VAT * rate / factor, 2 );
+		amount = Round ( ( row.Total - row.VAT ) * rate / factor, 2 );
+		total = amount + vat;
 		writeAttribute("Quantity", qty, true, "NFD=3; NDS=.; NZ=0; NG=");
 		writeAttribute("UnitPriceWithoutTVA", amount / ?(qty = 0, 1, qty), true, "NFD=2; NDS=.; NZ=0; NG=");
 		writeAttribute("TotalPriceWithoutTVA", amount, true, "NFD=2; NDS=.; NZ=0; NG=");
@@ -263,9 +263,9 @@ Procedure unload()
 		writeAttribute("Code", TrimR(details.Code));
 		writeAttribute("Name", details.Item, true);
 		writeAttribute("UnitOfMeasure", details.Unit, true);
-		total = row.Amount * rate / factor;;
-		vat = row.VAT * rate / factor;;
-		amount = total - vat;
+		vat = Round ( row.VAT * rate / factor, 2 );
+		amount = Round ( ( row.Total - row.VAT ) * rate / factor, 2 );
+		total = amount + vat;
 		writeAttribute("Quantity", 0, true, "NFD=3; NDS=.; NZ=0; NG=");
 		writeAttribute("UnitPriceWithoutTVA", - amount, true, "NFD=2; NDS=.; NZ=0; NG=");
 		writeAttribute("TotalPriceWithoutTVA", - amount, true, "NFD=2; NDS=.; NZ=0; NG=");

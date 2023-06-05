@@ -263,24 +263,21 @@ EndProcedure
 &AtServer
 Procedure setDefaultValues ()
 	
-	data = getDefaultValues ();
-	range = data.Range;
-	if ( range <> undefined ) then
-		Object.Range = range.Range;
+	fields = getDefaultValues ();
+	if ( fields = undefined ) then
+		return;
 	endif;
-	fields = data.Fields;
-	if ( fields <> undefined ) then
-		Object.FirstPageRows = fields.FirstPageRows;
-		Object.AttachmentRows = fields.AttachmentRows;
-		Object.Storekeeper = fields.Storekeeper;
-		Object.Carrier = fields.Carrier;
-		Object.Dispatcher = fields.Dispatcher;
-		if ( Object.Range.IsEmpty () ) then
-			data = CoreLibrary.SeriesAndNumber ( fields.Number );
-			series = data.Series;
-			Object.Series = series;
-			Object.Number = RegulatedRanges.BuildNumber ( , series, data.Number, true );
-		endif;
+	Object.FirstPageRows = fields.FirstPageRows;
+	Object.AttachmentRows = fields.AttachmentRows;
+	Object.Storekeeper = fields.Storekeeper;
+	Object.Carrier = fields.Carrier;
+	Object.Dispatcher = fields.Dispatcher;
+	Object.Range = fields.Range;
+	if ( Object.Range.IsEmpty () ) then
+		data = CoreLibrary.SeriesAndNumber ( fields.Number );
+		series = data.Series;
+		Object.Series = series;
+		Object.Number = RegulatedRanges.BuildNumber ( , series, data.Number, true );
 	endif;
 
 EndProcedure
@@ -289,17 +286,10 @@ EndProcedure
 Function getDefaultValues ()
 	
 	s = "
-	|// @Range
-	|select allowed top 1 Ranges.Range as Range
-	|from Document.InvoiceRecord as Ranges
-	|where Ranges.Company = &Company
-	|and Ranges.Creator = &Creator
-	|and not Ranges.DeletionMark
-	|order by Ranges.Date desc
-	|;
 	|// @Fields
-	|select allowed top 1 Documents.Number as Number, Documents.Storekeeper as Storekeeper, Documents.Carrier as Carrier,
-	|	Documents.Dispatcher as Dispatcher, Documents.FirstPageRows as FirstPageRows, Documents.AttachmentRows as AttachmentRows
+	|select allowed top 1 Documents.Range as Range, Documents.Number as Number, Documents.Storekeeper as Storekeeper,
+	|	Documents.Carrier as Carrier, Documents.Dispatcher as Dispatcher, Documents.FirstPageRows as FirstPageRows,
+	|	Documents.AttachmentRows as AttachmentRows
 	|from Document.InvoiceRecord as Documents
 	|where Documents.Company = &Company
 	|and Documents.LoadingPoint = &WarehouseOrNothing
@@ -312,7 +302,7 @@ Function getDefaultValues ()
 	q.SetParameter ( "Creator", Object.Creator );
 	q.SetParameter ( "WarehouseOrNothing", Object.LoadingPoint );
 	SQL.Perform ( data );
-	return data;
+	return data.Fields;
 
 EndFunction
 

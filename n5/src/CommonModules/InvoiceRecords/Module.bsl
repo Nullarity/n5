@@ -202,6 +202,7 @@ Procedure getTables ( Env, Base )
 	q.SetParameter ( "Ref", Base.Ref );
 	q.SetParameter ( "Company", Base.Company );
 	q.SetParameter ( "Transfer", Output.Transfer () );
+	q.SetParameter ( "User", SessionParameters.User );
 	SQL.Perform ( Env );
 
 EndProcedure
@@ -681,10 +682,16 @@ Procedure sqlFieldsAdjustDebts ( Env )
 		s = s + ",
 		|	true as ShowServices,
 		|	Documents.Customer.ShippingAddress as UnloadingAddress, Documents.Date as DeliveryDate,
-		|	Documents.Contract.CustomerBank as CustomerAccount";
+		|	Documents.Contract.CustomerBank as CustomerAccount,
+		|	Settings.Warehouse as LoadingPoint";
 	endif;
 	s = s + "
 	|from Document.AdjustDebts as Documents
+	|	//
+	|	// User settings
+	|	//
+	|	left join Catalog.UserSettings as Settings
+	|	on Settings.Owner = &User
 	|where Documents.Ref = &Ref
 	|";
 	Env.Selection.Add ( s );

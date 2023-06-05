@@ -245,8 +245,8 @@ select Sales.VAT as VAT, Sales.Amount as Amount, Sales.Ref as Ref,
 	Sales.Description as Description, Sales.Base as Base
 {select VAT, Amount, Total, Rate.*, CodeFiscal, Customer.*, Number, Date, Ref.*, Description, Base}
 from (
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end as VAT, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end as Amount, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end as VAT, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end as Amount, 
 		Table.VATCode as Rate, Table.Ref.Number as Number, Table.Ref.DeliveryDate as Date, 
 		Table.Ref.Customer.CodeFiscal as CodeFiscal, Table.Ref.Customer as Customer, Table.Ref as Ref, Table.Ref.Description as Description,
 		Table.Ref.Base as Base
@@ -265,8 +265,8 @@ from (
 		value ( Enum.FormStatuses.Returned )
 	)
 	union all
-	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Number, Table.Ref.DeliveryDate, 
 		Table.Ref.Customer.CodeFiscal, Table.Ref.Customer, Table.Ref, Table.Ref.Description,
 		Table.Ref.Base
@@ -283,8 +283,8 @@ from (
 		value ( Enum.FormStatuses.Returned )
 	)
 	union all
-	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else Table.VAT * Table.Ref.Rate / Table.Ref.Factor end, 
-		- case when Table.Ref.Currency = &amp;Currency then Table.Amount - Table.VAT else ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor end, 
+	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		- case when Table.Ref.Currency = &amp;Currency then Table.Amount - Table.VAT else cast ( ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		Table.VATCode, Table.Ref.Number, Table.Ref.DeliveryDate, 
 		Table.Ref.Customer.CodeFiscal, Table.Ref.Customer, Table.Ref, Table.Ref.Description,
 		Table.Ref.Base
