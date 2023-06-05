@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form">
+<form:Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:form="http://g5.1c.ru/v8/dt/form" xmlns:schema="http://g5.1c.ru/v8/dt/data-composition-system/schema">
   <title>
     <key>en</key>
     <value>Available Ranges</value>
@@ -600,14 +600,191 @@ from Catalog.Ranges as Items
 	left join InformationRegister.RangeLocations.SliceLast ( {&amp;Date} ) as Locations
 	on Locations.Range = Items.Ref
 where ( Items.Finish - isnull ( Ranges.Last, Items.Start - 1 ) ) > 0
-{where Locations.Warehouse = &amp;Warehouse or Items.Online}
+{where Locations.Warehouse = &amp;Warehouse
+	or Items.Online
+	or Items.Print in (
+		value ( Enum.Print.ElectronicPortrait ),
+		value ( Enum.Print.ElectronicLandscape ) )	
+}
 </queryText>
       <mainTable>Catalog.Ranges</mainTable>
-      <dynamicDataRead>true</dynamicDataRead>
       <autoFillAvailableFields>true</autoFillAvailableFields>
       <customQuery>true</customQuery>
       <autoSaveUserSettings>true</autoSaveUserSettings>
       <getInvisibleFieldPresentations>true</getInvisibleFieldPresentations>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Range</dataPath>
+        <field>Range</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Balance</dataPath>
+        <field>Balance</field>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Balance</value>
+            </content>
+          </localValue>
+        </title>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Predefined</dataPath>
+        <field>Predefined</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Feature</dataPath>
+        <field>Feature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Item</dataPath>
+        <field>Item</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ExpenseAccount</dataPath>
+        <field>ExpenseAccount</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Online</dataPath>
+        <field>Online</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Series</dataPath>
+        <field>Series</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Type</dataPath>
+        <field>Type</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Finish</dataPath>
+        <field>Finish</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim3</dataPath>
+        <field>Dim3</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>DeletionMark</dataPath>
+        <field>DeletionMark</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Real</dataPath>
+        <field>Real</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim2</dataPath>
+        <field>Dim2</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Memo</dataPath>
+        <field>Memo</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Dim1</dataPath>
+        <field>Dim1</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Company</dataPath>
+        <field>Company</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Capacity</dataPath>
+        <field>Capacity</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Length</dataPath>
+        <field>Length</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Account</dataPath>
+        <field>Account</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Creator</dataPath>
+        <field>Creator</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Package</dataPath>
+        <field>Package</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Code</dataPath>
+        <field>Code</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Product</dataPath>
+        <field>Product</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Prefix</dataPath>
+        <field>Prefix</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>ProductFeature</dataPath>
+        <field>ProductFeature</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Print</dataPath>
+        <field>Print</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Received</dataPath>
+        <field>Received</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Source</dataPath>
+        <field>Source</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Start</dataPath>
+        <field>Start</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>PredefinedDataName</dataPath>
+        <field>PredefinedDataName</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Ref</dataPath>
+        <field>Ref</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Description</dataPath>
+        <field>Description</field>
+      </fields>
+      <parameters>
+        <name>Date</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Date</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>Date</types>
+          <dateQualifiers/>
+        </valueType>
+        <values xsi:type="core:DateValue">
+          <value>0001-01-01T00:00:00</value>
+        </values>
+      </parameters>
+      <parameters>
+        <name>Warehouse</name>
+        <title>
+          <localValue>
+            <content>
+              <key>en</key>
+              <value>Warehouse</value>
+            </content>
+          </localValue>
+        </title>
+        <valueType>
+          <types>CatalogRef.Warehouses</types>
+        </valueType>
+        <values xsi:type="core:UndefinedValue"/>
+      </parameters>
     </extInfo>
   </attributes>
   <commandInterface>
