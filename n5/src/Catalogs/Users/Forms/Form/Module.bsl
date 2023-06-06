@@ -353,6 +353,8 @@ Procedure setLogin ()
 			or not accessIsLimited ( friend ) ) then
 			return;
 		endif;
+	else
+		Object.Show = not Cloud.Cloud ();
 	endif;
 	tenants = Login.Tenants;
 	tenants.Clear ();
