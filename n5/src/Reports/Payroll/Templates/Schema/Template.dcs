@@ -344,6 +344,36 @@ from AccountingRegister.General.BalanceAndTurnovers ( &amp;DateStart, &amp;DateE
 			<dataPath>Days</dataPath>
 			<field>Days</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Division</dataPath>
+			<field>Division</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Division</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Subdiviziune teritorială</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Территориальное подразделение</v8:content>
+				</v8:item>
+			</title>
+			<inputParameters>
+				<dcscor:item>
+					<dcscor:parameter>ChoiceParameterLinks</dcscor:parameter>
+					<dcscor:value xsi:type="dcscor:ChoiceParameterLinks">
+						<dcscor:item>
+							<dcscor:choiceParameter>Filter.Owner</dcscor:choiceParameter>
+							<dcscor:value>DataParameters.Company</dcscor:value>
+							<dcscor:mode xmlns:d8p1="http://v8.1c.ru/8.1/data/enterprise" xsi:type="d8p1:LinkedValueChangeMode">Clear</dcscor:mode>
+						</dcscor:item>
+					</dcscor:value>
+				</dcscor:item>
+			</inputParameters>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Payroll
 select Compensations.Individual as Employee, Compensations.Compensation as Compensation, Compensations.Days as Days,
@@ -351,7 +381,7 @@ select Compensations.Individual as Employee, Compensations.Compensation as Compe
 	Compensations.ScheduledDays as ScheduledDays, Compensations.ScheduledHours as ScheduledHours
 {select Employee.*, PayrollEmployee.* as PayrollEmployee, Compensation.*, Calculated, PayrollEmployee, Days, Hours, ScheduledDays, ScheduledHours}
 from Document.Payroll.Compensations as Compensations
-{where Compensations.Department = &amp;Department, Compensations.Ref.Company = &amp;Company, Compensations.Individual = &amp;Employee}
+{where Compensations.Department = &amp;Department, Compensations.Department.Division.* as Division, Compensations.Ref.Company = &amp;Company, Compensations.Individual = &amp;Employee}
 where Compensations.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Compensations.Ref.Posted
 </query>
@@ -603,13 +633,24 @@ and Taxes.Ref.Posted
 				</v8:item>
 			</title>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Division</dataPath>
+			<field>Division</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Division</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Employees
 select distinct Compensations.Individual as Employee, Compensations.Employee.Code as Code, Compensations.Position as Position,
 	Compensations.Employee as PayrollEmployee
 {select Employee.*, Code, Position.*, PayrollEmployee}
 from Document.Payroll.Compensations as Compensations
-{where Compensations.Department = &amp;Department, Compensations.Ref.Company = &amp;Company, Compensations.Individual = &amp;Employee}
+{where Compensations.Department = &amp;Department, Compensations.Ref.Company = &amp;Company, Compensations.Individual = &amp;Employee,
+Compensations.Department.Division.* as Division}
 where Compensations.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Compensations.Ref.Posted
 union all
@@ -620,7 +661,8 @@ from Document.PayEmployees.Totals as Totals
 	//
 	{left join InformationRegister.Personnel.SliceLast ( &amp;DateEnd ) as Personnel
 	on Personnel.Employee.Individual = Totals.Employee}
-{where Personnel.Department = &amp;Department, Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee}
+{where Personnel.Department = &amp;Department, Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee,
+Personnel.Department.Division.* as Division}
 where Totals.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Totals.Ref.Posted
 union all
@@ -631,7 +673,8 @@ from Document.PayAdvances.Totals as Totals
 	//
 	{left join InformationRegister.Personnel.SliceLast ( &amp;DateEnd ) as Personnel
 	on Personnel.Employee.Individual = Totals.Employee}
-{where Personnel.Department = &amp;Department, Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee}
+{where Personnel.Department = &amp;Department, Totals.Ref.Company = &amp;Company, Totals.Employee = &amp;Employee,
+Personnel.Department.Division.* as Division}
 where Totals.Ref.Date between &amp;DateStart and &amp;DateEnd
 and Totals.Ref.Posted</query>
 		<autoFillFields>false</autoFillFields>
@@ -2828,6 +2871,15 @@ from Company as Company
 					<dcsset:placement>Auto</dcsset:placement>
 				</dcsset:item>
 			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Division</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>e27b55cc-41e8-4122-ac0f-ff2ecae7b042</dcsset:userSettingID>
+				</dcsset:item>
+			</dcsset:filter>
 			<dcsset:dataParameters>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>Period</dcscor:parameter>
