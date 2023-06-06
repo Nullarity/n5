@@ -100,7 +100,7 @@ Function lastPayment ()
 	q = new Query ( s );
 	q.SetParameter ( "Company", Object.Company );
 	table = q.Execute ().Unload ();
-	return ? ( table.Count () = 0, undefined, table [ 0 ].Date );
+	return ? ( table.Count () = 0, CurrentSessionDate (), table [ 0 ].Date );
 	
 EndFunction
 
