@@ -58,6 +58,7 @@ Procedure sqlAdvances ( Env )
 	|	Advances.CustomerAccount.Currency as Export, Advances.AdvanceAccount as AdvanceAccount, Advances.VAT as VAT, Advances.VATAmount as VATAmount
 	|from Document.ClosingAdvances.Advances as Advances
 	|where Advances.Ref = &Ref
+	|and Advances.VATAmount <> 0
 	|";
 	Env.Selection.Add ( s );
 	
