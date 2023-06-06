@@ -130,6 +130,7 @@ Procedure readAppearance ()
 	|VendorRateType show Object.Vendor and Object.Currency <> LocalCurrency;
 	|VendorRate VendorFactor show Object.Vendor and Object.Currency <> LocalCurrency
 	|	and Object.VendorRateType = Enum.CurrencyRates.Fixed;
+	|SignedAll show Object.Signed;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -212,6 +213,33 @@ Procedure setNumber ( CurrentObject )
 	+ Print.ShortNumber ( CurrentObject.Code )
 	+ CurrentObject.Currency;
 
+EndProcedure
+
+&AtServer
+Procedure OnWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	if ( Object.SignedAll ) then
+		signSubcontracts ();
+	endif;
+	
+EndProcedure
+
+&AtServer
+Procedure signSubcontracts ()
+	
+	ref = Object.Ref;
+	if ( ref.IsEmpty () ) then
+		return;
+	endif;
+	q = new Query ( "select Ref from Catalog.Contracts where Parent in hierarchy ( &Ref ) and not Signed and not DeletionMark" );
+	q.SetParameter ( "Ref", ref );
+	selection = q.Execute ().Select ();
+	while ( selection.Next () ) do
+		obj = selection.Ref.GetObject ();
+		obj.Signed = true;
+		obj.Write ();
+	enddo;
+	
 EndProcedure
 
 // *****************************************
@@ -458,6 +486,21 @@ EndProcedure
 Procedure ImportOnChange ( Item )
 	
 	Appearance.Apply ( ThisObject, "Object.Import" );
+	
+EndProcedure
+
+&AtClient
+Procedure SignedOnChange ( Item )
+	
+	applySigned ();
+	
+EndProcedure
+
+&AtClient
+Procedure applySigned ()
+	
+	Object.SignedAll = Object.Signed;
+	Appearance.Apply ( ThisObject, "Object.Signed" );
 	
 EndProcedure
 
