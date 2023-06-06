@@ -136,12 +136,11 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
-Procedure _5_0_30_1 () export
+Procedure _5_0_34_1 () export
 	
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
-		setInventory ();
 		updateReports ();
 	enddo;
 	CommitTransaction ();
