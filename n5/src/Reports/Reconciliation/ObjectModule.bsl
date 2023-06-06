@@ -344,6 +344,7 @@ Procedure sqlContracts ()
 	if ( Detailed ) then
 		s = s + "
 		|group by Records.Contract
+		|order by Records.Contract.DateStart, Records.Contract.DateEnd
 		|";
 	endif;
 	Env.Selection.Add ( s );    
