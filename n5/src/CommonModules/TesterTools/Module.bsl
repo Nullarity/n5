@@ -14,3 +14,12 @@ Procedure Record ( Test ) export
 	r.Write ();
 	
 EndProcedure
+
+&AtServer
+Procedure StringToFile ( S, File ) export
+	
+	text = new TextDocument ();
+	text.SetText ( S );
+	text.Write ( File );
+	
+EndProcedure
