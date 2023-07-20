@@ -827,3 +827,27 @@ Procedure serializeRows ( Rows, Columns, RowsArray )
 	enddo; 
 	
 EndProcedure
+
+Procedure ForExtension ( Data ) export
+
+	tableType = Type ( "ValueTable" );
+	for each item in Data do
+		table = item.Value;
+		if ( TypeOf ( table ) <> tableType ) then
+			continue;
+		endif;
+		columns = new Array ();
+		list = new Array ();
+		for each column in table.Columns do
+			columns.Add ( column.Name );
+		enddo;
+		columns = StrConcat ( columns, "," );
+		for each row in table do
+			newRow = new Structure ( columns );
+			FillPropertyValues ( newRow, row );
+			list.Add ( newRow );
+		enddo;
+		Data [ item.Key ] = list;
+	enddo;
+
+EndProcedure
