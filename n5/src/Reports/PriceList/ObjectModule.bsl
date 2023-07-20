@@ -46,9 +46,11 @@ EndProcedure
 Procedure setDate ()
 	
 	param = DC.GetParameter ( Settings, "ReportDate" );
-	if ( not param.Use or param.Value = Date ( 1, 1, 1 ) ) then
+	value = param.Value;
+	if ( not param.Use or value.Date = Date ( 1, 1, 1 ) ) then
 		param.Use = true;
-		param.Value = CurrentDate ();
+		value.Variant = StandardBeginningDateVariant.Custom;
+		value.Date = CurrentDate ();
 	endif; 
 	
 EndProcedure 

@@ -1284,6 +1284,13 @@ Function ConstantsAgentUserName () export
 	
 EndFunction
 
+&AtServer
+Function PriceListLimit () export
+	
+	return 1000;
+	
+EndFunction
+
 #endregion
 
 #region Framework

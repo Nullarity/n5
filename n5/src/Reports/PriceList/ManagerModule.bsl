@@ -1,5 +1,4 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
-
 	
 Function Events () export
 	
@@ -14,9 +13,23 @@ EndFunction
 
 Procedure BeforeOpen ( Form ) export
 	
-	Form.GenerateOnOpen = true;
+	Form.GenerateOnOpen = shortList ();
 	
-EndProcedure 
+EndProcedure
+
+Function shortList ()
+	
+	s = "
+	|select count ( Items.Ref )
+	|from Catalog.Items as Items
+	|where not Items.DeletionMark
+	|having count ( Items.Ref ) > &Limit
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Limit", Enum.PriceListLimit () );
+	return q.Execute ().IsEmpty ();
+	
+EndFunction 
 
 Procedure OnScheduling ( SettingsComposer, Cancel, StandardProcessing ) export
 	

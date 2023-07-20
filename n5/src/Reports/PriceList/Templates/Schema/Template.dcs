@@ -182,8 +182,8 @@ from Pricing as Pricing
 	//
 	// Balances
 	//
-	{left join AccumulationRegister.Items.Balance ( , Warehouse = &amp;Warehouse
-		and Item in ( select distinct Item from Pricing ) ) as Balances
+	{left join AccumulationRegister.Items.Balance ( , {Warehouse = &amp;Warehouse}
+		Item in ( select distinct Item from Pricing ) ) as Balances
 	on Balances.Item = Pricing.Item
 	and Balances.Feature = Pricing.Feature
 	and Balances.Package = Pricing.WarehousePackage}
