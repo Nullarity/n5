@@ -7,7 +7,7 @@
 
 См. также:
 
-- [Договора / Отображать авансы в конце месяца](/c/Contracts#CloseAdvances)
-- [Настройки / Бухгалтерия / Отображать авансы в конце месяца](/cf/Settings#CloseAdvances)
+- [Договора > Отображать авансы в конце месяца](/c/Contracts#CloseAdvances)
+- [Настройки > Бухгалтерия > Отображать авансы в конце месяца](/cf/Settings#CloseAdvances)
 - [Как настроить помесячный учет авансов контрагентов?](/faqaccounting#MonthlyAdvances)
 - [Почему я не вижу проводки по авансам контрагентов?](/faqaccounting#WhereIsAdvance)
