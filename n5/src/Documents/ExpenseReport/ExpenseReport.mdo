@@ -642,6 +642,41 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="6b238c63-4c72-4770-83b1-07ba81dd7665">
+    <name>SelectMoney</name>
+    <synonym>
+      <key>en</key>
+      <value>Manually indicate monetary documents</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Indicarea manuală a documentelor monetare</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Вручную указать денежные документы</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Manually indicate the documents on which the cash was issued to the employee</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Indicarea manuală a documentelor pe baza cărora a fost eliberat numerarul către angajat</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Вручную указывать документы, по которым выдавались денежные средства сотруднику</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="42c63ffa-fc46-4435-8c26-a686f96307ed">
     <name>Tax</name>
     <synonym>
@@ -5036,6 +5071,108 @@
         <name>Filter.Owner</name>
         <field>Document.ExpenseReport.Attribute.Company</field>
       </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+  <tabularSections uuid="2911e40f-0695-48c8-80fd-8903c2a2aa6c">
+    <producedTypes>
+      <objectType typeId="ff0461ce-eecb-4d81-9f4c-15c9995d9139" valueTypeId="83b0fba6-de49-4ed1-b390-0d79c724f4fb"/>
+      <rowType typeId="ddc08a6e-b3bd-4b6f-a716-e192d2fbe347" valueTypeId="239d97fa-4de9-4803-9951-1458a3665a31"/>
+    </producedTypes>
+    <name>Money</name>
+    <synonym>
+      <key>en</key>
+      <value>Cash Issued</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Banii dați</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Выданные средства</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Cash issued to the employee. The table is used in the printed form of the advance report</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numerar eliberat angajatului. Tabelul este utilizat în forma tipărită a raportului de avans</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Выданные в подотчёт денежные средства. Таблица используется в печатной форме авансового отчёта</value>
+    </toolTip>
+    <attributes uuid="a17fb12d-f5fa-4f67-a4e3-255a297c9e1d">
+      <name>CashVoucher</name>
+      <synonym>
+        <key>en</key>
+        <value>Petty Cash Voucher</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>РКО</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Dispoziție de plată</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.CashVoucher</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Petty Cash Voucher</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Dispoziție de plată</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>РКО</value>
+      </toolTip>
+      <createOnInput>Use</createOnInput>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="f2424789-da32-4721-9254-ebf4f94df6bf">
+      <name>Document</name>
+      <synonym>
+        <key>en</key>
+        <value>Document</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Document</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Документ</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.Entry</types>
+      </type>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>Document.ExpenseReport.Attribute.Company</field>
+      </choiceParameterLinks>
+      <choiceParameters>
+        <name>Filter.Method</name>
+        <value xsi:type="core:FixedArrayValue">
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Operations.EnumValue.CashExpense</value>
+          </values>
+          <values xsi:type="core:ReferenceValue">
+            <value>Enum.Operations.EnumValue.BankExpense</value>
+          </values>
+        </value>
+      </choiceParameters>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>

@@ -26,7 +26,7 @@ Procedure getData ( Params, Env )
 	sqlFields ( Env );
 	getFields ( Params, Env );
 	defineAmount ( Env );
-	sqlBalance ( Env );
+	sqlCash ( Env );
 	sqlItems ( Env );
 	getTables ( Env );
 	SetPrivilegedMode ( false );
@@ -39,7 +39,8 @@ Procedure sqlFields ( Env )
 	|// @Fields
 	|select Documents.Number as Number, Documents.Date as Date, Documents.Company.FullDescription as Company, Documents.Currency as CurrencyRef,
 	|	Documents.Employee.Description as Employee, Documents.Currency.Description as Currency, Contacts.Name as Accountant,
-	|	Documents.Employee as EmployeeRef, isnull ( LastReport.Date, undefined ) as LastDate, 
+	|	Documents.Employee as EmployeeRef,
+	|	isnull ( LastReport.Date, dateadd ( Documents.Date, second, -1 ) ) as LastDate, 
 	|	Documents.EmployeeAccount as EmployeeAccount, Documents.Rate as Rate, Documents.Factor as Factor, Constants.Currency as LocalCurrency,
 	|	Documents.Company as CompanyRef, Documents.Description as Purpose
 	|from Document.ExpenseReport as Documents
@@ -101,24 +102,42 @@ Procedure defineAmount ( Env )
 
 EndProcedure 
 
-Procedure sqlBalance ( Env )
+Procedure sqlCash ( Env )
 	
 	s = "
-	|// #Balances
-	|select General.AmountOpeningBalance as InitBalance, General.AmountTurnoverDr as Income, General.Recorder.Date as Date, CashVoucher.Number as Number
-	|from AccountingRegister.General.BalanceAndTurnovers ( &LastDate,
-	|				case when &Date = &LastDate then &Date else dateadd ( &Date, second, -1 ) end, recorder, , Account = &Account, 
-	|				value ( ChartOfCharacteristicTypes.Dimensions.Employees ),
-	|				Company = &Company
-	|				and case when &Currency = &LocalCurrency then Currency is null else Currency = &Currency end
-	|				and ExtDimension1 = &Employee ) as General
+	|// @Balance
+	|select Balances.AmountBalance as Amount
+	|from AccountingRegister.General.Balance ( dateadd ( &LastDate, second, 1 ),
+	|Account = &Account, 
+	|value ( ChartOfCharacteristicTypes.Dimensions.Employees ),
+	|Company = &Company
+	|and case when &Currency = &LocalCurrency then Currency is null else Currency = &Currency end
+	|and ExtDimension1 = &Employee ) as Balances
+	|;
+	|// #Records
+	|select General.Period as Period, General.Recorder as Recorder, General.AmountTurnoverDr as Amount,
+	|	CashVouchers.Date as Date, CashVouchers.Number as Number
+	|from AccountingRegister.General.Turnovers ( dateadd ( &LastDate, second, 1 ), &Date,
+	|recorder,
+	|Account = &Account, 
+	|	value ( ChartOfCharacteristicTypes.Dimensions.Employees ),
+	|	Company = &Company
+	|	and case when &Currency = &LocalCurrency then Currency is null else Currency = &Currency end
+	|	and ExtDimension1 = &Employee ) as General
 	|	//
-	|	//	CashVoucher
+	|	// CashVoucher
 	|	//
-	|	left join Document.CashVoucher as CashVoucher
-	|	on CashVoucher.Base = General.Recorder
-	|where General.Recorder <> undefined
-	|order by General.Period desc
+	|	join Document.CashVoucher as CashVouchers
+	|	on CashVouchers.Base = General.Recorder
+	|and not CashVouchers.DeletionMark
+	|where 1 in ( select 1 from Document.ExpenseReport where Ref = &Ref and not SelectMoney )
+	|union all
+	|select Money.Document.Date, Money.Ref, Money.Document.Amount, Money.Document.Date,
+	|	isnull ( Money.CashVoucher.Number, Money.Document.Number )
+	|from Document.ExpenseReport.Money as Money
+	|where Money.Ref = &Ref
+	|and Money.Ref.SelectMoney
+	|order by Period desc
 	|";
 	Env.Selection.Add ( s );
 	
@@ -213,7 +232,7 @@ Procedure putHeader ( Params, Env )
 	date = fields.Date;
 	p.Date = Format ( date, "DLF=D" );
 	p.Year = Format ( date, "DF=yyyy" );
-	fillIncome ( Env.Balances, p );
+	fillCash ( Env, p );
 	items = Env.Items;
 	fillAccounts ( items, p );
 	amount = items.Total ( "Amount" );
@@ -235,23 +254,19 @@ Procedure putHeader ( Params, Env )
 	
 EndProcedure
 
-Procedure fillIncome ( Balances, AreaParams ) 
+Procedure fillCash ( Env, AreaParams ) 
 
-	count = Balances.Count ();
-	initBalance = 0;
+	records = Env.Records;
+	count = Min ( records.Count (), 3 );
 	for i = 1 to count do
-		row = Balances [ i - 1 ];
-		if ( i <= 3 ) then
-			AreaParams [ "Number" + i ] = row.Number;
-			AreaParams [ "Date" + i ] = row.Date;
-			AreaParams [ "Income" + i ] = row.Income;
-		endif;
-		if ( i = count ) then
-			initBalance = row.InitBalance;
-		endif;
+		row = records [ i - 1 ];
+		AreaParams [ "Number" + i ] = row.Number;
+		AreaParams [ "Date" + i ] = row.Date;
+		AreaParams [ "Income" + i ] = row.Amount;
+		AreaParams [ "Doc" + i ] = row.Recorder;
 	enddo;
-	AreaParams.InitBalance = initBalance;
-	AreaParams.Income = Balances.Total ( "Income" );
+	AreaParams.InitBalance = Env.Balance.Amount;
+	AreaParams.Income = records.Total ( "Amount" );
 
 EndProcedure
 

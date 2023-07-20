@@ -128,7 +128,8 @@ Procedure readAppearance ()
 	|IntangibleAssetsVAT AccountsVATCode AccountsVAT
 	|	show Object.VATUse > 0;
 	|ItemsTotal ServicesTotal FixedAssetsTotal IntangibleAssetsTotal AccountsTotal show Object.VATUse = 2;
-	|ItemsProducerPrice show UseSocial
+	|ItemsProducerPrice show UseSocial;
+	|Money enable Object.SelectMoney;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -1564,3 +1565,50 @@ Procedure AccountsAmountOnChange ( Item )
 	Computations.Total ( AccountsRow, Object.VATUse );
 	
 EndProcedure
+
+// *****************************************
+// *********** Table Money
+
+&AtClient
+Procedure SelectMoneyOnChange ( Item )
+	
+	applyMoney ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyMoney ()
+	
+	if ( not Object.SelectMoney ) then
+		Object.Money.Clear ();
+	endif;
+	Appearance.Apply ( ThisObject, "Object.SelectMoney" );
+	
+EndProcedure
+
+&AtClient
+Procedure MoneyDocumentOnChange ( Item )
+	
+	applyMoneyDocument ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyMoneyDocument ()
+	
+	row = Items.Money.CurrentData;
+	document = row.Document;
+	if ( document.IsEmpty () ) then
+		row.CashVoucher = undefined;
+	else
+		row.CashVoucher = findVoucher ( document );
+	endif;
+	
+EndProcedure
+
+&AtServerNoContext
+Function findVoucher ( val Document )
+	
+	return Documents.CashVoucher.FindByAttribute ( "Base", Document );
+	
+EndFunction
