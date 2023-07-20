@@ -165,8 +165,9 @@ Procedure readAppearance ()
 	|Rate Factor enable Object.Currency <> LocalCurrency;
 	|Base show filled ( Object.Base );
 	|PageServices show Object.ShowServices;
-	|Company Currency Rate Factor VATUse Items Services Discounts Prices Date LoadingPoint UnloadingPoint
+	|Company Currency Rate Factor VATUse Items Services Discounts Prices Date LoadingPoint
 	|lock filled ( Object.Base );
+	|UnloadingPoint unlock empty ( Object.Base ) or Retail;
 	|Customer unlock empty ( Object.Base ) or Retail;
 	|GroupHeader PageMain PageMore Footer unlock Object.Status = Enum.FormStatuses.Saved;
 	|Warning hide Object.Status = Enum.FormStatuses.Saved;
@@ -664,14 +665,14 @@ EndProcedure
 &AtClient
 Procedure UnloadingPointOnChange ( Item )
 	
-	setUnloadingAddress ();
+	setUnloadingAddress ( Object );
 	Appearance.Apply ( ThisObject, "Object.UnloadingPoint" );
 	
 EndProcedure
 
-&AtClient
-Procedure setUnloadingAddress () 
-
+&AtClientAtServerNoContext
+Procedure setUnloadingAddress ( Object ) 
+	
 	point = Object.UnloadingPoint;
 	if ( TypeOf ( point ) = Type ( "CatalogRef.Warehouses" ) ) then
 		address = DF.Pick ( point, "Address" );
@@ -735,12 +736,28 @@ Procedure applyCustomer ()
 	
 	if ( ValueIsFilled ( Object.Customer ) ) then
 		setCustomerAccount ();
+		setUnloadingPoint ();
 	endif;
 	if ( Documents.InvoiceRecord.Independent ( Object ) ) then
 		Constraints.ShowSales ( ThisObject );
 	endif;
 	adjustCustomerControl ();
 
+EndProcedure
+
+&AtServer
+Procedure setUnloadingPoint ()
+	
+	customer = Object.Customer;
+	if ( TypeOf ( customer ) = Type ( "CatalogRef.Companies" ) ) then
+		point = Object.LoadingPoint;
+	else
+		point = Object.Customer;
+	endif;
+	Object.UnloadingPoint = point;
+	setUnloadingAddress ( Object );
+	Appearance.Apply ( ThisObject, "Object.UnloadingPoint" );
+	
 EndProcedure
 
 &AtClient
