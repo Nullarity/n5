@@ -87,9 +87,9 @@ EndProcedure
 
 Function prepareBatch ( Template )
 	
-	q = new Query ( template.DataSets [ 0 ].Query );
+	q = new Query ( Template.DataSets [ 0 ].Query );
 	SQL.DefineTempManager ( q );
-	for each item in template.ParameterValues do
+	for each item in Template.ParameterValues do
 		q.SetParameter ( item.Name, item.Value );
 	enddo; 
 	CoreLibrary.AdjustQuery ( q );

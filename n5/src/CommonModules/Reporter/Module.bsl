@@ -124,6 +124,7 @@ Function getParams ( Report )
 	p.Insert ( "Settings" );
 	p.Insert ( "Composer" );
 	p.Insert ( "ExternalDataSets" );
+	p.Insert ( "TempTables" );
 	p.Insert ( "Details" );
 	p.Insert ( "Empty", false );
 	p.Insert ( "Interactive", true );
@@ -887,7 +888,7 @@ Function putReport ( Report )
 		Report.OnPrepare ( template );
 	endif; 
 	processor = new DataCompositionProcessor ();
-	processor.Initialize ( template, p.ExternalDataSets, ? ( p.Interactive, p.Details, undefined ), true );
+	processor.Initialize ( template, p.ExternalDataSets, ? ( p.Interactive, p.Details, undefined ), true, , p.TempTables );
 	builder = new DataCompositionResultSpreadsheetDocumentOutputProcessor ();
 	p.Result.Clear ();
 	builder.SetDocument ( p.Result );
