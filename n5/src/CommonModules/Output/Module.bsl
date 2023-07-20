@@ -3906,10 +3906,7 @@ EndFunction
 &AtServer
 Function QuoteDueDateLessCurrentDate ( Params ) export
 
-	text = NStr ( "en='The period of validity of the commercial offer has passed as of %DueDate.
-				|You cannot enter orders based on outstanding commercial offers'; ro='Perioada de valabilitate a ofertei a fost (data de încheiere: %DueDate).
-				|Este imposibil de a introduce comenzi pe baza propunerilor comerciale expirate'; ru='Период действия коммерческого предложения вышел (дата конца действия: %DueDate).
-				|Нельзя вводить заказы на основании просроченных коммерческих предложений'" );
+	text = NStr ( "en = 'The period of validity of the commercial offer has passed as of %DueDate';ro = 'Perioada de valabilitate a ofertei a fost (data de încheiere: %DueDate)';ru = 'Период действия коммерческого предложения вышел (дата конца действия: %DueDate)'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -3917,10 +3914,7 @@ EndFunction
 &AtServer
 Function QuoteRejected ( Params ) export
 
-	text = NStr ( "en='Commercial offer was already rejected for the reason: %Cause
-				|It is impossible to enter an order based on a rejected commercial offer'; ro='Oferta comerciala a fost deja refuzată din cauza: %Cause
-				|Intrarea ordinului pe baza ofertei comerciale respinse este imposibilă '; ru='Коммерческое предложение уже было отклонено по причине: %Cause
-				|Ввод заказа на основании отклоненного коммерческого предложения невозможен'" );
+	text = NStr ( "en = 'Commercial offer was already rejected for the reason: %Cause';ro = 'Oferta comerciala a fost deja refuzată din cauza: %Cause';ru = 'Коммерческое предложение уже было отклонено по причине: %Cause'" );
 	return Output.FormatStr ( text, Params );
 
 EndFunction
@@ -8635,5 +8629,13 @@ Procedure SystemProfileEmpty ( Module = undefined, CallbackParams = undefined, P
 	text = NStr ( "en = 'The System Mail Profile is not set up. Please fill in the required fields in the menu path: Settings > System > System Mail. Make sure you are logged in with System Administrator access rights.';ro = 'Profilul de email al sistemului nu este setat. Vă rugăm să completați câmpurile necesare în calea meniului: Setări > Sistem > Mail de sistem. Asigurați-vă că v-ați autentificat cu drepturile de acces ale Administratorului de Sistem.';ru = 'Профиль системной почты не настроен. Пожалуйста, заполните необходимые поля в меню: Настройки > Система > Системная почта. Убедитесь, что вы вошли в систему с правами доступа системного администратора.'" );
 	title = NStr ( "en=''; ro=''; ru=''" );
 	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtServer
+Procedure WrongScaleLimit ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Wrong limit'; ro = 'Limita nu este setată corect'; ru = 'Лимит задан неверно'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure

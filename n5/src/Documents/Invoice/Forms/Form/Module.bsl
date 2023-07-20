@@ -9,6 +9,8 @@ var ServicesRow;
 &AtServer
 var SalesOrderExists;
 &AtServer
+var QuoteExists;
+&AtServer
 var ShipmentExists;
 &AtServer
 var ShipmentMetadata;
@@ -93,6 +95,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			baseType = TypeOf ( Base );
 			if ( baseType = Type ( "DocumentRef.SalesOrder" ) ) then
 				fillBySaleOrder ();
+			elsif ( baseType = Type ( "DocumentRef.Quote" ) ) then
+				fillByQuote ();
 			elsif ( baseType = Type ( "DocumentRef.TimeEntry" ) ) then
 				fillByTimeEntry ();
 			elsif ( baseType = Type ( "DocumentRef.ShipmentStockman" ) ) then
@@ -410,6 +414,121 @@ Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
 EndProcedure 
 
 &AtServer
+Procedure fillByQuote ()
+	
+	setEnv ();
+	sqlQuote ();
+	SQL.Perform ( Env );
+	InvoiceForm.CheckQuote ( Env.Fields );
+	headerByQuote ();
+	loadQuoteTables ();
+	updateTotals ( ThisObject );
+	InvoiceForm.SetCurrencyList ( ThisObject );
+	InvoiceForm.SetPayment ( Object );
+	Constraints.ShowSales ( ThisObject );
+
+EndProcedure
+
+&AtServer
+Procedure sqlQuote ()
+	
+	s = "
+	|// @Fields
+	|select Document.Amount as Amount, Document.Company as Company, Document.Contract as Contract,
+	|	Document.Creator as Creator, Document.Currency as Currency, Document.Contract.Currency as ContractCurrency,
+	|	Document.Customer as Customer, Document.DeliveryDate as DeliveryDate, Document.Discount as Discount,
+	|	Document.DueDate as DueDate, Document.Factor as Factor, Document.GrossAmount as GrossAmount,
+	|	Document.Prices as Prices, Document.Rate as Rate, Document.VAT as VAT, Document.VATUse as VATUse,
+	|	Document.Warehouse as Warehouse, Document.Contract.CustomerRateType as RateType,
+	|	presentation ( RejectedQuotes.Cause ) as RejectionCause, Document.Ref as Quote
+	|from Document.Quote as Document
+	|	//
+	|	// RejectedQuotes
+	|	//
+	|	left join InformationRegister.RejectedQuotes as RejectedQuotes
+	|	on RejectedQuotes.Quote = &Base
+	|where Document.Ref = &Base
+	|;
+	|// #Goods
+	|select false as ItemService, Items.Feature as Feature, Items.DeliveryDate as DeliveryDate, Items.DiscountRate as DiscountRate,
+	|	Items.Item as Item, Items.Package as Package, Items.Price as Price, Items.Prices as Prices,
+	|	Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
+	|	Items.Discount as Discount, Items.Capacity as Capacity, Items.Total as Total, Items.VAT as VAT, 
+	|	Items.VATRate as VATRate, Items.VATCode as VATCode, Items.Amount as Amount,
+	|	"""" as Description, Items.LineNumber as LineNumber
+	|from Document.Quote.Items as Items
+	|where Items.Ref = &Base
+	|union all
+	|select true, Services.Feature, Services.DeliveryDate, Services.DiscountRate,
+	|	Services.Item, null, Services.Price, Services.Prices, Services.Quantity,
+	|	Services.Quantity, Services.Discount, 1, Services.Total,
+	|	Services.VAT, Services.VATRate, Services.VATCode, Services.Amount,
+	|	Services.Description, Services.LineNumber
+	|from Document.Quote.Services as Services
+	|where Services.Ref = &Base
+	|order by LineNumber
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByQuote ()
+	
+	fields = Env.Fields;
+	FillPropertyValues ( Object, fields );
+	Object.Quote = Base;
+	ContractCurrency = fields.ContractCurrency;
+	if ( fields.RateType = Enums.CurrencyRates.Current ) then
+		currency = CurrenciesSrv.Get ( Object.Currency, Object.Date );
+		Object.Rate = currency.Rate;
+		Object.Factor = currency.Factor;
+	endif;
+	data = AccountsMap.Organization ( Object.Customer, Object.Company, "CustomerAccount" );
+	Object.CustomerAccount = data.CustomerAccount;
+	settings = Logins.Settings ( "Department" );
+	Object.Department = settings.Department;
+	
+EndProcedure 
+
+&AtServer
+Procedure loadQuoteTables ()
+	
+	company = Object.Company;
+	oneWarehouse = not Options.WarehousesInTable ( company );
+	warehouse = Object.Warehouse;
+	vatUse = Object.VATUse;
+	tableItems = Object.Items;
+	services = Object.Services;
+	for each row in Env.Goods do
+		if ( row.ItemService ) then
+			docRow = services.Add ();
+			FillPropertyValues ( docRow, row );
+			item = row.Item;
+			accounts = AccountsMap.Item ( item, company, warehouse, "Income, VAT" );
+			docRow.Income = accounts.Income;
+			docRow.VATAccount = accounts.VAT;
+		else
+			docRow = tableItems.Add ();
+			FillPropertyValues ( docRow, row );
+			if ( oneWarehouse
+				or docRow.Warehouse = warehouse ) then
+				docRow.Warehouse = undefined;
+			endif; 
+			accounts = AccountsMap.Item ( docRow.Item, company, warehouse, "Account, SalesCost, Income, VAT" );
+			docRow.Account = accounts.Account;
+			docRow.SalesCost = accounts.SalesCost;
+			docRow.Income = accounts.Income;
+			docRow.VATAccount = accounts.VAT;
+		endif;
+		Computations.Discount ( docRow );
+		Computations.Amount ( docRow );
+		Computations.Total ( docRow, vatUse );
+	enddo; 
+	
+EndProcedure 
+
+&AtServer
 Procedure fillByTimeEntry ()
 	
 	setEnv ();
@@ -650,6 +769,7 @@ Procedure setLinks ()
 	else
 		q = Env.Q;
 		q.SetParameter ( "TimeEntry", Object.TimeEntry );
+		q.SetParameter ( "Quote", Object.Quote );
 		q.SetParameter ( "SalesOrder", Object.SalesOrder );
 		q.SetParameter ( "Shipment", Object.Shipment );
 		q.SetParameter ( "Contract", Object.Contract );
@@ -667,6 +787,7 @@ Procedure sqlLinks ()
 	selection = Env.Selection;
 	TimeEntryExists = not Object.TimeEntry.IsEmpty ();
 	SalesOrderExists = not Object.SalesOrder.IsEmpty ();
+	QuoteExists = not Object.Quote.IsEmpty ();
 	ShipmentExists = Object.Shipment <> undefined;
 	if ( TimeEntryExists ) then
 		s = "
@@ -683,6 +804,15 @@ Procedure sqlLinks ()
 		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
 		|from Document.SalesOrder as Documents
 		|where Documents.Ref = &SalesOrder
+		|";
+		selection.Add ( s );
+	endif;
+	if ( QuoteExists ) then
+		s = "
+		|// #Quotes
+		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+		|from Document.Quote as Documents
+		|where Documents.Ref = &Quote
 		|";
 		selection.Add ( s );
 	endif;
@@ -748,6 +878,9 @@ Procedure setURLPanel ()
 	
 	parts = new Array ();
 	meta = Metadata.Documents;
+	if ( QuoteExists ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.Quotes, meta.Quote ) );
+	endif; 
 	if ( SalesOrderExists ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.SalesOrders, meta.SalesOrder ) );
 	endif; 

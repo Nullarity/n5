@@ -79,6 +79,7 @@
   <basedOn>Document.SalesOrder</basedOn>
   <basedOn>Document.TimeEntry</basedOn>
   <basedOn>Document.ShipmentStockman</basedOn>
+  <basedOn>Document.Quote</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -832,6 +833,41 @@
       <name>Filter.Owner</name>
       <field>Document.Invoice.Attribute.Company</field>
     </choiceParameterLinks>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5cfe7832-6dda-4008-8a23-5e625bf54d39">
+    <name>Quote</name>
+    <synonym>
+      <key>en</key>
+      <value>Quote</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Коммерческое предложение</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Oferta comerciala</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.Quote</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Commercial offer on the basis of which the invoice is entered</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Oferta comercială pe baza căreia se înregistrează factura</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Коммерческое предложение покупателю, на основании которого вводится реализация</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>

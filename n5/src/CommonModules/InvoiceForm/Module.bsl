@@ -555,3 +555,16 @@ Procedure ExtractSeries ( Object ) export
 	Object.Series = StrConcat ( series );
 
 EndProcedure
+
+&AtServer
+Procedure CheckQuote ( Fields ) export
+	
+	documentDate = BegOfDay ( CurrentSessionDate () );
+	if ( Fields.DueDate < documentDate ) then
+		raise Output.QuoteDueDateLessCurrentDate ( new Structure ( "DueDate", Conversion.DateToString ( Fields.DueDate ) ) );
+	endif; 
+	if ( Fields.RejectionCause <> null ) then
+		raise Output.QuoteRejected ( new Structure ( "Cause", Fields.RejectionCause ) );
+	endif; 
+	
+EndProcedure 

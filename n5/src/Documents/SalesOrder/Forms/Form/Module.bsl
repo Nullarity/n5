@@ -297,8 +297,8 @@ Procedure fillByQuote ()
 	sqlQuote ();
 	Env.Q.SetParameter ( "Base", Parameters.Basis );
 	SQL.Perform ( Env );
-	checkQuote ();
 	fields = Env.Fields;
+	InvoiceForm.CheckQuote ( fields );
 	FillPropertyValues ( Object, fields );
 	ContractCurrency = fields.ContractCurrency;
 	if ( fields.RateType = Enums.CurrencyRates.Current ) then
