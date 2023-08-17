@@ -88,6 +88,7 @@ Procedure headerByWaybill ()
 	
 	FillPropertyValues ( ThisObject, Env.Fields );
 	Currency = Application.Currency ();
+	CarExpenses = Enums.CarExpenses.Fuel;
 	
 EndProcedure 
 
@@ -112,15 +113,25 @@ EndProcedure
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
 	checkVAT ( CheckedAttributes );
+	checkDriver ( CheckedAttributes );
 
 EndProcedure
 
 Procedure checkVAT ( CheckedAttributes )
-	
+
 	if ( VATUse > 0 ) then
 		CheckedAttributes.Add ( "VATAccount" );
 		CheckedAttributes.Add ( "Items.VATAccount" );
 	endif; 
+	
+EndProcedure
+
+Procedure checkDriver ( CheckedAttributes )
+	
+	if ( DF.Pick ( Warehouse, "Class" ) = Enums.WarehouseTypes.Car
+		and CarExpenses = Enums.CarExpenses.Overconsumption ) then
+		CheckedAttributes.Add ( "Items.Driver" );
+	endif;
 	
 EndProcedure
 

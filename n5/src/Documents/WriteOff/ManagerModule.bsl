@@ -51,8 +51,10 @@ Function Post ( Env ) export
 				return false;
 			endif;
 		endif;
-		if ( fields.FuelExpense ) then
+		if ( Env.FuelExpense ) then
 			makeFuelToExpense ( Env );
+		elsif ( Env.FuelOverconsumption ) then
+			makeFuelExcess ( Env );
 		endif;
 		if ( not checkBalances ( Env ) ) then
 			return false;
@@ -102,8 +104,8 @@ Procedure sqlFields ( Env )
 	|	Documents.ProductFeature as ProductFeature, Documents.ExpenseAccount as ExpenseAccount,
 	|	Documents.Dim1 as Dim1, Documents.Dim2 as Dim2, Documents.Dim3 as Dim3, Documents.VATAccount as VATAccount,
 	|	Documents.VATDim1 as VATDim1, Documents.VATDim2 as VATDim2, Documents.VATDim3 as VATDim3,
-	|	isnull ( Forms.Exists, false ) as Forms, Documents.Base refs Document.Waybill as FuelExpense,
-	|	Cars.Ref as Car
+	|	isnull ( Forms.Exists, false ) as Forms, Documents.CarExpenses as CarExpenses,
+	|	Documents.Warehouse.Class as WarehouseClass
 	|from Document.WriteOff as Documents
 	|	//
 	|	// Forms
@@ -114,11 +116,6 @@ Procedure sqlFields ( Env )
 	|		where Items.Item.Form
 	|		and Items.Ref = &Ref ) as Forms
 	|	on true
-	|	//
-	|	// Cars
-	|	//
-	|	left join Catalog.Cars as Cars
-	|	on Cars.Warehouse = Documents.Warehouse
 	|where Documents.Ref = &Ref
 	|;
 	|// @DocumentOrderExists
@@ -141,7 +138,15 @@ EndProcedure
 
 Procedure setContext ( Env )
 	
-	Env.Insert ( "DocumentOrderExists", Env.DocumentOrderExists <> undefined and Env.DocumentOrderExists.Exist );
+	Env.Insert ( "DocumentOrderExists",
+		Env.DocumentOrderExists <> undefined and Env.DocumentOrderExists.Exist );
+	fields = Env.Fields;
+	car = ( fields.WarehouseClass = Enums.WarehouseTypes.Car );
+	expenses = fields.CarExpenses;
+	Env.Insert ( "FuelExpense",
+		car and expenses = Enums.CarExpenses.Fuel );
+	Env.Insert ( "FuelOverconsumption",
+		car and expenses = Enums.CarExpenses.Overconsumption );
 
 EndProcedure
 
@@ -161,11 +166,11 @@ Procedure sqlItems ( Env )
 	|	case when ( Items.ExpenseAccount = value ( ChartOfAccounts.General.EmptyRef ) ) then &Dim3 else Items.Dim3 end as Dim3,
 	|	case when ( Items.Product = value ( Catalog.Items.EmptyRef ) ) then &Product else Items.Product end as Product,
 	|	case when ( Items.ProductFeature = value ( Catalog.Features.EmptyRef ) ) then &ProductFeature else Items.ProductFeature end as ProductFeature,
-	|	Items.Account as Account, Items.Range as Range
+	|	Items.Account as Account, Items.Range as Range, Items.Driver as Driver
 	|into Items
 	|from Document.WriteOff.Items as Items
 	|where Items.Ref = &Ref
-	|index by Items.Item, Items.Feature
+	|index by Item, Feature
 	|";
 	Env.Selection.Add ( s );
 	
@@ -250,12 +255,26 @@ EndProcedure
 
 Procedure sqlQuantity ( Env )
 	
+	fuel = Env.FuelExpense or Env.FuelOverconsumption;
 	s = "
-	|// ^Items
+	|// #Items
 	|select Items.Warehouse as Warehouse, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
-	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity
+	|	Items.Package as Package, sum ( Items.QuantityPkg ) as Quantity";
+	if ( Fuel ) then
+		s = s + ", Items.Driver as Driver, Cars.Ref as Car";
+	endif;
+	s = s + "
 	|from Items as Items
 	|";
+	if ( fuel ) then
+		s = s + "
+		|	//
+		|	// Cars
+		|	//
+		|	left join Catalog.Cars as Cars
+		|	on Cars.Warehouse = Items.Warehouse
+		|";
+	endif;
 	if ( Env.DocumentOrderExists ) then
 		s = s + "
 		|where Items.RowKey not in ( select RowKey from Reserves )";
@@ -263,6 +282,10 @@ Procedure sqlQuantity ( Env )
 	s = s + "
 	|group by Items.Warehouse, Items.Item, Items.Feature, Items.Package, Items.Series
 	|";
+	if ( Fuel ) then
+		s = s + ", Items.Driver, Cars.Ref
+		|";
+	endif;
 	Env.Selection.Add ( s );
 	
 EndProcedure
@@ -339,10 +362,9 @@ EndProcedure
 
 Procedure makeItems ( Env )
 
-	table = SQL.Fetch ( Env, "$Items" );
 	recordset = Env.Registers.Items;
 	date = Env.Fields.Date;
-	for each row in table do
+	for each row in Env.Items do
 		movement = recordset.AddExpense ();
 		movement.Period = date;
 		movement.Item = row.Item;
@@ -622,46 +644,61 @@ EndProcedure
 
 Function checkBalances ( Env )
 	
-	if ( Env.CheckBalances ) then
-		Env.Registers.Items.LockForUpdate = true;
-		Env.Registers.Items.Write ();
-		Shortage.SqlItems ( Env );
-	else
-		Env.Registers.Items.Write = true;
-	endif;
-	if ( Env.DocumentOrderExists ) then
-		if ( Env.CheckBalances ) then
-			if ( Env.ReservesExist ) then
-				Env.Registers.Reserves.LockForUpdate = true;
-				Env.Registers.Reserves.Write ();
-				Shortage.SqlReserves ( Env );
-			else
-				Env.Registers.Reserves.Write = true;
-			endif;
-		endif; 
-	else
-		Env.Registers.Reserves.Write = true;
-	endif;
-	if ( Env.Selection.Count () = 0 ) then
-		return true;
-	endif;
-	SQL.Perform ( Env );
+	registers = Env.Registers;
+	registers.Items.Write = true;
+	registers.Reserves.Write = true;
+	registers.FuelToExpense.Write = true;
+	registers.FuelExcess.Write = true;
 	if ( not Env.CheckBalances ) then
 		return true;
-	endif; 
+	endif;
+	registers.Items.LockForUpdate = true;
+	registers.Items.Write = false;
+	registers.Items.Write ();
+	Shortage.SqlItems ( Env );
+	checkReserves = Env.DocumentOrderExists and Env.ReservesExist;
+	if ( checkReserves ) then
+		registers.Reserves.LockForUpdate = true;
+		registers.Reserves.Write = false;
+		registers.Reserves.Write ();
+		Shortage.SqlReserves ( Env );
+	endif;
+	if ( Env.FuelExpense ) then
+		registers.FuelToExpense.LockForUpdate = true;
+		registers.FuelToExpense.Write = false;
+		registers.FuelToExpense.Write ();
+		Shortage.SqlFuelToExpense ( Env );
+	elsif ( Env.FuelOverconsumption ) then
+		registers.FuelExcess.LockForUpdate = true;
+		registers.FuelExcess.Write = false;
+		registers.FuelExcess.Write ();
+		Shortage.SqlFuelExcess ( Env );
+	endif;
+	SQL.Perform ( Env );
 	table = SQL.Fetch ( Env, "$ShortageItems" );
 	if ( table.Count () > 0 ) then
 		Shortage.Items ( Env, table );
 		return false;
 	endif;
-	if ( Env.DocumentOrderExists ) then
-		if ( Env.ReservesExist ) then
-			table = SQL.Fetch ( Env, "$ShortageReserves" );
-			if ( table.Count () > 0 ) then
-				Shortage.Reserves ( Env, table );
-				return false;
-			endif; 
+	if ( checkReserves ) then
+		table = SQL.Fetch ( Env, "$ShortageReserves" );
+		if ( table.Count () > 0 ) then
+			Shortage.Reserves ( Env, table );
+			return false;
 		endif; 
+	endif;
+	if ( Env.FuelExpense ) then
+		table = SQL.Fetch ( Env, "$ShortageFuelToExpense" );
+		if ( table.Count () > 0 ) then
+			Shortage.FuelToExpense ( Env, table );
+			return false;
+		endif;
+	elsif ( Env.FuelOverconsumption ) then
+		table = SQL.Fetch ( Env, "$ShortageFuelExcess" );
+		if ( table.Count () > 0 ) then
+			Shortage.FuelExcess ( Env, table );
+			return false;
+		endif;
 	endif;
 	return true;
 	
@@ -677,9 +714,6 @@ Procedure flagRegisters ( Env )
 		registers.RangeStatuses.Write = true;
 		if ( not Env.CheckBalances ) then
 			registers.Items.Write = true;
-		endif;
-		if ( Env.Fields.FuelExpense ) then
-			registers.FuelToExpense.Write = true;
 		endif;
 	endif;
 	
@@ -788,13 +822,26 @@ EndFunction
 Procedure makeFuelToExpense ( Env )
 	
 	recordset = Env.Registers.FuelToExpense;
-	table = SQL.Fetch ( Env, "$Items" );
 	date = Env.Fields.Date;
-	car = Env.Fields.Car;
-	for each row in table do
+	for each row in Env.Items do
 		movement = recordset.AddExpense ();
 		movement.Period = date;
-		movement.Car = car;
+		movement.Car = row.Car;
+		movement.Fuel = row.Item;
+		movement.Quantity = row.Quantity;
+	enddo;	
+	
+EndProcedure
+
+Procedure makeFuelExcess ( Env )
+	
+	recordset = Env.Registers.FuelExcess;
+	date = Env.Fields.Date;
+	for each row in Env.Items do
+		movement = recordset.AddExpense ();
+		movement.Period = date;
+		movement.Car = row.Car;
+		movement.Driver = row.Driver;
 		movement.Fuel = row.Item;
 		movement.Quantity = row.Quantity;
 	enddo;	
@@ -902,7 +949,7 @@ Procedure putHeader ( Params, Env )
 	Params.TabDoc.Put ( area );
 	
 EndProcedure
- 
+
 Procedure putTable ( Params, Env )
 	
 	t = Env.T;

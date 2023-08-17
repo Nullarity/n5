@@ -131,6 +131,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		updateChangesPermission ();
 	endif;
 	setLinks ();
+	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -585,6 +586,13 @@ Procedure NotificationProcessing ( EventName, Parameter, Source )
 
 EndProcedure
 
+&AtClient
+Procedure BeforeWrite ( Cancel, WriteParameters )
+	
+	StandardButtons.AdjustSaving ( ThisObject, WriteParameters );
+	
+EndProcedure
+
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
@@ -650,8 +658,7 @@ EndProcedure
 &AtServer
 Function updateWriteOff ( WriteParameters, Exception )
 	
-	if ( WriteParameters.WriteMode <> DocumentWriteMode.Posting
-		or not Object.FuelInventory
+	if ( not Object.FuelInventory
 		or Application.WaybillManualWriteOff () ) then
 		return false;
 	endif;
@@ -667,6 +674,26 @@ Function updateWriteOff ( WriteParameters, Exception )
 			Exception = exceptionDescription ( ErrorInfo () );
 			return false;
 		endtry;
+	endif;
+	deletion = Object.DeletionMark;
+	writeOffExists = not obj.IsNew ();
+	if ( deletion <> obj.DeletionMark ) then
+		if ( not writeOffExists ) then
+			return false;
+		else
+			try
+				obj.SetDeletionMark ( deletion );
+			except
+				Exception = exceptionDescription ( ErrorInfo () );
+				return false;
+			endtry;
+		endif;
+	endif;
+	if ( deletion ) then
+		return true;
+	endif;
+	if ( WriteParameters.WriteMode <> DocumentWriteMode.Posting ) then
+		return writeOffExists;
 	endif;
 	try
 		obj.Fill ( Object.Ref );

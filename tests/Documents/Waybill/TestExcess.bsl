@@ -6,7 +6,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "2A6C51DD" );
+id = Call ( "Common.ScenarioID", "A17G" );
 env = getEnv ( id );
 createEnv ( env );
 
@@ -28,7 +28,7 @@ Put ( "#OdometerEnd", 100 );
 Put ( "#MileageCity", 100 );
 
 Activate ( "#PageMore" );
-Put ( "#WaybillType", "!!!" );
+Put ( "#WaybillType", "11" );
 
 Click ( "#FormPost" );
 Close ( form );
@@ -55,8 +55,8 @@ GotoRow ( table, "Fuel", "Fuel: " + Env.ID );
 Put ( "#FuelBalancesQuantity", 25, table );
 
 Activate ( "#PageMore" );
-Put ( "#WaybillType", "!!!" );
-
+Put ( "#WaybillType", "11" );
+Put ( "#Account", "7111" );
 Click ( "#FormPost" );
 
 Click ( "#FormReportRecordsShow" );

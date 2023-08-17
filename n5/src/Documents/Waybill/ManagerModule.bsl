@@ -139,20 +139,30 @@ Procedure sqlFuelInventory ( Env )
 	|index by Fuel, Warehouse
 	|;
 	|// #FuelInventory
-	|select Items.Fuel as Fuel, sum ( Items.Quantity ) as QuantityExtraExpense, sum ( Items.QuantityToExpenseBalance ) as QuantityToExpenseBalance
-	|from ( select GoodsBalances.Item as Fuel, sum ( GoodsBalances.QuantityBalance ) as Quantity, 0 as QuantityToExpenseBalance
-	|		from AccumulationRegister.Items.Balance ( &Timestamp, ( Warehouse, Item ) in ( select Warehouse, Fuel from FuelBalances ) ) as GoodsBalances
+	|select Items.Fuel as Fuel, sum ( Items.Quantity ) as Deviation, sum ( Items.ExcessBalance )  as ExcessBalance
+	|from (
+	|		select GoodsBalances.Item as Fuel, sum ( GoodsBalances.QuantityBalance ) as Quantity,
+	|			0 as ExcessBalance
+	|		from AccumulationRegister.Items.Balance ( &Timestamp,
+	|			( Warehouse, Item ) in ( select Warehouse, Fuel from FuelBalances )
+	|			) as GoodsBalances
 	|		group by GoodsBalances.Item
-	|		union all
-	|		select FuelToExpense.Fuel, - FuelToExpense.QuantityBalance, - FuelToExpense.QuantityBalance
-	|		from AccumulationRegister.FuelToExpense.Balance ( &Timestamp, Car = &Car ) as FuelToExpense
-	|		union all
-	|		select FuelToExpense.Fuel, - FuelToExpense.Quantity, - FuelToExpense.Quantity
-	|		from FuelToExpense as FuelToExpense
 	|		union all
 	|		select FuelBalances.Fuel, - FuelBalances.Quantity, 0
 	|		from Document.Waybill.FuelBalances as FuelBalances
-	|		where FuelBalances.Ref = &Ref ) as Items
+	|		where FuelBalances.Ref = &Ref
+	|		union all
+	|		select FuelToExpense.Fuel, - FuelToExpense.QuantityBalance, 0
+	|		from AccumulationRegister.FuelToExpense.Balance ( &Timestamp, Car = &Car ) as FuelToExpense
+	|		union all
+	|		select FuelToExpense.Fuel, - FuelToExpense.Quantity, 0
+	|		from FuelToExpense as FuelToExpense
+	|		union all
+	|		select Overconsumption.Fuel,
+	|			case when Overconsumption.QuantityBalance > 0 then - Overconsumption.QuantityBalance else 0 end,
+	|			Overconsumption.QuantityBalance
+	|		from AccumulationRegister.FuelExcess.Balance ( &Timestamp, Car = &Car ) as Overconsumption
+	|) as Items
 	|group by Items.Fuel
 	|having sum ( Items.Quantity ) <> 0
 	|";
@@ -235,38 +245,59 @@ EndProcedure
 
 Procedure makeFuelInventory ( Env )
 	
-	recordsetFuelToExpense = Env.Registers.FuelToExpense;
-	recordsetFuelExcess = Env.Registers.FuelExcess;
-	recordsetFuelExcessTurnovers = Env.Registers.FuelExcessTurnovers;
-	recordsetFuelExcess.Clear ();
-	recordsetFuelExcessTurnovers.Clear ();
+	writeOffRecords = Env.Registers.FuelToExpense;
+	excessRecords = Env.Registers.FuelExcess;
+	excessTurnovers = Env.Registers.FuelExcessTurnovers;
+	excessRecords.Clear ();
+	excessTurnovers.Clear ();
 	table = Env.FuelInventory;
 	for each row in table do
-		if ( row.QuantityExtraExpense > 0 ) then
-			movement = recordsetFuelExcess.Add ();
+		deviation = row.Deviation;
+		if ( deviation > 0 ) then
+			overconsumption = deviation;
+			economy = ? ( row.ExcessBalance < 0, - row.ExcessBalance, 0 );
+			if ( economy > 0 ) then
+				movement = writeOffRecords.Add ();
+				movement.Period = Env.Fields.Date;
+				movement.Fuel = row.Fuel;
+				movement.Car = Env.Fields.Car;
+				movement.Quantity = Min ( economy, overconsumption );
+			endif;
+			movement = excessRecords.Add ();
 			movement.Period = Env.Fields.Date;
 			movement.Fuel = row.Fuel;
 			movement.Driver = Env.Fields.Driver1;
 			movement.Car = Env.Fields.Car;
-			movement.Quantity = row.QuantityExtraExpense;
-			movement = recordsetFuelExcessTurnovers.Add ();
+			movement.Quantity = overconsumption;
+			movement = excessTurnovers.Add ();
 			movement.Period = Env.Fields.Date;
 			movement.Fuel = row.Fuel;
 			movement.Driver = Env.Fields.Driver1;
 			movement.Car = Env.Fields.Car;
-			movement.Excess = row.QuantityExtraExpense;
+			movement.Excess = overconsumption;
 		else
-			movement = recordsetFuelToExpense.AddReceipt ();
-			movement.Period = Env.Fields.Date;
-			movement.Fuel = row.Fuel;
-			movement.Car = Env.Fields.Car;
-			movement.Quantity = row.QuantityExtraExpense;
-			movement = recordsetFuelExcessTurnovers.Add ();
+			overconsumption = row.ExcessBalance;
+			economy = - deviation;
+			balanceCorrection = overconsumption - economy;
+			if ( balanceCorrection < 0 ) then
+				movement = writeOffRecords.Add ();
+				movement.Period = Env.Fields.Date;
+				movement.Fuel = row.Fuel;
+				movement.Car = Env.Fields.Car;
+				movement.Quantity = balanceCorrection;
+			endif;
+			movement = excessRecords.AddExpense ();
 			movement.Period = Env.Fields.Date;
 			movement.Fuel = row.Fuel;
 			movement.Driver = Env.Fields.Driver1;
 			movement.Car = Env.Fields.Car;
-			movement.Economy = - row.QuantityExtraExpense;
+			movement.Quantity = economy;
+			movement = excessTurnovers.Add ();
+			movement.Period = Env.Fields.Date;
+			movement.Fuel = row.Fuel;
+			movement.Driver = Env.Fields.Driver1;
+			movement.Car = Env.Fields.Car;
+			movement.Economy = economy;
 		endif; 
 	enddo; 
 	

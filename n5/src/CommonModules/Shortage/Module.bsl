@@ -508,3 +508,75 @@ Procedure Work ( Env, Table ) export
 	enddo; 
 
 EndProcedure
+
+Procedure SqlFuelToExpense ( Env ) export
+
+	s = "
+	|// ^ShortageFuelToExpense
+	|select min ( Items.LineNumber ) as LineNumber, presentation ( Items.Warehouse ) as Warehouse, presentation ( Items.Item ) as Item, Items.Unit as Unit, - Balances.QuantityBalance as Quantity,
+	|	sum ( Items.QuantityPkg ) + Balances.QuantityBalance as QuantityBalance
+	|from AccumulationRegister.FuelToExpense.Balance ( , ( Car, Fuel )
+	|	in ( select distinct Car, Fuel from AccumulationRegister.FuelToExpense where Recorder = &Ref ) ) as Balances
+	|	//
+	|	// Items
+	|	//
+	|	join Items as Items
+	|	on Items.Item = Balances.Fuel
+	|	and Items.Warehouse = Balances.Car.Warehouse
+	|where Balances.QuantityBalance < 0
+	|group by Items.Warehouse, Items.Item, Items.Unit, Balances.QuantityBalance
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure FuelToExpense ( Env, Table ) export
+	
+	field = ? ( Options.Packages (), "QuantityPkg", "Quantity" );
+	p = Posting.Msg ( Env, "Warehouse, Item, QuantityBalance, Quantity" );
+	for each row in table do
+		p.Warehouse = row.Warehouse;
+		p.Item = row.Item;
+		p.QuantityBalance = Conversion.NumberToQuantity ( row.QuantityBalance, row.Unit );
+		p.Quantity = Conversion.NumberToQuantity ( row.Quantity, row.Unit );
+		Output.FuelToExpenseBalanceError ( p, Output.Row ( "Items", row.LineNumber, field ), Env.Ref );
+	enddo; 
+
+EndProcedure
+
+Procedure SqlFuelExcess ( Env ) export
+
+	s = "
+	|// ^ShortageFuelExcess
+	|select min ( Items.LineNumber ) as LineNumber, presentation ( Items.Warehouse ) as Warehouse, presentation ( Items.Item ) as Item, Items.Unit as Unit, - Balances.QuantityBalance as Quantity,
+	|	sum ( Items.QuantityPkg ) + Balances.QuantityBalance as QuantityBalance
+	|from AccumulationRegister.FuelExcess.Balance ( , ( Car, Driver, Fuel )
+	|	in ( select distinct Car, Driver, Fuel from AccumulationRegister.FuelExcess where Recorder = &Ref ) ) as Balances
+	|	//
+	|	// Items
+	|	//
+	|	join Items as Items
+	|	on Items.Item = Balances.Fuel
+	|	and Items.Warehouse = Balances.Car.Warehouse
+	|	and Items.Driver = Balances.Driver
+	|where Balances.QuantityBalance < 0
+	|group by Items.Warehouse, Items.Driver, Items.Item, Items.Unit,
+	|	Balances.QuantityBalance
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure FuelExcess ( Env, Table ) export
+	
+	field = ? ( Options.Packages (), "QuantityPkg", "Quantity" );
+	p = Posting.Msg ( Env, "Warehouse, Item, QuantityBalance, Quantity" );
+	for each row in table do
+		p.Warehouse = row.Warehouse;
+		p.Item = row.Item;
+		p.QuantityBalance = Conversion.NumberToQuantity ( row.QuantityBalance, row.Unit );
+		p.Quantity = Conversion.NumberToQuantity ( row.Quantity, row.Unit );
+		Output.FuelExcessBalanceError ( p, Output.Row ( "Items", row.LineNumber, field ), Env.Ref );
+	enddo; 
+
+EndProcedure

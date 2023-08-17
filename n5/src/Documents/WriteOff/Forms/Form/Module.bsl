@@ -23,6 +23,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	InvoiceForm.SetLocalCurrency ( ThisObject );
 	InvoiceRecords.Read ( ThisObject );
+	readWarehouseClass ( ThisObject );
 	readAccount ();
 	labelDims ( AccountData );
 	if ( Object.VATUse > 0 ) then
@@ -39,6 +40,13 @@ Procedure updateChangesPermission ()
 
 	Constraints.ShowAccess ( ThisObject );
 
+EndProcedure
+
+&AtClientAtServerNoContext
+Procedure readWarehouseClass ( Form )
+	
+	Form.WarehouseClass = DF.Pick ( Form.Object.Warehouse, "Class" );
+	
 EndProcedure
 
 &AtServer
@@ -88,6 +96,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			setCurrency ();
 		endif;
 		updateChangesPermission ();
+		readWarehouseClass ( ThisObject );
 	endif; 
 	setAccuracy ();
 	setLinks ();
@@ -122,10 +131,26 @@ Procedure readAppearance ()
 	|ItemsTotal show Object.VATUse = 2;
 	|GroupHeader GroupItems GroupStakeholders GroupFooter GroupMore lock ChangesDisallowed;
 	|ItemsTableCommandBar disable ChangesDisallowed;
+	|CarExpenses show WarehouseClass = Enum.WarehouseTypes.Car;
+	|#s CarExpenses lock WarehouseClass = Enum.WarehouseTypes.Car and Form.waybillBase ();
+	|#s Warehouse ItemsWarehouse Company lock Form.waybillBase ();
+	|FormFuel show WarehouseClass = Enum.WarehouseTypes.Car and Object.CarExpenses <> Enum.CarExpenses.Other;
+	|ItemsTableFillByCar show WarehouseClass = Enum.WarehouseTypes.Car and Object.Base = undefined
+	|	and Object.CarExpenses <> Enum.CarExpenses.Other;
+	|ItemsTableRange show WarehouseClass <> Enum.WarehouseTypes.Car;
+	|ItemsDriver show WarehouseClass = Enum.WarehouseTypes.Car
+	|	and Object.CarExpenses = Enum.CarExpenses.Overconsumption;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
 EndProcedure
+
+&AtServer
+Function waybillBase () export
+	
+	return TypeOf ( Object.Base ) = Type ( "DocumentRef.Waybill" );
+	
+EndFunction
 
 &AtServer
 Function isNew ()
@@ -574,9 +599,91 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
+Procedure Fuel ( Command )
+
+	openFuelReport ();
+
+EndProcedure
+
+&AtClient
+Procedure openFuelReport ()
+	
+	p = ReportsSystem.GetParams ( "Fuel" );
+	filters = new Array ();
+	filters.Add ( DC.CreateParameter ( "ShowRecorders", true ) );
+	period = DC.CreateParameter ( "Period",
+		new StandardPeriod ( BegOfYear ( Object.Date ), Object.Date ) );
+	filters.Add ( period );
+	filters.Add ( DC.CreateFilter ( "Car", getCars () ) );
+	p.Filters = filters;
+	p.GenerateOnOpen = true;
+	OpenForm ( "Report.Common.Form", p );
+	
+EndProcedure
+
+&AtClient
+Function getCars ()
+	
+	warehouses = new Array ();
+	warehouses.Add ( Object.Warehouse );
+	for each row in Object.Items do
+		warehouse = row.Warehouse;
+		if ( not warehouse.IsEmpty () ) then
+			warehouses.Add ( warehouse ); 
+		endif;
+	enddo;
+	Collections.Group ( warehouses );
+	cars = fetchCars ( warehouses );
+	return cars;
+	
+EndFunction
+
+&AtServerNoContext
+Function fetchCars ( val Warehouses )
+	
+	q = new Query (
+		"select Cars.Ref as Ref from Catalog.Cars as Cars where Cars.Warehouse in ( &Warehouses )"
+	);
+	q.SetParameter ( "Warehouses", Warehouses );
+	return q.Execute ().Unload ().UnloadColumn ( "Ref" );
+	
+EndFunction
+
+&AtClient
 Procedure DateOnChange ( Item )
 
 	updateChangesPermission ();
+	
+EndProcedure
+
+&AtClient
+Procedure WarehouseOnChange ( Item )
+	
+	applyWarehouse ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyWarehouse ()
+	
+	readWarehouseClass ( ThisObject );
+	Appearance.Apply ( ThisObject, "WarehouseClass" );
+	
+EndProcedure
+
+&AtClient
+Procedure CarExpensesOnChange ( Item )
+	
+	applyCarExpenses ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyCarExpenses ()
+	
+	Object.Items.Clear ();
+	calcTotals ( Object );
+	Appearance.Apply ( ThisObject, "Object.CarExpenses" );
 	
 EndProcedure
 
@@ -747,6 +854,88 @@ EndProcedure
 
 // *****************************************
 // *********** Table Items
+
+&AtClient
+Procedure FillByCar ( Command )
+	
+	Filler.Open ( fillingParams (), ThisObject );
+	
+EndProcedure
+
+&AtServer
+Function fillingParams ()
+	
+	p = Filler.GetParams ();
+	p.Report = "FuelFilling";
+	p.Insert ( "Variant", "Default" );
+	p.Filters = getFilters ();
+	return p;
+	
+EndFunction
+
+&AtServer
+Function getFilters ()
+	
+	filters = new Array ();
+	company = Object.Company;
+	filters.Add ( DC.CreateParameter ( "Company", company ) );
+	oneWarehouse = not Options.WarehousesInTable ( company );
+	filters.Add ( DC.CreateParameter ( "AllCars", false, false, , oneWarehouse ) );
+	warehouse = Object.Warehouse;
+	if ( not warehouse.IsEmpty () ) then
+		filters.Add ( DC.CreateFilter ( "Car", warehouse, , , , oneWarehouse ) );
+	endif; 
+	item = DC.CreateParameter ( "Date", Periods.GetBalanceDate ( Object ) );
+	item.Use = item.Value <> undefined;
+	filters.Add ( item );
+	overconsumption = Object.CarExpenses = Enums.CarExpenses.Overconsumption;
+	filters.Add ( DC.CreateParameter ( "Overconsumption", overconsumption ) );
+	filters.Add ( DC.CreateFilter ( "Driver", , , false, , not overconsumption ) );
+	return filters;
+	
+EndFunction
+
+&AtClient
+Procedure Filling ( Result, Params ) export
+	
+	if ( not fillTables ( Result ) ) then
+		Output.FillingDataNotFound ();
+	endif;
+	
+EndProcedure 
+
+&AtServer
+Function fillTables ( val Result )
+	
+	table = Filler.Fetch ( Result );
+	if ( table = undefined ) then
+		return false;
+	endif;
+	if ( Result.ClearTable ) then
+		Object.Items.Clear ();
+	endif;
+	itemsTable = Object.Items;
+	warehouse = Object.Warehouse;
+	company = Object.Company;
+	for each row in table do
+		newRow = itemsTable.Add ();
+		fuel = row.Fuel;
+		newRow.Item = fuel;
+		newRow.Package = row.FuelPackage;
+		newRow.Driver = row.Driver;
+		newRow.Capacity = row.FuelPackageCapacity;
+		newRow.Quantity = row.Quantity;
+		Computations.Packages ( newRow );
+		newRow.Account = AccountsMap.Item ( fuel, company, warehouse, "Account" ).Account;
+		car = row.Car;
+		if ( car <> warehouse ) then
+			newRow.Warehouse = car;
+		endif;
+	enddo;
+	calcTotals ( Object );
+	return true;
+	
+EndFunction
 
 &AtClient
 Procedure Scan ( Command )

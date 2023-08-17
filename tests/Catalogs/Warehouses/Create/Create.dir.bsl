@@ -16,6 +16,10 @@ if ( TypeOf ( _ ) = Type ( "Structure" ) ) then
 	if ( company <> undefined ) then
 		Put ( "#Owner", company );
 	endif;
+	value = _.Class;
+	if ( value <> undefined ) then
+		Put("#Class", value);
+	endif;
 	if ( _.Production ) then
 		Click("#Production");
 		if ( _.Department <> undefined ) then
