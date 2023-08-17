@@ -18,13 +18,21 @@ EndProcedure
 
 Procedure OnDetail ( Menu, StandardMenu, UseMainAction, Filters ) export
 	
-	Reporter.DisableMenu ( StandardMenu );
 	Menu = new ValueList ();
 	Reporter.AddReport ( Menu, "AccountBalance" );
 	Reporter.AddReport ( Menu, "AccountAnalysis" );
 	Reporter.AddReport ( Menu, "Transactions" );
+	StandardMenu = getActions ();
 	
 EndProcedure
+
+Function getActions ()
+	
+	actions = new Array ();
+	actions.Add ( DataCompositionDetailsProcessingAction.OpenValue );
+	return actions;
+	
+EndFunction 
 
 Procedure ApplyDetails ( Composer, Params ) export
 	
@@ -44,7 +52,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 		filterName = filter.Name;
 		if ( filterName = "Class" ) then
 			if ( balanceSheet ) then
-				DC.SetFilter ( Composer, "Account.Class", filter.Item.Value, , true );
+				DC.SetFilter ( Composer, "Account.Class", filter.Item.Value, , DataCompositionSettingsItemViewMode.Auto );
 				filter.StandardProcessing = false;
 			endif;
 		elsif ( filterName = "Period" ) then
@@ -68,7 +76,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 			if ( debts
 				or debtDetails ) then
 				if ( balanceSheet ) then
-					DC.AddFilter ( Composer, "Dim1", filter.Item.Value, , true );
+					DC.AddFilter ( Composer, "Dim1", filter.Item.Value, , DataCompositionSettingsItemViewMode.Auto );
 					DC.SetParameter ( Composer, "ShowDimensions", Enums.Dimensions._1 );
 				elsif ( analyticTransactions ) then
 					DC.SetParameter ( Composer, "DimType1", ChartsOfCharacteristicTypes.Dimensions.Organizations );
@@ -79,7 +87,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 			if ( debts
 				or debtDetails ) then
 				if ( balanceSheet ) then
-					DC.AddFilter ( Composer, "Dim2", filter.Item.Value, , true );
+					DC.AddFilter ( Composer, "Dim2", filter.Item.Value, , DataCompositionSettingsItemViewMode.Auto );
 					DC.SetParameter ( Composer, "ShowDimensions", Enums.Dimensions._2 );
 				elsif ( analyticTransactions ) then
 					DC.SetParameter ( Composer, "DimType2", ChartsOfCharacteristicTypes.Dimensions.Contracts );
@@ -110,7 +118,7 @@ Procedure ApplyDetails ( Composer, Params ) export
 			if ( assets ) then
 				value = filter.Item.Value;
 				if ( balanceSheet ) then
-					DC.AddFilter ( Composer, "Dim1", value, , true );
+					DC.AddFilter ( Composer, "Dim1", value, , DataCompositionSettingsItemViewMode.Auto );
 				elsif ( analyticTransactions ) then
 					DC.SetParameter ( Composer, "DimType1", dimensionOfValue ( value ) );
 					DC.SetParameter ( Composer, "Dim1", value );

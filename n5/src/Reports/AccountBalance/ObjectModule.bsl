@@ -7,6 +7,7 @@ var AccountGroup;
 var LastGroup;
 var ShowCurrency;
 var ShowQuantity;
+var ShowRecorders;
 var DimsHierarchy;
 var ShowDimensions;
 
@@ -59,6 +60,8 @@ Procedure readParams ()
 	ShowCurrency = p.Use and p.Value;
 	p = DC.GetParameter ( settings, "ShowQuantity" );
 	ShowQuantity = p.Use and p.Value;
+	p = DC.GetParameter ( Params.Settings, "ShowRecorders" );
+	ShowRecorders = p.Use and p.Value;
 	p = DC.GetParameter ( Params.Settings, "DimsHierarchy" );
 	DimsHierarchy = p.Use and p.Value;
 	
@@ -196,12 +199,10 @@ EndProcedure
 
 Procedure addRecorders ()
 	
-	settings = Params.Settings;
-	p = DC.GetParameter ( settings, "ShowRecorders" );
-	if ( not ( p.Value and p.Use ) ) then
+	if ( not ShowRecorders ) then
 		return;
 	endif; 
-	recorders = DCsrv.GetGroup ( settings, "Recorder" );
+	recorders = DCsrv.GetGroup ( Params.Settings, "Recorder" );
 	if ( ShowDimensions
 		or AccountData.Fields.Level = 0 ) then
 		dimension = DCsrv.GetField ( recorders.Selection, "Dim1" );
@@ -209,7 +210,7 @@ Procedure addRecorders ()
 	endif; 
 	LastGroup = DCsrv.Insert ( recorders, LastGroup.Structure );
 	LastGroup.Use = true;
-	
+
 EndProcedure
 
 Procedure titleReport ()

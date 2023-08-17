@@ -1,22 +1,42 @@
-Function CreateFilter ( LeftValue, RightValue = undefined, ComparisonType = undefined, Use = true, ViewMode = undefined, Access = true ) export
+Function CreateFilter ( LeftValue, RightValue = undefined, ComparisonType = undefined, Use = true, ViewMode = undefined, Hide = false ) export
 	
-	return new Structure ( "LeftValue, ComparisonType, RightValue, ViewMode, Use, Access", new DataCompositionField ( LeftValue ), defaultComparison ( RightValue, ComparisonType ), RightValue, ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.QuickAccess, ViewMode ), Use, Access );
+	filter = new Structure ( "LeftValue, ComparisonType, RightValue, ViewMode, Use, Hide",
+		new DataCompositionField ( LeftValue ),
+		ComparisonType,
+		RightValue,
+		? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.QuickAccess, ViewMode ), Use, Hide );
+	adjustFilter ( filter, ComparisonType );
+	return filter; 
 	
 EndFunction
 
-Function defaultComparison ( Filter, ComparisonType )
+Procedure adjustFilter ( Filter, ComparisonType )
 	
-	if ( ComparisonType = undefined ) then
-		return ? ( TypeOf ( Filter ) = Type ( "Array" ), DataCompositionComparisonType.InList, DataCompositionComparisonType.Equal );
+	if ( ComparisonType <> undefined ) then
+		return;
+	endif;
+	value = Filter.RightValue;
+	if ( TypeOf ( value ) = Type ( "Array" ) ) then
+		if ( value.Count () = 1 ) then
+			Filter.ComparisonType = DataCompositionComparisonType.Equal;
+			Filter.RightValue = value [ 0 ];
+		else
+			Filter.ComparisonType = DataCompositionComparisonType.InList;
+		endif;
 	else
-		return ComparisonType;
+		Filter.ComparisonType = DataCompositionComparisonType.Equal;
 	endif;
 	
-EndFunction
+EndProcedure
  
-Function CreateParameter ( Parameter, Value = undefined, Use = true, ViewMode = undefined ) export
+Function CreateParameter ( Parameter, Value = undefined, Use = true, ViewMode = undefined, Hide = false ) export
 	
-	return new Structure ( "Parameter, Value, ViewMode, Use", new DataCompositionParameter ( Parameter ), Value, ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.QuickAccess, ViewMode ), Use );
+	return new Structure ( "Parameter, Value, ViewMode, Use, Hide",
+		new DataCompositionParameter ( Parameter ),
+		Value,
+		? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.QuickAccess, ViewMode ),
+		Use,
+		Hide );
 	
 EndFunction
 
@@ -82,7 +102,7 @@ Procedure ChangeFilter ( Source, Name, Value, Setup, ComparisonType = undefined 
 	
 EndProcedure
 
-Procedure SetFilter ( Source, Name, Value, ComparisonType = undefined, Access = false ) export
+Procedure SetFilter ( Source, Name, Value, ComparisonType = undefined, ViewMode = undefined ) export
 	
 	item = DC.FindFilter ( Source, Name );
 	if ( item = undefined ) then
@@ -100,14 +120,15 @@ Procedure SetFilter ( Source, Name, Value, ComparisonType = undefined, Access = 
 		item = items.Add ( Type ( "DataCompositionFilterItem" ) );
 		item.LeftValue = new DataCompositionField ( Name );
 	endif; 
-	item.ComparisonType = defaultComparison ( Value, ComparisonType );
+	item.ComparisonType = ComparisonType;
 	item.RightValue = Value;
+	adjustFilter ( item, ComparisonType );
 	item.Use = true;
-	item.ViewMode = ? ( Access, DataCompositionSettingsItemViewMode.Auto, DataCompositionSettingsItemViewMode.Inaccessible );
+	item.ViewMode = ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.Inaccessible, ViewMode );
 	
 EndProcedure
 
-Procedure AddFilter ( Source, Name, Value, ComparisonType = undefined, Access = false ) export
+Procedure AddFilter ( Source, Name, Value, ComparisonType = undefined, ViewMode = undefined ) export
 	
 	composer = ( TypeOf ( Source ) = Type ( "DataCompositionSettingsComposer" ) );
 	if ( composer ) then
@@ -122,10 +143,11 @@ Procedure AddFilter ( Source, Name, Value, ComparisonType = undefined, Access = 
 	endif; 
 	item = items.Add ( Type ( "DataCompositionFilterItem" ) );
 	item.LeftValue = new DataCompositionField ( Name );
-	item.ComparisonType = defaultComparison ( Value, ComparisonType );
+	item.ComparisonType = ComparisonType;
 	item.RightValue = Value;
+	adjustFilter ( item, ComparisonType );
 	item.Use = true;
-	item.ViewMode = ? ( Access, DataCompositionSettingsItemViewMode.Auto, DataCompositionSettingsItemViewMode.Inaccessible );
+	item.ViewMode = ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.Inaccessible, ViewMode );
 	
 EndProcedure
 

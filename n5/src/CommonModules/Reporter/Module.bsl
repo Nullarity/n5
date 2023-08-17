@@ -67,7 +67,8 @@ Procedure ApplyFilters ( Composer, Params ) export
 		return;
 	endif;
 	for each filter in filters do
-		if ( filter.Property ( "Parameter" ) ) then
+		isParameter = filter.Property ( "Parameter" );
+		if ( isParameter ) then
 			name = "" + filter.Parameter;
 			item = DC.GetParameter ( Composer, name );
 			if ( item = undefined ) then
@@ -79,7 +80,7 @@ Procedure ApplyFilters ( Composer, Params ) export
 			item = DC.FindFilter ( Composer, name );
 			if ( item = undefined ) then
 				try
-					DC.SetFilter ( Composer, name, filter.RightValue, filter.ComparisonType, filter.Access );
+					DC.SetFilter ( Composer, name, filter.RightValue, filter.ComparisonType, filter.ViewMode );
 				except
 					raise ( "Cannot find filter for Name=" + name );
 				endtry;
@@ -716,7 +717,7 @@ Procedure ApplyDetails ( Composer, Filters ) export
 				if ( item = undefined ) then
 					continue;
 				endif; 
-				DC.SetFilter ( Composer, filter.Name, filter.Item.Value, filter.Comparison, true );
+				DC.SetFilter ( Composer, filter.Name, filter.Item.Value, filter.Comparison, DataCompositionSettingsItemViewMode.Auto );
 			else
 				DC.SetParameter ( Composer, filter.Name, filter.Item.Value );
 			endif; 

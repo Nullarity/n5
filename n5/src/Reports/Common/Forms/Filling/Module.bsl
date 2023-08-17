@@ -9,6 +9,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 
 	loadParams ();
 	init ();
+	fetchHiddenSettings ();
+	hideSettings ();
 	setTitle ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -55,6 +57,45 @@ Procedure init ()
 EndProcedure 
 
 &AtServer
+Procedure fetchHiddenSettings ()
+
+	filters = undefined;
+	Parameters.Filling.Property ( "Filters", filters );
+	if ( filters = undefined ) then
+		return;
+	endif;
+	settings = Composer.Settings;
+	for each filter in filters do
+		if ( not filter.Hide ) then
+			continue;
+		endif;
+		if ( filter.Property ( "Parameter" ) ) then
+			name = "" + filter.Parameter;
+			item = DC.GetParameter ( Composer, name );
+			fields = "Use, Value";
+		else
+			name = "" + filter.LeftValue;
+			item = DC.FindFilter ( Composer, name );
+			fields = "Use, ComparisonType, RightValue";
+		endif; 
+		source = DC.FindSetting ( settings, name );
+		FillPropertyValues ( source, item, fields );
+		HiddenSettings.Add ( name, item.UserSettingID );
+	enddo; 
+
+EndProcedure
+
+&AtServer
+Procedure hideSettings ()
+
+	settings = Composer.Settings;
+	for each setting in HiddenSettings do
+		DC.FindSetting ( settings, setting.Value ).UserSettingID = "";
+	enddo;
+
+EndProcedure
+
+&AtServer
 Procedure setTitle ()
 	
 	Title = Presentation;
@@ -90,13 +131,32 @@ Procedure perform ()
 	args = new Array ();
 	args.Add ( Report );
 	args.Add ( Variant );
-	settings = Composer.GetSettings ();
-	FillerSrv.ExtractTables ( settings );
-	args.Add ( settings );
+	args.Add ( getSettings () );
 	args.Add ( schema );
 	args.Add ( ResultAddress );
 	args.Add ( Batch );
 	Jobs.Run ( "FillerSrv.Perform", args, UUID, , TesterCache.Testing () );
+
+EndProcedure
+
+&AtServer
+Function getSettings ()
+
+	loadHiddenSettings ();
+	settings = Composer.GetSettings ();
+	hideSettings ();
+	FillerSrv.ExtractTables ( settings );
+	return settings;
+
+EndFunction
+
+&AtServer
+Procedure loadHiddenSettings ()
+
+	settings = Composer.Settings;
+	for each setting in HiddenSettings do
+		DC.FindSetting ( settings, setting.Value ).UserSettingID = setting.Presentation;
+	enddo;
 
 EndProcedure
 

@@ -6,6 +6,7 @@ var AccountGroup;
 var LastGroup;
 var ShowCurrency;
 var ShowQuantity;
+var ShowRecorders;
 var DimsHierarchy;
 
 Procedure OnCompose () export
@@ -21,6 +22,7 @@ Procedure OnCompose () export
 	setResources ();
 	addCurrency ();
 	addDims ();
+	addRecorders ();
 	titleReport ();
 	
 EndProcedure
@@ -44,6 +46,8 @@ Procedure readParams ()
 	ShowCurrency = p.Use and p.Value;
 	p = DC.GetParameter ( settings, "ShowQuantity" );
 	ShowQuantity = p.Use and p.Value;
+	p = DC.GetParameter ( Params.Settings, "ShowRecorders" );
+	ShowRecorders = p.Use and p.Value;
 	p = DC.GetParameter ( Params.Settings, "DimsHierarchy" );
 	DimsHierarchy = p.Use and p.Value;
 	
@@ -58,6 +62,7 @@ Procedure hideParams ()
 	list.Add ( "DimsHierarchy" );
 	list.Add ( "ShowCurrency" );
 	list.Add ( "ShowQuantity" );
+	list.Add ( "ShowRecorders" );
 	
 EndProcedure 
 
@@ -155,6 +160,17 @@ Procedure addDims ()
 			field.Title = "" + accountDims [ i - 1 ].Presentation;
 		endif;
 	enddo; 
+	
+EndProcedure
+
+Procedure addRecorders ()
+	
+	if ( not ShowRecorders ) then
+		return;
+	endif; 
+	recorders = DCsrv.GetGroup ( Params.Settings, "Recorder" );
+	LastGroup = DCsrv.Insert ( recorders, LastGroup.Structure );
+	LastGroup.Use = true;
 	
 EndProcedure
 
