@@ -8639,3 +8639,26 @@ Procedure WrongScaleLimit ( Params = undefined, Field = "", DataKey = undefined,
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Procedure EntryNotInBalance ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'These records are not in balance';ro = 'Aceste înregistrări nu sunt în balanță';ru = 'Не соблюден баланс проводок'" );	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure FuelToExpenseBalanceError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Exceeded write-off of %Item by %Quantity. Remaining fuel to be written off from %Warehouse is listed as %QuantityBalance';ro = 'A depășit casarea de %Item cu %Quantity. Combustibilul rămas de casat din %Warehouse este listat ca %QuantityBalance';ru = 'Превышено списание %Item на %Quantity . В остатках к списанию топлива с %Warehouse числится %QuantityBalance'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure FuelExcessBalanceError ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ( "en = 'Exceeded write-off of overconsumption of %Item by %Quantity. Remaining overconsumption to be written off from %Warehouse is listed as %QuantityBalance';ro = 'A fost depășită limita de casare a supraconsumului de %Item cu %Quantity. Supraconsumul rămas de casat din %Warehouse este înregistrat ca %QuantityBalance';ru = 'Превышено списание пережога %Item на %Quantity . В остатках к списанию пережога с %Warehouse числится %QuantityBalance'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
