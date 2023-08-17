@@ -136,29 +136,53 @@ Procedure _1_0_0_1 () export
 	
 EndProcedure
 
-Procedure _5_0_34_1 () export
+Procedure _5_0_35_1 () export
 	
 	BeginTransaction ();
 	for each tenant in Tenants do
 		activateTenant ( tenant );
-		updateReports ();
+		updateCarWarehouses ();
+		updateWriteOffs ();
+		//updateReports ();
 	enddo;
 	CommitTransaction ();
 	
 EndProcedure
 
-#endregion
-
-Procedure setInventory ()
+Procedure updateCarWarehouses ()
 	
-	selection = Catalogs.Warehouses.Select ();
+	q = new Query ( "
+	|select distinct Warehouse
+	|from Catalog.Cars
+	|where Warehouse.Class <> value ( Enum.WarehouseTypes.Car )
+	|" );
+	selection = q.Execute ().Select ();
 	while ( selection.Next () ) do
-		obj = selection.GetObject ();
-		obj.Inventory = 14;
+		obj = selection.Warehouse.GetObject ();
+		obj.Class = Enums.WarehouseTypes.Car;
 		obj.Write ();
 	enddo;
 
 EndProcedure
+
+Procedure updateWriteOffs ()
+	
+	q = new Query ( "
+	|select Ref
+	|from Document.WriteOff
+	|where Warehouse.Class = value ( Enum.WarehouseTypes.Car )
+	|" );
+	selection = q.Execute ().Select ();
+	while ( selection.Next () ) do
+		obj = selection.Ref.GetObject ();
+		obj.CarExpenses = Enums.CarExpenses.Fuel;
+		obj.DataExchange.Load = true;
+		obj.Write ();
+	enddo;
+
+EndProcedure
+
+#endregion
 
 Procedure updateReports ()
 
