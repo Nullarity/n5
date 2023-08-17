@@ -107,6 +107,7 @@ Procedure createEnv ( Env )
 	
 	p = Call ( "Catalogs.Warehouses.Create.Params" );
 	p.Description = Env.Warehouse;
+	p.Class = "Car";
 	Call ( "Catalogs.Warehouses.Create", p );
 	
 	// *************************
