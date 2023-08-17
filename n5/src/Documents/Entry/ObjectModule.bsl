@@ -1,5 +1,23 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
+Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
+	
+	if ( not checkBalance () ) then
+		Cancel = true;
+	endif;
+	
+EndProcedure
+
+Function checkBalance ()
+	
+	if ( Records.Total ( "AmountDr" ) <> Records.Total ( "AmountCr" ) ) then
+		Output.EntryNotInBalance ( , "Records", Ref );
+		return false;
+	endif;
+	return true;
+	
+EndFunction
+
 Procedure OnWrite ( Cancel )
 	
 	if ( DataExchange.Load ) then
