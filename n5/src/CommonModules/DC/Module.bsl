@@ -5,26 +5,29 @@ Function CreateFilter ( LeftValue, RightValue = undefined, ComparisonType = unde
 		ComparisonType,
 		RightValue,
 		? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.QuickAccess, ViewMode ), Use, Hide );
-	adjustFilter ( filter, ComparisonType );
+	applyFilter ( filter, ComparisonType, RightValue );
 	return filter; 
 	
 EndFunction
 
-Procedure adjustFilter ( Filter, ComparisonType )
+Procedure applyFilter ( Filter, ComparisonType, Value )
 	
-	if ( ComparisonType <> undefined ) then
-		return;
-	endif;
-	value = Filter.RightValue;
-	if ( TypeOf ( value ) = Type ( "Array" ) ) then
-		if ( value.Count () = 1 ) then
-			Filter.ComparisonType = DataCompositionComparisonType.Equal;
-			Filter.RightValue = value [ 0 ];
+	if ( ComparisonType = undefined ) then
+		if ( TypeOf ( Value ) = Type ( "Array" ) ) then
+			if ( Value.Count () = 1 ) then
+				Filter.ComparisonType = DataCompositionComparisonType.Equal;
+				Filter.RightValue = Value [ 0 ];
+			else
+				Filter.ComparisonType = DataCompositionComparisonType.InList;
+				Filter.RightValue = Value;
+			endif;
 		else
-			Filter.ComparisonType = DataCompositionComparisonType.InList;
+			Filter.ComparisonType = DataCompositionComparisonType.Equal;
+			Filter.RightValue = Value;
 		endif;
 	else
-		Filter.ComparisonType = DataCompositionComparisonType.Equal;
+		Filter.ComparisonType = ComparisonType;
+		Filter.RightValue = Value;
 	endif;
 	
 EndProcedure
@@ -120,9 +123,10 @@ Procedure SetFilter ( Source, Name, Value, ComparisonType = undefined, ViewMode 
 		item = items.Add ( Type ( "DataCompositionFilterItem" ) );
 		item.LeftValue = new DataCompositionField ( Name );
 	endif; 
-	item.ComparisonType = ComparisonType;
-	item.RightValue = Value;
-	adjustFilter ( item, ComparisonType );
+	if ( ComparisonType <> undefined ) then
+		item.ComparisonType = ComparisonType;
+	endif;
+	applyFilter ( item, ComparisonType, Value );
 	item.Use = true;
 	item.ViewMode = ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.Inaccessible, ViewMode );
 	
@@ -143,9 +147,7 @@ Procedure AddFilter ( Source, Name, Value, ComparisonType = undefined, ViewMode 
 	endif; 
 	item = items.Add ( Type ( "DataCompositionFilterItem" ) );
 	item.LeftValue = new DataCompositionField ( Name );
-	item.ComparisonType = ComparisonType;
-	item.RightValue = Value;
-	adjustFilter ( item, ComparisonType );
+	applyFilter ( item, ComparisonType, Value );
 	item.Use = true;
 	item.ViewMode = ? ( ViewMode = undefined, DataCompositionSettingsItemViewMode.Inaccessible, ViewMode );
 	
