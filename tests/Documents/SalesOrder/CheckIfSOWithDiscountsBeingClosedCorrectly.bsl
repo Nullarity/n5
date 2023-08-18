@@ -48,7 +48,7 @@ Click ( "!FormPostAndClose" );
 
 #region checkInvoive1
 Commando("e1cib/command/Document.Invoice.Create");
-Set("#Customer", this.Customer);
+Put("#Customer", this.Customer);
 Next ();
 Items = Get ( "!ItemsTable" );
 try
