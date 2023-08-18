@@ -14,7 +14,7 @@ Check ( "#VAT", 16.67 );
 Set ( "#VATUse", "Not Included" );
 Check ( "#VAT", "20" );
 
-series = "aaa";
+series = "AAA";
 number = Call ( "Common.GetID" );
 id = Upper ( series ) + number;
 Set ( "#Series", series );
