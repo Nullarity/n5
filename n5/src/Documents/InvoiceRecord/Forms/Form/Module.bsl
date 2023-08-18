@@ -201,6 +201,7 @@ Procedure fillNew ()
 	else
 		Object.Company = DF.Pick ( Object.LoadingPoint, "Owner" );
 	endif;
+	Object.DeliveryDate = ? ( Object.Date = Date ( 1, 1, 1 ), CurrentSessionDate (), Object.Date );
 	Object.Base = undefined;
 	Object.ShowServices = true;
 	Object.Prices = DF.Pick ( Object.Company, "CostPrices" );
