@@ -41,7 +41,8 @@ Procedure readAppearance ()
 	|Write show empty ( Object.Ref );
 	|Responsible show inlist ( Object.Class, Enum.WarehouseTypes.Salesman, Enum.WarehouseTypes.Car );
 	|Department show Object.Production;
-	|Inventory hide Object.Class = Enum.WarehouseTypes.PickPack;
+	|Inventory hide inlist ( Object.Class, Enum.WarehouseTypes.PickPack,
+	|	Enum.WarehouseTypes.Car );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
