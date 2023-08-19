@@ -400,6 +400,7 @@ from (
 		0 as Economy,
 		case when ( Balances.Recorder = undefined ) then null else Balances.Recorder end as Recorder,
 		Balances.SecondPeriod as SecondPeriod
+	{select Recorder.*, SecondPeriod}
 	from AccumulationRegister.Items.BalanceAndTurnovers ( {&amp;DateStart}, {&amp;DateEnd}, auto, ,
 		Warehouse in ( select Warehouse from Catalog.Cars {where Ref.* as Car})
 		{Item.* as Fuel, Warehouse.Owner.* as Company} ) as Balances
