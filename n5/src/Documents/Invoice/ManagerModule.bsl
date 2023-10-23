@@ -331,9 +331,9 @@ Procedure sqlSales ( Env )
 	|// ^Sales
 	|select value ( Catalog.Warehouses.EmptyRef ) as Warehouse, Services.Item as Item, Services.Feature as Feature,
 	|	value ( Catalog.Series.EmptyRef ) as Series, value ( ChartOfAccounts.General.EmptyRef ) as Account,
-	|	Services.Income as Income, Services.Quantity as Quantity, Services.Amount as Amount,
+	|	Services.Income as Income, Services.Quantity as Quantity,
 	|	Services.SalesOrder as SalesOrder, Details.ItemKey as ItemKey,
-	|	Services.AmountGeneral as AmountGeneral";
+	|	Services.AmountGeneral as AmountGeneral, Services.VAT as VAT";
 	usual = not Env.RestoreCost;
 	if ( usual ) then
 		s = s + ", Services.ContractAmount as ContractAmount";
@@ -358,9 +358,9 @@ Procedure sqlSales ( Env )
 		|//
 		|// Items sales without cost
 		|//
-		|select Items.Warehouse, Items.Item, Items.Feature, Items.Series, Items.Account,
+		|select Items.Warehouse, Items.Item, Items.Feature, Items.Series,
 		|	Items.Income, Items.Quantity, Items.Amount, Items.SalesOrder, Details.ItemKey,
-		|	Items.AmountGeneral";
+		|	Items.AmountGeneral, Items.VAT";
 		if ( usual ) then
 			s = s + ", Items.ContractAmount";
 		endif;
@@ -631,7 +631,7 @@ Procedure sqlItemsAndKeys ( Env )
 	|select Items.LineNumber as LineNumber, Items.Warehouse as Warehouse, Items.Item as Item,
 	|	Items.Package as Package, Items.Item.Unit as Unit, Items.Feature as Feature, Items.Series as Series,
 	|	Items.Account as Account, Items.Income as Income, Items.SalesCost as SalesCost,
-	|	Items.QuantityPkg as Quantity, Items.Amount as Amount, Details.ItemKey as ItemKey,
+	|	Items.QuantityPkg as Quantity, Items.Amount as Amount, Items.VAT as VAT, Details.ItemKey as ItemKey,
 	|	Items.SalesOrder as SalesOrder, Items.Capacity as Capacity, Items.AmountGeneral as AmountGeneral";
 	if ( not Env.RestoreCost ) then
 		s = s + ", Items.ContractAmount as ContractAmount";
@@ -741,12 +741,11 @@ Function getCost ( Env, Items )
 	p.Insert ( "KeyColumnAvailable", "QuantityBalance" );
 	p.Insert ( "DecreasingColumns", "Cost" );
 	if ( Env.RestoreCost ) then
-		decrease = "Amount, AmountGeneral";
-		attach = "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral";
+		decrease = "AmountGeneral, VAT";
 	else
-		decrease = "Amount, ContractAmount, AmountGeneral";
-		attach = "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral";
+		decrease = "AmountGeneral, VAT, ContractAmount";
 	endif;
+	attach = "Capacity, Income, SalesCost, Warehouse, SalesOrder, AmountGeneral";
 	p.Insert ( "DecreasingColumns2", decrease );
 	p.Insert ( "AddInTable1FromTable2", attach );
 	return CollectionsSrv.Decrease ( cost, Items, p );
@@ -885,10 +884,11 @@ Procedure makeItemsSales ( Env, Table )
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount;
+		vat = row.VAT;
+		movement.Amount = row.AmountGeneral + vat;
 		movement.Cost = row.Cost;
 		movement.SalesOrder = row.SalesOrder;
-		movement.VAT = row.Amount - row.AmountGeneral;
+		movement.VAT = vat;
 		if ( usual ) then
 			rowSales = sales.Add ();
 			rowSales.Operation = Enums.Operations.Sales;
@@ -935,9 +935,10 @@ Procedure makeSales ( Env )
 		movement.Department = department;
 		movement.Account = row.Income;
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount;
+		vat = row.VAT;
+		movement.Amount = row.AmountGeneral + vat;
 		movement.SalesOrder = row.SalesOrder;
-		movement.VAT = row.Amount - row.AmountGeneral;
+		movement.VAT = row.VAT;
 		if ( usual ) then
 			rowSales = sales.Add ();
 			rowSales.Operation = Enums.Operations.Sales;

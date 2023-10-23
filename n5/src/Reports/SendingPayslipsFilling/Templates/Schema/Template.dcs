@@ -46,7 +46,7 @@ from (
 	left join Document.SendingPayslips.Employees as Sent
 	on Sent.Ref.Company = &amp;Company
 	and Sent.Ref.Posted
-	and Sent.Ref.Date between beginofperiod ( &amp;Date, month )
+	and Sent.Ref.Month between beginofperiod ( &amp;Date, month )
 		and endofperiod ( &amp;Date, month )
 	and Sent.Employee = Payments.Employee
 	and &amp;ExcludeAlreadySent
@@ -56,6 +56,7 @@ where Sent.Employee is null
 	</dataSet>
 	<parameter>
 		<name>Date</name>
+		<title xsi:type="xs:string">Date</title>
 		<valueType>
 			<v8:Type>xs:dateTime</v8:Type>
 			<v8:DateQualifiers>
@@ -89,6 +90,7 @@ where Sent.Employee is null
 	</parameter>
 	<parameter>
 		<name>Company</name>
+		<title xsi:type="xs:string">Company</title>
 		<valueType>
 			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Companies</v8:Type>
 		</valueType>
@@ -161,11 +163,6 @@ where Sent.Employee is null
 				</dcsset:item>
 			</dcsset:filter>
 			<dcsset:dataParameters>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Company</dcscor:parameter>
-					<dcscor:value xsi:nil="true"/>
-				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>ExcludeAlreadySent</dcscor:parameter>

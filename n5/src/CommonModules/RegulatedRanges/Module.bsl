@@ -119,7 +119,7 @@ Function registrationNeeded ( Object )
 	|	// Current
 	|	//
 	|	left join InformationRegister.Forms as Current
-	|	on Current.Document = Last.Ref
+	|	on Current.Form = Last.Ref
 	|";
 	q = new Query ( s );
 	q.SetParameter ( "Base", Object.Base );

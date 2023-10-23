@@ -82,6 +82,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 			endif;
 		endif;
 		updateWarning ( ThisObject );
+		setRegistrationDate ();
 	endif; 
 	OptionalProperties.Access ( ThisObject );
 	StandardButtons.Arrange ( ThisObject );
@@ -179,6 +180,13 @@ Function leadData ()
 	return data;
 	
 EndFunction
+
+&AtServer
+Procedure setRegistrationDate ()
+
+	Object.RegistrationDate = CurrentSessionDate ();
+
+EndProcedure
 
 &AtServer
 Procedure FillCheckProcessingAtServer ( Cancel, CheckedAttributes )
