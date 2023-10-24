@@ -107,20 +107,25 @@ Function registrationNeeded ( Object )
 	
 	formName = Metadata.FindByType ( TypeOf ( Object.Ref ) ).Name;
 	s = "
-	|select case when Current.Document is null then true else false end as Change
+	|select Forms.Form is null as Change
 	|from (
-	|	select top 1 Last.Ref
-	|	from Document." + formName + " as Last
-	|	where Last.Base = &Base
-	|	and not Last.DeletionMark
-	|	order by Last.Date desc
-	|) as Last
+	|	select top 1 AllForms.Ref as Ref, AllForms.Status as Status,
+	|		case cast ( AllForms.Ref as Document.InvoiceRecord ).Status
+	|			when value ( Enum.FormStatuses.Canceled ) then 1
+	|			else 0
+	|		end as Priority
+	|	from Document." + formName + " as AllForms
+	|	where AllForms.Base = &Base
+	|	and not AllForms.DeletionMark
+	|	order by Priority
+	|) as LastForm
 	|	//
-	|	// Current
+	|	// Forms
 	|	//
-	|	left join InformationRegister.Forms as Current
-	|	on Current.Form = Last.Ref
-	|";
+	|	left join InformationRegister.Forms as Forms
+	|	on Forms.Document = &Base
+	|	and Forms.Form = LastForm.Ref
+	|	and Forms.Status = LastForm.Status";
 	q = new Query ( s );
 	q.SetParameter ( "Base", Object.Base );
 	table = q.Execute ().Unload ();
