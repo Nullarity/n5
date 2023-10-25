@@ -1,10 +1,9 @@
-﻿return;
-// To see how the report is generated in case of canceled Tax Invoice
+﻿// To see how the report is generated in case of canceled Tax Invoice
 
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A17U" );
+id = Call ( "Common.ScenarioID", "A17W" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -31,7 +30,8 @@ p.Filters = filters;
 
 With ( Call ( "Common.Report", p ) );
 Click ( "#GenerateReport" );
-//CheckTemplate ( "#Result" );
+With ();
+CheckTemplate ( "#Result" );
 #endregion
 // *************************
 // Procedures
