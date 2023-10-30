@@ -8662,3 +8662,22 @@ Procedure FuelExcessBalanceError ( Params = undefined, Field = "", DataKey = und
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Function ErrorSavingIssue ( Params = undefined ) export
+
+	s = NStr ( "en = 'Could not save the Issue #%Issue
+			   |Error description: %Error';ro = 'Nu a putut fi salvat problema #%Issue
+			   |Descrierea erorii: %Error';ru = 'Не удалось сохранить проблему №%Issue.
+			   |Описание ошибки: %Error'" );
+	return Output.FormatStr ( s, Params );
+
+EndFunction
+
+&AtServer
+Function RepositoryNotSupported ( Params = undefined ) export
+
+	s = NStr ( "en = 'Currently, only github.com repositories are supported';ro = 'În prezent, sunt acceptate doar depozitele de pe github.com';ru = 'В настоящее время поддерживаются только репозитории сайта github.com'" );
+	return Output.FormatStr ( s, Params );
+
+EndFunction

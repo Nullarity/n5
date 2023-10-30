@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="852ee171-a368-46e1-98fa-946ce4028fb0">
+  <producedTypes>
+    <objectType typeId="84823d5d-8412-43fa-a9c5-ef63c8a8ffc4" valueTypeId="db573c93-d869-4dc3-bc08-9777286a77f8"/>
+    <refType typeId="2c7aa87c-d237-4d6b-8d20-19e1eecf03c0" valueTypeId="ff6f40ff-a432-40d6-84fa-95dc2d734f41"/>
+    <selectionType typeId="41237927-3980-42e5-a217-ca88f7822772" valueTypeId="4c0cbd9b-e4f0-42fc-ba57-9d95f85a7f10"/>
+    <listType typeId="753ac35e-e8a3-4625-a130-0289a0afab00" valueTypeId="07ea188c-f4f9-4139-944d-82206af4c51c"/>
+    <managerType typeId="59eb186b-4697-4a4a-b8ea-2977524c2830" valueTypeId="fd76814f-e17d-4861-b72f-b8bd51cf1c09"/>
+  </producedTypes>
+  <name>Issue</name>
+  <synonym>
+    <key>en</key>
+    <value>Issue</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Проблема</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Problema</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Document.Issue.StandardAttribute.Number</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <dataLockFields>Document.Issue.Attribute.ID</dataLockFields>
+  <dataLockFields>Document.Issue.Attribute.Repository</dataLockFields>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <listPresentation>
+    <key>en</key>
+    <value>Issues</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Проблемы</value>
+  </listPresentation>
+  <listPresentation>
+    <key>ro</key>
+    <value>Probleme</value>
+  </listPresentation>
+  <explanation>
+    <key>en</key>
+    <value>Record about the problem in a similar way to Github Issues</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Запись о проблеме по аналогии с Github Issues</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Înregistrați despre problemă într-un mod similar cu Github Issues</value>
+  </explanation>
+  <numberType>String</numberType>
+  <numberLength>9</numberLength>
+  <numberAllowedLength>Variable</numberAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultObjectForm>Document.Issue.Form.Form</defaultObjectForm>
+  <defaultListForm>Document.Issue.Form.List</defaultListForm>
+  <posting>Deny</posting>
+  <postInPrivilegedMode>true</postInPrivilegedMode>
+  <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
+  <attributes uuid="404d7127-e44a-4d6e-afc4-da1886361140">
+    <name>Closed</name>
+    <synonym>
+      <key>en</key>
+      <value>Closed</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Закрыто</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Închis</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date and time when the issue was closed</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата и время закрытия проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data și ora când problema a fost închisă</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="40640d19-4da5-4072-b13d-04b7e0f99ed7">
+    <name>Creator</name>
+    <synonym>
+      <key>en</key>
+      <value>Creator</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Автор</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Autor</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Users</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Creator of the document</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Пользователь, создавший документ</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Utilizatorul care a creat documentul</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f2994bfc-8495-473a-97d2-7acff6565a9a">
+    <name>Details</name>
+    <synonym>
+      <key>en</key>
+      <value>Details</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Детали</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Detalii</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Detailed description of the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Подробное описание проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Descriere detaliată a problemei</value>
+    </toolTip>
+    <multiLine>true</multiLine>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="12d57b9a-5d3a-4693-9308-3060dfcfba78">
+    <name>ID</name>
+    <synonym>
+      <key>en</key>
+      <value>ID</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>ИД</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>ID</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>15</precision>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Unique identifier of the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный идентификатор проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Identificator unic al problemei</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e546c094-c7cf-43f4-8273-159da7afba86">
+    <name>IssueNumber</name>
+    <synonym>
+      <key>en</key>
+      <value>Issue Number</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Номер проблемы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Număr al problemei</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>15</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Issue's unique number</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Уникальный номер проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numărul unic al problemei</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="129c22ca-8925-4133-a97f-2e65dbda431f">
+    <name>Memo</name>
+    <synonym>
+      <key>en</key>
+      <value>Memo</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Комментарий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comentariu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Any information</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Произвольные заметки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Note explicative</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5afe6135-4fcf-44e4-94b6-f261d7b3da22">
+    <name>Profile</name>
+    <synonym>
+      <key>en</key>
+      <value>Profile</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Профиль</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Profil</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>250</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Link to the user's profile</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ссылка на профиль пользователя</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Link către profilul al utilizatorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="f8a11452-6d38-40b2-bb31-40713565e613">
+    <name>Repository</name>
+    <synonym>
+      <key>en</key>
+      <value>Repository</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Репозиторий</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Depozit</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Repositories</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Git Repository</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Репозиторий Git</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Depozitul Git</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="6b35c149-457c-470b-9793-75303a19edf4">
+    <name>Status</name>
+    <synonym>
+      <key>en</key>
+      <value>Status</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Статус</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Stare</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>150</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Current status of the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Текущий статус проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Starea curentă a problemei</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="5aa0a194-8779-47b2-bb66-905e8e770629">
+    <name>Title</name>
+    <synonym>
+      <key>en</key>
+      <value>Title</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заголовок</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Titlu</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>250</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Short description of the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Краткое описание проблемы</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Descriere scurtă a problemei</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e22ff586-8b5f-409c-987c-3f8f86cedef4">
+    <name>Updated</name>
+    <synonym>
+      <key>en</key>
+      <value>Updated</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Обновлено</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Actualizat</value>
+    </synonym>
+    <type>
+      <types>Date</types>
+      <dateQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Date and time of the last update</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Дата и время последнего обновления</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Data și ora ultimei actualizări</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e27bb786-3af9-41b0-acbd-619a753701bd">
+    <name>URL</name>
+    <synonym>
+      <key>en</key>
+      <value>URL</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ссылка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>URL</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>200</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Direct link to the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Прямая ссылка на проблему</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Link direct către problema</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="e6c17225-66d3-4e5e-a1f9-25a52441ae5c">
+    <name>User</name>
+    <synonym>
+      <key>en</key>
+      <value>User</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Пользователь</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Utilizator</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>150</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Username of the issue creator</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Имя пользователя, создавшего проблему</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Numele de utilizator al creatorului problemei</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <forms uuid="2de11339-b305-4bfe-918f-97255ea0058a">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="5cec1657-0021-461c-994d-d2e49c5ba708">
+    <name>List</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <tabularSections uuid="f9b80b1f-3109-43c4-ac92-868923c4b24c">
+    <producedTypes>
+      <objectType typeId="905c8978-0537-4b61-a4b2-b275154a0d9a" valueTypeId="f43c43be-20cd-4e22-a7f8-b04b2f7263e5"/>
+      <rowType typeId="1414e4d3-5ebb-41d0-817a-51a509329096" valueTypeId="2ae870fa-3b21-4ddf-b6f3-087512a7a707"/>
+    </producedTypes>
+    <name>Labels</name>
+    <synonym>
+      <key>en</key>
+      <value>Labels</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Метки</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Categorii</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Table of categories or tags associated with the issue</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Таблица категорий или тегов, связанных с проблемой</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tabelul de categorii sau tag-uri asociate cu problema</value>
+    </toolTip>
+    <attributes uuid="63c58dbf-2e94-4832-98e6-262f0deb44c6">
+      <name>Name</name>
+      <synonym>
+        <key>en</key>
+        <value>Name</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Метка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Categorie</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>150</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Category or tag associated with the issue</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Категория или тег, связанный с проблемой</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Categorie sau etichetă asociată cu problema</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
+</mdclass:Document>

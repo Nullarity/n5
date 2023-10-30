@@ -45,7 +45,7 @@ Procedure activate ( Tenant )
 		SessionParameters.Tenant = Tenant;
 	except
 		Progress.Put ( BriefErrorDescription ( ErrorInfo () ), JobKey, true );
-		raise Output.OperationNotPerformed ();
+		raise Output.OperationError ();
 	endtry;
 	
 EndProcedure

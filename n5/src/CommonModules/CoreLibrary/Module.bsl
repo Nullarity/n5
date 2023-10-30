@@ -120,3 +120,11 @@ Function BuildPanel ( Parts ) export
 	return codemodule ().BuildPanel ( Parts );
 	
 EndFunction
+
+Function GetIssues ( Repository, Token, Since, Status ) export
+	
+	//@skip-warning
+	lib = module ().GetLibrary ( "github" );
+	return lib.Issues ( Repository, Token, Since, Status );
+	
+EndFunction

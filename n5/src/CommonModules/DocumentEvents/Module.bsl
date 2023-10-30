@@ -41,7 +41,8 @@ Function dontPrefix ( Source )
 		or type = Type ( "DocumentObject.TimeEntry" )
 		or type = Type ( "DocumentObject.Timesheet" )
 		or type = Type ( "DocumentObject.Entry" )
-		or type = Type ( "DocumentObject.InvoiceRecord" );
+		or type = Type ( "DocumentObject.InvoiceRecord" )
+		or type = Type ( "DocumentObject.Issue" );
 	
 EndFunction 
 	

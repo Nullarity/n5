@@ -298,11 +298,11 @@ Function ToJSON ( Params ) export
 	
 EndFunction 
 
-Function FromJSON ( JSON ) export
+Function FromJSON ( JSON, ToMap = false ) export
 	
 	reader = new JSONReader ();
 	reader.SetString ( JSON );
-	return ReadJSON ( reader );
+	return ReadJSON ( reader, ToMap );
 		
 EndFunction 
 

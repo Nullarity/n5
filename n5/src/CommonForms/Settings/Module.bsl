@@ -11,6 +11,8 @@ var Series;
 &AtClient
 var WaybillManualWriteOff;
 &AtClient
+var GitIntegration;
+&AtClient
 var AccountingRow;
 &AtClient
 var StayOpen;
@@ -169,6 +171,7 @@ Procedure readOptions ()
 	Production = Object.Production;
 	Series = Object.Series;
 	WaybillManualWriteOff = Object.WaybillManualWriteOff;
+	GitIntegration = Object.GitIntegration;
 	
 EndProcedure 
 
@@ -287,7 +290,8 @@ Function optionsChanged ()
 		or Packages <> Object.Packages
 		or Production <> Object.Production
 		or Series <> Object.Series
-		or WaybillManualWriteOff <> Object.WaybillManualWriteOff;
+		or WaybillManualWriteOff <> Object.WaybillManualWriteOff
+		or GitIntegration <> Object.GitIntegration;
 	
 EndFunction 
 
