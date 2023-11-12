@@ -230,24 +230,27 @@ Procedure defineAmount ( Env )
 	list = new Structure ();
 	Env.Insert ( "AmountFields", list );
 	fields = Env.Fields;
-	foreign = fields.Currency <> fields.LocalCurrency;
 	amount = "Amount";
 	amountGeneral = "( Total - VAT )";
-	if ( foreign ) then
+	vat = "VAT";
+	documentCurrency = fields.Currency;
+	localCurrency = fields.LocalCurrency;
+	if ( documentCurrency <> localCurrency ) then
 		rate = " * &Rate / &Factor";
 		amount = amount + rate;
 		amountGeneral = amountGeneral + rate;
+		vat = vat + rate;
 	endif;
 	list.Insert ( "Amount", "cast ( " + amount + " as Number ( 15, 2 ) )" );
 	list.Insert ( "AmountGeneral", "cast ( " + amountGeneral + " as Number ( 15, 2 ) )" );
+	list.Insert ( "VAT", "cast ( " + vat + " as Number ( 15, 2 ) )" );
 	if ( Env.RestoreCost ) then
 		return;
 	endif;
-	vat = "VAT";
 	contractVAT = "VAT";
 	contractAmount = "( Total - VAT )";
-	if ( fields.ContractCurrency <> fields.Currency ) then
-		if ( fields.Currency = fields.LocalCurrency ) then
+	if ( fields.ContractCurrency <> documentCurrency ) then
+		if ( documentCurrency = localCurrency ) then
 			rate = " / &Rate * &Factor";
 		else
 			rate = " * &Rate / &Factor";
@@ -255,13 +258,8 @@ Procedure defineAmount ( Env )
 		contractAmount = contractAmount + rate;
 		contractVAT = contractVAT + rate;
 	endif; 
-	if ( foreign ) then
-		rate = " * &Rate / &Factor";
-		vat = vat + rate;
-	endif;
 	list.Insert ( "ContractVAT", "cast ( " + contractVAT + " as Number ( 15, 2 ) )" );
 	list.Insert ( "ContractAmount", "cast ( " + contractAmount + " as Number ( 15, 2 ) )" );
-	list.Insert ( "VAT", "cast ( " + vat + " as Number ( 15, 2 ) )" );
 	
 EndProcedure 
 
@@ -270,11 +268,11 @@ Procedure sqlItems ( Env )
 	fields = Env.AmountFields;
 	amount = fields.Amount;
 	amountGeneral = fields.AmountGeneral;
+	vat = fields.VAT;
 	usual = not Env.RestoreCost;
 	if ( usual ) then
 		contractAmount = fields.ContractAmount;
 		contractVAT = fields.ContractVAT;
-		vat = fields.VAT;
 	endif;
 	s = "
 	|select ""Items"" as Table, Items.LineNumber as LineNumber, Items.Item as Item, Items.Feature as Feature, Items.Series as Series,
@@ -289,11 +287,11 @@ Procedure sqlItems ( Env )
 	|	case when Items.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Items.Ref.TimeEntry else Items.TimeEntry end as TimeEntry,
 	|	Items.RowKey as RowKey, Items.TimeEntryRow as TimeEntryRow,"
 	+ amount + " as Amount, "
-	+ amountGeneral + " as AmountGeneral";
+	+ amountGeneral + " as AmountGeneral, "
+	+ vat + " as VAT";
 	if ( usual ) then
 		s = s + ", Items.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
-		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "
@@ -307,12 +305,12 @@ Procedure sqlItems ( Env )
 	|	Services.Income as Income, Services.RowKey as RowKey, Services.TimeEntryRow as TimeEntryRow,
 	|	case when Services.SalesOrder = value ( Document.SalesOrder.EmptyRef ) then Services.Ref.SalesOrder else Services.SalesOrder end as SalesOrder,
 	|	case when Services.TimeEntry = value ( Document.TimeEntry.EmptyRef ) then Services.Ref.TimeEntry else Services.TimeEntry end as TimeEntry,"
-	+ amount + " as Amount,"
-	+ amountGeneral + " as AmountGeneral";
+	+ amount + " as Amount, "
+	+ amountGeneral + " as AmountGeneral, "
+	+ vat + " as VAT";
 	if ( usual ) then
 		s = s + ", Services.Amount as DocumentAmount, "
 		+ contractAmount + " as ContractAmount, "
-		+ vat + " as VAT, "
 		+ contractVAT + " as ContractVAT";
 	endif; 
 	s = s + "
