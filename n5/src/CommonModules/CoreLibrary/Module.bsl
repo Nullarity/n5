@@ -125,6 +125,10 @@ Function GetIssues ( Repository, Token, Since, Status ) export
 	
 	//@skip-warning
 	lib = module ().GetLibrary ( "github" );
-	return lib.Issues ( Repository, Token, Since, Status );
+	try
+		return lib.Issues ( Repository, Token, Since, Status );
+	except
+		raise lib.Problem ();
+	endtry;
 	
 EndFunction
