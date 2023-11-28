@@ -1860,8 +1860,6 @@ from (
 		//
 		join Compensations as Compensations
 		on Compensations.Employee = Location.Employee
-		and ( Location.DateStart between Compensations.DateStart and Compensations.DateEnd
-			or Location.DateEnd between Compensations.DateStart and Compensations.DateEnd )
 		//
 		// GeneralHours
 		//
