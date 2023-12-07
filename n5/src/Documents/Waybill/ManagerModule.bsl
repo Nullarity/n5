@@ -276,15 +276,14 @@ Procedure makeFuelInventory ( Env )
 			movement.Car = Env.Fields.Car;
 			movement.Excess = overconsumption;
 		else
-			overconsumption = row.ExcessBalance;
 			economy = - deviation;
-			balanceCorrection = overconsumption - economy;
-			if ( balanceCorrection < 0 ) then
+			overconsumption = ? ( row.ExcessBalance > 0, row.ExcessBalance, 0 );
+			if ( overconsumption > 0 ) then
 				movement = writeOffRecords.Add ();
 				movement.Period = Env.Fields.Date;
 				movement.Fuel = row.Fuel;
 				movement.Car = Env.Fields.Car;
-				movement.Quantity = balanceCorrection;
+				movement.Quantity = - Min ( economy, overconsumption );
 			endif;
 			movement = excessRecords.AddExpense ();
 			movement.Period = Env.Fields.Date;
