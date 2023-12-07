@@ -32,10 +32,9 @@ EndProcedure
 &AtServer
 Procedure isApplied ()
 	
-	s = "select top 1 1 from Document.Inventory where Ref.Posted and Ref.Warehouse = &Warehouse and Ref.Date > &Date";
+	s = "select top 1 1 from Document.Inventory.Items where Inventory = &Ref and Ref.Posted";
 	q = new Query ( s );
-	q.SetParameter ( "Warehouse", Object.Warehouse );
-	q.SetParameter ( "Date", Object.Date );
+	q.SetParameter ( "Ref", Object.Ref );
 	SetPrivilegedMode ( true );
 	InventoryApplied = not q.Execute ().IsEmpty ();
 	
@@ -104,7 +103,7 @@ Procedure setLinks ()
 		ShowLinks = false;
 	else
 		q = Env.Q;
-		q.SetParameter ( "Warehouse", Object.Warehouse );
+		q.SetParameter ( "Ref", Object.Ref );
 		SQL.Perform ( Env, false );
 		setURLPanel ();
 	endif;
@@ -120,10 +119,9 @@ Procedure sqlLinks ()
 	endif; 
 	s = "
 	|// #Inventories
-	|select Documents.Ref as Document, Documents.Ref.Date as Date, Documents.Ref.Number as Number
-	|from Document.Inventory as Documents
-	|where Documents.Warehouse = &Warehouse
-	|and not Documents.DeletionMark
+	|select Items.Ref as Document, Items.Ref.Date as Date, Items.Ref.Number as Number
+	|from Document.Inventory.Items as Items
+	|where Items.Inventory = &Ref
 	|";
 	Env.Selection.Add ( s );
 	
@@ -372,25 +370,4 @@ Procedure ItemsQuantityPkgOnChange ( Item )
 
 	Computations.Units ( ItemsRow );
 
-EndProcedure
-
-&AtClient
-Procedure ItemsFeatureOnChange ( Item )
-	
-	ItemsRow.Balance = rowBalance ();
-
-EndProcedure
-
-&AtClient
-Function rowBalance ()
-	
-	return getBalance ( ItemsRow.Item, Object.Warehouse, ItemsRow.Package, ItemsRow.Feature, ItemsRow.Series );
-
-EndFunction
-
-&AtClient
-Procedure ItemsSeriesOnChange ( Item )
-	
-	ItemsRow.Balance = rowBalance ();
-	
 EndProcedure
