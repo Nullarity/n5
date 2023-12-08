@@ -107,12 +107,23 @@
 			</title>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>select ToExpense.Car.Warehouse as Car, ToExpense.Fuel as Fuel, ToExpense.QuantityBalance as Quantity,
+		<query>select ToExpense.Car.Warehouse as Car, ToExpense.Fuel as Fuel,
+	case when ToExpense.QuantityBalance &lt; isnull ( Balances.QuantityBalance, 0 )
+		then ToExpense.QuantityBalance
+		else isnull ( Balances.QuantityBalance, 0 )
+ 	end as Quantity,
 	null as Driver
 {select Car.*, Fuel.*, Quantity, Driver}
 from AccumulationRegister.FuelToExpense.Balance ( {&amp;Date},
 	Car.Warehouse.Owner = &amp;Company
 	{Car.Warehouse.* as Car, Fuel.* as Fuel} ) as ToExpense
+	//
+	// Balances
+	//
+	left join AccumulationRegister.Items.Balance ( {&amp;Date},
+		Warehouse.Owner = &amp;Company
+		{Warehouse.* as Car, Item.* as Fuel} ) as Balances
+	on ToExpense.Fuel = Balances.Item
 where not &amp;Overconsumption
 union all
 select Excess.Car.Warehouse, Excess.Fuel, Excess.QuantityBalance, Excess.Driver
