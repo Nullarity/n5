@@ -66,9 +66,19 @@ Procedure sqlWaybill ()
 	
 	s = "
 	|// #Items
-	|select Items.Fuel as Item, Items.QuantityBalance as Quantity, 
-	|	Items.Fuel.Package as Package, isnull ( Items.Fuel.Package.Capacity, 1 ) as Capacity
+	|select Items.Fuel as Item, Items.Fuel.Package as Package,
+	|	isnull ( Items.Fuel.Package.Capacity, 1 ) as Capacity,
+	|	case when Items.QuantityBalance < isnull ( Balances.QuantityBalance, 0 )
+	|		then Items.QuantityBalance
+	|		else isnull ( Balances.QuantityBalance, 0 )
+	| 	end as Quantity
 	|from AccumulationRegister.FuelToExpense.Balance ( &Date, Car = &Car ) as Items
+	|	//
+	|	// Balances
+	|	//
+	|	left join AccumulationRegister.Items.Balance ( &Date,
+	|		Warehouse in ( select Warehouse from Catalog.Cars where Ref = &Car ) ) as Balances
+	|	on Items.Fuel = Balances.Item
 	|";
 	Env.Selection.Add ( s );
 	
