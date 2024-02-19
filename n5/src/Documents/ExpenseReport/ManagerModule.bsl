@@ -120,6 +120,7 @@ Procedure defineAmount ( Env )
 	endif;
 	vat = "VAT";
 	if ( foreign ) then
+		rate = " * &Rate / &Factor";
 		vat = vat + rate;
 	endif;
 	list.Insert ( "VAT", "cast ( " + vat + " as Number ( 15, 2 ) )" );
