@@ -793,13 +793,24 @@ Procedure leaveItem ( Data, StandardProcessing )
 		activateFeatures ();
 	elsif ( Data.CountPackages ) then
 		activatePackages ();
-	elsif ( Data.Series ) then
+	elsif ( Data.Series
+		and seriesAvailable () ) then
 		activateSeries ();
 	else
 		completeSelection ();
 	endif; 
 		
 EndProcedure
+
+&AtClient
+Function seriesAvailable ()
+	
+	type = Source.Type;
+	return not
+		( type.InternalOrder
+		or type.PurchaseOrder );
+	
+EndFunction
  
 &AtClient
 Function featureExists ()
