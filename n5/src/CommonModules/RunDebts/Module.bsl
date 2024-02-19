@@ -331,9 +331,11 @@ Procedure registerOverpayment ( Payments, Record, Row )
 	types.Add ( Type ( "DocumentRef.Payment" ) );
 	types.Add ( Type ( "DocumentRef.VendorPayment" ) );
 	types.Add ( Type ( "DocumentRef.Refund" ) );
+	types.Add ( Type ( "DocumentRef.AdjustDebts" ) );
 	types.Add ( Type ( "DocumentRef.VendorRefund" ) );
 	types.Add ( Type ( "DocumentRef.Debts" ) );
 	types.Add ( Type ( "DocumentRef.VendorDebts" ) );
+	types.Add ( Type ( "DocumentRef.AdjustVendorDebts" ) );
 	for each document in list do
 		if ( types.Find ( TypeOf ( document ) ) <> undefined ) then
 			entry = Payments.Add ();

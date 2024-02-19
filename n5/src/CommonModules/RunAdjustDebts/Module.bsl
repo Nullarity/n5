@@ -216,12 +216,14 @@ Function documentAccounts ( Env, ForReceiver )
 		|	when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).CustomerAccount
 		|	when Adjustments.Document refs Document.Invoice then cast ( Adjustments.Document as Document.Invoice ).CustomerAccount
 		|	when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).CustomerAccount
+		|	when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).ReceiverAccount
 		|	when Adjustments.Document refs Document.Refund then cast ( Adjustments.Document as Document.Refund ).CustomerAccount
 		|	when Adjustments.Document refs Document.Return then cast ( Adjustments.Document as Document.Return ).CustomerAccount
 		|	when Adjustments.Document refs Document.Debts then cast ( Adjustments.Document as Document.Debts ).CustomerAccount
 		|	when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).CustomerAccount
 		|	when Adjustments.Detail refs Document.Invoice then cast ( Adjustments.Detail as Document.Invoice ).CustomerAccount
 		|	when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).CustomerAccount
+		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).ReceiverAccount
 		|	when Adjustments.Detail refs Document.Refund then cast ( Adjustments.Detail as Document.Refund ).CustomerAccount
 		|	when Adjustments.Detail refs Document.Return then cast ( Adjustments.Detail as Document.Return ).CustomerAccount
 		|	when Adjustments.Detail refs Document.Debts then cast ( Adjustments.Detail as Document.Debts ).CustomerAccount
@@ -229,10 +231,12 @@ Function documentAccounts ( Env, ForReceiver )
 		advanceAccount.Add ( "
 		|	when Adjustments.Document refs Document.Payment then cast ( Adjustments.Document as Document.Payment ).AdvanceAccount
 		|	when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).AdvanceAccount
+		|	when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).AdvanceAccount
 		|	when Adjustments.Document refs Document.Refund then cast ( Adjustments.Document as Document.Refund ).AdvanceAccount
 		|	when Adjustments.Document refs Document.Debts then cast ( Adjustments.Document as Document.Debts ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).AdvanceAccount
+		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.Refund then cast ( Adjustments.Detail as Document.Refund ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.Debts then cast ( Adjustments.Detail as Document.Debts ).AdvanceAccount
 		|" );
@@ -242,25 +246,27 @@ Function documentAccounts ( Env, ForReceiver )
 		|	when Adjustments.Document refs Document.VendorPayment then cast ( Adjustments.Document as Document.VendorPayment ).VendorAccount
 		|	when Adjustments.Document refs Document.VendorInvoice then cast ( Adjustments.Document as Document.VendorInvoice ).VendorAccount
 		|	when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).VendorAccount
+		|	when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).ReceiverAccount
 		|	when Adjustments.Document refs Document.VendorRefund then cast ( Adjustments.Document as Document.VendorRefund ).VendorAccount
 		|	when Adjustments.Document refs Document.VendorReturn then cast ( Adjustments.Document as Document.VendorReturn ).VendorAccount
 		|	when Adjustments.Document refs Document.VendorDebts then cast ( Adjustments.Document as Document.VendorDebts ).VendorAccount
 		|	when Adjustments.Detail refs Document.VendorPayment then cast ( Adjustments.Detail as Document.VendorPayment ).VendorAccount
 		|	when Adjustments.Detail refs Document.VendorInvoice then cast ( Adjustments.Detail as Document.VendorInvoice ).VendorAccount
 		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).VendorAccount
+		|	when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).ReceiverAccount
 		|	when Adjustments.Detail refs Document.VendorRefund then cast ( Adjustments.Detail as Document.VendorRefund ).VendorAccount
 		|	when Adjustments.Detail refs Document.VendorReturn then cast ( Adjustments.Detail as Document.VendorReturn ).VendorAccount
 		|	when Adjustments.Detail refs Document.VendorDebts then cast ( Adjustments.Detail as Document.VendorDebts ).VendorAccount
-		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).VendorAccount
 		|" );
 		advanceAccount.Add ( "
 		|	when Adjustments.Document refs Document.VendorPayment then cast ( Adjustments.Document as Document.VendorPayment ).AdvanceAccount
 		|	when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).AdvanceAccount
+		|	when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).AdvanceAccount
 		|	when Adjustments.Document refs Document.VendorDebts then cast ( Adjustments.Document as Document.VendorDebts ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.VendorPayment then cast ( Adjustments.Detail as Document.VendorPayment ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).AdvanceAccount
+		|	when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).AdvanceAccount
 		|	when Adjustments.Detail refs Document.VendorDebts then cast ( Adjustments.Detail as Document.VendorDebts ).AdvanceAccount
-		|	when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).AdvanceAccount
 		|" );
 	endif;
 	return ",
