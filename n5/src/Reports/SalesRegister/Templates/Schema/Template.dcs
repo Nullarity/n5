@@ -192,6 +192,16 @@
 			<dataPath>Description</dataPath>
 			<field>Description</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Export</dataPath>
+			<field>Export</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Export</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>select Advances.Recorder as Recorder, sum ( Advances.Amount ) as Amount, sum ( Advances.VAT ) as VAT,
 	Advances.VATCode as VATCode, Advances.Customer as Customer
@@ -264,6 +274,7 @@ from (
 		value ( Enum.FormStatuses.Submitted ),
 		value ( Enum.FormStatuses.Returned )
 	)
+	{where not &amp;Export}
 	union all
 	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
@@ -282,6 +293,7 @@ from (
 		value ( Enum.FormStatuses.Submitted ),
 		value ( Enum.FormStatuses.Returned )
 	)
+	{where not &amp;Export}
 	union all
 	select - case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
 		- case when Table.Ref.Currency = &amp;Currency then Table.Amount - Table.VAT else cast ( ( Table.Amount - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
@@ -300,6 +312,7 @@ from (
 		value ( Enum.FormStatuses.Submitted ),
 		value ( Enum.FormStatuses.Returned )
 	)
+	{where not &amp;Export}
 	union all
 	select Table.VAT, Table.Total - Table.VAT,	Table.VATCode, Table.Number, Table.Date, 
 		Table.Customer.CodeFiscal, Table.Customer, Table.Ref, Table.Description, Table.Base
@@ -307,6 +320,7 @@ from (
 	where not Table.Ref.DeletionMark
 	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Table.Ref.Company = &amp;Company
+	{where not &amp;Export}
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		CustomerPayments.Number, CustomerPayments.Date, Advances.Customer.CodeFiscal,
@@ -317,6 +331,18 @@ from (
 		//
 		join Advances as Advances
 		on Advances.Recorder = CustomerPayments.Ref
+	{where not &amp;Export}
+	union all
+	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
+		Refunds.Number, Refunds.Date, Advances.Customer.CodeFiscal,
+		Advances.Customer, Refunds.Ref, value ( Enum.Operations.VATAdvancesReverse ), undefined
+	from Document.Refund as Refunds
+		//
+		// Refunds
+		//
+		join Advances as Advances
+		on Advances.Recorder = Refunds.Ref
+	{where not &amp;Export}
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		Invoices.Number, Invoices.Date, Advances.Customer.CodeFiscal,
@@ -327,6 +353,7 @@ from (
 		//
 		join Advances as Advances
 		on Advances.Recorder = Invoices.Ref
+	{where not &amp;Export}
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		AdjustDebts.Number, AdjustDebts.Date, Advances.Customer.CodeFiscal,
@@ -337,6 +364,7 @@ from (
 		//
 		join Advances as Advances
 		on Advances.Recorder = AdjustDebts.Ref
+	{where not &amp;Export}
 	union all
 	select Advances.VAT, Advances.Amount - Advances.VAT, Advances.VATCode,
 		AdjustVendorDebts.Number, AdjustVendorDebts.Date, Advances.Customer.CodeFiscal,
@@ -347,6 +375,7 @@ from (
 		//
 		join Advances as Advances
 		on Advances.Recorder = AdjustVendorDebts.Ref
+	{where not &amp;Export}
 	union all
 	select Advances.VATAmount, case when Advances.CloseAdvance then -1 else 1 end
 		* Advances.Amount - Advances.VATAmount,
@@ -361,6 +390,7 @@ from (
 	and Advances.VATAmount &lt;&gt; 0
 	and Advances.Ref.Date between &amp;DateStart and &amp;DateEnd
 	and Advances.Ref.Company = &amp;Company
+	{where not &amp;Export}
 	union all
 	select sum ( Table.VAT ), sum ( Table.Amount ), Table.Rate, Table.Ref.Number,
 		Table.Ref.Date, undefined, Table.Ref.Warehouse.Description + ", " +
@@ -422,6 +452,33 @@ from (
 		and ( Table.VAT - isnull ( Goods.VAT, 0 ) ) &lt;&gt; 0
 	) as Table
 	group by Table.Ref, Table.Rate
+	{where not &amp;Export}
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		Table.VATCode, Table.Ref.Number, Table.Ref.Date, 
+		Table.Ref.Customer.CodeFiscal, Table.Ref.Customer, Table.Ref, "",
+		Table.Ref
+	from Document.Invoice.Items as Table
+	where Table.Ref.Posted
+	and Table.Ref.Contract.Export
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	{where &amp;Export}
+	union all
+	select case when Table.Ref.Currency = &amp;Currency then Table.VAT else cast ( Table.VAT * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		case when Table.Ref.Currency = &amp;Currency then Table.Total - Table.VAT else cast ( ( Table.Total - Table.VAT ) * Table.Ref.Rate / Table.Ref.Factor as Number ( 15, 2 ) ) end, 
+		Table.VATCode, Table.Ref.Number, Table.Ref.Date, 
+		Table.Ref.Customer.CodeFiscal, Table.Ref.Customer, Table.Ref, "",
+		Table.Ref
+	from Document.Invoice.Services as Table
+	where Table.Ref.Posted
+	and Table.Ref.Contract.Export
+	and Table.Ref.Date between &amp;DateStart and &amp;DateEnd
+	and Table.Ref.Company = &amp;Company
+	and Table.Ref.VATUse &lt;&gt; 0
+	{where &amp;Export}
 ) as Sales
 </query>
 		<autoFillFields>false</autoFillFields>
@@ -479,6 +536,16 @@ where Company.Ref = &amp;Company</query>
 			<dataPath>DescriptionsRef</dataPath>
 			<field>DescriptionsRef</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Export</dataPath>
+			<field>Export</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Export</v8:content>
+				</v8:item>
+			</title>
+		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>select allowed Table.Ref as DescriptionsRef,
 	case valuetype ( Table.Item )
@@ -491,16 +558,33 @@ where Company.Ref = &amp;Company</query>
 from Document.InvoiceRecord.Items as Table
 where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 and Table.Ref in ( &amp;Documents )
+{where not &amp;Export}
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.InvoiceRecord.Services as Table
 where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 and Table.Ref in ( &amp;Documents )
+{where not &amp;Export}
 union
 select Table.Ref, Table.Item.ItemType.Description
 from Document.RetailSales.Items as Table
 where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
 and Table.Ref in ( &amp;Documents )
+{where not &amp;Export}
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.Invoice.Items as Table
+where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+and Table.Ref in ( &amp;Documents )
+and Table.Ref.Contract.Export
+{where &amp;Export}
+union
+select Table.Ref, Table.Item.ItemType.Description
+from Document.Invoice.Services as Table
+where Table.VATCode.Type &lt;&gt; value ( Enum.VAT.None )
+and Table.Ref in ( &amp;Documents )
+and Table.Ref.Contract.Export
+{where &amp;Export}
 </query>
 	</dataSet>
 	<dataSetLink>
@@ -696,6 +780,28 @@ and Table.Ref in ( &amp;Documents )
 		<useRestriction>true</useRestriction>
 		<availableAsField>false</availableAsField>
 		<use>Always</use>
+	</parameter>
+	<parameter>
+		<name>Export</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Export Only</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ro</v8:lang>
+				<v8:content>Numai pentru export</v8:content>
+			</v8:item>
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Только экспорт</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:boolean</v8:Type>
+		</valueType>
+		<value xsi:type="xs:boolean">true</value>
+		<useRestriction>false</useRestriction>
 	</parameter>
 	<template>
 		<name>Template1</name>
@@ -2111,6 +2217,13 @@ and Table.Ref in ( &amp;Documents )
 					<dcscor:value xsi:nil="true"/>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>4785e747-692c-475a-b792-339d73561cf5</dcsset:userSettingID>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Export</dcscor:parameter>
+					<dcscor:value xsi:type="xs:boolean">true</dcscor:value>
+					<dcsset:viewMode>Normal</dcsset:viewMode>
+					<dcsset:userSettingID>7b7ea8c9-b6f2-4621-aed1-9c4d948bd922</dcsset:userSettingID>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:order>

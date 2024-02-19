@@ -6,9 +6,16 @@ Function Events () export
 	p.OnCompose = true;
 	p.BeforeOpen = true;
 	p.OnDetail = true;
+	p.FullAccessRequest = true;
 	return p;
 	
 EndFunction 
+
+Function FullAccessRequest ( Params ) export
+
+	return true;
+
+EndFunction
 
 Procedure BeforeOpen ( Form ) export
 	
