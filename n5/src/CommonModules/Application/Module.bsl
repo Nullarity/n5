@@ -81,3 +81,9 @@ Function WaybillManualWriteOff () export
 	return Constants.WaybillManualWriteOff.Get ();
 
 EndFunction
+
+Function AssistantPlugin () export
+	
+	return Constants.AssistantPlugins.Get ();
+	
+EndFunction

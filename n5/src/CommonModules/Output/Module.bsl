@@ -8150,7 +8150,7 @@ EndFunction
 &AtServer
 Function SalesRequestSubject ( Params ) export
 
-	text = NStr ( "en = 'User requests one-time removal of the restriction ""%Reason"" for %Customer';ro = 'Utilizatorul solicită eliminarea o singură dată a restricției ""%Reason"" pentru %Customer';ru = '%User просит единоразово снять ограничение  ""%Reason"" для %Customer'" );
+	text = NStr ( "en = 'User requests one-time removal of the restriction ""%Reason"" for %Customer, %Amount';ro = 'Utilizatorul solicită eliminarea o singură dată a restricției ""%Reason"" pentru %Customer, %Amount';ru = '%User просит единоразово снять ограничение  ""%Reason"" для %Customer, %Amount'" );
 	return FormatStr ( text, Params );
 
 EndFunction
@@ -8664,6 +8664,38 @@ Procedure FuelExcessBalanceError ( Params = undefined, Field = "", DataKey = und
 EndProcedure
 
 &AtServer
+Function AssistantInitializationMessage ( Params = undefined ) export
+	
+	text = NStr ("ru = 'Привет, моё имя %Name.'; en = 'Hello, my name is %Name.'; ro = 'Bună ziua, numele meu este %Name.'" );
+	return FormatStr ( text, Params );
+	
+EndFunction
+
+&AtServer
+Function AIFileDeletionError ( Params ) export
+
+	text = NStr ("en = 'An error occurred while deleting the file ""%File"": %Error'; ru = 'Произошла ошибка при удалении файла ""%File"": %Error'; ro = 'S-a produs o eroare la ștergerea fișierului ""%File"": %Error'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtServer
+Function JobFailed () export
+
+	text = NStr ( "en='An exception has occurred during the execution of a background job'; ro='S-a produs o excepție în timpul executării unei lucrări de fond'; ru='Произошло исключение во время выполнения фонового задания'" );
+	return FormatStr ( text, undefined );
+
+EndFunction
+
+&AtServer
+Function SelectPhrase () export
+
+	text = NStr ( "en='Select Phrase'; ro='Selectați fraza'; ru='Выбрать фразу'" );
+	return text;
+
+EndFunction
+
+&AtServer
 Function ErrorSavingIssue ( Params = undefined ) export
 
 	s = NStr ( "en = 'Could not save the Issue #%Issue
@@ -8681,3 +8713,4 @@ Function RepositoryNotSupported ( Params = undefined ) export
 	return Output.FormatStr ( s, Params );
 
 EndFunction
+

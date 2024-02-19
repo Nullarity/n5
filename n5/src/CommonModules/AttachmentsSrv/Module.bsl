@@ -521,3 +521,15 @@ Function returnFiles ( Document )
 	return Collections.DeserializeTable ( CollectionsSrv.Serialize ( table ) );
 	
 EndFunction 
+
+Function GetChecksum ( Data ) export
+
+	hash = new DataHashing ( HashFunction.SHA256 );
+	if ( TypeOf ( Data ) = Type ( "String" ) ) then
+		hash.AppendFile ( Data );
+	else
+		hash.Append ( Data );
+	endif;
+	return StrReplace ( String ( hash.HashSum ), " ", "" );
+
+EndFunction

@@ -296,7 +296,7 @@ async Procedure SelectUploadingFiles ( Files, Params ) export
 	if ( stored = undefined ) then
 		return;
 	endif;
-	list = getStoredFiles ( stored );
+	list = Attachments.GetStoredFiles ( stored );
 	data = AttachmentsSrv.UploadFiles ( list, Params.Ref, Params.FolderID );
 	table = Params.Table;
 	control = Params.Control;
@@ -664,7 +664,7 @@ Function GetLink ( Address ) export
 EndFunction
 
 &AtClient
-Function getStoredFiles ( StoredFiles )
+Function GetStoredFiles ( StoredFiles ) export
 	
 	files = new Array ();
 	for each record in StoredFiles do

@@ -1305,6 +1305,20 @@ Function FrameworkManagedForm () export
 	
 EndFunction
 
+&AtServer
+Function OpenAIMessageFilesLimit () export
+	
+	return 10; // https://platform.openai.com/docs/api-reference/messages
+	
+EndFunction
+
+&AtServer
+Function StandardTransactionBatch () export
+	
+	return 300;
+	
+EndFunction
+
 #endregion
 
 #region DataProcessors

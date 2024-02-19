@@ -164,7 +164,15 @@ EndFunction
 
 Function StringToStructure ( StringValue, EqualChars = "=:", SplitteChars = ",;" ) export
 	
-	resultSructure = new Structure;
+	result = new Structure ();
+	stringToCollestion ( result, StringValue, EqualChars, SplitteChars );
+	return result;
+	
+EndFunction
+
+Procedure stringToCollestion ( Result, StringValue, EqualChars, SplitteChars )
+	
+	isStructure = TypeOf ( Result ) = Type ( "Structure" );
 	templateStr = StringValue;	
 	while ( not IsBlankString ( templateStr ) ) do
 		equalPos = findMinPos ( templateStr, EqualChars );
@@ -185,10 +193,21 @@ Function StringToStructure ( StringValue, EqualChars = "=:", SplitteChars = ",;"
 		endif;
 		if ( IsBlankString ( keyStructure ) ) then
 			continue;
-		endif; 
-		resultSructure.Insert ( StrReplace ( keyStructure, " ", "" ), valueStructure );
+		endif;
+		if ( isStructure ) then
+			Result.Insert ( StrReplace ( keyStructure, " ", "" ), valueStructure );
+		else
+			Result [ TrimAll ( keyStructure ) ] = valueStructure;
+		endif;
 	enddo;
-	return resultSructure;
+	
+EndProcedure
+
+Function StringToMap ( StringValue, EqualChars = "=:", SplitteChars = ",;" ) export
+	
+	result = new Map ();
+	stringToCollestion ( result, StringValue, EqualChars, SplitteChars );
+	return result;
 	
 EndFunction
 
@@ -298,11 +317,11 @@ Function ToJSON ( Params ) export
 	
 EndFunction 
 
-Function FromJSON ( JSON, ToMap = false ) export
+Function FromJSON ( JSON ) export
 	
 	reader = new JSONReader ();
 	reader.SetString ( JSON );
-	return ReadJSON ( reader, ToMap );
+	return ReadJSON ( reader );
 		
 EndFunction 
 

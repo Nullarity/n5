@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:HTTPService xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="27d61989-29d8-4e2a-86d8-469015eb8641">
+  <name>Assist</name>
+  <synonym>
+    <key>en</key>
+    <value>Assist</value>
+  </synonym>
+  <rootURL>Assist</rootURL>
+  <reuseSessions>AutoUse</reuseSessions>
+  <sessionMaxAge>20</sessionMaxAge>
+  <urlTemplates uuid="e16de5c2-c2cf-410e-b36d-91167ab2db22">
+    <name>Info</name>
+    <synonym>
+      <key>en</key>
+      <value>Info</value>
+    </synonym>
+    <template>/*</template>
+    <methods uuid="468979ea-63ff-482e-a55f-2b217bc0907b">
+      <name>Get</name>
+      <handler>InfoGet</handler>
+    </methods>
+    <methods uuid="d6a49c66-aa28-4aed-813f-acf3ec8e1539">
+      <name>Post</name>
+      <httpMethod>POST</httpMethod>
+      <handler>InfoPost</handler>
+    </methods>
+  </urlTemplates>
+</mdclass:HTTPService>
