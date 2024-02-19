@@ -143,7 +143,7 @@ Procedure sqlFields ( Env )
 	|	Documents.ShippingAccount as ShippingAccount,
 	|	cast ( case when Documents.Currency = Constants.Currency then Documents.ShippingAmount
 	|		else Documents.ShippingAmount * Documents.Rate / Documents.Factor
-	|	end as Number ( 15, 2 ) ) ShippingAmount
+	|	end as Number ( 15, 2 ) ) as ShippingAmount
 	|from Document.VendorInvoice as Documents
 	|	//
 	|	// Lots
@@ -268,11 +268,10 @@ Procedure defineAmount ( Env )
 	list = new Structure ();
 	Env.Insert ( "AmountFields", list );
 	fields = Env.Fields;
+	foreign = fields.Currency <> fields.LocalCurrency;
 	amount = "( Total - VAT )";
 	total = "Total";
-	documentCurrency = fields.Currency;
-	localCurrency = fields.LocalCurrency;
-	if ( documentCurrency <> localCurrency ) then
+	if ( foreign ) then
 		rate = " * &Rate / &Factor";
 		amount = amount + rate;
 		total = total + rate;
@@ -282,8 +281,8 @@ Procedure defineAmount ( Env )
 	vat = "VAT";
 	contractVAT = "VAT";
 	contractAmount = "( Total - VAT )";
-	if ( fields.ContractCurrency <> documentCurrency ) then
-		if ( documentCurrency = localCurrency ) then
+	if ( fields.ContractCurrency <> fields.Currency ) then
+		if ( fields.Currency = fields.LocalCurrency ) then
 			rate = " / &Rate * &Factor";
 		else
 			rate = " * &Rate / &Factor";
@@ -291,6 +290,10 @@ Procedure defineAmount ( Env )
 		contractAmount = contractAmount + rate;
 		contractVAT = contractVAT + rate;
 	endif; 
+	if ( foreign ) then
+		rate = " * &Rate / &Factor";
+		vat = vat + rate;
+	endif;
 	list.Insert ( "ContractVAT", "cast ( " + contractVAT + " as Number ( 15, 2 ) )" );
 	list.Insert ( "ContractAmount", "cast ( " + contractAmount + " as Number ( 15, 2 ) )" );
 	list.Insert ( "VAT", "cast ( " + vat + " as Number ( 15, 2 ) )" );
@@ -1288,7 +1291,7 @@ Function getDistributingParams ( Env )
 	p.Insert ( "FilterColumns", "Document" );
 	p.Insert ( "DistribColumnsTable1", "Amount, ContractAmount" );
 	p.Insert ( "DistributeTables" );
-	p.Insert ( "AssignСоlumnsTаble1", "ServicesItem, ServicesLineNumber, ServicesDescription" );
+	p.Insert ( "AssignÐ¡Ð¾lumnsTÐ°ble1", "ServicesItem, ServicesLineNumber, ServicesDescription" );
 	p.Insert ( "AssignColumnsTable2", "Table, Document, Item, Warehouse, Account, ItemKey, Lot, Date, LineNumber" );
 	return p;
 	

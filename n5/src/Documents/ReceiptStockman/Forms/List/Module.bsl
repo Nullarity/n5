@@ -32,7 +32,9 @@ EndProcedure
 &AtServer
 Procedure filterByProgress ()
 	
-	DC.ChangeFilter ( List, "Invoiced", not InProgress, InProgress );
+	invoiced = not InProgress;
+	DC.ChangeFilter ( List, "Invoiced", invoiced, InProgress );
+	DC.ChangeFilter ( List, "DeletionMark", invoiced, InProgress );
 	Appearance.Apply ( ThisObject, "InProgress" );
 	
 EndProcedure

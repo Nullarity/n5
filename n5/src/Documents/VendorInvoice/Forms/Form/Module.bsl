@@ -701,16 +701,25 @@ Procedure sqlReceiptStockman ()
 	
 	s = "
 	|// @Fields
-	|select Documents.Company as Company, Documents.Warehouse as Warehouse, Documents.Organization as Vendor,
-	|	Documents.Invoiced as Invoiced
+	|select Documents.Company as Company, Documents.Warehouse as Warehouse, Documents.Vendor as Vendor,
+	|	Documents.Invoiced as Invoiced, Documents.PurchaseOrder as PurchaseOrder
 	|from Document.ReceiptStockman as Documents
 	|where Documents.Ref = &Base
 	|;
 	|// #Items
 	|select Items.Item as Item, Items.Feature as Feature, Items.Series as Series, Items.Package as Package,
 	|	Items.Capacity as Capacity, Items.Quantity as Quantity, Items.QuantityPkg as QuantityPkg,
-	|	Items.Item.Social as Social, Items.Item.VAT as VATCode, Items.Item.VAT.Rate as VATRate
+	|	Items.Item.Social as Social, OrderItems.Price as Price,
+	|	isnull ( OrderItems.VATCode, Items.Item.VAT ) as VATCode,
+	|	isnull ( OrderItems.VATRate, Items.Item.VAT.Rate ) as VATRate,
+	|	Items.RowKey as RowKey
 	|from Document.ReceiptStockman.Items as Items
+	|	//
+	|	// Order Items
+	|	//
+	|	left join Document.PurchaseOrder.Items as OrderItems
+	|	on OrderItems.Ref in ( select PurchaseOrder from Document.ReceiptStockman where Ref = &Base )
+	|	and OrderItems.RowKey = Items.RowKey
 	|where Items.Ref = &Base
 	|order by Items.LineNumber
 	|";
@@ -745,6 +754,7 @@ Procedure loadReceiptStockman ()
 	contract = Object.Contract;
 	currency = Object.Currency;
 	itemsTable = Object.Items;
+	withoutPO = Object.PurchaseOrder.IsEmpty ();
 	for each row in Env.Items do
 		docRow = itemsTable.Add ();
 		FillPropertyValues ( docRow, row );
@@ -752,8 +762,10 @@ Procedure loadReceiptStockman ()
 		accounts = AccountsMap.Item ( item, company, warehouse, "Account, VAT" );
 		docRow.Account = accounts.Account;
 		docRow.VATAccount = accounts.VAT;
-		docRow.Price = Goods.Price ( cache, date, prices, item, docRow.Package, docRow.Feature,
-			vendor, contract, true, warehouse, currency );
+		if ( withoutPO and docRow.Price = 0 ) then
+			docRow.Price = Goods.Price ( cache, date, prices, item, docRow.Package, docRow.Feature,
+				vendor, contract, true, warehouse, currency );
+		endif;
 		Computations.Amount ( docRow );
 		Computations.Total ( docRow, vatUse );
 	enddo; 
@@ -982,6 +994,65 @@ Procedure BeforeWrite ( Cancel, WriteParameters )
 	Forms.DeleteLastRow ( Object.IntangibleAssets, "Item" );
 	Forms.DeleteLastRow ( Object.Accounts, "Account" );
 	updateTotals ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	assignKeys ( CurrentObject );
+	
+EndProcedure
+
+&AtServer
+Procedure assignKeys ( CurrentObject )
+	
+	if ( Object.PurchaseOrder.IsEmpty () ) then
+		return;
+	endif;
+	search = new Structure ( "RowKey", Catalogs.RowKeys.EmptyRef () );
+	itemsRows = CurrentObject.Items.FindRows ( search );
+	servicesRows = CurrentObject.Services.FindRows ( search );
+	if ( itemsRows.Count () = 0 and servicesRows.Count () = 0 ) then
+		return;
+	endif;
+	orderRows = getOrderRows ();
+	assignTableKeys ( itemsRows, orderRows );
+	assignTableKeys ( servicesRows, orderRows );
+	
+EndProcedure
+
+&AtServer
+Function getOrderRows ()
+	
+	s = "
+	|select Items.RowKey as Key, Items.Item as Item, Items.Feature as Feature,
+	|	Items.DiscountRate as DiscountRate
+	|from Document.PurchaseOrder.Items as Items
+	|where Items.Ref = &Ref
+	|union all
+	|select Services.RowKey as Key, Services.Item as Item, Services.Feature as Feature,
+	|	Services.DiscountRate as DiscountRate
+	|from Document.PurchaseOrder.Services as Services
+	|where Services.Ref = &Ref
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", Object.PurchaseOrder );
+	return q.Execute ().Unload ();
+	
+EndFunction
+
+&AtServer
+Procedure assignTableKeys ( Table, OrderRows )
+	
+	search = new Structure ( "Item, Feature, DiscountRate" );
+	for each row in Table do
+		FillPropertyValues ( search, row );
+		for each orderRow in OrderRows.FindRows ( search ) do
+			row.RowKey = orderRow.Key;
+			break; 
+		enddo;
+	enddo;
 	
 EndProcedure
 

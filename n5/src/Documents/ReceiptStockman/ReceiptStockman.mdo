@@ -76,6 +76,7 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
   </standardAttributes>
+  <basedOn>Document.PurchaseOrder</basedOn>
   <createOnInput>Use</createOnInput>
   <help>
     <pages>
@@ -270,18 +271,18 @@
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="9835f3cf-4d47-4081-baae-9d78982a7ae7">
-    <name>Organization</name>
+    <name>Vendor</name>
     <synonym>
       <key>en</key>
-      <value>Organization</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Контрагент</value>
+      <value>Vendor</value>
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>Terț</value>
+      <value>Furnizor</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поставщик</value>
     </synonym>
     <type>
       <types>CatalogRef.Organizations</types>
@@ -301,6 +302,41 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="3f5288b0-ac51-428e-b25b-f14a605133fc">
+    <name>PurchaseOrder</name>
+    <synonym>
+      <key>en</key>
+      <value>Purchase Order</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Заказ поставщику</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Comanda furnizorului</value>
+    </synonym>
+    <type>
+      <types>DocumentRef.PurchaseOrder</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Purchase Order</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Заказ поставщику</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Comanda furnizorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -467,6 +503,79 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="cfa528d2-c0b3-4376-b721-f7e5ac34dcf4">
+      <name>DocumentOrder</name>
+      <synonym>
+        <key>en</key>
+        <value>Order</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Заказ</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Comandă</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.InternalOrder</types>
+        <types>DocumentRef.SalesOrder</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Sales Order, Internal Order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Заказ покупателя; Внутренняя заявка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Comanda cumpărătorului, Comanda internă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameterLinks>
+        <name>Filter.Company</name>
+        <field>Document.ReceiptStockman.Attribute.Company</field>
+      </choiceParameterLinks>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="971c83ce-9b77-437b-a27d-a5eedf040a20">
+      <name>DocumentOrderRowKey</name>
+      <synonym>
+        <key>en</key>
+        <value>Row Key for Linked Order</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ключ строки связанного заказа</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cheia rândului din comandă asociată</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.RowKeys</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique line key of linked order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный ключ строки связанного заказа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cheia unică a liniei din comandă legată</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
       <fullTextSearch>Use</fullTextSearch>
     </attributes>
@@ -694,6 +803,40 @@
         <value>Cantitate</value>
       </toolTip>
       <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="2a016211-3d48-4fb9-97fd-902e5290f632">
+      <name>RowKey</name>
+      <synonym>
+        <key>en</key>
+        <value>Row Key</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ключ строки</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cheia rândului</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.RowKeys</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique line key of linked order</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный ключ строки заказа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cheia unică a liniei din comandă</value>
+      </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>

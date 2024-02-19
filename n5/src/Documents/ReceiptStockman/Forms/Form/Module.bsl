@@ -2,6 +2,12 @@
 var Env;
 &AtClient
 var ItemsRow;
+&AtServer
+var Base;
+&AtServer
+var BaseType;
+&AtServer
+var PurchaseOrderExists;
 
 // *****************************************
 // *********** Form events
@@ -27,6 +33,10 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	if ( isNew () ) then
 		DocumentForm.SetCreator ( Object );
 		initNew ();
+		Base = Parameters.Basis;
+		if ( Base <> undefined ) then
+			fillByPurchaseOrder ();
+		endif;
 		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
@@ -61,6 +71,99 @@ Procedure initNew ()
 
 EndProcedure
 
+#region Filling
+
+&AtServer
+Procedure fillByPurchaseOrder ()
+	
+	setEnv ();
+	sqlPurchaseOrder ();
+	SQL.Perform ( Env );
+	headerByPurchaseOrder ();
+	table = FillerSrv.GetData ( fillingParams () );
+	loadPurchaseOrders ( table );
+	
+EndProcedure 
+
+&AtServer
+Procedure setEnv ()
+	
+	Env = new Structure ();
+	SQL.Init ( Env );
+	Env.Q.SetParameter ( "Base", Base );
+	
+EndProcedure
+
+&AtServer
+Procedure sqlPurchaseOrder ()
+	
+	s = "
+	|// @Fields
+	|select Documents.Company as Company, Documents.Vendor as Vendor
+	|from Document.PurchaseOrder as Documents
+	|where Documents.Ref = &Base
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+&AtServer
+Procedure headerByPurchaseOrder ()
+	
+	fields = Env.Fields;
+	FillPropertyValues ( Object, fields );
+	Object.PurchaseOrder = Base;
+	Object.Received = fields.Vendor;
+	
+EndProcedure 
+
+&AtServer
+Function fillingParams ()
+	
+	p = Filler.GetParams ();
+	p.ProposeClearing = Object.PurchaseOrder.IsEmpty ();
+	report = "PurchaseOrderItems";
+	p.Report = report;
+	p.Filters = getFilters ( report );
+	return p;
+	
+EndFunction
+
+&AtServer
+Function getFilters ( Report )
+	
+	filters = new Array ();
+	filters.Add ( DC.CreateFilter ( "PurchaseOrder", Base ) );
+	item = DC.CreateParameter ( "ReportDate" );
+	item.Value = Catalogs.Calendar.GetDate ( Periods.GetBalanceDate ( Object ) );
+	item.Use = not item.Value.IsEmpty ();
+	filters.Add ( item );
+	return filters;
+	
+EndFunction
+
+&AtServer
+Procedure loadPurchaseOrders ( Table )
+	
+	orders = Options.PurchaseOrdersInTable ( Object.Company );
+	purchaseOrder = Object.PurchaseOrder;
+	itemsTable = Object.Items;
+	for each row in Table do
+		if ( row.ItemService ) then
+			continue;
+		endif; 
+		docRow = itemsTable.Add ();
+		FillPropertyValues ( docRow, row );
+		if ( orders
+			and docRow.PurchaseOrder = purchaseOrder ) then
+			docRow.PurchaseOrder = undefined;
+		endif; 
+	enddo; 
+	
+EndProcedure 
+
+#endregion
+
 &AtServer
 Procedure setAccuracy ()
 	
@@ -78,6 +181,7 @@ Procedure setLinks ()
 	else
 		q = Env.Q;
 		q.SetParameter ( "Ref", Object.Ref );
+		q.SetParameter ( "PurchaseOrder", Object.PurchaseOrder );
 		SQL.Perform ( Env, false );
 		setURLPanel ();
 	endif;
@@ -88,6 +192,17 @@ EndProcedure
 &AtServer
 Procedure sqlLinks ()
 	
+	PurchaseOrderExists = not Object.PurchaseOrder.IsEmpty ();
+	selection = Env.Selection;
+	if ( PurchaseOrderExists ) then
+		s = "
+		|// #PurchaseOrders
+		|select Documents.Ref as Document, Documents.Date as Date, Documents.Number as Number
+		|from Document.PurchaseOrder as Documents
+		|where Documents.Ref = &PurchaseOrder
+		|";
+		selection.Add ( s );
+	endif;
 	if ( isNew () ) then
 		return;
 	endif; 
@@ -97,7 +212,7 @@ Procedure sqlLinks ()
 	|from Document.VendorInvoice as Documents
 	|where Documents.Receipt = &Ref
 	|";
-	Env.Selection.Add ( s );
+	selection.Add ( s );
 	
 EndProcedure
 
@@ -106,6 +221,9 @@ Procedure setURLPanel ()
 	
 	parts = new Array ();
 	meta = Metadata.Documents;
+	if ( PurchaseOrderExists ) then
+		parts.Add ( URLPanel.DocumentsToURL ( Env.PurchaseOrders, meta.PurchaseOrder ) );
+	endif;
 	if ( not isNew () ) then
 		parts.Add ( URLPanel.DocumentsToURL ( Env.VendorInvoices, meta.VendorInvoice ) );
 	endif; 
@@ -137,6 +255,57 @@ EndProcedure
 Procedure BeforeWrite ( Cancel, WriteParameters )
 	
 	Forms.DeleteLastRow ( Object.Items, "Item" );
+	
+EndProcedure
+
+&AtServer
+Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
+	
+	assignKeys ( CurrentObject );
+	
+EndProcedure
+
+&AtServer
+Procedure assignKeys ( CurrentObject )
+	
+	if ( Object.PurchaseOrder.IsEmpty () ) then
+		return;
+	endif;
+	search = new Structure ( "RowKey", Catalogs.RowKeys.EmptyRef () );
+	itemsRows = CurrentObject.Items.FindRows ( search );
+	if ( itemsRows.Count () = 0 ) then
+		return;
+	endif;
+	orderRows = getOrderRows ();
+	assignTableKeys ( itemsRows, orderRows );
+	
+EndProcedure
+
+&AtServer
+Function getOrderRows ()
+	
+	s = "
+	|select Items.RowKey as Key, Items.Item as Item, Items.Feature as Feature
+	|from Document.PurchaseOrder.Items as Items
+	|where Items.Ref = &Ref
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Ref", Object.PurchaseOrder );
+	return q.Execute ().Unload ();
+	
+EndFunction
+
+&AtServer
+Procedure assignTableKeys ( Table, OrderRows )
+	
+	search = new Structure ( "Item, Feature" );
+	for each row in Table do
+		FillPropertyValues ( search, row );
+		for each orderRow in OrderRows.FindRows ( search ) do
+			row.RowKey = orderRow.Key;
+			break; 
+		enddo;
+	enddo;
 	
 EndProcedure
 
@@ -216,7 +385,7 @@ EndProcedure
 &AtClient
 Procedure setReceived ()
 	
-	Object.Received = Object.Organization;
+	Object.Received = Object.Vendor;
 
 EndProcedure
 
