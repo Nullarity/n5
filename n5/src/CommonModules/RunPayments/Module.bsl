@@ -537,14 +537,18 @@ Procedure returnAdvance ( Env, Row, Advance )
 	p = GeneralRecords.GetParams ();
 	p.Date = fields.Date;
 	p.Company = fields.Company;
-	p.Operation = Enums.Operations.PaymentReturn;
 	money = Env.Money;
 	organizations = Env.Organizations;
 	if ( Advance ) then
-		advanceData = takenAdvanceData ( Env, Row );
+		advanceData = advanceTakenData ( Env, Row );
+		payment = advanceData.Payment;
 		account = advanceData.AdvanceAccount;
+		operation = Enums.Operations.AdvanceApplied;
+		p.Operation = operation;
+		p.Content = String ( operation ) + ": " + payment; 
 	else
 		account = fields.OrganizationAccount;
+		p.Operation = Enums.Operations.PaymentReturn;
 	endif;
 	p [ "Account" + organizations ] = account;
 	p [ "Currency" + organizations ] = fields.ContractCurrency;
@@ -579,14 +583,15 @@ Procedure returnAdvance ( Env, Row, Advance )
 		p [ "Account" + money ] = advanceData.VATAccount;
 		vatAmount = amountAccounting - amountAccounting * ( 100 / ( 100 + advanceData.VAT ) );
 		p.Amount = - vatAmount;
-		p.Operation = Enums.Operations.VATAdvancesReverse;
-		p.Content = String ( Enums.Operations.VATAdvancesReverse ) + ": " + payment; 
+		operation = Enums.Operations.VATAdvancesReverse;
+		p.Operation = operation;
+		p.Content = String ( operation ) + ": " + payment; 
 		GeneralRecords.Add ( p );
 	endif;
 	
 EndProcedure
 
-Function takenAdvanceData ( Env, Row )
+Function advanceTakenData ( Env, Row )
 	
 	result = new Structure ( "Payment, VAT, VATAccount, AdvanceAccount, ReceivablesVATAccount", , 0 );
 	customerPayment = Type ( "DocumentRef.Payment" );
@@ -617,6 +622,7 @@ Function takenAdvanceData ( Env, Row )
 	enddo;
 	data = DF.Values ( recorder, set );
 	FillPropertyValues ( result, data );
+	result.Payment = recorder;
 	return result;
 	
 EndFunction
