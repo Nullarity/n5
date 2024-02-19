@@ -24,6 +24,6 @@ Procedure sendEmail ( User )
 	
 	p = new Array ();
 	p.Add ( User );
-	Jobs.Run ( "RegistrationSrv.Send", p );
+	Jobs.Run ( "RegistrationSrv.Send", p, , , TesterCache.Testing () );
 	
 EndProcedure
