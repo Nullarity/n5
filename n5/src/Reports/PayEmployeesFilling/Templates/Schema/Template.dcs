@@ -309,7 +309,7 @@ from (
 	{where AppliedDeductions.Ref.Company.* as Company}
 	) as Deductions
 group by Deductions.Employee
-having sum ( Deductions.Amount ) &gt; 0
+having sum ( Deductions.Amount ) &lt;&gt; 0
 index by Employee
 ;
 // Rates

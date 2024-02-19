@@ -3139,7 +3139,7 @@ from (
 	{where AppliedDeductions.Ref.Company.* as Company}
 	) as Deductions
 group by Deductions.Employee
-having sum ( Deductions.Amount ) &gt; 0
+having sum ( Deductions.Amount ) &lt;&gt; 0
 index by Employee
 ;
 // TaxRates
@@ -4316,6 +4316,7 @@ order by Employees.Description, Employees.Code, Compensations.DateStart, Priorit
 		</title>
 		<valueType>
 			<v8:Type>xs:string</v8:Type>
+			<v8:Type>v8:ValueTable</v8:Type>
 			<v8:StringQualifiers>
 				<v8:Length>0</v8:Length>
 				<v8:AllowedLength>Variable</v8:AllowedLength>
