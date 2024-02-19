@@ -169,12 +169,12 @@
 			</title>
 		</field>
 		<dataSource>DataSource1</dataSource>
-		<query>//Balances
+		<query>// Balances
 select Balances.Account as Account, Balances.ExtDimension1 as ExtDimension1, 
 	Balances.ExtDimension2 as ExtDimension2, Balances.Currency as Currency, Balances.AmountBalanceCr as AmountBalanceCr,
 	Balances.CurrencyAmountBalanceCr as CurrencyAmountBalanceCr
 into Balances
-from AccountingRegister.General.Balance ( &amp;Date, Account = &amp;Account, , Company = &amp;Company 
+from AccountingRegister.General.Balance ( dateadd ( &amp;Date, second, 1 ), Account = &amp;Account, , Company = &amp;Company 
 	{ExtDimension1 as Vendor} ) as Balances
 ;	
 // Advances
@@ -191,7 +191,7 @@ from Balances as Balances
 	//
 	// Advances Balances
 	//
-	join AccountingRegister.General.Balance ( &amp;Date, Account = &amp;AdvanceAccount, , 
+	join AccountingRegister.General.Balance ( dateadd ( &amp;Date, second, 1 ), Account = &amp;AdvanceAccount, , 
 	Company = &amp;Company {ExtDimension1 as Vendor} ) as AdvancesBalances
 	on AdvancesBalances.ExtDimension1 = Balances.ExtDimension1
 	and isnull ( AdvancesBalances.ExtDimension2, undefined ) = isnull ( Balances.ExtDimension2, undefined )
@@ -302,6 +302,7 @@ from Advances as Advances
 					<dcscor:item>
 						<dcscor:choiceParameter>Filter.Class</dcscor:choiceParameter>
 						<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Accounts.AccountsPayable</dcscor:value>
+						<dcscor:value xsi:type="dcscor:DesignTimeValue">Enum.Accounts.OtherCurrentLiability</dcscor:value>
 					</dcscor:item>
 					<dcscor:item>
 						<dcscor:choiceParameter>Filter.Offline</dcscor:choiceParameter>

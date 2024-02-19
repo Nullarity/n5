@@ -291,7 +291,7 @@ select Balances.Account as CustomerAccount, Balances.ExtDimension1 as Customer, 
 		else &amp;VATAdvance
 	end as VAT, &amp;AdvanceAccount as AdvanceAccount
 into Advances
-from AccountingRegister.General.Balance ( &amp;Date, Account = &amp;Account, , Company = &amp;Company
+from AccountingRegister.General.Balance ( dateadd ( &amp;Date, second, 1 ), Account = &amp;Account, , Company = &amp;Company
 	{ExtDimension1 as Customer} ) as Balances
 	//
 	// Constants
@@ -301,7 +301,7 @@ from AccountingRegister.General.Balance ( &amp;Date, Account = &amp;Account, , C
 	//
 	// Advances
 	//
-	left join AccountingRegister.General.Balance ( &amp;Date, 
+	left join AccountingRegister.General.Balance ( dateadd ( &amp;Date, second, 1 ), 
 		Account = &amp;AdvanceAccount, ,
 		Company = &amp;Company {ExtDimension1 as Customer} ) as Advances
 	on Advances.ExtDimension1 = Balances.ExtDimension1
