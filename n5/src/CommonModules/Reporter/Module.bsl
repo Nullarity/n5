@@ -393,12 +393,14 @@ Procedure groupHeader ( Params, DataTemplate )
 	templates = DataTemplate.Templates;
 	reduceMargin = true;
 	chart = Type ( "DataCompositionAreaTemplateChartTemplate" );
+	document = Type ( "DataCompositionAreaDocumentTemplate" );
 	for i = 0 to header do
 		level = ? ( i = header, 0, 1 );
 		template = templates [ i ].Template;
-		if ( TypeOf ( template ) = chart ) then
+		templateType = TypeOf ( template );
+		if ( templateType = chart ) then
 			reduceMargin = false;
-		else
+		elsif ( templateType <> document ) then
 			for each row in template do
 				for each cell in row.Cells do
 					set = cell.Appearance;
