@@ -17,10 +17,11 @@ Function createMessage ( Document, Reason, Receiver )
 	message = new InternetMailMessage ();
 	message.From = Cloud.Noreply ();
 	message.To.Add ( Receiver.Email );
-	info = new Structure ( "User, Receiver, Document, Customer, Reason, Yes, No" );
+	info = new Structure ( "User, Receiver, Document, Customer, Reason, Yes, No, Amount" );
 	info.User = TrimAll ( "" + SessionParameters.User );
-	data = DF.Values ( Document, "Document as Source, Customer.Description as Customer" );
+	data = DF.Values ( Document, "Document as Source, Document.Amount as Amount, Document.Currency.Description as Currency, Customer.Description as Customer" );
 	info.Customer = data.Customer;
+	info.Amount = Conversion.NumberToMoney ( data.Amount, data.Currency );
 	info.Reason = Reason;
 	login = TrimAll ( Receiver.Login );
 	info.Receiver = login;
