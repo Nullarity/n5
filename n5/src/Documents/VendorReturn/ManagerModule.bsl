@@ -158,11 +158,10 @@ Procedure defineAmount ( Env )
 	list = new Structure ();
 	Env.Insert ( "AmountFields", list );
 	fields = Env.Fields;
+	foreign = fields.Currency <> fields.LocalCurrency;
 	amount = "( Total - VAT )";
 	total = "Total";
-	documentCurrency = fields.Currency;
-	localCurrency = fields.LocalCurrency;
-	if ( documentCurrency <> localCurrency ) then
+	if ( foreign ) then
 		rate = " * &Rate / &Factor";
 		amount = amount + rate;
 		total = total + rate;
@@ -173,8 +172,8 @@ Procedure defineAmount ( Env )
 	contractVAT = "VAT";
 	contractAmount = "( Total - VAT )";
 	contractTotal = "Total";
-	if ( fields.ContractCurrency <> documentCurrency ) then
-		if ( documentCurrency = localCurrency ) then
+	if ( fields.ContractCurrency <> fields.Currency ) then
+		if ( fields.Currency = fields.LocalCurrency ) then
 			rate = " / &Rate * &Factor";
 		else
 			rate = " * &Rate / &Factor";
@@ -183,6 +182,10 @@ Procedure defineAmount ( Env )
 		contractVAT = contractVAT + rate;
 		contractTotal = contractTotal + rate;
 	endif; 
+	if ( foreign ) then
+		rate = " * &Rate / &Factor";
+		vat = vat + rate;
+	endif;
 	list.Insert ( "ContractVAT", "cast ( " + contractVAT + " as Number ( 15, 2 ) )" );
 	list.Insert ( "ContractAmount", "cast ( " + contractAmount + " as Number ( 15, 2 ) )" );
 	list.Insert ( "ContractTotal", "cast ( " + contractTotal + " as Number ( 15, 2 ) )" );
