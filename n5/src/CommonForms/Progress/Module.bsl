@@ -65,28 +65,50 @@ EndProcedure
 &AtServerNoContext
 Function getStatus ( val JobKey, Status, Error, Messages )
 	
-	data = InformationRegisters.Jobs.Get ( new Structure ( "JobKey", JobKey ) );
-	Status = data.Status;
-	Error = data.Error;
-	return jobIsActive ( JobKey, Messages );
+	failed = false;
+	active = jobIsActive ( JobKey, Messages, failed );
+	if ( failed ) then
+		Status = Output.JobFailed ();
+		Error = true;
+	else
+		data = InformationRegisters.Jobs.Get ( new Structure ( "JobKey", JobKey ) );
+		Status = data.Status;
+		Error = data.Error;
+	endif;
+	return active;
 	
 EndFunction
 
 &AtServerNoContext
-Function jobIsActive ( val JobKey, Messages )
+Function jobIsActive ( val JobKey, Messages, Failed )
 	
+	Failed = false;
 	job = Jobs.GetBackground ( JobKey, false );
 	if ( job = undefined ) then
 		return false;
 	elsif ( job.State = BackgroundJobState.Active ) then
 		return true;
 	else
-		scope = job.GetUserMessages ( true );
+		Failed = ( job.State = BackgroundJobState.Failed );
+		scope = new Array ( job.GetUserMessages () );
+		exception = job.ErrorInfo;
+		if ( exception <> undefined ) then
+			scope.Add ( exceptionMessage ( exception ) );
+		endif;
 		if ( scope.Count () > 0 ) then
 			Messages = scope;
 		endif; 
 		return false;
 	endif;
+	
+EndFunction
+
+&AtServerNoContext
+Function exceptionMessage ( Exception )
+	
+	msg = new UserMessage ();
+	msg.Text = Exception.Description;
+	return msg;
 	
 EndFunction
 
@@ -146,11 +168,15 @@ EndProcedure
 &AtClient
 Procedure checkFinish () export
 	
-	if ( jobIsActive ( Parameters.JobKey, Messages ) ) then
+	failed = false;
+	if ( jobIsActive ( Parameters.JobKey, Messages, failed ) ) then
 		return;
 	endif; 
 	DetachIdleHandler ( "checkFinish" );
-	showMessages ( false );
+	if ( failed ) then
+		Status = Output.JobFailed ();
+	endif;
+	showMessages ( failed );
 	
 EndProcedure 
 
