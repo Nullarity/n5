@@ -76,6 +76,7 @@ Procedure sqlPricesAndPriceGroups ( Env )
 	|and Pricing <> value ( Enum.Pricing.Percent )
 	|and Pricing <> value ( Enum.Pricing.Group )
 	|and Pricing <> value ( Enum.Pricing.Cost )
+	|and Pricing <> value ( Enum.Pricing.Purchase )
 	|order by List.Code
 	|;
 	|// #PriceGroups

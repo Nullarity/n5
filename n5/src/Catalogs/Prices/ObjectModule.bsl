@@ -9,7 +9,8 @@ EndProcedure
 Procedure addToCheckPercentFields ( CheckedAttributes )
 	
 	if ( Pricing <> Enums.Pricing.Base
-		and Pricing <> Enums.Pricing.Cost ) then
+		and Pricing <> Enums.Pricing.Cost
+		and Pricing <> Enums.Pricing.Purchase ) then
 		CheckedAttributes.Add ( "BasePrices" );
 		CheckedAttributes.Add ( "RoundMethod" );
 	endif; 

@@ -26,8 +26,10 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|RoundMethod RoundToNextPart enable Object.Pricing <> Enum.Pricing.Base;
-	|BasePrices Detail enable not inlist ( Object.Pricing, Enum.Pricing.Base, Enum.Pricing.Cost );
+	|BasePrices Detail enable not inlist ( Object.Pricing,
+	|	Enum.Pricing.Base, Enum.Pricing.Cost, Enum.Pricing.Purchase );
 	|Percent enable Object.Pricing = Enum.Pricing.Percent;
+	|Currency enable Object.Pricing <> Enum.Pricing.Cost;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -51,27 +53,31 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
-Procedure CalculationMethodOnChange ( Item )
+Procedure PricingOnChange ( Item )
 	
-	resetFieldsByCalculationMethod ();
-	Appearance.Apply ( ThisObject, "Object.Pricing" );
+	applyPricing ();
 	
 EndProcedure
 
 &AtServer
-Procedure resetFieldsByCalculationMethod ()
+Procedure applyPricing ()
 	
-	if ( Object.Pricing = Enums.Pricing.Base ) then
+	pricing = Object.Pricing;
+	if ( pricing = Enums.Pricing.Base ) then
 		Object.BasePrices = undefined;
 		Object.RoundMethod = undefined;
 		Object.RoundToNextPart = false;
-	elsif ( Object.Pricing = Enums.Pricing.Cost ) then
+	elsif ( pricing = Enums.Pricing.Cost ) then
 		Object.BasePrices = undefined;
-	elsif ( Object.Pricing = Enums.Pricing.Percent ) then
+		Object.Currency = Application.Currency ();
+	elsif ( pricing = Enums.Pricing.Purchase ) then
+		Object.BasePrices = undefined;
+	elsif ( pricing = Enums.Pricing.Percent ) then
 		Object.Detail = Enums.PriceDetails.Item;
 	endif;
-	if ( Object.Pricing <> Enums.Pricing.Percent ) then
+	if ( pricing <> Enums.Pricing.Percent ) then
 		Object.Percent = 0;
 	endif;
+	Appearance.Apply ( ThisObject, "Object.Pricing" );
 	
 EndProcedure 

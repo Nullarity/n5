@@ -103,6 +103,8 @@ Function calcPrice ( Cache, Params, Prices )
 		priceOrPercent = getPriceForBase ( Cache, Params, Prices );
 	elsif ( Prices.Pricing = Enums.Pricing.Cost ) then
 		priceOrPercent = getCost ( Cache, Params, Prices );
+	elsif ( Prices.Pricing = Enums.Pricing.Purchase ) then
+		priceOrPercent = getPurchase ( Cache, Params, Prices );
 	endif; 
 	if ( cachedPrice.CacheEnabled ) then
 		cachedPrice.CashItem.Price = priceOrPercent;
@@ -532,7 +534,70 @@ Function getItemCost ( Params, Prices )
 	q.SetParameter ( "Date", Periods.GetOperationalDate ( Params.Date ) );
 	q.SetParameter ( "Item", Params.Item );
 	table = q.Execute ().Unload ();
-	return ? ( table.Count () = 0, undefined, table [ 0 ].Price );
+	return ? ( table.Count () = 0, 0, table [ 0 ].Price );
+	
+EndFunction
+
+Function getPurchase ( Cache, Params, Prices )
+	
+	price = getItemPurchase ( Params, Prices );
+	finalizePrice ( price, Params, Prices );
+	return price;
+	
+EndFunction 
+
+Function getItemPurchase ( Params, Prices )
+
+	q = new Query ();
+	items = "
+	|select Table.Price as Price
+	|from (
+	|	select top 1 Items.Price as Price
+	|	from Document.VendorInvoice.Items as Items
+	|	where Items.Item = &Item
+	|	and Items.Ref.Currency in ( select Currency from Catalog.Prices where Ref = &Prices )
+	|	and Items.Ref.Posted
+	|	order by Items.Ref.Date desc
+	|) as Table
+	|";
+	services = "
+	|select Table.Price
+	|from (
+	|	select top 1 Services.Price as Price
+	|	from Document.VendorInvoice.Services as Services
+	|	where Services.Item = &Item
+	|	and Services.Ref.Currency in ( select Currency from Catalog.Prices where Ref = &Prices )
+	|	and Services.Ref.Posted
+	|	order by Services.Ref.Date desc
+	|) as Table
+	|";
+	itemsFilter = new Array ();
+	servicesFilter = new Array ();
+	if ( Params.Feature <> undefined ) then
+		itemsFilter.Add ( "Items.Feature = &Feature" );
+		servicesFilter.Add ( "Services.Feature = &Feature" );
+		q.SetParameter ( "Feature", Params.Feature );
+	endif;
+	if ( Params.Package <> undefined ) then
+		itemsFilter.Add ( "Items.Package = &Package" );
+		q.SetParameter ( "Package", Params.Package );
+	endif;
+	parts = new Array ();
+	parts.Add ( items );
+	if ( itemsFilter.Count () > 0 ) then
+		parts.Add ( StrConcat ( itemsFilter, " and " ) );
+	endif;
+	parts.Add ( "union all" );
+	parts.Add ( services );
+	if ( servicesFilter.Count () > 0 ) then
+		parts.Add ( StrConcat ( servicesFilter, " and " ) );
+	endif;
+	q.Text = StrConcat ( parts, Chars.LF );
+	q.SetParameter ( "Item", Params.Item );
+	q.SetParameter ( "Prices", Params.Prices );
+	SetPrivilegedMode ( true );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, 0, table [ 0 ].Price );
 	
 EndFunction
 
