@@ -35,33 +35,6 @@
 	|where Turnovers.Recorder in ( select Recorder from Income )
 	|group by Income.Code, Turnovers.ExtDimension1 
 	|;
-	|// #Organizations
-	|select isnull ( Income.Amount, 0 ) as IncomeTaxAmount, presentation ( Income.Code ) as Code, isnull ( Base.Amount, 0 ) as BaseAmount, Income.Organization.CodeFiscal as CodeFiscal,
-	|	Income.Organization.Description as Organization
-	|from ( select sum ( Income.Amount ) as Amount, Income.Code as Code, Income.Organization as Organization
-	|		from Income as Income
-	|		group by Income.Code, Income.Organization
-	|	  ) as Income
-	|	// 
-	|	// Base
-	|	// 
-	|	left join Base as Base
-	|	on Base.Code = Income.Code
-	|	and Base.Organization = Income.Organization
-	|	// 
-	|	// Deductions
-	|	// 
-	|	left join InformationRegister.DeductionRates.SliceLast ( &DateEnd, Deduction.Code = ""P"" ) as Rates
-	|	on true
-	|where case when Income.Code in ( value ( Enum.IncomeCodes.FOL ), value ( Enum.IncomeCodes.DIVA ), value ( Enum.IncomeCodes.RCSA ), value ( Enum.IncomeCodes.ROY ), 
-	|			value ( Enum.IncomeCodes.NOR ), value ( Enum.IncomeCodes.PUB ), value ( Enum.IncomeCodes.LIV ) )
-	|			then case when isnull ( Base.Amount, 0 ) >= isnull ( Rates.Rate, 0)	then true
-	|					else false
-	|				end
-	|			else true
-	|		end
-	|order by Income.Organization.Description
-	|;
 	|// PayEmployees
 	|select Compensations.Amount as SalaryAmount, Compensations.Employee as Individual, Compensations.Ref as Recorder
 	|into PayEmployees
@@ -92,9 +65,10 @@
 	|group by Salary.Individual
 	|;
 	|// #Employees
-	|select Employees.Description as Employee, Employees.Individual.PIN as PIN, ""SAL"" as Code, Salary.SalaryAmount as SalaryAmount, Salary.MedicalAmount as MedicalAmount,
-	|	Salary.IncomeTaxAmount as IncomeTaxAmount, isnull ( PayEmployees.MonthsCount, 0 ) as MonthsCount, Statuses.PIN as SpousePIN, Employees.Individual as EmployeeRef,
-	|	Citizenship.Country.Code as CountryCode
+	|select Employees.LastName + "" "" + Employees.FirstName as Employee, Employees.Individual.PIN as PIN, ""SAL"" as Code, Salary.SalaryAmount as SalaryAmount, Salary.MedicalAmount as MedicalAmount,
+	|	Salary.IncomeTaxAmount as IncomeTaxAmount, isnull ( PayEmployees.MonthsCount, 0 ) as MonthsCount,
+	|	case when Statuses.FromInfobase then Statuses.Individual.PIN else Statuses.PIN end as SpousePIN, Employees.Individual as EmployeeRef,
+	|	isnull ( Citizenship.Country.Code, ""MDA"" ) as CountryCode
 	|from Salary as Salary
 	|	// 
 	|	// Employees
@@ -114,7 +88,7 @@
 	|	// Statuses
 	|	//
 	|	left join ( 
-	|		select Statuses.PIN as PIN, Statuses.Individual as Individual
+	|		select Statuses.PIN as PIN, Statuses.Individual as Individual, Statuses.Select as FromInfobase
 	|		from InformationRegister.MaritalStatuses.SliceLast ( &DateEnd, Individual in ( select Individual from Salary ) ) as Statuses
 	|		) as Statuses
 	|	on Statuses.Individual = Salary.Individual
@@ -263,6 +237,7 @@
 		enddo;
 	endif;
 	
+	FieldsValues [ "RecordsNumber" ] = Env.Employees.Count ();
 	FieldsValues [ "Period" ] = "A/" + Format ( DateEnd, "DF='yyyy'" );
 	
 	// DefaultValues
@@ -283,23 +258,12 @@
 	    FieldsValues [ "E" + i ] = row.Code;
 	    FieldsValues [ "F" + i ] = row.SalaryAmount;
 	    FieldsValues [ "G" + i ] = row.CountryCode;
-	    
 	    filter.Employee = row.EmployeeRef;
 	    for each rowDeduction in deductions.FindRows ( filter ) do
 	    	 FieldsValues [ rowDeduction.Deduction + i ] = rowDeduction.Amount;	
 	    enddo;
 		FieldsValues [ "P" + i ] = row.MedicalAmount;
 	    FieldsValues [ "Q" + i ] = 0;
-	    FieldsValues [ "R" + i ] = row.IncomeTaxAmount;
-		line = line + 1;
-		i = i + 1;
-	enddo;
-	for each row in Env.Organizations do
-	    FieldsValues [ "A" + i ] = line;
-	    FieldsValues [ "B" + i ] = row.CodeFiscal;
-	    FieldsValues [ "C" + i ] = row.Organization;
-	    FieldsValues [ "E" + i ] = row.Code;
-	    FieldsValues [ "F" + i ] = row.BaseAmount;
 	    FieldsValues [ "R" + i ] = row.IncomeTaxAmount;
 		line = line + 1;
 		i = i + 1;
