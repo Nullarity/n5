@@ -226,16 +226,16 @@
 			<field>VendorDebtsPaymentBalance</field>
 			<title xsi:type="v8:LocalStringType">
 				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Долг поставщика</v8:content>
-				</v8:item>
-				<v8:item>
 					<v8:lang>en</v8:lang>
 					<v8:content>Vendor debt</v8:content>
 				</v8:item>
 				<v8:item>
 					<v8:lang>ro</v8:lang>
 					<v8:content>Datoria furnizorului</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Долг поставщику</v8:content>
 				</v8:item>
 			</title>
 			<useRestriction>
@@ -387,6 +387,20 @@ from VendorDebtsBalance as VendorDebtsBalance
 		<field xsi:type="DataSetFieldField">
 			<dataPath>DeliveryDate</dataPath>
 			<field>DeliveryDate</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Delivery Date</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Data de livrare</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Требуется на</v8:content>
+				</v8:item>
+			</title>
 			<useRestriction>
 				<group>true</group>
 			</useRestriction>
@@ -394,6 +408,20 @@ from VendorDebtsBalance as VendorDebtsBalance
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Amount</dataPath>
 			<field>Amount</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Amount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма</v8:content>
+				</v8:item>
+			</title>
 			<useRestriction>
 				<group>true</group>
 			</useRestriction>
@@ -507,6 +535,9 @@ select Items.Ref as PurchaseOrder, isnull ( PurchaseOrdersBalance.QuantityBalanc
 	Items.Quantity - isnull ( PurchaseOrdersBalance.QuantityBalance, 0 ) as QuantitySold
 {select PurchaseOrder.*, QuantityBalance, Item.*, Feature.*, DeliveryDate, QuantityOrder, Price, Amount, QuantitySold}
 from Document.PurchaseOrder.Items as Items
+	//
+	// Order balances
+	//
 	left join PurchaseOrdersBalance as PurchaseOrdersBalance
 	on PurchaseOrdersBalance.PurchaseOrder = Items.Ref
 	and PurchaseOrdersBalance.RowKey = Items.RowKey

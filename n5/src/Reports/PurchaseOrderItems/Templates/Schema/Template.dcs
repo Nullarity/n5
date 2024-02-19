@@ -202,6 +202,20 @@
 		<field xsi:type="DataSetFieldField">
 			<dataPath>Quantity</dataPath>
 			<field>Quantity</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Balance</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Balanță</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Осталось</v8:content>
+				</v8:item>
+			</title>
 			<useRestriction>
 				<group>true</group>
 				<order>true</order>
@@ -228,6 +242,20 @@
 		<field xsi:type="DataSetFieldField">
 			<dataPath>DeliveryDate</dataPath>
 			<field>DeliveryDate</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Delivery Date</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Data de livrare</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Доставить</v8:content>
+				</v8:item>
+			</title>
 		</field>
 		<field xsi:type="DataSetFieldField">
 			<dataPath>DocumentOrderRowKey</dataPath>
@@ -298,7 +326,15 @@
 			<title xsi:type="v8:LocalStringType">
 				<v8:item>
 					<v8:lang>en</v8:lang>
-					<v8:content>Quantity pkg ordered</v8:content>
+					<v8:content>Ordered (pkg)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Comandat (pachet)</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Заказано (уп.)</v8:content>
 				</v8:item>
 			</title>
 		</field>
@@ -309,6 +345,14 @@
 				<v8:item>
 					<v8:lang>en</v8:lang>
 					<v8:content>Amount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Suma</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма</v8:content>
 				</v8:item>
 			</title>
 		</field>
@@ -333,6 +377,14 @@
 				<v8:item>
 					<v8:lang>en</v8:lang>
 					<v8:content>Discount</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Reducere</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Скидка</v8:content>
 				</v8:item>
 			</title>
 		</field>
@@ -411,23 +463,32 @@ from Document.PurchaseOrder.Services as Services
 	</dataSet>
 	<totalField>
 		<dataPath>Price</dataPath>
-		<expression>Avg(Price)</expression>
+		<expression>Price</expression>
+		<group>Item</group>
 	</totalField>
 	<totalField>
 		<dataPath>QuantityPkg</dataPath>
 		<expression>Sum(Quantity)</expression>
+		<group>Item</group>
 	</totalField>
 	<totalField>
 		<dataPath>QuantityPkgSold</dataPath>
 		<expression>Sum(QuantitySold)</expression>
+		<group>Item</group>
 	</totalField>
 	<totalField>
 		<dataPath>QuantityPkgOrdered</dataPath>
 		<expression>Sum(QuantityPkgOrdered)</expression>
+		<group>Item</group>
 	</totalField>
 	<totalField>
 		<dataPath>Amount</dataPath>
 		<expression>Sum(Amount)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>Quantity</dataPath>
+		<expression>Sum(Quantity)</expression>
+		<group>Item</group>
 	</totalField>
 	<parameter>
 		<name>ReportDate</name>
@@ -588,7 +649,7 @@ from Document.PurchaseOrder.Services as Services
 					<dcsset:field>QuantityPkgSold</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
-					<dcsset:field>QuantityPkg</dcsset:field>
+					<dcsset:field>Quantity</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Price</dcsset:field>
@@ -986,7 +1047,7 @@ from Document.PurchaseOrder.Services as Services
 					<dcsset:field>QuantityPkgSold</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
-					<dcsset:field>QuantityPkg</dcsset:field>
+					<dcsset:field>Quantity</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Price</dcsset:field>
@@ -1139,11 +1200,6 @@ from Document.PurchaseOrder.Services as Services
 					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
 					<dcsset:viewMode>Normal</dcsset:viewMode>
 					<dcsset:userSettingID>cc640d10-eeb1-4ded-87b6-c9e24709d34d</dcsset:userSettingID>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:use>false</dcscor:use>
-					<dcscor:parameter>Asof</dcscor:parameter>
-					<dcscor:value xsi:type="xs:dateTime">0001-01-01T00:00:00</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>
