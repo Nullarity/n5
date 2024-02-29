@@ -6,8 +6,10 @@ Function GetParams () export
 	p.Insert ( "Filters" );
 	p.Insert ( "Processor", "Filling" );
 	p.Insert ( "ProposeClearing", true );
+	p.Insert ( "ClearTable", true );
 	p.Insert ( "Background", false );
 	p.Insert ( "Batch", false );
+	p.Insert ( "CloseOnErrors", false );
 	return p;
 	
 EndFunction 
@@ -17,6 +19,7 @@ Function Result () export
 	p = new Structure ();
 	p.Insert ( "Address", "" );
 	p.Insert ( "ClearTable", true );
+	p.Insert ( "Completed" );
 	return p;
 	
 EndFunction 

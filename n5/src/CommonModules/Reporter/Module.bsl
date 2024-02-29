@@ -138,6 +138,7 @@ Function getParams ( Report )
 	p.Insert ( "CompanyInHeader", true );
 	p.Insert ( "StandardFooter", true );
 	p.Insert ( "BatchQuery" );
+	p.Insert ( "ClearTable", true );
 	return p;
 	
 EndFunction 
@@ -294,6 +295,7 @@ Procedure getParts ( Params, DataTemplate )
 	
 	parts = new Array ();
 	parts.Add ( "StartIndex" );
+	parts.Add ( "GapAfterStartIndex" );
 	if ( Params.ShowTitle ) then
 		parts.Add ( "TitleIndex" );
 		parts.Add ( "GapAfterTitleIndex" );
@@ -415,7 +417,7 @@ Procedure groupHeader ( Params, DataTemplate )
 		endif;
 	enddo;
 	
-EndProcedure 
+EndProcedure
 
 Procedure decodeParams ( Params, DataTemplate = undefined )
 	

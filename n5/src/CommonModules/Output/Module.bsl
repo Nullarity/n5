@@ -8679,7 +8679,6 @@ Function AIFileDeletionError ( Params ) export
 
 EndFunction
 
-&AtServer
 Function JobFailed () export
 
 	text = NStr ( "en='An exception has occurred during the execution of a background job'; ro='S-a produs o excepție în timpul executării unei lucrări de fond'; ru='Произошло исключение во время выполнения фонового задания'" );

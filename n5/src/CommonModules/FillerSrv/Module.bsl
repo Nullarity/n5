@@ -5,7 +5,7 @@ Function GetData ( Params ) export
 	loadSchema ( Params, schema, composer );
 	Reporter.ApplyFilters ( composer, Params );
 	FillerSrv.ExtractTables ( composer );
-	return putData ( Params.Report, Params.Variant, composer, schema, Params.Batch );
+	return putData ( Params.Report, Params.Variant, composer, schema, Params.Batch, Params.ClearTable );
 	
 EndFunction
 
@@ -20,10 +20,10 @@ Procedure loadSchema ( Params, Schema, Composer )
 	
 EndProcedure 
 
-Function putData ( Report, Variant, Composer, Schema, Batch )
+Function putData ( Report, Variant, Composer, Schema, Batch, ClearTable )
 
 	SetPrivilegedMode ( true );
-	obj = prepareReport ( Report, Variant, Composer, Schema );
+	obj = prepareReport ( Report, Variant, Composer, Schema, ClearTable );
 	p = obj.Params;
 	events = p.Events;
 	if ( events.OnCheck ) then
@@ -68,13 +68,14 @@ Function putData ( Report, Variant, Composer, Schema, Batch )
 	
 EndFunction
 
-Function prepareReport ( Report, Variant, Composer, Schema )
+Function prepareReport ( Report, Variant, Composer, Schema, ClearTable )
  	
 	obj = Reporter.Prepare ( Report );
 	p = obj.Params;
 	p.Variant = Variant;
 	p.Schema = Schema;
 	p.Composer = Composer;
+	p.ClearTable = ClearTable;
 	return obj;
 	
 EndFunction 
@@ -113,14 +114,15 @@ Procedure StartProcess ( val Params, val Caller, ResultAddress ) export
 	ResultAddress = PutToTempStorage ( new ValueTable (), Caller );
 	args.Add ( ResultAddress );
 	args.Add ( Params.Batch );
+	args.Add ( Params.ClearTable );
 	Jobs.Run ( "FillerSrv.Perform", args, Caller, , TesterCache.Testing () );
 	
 EndProcedure 
 
-Procedure Perform ( Report, Variant, SettingsSource, Schema, ResultAddress, Batch ) export
+Procedure Perform ( Report, Variant, SettingsSource, Schema, ResultAddress, Batch, ClearTable ) export
 	
 	composer = getComposer ( SettingsSource, Schema );
-	result = putData ( Report, Variant, composer, Schema, Batch );
+	result = putData ( Report, Variant, composer, Schema, Batch, ClearTable );
 	PutToTempStorage ( result, ResultAddress );
 	
 EndProcedure

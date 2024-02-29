@@ -110,3 +110,22 @@ Procedure ExecProcessor ( DataProcessor, Params = undefined, Key = undefined ) e
 	DataProcessors [ DataProcessor ].Exec ( Params, Key );
 	
 EndProcedure 
+
+Function CheckFilling ( Object ) export
+	
+	GetUserMessages ( true );
+	if ( Object.CheckFilling () ) then
+		return true;
+	else
+		Object.Write ();
+		ref = Object.Ref;
+		errors = GetUserMessages ( true );
+		for each msg in errors do
+			msg.DataKey = ref;
+			msg.Message ();
+			GetUserMessages ( true );
+		enddo;
+	endif;
+	return false;
+	
+EndFunction
