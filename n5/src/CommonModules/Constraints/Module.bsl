@@ -537,13 +537,24 @@ EndProcedure
 Function objectDate ( Form )	
 	
 	object = Form.Object;
-	objectDate = object.Date;
+	objectDate = operationDate ( object );
 	if ( objectDate = Date ( 1, 1, 1 ) ) then
 		if ( object.Ref.IsEmpty () ) then
 			objectDate = CurrentSessionDate ();
 		endif;
 	endif;
 	return objectDate;
+	
+EndFunction
+
+Function operationDate ( Object )
+	
+	type = TypeOf ( Object );
+	if ( type = TypeOf ( "DocumentObject.CloseCurrency" ) ) then
+		return Object.OperationDate;
+	else
+		return Object.Date;
+	endif;
 	
 EndFunction
 
@@ -777,7 +788,7 @@ EndFunction
 
 Function CheckAccess ( Object ) export
 	
-	data = getAccessData ( Object.Ref, Object.Date );
+	data = getAccessData ( Object.Ref, operationDate ( Object ) );
 	access = data.Access;
 	if ( access.Allowed or access.Warning ) then
 		return true;

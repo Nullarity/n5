@@ -111,6 +111,33 @@ and T.Customer in ( #Organizations ( "Customer" ) )</condition>
 		</right>
 	</object>
 	<object>
+		<name>Configuration.Nullarity</name>
+		<right>
+			<name>MainWindowModeNormal</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeEmbeddedWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeFullscreenWorkplace</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>MainWindowModeKiosk</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>AnalyticsSystemClient</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>AccumulationRegister.Expenses.StandardAttribute.Active</name>
 		<right>
 			<name>View</name>
@@ -174,6 +201,36 @@ and T.Customer in ( #Organizations ( "Customer" ) )</condition>
 		<right>
 			<name>Edit</name>
 			<value>false</value>
+		</right>
+	</object>
+	<object>
+		<name>Document.CloseCurrency</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Company in ( #Companies ( "Company" ) )
+and T.Customer in ( #Organizations ( "Customer" ) )</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Report.CloseCurrencyFilling</name>
+		<right>
+			<name>Use</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
 		</right>
 	</object>
 	<object>

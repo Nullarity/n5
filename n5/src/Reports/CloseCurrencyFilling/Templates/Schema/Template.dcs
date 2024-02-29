@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>DataSource1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>Main</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Customer</dataPath>
+			<field>Customer</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Customer</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Cumpãrãtor</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Покупатель</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Currency</dataPath>
+			<field>Currency</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>en</v8:lang>
+					<v8:content>Currency</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ro</v8:lang>
+					<v8:content>Valuta</v8:content>
+				</v8:item>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Валюта</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Factor</dataPath>
+			<field>Factor</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Rate</dataPath>
+			<field>Rate</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Advance</dataPath>
+			<field>Advance</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Contract</dataPath>
+			<field>Contract</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Amount</dataPath>
+			<field>Amount</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Operation</dataPath>
+			<field>Operation</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Adjustment</dataPath>
+			<field>Adjustment</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ContractLocal</dataPath>
+			<field>ContractLocal</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<dataSource>DataSource1</dataSource>
+		<query>// Debts &amp; advances
+select Debts.Contract.Owner as Customer, Debts.AmountBalance as Amount, Debts.AdvanceBalance as Advance,
+	Debts.AccountingBalance as Accounting, Debts.OverpaymentBalance as Overpayment,
+	Debts.Contract as Contract, Debts.Contract.Currency as Currency
+into Debts
+from AccumulationRegister.Debts.Balance ( dateadd ( &amp;Date, second, 1 ),
+	Contract.Company = &amp;Company
+	and not Contract.Export
+	and not Contract.Currency in ( select Currency from Constants )
+	{Contract.* as Contract, Contract.Owner.* as Customer, Contract.Currency.* as Currency,
+	Contract in ( select Contract from Document.AdjustDebts where Base = &amp;CalculatingDocument and not DeletionMark )}
+	) as Debts
+;
+// All local contracts
+select Contracts.Owner as Customer, Contracts.Ref as Contract,
+	Contracts.DateEnd as DateEnd
+into AllLocalContracts
+from Catalog.Contracts as Contracts
+	//
+	// Filter by customers
+	//
+	join Debts as Debts
+	on Debts.Customer = Contracts.Owner
+	//
+	// Local Currency
+	//
+	join Constants as Constants
+	on Constants.Currency = Contracts.Currency
+where not Contracts.DeletionMark
+and Contracts.Customer
+and Contracts.DateStart &lt; &amp;Date
+;
+// Last local contracts
+select Contracts.Customer as Customer, max ( Contracts.Contract ) as Contract
+into LocalContracts
+from AllLocalContracts as Contracts
+	//
+	// Last contracts
+	//
+	join (
+		select Contracts.Customer as Customer, max ( Contracts.DateEnd ) as DateEnd
+		from AllLocalContracts as Contracts
+		group by Contracts.Customer
+	) as LastContracts
+	on LastContracts.Customer = Contracts.Customer
+	and LastContracts.DateEnd = Contracts.DateEnd
+group by Contracts.Customer
+;
+// Exchange rates
+select Rates.Currency as Currency, Rates.Rate as Rate, Rates.Factor as Factor
+into Rates
+from InformationRegister.ExchangeRates.SliceLast ( &amp;Date ) as Rates
+;
+select Debts.Customer as Customer, Debts.Contract as Contract, Debts.Currency as Currency,
+	Debts.Amount as Amount, Debts.Advance as Advance,
+	Debts.Accounting as Accounting, Debts.Overpayment as Overpayment,
+	cast ( Debts.Amount * Rates.Rate / Rates.Factor as Number ( 15, 2 ) ) as AmountLocal,
+	cast ( Debts.Advance * Rates.Rate / Rates.Factor as Number ( 15, 2 ) ) as AdvanceLocal,
+	Rates.Rate as Rate, Rates.Factor as Factor,
+	LocalContracts.Contract as ContractLocal
+into MovingDebts
+from Debts as Debts
+	//
+	// Local Contracts
+	//
+	join LocalContracts as LocalContracts
+	on LocalContracts.Customer = Debts.Customer
+	//
+	// Rates
+	//
+	join Rates as Rates
+	on Rates.Currency = Debts.Currency
+;
+select 0 as Operation, Debts.Customer as Customer,
+	Debts.Contract as Contract, Debts.Currency as Currency,
+	Debts.Amount as Amount, Debts.Advance as Advance, Debts.ContractLocal as ContractLocal,
+	Debts.ContractLocal.CustomerVATAdvance as VATAdvance,
+	Debts.Rate as Rate, Debts.Factor as Factor, Adjusted.Ref as Adjustment
+{select Operation, Customer, Contract, Amount, Advance, ContractLocal, Rate, Factor, Adjustment}
+from MovingDebts as Debts
+	//
+	// Adjustments
+	//
+	left join Document.AdjustDebts as Adjusted
+	on Adjusted.Base = &amp;Base
+	and Adjusted.Contract = Debts.Contract
+	and not Adjusted.AmountDifference
+where Debts.Amount &lt;&gt; 0
+or Debts.Advance &lt;&gt; 0
+union all
+select 1, Debts.Customer, Debts.Contract, Debts.Currency,
+	Debts.Accounting - Debts.AmountLocal, Debts.Overpayment - Debts.AdvanceLocal, Debts.ContractLocal,
+	Debts.ContractLocal.CustomerVATAdvance, Debts.Rate, Debts.Factor, Adjusted.Ref
+from MovingDebts as Debts
+	//
+	// Adjustments
+	//
+	left join Document.AdjustDebts as Adjusted
+	on Adjusted.Base = &amp;Base
+	and Adjusted.Contract = Debts.Contract
+	and Adjusted.AmountDifference
+where ( Debts.Accounting - Debts.AmountLocal ) &lt;&gt; 0
+or ( Debts.Overpayment - Debts.AdvanceLocal ) &lt;&gt; 0
+</query>
+		<autoFillFields>false</autoFillFields>
+	</dataSet>
+	<parameter>
+		<name>Company</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Company</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:CatalogRef.Companies</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Date</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Date</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type>xs:dateTime</v8:Type>
+			<v8:DateQualifiers>
+				<v8:DateFractions>DateTime</v8:DateFractions>
+			</v8:DateQualifiers>
+		</valueType>
+		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>Base</name>
+		<title xsi:type="xs:string">Base</title>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>PaymentOption</name>
+		<title xsi:type="xs:string">Payment option</title>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>PaymentDate</name>
+		<title xsi:type="xs:string">Payment date</title>
+		<value xsi:nil="true"/>
+		<useRestriction>true</useRestriction>
+		<availableAsField>false</availableAsField>
+	</parameter>
+	<parameter>
+		<name>CalculatingDocument</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>en</v8:lang>
+				<v8:content>Calculating document</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:DocumentRef.CloseCurrency</v8:Type>
+		</valueType>
+		<value xsi:nil="true"/>
+		<useRestriction>false</useRestriction>
+	</parameter>
+	<settingsVariant>
+		<dcsset:name>#Fill</dcsset:name>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Operation</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Customer</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Contract</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>ContractLocal</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Amount</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Advance</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Rate</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Factor</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>Adjustment</dcsset:field>
+				</dcsset:item>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Customer</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>bb993fee-5c52-4f38-892a-e49989e7039d</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:left xsi:type="dcscor:Field">Currency</dcsset:left>
+					<dcsset:comparisonType>Equal</dcsset:comparisonType>
+					<dcsset:userSettingID>740c9f42-57cf-4bd8-b556-9b27fcf0dadb</dcsset:userSettingID>
+				</dcsset:item>
+				<dcsset:viewMode>Normal</dcsset:viewMode>
+				<dcsset:userSettingID>9c88159b-3d93-4ee8-863f-2423dade839a</dcsset:userSettingID>
+			</dcsset:filter>
+			<dcsset:outputParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:parameter>AppearanceTemplate</dcscor:parameter>
+					<dcscor:value xsi:type="xs:string">Reports</dcscor:value>
+				</dcscor:item>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Title</dcscor:parameter>
+					<dcscor:value xsi:type="v8:LocalStringType"/>
+				</dcscor:item>
+			</dcsset:outputParameters>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>

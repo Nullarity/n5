@@ -57,7 +57,7 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	AdjustDebtsForm.BeforeWriteAtServer ( CurrentObject, ThisObject );
+	AdjustDebtsForm.BeforeWriteAtServer ( CurrentObject, UseReceiver );
 
 EndProcedure
 
