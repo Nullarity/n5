@@ -90,7 +90,7 @@ Function jobIsActive ( val JobKey, Messages, Failed )
 		return true;
 	else
 		Failed = ( job.State = BackgroundJobState.Failed );
-		scope = new Array ( job.GetUserMessages () );
+		scope = getMessages ( job.GetUserMessages () );
 		exception = job.ErrorInfo;
 		if ( exception <> undefined ) then
 			scope.Add ( exceptionMessage ( exception ) );
@@ -100,6 +100,38 @@ Function jobIsActive ( val JobKey, Messages, Failed )
 		endif; 
 		return false;
 	endif;
+	
+EndFunction
+
+&AtServerNoContext
+Function getMessages ( Messages )
+	
+	list = new Array ();
+	limit = Messages.UBound ();
+	for i = 0 to limit do
+		duplicate = false;
+		msg = Messages [ i ];
+		undefinedKey = not ValueIsFilled ( msg.DataKey );
+		for j = i + 1 to limit do
+			next = Messages [ j ];
+			if ( next.Text = msg.Text
+				and next.Field = msg.Field
+				and next.DataPath = msg.DataPath
+				and ( next.DataKey = msg.DataKey
+					or undefinedKey )
+			) then
+				duplicate = true;
+				break;
+			endif;
+		enddo;
+		if ( not duplicate ) then
+			if ( not undefinedKey ) then
+				msg.Text = msg.Text + " (" + msg.DataKey + ")";
+			endif;
+			list.Add ( msg );
+		endif;
+	enddo;
+	return list;
 	
 EndFunction
 
