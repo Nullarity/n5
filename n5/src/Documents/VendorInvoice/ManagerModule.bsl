@@ -1291,7 +1291,7 @@ Function getDistributingParams ( Env )
 	p.Insert ( "FilterColumns", "Document" );
 	p.Insert ( "DistribColumnsTable1", "Amount, ContractAmount" );
 	p.Insert ( "DistributeTables" );
-	p.Insert ( "AssignÐ¡Ð¾lumnsTÐ°ble1", "ServicesItem, ServicesLineNumber, ServicesDescription" );
+	p.Insert ( "AssignColumnsTable1", "ServicesItem, ServicesLineNumber, ServicesDescription" );
 	p.Insert ( "AssignColumnsTable2", "Table, Document, Item, Warehouse, Account, ItemKey, Lot, Date, LineNumber" );
 	return p;
 	

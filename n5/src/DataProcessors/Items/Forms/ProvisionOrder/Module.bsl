@@ -305,10 +305,6 @@ Procedure addRest ( Result )
 	
 	if ( TableRow.Quantity > 0 ) then
 		Result.Add ( TableRow );
-		row = Result [ Result.UBound () ];
-		if ( Source.Type.PurchaseOrder ) then
-			Computations.Amount ( row );
-		endif;
 	endif; 
 	
 EndProcedure 
