@@ -652,7 +652,7 @@ Procedure fillTable ( Form )
 EndProcedure
 
 &AtServer
-Function GetPayments ( Object ) export
+Function GetPayments ( Object, ClosingPeriod = undefined ) export
 	
 	if ( isAdjustDebts ( Object ) ) then
 		tableName = "Debts";
@@ -669,6 +669,7 @@ Function GetPayments ( Object ) export
 	q.SetParameter ( "VATAccount", Object.VATAccount );
 	q.SetParameter ( "Currency", Object.ContractCurrency );
 	q.SetParameter ( "Organization", organization );
+	q.SetParameter ( "ClosingPeriod", ? ( ClosingPeriod = undefined, undefined, ClosingPeriod + 1 ) );
 	return q.Execute ().Unload ();
 	
 EndFunction
@@ -682,7 +683,7 @@ Function sqlPayments ( Type, TableName, Accounting )
 		|	Balances.AccountingBalance as Accounting, Balances.AdvanceBalance as Advance,
 		|	Balances.Detail as Detail, PaymentDetails.Option as Option, Balances.Document.Date as Date
 		|into Balances
-		|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
+		|from AccumulationRegister." + TableName + ".Balance ( &ClosingPeriod, Contract = &Contract ) as Balances
 		|	//
 		|	// PaymentDetails
 		|	//
@@ -780,7 +781,7 @@ Function sqlPayments ( Type, TableName, Accounting )
 		|	Balances.PaymentBalance as Payment, Balances.AmountBalance as Debt, Balances.OverpaymentBalance as Overpayment,
 		|	Balances.AccountingBalance as Accounting, Balances.AdvanceBalance as Advance,
 		|	Balances.Detail as Detail, PaymentDetails.Option as Option, PaymentDetails.Date as Date
-		|from AccumulationRegister." + TableName + ".Balance ( , Contract = &Contract ) as Balances
+		|from AccumulationRegister." + TableName + ".Balance ( &ClosingPeriod, Contract = &Contract ) as Balances
 		|	//
 		|	// PaymentDetails
 		|	//
@@ -1282,7 +1283,7 @@ Procedure fillReceiverDebts ( Form )
 EndProcedure
 
 &AtServer
-Function GetPaymentsReceiver ( Object ) export
+Function GetPaymentsReceiver ( Object, ClosingPeriod = undefined ) export
 	
 	if ( isAdjustDebts ( Object ) ) then
 		if ( Object.Option = Enums.AdjustmentOptions.Customer ) then
@@ -1307,6 +1308,7 @@ Function GetPaymentsReceiver ( Object ) export
 	q.SetParameter ( "Contract", Object.ReceiverContract );
 	q.SetParameter ( "Currency", Object.ReceiverContractCurrency );
 	q.SetParameter ( "Organization", Object.Receiver );
+	q.SetParameter ( "ClosingPeriod", ? ( ClosingPeriod = undefined, undefined, ClosingPeriod + 1 ) );
 	return q.Execute ().Unload ();
 	
 EndFunction

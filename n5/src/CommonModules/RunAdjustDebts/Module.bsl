@@ -476,7 +476,7 @@ Procedure decreaseDebt ( Env, Table, ForReceiver )
 		amount = row.AmountDebts;
 		amountAccounting = row.AmountLocal;
 		if ( row.Debt = 0 ) then
-			movement.Advance = coef * amountAccounting * ? ( regularAdjustment, 1, -1 );
+			movement.Advance = coef * amountAccounting * ? ( amount < 0, - 1, 1 ); //* ? ( regularAdjustment, 1, -1 );
 			if ( regularAdjustment ) then
 				movement.Overpayment = coef * amount;
 				if ( row.ByOrder ) then

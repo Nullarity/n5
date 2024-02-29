@@ -45,6 +45,8 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		DocumentForm.Init ( Object );
 		fillNew ();
 		updateChangesPermission ();
+		filterList ();
+		filterDeleted ();
 	endif; 
 	Options.Company ( ThisObject, Object.Company );
 	readAppearance ();

@@ -23,8 +23,8 @@ Procedure init ()
 	OperationDate = DC.GetParameter ( Params.Settings, "Date" ).Value;
 	Company = DC.GetParameter ( Params.Settings, "Company" ).Value;
 	Base = DC.GetParameter ( Params.Settings, "Base" ).Value;
-	PaymentDate = DC.GetParameter ( Params.Settings, "PaymentOption" ).Value;
-	PaymentOption = DC.GetParameter ( Params.Settings, "PaymentDate" ).Value;
+	PaymentDate = DC.GetParameter ( Params.Settings, "PaymentDate" ).Value;
+	PaymentOption = DC.GetParameter ( Params.Settings, "PaymentOption" ).Value;
 	LocalCurrency = Application.Currency ();
 	accounts = AccountsMap.Item ( Catalogs.Items.EmptyRef (), Company, Catalogs.Warehouses.EmptyRef (), "VAT" );
 	VATAccount = accounts.VAT;
@@ -64,7 +64,9 @@ Procedure AfterOutput () export
 
 	table = Params.Result [ Params.Result.Ubound () ].Unload ();
 	for each Row in table do
-		makeAdjustment ();
+		while ( Row.Amount <> 0 or Row.Overpayment <> 0 ) do
+			makeAdjustment ();
+		enddo;
 	enddo;
 	if ( Params.ClearTable ) then
 		delete ();
@@ -98,7 +100,7 @@ Procedure makeAdjustment ()
 	rate = Row.Rate;
 	factor = Row.Factor;
 	amount = Row.Amount;
-	advance = Row.Advance;
+	overpayment = Row.Overpayment;
 	obj.Customer = customer;
 	obj.Contract = Row.Contract;
 	obj.Receiver = customer;
@@ -111,48 +113,57 @@ Procedure makeAdjustment ()
 	obj.ReceiverContractFactor = 1;
 	movingDebt = ( Row.Operation = 0 );
 	if ( movingDebt ) then
-		if ( amount <> 0 ) then
+		if ( amount > 0 ) then
 			obj.Amount = amount;
 			obj.Type = Enums.TypesAdjustDebts.Debt;
-		else
-			obj.Amount = advance;
+			Row.Amount = 0;
+		elsif ( amount < 0 ) then
+			obj.Amount = - amount;
 			obj.Type = Enums.TypesAdjustDebts.Advance;
+			Row.Amount = 0;
+		else
+			obj.Amount = overpayment;
+			obj.Type = Enums.TypesAdjustDebts.Advance;
+			Row.Overpayment = 0;
 		endif;
+		obj.TypeReceiver = ? ( obj.Type = Enums.TypesAdjustDebts.Advance,
+			Enums.TypesAdjustDebts.Debt, Enums.TypesAdjustDebts.Advance );
 		obj.Currency = contractCurrency;
 		obj.Rate = rate;
 		obj.Factor = factor;
 	else
-		if ( amount > 0 ) then
+		if ( amount <> 0 ) then
 			obj.Amount = amount;
 			obj.Type = Enums.TypesAdjustDebts.Debt;
-		elsif ( amount < 0 ) then
-			obj.Amount = amount;
+			Row.Amount = 0;
+		elsif ( overpayment > 0 ) then
+			obj.Amount = overpayment;
 			obj.Type = Enums.TypesAdjustDebts.Advance;
-		elsif ( advance > 0 ) then
-			obj.Amount = advance;
-			obj.Type = Enums.TypesAdjustDebts.Advance;
+			Row.Overpayment = 0;
 		else
-			obj.Amount = advance;
+			obj.Amount = overpayment;
 			obj.Type = Enums.TypesAdjustDebts.Debt;
+			Row.Overpayment = 0;
 		endif;
 		obj.Currency = LocalCurrency;
 		obj.Rate = 1;
 		obj.Factor = 1;
 		obj.AmountDifference = true;
+		obj.TypeReceiver = ? ( obj.Amount > 0, Enums.TypesAdjustDebts.Advance, Enums.TypesAdjustDebts.Debt );
 	endif;
 	setAccounts ( obj );
-	obj.Adjustments.Load ( AdjustDebtsForm.GetPayments ( obj ) );
-	obj.ReceiverDebts.Load ( AdjustDebtsForm.GetPaymentsReceiver ( obj ) );
+	obj.Adjustments.Load ( AdjustDebtsForm.GetPayments ( obj, OperationDate ) );
+	obj.ReceiverDebts.Load ( AdjustDebtsForm.GetPaymentsReceiver ( obj, OperationDate ) );
 	AdjustDebtsForm.CalcContract ( obj );
 	AdjustDebtsForm.DistributeAmount ( obj );
 	AdjustDebtsForm.CalcApplied ( obj );
 	AdjustDebtsForm.CalcReceiverContract ( obj );
 	AdjustDebtsForm.DistributeReceiverAmount ( obj );
 	AdjustDebtsForm.CalcAppliedReceiver ( obj );
-	rest = AdjustDebtsForm.ReceiverDifference ( obj );
+	rest = obj.ReceiverContractAmount - obj.ReceiverDebts.Total ( "Applied" );
 	if ( rest <> 0 ) then
 		correction = obj.AccountingReceiver.Add ();
-		correction.Amount = ? ( movingDebt, rest * rate / factor, rest );
+		correction.Amount = rest;
 		correction.PaymentDate = PaymentDate;
 		correction.PaymentOption = PaymentOption;
 		AdjustDebtsForm.CalcAppliedReceiver ( obj );

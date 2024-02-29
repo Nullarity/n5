@@ -51,10 +51,6 @@
 			<field>Rate</field>
 		</field>
 		<field xsi:type="DataSetFieldField">
-			<dataPath>Advance</dataPath>
-			<field>Advance</field>
-		</field>
-		<field xsi:type="DataSetFieldField">
 			<dataPath>Contract</dataPath>
 			<field>Contract</field>
 			<role>
@@ -79,6 +75,10 @@
 			<role>
 				<dcscom:dimension>true</dcscom:dimension>
 			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>Overpayment</dataPath>
+			<field>Overpayment</field>
 		</field>
 		<dataSource>DataSource1</dataSource>
 		<query>// Debts &amp; advances
@@ -135,10 +135,10 @@ into Rates
 from InformationRegister.ExchangeRates.SliceLast ( &amp;Date ) as Rates
 ;
 select Debts.Customer as Customer, Debts.Contract as Contract, Debts.Currency as Currency,
-	Debts.Amount as Amount, Debts.Advance as Advance,
-	Debts.Accounting as Accounting, Debts.Overpayment as Overpayment,
+	Debts.Amount as Amount, Debts.Overpayment as Overpayment,
+	Debts.Accounting as Accounting, Debts.Advance as Advance,
 	cast ( Debts.Amount * Rates.Rate / Rates.Factor as Number ( 15, 2 ) ) as AmountLocal,
-	cast ( Debts.Advance * Rates.Rate / Rates.Factor as Number ( 15, 2 ) ) as AdvanceLocal,
+	cast ( Debts.Overpayment * Rates.Rate / Rates.Factor as Number ( 15, 2 ) ) as OverpaymentLocal,
 	Rates.Rate as Rate, Rates.Factor as Factor,
 	LocalContracts.Contract as ContractLocal
 into MovingDebts
@@ -156,10 +156,10 @@ from Debts as Debts
 ;
 select 0 as Operation, Debts.Customer as Customer,
 	Debts.Contract as Contract, Debts.Currency as Currency,
-	Debts.Amount as Amount, Debts.Advance as Advance, Debts.ContractLocal as ContractLocal,
+	Debts.Amount as Amount, Debts.Overpayment as Overpayment, Debts.ContractLocal as ContractLocal,
 	Debts.ContractLocal.CustomerVATAdvance as VATAdvance,
 	Debts.Rate as Rate, Debts.Factor as Factor, Adjusted.Ref as Adjustment
-{select Operation, Customer, Contract, Amount, Advance, ContractLocal, Rate, Factor, Adjustment}
+{select Operation, Customer, Contract, Amount, Overpayment, ContractLocal, Rate, Factor, Adjustment}
 from MovingDebts as Debts
 	//
 	// Adjustments
@@ -169,10 +169,10 @@ from MovingDebts as Debts
 	and Adjusted.Contract = Debts.Contract
 	and not Adjusted.AmountDifference
 where Debts.Amount &lt;&gt; 0
-or Debts.Advance &lt;&gt; 0
+or Debts.Overpayment &lt;&gt; 0
 union all
 select 1, Debts.Customer, Debts.Contract, Debts.Currency,
-	Debts.Accounting - Debts.AmountLocal, Debts.Overpayment - Debts.AdvanceLocal, Debts.ContractLocal,
+	Debts.Accounting - Debts.AmountLocal - ( Debts.Advance - Debts.OverpaymentLocal ), 0, Debts.ContractLocal,
 	Debts.ContractLocal.CustomerVATAdvance, Debts.Rate, Debts.Factor, Adjusted.Ref
 from MovingDebts as Debts
 	//
@@ -182,8 +182,7 @@ from MovingDebts as Debts
 	on Adjusted.Base = &amp;Base
 	and Adjusted.Contract = Debts.Contract
 	and Adjusted.AmountDifference
-where ( Debts.Accounting - Debts.AmountLocal ) &lt;&gt; 0
-or ( Debts.Overpayment - Debts.AdvanceLocal ) &lt;&gt; 0
+where Debts.Accounting - Debts.AmountLocal - ( Debts.Advance - Debts.OverpaymentLocal ) &lt;&gt; 0
 </query>
 		<autoFillFields>false</autoFillFields>
 	</dataSet>
@@ -274,7 +273,7 @@ or ( Debts.Overpayment - Debts.AdvanceLocal ) &lt;&gt; 0
 					<dcsset:field>Amount</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
-					<dcsset:field>Advance</dcsset:field>
+					<dcsset:field>Overpayment</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Rate</dcsset:field>
