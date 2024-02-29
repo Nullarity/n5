@@ -37,6 +37,8 @@ Procedure loadParams ()
 	Background = filling.Background;
 	Batch = filling.Batch;
 	ProposeClearing = filling.ProposeClearing;
+	CloseOnErrors = filling.CloseOnErrors;
+	ClearTable = filling.ClearTable;
 	
 EndProcedure
 
@@ -51,7 +53,6 @@ Procedure init ()
 	Composer.LoadSettings ( schema.SettingVariants [ Variant ].Settings );
 	Presentation = schema.SettingVariants [ Variant ].Presentation;
 	ResultAddress = PutToTempStorage ( new ValueTable (), Parameters.Caller );
-	ClearTable = true;
 	Reporter.ApplyFilters ( Composer, Parameters.Filling );
 
 EndProcedure 
@@ -115,17 +116,17 @@ EndProcedure
 &AtClient
 Procedure Fill ( Command )
 	
-	perform ();
+	perform ( Background );
 	if ( Background ) then
-		Progress.Open ( UUID, ThisObject, new NotifyDescription ( "Complete", ThisObject ) );
+		Progress.Open ( UUID, FormOwner, new NotifyDescription ( "Complete", ThisObject ) );
 	else
-		Close ( getResult () );
+		Close ( getResult ( true ) );
 	endif; 
 	
 EndProcedure
 
 &AtServer
-Procedure perform ()
+Procedure perform ( Background )
 	
 	schema = GetFromTempStorage ( SchemaAddress );
 	args = new Array ();
@@ -135,7 +136,8 @@ Procedure perform ()
 	args.Add ( schema );
 	args.Add ( ResultAddress );
 	args.Add ( Batch );
-	Jobs.Run ( "FillerSrv.Perform", args, UUID, , TesterCache.Testing () );
+	args.Add ( ClearTable );
+	Jobs.Run ( "FillerSrv.Perform", args, UUID, , not Background or TesterCache.Testing () );
 
 EndProcedure
 
@@ -163,18 +165,19 @@ EndProcedure
 &AtClient
 Procedure Complete ( Completed, Params ) export
 	
-	if ( Completed ) then
-		Close ( getResult () );
+	if ( Completed or CloseOnErrors ) then
+		Close ( getResult ( Completed ) );
 	endif; 
 	
 EndProcedure 
 
 &AtClient
-Function getResult ()
+Function getResult ( Completed )
 	
 	result = Filler.Result ();
 	result.ClearTable = ClearTable;
 	result.Address = ResultAddress;
+	result.Completed = Completed;
 	return result;
 	
 EndFunction 
