@@ -36,4 +36,6 @@
 См. также:
 
 - [Корректировка долга поставщика](/d/AdjustVendorDebts)
+- [Закрытие валют](/d/CloseCurrency)
 - [Акт сверки](/r/Reconciliation)
+- [Дебиторы](/r/Debts)
