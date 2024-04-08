@@ -2,21 +2,40 @@
 Function InfoPost ( Request )
 	
 	return proceed ( Request );
-	
+
 EndFunction
 
 Function proceed ( Request )
 	
-	p = Conversion.FromJSON ( Request.GetBodyAsString () );
+	parameters = Request.GetBodyAsString ();
+	try
+		response = new HTTPServiceResponse ( 200 );
+		response.Headers.Insert ( "content-type", "text/html" );
+		result = get ( parameters );
+		response.SetBodyFromString ( result );
+	except
+		WriteLogEvent ( "OpenAI.FunctionCall",
+			EventLogLevel.Error, , ,
+			ErrorProcessing.DetailErrorDescription ( ErrorInfo () )
+			+ ", request: "
+			+ parameters
+		);
+		response = new HTTPServiceResponse ( 500 );
+		response.SetBodyFromString ( Output.ProcessingError () );
+	endtry;
+	return response;
+	
+EndFunction
+
+Function get ( Parameters )
+	
+	p = Conversion.FromJSON ( Parameters );
 	SetPrivilegedMode ( true );
 	folder = Application.AssistantPlugin (); 
-	obj = ExternalDataProcessors.Create ( folder + "/" + p.function + ".epf", false );
+	processor = ExternalDataProcessors.Create ( folder + "/" + p.function + ".epf", false );
 	SetPrivilegedMode ( false );
-	response = new HTTPServiceResponse ( 200 );
-	response.Headers.Insert ( "content-type", "text/html" );
-	obj.Parameters = p;
-	response.SetBodyFromString ( obj.Get () );
-	return response;
+	processor.Parameters = p;
+	return processor.Get ();
 	
 EndFunction
 

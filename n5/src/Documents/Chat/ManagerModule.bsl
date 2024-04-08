@@ -21,4 +21,22 @@ Procedure PresentationGetProcessing ( Data, Presentation, StandardProcessing )
 	
 EndProcedure
 
+Procedure FormGetProcessing ( FormType, Parameters, SelectedForm, AdditionalInformation, StandardProcessing )
+	
+	if ( newChat ( FormType, Parameters ) ) then
+		Parameters.Insert ( "NewWindow", new UUID () );
+		SelectedForm = Metadata.Documents.Chat.Forms.Form;
+		StandardProcessing = false;
+	endif;
+	
+EndProcedure
+
+Function newChat ( Type, Parameters )
+	
+	return Type = "ObjectForm"
+	and not Parameters.Property ( "Key" )
+	and not Parameters.Property ( "CopyingValue" );
+	
+EndFunction
+
 #endif

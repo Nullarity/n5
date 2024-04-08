@@ -3,7 +3,7 @@
 Call ( "Common.Init" );
 CloseAll ();
 
-id = Call ( "Common.ScenarioID", "A18Z" );
+id = Call ( "Common.ScenarioID", "A19G" );
 this.Insert ( "ID", id );
 getEnv ();
 createEnv ();
@@ -34,6 +34,7 @@ Procedure createEnv ()
 	#region newDocument
 	Commando("e1cib/command/Document.Document.Create");
 	Set("#Subject", this.Subject );
+	Next ();
 	file = GetTempFileName("txt");
 	doc = new TextDocument();
 	doc.SetText ( "This is the test document " + id );

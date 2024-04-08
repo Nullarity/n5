@@ -10,15 +10,15 @@
   <name>Chat</name>
   <synonym>
     <key>en</key>
-    <value>Assistant (beta)</value>
-  </synonym>
-  <synonym>
-    <key>ru</key>
-    <value>Ассистент (beta)</value>
+    <value>Chat</value>
   </synonym>
   <synonym>
     <key>ro</key>
-    <value>Asistent (beta)</value>
+    <value>Conversație</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Чат</value>
   </synonym>
   <useStandardCommands>true</useStandardCommands>
   <inputByString>Document.Chat.StandardAttribute.Number</inputByString>
@@ -49,7 +49,6 @@
     <name>Date</name>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
-    <fullTextSearch>Use</fullTextSearch>
     <format>
       <key>en</key>
       <value>DLF=D</value>
@@ -94,7 +93,7 @@
   </explanation>
   <explanation>
     <key>ro</key>
-    <value>Discutați cu asistentul AI</value>
+    <value>Conversați cu asistentul AI</value>
   </explanation>
   <numberType>String</numberType>
   <numberLength>9</numberLength>
@@ -102,7 +101,6 @@
   <checkUnique>true</checkUnique>
   <autonumbering>true</autonumbering>
   <defaultObjectForm>Document.Chat.Form.Form</defaultObjectForm>
-  <defaultListForm>Document.Chat.Form.List</defaultListForm>
   <posting>Deny</posting>
   <postInPrivilegedMode>true</postInPrivilegedMode>
   <unpostInPrivilegedMode>true</unpostInPrivilegedMode>
@@ -140,7 +138,6 @@
     <fillChecking>ShowError</fillChecking>
     <fillFromFillingValue>true</fillFromFillingValue>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="863abe50-7e9f-4017-8580-f9e0f2198dd0">
@@ -170,20 +167,19 @@
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Întreprinderea în numele căreia este introdus documentul</value>
+      <value>Societatea în numele căreia este înscris documentul</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="78fc7f73-522b-4ed3-9497-d7bfab9050ec">
     <name>Creator</name>
     <synonym>
       <key>en</key>
-      <value>Author</value>
+      <value>Creator</value>
     </synonym>
     <synonym>
       <key>ru</key>
@@ -211,7 +207,40 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="32d490fa-c1b2-4cfd-8080-f20d1b7f6168">
+    <name>Error</name>
+    <synonym>
+      <key>en</key>
+      <value>Error</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ошибка</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Eroare</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Error state</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Состояние ошибки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Stare de eroare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="ff2eaade-473f-408a-984f-f232f01332e4">
@@ -249,7 +278,6 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="bb66646c-6672-4754-bead-9c7f22e13800">
@@ -282,7 +310,7 @@
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Subiect de chat</value>
+      <value>Subiect chat</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
@@ -302,7 +330,7 @@
     </synonym>
     <synonym>
       <key>ro</key>
-      <value>Firul</value>
+      <value>Fir</value>
     </synonym>
     <type>
       <types>String</types>
@@ -320,24 +348,331 @@
     </toolTip>
     <toolTip>
       <key>ro</key>
-      <value>Firul</value>
+      <value>Fir</value>
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <forms uuid="6354bcb9-5336-4936-b1c8-6be41c704e30">
+    <name>History</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
   <forms uuid="8bd8ca2b-fe52-4640-a068-ed92a5b0f8ef">
     <name>Form</name>
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
-  <forms uuid="6354bcb9-5336-4936-b1c8-6be41c704e30">
-    <name>List</name>
-    <usePurposes>PersonalComputer</usePurposes>
-    <usePurposes>MobileDevice</usePurposes>
-  </forms>
+  <tabularSections uuid="fc38ce3c-36c2-4dc1-a40c-11c6f6e3cc67">
+    <producedTypes>
+      <objectType typeId="83ed28c3-1c19-4904-b9b5-be20358b6d1f" valueTypeId="6cf24bd5-23b9-44ec-914a-e1c4299140c4"/>
+      <rowType typeId="2b997f25-38b6-4416-8eef-86085ffdec68" valueTypeId="c71fc255-c957-425b-88f8-0c188323bb67"/>
+    </producedTypes>
+    <name>Data</name>
+    <synonym>
+      <key>en</key>
+      <value>Data</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Данные</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Date</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Messages displayed as continuous text, not split into rows</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сообщения как сплошной текст, не разбитый на строки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Mesajele afișate ca text continuu, nu împărțite în rânduri</value>
+    </toolTip>
+    <attributes uuid="bb91ed20-56a4-4e52-884a-b5820e38619a">
+      <name>Element</name>
+      <synonym>
+        <key>en</key>
+        <value>Element</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Элемент</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Element</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>5</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Unique element ID</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Уникальный идентификатор элемента</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>ID unic al elementului</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="80312f71-cb41-4ce8-bec2-6c5b1e0332f1">
+      <name>Error</name>
+      <synonym>
+        <key>en</key>
+        <value>Error</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ошибка</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Eroare</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Error</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ошибка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Eroare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="4fbb666c-8c8e-4465-897c-6f13e9f3fffe">
+      <name>File</name>
+      <synonym>
+        <key>en</key>
+        <value>File</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Файл</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Fişier</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>File</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Файл</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Fişier</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="8b939a39-72f3-4434-bb95-48542466c278">
+      <name>ID</name>
+      <synonym>
+        <key>en</key>
+        <value>ID</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Идентификатор</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>ID</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>50</length>
+        </stringQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Message ID</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Идентификатор сообщения</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>ID mesaj</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="1fe52acb-c4ef-484f-8876-13cfc44cf938">
+      <name>Link</name>
+      <synonym>
+        <key>en</key>
+        <value>Link</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Связь</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Legătură</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>5</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Link to the Messages tabular section</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ссылка на табличную часть «Сообщения»</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Link către secțiunea tabelară Mesaje</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="c65ad4c6-1409-49ed-a0f7-7e51428a0e5b">
+      <name>Me</name>
+      <synonym>
+        <key>en</key>
+        <value>Me</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Я</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Pe mine</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>My message</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Моё сообщение</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Mesajul meu</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="e517f6a7-616b-4ae8-8ef3-e556859cfba1">
+      <name>Separator</name>
+      <synonym>
+        <key>en</key>
+        <value>Separator</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Разделитель</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Separator</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Separator</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Разделитель</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Separator</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="0c06122e-1fdd-497c-a376-12ca2048b911">
+      <name>Text</name>
+      <synonym>
+        <key>en</key>
+        <value>Text</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Текст</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Text</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Message text</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Текст сообщения</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Mesaj text</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
   <tabularSections uuid="e0f403f0-e0dc-4ed3-b575-865f1146cca3">
     <producedTypes>
       <objectType typeId="285bddfd-a349-422b-b735-e063eba4033d" valueTypeId="eb42da0f-cded-44ba-82bc-5c63dbe5219d"/>
@@ -356,6 +691,18 @@
       <key>ro</key>
       <value>Mesaje</value>
     </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Messages split by rows</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Сообщения разделены по строкам</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Mesajele împărțite pe rânduri</value>
+    </toolTip>
     <attributes uuid="ed922c9d-7758-4ead-9792-964a29b50e91">
       <name>Error</name>
       <synonym>
@@ -388,7 +735,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="2df88357-7aeb-4a16-ada3-5a357b77e03e">
       <name>File</name>
@@ -402,7 +748,7 @@
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Fișier</value>
+        <value>Fişier</value>
       </synonym>
       <type>
         <types>Boolean</types>
@@ -417,12 +763,11 @@
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Fișier</value>
+        <value>Fişier</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="61389d4f-cb64-4c27-8d88-5651120f1dce">
       <name>ID</name>
@@ -433,6 +778,10 @@
       <synonym>
         <key>ru</key>
         <value>Идентификатор</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>ID</value>
       </synonym>
       <type>
         <types>String</types>
@@ -450,12 +799,48 @@
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>ID-ul mesajului</value>
+        <value>ID mesaj</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="99250bfb-3063-4ce8-b939-9d99c33a26ad">
+      <name>Link</name>
+      <synonym>
+        <key>en</key>
+        <value>Link</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Связь</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Legătură</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>5</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Link to the Messages tabular section</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Ссылка на табличную часть «Сообщения»</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Link către secțiunea tabelară Mesaje</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
     </attributes>
     <attributes uuid="194bcfca-e395-4944-aeca-68f0684815e2">
       <name>Me</name>
@@ -469,7 +854,7 @@
       </synonym>
       <synonym>
         <key>ro</key>
-        <value>Eu</value>
+        <value>Pe mine</value>
       </synonym>
       <type>
         <types>Boolean</types>
@@ -489,7 +874,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="90b462e0-dac2-43ad-a8ec-e9ab5bc2e30d">
       <name>Separator</name>
@@ -523,7 +907,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="646b11ef-ff1c-42ad-aa0c-192a76017fa5">
       <name>Text</name>
@@ -553,12 +936,11 @@
       </toolTip>
       <toolTip>
         <key>ro</key>
-        <value>Textul mesajului</value>
+        <value>Mesaj text</value>
       </toolTip>
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
   </tabularSections>
 </mdclass:Document>

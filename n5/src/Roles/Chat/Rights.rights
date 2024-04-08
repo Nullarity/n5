@@ -4,6 +4,13 @@
 	<setForAttributesByDefault>true</setForAttributesByDefault>
 	<independentRightsOfChildObjects>false</independentRightsOfChildObjects>
 	<object>
+		<name>InformationRegister.Assistants</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>Catalog.Phrases</name>
 		<right>
 			<name>Read</name>
@@ -102,14 +109,43 @@
 		</right>
 	</object>
 	<object>
-		<name>Catalog.Assistants.Attribute.Token</name>
+		<name>Catalog.AIModels</name>
 		<right>
-			<name>View</name>
-			<value>false</value>
+			<name>Read</name>
+			<value>true</value>
 		</right>
 		<right>
-			<name>Edit</name>
-			<value>false</value>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>Catalog.Functions</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#WithCommonTenant</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
+		<name>DataProcessor.Chat</name>
+		<right>
+			<name>Use</name>
+			<value>true</value>
 		</right>
 	</object>
 	<object>
@@ -124,6 +160,9 @@
 		<right>
 			<name>Read</name>
 			<value>true</value>
+			<restrictionByCondition>
+				<condition>#WithCommonTenant</condition>
+			</restrictionByCondition>
 		</right>
 		<right>
 			<name>View</name>
@@ -245,9 +284,20 @@
 		</right>
 	</object>
 	<object>
-		<name>DataProcessor.Chat</name>
+		<name>Catalog.Servers</name>
 		<right>
-			<name>Use</name>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>T where T.Access.Tenant = &amp;Tenant</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
 			<value>true</value>
 		</right>
 	</object>
@@ -259,10 +309,32 @@
 		</right>
 	</object>
 	<object>
+		<name>Catalog.Instructions</name>
+		<right>
+			<name>Read</name>
+			<value>true</value>
+			<restrictionByCondition>
+				<condition>#WithCommonTenant</condition>
+			</restrictionByCondition>
+		</right>
+		<right>
+			<name>View</name>
+			<value>true</value>
+		</right>
+		<right>
+			<name>InputByString</name>
+			<value>true</value>
+		</right>
+	</object>
+	<object>
 		<name>Constant.AssistantPlugins</name>
 		<right>
 			<name>Read</name>
 			<value>true</value>
 		</right>
 	</object>
+	<restrictionTemplate>
+		<name>WithCommonTenant</name>
+		<condition>T where T.Tenant in ( value ( Catalog.Tenants.EmptyRef ), &amp;Tenant )</condition>
+	</restrictionTemplate>
 </Rights>

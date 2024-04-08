@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:InformationRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="0c1f83f9-b2a9-4de2-ac90-fa45e60034e2">
+  <producedTypes>
+    <selectionType typeId="63a5596b-630e-40eb-a5ce-fbb91ec9b815" valueTypeId="b627927a-6c16-4488-aca7-d244a3f0c314"/>
+    <listType typeId="096c527b-9da9-41b1-a1fe-8db0e25b3255" valueTypeId="358a85c4-2104-4708-9772-830ea9b265c6"/>
+    <managerType typeId="c37a7e14-90a9-417a-81c4-84543e6d1e27" valueTypeId="8d68903c-1de0-4803-a7ee-d3dabac8be5a"/>
+    <recordSetType typeId="8bc39da0-1af3-497f-b547-d64f6816e7cc" valueTypeId="6c194a02-f25a-4321-95fa-22332abfa557"/>
+    <recordKeyType typeId="7239b2f9-6615-4a95-a7ad-c5f68c6ba42e" valueTypeId="30dcce41-69d0-49c2-9ad6-baf6ff873511"/>
+    <recordType typeId="751b3b4e-4e2f-4933-8435-f9bdc5f31ec9" valueTypeId="1e66c6ea-d023-4e94-8d11-1b6f0d931915"/>
+    <recordManagerType typeId="d664b16f-02dd-4f12-bd86-58ea00536e21" valueTypeId="f28c85d9-7112-4014-91b2-8c47665568aa"/>
+  </producedTypes>
+  <name>Assistants</name>
+  <synonym>
+    <key>en</key>
+    <value>Assistants</value>
+  </synonym>
+  <synonym>
+    <key>ru</key>
+    <value>Ассистенты</value>
+  </synonym>
+  <synonym>
+    <key>ro</key>
+    <value>Asistenți</value>
+  </synonym>
+  <editType>InDialog</editType>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <explanation>
+    <key>en</key>
+    <value>Assistants</value>
+  </explanation>
+  <explanation>
+    <key>ru</key>
+    <value>Ассистенты</value>
+  </explanation>
+  <explanation>
+    <key>ro</key>
+    <value>Asistenți</value>
+  </explanation>
+  <resources uuid="e092599f-a304-48f5-a7dd-f565148d584e">
+    <name>ID</name>
+    <synonym>
+      <key>en</key>
+      <value>ID</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>ИД</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>ID</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>35</length>
+      </stringQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Assistant ID</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Идентификатор Ассистента</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>ID asistent</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:StringValue">
+      <value></value>
+    </fillValue>
+  </resources>
+  <resources uuid="c8b48961-a388-4f97-b576-327800fe8609">
+    <name>Synced</name>
+    <synonym>
+      <key>en</key>
+      <value>Synced</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Синхронизировано</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Sincronizat</value>
+    </synonym>
+    <type>
+      <types>Boolean</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Successfully synchronized with the vendor's server</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Успешно синхронизировано с сервером поставщика</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Sincronizat cu succes cu serverul furnizorului</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+    <fillValue xsi:type="core:UndefinedValue"/>
+  </resources>
+  <dimensions uuid="4088df02-9e2c-41c6-8817-f59ce4bf29bd">
+    <name>Assistant</name>
+    <synonym>
+      <key>en</key>
+      <value>Assistant</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Ассистент</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Asistent</value>
+    </synonym>
+    <type>
+      <types>CatalogRef.Assistants</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Assistant</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Ассистент</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Asistent</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <dataHistory>Use</dataHistory>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <master>true</master>
+    <mainFilter>true</mainFilter>
+  </dimensions>
+</mdclass:InformationRegister>

@@ -132,3 +132,16 @@ Function GetIssues ( Repository, Token, Since, Status ) export
 	endtry;
 	
 EndFunction
+
+Function MarkdownToHTML ( String ) export
+	
+	return module ().GetLibrary ( "Conversion" ).MarkdownToHTML ( String );
+	
+EndFunction
+
+Function GetArea ( Text, Area ) export
+	
+	lib = module ().GetLibrary ( "Root" );
+	return lib.GetArea ( Text, Area );
+	
+EndFunction

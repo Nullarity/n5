@@ -688,6 +688,20 @@ Function SettingsPrintFormLanguage () export
 	
 EndFunction 
 
+&AtServer
+Function SettingsChatInPlaintext () export
+	
+	return "ChatInPlaintext";
+	
+EndFunction 
+
+&AtServer
+Function SettingsChatAssistant () export
+	
+	return "ChatAssistant";
+	
+EndFunction 
+
 #endregion
 
 #region PhonesActions
@@ -1461,6 +1475,24 @@ Function WriteParametersJustSave () export
 	
 	return "JustSave";
 
+EndFunction
+
+#endregion
+
+#region HTTPStatuses
+
+&AtServer
+Function HTTPStatusOK () export
+	
+	return 200;
+	
+EndFunction
+
+&AtServer
+Function HTTPStatus400 () export
+	
+	return 400;
+	
 EndFunction
 
 #endregion

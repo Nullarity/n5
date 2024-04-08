@@ -12,7 +12,7 @@ Function List ( Search, Scope, Limit = 10 ) export
 		foundText = extractResult ( response );
 		item = result.Add ();
 		item.Value = response.Value;
-		item.Presentation = ? ( highlights = undefined, foundText, highlight ( foundText, highlights ) );
+		item.Presentation = ? ( highlights = undefined, foundText, FullTextSearch.Highlight ( foundText, highlights ) );
 	enddo; 
 	return result;
 	
@@ -119,6 +119,10 @@ Function firstPart ( Search, Scope )
 	elsif ( Scope = Enums.Search.Mail ) then
 		list.SearchArea.Add ( Metadata.Documents.IncomingEmail );
 		list.SearchArea.Add ( Metadata.Documents.OutgoingEmail );
+	elsif ( Scope = Enums.Search.Chat ) then
+		list.SearchArea.Add ( Metadata.Documents.Chat );
+	elsif ( Scope <> undefined ) then
+		list.SearchArea.Add ( Scope );
 	endif; 
 	try
 		list.FirstPart ();
@@ -154,7 +158,7 @@ Function extractResult ( Response )
 	
 EndFunction
 
-Function highlight ( Text, Highlights )
+Function Highlight ( Text, Highlights ) export
 	
 	parts = Conversion.StringToArray ( Text, " " );
 	result = new Array ();
@@ -163,7 +167,7 @@ Function highlight ( Text, Highlights )
 		sourceSize = StrLen ( source );
 		found = false;
 		for each word in Highlights do
-			foundPart = new FormattedString ( word, , StyleColors.SpecialTextColor );
+			foundPart = new FormattedString ( word, , StyleColors.AccentColor );
 			i = Find ( source, Lower ( word ) );
 			if ( i = 0 ) then
 				continue;

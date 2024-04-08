@@ -64,7 +64,7 @@ Procedure PutMessage ( Text, Params = undefined, Field = "", DataKey = undefined
 		property = Enum.AdditionalPropertiesInteractive ();
 		interactive = ( Params = undefined  ) or not Params.Property ( property ) or Params [ property ];
 	#else
-		interactive = false;
+		interactive = true;
 	#endif
 	if ( interactive ) then
 		msg.DataPath = DataPath;
@@ -177,6 +177,13 @@ Procedure OpenQueryBox ( Text, Params, ProcName, Module, CallbackParams, Buttons
 	ShowQueryBox ( new NotifyDescription ( ProcName, Module, CallbackParams ), Output.FormatStr ( Text, Params ), Buttons, Timeout, DefaultButton, ? ( Title = "", MetadataPresentation (), Title ) );
 
 EndProcedure
+
+&AtClient
+async Function openQueryBoxAsync ( Text, Params, Buttons, Timeout, DefaultButton, Title )
+
+	return await DoQueryBoxAsync ( Output.FormatStr ( Text, Params ), Buttons, Timeout, DefaultButton, ? ( Title = "", MetadataPresentation (), Title ) );
+
+EndFunction
 
 &AtClient
 Function AskUser ( Text, Params, Buttons, Timeout, DefaultButton, Title ) export
@@ -2029,7 +2036,6 @@ Procedure RejectConfirmation ( Module, CallbackParams = undefined, Params = unde
 
 EndProcedure
 
-&AtServer
 Procedure Error ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ( "en='Error: %Error'; ro='Eroare: %Error'; ru='Ошибка: %Error'" );
@@ -2854,6 +2860,24 @@ Procedure RemoveFilesConfirmation ( Module, CallbackParams = undefined, Params =
 	OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
 
 EndProcedure
+
+&AtClient
+async Function RemoveFilesConfirmationAsync () export
+
+	text = NStr ( "en='Are you sure you want to delete the selected files?'; ro='Ștergeți fișierele selectate?'; ru='Удалить выделенные файлы?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return await openQueryBoxAsync ( text, undefined, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
+
+EndFunction
+
+&AtClient
+async Function RemoveFilesFromListConfirmationAsync () export
+
+	text = NStr ( "en = 'Are you sure you want to delete the selected files from the list?';ro = 'Sunteți sigur că doriți să ștergeți fișierele selectate din listă?';ru = 'Удалить выделенные файлы из списка?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return await openQueryBoxAsync ( text, undefined, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
+
+EndFunction
 
 &AtClient
 Procedure RemoveLabelConfirmation ( Module, CallbackParams = undefined, Params = undefined, ProcName = "RemoveLabelConfirmation" ) export
@@ -8713,3 +8737,61 @@ Function RepositoryNotSupported ( Params = undefined ) export
 
 EndFunction
 
+&AtServer
+Function ThreadCreationError ( Params ) export
+
+	text = NStr ("en = 'An error occurred while creating a thread: %Code';ro = 'A apărut o eroare în timpul creării unui fir: %Code';ru = 'При создании потока произошла ошибка: %Code'" );
+	return FormatStr ( text, Params );
+
+EndFunction
+
+&AtClient
+Procedure MessageBox ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "MessageBox" ) export
+	
+	text = NStr ("en = '%Message'; ru = '%Message'; ro = '%Message'" );
+	title = NStr ( "ru='';en='';ro=''" );
+	openMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtServer
+Function ProcessingError () export
+
+	text = NStr ( "en = 'Unfortunately, this request cannot be performed. Please try again later';ro = 'Din păcate, această solicitare nu poate fi efectuată. Vă rugăm să încercați din nou mai târziu';ru = 'К сожалению, этот запрос не может быть выполнен. Пожалуйста, попробуйте позже'" );
+	return FormatStr ( text, undefined );
+
+EndFunction
+
+&AtClient
+Function RequestToStopFailed () export
+
+	text = NStr ( "en = 'The request to stop has failed';ro = 'Cererea de oprire a eșuat';ru = 'Запрос на остановку не прошел'" );
+	return FormatStr ( text, undefined );
+
+EndFunction
+
+&AtClient
+Procedure SelectFileForDeletion ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "SelectFileForDeletion" ) export
+	
+	text = NStr ("en = 'Please select the file for deletion';ro = 'Vă rugăm să selectați fișierul pentru ștergere';ru = 'Пожалуйста, выберите файл для удаления'" );
+	title = NStr ( "ru='';en=''" );
+	openMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtClient
+Procedure FileAlreadySent ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "FileAlreadySent" ) export
+	
+	text = NStr ("en = 'The file has been sent; deletions are not allowed';ro = 'Fișierul a fost trimis; ștergerile nu sunt permise';ru = 'Файл был отправлен; удаления не разрешены'" );
+	title = NStr ( "ru='';en=''" );
+	openMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtServer
+Procedure SubjectIsEmpty ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ("en = 'Please, fill in the subject'; ro = 'Vă rugăm să completați subiectul'; ru = 'Пожалуйста, заполните тему'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure

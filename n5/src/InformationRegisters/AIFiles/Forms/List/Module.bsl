@@ -4,25 +4,36 @@
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 
-	initFilter ();
+	initFilters ();
+	filterByLogin ();
+	filterByServer ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
 
 &AtServer
-Procedure initFilter ()
+Procedure initFilters ()
 	
-	CreatorFilter = SessionParameters.User;
-	filterByCreator ();
+	LoginFilter = SessionParameters.Login;
+	if ( Parameters.Filter.Property ( "Server", FixedServerFilter ) ) then
+		ServerFilter = FixedServerFilter;
+	endif;
 	
 EndProcedure
 
 &AtServer
-Procedure filterByCreator ()
+Procedure filterByLogin ()
 	
-	DC.ChangeFilter ( List, "Creator", CreatorFilter, not CreatorFilter.IsEmpty () );
-	Appearance.Apply ( ThisObject, "CreatorFilter" );
+	DC.ChangeFilter ( List, "Login", LoginFilter, not LoginFilter.IsEmpty () );
+	Appearance.Apply ( ThisObject, "LoginFilter" );
+	
+EndProcedure
+
+&AtServer
+Procedure filterByServer ()
+	
+	DC.ChangeFilter ( List, "Server", ServerFilter, not ServerFilter.IsEmpty () );
 	
 EndProcedure
 
@@ -31,7 +42,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
-	|Creator show empty ( CreatorFilter );
+	|Login show empty ( LoginFilter );
+	|ServerFilter show empty ( FixedServerFilter );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -108,14 +120,13 @@ EndFunction
 &AtServer
 Procedure runDeletion ( val Files )
 	
-	p = DataProcessors.DeleteFromAI.GetParams ();
+	p = AIServer.DropFilesParams ();
 	p.Files = Files;
-	p.Assistant = Parameters.Assistant;
+	p.Server = ServerFilter;
 	p.Session = Parameters.Session;
 	args = new Array ();
-	args.Add ( "DeleteFromAI" );
 	args.Add ( p );
-	Jobs.Run ( "Jobs.ExecProcessor", args, JobKey, , TesterCache.Testing () );
+	Jobs.Run ( "AIServer.DropFiles", args, JobKey, , TesterCache.Testing () );
 	
 EndProcedure
 
@@ -127,7 +138,7 @@ Procedure truncate ()
 	BeginTransaction ();
 	for each record in Items.List.SelectedRows do
 		entry = InformationRegisters.AIFiles.CreateRecordManager ();
-		FillPropertyValues ( entry, record, "Creator, ID" );
+		FillPropertyValues ( entry, record, "Login, ID, Server" );
 		entry.Delete ();
 		counter = counter + 1;
 		if ( counter = batch ) then
@@ -141,10 +152,17 @@ Procedure truncate ()
 EndProcedure
 
 &AtClient
-Procedure CreatorFilterOnChange ( Item )
+Procedure LoginFilterOnChange ( Item )
 	
-	filterByCreator ();
+	filterByLogin ();
 	
+EndProcedure
+
+&AtClient
+Procedure ServerFilterOnChange ( Item )
+
+	filterByServer ();
+
 EndProcedure
 
 // *****************************************
@@ -162,7 +180,9 @@ EndProcedure
 Procedure ListBeforeAddRow ( Item, Cancel, Clone, Parent, Folder, Parameter )
 	
 	Cancel = true;
-	upload ();
+	if ( CheckFilling () ) then
+		upload ();
+	endif;
 	
 EndProcedure
 
@@ -200,16 +220,15 @@ Procedure runUploading ( val Files )
 		set.Add ( new Structure ( "Name, Size, Data", file.Name, file.Size,
 			GetFromTempStorage ( file.Address ) ) );
 	enddo;
-	p = DataProcessors.UploadToAI.GetParams ();
+	p = AIServer.UploadFilesParams ();
 	p.Files = set;
 	ResultAddress = PutToTempStorage ( undefined, UUID );
 	p.Result = ResultAddress;
-	p.Assistant = Parameters.Assistant;
+	p.Server = ServerFilter;
 	p.Session = Session;
 	args = new Array ();
-	args.Add ( "UploadToAI" );
 	args.Add ( p );
-	Jobs.Run ( "Jobs.ExecProcessor", args, JobKey, , TesterCache.Testing () );
+	Jobs.Run ( "AIServer.UploadFiles", args, JobKey, , TesterCache.Testing () );
 	
 EndProcedure
 
@@ -246,14 +265,14 @@ Procedure activateFile ( File )
 	control = Items.List;
 	CurrentItem = control;
 	control.Refresh ();
-	control.CurrentRow = fileKey ( File );
+	control.CurrentRow = fileKey ( File, ServerFilter );
 	
 EndProcedure
 
 &AtServerNoContext
-Function fileKey ( val ID )
+Function fileKey ( val ID, val Server )
 	
-	record = new Structure ( "Creator, ID", SessionParameters.User, ID );
+	record = new Structure ( "Login, ID, Server", SessionParameters.Login, Server, ID, Server );
 	return InformationRegisters.AIFiles.CreateRecordKey ( record );
 	
 EndFunction
