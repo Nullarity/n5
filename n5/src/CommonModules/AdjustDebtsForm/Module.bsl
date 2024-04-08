@@ -605,7 +605,11 @@ Procedure DistributeReceiverAmount ( Object ) export
 	for i = 0 to j do
 		row = table [ i ];
 		appliedRow = appliedAmountRow ( row, isDebt, false );
-		applied = ? ( amount <= 0, appliedRow, Max ( 0, Min ( amount, appliedRow ) ) );
+		if ( amount = 0 ) then
+			applied = 0;
+		else
+			applied = ? ( amount < 0, appliedRow, Max ( 0, Min ( amount, appliedRow ) ) );
+		endif;
 		row.Amount = applied;
 		applyReceiverRowAmount ( object, row );
 		amount = amount - Row.Applied;
@@ -1620,7 +1624,11 @@ Procedure ApplyReceiverAdjust ( Form ) export
 		appliedRow = appliedAmountRow ( Form.ReceiverRow, isDebt ( object.TypeReceiver ), false );
 		rest = object.Amount - object.Applied;
 		rest = Currencies.Convert ( rest, object.Currency, object.ReceiverContractCurrency, object.Date, object.Rate, object.Factor, object.ReceiverContractRate, object.ReceiverContractFactor );
-		amount = ? ( rest <= 0, appliedRow, Max ( 0, Min ( rest, appliedRow ) ) );
+		if ( rest = 0 ) then
+			amount = 0;
+		else
+			amount = ? ( rest < 0, appliedRow, Max ( 0, Min ( rest, appliedRow ) ) );
+		endif;
 		Form.ReceiverRow.Amount = amount;
 	else
 		Form.ReceiverRow.Amount = 0;
