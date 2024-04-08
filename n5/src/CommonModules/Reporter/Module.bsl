@@ -682,8 +682,16 @@ EndProcedure
 
 Procedure MakeFlat ( Template ) export
 	
+	chart = Type ( "DataCompositionAreaTemplateChartTemplate" );
+	document = Type ( "DataCompositionAreaDocumentTemplate" );
 	for each item In Template.Templates do
-        for each row in item.Template Do            
+		object = item.Template;
+		type = TypeOf ( object );
+		if ( type = chart
+			or type = document ) then
+			continue;
+		endif;
+        for each row in object Do            
             row.TableID = "";
         enddo;
     enddo;
