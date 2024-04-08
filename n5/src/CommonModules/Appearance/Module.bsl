@@ -156,6 +156,9 @@ Procedure formatFields ( Form, Items, AppearanceItem, Result )
 				if ( yes ) then
 					item.InputHint = expressionToValue ( Form, operation [ 1 ] );
 				endif;
+			elsif ( format = "assign"
+				or format = "назначить" ) then
+				item.DefaultButton = yes;
 			endif;
 		enddo;
 	enddo; 
