@@ -1132,7 +1132,7 @@ EndProcedure
 Procedure applyAssistant ()
 	
 	assistant = Object.Assistant;
-	if ( assistant.IsEmpty () ) then
+	if ( not assistant.IsEmpty () ) then
 		memorizeAssistant ( assistant );
 	endif;
 	setServer ( ThisObject );
