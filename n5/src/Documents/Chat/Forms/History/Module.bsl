@@ -152,7 +152,7 @@ Function runSearch ( val SearchString, val UUID, val SearchJob, SearchResult )
 	SearchResult = PutToTempStorage ( undefined, UUID );
 	params = new Array ();
 	params.Add ( SearchString );
-	params.Add ( Enums.Search.Mail );
+	params.Add ( Enums.Search.Chat );
 	params.Add ( SearchResult );
 	params.Add ( SearchJob );
 	return Jobs.Run ( "FullSearch.Background", params ).UUID;
