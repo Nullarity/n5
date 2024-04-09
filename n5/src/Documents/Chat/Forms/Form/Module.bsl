@@ -238,7 +238,6 @@ EndProcedure
 &AtClient
 Procedure ChoiceProcessing ( Value, Source )
 
-	StandardProcessing = false;
 	type = TypeOf ( Value );
 	if ( type = Type ( "Array" )
 		and TypeOf ( Value [ 0 ] ) = Type ( "DocumentRef.Document" ) ) then
@@ -246,8 +245,9 @@ Procedure ChoiceProcessing ( Value, Source )
 	elsif ( type = Type ( "DocumentRef.Chat" ) ) then
 		if ( Value = PredefinedValue ( "Document.Chat.EmptyRef" ) ) then
 			newChat ();
-		else
+		elsif ( Value <> Object.Ref ) then
 			loadChat ( Value );
+			activateMessage ();
 		endif;
 	else
 		loadFiles ( Value );
@@ -262,17 +262,6 @@ EndProcedure
 Procedure newChat ()
 	
 	OpenForm ( "Document.Chat.ObjectForm" );
-	
-EndProcedure
-
-&AtClient
-Procedure openChat ( val Ref )
-	
-	if ( Ref <> Object.Ref ) then
-		loadChat ( Ref );
-		scrollMessages ();
-	endif;
-	activateMessage ();
 	
 EndProcedure
 
@@ -1301,13 +1290,6 @@ Function getLinks ( val Message )
 	return links;
 	
 EndFunction
-
-&AtClient
-Procedure proceedLink ()
-
-	//list = 
-
-EndProcedure
 
 &AtClient
 Procedure augmentMessage ()
