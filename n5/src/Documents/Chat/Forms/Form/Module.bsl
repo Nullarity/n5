@@ -15,17 +15,9 @@ var StoppingTimeout;
 &AtServer
 Procedure OnReadAtServer ( CurrentObject )
 	
-	readSettings ();
 	initChat ();
 	initIDs ();
 	Appearance.Apply ( ThisObject );
-
-EndProcedure
-
-&AtServer
-Procedure readSettings ()
-
-	Plaintext = CommonSettingsStorage.Load ( Enum.SettingsChatInPlaintext () );
 
 EndProcedure
 
@@ -50,6 +42,7 @@ EndProcedure
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
+	readSettings ();
 	restoreAssistant ();
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.SetCreator ( Object );
@@ -60,6 +53,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	setServer ( ThisObject );
 	prepareMenu ();
 	readAppearance ();
+	invalidateHomepage ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -71,6 +65,13 @@ Procedure init ()
 	StageSending = 1;
 	StageStopping = 2;
 	
+EndProcedure
+
+&AtServer
+Procedure readSettings ()
+
+	Plaintext = CommonSettingsStorage.Load ( Enum.SettingsChatInPlaintext () );
+
 EndProcedure
 
 &AtServer
@@ -167,6 +168,7 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|GroupHomepage hide ChatStarted;
 	|SaveAndNew FormWrite
 	|FormSend FormResend Assistant MenuAttach MenuUpload MenuAttachDocument
 	|MessagesContextMenuAttach MessagesContextMenuUpload MessagesContextAttachDocument
@@ -205,19 +207,10 @@ EndProcedure
 &AtClient
 Procedure OnOpen ( Cancel )
 	
-	if ( Object.Messages.Count () > 0 ) then
-		AttachIdleHandler ( "activateControls", 0.1, true );
-	endif;
-	
-EndProcedure
-
-&AtClient
-Procedure activateControls () export
-	
-	Items.Pages.CurrentPage = ? ( Plaintext, Items.GroupText, Items.GroupHTML );
+	invalidateHomepage ( ThisObject );
 	scrollMessages ();
 	
-EndProcedure 
+EndProcedure
 
 &AtClient
 Procedure scrollMessages ()
@@ -237,16 +230,23 @@ EndProcedure
 &AtClient
 Procedure scrollHTML () export
 	
+	data = Object.Data;
+	last = data.Count ();
+	if ( last = 0 ) then
+		return;
+	endif;
+	DetachIdleHandler ( "scrollHTML" );
 	document = Items.HTML.Document;
-	if ( document = undefined ) then
+	index = data [ last - 1 ].Element - 1;
+	loading = (
+		document = undefined
+		or document.body = undefined
+		or document.body.children = undefined
+		or document.body.children.item ( index ) = undefined
+	);
+	if ( loading ) then
 		AttachIdleHandler ( "scrollHTML", 0.5, true );
 	else
-		data = Object.Data;
-		last = data.Count ();
-		if ( last = 0 ) then
-			return;
-		endif;
-		index = data [ last - 1 ].Element - 1;
 		document.body.children.item ( index ).scrollIntoView ( true );
 	endif;
 	
@@ -279,6 +279,7 @@ Procedure loadChat ( val Ref )
 	if ( not Object.Ref.IsEmpty () and Modified ) then
 		Write ();
 	endif;
+	ChatStarted = undefined;
 	blank = ( Ref = undefined or Ref.IsEmpty () );
 	if ( blank ) then
 		obj = Documents.Chat.CreateDocument ();
@@ -298,9 +299,12 @@ Procedure loadChat ( val Ref )
 		DocumentForm.SetCreator ( Object );
 		restoreAssistant ();
 		fillNew ();
+	else
+		memorizeAssistant ( Object.Assistant );
 	endif;
 	setServer ( ThisObject );
 	Session = "";
+	invalidateHomepage ( ThisObject );
 	Appearance.Apply ( ThisObject );
 	
 EndProcedure
@@ -443,7 +447,7 @@ EndProcedure
 &AtClient
 Procedure addQuestion ()
 	
-	addRow ( ThisObject, Object.Message, false, true, "", false );
+	addRow ( ThisObject, Object.Message, false, true, "", false, false );
 	Object.Message = "";
 	
 EndProcedure
@@ -455,17 +459,8 @@ Procedure addSeparator ( Form, Me )
 	table = object.Messages;
 	row = findRow ( table, "_.Separator" );
 	if ( row = undefined or row.Me <> Me ) then
-		row = object.Data.Add ();
 		text = ? ( Me, object.Creator, object.Assistant );
-		row.Text = text;
-		row.Me = Me;
-		row.Separator = true;
-		assignElement ( Form, row );
-		addElement ( Form, row );
-		row = table.Add ();
-		row.Text = text;
-		row.Me = Me;
-		row.Separator = true;
+		addRow ( Form, text, false, Me, "", false, true );
 	endif;
 	
 EndProcedure
@@ -671,7 +666,7 @@ Procedure applyAnswer ( val Exception )
 	Object.Error = result.Error;
 	setMyMessageID ( result.MessageID );
 	if ( result.Error ) then
-		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ), true, false, "", false );
+		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ), true, false, "", false, false );
 		Appearance.Apply ( ThisObject, "Object.Error" );
 	else
 		Session = result.Session;
@@ -797,31 +792,55 @@ Function findRows ( Table, Lambda )
 EndFunction
 
 &AtClientAtServerNoContext
-Procedure addRow ( Form, Text, Error, Me, ID, File )
+Procedure addRow ( Form, Text, Error, Me, ID, File, Separator )
 	
 	object = Form.Object;
-	link = ? ( Error, 0, Form.LinkID );
 	data = object.Data.Add ();
+	link = ? ( Error or Separator, 0, Form.LinkID );
 	data.Link = link;
-	assignElement ( Form, data );
 	data.Me = Me;
 	data.ID = ID;
 	data.File = File;
 	data.Text = Text;
 	data.Error = Error;
+	data.Separator = Separator;
+	assignElement ( Form, data );
 	addElement ( Form, data );
 	table = object.Messages;
 	for each line in StrSplit ( Text, Chars.LF ) do
 		row = table.Add ();
 		row.Text = line;
 		row.Error = Error;
+		row.Separator = Separator;
 		row.Me = Me;
 		row.File = File;
 		row.ID = ID;
 		row.Link = link;
 	enddo;
+	invalidateHomepage ( Form );
 	Appearance.Update ( Form, "Assistant" );
 	
+EndProcedure
+
+&AtClientAtServerNoContext
+Procedure invalidateHomepage ( Form )
+
+	haveMessages = Form.Object.Data.Count () > 0;
+	if ( Form.ChatStarted = haveMessages ) then
+		return;
+	endif;
+	Form.ChatStarted = haveMessages;
+	items = Form.Items;
+	pages = items.Pages;
+	if ( haveMessages ) then
+		pages.PagesRepresentation = FormPagesRepresentation.Auto;
+		Items.Pages.CurrentPage = ? ( Form.Plaintext, items.GroupText, items.GroupHTML );
+	else
+		pages.PagesRepresentation = FormPagesRepresentation.None;
+		Items.Pages.CurrentPage = items.GroupHomepage;
+	endif;
+	Appearance.Apply ( Form, "ChatStarted" );
+
 EndProcedure
 
 &AtClientAtServerNoContext
@@ -853,7 +872,7 @@ Procedure addAnswer ( Messages )
 	for each row in last.content do
 		id = last.id;
 		if ( row.type = "text" ) then
-			addRow ( ThisObject, row.text.value, false, false, id, false );
+			addRow ( ThisObject, row.text.value, false, false, id, false, false );
 		endif;
 	enddo;
 	
@@ -1061,7 +1080,7 @@ Procedure CompleteUploading ( Exception, Params ) export
 		applyUploading ( Exception );
 		flushChanges ();
 	else
-		addRow ( ThisObject, Exception, true, true, "", true );
+		addRow ( ThisObject, Exception, true, true, "", true, false );
 	endif;
 	scrollMessages ();
 	activateMessage ();
@@ -1081,7 +1100,7 @@ Procedure applyUploading ( val Exception )
 		if ( error = "" ) then
 			addFile ( file.File.Name, file.ID );
 		else
-			addRow ( ThisObject, file.File.Name + ": " + error, true, true, "", true );
+			addRow ( ThisObject, file.File.Name + ": " + error, true, true, "", true, false );
 		endif;
 	enddo;
 
@@ -1090,7 +1109,7 @@ EndProcedure
 &AtServer
 Procedure addFile ( Name, ID )
 
-	addRow ( ThisObject, Name, false, true, ID, true );
+	addRow ( ThisObject, Name, false, true, ID, true, false );
 	
 EndProcedure
 
@@ -1359,7 +1378,7 @@ EndProcedure
 Procedure HTMLDocumentComplete ( Item )
 	
 	if ( windowPinned () ) then
-		invalidateChat ();
+		restoreHTML ();
 	else
 		scrollHTML ();
 	endif;
@@ -1374,7 +1393,7 @@ Function windowPinned ()
 EndFunction
 
 &AtServer
-Procedure invalidateChat ()
+Procedure restoreHTML ()
 
 	ChatForm.SetBody ( Chat, Object );
 
