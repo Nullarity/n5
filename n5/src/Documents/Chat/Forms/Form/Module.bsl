@@ -70,7 +70,6 @@ Procedure init ()
 	StageComplete = 0;
 	StageSending = 1;
 	StageStopping = 2;
-	WebClient = Environment.WebClient ();
 	
 EndProcedure
 
@@ -242,8 +241,13 @@ Procedure scrollHTML () export
 	if ( document = undefined ) then
 		AttachIdleHandler ( "scrollHTML", 0.5, true );
 	else
-		bottom = document.body.scrollHeight;
-		document.defaultView.window.scrollTo ( 0, bottom );
+		data = Object.Data;
+		last = data.Count ();
+		if ( last = 0 ) then
+			return;
+		endif;
+		index = data [ last - 1 ].Element - 1;
+		document.body.children.item ( index ).scrollIntoView ( true );
 	endif;
 	
 EndProcedure
@@ -1348,17 +1352,33 @@ Procedure augmentMessage ()
 	
 EndProcedure
 
+// *****************************************
+// *********** Page HTML
+
 &AtClient
 Procedure HTMLDocumentComplete ( Item )
 	
-	if ( WebClient ) then
+	if ( windowPinned () ) then
+		invalidateChat ();
+	else
 		scrollHTML ();
 	endif;
 	
 EndProcedure
 
-// *****************************************
-// *********** Page HTML
+&AtClient
+Function windowPinned ()
+	
+	return Items.HTML.Document.body.children.length = 0;
+	
+EndFunction
+
+&AtServer
+Procedure invalidateChat ()
+
+	ChatForm.SetBody ( Chat, Object );
+
+EndProcedure
 
 &AtClient
 Procedure HTMLOnClick ( Item, EventData, StandardProcessing )

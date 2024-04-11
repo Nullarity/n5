@@ -183,7 +183,7 @@ EndProcedure
 Procedure showChat ()
 	
 	DetachIdleHandler ( "loadMessages" );
-	AttachIdleHandler ( "loadMessages", 0.1, true );
+	AttachIdleHandler ( "loadMessages", 0.5, true );
 	
 EndProcedure
 
