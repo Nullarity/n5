@@ -362,9 +362,8 @@ EndProcedure
 &AtClient
 Procedure showHistory ()
 	
-	filter = new Structure ( "Assistant", Object.Assistant );
 	OpenForm ( "Document.Chat.Form.History",
-		new Structure ( "Filter, Source, CurrentRow", filter, Object.Ref, Object.Ref ), ThisObject );
+		new Structure ( "Filter, Source, CurrentRow", Object.Ref, Object.Ref ), ThisObject );
 	
 EndProcedure
 
