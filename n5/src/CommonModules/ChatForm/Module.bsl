@@ -17,7 +17,8 @@ EndProcedure
 Procedure SetBody ( Chat, Object ) export
 	
 	body = getBody ( Chat, Object );
-	Chat.Body = Output.FormatStr ( Chat.BodyTemplate, new Structure ( "Body", body ) );
+	Chat.Body = Output.FormatStr ( Chat.BodyTemplate,
+		new Structure ( "Body, UniqueID", body, new UUID () ) );
 	
 EndProcedure
 
@@ -43,16 +44,20 @@ Function GetParagraph ( Chat, Object, Row ) export
 			text = Object.Assistant;
 			template = Chat.ReceiverTemplate;
 		endif;
-		return Output.FormatStr ( template, new Structure ( "ID, Name", id, text ) );
+		return Output.FormatStr ( template, new Structure ( "ID, Name", id,
+			Conversion.PlainTextToHTML ( text ) ) );
 	elsif ( Row.File ) then
-		return Output.FormatStr ( Chat.FileTemplate, new Structure ( "ID, File", id, Row.Text ) );
+		return Output.FormatStr ( Chat.FileTemplate, new Structure ( "ID, File", id,
+			Conversion.PlainTextToHTML ( Row.Text ) ) );
 	elsif ( Row.Error ) then
-		return Output.FormatStr ( Chat.ErrorTemplate, new Structure ( "ID, Error", id, Row.Text ) );
+		return Output.FormatStr ( Chat.ErrorTemplate, new Structure ( "ID, Error", id,
+			Conversion.PlainTextToHTML ( Row.Text ) ) );
 	else
-		text = CoreLibrary.MarkdownToHTML ( Row.Text );
 		if ( Row.Me ) then
+			text = Conversion.PlainTextToHTML ( Row.Text );
 			template = Chat.SenderMessageTemplate;
 		else
+			text = CoreLibrary.MarkdownToHTML ( Row.Text );
 			template = Chat.ReceiverMessageTemplate;
 		endif;
 		return Output.FormatStr ( template, new Structure ( "ID, Text", id, text ) );

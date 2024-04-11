@@ -560,6 +560,23 @@ Function ParametersToMap ( Parameters ) export
 	
 EndFunction 
 
+Function PlainTextToHTML ( Text ) export
+	
+	s = StrReplace ( Text, "&", "&amp;" );
+	s = StrReplace ( s, "<", "&lt;" );
+	s = StrReplace ( s, ">", "&gt;" );
+	s = StrReplace ( s, """", "&quot;" );
+	s = StrReplace ( s, "'", "&apos;" );
+	s = StrReplace ( s, "\", "&#39;" );
+	s = StrReplace ( s, Chars.LF, "<br>" );
+	s = StrReplace ( s, Chars.Tab, "&nbsp;&nbsp;&nbsp;&nbsp;" );
+	while ( StrFind ( s, "  " ) ) do
+		s = StrReplace ( s, "  ", " &nbsp;" );
+	enddo;
+	return s;
+	
+EndFunction
+
 &AtServer
 Function AmountToWords ( Amount, Currency = undefined, Language = "ro" ) export
 	

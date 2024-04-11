@@ -50,6 +50,7 @@ EndProcedure
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
+	restoreAssistant ();
 	if ( Object.Ref.IsEmpty () ) then
 		DocumentForm.SetCreator ( Object );
 		fillNew ();
@@ -70,6 +71,12 @@ Procedure init ()
 	StageSending = 1;
 	StageStopping = 2;
 	WebClient = Environment.WebClient ();
+	
+EndProcedure
+
+&AtServer
+Procedure restoreAssistant ()
+	
 	Object.Assistant = CommonSettingsStorage.Load ( Enum.SettingsChatAssistant () );
 	
 EndProcedure
@@ -182,9 +189,11 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 	
-	if ( Parameters.CopyingValue.IsEmpty () ) then
+	if ( not Parameters.Property ( "CopyingValue" )
+		or Parameters.CopyingValue.IsEmpty () ) then
 		settings = Logins.Settings ( "Company" );
 		Object.Company = settings.Company;
+		Object.Date = CurrentSessionDate ();
 	else
 		Object.Messages.Clear ();
 		Object.Data.Clear ();
@@ -227,11 +236,15 @@ Procedure scrollMessages ()
 EndProcedure
 
 &AtClient
-Procedure scrollHTML ()
+Procedure scrollHTML () export
 	
 	document = Items.HTML.Document;
-	bottom = document.body.scrollHeight;
-	document.defaultView.window.scrollTo ( 0, bottom );
+	if ( document = undefined ) then
+		AttachIdleHandler ( "scrollHTML", 0.5, true );
+	else
+		bottom = document.body.scrollHeight;
+		document.defaultView.window.scrollTo ( 0, bottom );
+	endif;
 	
 EndProcedure
 
@@ -243,9 +256,7 @@ Procedure ChoiceProcessing ( Value, Source )
 		and TypeOf ( Value [ 0 ] ) = Type ( "DocumentRef.Document" ) ) then
 		uploadData ( Value, false );
 	elsif ( type = Type ( "DocumentRef.Chat" ) ) then
-		if ( Value = PredefinedValue ( "Document.Chat.EmptyRef" ) ) then
-			newChat ();
-		elsif ( Value <> Object.Ref ) then
+		if ( Value <> Object.Ref ) then
 			loadChat ( Value );
 			activateMessage ();
 		endif;
@@ -258,25 +269,31 @@ Procedure ChoiceProcessing ( Value, Source )
 
 EndProcedure
 
-&AtClient
-Procedure newChat ()
-	
-	OpenForm ( "Document.Chat.ObjectForm" );
-	
-EndProcedure
-
 &AtServer
 Procedure loadChat ( val Ref )
 	
-	if ( not Object.Ref.IsEmpty () ) then
+	if ( not Object.Ref.IsEmpty () and Modified ) then
 		Write ();
 	endif;
-	message = Object.Message;
-	ValueToFormAttribute ( Ref.GetObject (), "Object" );
+	blank = ( Ref = undefined or Ref.IsEmpty () );
+	if ( blank ) then
+		obj = Documents.Chat.CreateDocument ();
+		Metafields.Constructor ( obj );
+		message = "";
+	else
+		message = Object.Message;
+		obj = Ref.GetObject ()
+	endif;
+	ValueToFormAttribute ( obj, "Object" );
 	initIDs ();
-	initChat ();
+	ChatForm.SetBody ( Chat, Object );
 	if ( Object.Message = "" ) then
 		Object.Message = message;
+	endif;
+	if ( blank ) then
+		DocumentForm.SetCreator ( Object );
+		restoreAssistant ();
+		fillNew ();
 	endif;
 	setServer ( ThisObject );
 	Session = "";
@@ -305,6 +322,8 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	if ( IsBlankString ( Object.Subject )
 		and not setSubject ( CurrentObject ) ) then
 		Cancel = true;
+	else
+		CurrentObject.Date = CurrentSessionDate ();
 	endif;
 
 EndProcedure
@@ -324,6 +343,14 @@ EndFunction
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure NewChat ( Command )
+
+	loadChat ( undefined );
+	activateMessage ();
+
+EndProcedure
 
 &AtClient
 Procedure OpenHistory ( Command )
@@ -802,6 +829,12 @@ Procedure addElement ( Form, Row )
 	#else
 		Form.Items.HTML.Document.body.insertAdjacentHTML ( "beforeend",
 			ChatForm.GetParagraph ( Form.Chat, Form.Object, Row ) );
+		answer = not ( Row.Me or Row.Separator or Row.File or Row.Error );
+		if ( answer ) then
+			document = Form.Items.HTML.Document;
+			message = document.getElementById ( ChatForm.ElementID ( Row.Element ) );
+			document.defaultView.Prism.highlightAllUnder ( message );
+		endif;
 	#endif
 
 EndProcedure
@@ -1023,6 +1056,7 @@ Procedure CompleteUploading ( Exception, Params ) export
 	
 	if ( Exception = undefined ) then
 		applyUploading ( Exception );
+		flushChanges ();
 	else
 		addRow ( ThisObject, Exception, true, true, "", true );
 	endif;

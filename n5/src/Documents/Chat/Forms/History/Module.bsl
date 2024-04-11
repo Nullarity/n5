@@ -9,9 +9,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	ChatForm.Prepare ( ThisObject );
 	loadFixedSettings ();
-	if ( AssistantFilter <> undefined ) then
-		filterByAssistant ();
-	endif;
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
 	
@@ -31,7 +28,6 @@ EndProcedure
 &AtServer
 Procedure loadFixedSettings ()
 	
-	Parameters.Filter.Property ( "Assistant", AssistantFilter );
 	DC.SetParameter ( List, "Source", Parameters.Source );
 	
 EndProcedure 
