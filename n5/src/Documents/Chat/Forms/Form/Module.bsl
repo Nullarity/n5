@@ -50,7 +50,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		initIDs ();
 		initChat ();
 	endif; 
-	setServer ( ThisObject );
+	applyProperties ( ThisObject );
 	prepareMenu ();
 	readAppearance ();
 	invalidateHomepage ( ThisObject );
@@ -82,9 +82,12 @@ Procedure restoreAssistant ()
 EndProcedure
 
 &AtClientAtServerNoContext
-Procedure setServer ( Form )
+Procedure applyProperties ( Form )
 	
-	Form.Server = DF.Pick ( Form.Object.Assistant, "Server" );
+	data = DF.Values ( Form.Object.Assistant, "Server, Retrieval" );
+	Form.Server = data.Server;
+	Form.RetrievalCapability = data.Retrieval;
+	Appearance.Apply ( Form, "RetrievalCapability" );
 	
 EndProcedure
 
@@ -169,6 +172,11 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|GroupHomepage hide ChatStarted;
+	|Attach Upload AttachDocument
+	|MenuAttach MenuUpload MenuAttachDocument
+	|MessagesContextMenuAttach MessagesContextMenuUpload MessagesContextAttachDocument
+	|MessagesContextMenuAttach1 MessagesContextMenuUpload1 MessagesContextAttachDocument1
+	|	show RetrievalCapability;
 	|SaveAndNew FormWrite
 	|FormSend FormResend Assistant MenuAttach MenuUpload MenuAttachDocument
 	|MessagesContextMenuAttach MessagesContextMenuUpload MessagesContextAttachDocument
@@ -182,6 +190,7 @@ Procedure readAppearance ()
 	|FormStop show CurrentStage = StageSending;
 	|FormStop assign CurrentStage = StageSending;
 	|FormStopping show CurrentStage = StageStopping;
+	|
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -302,7 +311,7 @@ Procedure loadChat ( val Ref )
 	else
 		memorizeAssistant ( Object.Assistant );
 	endif;
-	setServer ( ThisObject );
+	applyProperties ( ThisObject );
 	Session = "";
 	invalidateHomepage ( ThisObject );
 	Appearance.Apply ( ThisObject );
@@ -1180,7 +1189,7 @@ Procedure applyAssistant ()
 	if ( not assistant.IsEmpty () ) then
 		memorizeAssistant ( assistant );
 	endif;
-	setServer ( ThisObject );
+	applyProperties ( ThisObject );
 	activateMessage ();
 	
 EndProcedure
@@ -1250,7 +1259,7 @@ async Procedure showMenu ()
 		endif;
 	else
 		Object.Assistant = menu.Value;
-		setServer ( ThisObject );
+		applyProperties ( ThisObject );
 		activateMessage ();
 	endif;
 	
