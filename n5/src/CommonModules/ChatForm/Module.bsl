@@ -65,16 +65,6 @@ Function GetParagraph ( Chat, Object, Row ) export
 	
 EndFunction
 
-&AtClient
-Procedure DeleteElement ( Form, Element ) export
-	
-	node = Form.Items.HTML.Document.getElementById ( ChatForm.ElementID ( Element ) );
-	if ( node <> undefined ) then
-		node.parentNode.removeChild ( node );
-	endif;
-	
-EndProcedure
-
 Function ElementID ( Element ) export
 	
 	return Format ( "l" + Element, "NG=0;NZ=0" );
@@ -82,12 +72,30 @@ Function ElementID ( Element ) export
 EndFunction
 
 &AtClient
-Procedure OnClick ( Item, EventData, StandardProcessing ) export
+async Procedure OnClick ( Files, Server, Session, Item, EventData ) export
 	
 	link = EventData.Href;
-	if ( link <> undefined ) then
-		StandardProcessing = false;
-		GotoURL ( link );
+	if ( link = undefined ) then
+		return;
 	endif;
+	for each file in Files do
+		if ( file.Presentation = link ) then
+			data = fetchFile ( file.Value, Server, Session );
+			await GetFileFromServerAsync ( data.Address, data.File, new GetFilesDialogParameters () );
+			return;
+		endif;
+	enddo;
+	GotoURL ( link );
 	
 EndProcedure
+
+&Client
+Function fetchFile ( val File, val Server, val Session )
+	
+	p = AIServer.DownloadParams ();
+	p.Server = Server;
+	p.Session = Session;
+	p.File = File;
+	return AIServer.Download ( p );
+	
+EndFunction

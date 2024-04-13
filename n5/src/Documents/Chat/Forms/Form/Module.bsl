@@ -204,6 +204,9 @@ Procedure fillNew ()
 		settings = Logins.Settings ( "Company" );
 		Object.Company = settings.Company;
 		Object.Date = CurrentSessionDate ();
+		if ( Object.Assistant.IsEmpty () ) then
+			Object.Assistant = defaultAssistant ();
+		endif;
 	else
 		Object.Messages.Clear ();
 		Object.Data.Clear ();
@@ -212,6 +215,26 @@ Procedure fillNew ()
 	endif; 
 	
 EndProcedure 
+
+&AtServer
+Function defaultAssistant ()
+	
+	s = "
+	|select allowed top 1 Assistants.Ref as Ref
+	|from Catalog.Assistants as Assistants
+	|	//
+	|	// Filter by actual assistants
+	|	//
+	|	join InformationRegister.Assistants as AI
+	|	on AI.Assistant = Assistants.Ref
+	|where not Assistants.DeletionMark
+	|order by Assistants.Code
+	|";
+	q = new Query ( s );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Ref );
+	
+EndFunction
 
 &AtClient
 Procedure OnOpen ( Cancel )
@@ -246,18 +269,24 @@ Procedure scrollHTML () export
 	endif;
 	DetachIdleHandler ( "scrollHTML" );
 	document = Items.HTML.Document;
-	index = data [ last - 1 ].Element - 1;
-	loading = (
-		document = undefined
-		or document.body = undefined
-		or document.body.children = undefined
-		or document.body.children.item ( index ) = undefined
-	);
-	if ( loading ) then
-		AttachIdleHandler ( "scrollHTML", 0.5, true );
-	else
-		document.body.children.item ( index ).scrollIntoView ( true );
+	if ( document = undefined or document.body = undefined ) then
+		keepScrolling ();
+		return;
 	endif;
+	id = ChatForm.ElementID ( data [ last - 1 ].Element - 1 );
+	element = document.getElementById ( id );
+	if ( element = undefined ) then
+		keepScrolling ();
+	else
+		element.scrollIntoView ( true );
+	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure keepScrolling ()
+	
+	AttachIdleHandler ( "scrollHTML", 0.5, true );
 	
 EndProcedure
 
@@ -814,7 +843,10 @@ Procedure addRow ( Form, Text, Error, Me, ID, File, Separator )
 	data.Error = Error;
 	data.Separator = Separator;
 	assignElement ( Form, data );
-	addElement ( Form, data );
+	Form.ChangesQueue.Add ( data.LineNumber - 1 );
+	#if ( Client ) then
+		Form.flushChanges ();
+	#endif
 	table = object.Messages;
 	for each line in StrSplit ( Text, Chars.LF ) do
 		row = table.Add ();
@@ -852,21 +884,33 @@ Procedure invalidateHomepage ( Form )
 
 EndProcedure
 
-&AtClientAtServerNoContext
-Procedure addElement ( Form, Row )
+&AtClient
+Procedure addElement () export
 
-	#if ( Server ) then
-		Form.PostponedChanges.Add ( Row.LineNumber - 1 );
-	#else
-		Form.Items.HTML.Document.body.insertAdjacentHTML ( "beforeend",
-			ChatForm.GetParagraph ( Form.Chat, Form.Object, Row ) );
-		answer = not ( Row.Me or Row.Separator or Row.File or Row.Error );
+	document = Items.HTML.Document;
+	if ( document = undefined
+		or document.body = undefined ) then
+		flushChanges ();
+		return;
+	endif;
+	table = Object.Data;
+	for each element in ChangesQueue do
+		row = table [ element.Value ];
+		document.body.insertAdjacentHTML ( "beforeend", ChatForm.GetParagraph ( Chat, Object, row ) );
+		answer = not ( row.Me or row.Separator or row.File or row.Error );
 		if ( answer ) then
-			document = Form.Items.HTML.Document;
-			message = document.getElementById ( ChatForm.ElementID ( Row.Element ) );
+			message = document.getElementById ( ChatForm.ElementID ( row.Element ) );
 			document.defaultView.Prism.highlightAllUnder ( message );
 		endif;
-	#endif
+	enddo;
+	ChangesQueue.Clear ();
+	for each element in DeletionQueue do
+		node = document.getElementById ( ChatForm.ElementID ( element.Value ) );
+		if ( node <> undefined ) then
+			node.parentNode.removeChild ( node );
+		endif;
+	enddo;
+	DeletionQueue.Clear ();
 
 EndProcedure
 
@@ -878,10 +922,28 @@ Procedure addAnswer ( Messages )
 		return;
 	endif;
 	last = Messages [ 0 ];
+	files = Object.Files;
 	for each row in last.content do
 		id = last.id;
-		if ( row.type = "text" ) then
+		contentType = row.type;
+		if ( contentType = "text" ) then
 			addRow ( ThisObject, row.text.value, false, false, id, false, false );
+			for each annotation in row.text.annotations do
+				annotationType = annotation.type;
+				if ( annotationType = "file_path" ) then
+					file = files.Add ();
+					file.Link = annotation.text;
+					file.ID = annotation.file_path.file_id;
+				elsif ( annotationType = "file_citation" ) then
+					file = files.Add ();
+					file.Link = annotation.text;
+					file.ID = annotation.file_citation.file_id;
+				endif;
+			enddo;
+		elsif ( contentType = "image_file" ) then
+			file = files.Add ();
+			file.Link = "";
+			file.ID = row.image_file.file_id;
 		endif;
 	enddo;
 	
@@ -895,17 +957,10 @@ Procedure increateLinkID ()
 EndProcedure
 
 &AtClient
-Procedure flushChanges ()
+Procedure flushChanges () export
 	
-	table = Object.Data;
-	for each element in PostponedChanges do
-		addElement ( ThisObject, table [ element.Value ] );
-	enddo;
-	PostponedChanges.Clear ();
-	for each element in PostponedDeletion do
-		ChatForm.DeleteElement ( ThisObject, element.Value );
-	enddo;
-	PostponedDeletion.Clear ();
+	DetachIdleHandler ( "addElement" );
+	AttachIdleHandler ( "addElement", 0.1, true );
 	
 EndProcedure
 
@@ -1044,10 +1099,9 @@ Procedure deleteRow ( Form, Row )
 	table = object.Data;
 	data = findRow ( table, StrConcat ( filter, " and " ) );
 	if ( data <> undefined ) then
+		Form.DeletionQueue.Add ( data.Element );
 		#if ( Client ) then
-			ChatForm.DeleteElement ( Form, data.Element );
-		#else
-			Form.PostponedDeletion.Add ( data.Element );
+			Form.flushChanges ();
 		#endif
 		table.Delete ( data );
 	endif;
@@ -1411,6 +1465,18 @@ EndProcedure
 &AtClient
 Procedure HTMLOnClick ( Item, EventData, StandardProcessing )
 	
-	ChatForm.OnClick ( Item, EventData, StandardProcessing );
+	StandardProcessing = false;
+	ChatForm.OnClick ( filesList (), Server, Session, Item, EventData );
 	
 EndProcedure
+
+&AtClient
+Function filesList ()
+	
+	list = new ValueList ();
+	for each row in Object.Files do
+		list.Add ( row.ID, row.Link );
+	enddo;
+	return list;
+	
+EndFunction

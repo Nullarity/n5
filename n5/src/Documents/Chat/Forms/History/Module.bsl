@@ -199,17 +199,30 @@ Procedure loadMessages () export
 	ref = undefined;
 	row.Property ( "Ref", ref );
 	if ( ref = undefined ) then
-		Chat.Body = "";
+		cleanMessages ();
 	else
-		setBody ( ref );
+		loadChat ( ref );
 	endif;
 	
 EndProcedure
 
-&AtServer
-Procedure setBody ( val Ref )
+&AtClient
+Procedure cleanMessages ()
 	
+	Chat.Body = "";
+	Files.Clear ();
+	
+EndProcedure
+
+&AtServer
+Procedure loadChat ( val Ref )
+	
+	Server = DF.Pick ( Ref.Assistant, "Server" );
 	ChatForm.SetBody ( Chat, Ref );
+	Files.Clear ();
+	for each row in Ref.Files do
+		Files.Add ( row.ID, row.Link );
+	enddo;
 	
 EndProcedure
 
@@ -227,6 +240,7 @@ EndProcedure
 &AtClient
 Procedure HTMLOnClick ( Item, EventData, StandardProcessing )
 	
-	ChatForm.OnClick ( Item, EventData, StandardProcessing );
+	StandardProcessing = false;
+	ChatForm.OnClick ( Files, Server, "", Item, EventData );
 
 EndProcedure

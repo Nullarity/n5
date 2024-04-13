@@ -518,14 +518,14 @@ Function sendFile ( Connection, File, Data, Error )
 			return ReadJSONValue ( answer ).id;
 		endif;
 	except
-		error = ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+		Error = ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
 		return undefined;
 	endtry;
 	try
 		info = ReadJSONValue ( answer );
-		error = info.error.message;
+		Error = info.error.message;
 	except
-		error = answer;
+		Error = answer;
 	endtry;
 
 EndFunction
@@ -566,6 +566,50 @@ Function StopRunning ( val Server, val Thread, val Session ) export
 		return true;
 	except
 		return false;
+	endtry;
+	
+EndFunction
+
+Function DownloadParams () export
+	
+	p = new Structure ();
+	p.Insert ( "Result" );
+	p.Insert ( "File" );
+	p.Insert ( "Server" );
+	p.Insert ( "Session" );
+	return p;
+	
+EndFunction 
+
+Function Download ( Parameters ) export
+	
+	data = fetchFile ( Parameters );
+	content = GetBinaryDataFromString ( data.Content );
+	return new Structure ( "File, Address", data.File, PutToTempStorage ( content ) );
+	
+EndFunction
+
+Function fetchFile ( Parameters )
+	
+	connection = prepareConnection ( Parameters.Server );
+	setSession ( connection, Parameters.Session );
+	request = new HTTPRequest ( "/assist/download", connection.header );
+	request.SetBodyFromString ( Parameters.File );
+	try
+		response = connection.http.Post ( request );
+		answer = response.GetBodyAsString ();
+		if ( response.StatusCode = Enum.HTTPStatusOK () ) then
+			setSession ( Connection, getSession ( request ) );
+			return ReadJSONValue ( answer );
+		endif;
+	except
+		raise ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+	endtry;
+	try
+		info = ReadJSONValue ( answer );
+		raise info.error.message;
+	except
+		raise answer;
 	endtry;
 	
 EndFunction
