@@ -273,7 +273,7 @@ Procedure scrollHTML () export
 		keepScrolling ();
 		return;
 	endif;
-	id = ChatForm.ElementID ( data [ last - 1 ].Element - 1 );
+	id = ChatForm.ElementID ( data [ last - 1 ].Element );
 	element = document.getElementById ( id );
 	if ( element = undefined ) then
 		keepScrolling ();
