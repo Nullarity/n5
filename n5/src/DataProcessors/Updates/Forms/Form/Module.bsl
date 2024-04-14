@@ -440,7 +440,7 @@ EndProcedure
 &AtClient
 Function goodResponse ( Response )
 	
-	return Response.StatusCode = 200;
+	return Response.StatusCode = Enum.HTTPStatusOK ();
 	
 EndFunction
 

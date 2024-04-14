@@ -50,7 +50,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		initIDs ();
 		initChat ();
 	endif; 
-	applyProperties ( ThisObject );
 	prepareMenu ();
 	readAppearance ();
 	invalidateHomepage ( ThisObject );
@@ -77,17 +76,7 @@ EndProcedure
 &AtServer
 Procedure restoreAssistant ()
 	
-	Object.Assistant = CommonSettingsStorage.Load ( Enum.SettingsChatAssistant () );
-	
-EndProcedure
-
-&AtClientAtServerNoContext
-Procedure applyProperties ( Form )
-	
-	data = DF.Values ( Form.Object.Assistant, "Server, Retrieval" );
-	Form.Server = data.Server;
-	Form.RetrievalCapability = data.Retrieval;
-	Appearance.Apply ( Form, "RetrievalCapability" );
+	setAssistant ( ThisObject, CommonSettingsStorage.Load ( Enum.SettingsChatAssistant () ) );
 	
 EndProcedure
 
@@ -205,16 +194,39 @@ Procedure fillNew ()
 		Object.Company = settings.Company;
 		Object.Date = CurrentSessionDate ();
 		if ( Object.Assistant.IsEmpty () ) then
-			Object.Assistant = defaultAssistant ();
+			setAssistant ( ThisObject, defaultAssistant () );
 		endif;
 	else
 		Object.Messages.Clear ();
 		Object.Data.Clear ();
+		Object.Files.Clear ();
 		Object.Subject = "";
 		Object.Thread = "";
 	endif; 
 	
 EndProcedure 
+
+&AtClientAtServerNoContext
+Procedure setAssistant ( Form, Assistant )
+	
+	if ( Assistant.IsEmpty () ) then
+		return;
+	endif;
+	memorizeAssistant ( Assistant );
+	Form.Object.Assistant = Assistant;
+	data = DF.Values ( Assistant, "Server, Retrieval" );
+	Form.Server = data.Server;
+	Form.RetrievalCapability = data.Retrieval;
+	Appearance.Apply ( Form, "RetrievalCapability" );
+	
+EndProcedure
+
+&AtServerNoContext
+Procedure memorizeAssistant ( val Assistant )
+
+	LoginsSrv.SaveSettings ( Enum.SettingsChatAssistant (), , Assistant );
+
+EndProcedure
 
 &AtServer
 Function defaultAssistant ()
@@ -317,6 +329,7 @@ Procedure loadChat ( val Ref )
 	if ( not Object.Ref.IsEmpty () and Modified ) then
 		Write ();
 	endif;
+	activateStage ( ThisObject, StageComplete );
 	ChatStarted = undefined;
 	blank = ( Ref = undefined or Ref.IsEmpty () );
 	if ( blank ) then
@@ -337,10 +350,8 @@ Procedure loadChat ( val Ref )
 		DocumentForm.SetCreator ( Object );
 		restoreAssistant ();
 		fillNew ();
-	else
-		memorizeAssistant ( Object.Assistant );
 	endif;
-	applyProperties ( ThisObject );
+	setAssistant ( ThisObject, obj.Assistant );
 	Session = "";
 	invalidateHomepage ( ThisObject );
 	Appearance.Apply ( ThisObject );
@@ -431,7 +442,7 @@ EndProcedure
 &AtClient
 Procedure start ()
 	
-	activateStage ( StageSending );
+	activateStage ( ThisObject, StageSending );
 	tryAgain = Object.Error;
 	newMessage = not IsBlankString ( Object.Message );
 	if ( tryAgain ) then
@@ -455,11 +466,11 @@ Procedure start ()
 	
 EndProcedure
 
-&AtClient
-Procedure activateStage ( Stage )
+&AtClientAtServerNoContext
+Procedure activateStage ( Form, Stage )
 	
-	CurrentStage = Stage;
-	Appearance.Apply ( ThisObject, "CurrentStage" );
+	Form.CurrentStage = Stage;
+	Appearance.Apply ( Form, "CurrentStage" );
 	
 EndProcedure
 
@@ -610,7 +621,7 @@ Procedure checkCompletion () export
 		DetachIdleHandler ( "checkCompletion" );
 		restoreSeparator ();
 		RunCallback ( Finisher, error );
-		activateStage ( StageComplete );
+		activateStage ( ThisObject, StageComplete );
 	endif;
 	
 EndProcedure 
@@ -648,7 +659,7 @@ Procedure reactivateStopping ()
 	endif;
 	if ( StoppingTimeout = 0 ) then
 		initStoppingTimeout ();
-		activateStage ( StageSending );
+		activateStage ( ThisObject, StageSending );
 	else
 		StoppingTimeout = StoppingTimeout - 1;
 	endif;
@@ -991,10 +1002,10 @@ async Procedure Upload ( Command )
 	if ( not CheckFilling () ) then
 		return;
 	endif;
-	activateStage ( StageSending );
+	activateStage ( ThisObject, StageSending );
 	files = await prepareFiles ();
 	if ( files = undefined ) then
-		activateStage ( StageComplete );
+		activateStage ( ThisObject, StageComplete );
 		return;
 	endif;
 	uploadData ( files, true );
@@ -1004,7 +1015,7 @@ EndProcedure
 &AtClient
 Procedure uploadData ( List, Files )
 
-	activateStage ( StageSending );
+	activateStage ( ThisObject, StageSending );
 	if ( Object.Error ) then
 		deleteAnswer ( ThisObject );
 	else
@@ -1232,35 +1243,23 @@ EndFunction
 &AtClient
 Procedure AssistantOnChange ( Item )
 	
-	applyAssistant ();
+	setAssistant ( ThisObject, Object.Assistant );
 	
-EndProcedure
-
-&AtClient
-Procedure applyAssistant ()
-	
-	assistant = Object.Assistant;
-	if ( not assistant.IsEmpty () ) then
-		memorizeAssistant ( assistant );
-	endif;
-	applyProperties ( ThisObject );
-	activateMessage ();
-	
-EndProcedure
-
-&AtServerNoContext
-Procedure memorizeAssistant ( val Assistant )
-
-	LoginsSrv.SaveSettings ( Enum.SettingsChatAssistant (), , Assistant );
-
 EndProcedure
 
 &AtClient
 Procedure activateMessage ()
 	
 	if ( not Object.Assistant.IsEmpty () ) then
-		CurrentItem = Items.Message;
+		AttachIdleHandler ( "gentleMessageActivation", 0.1, true );
 	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure gentleMessageActivation () export
+	
+	CurrentItem = Items.Message;
 	
 EndProcedure
 
@@ -1268,7 +1267,7 @@ EndProcedure
 Procedure Stop ( Command )
 
 	if ( stopRunning ( Server, Object.Thread, Session ) ) then
-		activateStage ( StageStopping );
+		activateStage ( ThisObject, StageStopping );
 	else
 		raise Output.RequestToStopFailed ();
 	endif;
@@ -1312,8 +1311,7 @@ async Procedure showMenu ()
 			DeleteFile ( undefined );
 		endif;
 	else
-		Object.Assistant = menu.Value;
-		applyProperties ( ThisObject );
+		setAssistant ( Object, menu.Value );
 		activateMessage ();
 	endif;
 	

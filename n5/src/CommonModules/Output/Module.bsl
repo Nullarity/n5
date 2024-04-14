@@ -8795,3 +8795,11 @@ Procedure SubjectIsEmpty ( Params = undefined, Field = "", DataKey = undefined, 
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure
+
+&AtServer
+Function ServerReturnedError ( Params = undefined ) export
+
+	s = NStr ( "en = 'Server returned an error code: %Code'; ro = 'Serverul a returnat un cod de eroare: %Code'; ru = 'Server returned an error code: %Code'" );
+	return Output.FormatStr ( s, Params );
+
+EndFunction

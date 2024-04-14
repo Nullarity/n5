@@ -584,7 +584,7 @@ EndFunction
 Function Download ( Parameters ) export
 	
 	data = fetchFile ( Parameters );
-	content = GetBinaryDataFromString ( data.Content );
+	content = Base64Value ( data.Content );
 	return new Structure ( "File, Address", data.File, PutToTempStorage ( content ) );
 	
 EndFunction
@@ -598,9 +598,12 @@ Function fetchFile ( Parameters )
 	try
 		response = connection.http.Post ( request );
 		answer = response.GetBodyAsString ();
-		if ( response.StatusCode = Enum.HTTPStatusOK () ) then
+		status = response.StatusCode;
+		if ( status = Enum.HTTPStatusOK () ) then
 			setSession ( Connection, getSession ( request ) );
 			return ReadJSONValue ( answer );
+		else
+			raise Output.ServerReturnedError ( new Structure ( "Code", status ) );
 		endif;
 	except
 		raise ErrorProcessing.BriefErrorDescription ( ErrorInfo () );

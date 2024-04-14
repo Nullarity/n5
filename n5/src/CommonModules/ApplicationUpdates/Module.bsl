@@ -61,7 +61,7 @@ EndFunction
 
 Function goodResponse ( Response )
 	
-	if ( Response.StatusCode = 200 ) then
+	if ( Response.StatusCode = Enum.HTTPStatusOK () ) then
 		return true;
 	endif;
 	ApplicationUpdatesSrv.Logging ( Response.GetBodyAsString () );

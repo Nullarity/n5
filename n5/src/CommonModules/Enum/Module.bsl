@@ -1481,7 +1481,6 @@ EndFunction
 
 #region HTTPStatuses
 
-&AtServer
 Function HTTPStatusOK () export
 	
 	return 200;
