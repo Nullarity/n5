@@ -1311,7 +1311,7 @@ async Procedure showMenu ()
 			DeleteFile ( undefined );
 		endif;
 	else
-		setAssistant ( Object, menu.Value );
+		setAssistant ( ThisObject, menu.Value );
 		activateMessage ();
 	endif;
 	
