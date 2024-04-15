@@ -209,7 +209,7 @@ EndProcedure
 &AtClientAtServerNoContext
 Procedure setAssistant ( Form, Assistant )
 	
-	if ( Assistant.IsEmpty () ) then
+	if ( not ValueIsFilled ( Assistant ) ) then
 		return;
 	endif;
 	memorizeAssistant ( Assistant );
