@@ -83,14 +83,14 @@ EndProcedure
 &AtServer
 Procedure prepareMenu ()
 
-	MessageMenu.Add ( menuSelectPhrase (), Output.SelectPhrase (), , PictureLib.Catalog );
+	FunctionsMenu.Add ( menuSelectPhrase (), Output.SelectPhrase (), , PictureLib.Catalog );
 	assistantsList ();
 	if ( Logins.Admin ()
 		or IsInRole ( Metadata.Roles.AIFiles ) ) then
-		MessageMenu.Add ( menuUploadFile (), Commands.Upload.Title, , Commands.Upload.Picture );
-		MessageMenu.Add ( menuAttachFile (), Commands.Attach.Title, , Commands.Attach.Picture );
-		MessageMenu.Add ( menuAttachDocument (), Commands.AttachDocument.Title, , Commands.AttachDocument.Picture );
-		MessageMenu.Add ( menuDeleteFile (), Commands.DeleteFile.Title, , Commands.DeleteFile.Picture );
+		FunctionsMenu.Add ( menuUploadFile (), Commands.Upload.Title, , Commands.Upload.Picture );
+		FunctionsMenu.Add ( menuAttachFile (), Commands.Attach.Title, , Commands.Attach.Picture );
+		FunctionsMenu.Add ( menuAttachDocument (), Commands.AttachDocument.Title, , Commands.AttachDocument.Picture );
+		FunctionsMenu.Add ( menuDeleteFile (), Commands.DeleteFile.Title, , Commands.DeleteFile.Picture );
 	endif;
 	
 EndProcedure
@@ -149,7 +149,7 @@ Procedure assistantsList ()
 		if ( purpose <> "" ) then
 			parts.Add ( purpose );
 		endif;
-		MessageMenu.Add ( row.Ref, StrConcat ( parts, ". " ), , PictureLib.User );
+		FunctionsMenu.Add ( row.Ref, StrConcat ( parts, ". " ), , PictureLib.User );
 		parts.Clear ();
 	enddo;
 	
@@ -179,7 +179,8 @@ Procedure readAppearance ()
 	|FormStop show CurrentStage = StageSending;
 	|FormStop assign CurrentStage = StageSending;
 	|FormStopping show CurrentStage = StageStopping;
-	|
+	|GroupHTML disable CurrentStage = StageSending and Plaintext;
+	|GroupText disable CurrentStage = StageSending and not Plaintext;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -461,8 +462,12 @@ Procedure start ()
 	addSeparator ( ThisForm, false );
 	scrollMessages ();
 	JobKey = "Chat " + UUID;
-	run ( newMessage );
-	startWaiting ( new CallbackDescription ( "CompleteSending", ThisObject ) );
+	error = run ( newMessage );
+	if ( error = undefined ) then
+		startWaiting ( new CallbackDescription ( "CompleteSending", ThisObject ) );
+	else
+		CompleteSending ( error, undefined );
+	endif;
 	
 EndProcedure
 
@@ -498,6 +503,7 @@ Procedure addQuestion ()
 	
 	addRow ( ThisObject, Object.Message, false, true, "", false, false );
 	Object.Message = "";
+	Items.Message.UpdateEditText ();
 	
 EndProcedure
 
@@ -523,10 +529,14 @@ Procedure assignElement ( Form, Row )
 EndProcedure
 
 &AtServer
-Procedure run ( val NewMessage )
+Function run ( val NewMessage )
 	
 	if ( Object.Thread = "" ) then
-		Object.Thread = AIServer.GetThread ( Server );
+		try
+			Object.Thread = AIServer.GetThread ( Server );
+		except
+			return ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+		endtry;
 	endif;
 	p = AIServer.ChatParams ();
 	ResultAddress = PutToTempStorage ( undefined, UUID );
@@ -546,7 +556,7 @@ Procedure run ( val NewMessage )
 	args.Add ( p );
 	Jobs.Run ( "AIServer.Chat", args, JobKey, , TesterCache.Testing () );
 	
-EndProcedure
+EndFunction
 
 &AtServer
 Function getMessage ( Data )
@@ -621,7 +631,6 @@ Procedure checkCompletion () export
 		DetachIdleHandler ( "checkCompletion" );
 		restoreSeparator ();
 		RunCallback ( Finisher, error );
-		activateStage ( ThisObject, StageComplete );
 	endif;
 	
 EndProcedure 
@@ -671,7 +680,9 @@ Procedure indicateProcess ()
 	
 	text = Separator.Text + ".";
 	Separator.Text = text;
-	setElementText ( SeparatorID, text );
+	if ( not Plaintext ) then
+		setElementText ( SeparatorID, text );
+	endif;
 	
 EndProcedure
 
@@ -688,8 +699,11 @@ EndProcedure
 &AtClient
 Procedure restoreSeparator ()
 	
-	if ( Separator <> undefined ) then
-		Separator.Text = SeparatorText;
+	if ( Separator = undefined ) then
+		return;
+	endif;
+	Separator.Text = SeparatorText;
+	if ( not Plaintext ) then
 		setElementText ( SeparatorID, SeparatorText );
 	endif;
 	
@@ -702,6 +716,7 @@ Procedure CompleteSending ( Exception, Params ) export
 	flushChanges ();
 	scrollMessages ();
 	activateMessage ();
+	activateStage ( ThisObject, StageComplete );
 	
 EndProcedure
 
@@ -731,7 +746,7 @@ EndProcedure
 &AtServer
 Function fetchResult ( Exception )
 	
-	result = new Structure ( "Error, Messages, MessageID, Thread, Session",
+	result = new Structure ( "Error, Messages, Pictures, MessageID, Thread, Session",
 		false, new Array (), "", "", "" );
 	if ( Exception = undefined ) then
 		json = GetFromTempStorage ( ResultAddress );
@@ -757,13 +772,14 @@ Function fetchResult ( Exception )
 		else
 			result.Session = response.Session;
 			data = ReadJSONValue ( message );
-			result.Messages = data.Messages.Data;
+			result.Messages = data.Messages.data;
+			result.Pictures = data.Pictures;
 			result.Thread = data.Thread;
 			result.MessageID = data.MessageID;
 		endif;
 	else
 		result.Error = true;
-		result.Message = Exception;
+		result.Messages.Add ( Exception );
 	endif;
 	return result;
 	
@@ -981,6 +997,7 @@ Procedure Attach ( Command )
 	if ( not CheckFilling () ) then
 		return;
 	endif;
+	commitMessage ();
 	pickFiles ();
 	
 EndProcedure
@@ -1002,6 +1019,7 @@ async Procedure Upload ( Command )
 	if ( not CheckFilling () ) then
 		return;
 	endif;
+	commitMessage ();
 	activateStage ( ThisObject, StageSending );
 	files = await prepareFiles ();
 	if ( files = undefined ) then
@@ -1158,6 +1176,7 @@ Procedure CompleteUploading ( Exception, Params ) export
 	endif;
 	scrollMessages ();
 	activateMessage ();
+	activateStage ( ThisObject, StageComplete );
 	
 EndProcedure
 
@@ -1193,6 +1212,7 @@ Procedure AttachDocument ( Command )
 	if ( not CheckFilling () ) then
 		return;
 	endif;
+	commitMessage ();
 	pickDocuments ();
 
 EndProcedure
@@ -1285,44 +1305,44 @@ EndFunction
 Procedure MessageStartChoice ( Item, ChoiceData, ChoiceByAdding, StandardProcessing )
 	
 	StandardProcessing = false;
-	showMenu ();
+	commitMessage ();
+	OpenForm ( "CommonForm.Menu", new Structure ( "Menu", FunctionsMenu ), Items.Message );
 	
 EndProcedure
 
 &AtClient
-async Procedure showMenu ()
+Procedure commitMessage ()
 	
-	menu = await ChooseFromMenuAsync ( MessageMenu, Items.Message );
-	if ( menu = undefined ) then
-		return;
-	endif;
-	selected = menu.Value;
-	type = TypeOf ( selected );
-	if ( type = Type ( "Number" ) ) then
-		if ( selected = menuSelectPhrase () ) then
-			OpenForm ( "Catalog.Phrases.ChoiceForm", , Items.Message );
-		elsif ( selected = menuUploadFile () ) then
-			Upload ( undefined );
-		elsif ( selected = menuAttachFile () ) then
-			Attach ( undefined );
-		elsif ( selected = menuAttachDocument () ) then
-			AttachDocument ( undefined );
-		elsif ( selected = menuDeleteFile () ) then
-			DeleteFile ( undefined );
-		endif;
-	else
-		setAssistant ( ThisObject, menu.Value );
-		activateMessage ();
-	endif;
+	#if ( WebClient ) then
+		Object.Message = Items.Message.EditText;
+	#endif
 	
 EndProcedure
 
 &AtClient
-Procedure MessageChoiceProcessing ( Item, Phrase, AdditionalData, StandardProcessing )
+Procedure MessageChoiceProcessing ( Item, Value, AdditionalData, StandardProcessing )
 	
 	StandardProcessing = false;
-	injectPhrase ( Phrase );
-	
+	type = TypeOf ( Value );
+	if ( type = Type ( "Number" ) ) then
+		if ( Value = menuSelectPhrase () ) then
+			OpenForm ( "Catalog.Phrases.ChoiceForm", , Items.Message );
+		elsif ( Value = menuUploadFile () ) then
+			Upload ( undefined );
+		elsif ( Value = menuAttachFile () ) then
+			Attach ( undefined );
+		elsif ( Value = menuAttachDocument () ) then
+			AttachDocument ( undefined );
+		elsif ( Value = menuDeleteFile () ) then
+			DeleteFile ( undefined );
+		endif;
+	elsif ( type = Type ( "CatalogRef.Phrases" ) ) then
+		injectPhrase ( Value );
+	else
+		setAssistant ( ThisObject, Value );
+		activateMessage ();
+	endif;
+
 EndProcedure
 
 &AtClient
