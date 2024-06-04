@@ -133,6 +133,7 @@ EndProcedure
 Function getMessage ( Params, Env, Receiver )
 	
 	message = new InternetMailMessage ();
+	message.From = Cloud.Noreply ();
 	message.To.Add ( Receiver.Email );
 	fillMessage ( Params, Env, Receiver, message );
 	return message;
