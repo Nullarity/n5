@@ -139,6 +139,7 @@
   <owners>Catalog.Organizations</owners>
   <owners>Catalog.Companies</owners>
   <owners>Catalog.Employees</owners>
+  <owners>Catalog.Individuals</owners>
   <codeLength>9</codeLength>
   <descriptionLength>150</descriptionLength>
   <codeType>String</codeType>
@@ -150,6 +151,7 @@
   <choiceMode>BothWays</choiceMode>
   <defaultObjectForm>Catalog.BankAccounts.Form.Form</defaultObjectForm>
   <defaultListForm>Catalog.BankAccounts.Form.List</defaultListForm>
+  <defaultChoiceForm>Catalog.BankAccounts.Form.Choice</defaultChoiceForm>
   <attributes uuid="399137c9-9631-495a-8514-6b590363a7fd">
     <name>Account</name>
     <synonym>
@@ -573,6 +575,11 @@
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <forms uuid="eb473724-b8b8-43b8-b355-51aeb56c28f8">
+    <name>Choice</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
   <forms uuid="c5d5eedc-1a78-4384-959f-e074a83dc9ea">
     <name>Company</name>
     <usePurposes>PersonalComputer</usePurposes>
@@ -588,36 +595,4 @@
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
-  <commands uuid="30cbd54f-32bf-4d34-aebf-8fa5c8d9f95a">
-    <name>ShowByIndividual</name>
-    <synonym>
-      <key>en</key>
-      <value>Bank Accounts</value>
-    </synonym>
-    <synonym>
-      <key>ru</key>
-      <value>Банковские счета</value>
-    </synonym>
-    <synonym>
-      <key>ro</key>
-      <value>Conturi bancare</value>
-    </synonym>
-    <group>FormNavigationPanelGoTo</group>
-    <commandParameterType>
-      <types>CatalogRef.Individuals</types>
-    </commandParameterType>
-    <representation>Auto</representation>
-    <toolTip>
-      <key>en</key>
-      <value>Employee bank accounts</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Банковские счета сотрудника</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Conturi bancare ale angajaților</value>
-    </toolTip>
-  </commands>
 </mdclass:Catalog>

@@ -16,6 +16,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|UnitFilter show empty ( FixedOwnerFilter );
+	|Owner show empty ( UnitFilter );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -37,6 +38,7 @@ EndProcedure
 Procedure filterByUnit ()
 	
 	DC.ChangeFilter ( List, "Owner", UnitFilter, ValueIsFilled ( UnitFilter ) );
+	Appearance.Apply ( ThisObject, "UnitFilter" );
 	
 EndProcedure
 
