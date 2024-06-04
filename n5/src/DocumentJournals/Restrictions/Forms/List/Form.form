@@ -120,7 +120,6 @@
     <type>UsualGroup</type>
     <extInfo xsi:type="form:UsualGroupExtInfo">
       <group>Vertical</group>
-      <behavior>Auto</behavior>
       <representation>WeakSeparation</representation>
       <showLeftMargin>true</showLeftMargin>
       <united>true</united>
@@ -478,20 +477,113 @@
         <autoMaxHeight>true</autoMaxHeight>
       </extInfo>
     </items>
-    <items xsi:type="form:FormField">
-      <name>Memo</name>
-      <id>34</id>
+    <items xsi:type="form:FormGroup">
+      <name>Group2</name>
+      <id>54</id>
+      <items xsi:type="form:FormField">
+        <name>Memo</name>
+        <id>34</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>List.Memo</segments>
+        </dataPath>
+        <extendedTooltip>
+          <name>MemoExtendedTooltip</name>
+          <id>36</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>MemoContextMenu</name>
+          <id>35</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>LabelField</type>
+        <editMode>Enter</editMode>
+        <autoCellHeight>true</autoCellHeight>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:LabelFieldExtInfo">
+          <autoMaxWidth>true</autoMaxWidth>
+          <height>2</height>
+          <autoMaxHeight>true</autoMaxHeight>
+        </extInfo>
+      </items>
+      <items xsi:type="form:FormField">
+        <name>Explanation</name>
+        <id>56</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>List.Explanation</segments>
+        </dataPath>
+        <extendedTooltip>
+          <name>ExplanationExtendedTooltip</name>
+          <id>58</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>ExplanationContextMenu</name>
+          <id>57</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>LabelField</type>
+        <editMode>Enter</editMode>
+        <autoCellHeight>true</autoCellHeight>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:LabelFieldExtInfo">
+          <autoMaxWidth>true</autoMaxWidth>
+          <height>2</height>
+          <autoMaxHeight>true</autoMaxHeight>
+        </extInfo>
+      </items>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
-      <dataPath xsi:type="form:DataPath">
-        <segments>List.Memo</segments>
-      </dataPath>
       <extendedTooltip>
-        <name>MemoExtendedTooltip</name>
-        <id>36</id>
+        <name>Group2ExtendedTooltip</name>
+        <id>55</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -504,24 +596,10 @@
           <horizontalAlign>Left</horizontalAlign>
         </extInfo>
       </extendedTooltip>
-      <contextMenu>
-        <name>MemoContextMenu</name>
-        <id>35</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <autoFill>true</autoFill>
-      </contextMenu>
-      <type>LabelField</type>
-      <editMode>Enter</editMode>
-      <showInHeader>true</showInHeader>
-      <headerHorizontalAlign>Left</headerHorizontalAlign>
-      <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:LabelFieldExtInfo">
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
+      <type>ColumnGroup</type>
+      <extInfo xsi:type="form:ColumnGroupExtInfo">
+        <group>InCell</group>
+        <showTitle>true</showTitle>
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
@@ -796,7 +874,8 @@
       <queryText>select Journal.Ref as Ref, Journal.Date as Date, Journal.DeletionMark as DeletionMark,
 	Journal.Number as Number, Journal.Posted as Posted, Journal.Amount as Amount,
 	Journal.Company as Company, Journal.Creator as Creator, Journal.Organization as Organization,
-	Journal.Memo as Memo, Journal.Type as Type, Journal.Ref.Resolution as Resolution,
+	Journal.Memo as Memo, Journal.Explanation as Explanation, Journal.Type as Type,
+	Journal.Ref.Resolution as Resolution,
 	Journal.Ref.Resolution = value ( Enum.AllowDeny.EmptyRef ) as Waiting,
 	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = true as Ban,
 	Journal.Type = type ( Document.SalesRestriction ) and Journal.Amount = false as CanSale,
@@ -911,6 +990,10 @@ from DocumentJournal.Restrictions as Journal
       <fields xsi:type="schema:DataCompositionSchemaDataSetField">
         <dataPath>Organization</dataPath>
         <field>Organization</field>
+      </fields>
+      <fields xsi:type="schema:DataCompositionSchemaDataSetField">
+        <dataPath>Explanation</dataPath>
+        <field>Explanation</field>
       </fields>
       <calculatedFields>
         <dataPath>Info</dataPath>

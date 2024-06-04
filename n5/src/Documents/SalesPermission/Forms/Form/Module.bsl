@@ -49,7 +49,7 @@ Procedure readAppearance ()
 	|Responsible show filled ( Object.Resolution );
 	|FormOK show Changed;
 	|Memo lock filled ( Object.Ref );
-	|Resolution hide empty ( Object.Ref );
+	|Resolution Explanation hide empty ( Object.Ref );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -169,5 +169,20 @@ Procedure applyResolution ()
 	PermissionForm.ApplyResolution ( Object );
 	Changed = true;
 	Appearance.Apply ( ThisObject, "Object.Resolution, Changed" );
+
+EndProcedure
+
+&AtClient
+Procedure ExplanationOnChange ( Item )
+	
+	applyExplanation ();
+	
+EndProcedure
+
+&AtServer
+Procedure applyExplanation ()
+	
+	Changed = true;
+	Appearance.Apply ( ThisObject, "Changed" );
 
 EndProcedure
