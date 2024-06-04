@@ -119,7 +119,7 @@ Procedure setOrderBySorting ()
 		DC.SetOrder ( DocumentsList, "Sorting desc" );
 	else
 		setOrderByDate ();
-	endif; 
+	endif;
 	
 EndProcedure 
 
