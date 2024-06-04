@@ -29,19 +29,47 @@ Procedure loadAccount ()
 		data = DF.Values ( Object.Company, "
 		|BankAccount,
 		|BankAccount.Bank.Application as Application,
-		|BankAccount.Bank.Application.Unloading as Unloading,
-		|BankAccount.Bank.Application.UnloadingSalary as UnloadingSalary" );
+		|BankAccount.Bank.Application.Unloading as Unloading" );
 		Object.Account = data.BankAccount;
 	else
 		data = DF.Values ( account, "
 		|Bank.Application as Application,
-		|Bank.Application.Unloading as Unloading,
-		|Bank.Application.UnloadingSalary as UnloadingSalary" );
+		|Bank.Application.Unloading as Unloading" );
 	endif;
 	Object.BankingApp = data.Application;
-	Object.Path = data.Unloading;
-	Object.PathSalary = data.UnloadingSalary;
+	setFiles ( data );
 
+EndProcedure
+
+&AtServer
+Procedure setFiles ( Data )
+	
+	app = DF.Pick ( Object.BankingApp, "Application" );
+	if ( app = PredefinedValue ( "Enum.Banks.Mobias" ) ) then
+		filePayments = "Plat.dbf";
+	elsif ( app = PredefinedValue ( "Enum.Banks.MAIB" ) ) then
+		date = CurrentSessionDate ();
+		month = Mid ( "123456789ABC", Month ( date ), 1 );
+		filePayments = "IDOC" + Format ( date, "DF='dd'" ) + month + ".dbf";
+		fileSalary = "PS" + Format ( date, "DF=yyMMdd" )
+			+ Right ( TrimR ( DF.Pick ( Object.Account, "Bank.Code", "" ) ), 3 )
+			+ DF.Pick ( Object.BankingApp, "Globus", "" )
+			+ ".001";
+	elsif ( app = PredefinedValue ( "Enum.Banks.FinComPay" )
+	 	or app = PredefinedValue ( "Enum.Banks.Comert" ) ) then
+		filePayments = "ExportPayments.xml";
+	elsif ( app = PredefinedValue ( "Enum.Banks.EuroCreditBank" ) ) then
+		filePayments = "ExportPayments";
+	elsif ( app = PredefinedValue ( "Enum.Banks.Eximbank" ) ) then
+		filePayments = "ExportPayments.txt";
+		fileSalary = "salary.csv";
+	else
+		filePayments = "ExportPayments.txt";
+	endif;
+	folder = Data.Unloading + GetClientPathSeparator ();
+	Object.Path = folder + filePayments;
+	Object.PathSalary = folder + ? ( fileSalary = undefined, "", fileSalary );
+	
 EndProcedure
 
 &AtServer

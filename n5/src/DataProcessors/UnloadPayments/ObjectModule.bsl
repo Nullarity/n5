@@ -52,7 +52,7 @@ Procedure init(Params)
 	SQL.Init(Env);
 	PaymentOrder = Documents.PaymentOrder;
 	BankingApplication = Params.BankingApp;
-	BankingProgram = DF.Pick ( Params.BankingApp, "Application" );
+	BankingProgram = DF.Pick ( BankingApplication, "Application" );
 	JobKey = Params.JobKey;
 	FileAddresses = new Array();
 	FileAddresses.Add(Params.File1);
@@ -87,7 +87,8 @@ Procedure sqlRows()
 	|// #Rows
 	|select Documents.ID as ID, Documents.Date as Date, Documents.Company.CodeFiscal as CodeFiscal,
 	|	case when Documents.Division = value ( Catalog.Divisions.EmptyRef ) then false else true end as HasDivision, Documents.Division.Code as DivisionCode,
-	|	Documents.BankAccount.AccountNumber as AccountNumber, Documents.BankAccount.Bank.Code as BankCode, Documents.RecipientPresentation as RecipientPresentation,
+	|	Documents.BankAccount.AccountNumber as AccountNumber, Documents.BankAccount.Bank.Code as BankCode,
+	|	Documents.RecipientPresentation as RecipientPresentation,
 	|	Documents.Recipient.CodeFiscal as RecipientCodeFiscal, Documents.RecipientBankAccount.AccountNumber as RecipientAccountNumber,
 	|	Documents.RecipientBankAccount.Bank.Code as RecipientBankCode, Documents.Amount - Documents.IncomeTax as AmountWithoutTax, Documents.VATRate.Rate as VATRate,
 	|	case when Documents.VATRate = value ( Catalog.VAT.EmptyRef ) then false else true end as VATFilled, Documents.VAT as VAT, Documents.Amount as Amount,
@@ -100,20 +101,37 @@ Procedure sqlRows()
 	|	Documents.BankAccount.Currency.Code as CurrencyCode, Documents.BankAccount.Currency.Description as CurrencyName,
 	|	case when Documents.Recipient.Alien then ""N"" else ""R"" end as RecipientResidency,
 	|	case when Documents.Company.Alien then ""N"" else ""R"" end as Residency, Documents.Company.Description as CompanyDescription,
-	|	Documents.Salary as Salary
+	|	Documents.Salary as Salary, Documents.Company.PaymentAddress.City.Description as City,
+	|	Documents.Company.PaymentAddress.Street as Street, Documents.Company.PaymentAddress.Building as Building
 	|from Document.PaymentOrder as Documents
 	|where Documents.Ref in ( &Orders )
 	|;
 	|// #Salary
 	|select Totals.Net as Amount, Totals.Employee.FirstName as FirstName, Totals.Employee.LastName as LastName,
-	|	Totals.Employee.Patronymic as Patronymic, Totals.Employee.Code as Code
+	|	Totals.Employee.Patronymic as Patronymic, Totals.Employee.Code as Code, Totals.Employee.PIN as PIN,
+	|	PaymentOrders.Ref as PaymentOrder, Accounts.AccountNumber as Account,
+	|	IDs.Series + IDs.Number as ID, Totals.Employee as Employee
 	|from Document.PayEmployees.Totals as Totals
-	|where Totals.Ref in (
-	|	select distinct Base
-	|	from Document.PaymentOrder
-	|	where Ref in ( &Orders )
-	|	and Ref.RecipientBankAccount.Bank.Application = &BankingApplication
-	|)
+	|	//
+	|	// Payment orders
+	|	//
+	|	join Document.PaymentOrder as PaymentOrders
+	|	on PaymentOrders.Ref in ( &Orders )
+	|	and PaymentOrders.RecipientBankAccount.Bank.Application = &BankingApplication
+	|	and PaymentOrders.Base = Totals.Ref
+	|	//
+	|	// Bank Accounts
+	|	//
+	|	left join Catalog.BankAccounts as Accounts
+	|	on Accounts.Owner = Totals.Employee
+	|	and Accounts.Bank = PaymentOrders.BankAccount.Bank
+	|	and not Accounts.DeletionMark
+	|	//
+	|	// IDs
+	|	//
+	|	left join InformationRegister.ID as IDs
+	|	on IDs.Main
+	|	and IDs.Individual = Totals.Employee
 	|and Totals.Net > 0
 	|";
 	Env.Selection.Add(s);
@@ -657,6 +675,9 @@ Procedure runMaib()
 		dbf.TD = 1;
 	enddo;
 	closeXBase(dbf);
+	if ( salaryExists () ) then
+		unloadMaibSalary ();
+	endif;
 	
 EndProcedure
 
@@ -740,6 +761,71 @@ Function getBIC(AccountNumber, BankCode)
 		endif;
 	endif;
 	return bic
+	
+EndFunction
+
+Procedure unloadMaibSalary ()
+
+	payments = Env.Rows.FindRows ( new Structure ( "Salary", true ) );
+	fields = new Array ();
+	counter = 1;
+	salary = Env.Salary;
+	for each payment in payments do
+		text = new TextDocument();
+		fields.Clear ();
+		fields.Add ( payment.CodeFiscal );
+		fields.Add ( payment.CompanyName );
+		fields.Add ( payment.City );
+		fields.Add ( payment.Street );
+		fields.Add ( payment.Building );
+		fields.Add ( maibAmount ( payment.Amount ) );
+		fields.Add ( payment.CurrencyName );
+		fields.Add ();
+		fields.Add ( "Plata salariului" );
+		text.AddLine ( StrConcat ( fields, "#" ) );
+		employees = salary.FindRows ( new Structure ( "PaymentOrder", payment.PaymentOrder ) );
+		for each row in employees do
+			if ( invalidMaibSalaryRow ( row ) ) then
+				continue;
+			endif;
+			fields.Clear ();
+			fields.Add ( row.PIN );
+			fields.Add ( row.ID );
+			fields.Add ( row.FirstName );
+			fields.Add ( row.LastName );
+			fields.Add ( maibAmount ( row.Amount ) );
+			fields.Add ( row.Account );
+			fields.Add ();
+			text.AddLine ( StrConcat ( fields, "#" ) );
+		enddo;
+		saveText ( text, SalaryFile, false );
+		counter = counter + 1;
+		if ( counter > 999 ) then
+			raise Output.MaibPaymentOrderLimitExceded ();
+		endif;
+	enddo; 
+	
+EndProcedure
+
+Function maibAmount ( Amount )
+	
+	return Format ( Amount, "NS=-2; NG=0" );
+	
+EndFunction
+
+Function invalidMaibSalaryRow ( Row )
+	
+	error = false;
+	employee = Row.Employee;
+	if ( not ValueIsFilled ( Row.ID ) ) then
+		Output.MaibEmptyEmployeeID ( new Structure ( "Employee", employee ), , employee );
+		error = true;
+	endif;
+	if ( not ValueIsFilled ( Row.Account ) ) then
+		Output.MaibEmptyEmployeeAccount ( new Structure ( "Employee", employee ), , employee );
+		error = true;
+	endif;
+	return error;
 	
 EndFunction
 

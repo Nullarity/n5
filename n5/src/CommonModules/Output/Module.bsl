@@ -7951,6 +7951,7 @@ Procedure SelectFilesFolder ( Module = undefined, CallbackParams = undefined, Pa
 
 EndProcedure
 
+&AtClient
 Function SalaryExportNotSupported () export
 
 	text = NStr ( "en = 'Payroll data export is not supported for this bank';ro = 'Exportul de salarii nu este acceptat pentru această bancă';ru = 'Для данного банка экспорт данных по заработной плате не поддерживается'" );
@@ -8803,3 +8804,27 @@ Function ServerReturnedError ( Params = undefined ) export
 	return Output.FormatStr ( s, Params );
 
 EndFunction
+
+&AtServer
+Function MaibPaymentOrderLimitExceded ( Params = undefined ) export
+
+	s = NStr ( "en = 'The limit on the number of payment orders has been exceeded';ro = 'A fost depășită limita privind numărul de ordine de plată';ru = 'Превышен лимит количества платежных поручений'" );
+	return Output.FormatStr ( s, Params );
+
+EndFunction
+
+&AtServer
+Procedure MaibEmptyEmployeeAccount ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ("en = 'The account number for salary transfer is not specified for the employee %Employee';ro = 'Nu este specificat numărul contului pentru transferul salariului pentru angajatul %Employee';ru = 'У сотрудника %Employee не задан номер счёта для перечисления заработной платы'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure MaibEmptyEmployeeID ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ("en = 'The primary document identifying the identity is not specified for the employee %Employee';ro = 'Documentul primar care identifică identitatea nu este specificat pentru angajatul %Employee';ru = 'Для сотрудника %Employee не задан основной документ, идентифицирующий личность'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
