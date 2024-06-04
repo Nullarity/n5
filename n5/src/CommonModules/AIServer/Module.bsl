@@ -191,76 +191,67 @@ EndFunction
 
 Procedure DropFiles ( Parameters ) export
 	
-	connection = prepareConnection ( Parameters.Server );
-	setSession ( connection, Parameters.Session );
-	search = prepareDeletionSearch ( Parameters );
-	removeFiles ( Parameters, search, connection );
+	SetPrivilegedMode ( true );
+	removeReferences ( Parameters );
+	removeFiles ( Parameters );
 		
 EndProcedure
 
-Function prepareDeletionSearch ( Parameters )
-
-	search = new Query ( "
-	|select Files.Login as Login
-	|from InformationRegister.AIFiles as Files
-	|where Files.ID = &ID
-	|and Files.Server = &Server
-	|" );
-	search.SetParameter ( "Server", Parameters.Server );
-	return search;
-
-EndFunction
-
-Procedure removeFiles ( Parameters, Search, Connection )
+Procedure removeReferences ( Parameters )
 	
 	server = Parameters.Server;
-	me = SessionParameters.Login;
+	BeginTransaction ();
 	for each file in Parameters.Files do
-		BeginTransaction ();
-		lockFile ( file );
-		references = findFileReferences ( file, Search );
-		last = true;
-		for each reference in references do
-			if ( reference.Login = me ) then
-				removeFileReference ( file, server );
-			else
-				last = false;
-			endif;
-		enddo;
-		if ( last ) then
-			rewokeFile ( file, Connection );
+		r = InformationRegisters.AIFiles.CreateRecordManager ();
+		r.ID = file.ID;
+		r.Login = file.Login;
+		r.Server = server;
+		r.Delete ();
+	enddo;
+	CommitTransaction ();
+	
+EndProcedure
+
+Procedure removeFiles ( Parameters )
+	
+	connection = undefined;
+	keep = filesInUse ( Parameters );
+	for each file in Parameters.Files do
+		if ( keep.Find ( file.ID ) <> undefined ) then
+			continue;
 		endif;
-		CommitTransaction ();
+		if ( connection = undefined ) then
+			connection = prepareConnection ( Parameters.Server );
+			setSession ( connection, Parameters.Session );
+		endif;
+		rewokeFile ( file, Connection );
 	enddo;
 	
 EndProcedure
 
-Procedure lockFile ( File )
-	
-	lock = new DataLock ();
-	item = lock.Add ( "InformationRegister.AIFiles" );
-	item.Mode = DataLockMode.Exclusive;
-	item.SetValue ( "ID", File.ID );
-	lock.Lock ();
-	
-EndProcedure
+Function filesInUse ( Parameters )
 
-Function findFileReferences ( File, Search )
-	
-	Search.SetParameter ( "ID", File.ID );
-	return Search.Execute ().Unload ();
-	
+	q = new Query ( "
+	|select distinct Files.ID as ID
+	|from InformationRegister.AIFiles as Files
+	|where Files.ID in ( &Files )
+	|and Files.Server = &Server
+	|" );
+	q.SetParameter ( "Files", filesID ( Parameters ) );
+	q.SetParameter ( "Server", Parameters.Server );
+	return q.Execute ().Unload ().UnloadColumn ( "ID" );
+
 EndFunction
 
-Procedure removeFileReference ( File, Server )
+Function filesID ( Parameters )
 	
-	r = InformationRegisters.AIFiles.CreateRecordManager ();
-	r.ID = File.ID;
-	r.Login = SessionParameters.Login;
-	r.Server = Server;
-	r.Delete ();
-
-EndProcedure
+	list = new Array ();
+	for each file in Parameters.Files do
+		list.Add ( file.ID );
+	enddo;
+	return list;
+	
+EndFunction
 
 Procedure rewokeFile ( File, Connection )
 
@@ -454,7 +445,7 @@ EndProcedure
 Function prepareUploadingSearch ( Parameters )
 
 	search = new Query ( "
-	|select allowed top 1 Files.ID as ID, Files.Login = &Me as Exists
+	|select top 1 Files.ID as ID, Files.Login = &Me as Exists
 	|from InformationRegister.AIFiles as Files
 	|where Files.Hash = &Hash
 	|and Files.Server = &Server
@@ -500,6 +491,7 @@ EndFunction
 Function uploadingFileInfo ( Search, Hash )
 	
 	Search.SetParameter ( "Hash", Hash );
+	SetPrivilegedMode ( true );
 	table = Search.Execute ().Unload ();
 	return Conversion.RowToStructure ( table );
 	

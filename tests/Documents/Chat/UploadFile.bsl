@@ -14,5 +14,9 @@ Pick ( "#Assistant", "Thomas" );
 App.SetFileDialogResult ( true, file );
 Click ( "#MenuUpload" );
 #endregion
-Pause ( 5 );
+Pause ( __.Performance * 3 );
+#region testFileContent
+Set ( "#Message", "Tell me about the file attached" );
+Click ( "#FormSend" );
+#endregion
 DeleteFiles ( file );

@@ -490,7 +490,9 @@ Procedure deleteQuestion ()
 	while ( i > messageBegins ) do
 		i = i - 1;
 		row = table [ i ];
-		keep = row.Me and ( row.File or row.Separator );
+		keep = row.Me
+			and ( row.Separator
+				or row.Content = PredefinedValue ( "Enum.ContentType.File" ) );
 		if ( not keep ) then
 			deleteRow ( ThisObject, row );
 		endif;
@@ -501,7 +503,8 @@ EndProcedure
 &AtClient
 Procedure addQuestion ()
 	
-	addRow ( ThisObject, Object.Message, false, true, "", false, false );
+	addRow ( ThisObject, Object.Message, false, true, "",
+		PredefinedValue ( "Enum.ContentType.Text" ), false );
 	Object.Message = "";
 	Items.Message.UpdateEditText ();
 	
@@ -515,7 +518,7 @@ Procedure addSeparator ( Form, Me )
 	row = findRow ( table, "_.Separator" );
 	if ( row = undefined or row.Me <> Me ) then
 		text = ? ( Me, object.Creator, object.Assistant );
-		addRow ( Form, text, false, Me, "", false, true );
+		addRow ( Form, text, false, Me, "", PredefinedValue ( "Enum.ContentType.Text" ), true );
 	endif;
 	
 EndProcedure
@@ -562,14 +565,14 @@ EndFunction
 Function getMessage ( Data )
 	
 	parts = new Array ();
-	weMet = undefined <> findRow ( Object.Data, "_.Me and not _.File and _.ID <> """"" );
+	weMet = undefined <> findRow ( Object.Data, "_.Me and _.Content = Enums.ContentType.Text and _.ID <> """"" );
 	if ( not weMet ) then
 		parts.Add ( Output.AssistantInitializationMessage (
 			new Structure ( "Name, Email", Object.Creator, DF.Pick ( Object.Creator, "Email" ) ) ) ); 
 	endif;
 	id = "";
 	for each row in Data.Data do
-		if ( not row.File ) then
+		if ( row.Content <> Enums.ContentType.File ) then
 			id = row.ID;
 			parts.Add ( row.Text );
 			break;
@@ -586,8 +589,8 @@ Function getFiles ( Data )
 	files = new Array ();
 	table = Data.Data;
 	for each row in table do
-		if ( row.File ) then
-			files.Add ( row.ID );
+		if ( row.Content = Enums.ContentType.File ) then
+			files.Add ( new Structure ( "ID, Name", row.ID, row.Text ) );
 		endif;
 	enddo;
 	return files;
@@ -730,13 +733,14 @@ Procedure applyAnswer ( val Exception )
 	Object.Error = result.Error;
 	setMyMessageID ( result.MessageID );
 	if ( result.Error ) then
-		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ), true, false, "", false, false );
+		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ), true, false, "", Enums.ContentType.Text, false );
 		Appearance.Apply ( ThisObject, "Object.Error" );
 	else
 		Session = result.Session;
 		Object.Thread = result.Thread;
 		increateLinkID ();
-		addAnswer ( result.Messages );
+		processFiles ( result );
+		processAnswer ( result );
 		increateLinkID ();
 	endif;
 	Write ();
@@ -746,7 +750,7 @@ EndProcedure
 &AtServer
 Function fetchResult ( Exception )
 	
-	result = new Structure ( "Error, Messages, Pictures, MessageID, Thread, Session",
+	result = new Structure ( "Error, Messages, Files, MessageID, Thread, Session",
 		false, new Array (), "", "", "" );
 	if ( Exception = undefined ) then
 		json = GetFromTempStorage ( ResultAddress );
@@ -773,7 +777,7 @@ Function fetchResult ( Exception )
 			result.Session = response.Session;
 			data = ReadJSONValue ( message );
 			result.Messages = data.Messages.data;
-			result.Pictures = data.Pictures;
+			result.Files = data.Files;
 			result.Thread = data.Thread;
 			result.MessageID = data.MessageID;
 		endif;
@@ -793,7 +797,7 @@ Procedure setMyMessageID ( ID )
 	endif;
 	info = getMyLastMessage ( ThisObject );
 	for each row in info.Data do
-		if ( not row.File ) then
+		if ( row.Content <> Enums.ContentType.File ) then
 			row.ID = ID;
 			break;
 		endif;
@@ -857,7 +861,7 @@ Function findRows ( Table, Lambda )
 EndFunction
 
 &AtClientAtServerNoContext
-Procedure addRow ( Form, Text, Error, Me, ID, File, Separator )
+Procedure addRow ( Form, Text, Error, Me, ID, Content, Separator )
 	
 	object = Form.Object;
 	data = object.Data.Add ();
@@ -865,7 +869,7 @@ Procedure addRow ( Form, Text, Error, Me, ID, File, Separator )
 	data.Link = link;
 	data.Me = Me;
 	data.ID = ID;
-	data.File = File;
+	data.Content = Content;
 	data.Text = Text;
 	data.Error = Error;
 	data.Separator = Separator;
@@ -881,7 +885,7 @@ Procedure addRow ( Form, Text, Error, Me, ID, File, Separator )
 		row.Error = Error;
 		row.Separator = Separator;
 		row.Me = Me;
-		row.File = File;
+		row.Content = Content;
 		row.ID = ID;
 		row.Link = link;
 	enddo;
@@ -924,7 +928,12 @@ Procedure addElement () export
 	for each element in ChangesQueue do
 		row = table [ element.Value ];
 		document.body.insertAdjacentHTML ( "beforeend", ChatForm.GetParagraph ( Chat, Object, row ) );
-		answer = not ( row.Me or row.Separator or row.File or row.Error );
+		answer = not (
+			row.Me
+			or row.Separator
+			or ( row.Content = PredefinedValue ( "Enum.ContentType.File" ) )
+			or row.Error
+		);
 		if ( answer ) then
 			message = document.getElementById ( ChatForm.ElementID ( row.Element ) );
 			document.defaultView.Prism.highlightAllUnder ( message );
@@ -942,35 +951,42 @@ Procedure addElement () export
 EndProcedure
 
 &AtServer
-Procedure addAnswer ( Messages )
+Procedure processFiles ( Answer )
 	
-	i = Messages.UBound ();
+	BeginTransaction ();
+	table = Object.Files;
+	for each record in Answer.Files do
+		row = table.Add ();
+		FillPropertyValues ( row, record );
+		if ( not record.Picture ) then
+			continue;
+		endif;
+		r = InformationRegisters.ChatPictures.CreateRecordManager ();
+		r.ID = record.ID;
+		r.Picture = new ValueStorage ( Base64Value ( record.Data.Content ) );
+		r.Write ();
+	enddo;
+	CommitTransaction ();
+	
+EndProcedure
+
+&AtServer
+Procedure processAnswer ( Answer )
+	
+	messages = Answer.Messages;
+	i = messages.UBound ();
 	if ( i = -1 ) then
 		return;
 	endif;
-	last = Messages [ 0 ];
+	last = messages [ 0 ];
 	files = Object.Files;
 	for each row in last.content do
 		id = last.id;
 		contentType = row.type;
 		if ( contentType = "text" ) then
-			addRow ( ThisObject, row.text.value, false, false, id, false, false );
-			for each annotation in row.text.annotations do
-				annotationType = annotation.type;
-				if ( annotationType = "file_path" ) then
-					file = files.Add ();
-					file.Link = annotation.text;
-					file.ID = annotation.file_path.file_id;
-				elsif ( annotationType = "file_citation" ) then
-					file = files.Add ();
-					file.Link = annotation.text;
-					file.ID = annotation.file_citation.file_id;
-				endif;
-			enddo;
+			addRow ( ThisObject, row.text.value, false, false, id, Enums.ContentType.Text, false );
 		elsif ( contentType = "image_file" ) then
-			file = files.Add ();
-			file.Link = "";
-			file.ID = row.image_file.file_id;
+			addRow ( ThisObject, row.image_file.file_id, false, false, id, Enums.ContentType.Image, false );
 		endif;
 	enddo;
 	
@@ -1172,7 +1188,8 @@ Procedure CompleteUploading ( Exception, Params ) export
 		applyUploading ( Exception );
 		flushChanges ();
 	else
-		addRow ( ThisObject, Exception, true, true, "", true, false );
+		addRow ( ThisObject, Exception, true, true, "",
+			PredefinedValue ( "Enum.ContentType.File" ), false );
 	endif;
 	scrollMessages ();
 	activateMessage ();
@@ -1193,7 +1210,8 @@ Procedure applyUploading ( val Exception )
 		if ( error = "" ) then
 			addFile ( file.File.Name, file.ID );
 		else
-			addRow ( ThisObject, file.File.Name + ": " + error, true, true, "", true, false );
+			addRow ( ThisObject, file.File.Name + ": " + error, true, true, "",
+				Enums.ContentType.File, false );
 		endif;
 	enddo;
 
@@ -1202,7 +1220,7 @@ EndProcedure
 &AtServer
 Procedure addFile ( Name, ID )
 
-	addRow ( ThisObject, Name, false, true, ID, true, false );
+	addRow ( ThisObject, Name, false, true, ID, Enums.ContentType.File, false );
 	
 EndProcedure
 
@@ -1240,14 +1258,14 @@ EndProcedure
 Function deletionAllowed ()
 	
 	row = Items.Messages.CurrentData;
-	if ( not row.File ) then
+	if ( row.Content <> PredefinedValue ( "Enum.ContentType.File" ) ) then
 		Output.SelectFileForDeletion ();
 		return false;
 	endif;
 	messages = getMyLastMessage ( ThisObject ).Data;
 	sent = ( messages.Count () = 0 );
 	for each row in messages do
-		if ( not row.File ) then
+		if ( row.Content <> PredefinedValue ( "Enum.ContentType.File" ) ) then
 			sent = row.ID <> "";
 			break;
 		endif;

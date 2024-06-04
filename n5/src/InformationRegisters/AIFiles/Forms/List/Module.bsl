@@ -90,7 +90,7 @@ async Procedure delete ( Hard )
 	if ( Hard ) then
 		answer = await Output.RemoveFilesConfirmationAsync ();
 		if ( answer = DialogReturnCode.Yes ) then
-			JobKey = "Uploading " + UUID;
+			JobKey = "Deleting " + UUID;
 			runDeletion ( filesList () );
 			Progress.Open ( JobKey, ThisObject, new CallBackDescription ( "DeletionComplete", ThisObject ), true );
 		endif;
@@ -111,7 +111,8 @@ Function filesList ()
 	table = Items.List;
 	for each id in table.SelectedRows do
 		data = table.RowData ( id );
-		files.Add ( new Structure ( "ID, Name", data.ID, data.Name ) );
+		files.Add ( new Structure ( "Login, ID, Name",
+			data.Login, data.ID, data.Name ) );
 	enddo;
 	return files;
 	
@@ -288,7 +289,9 @@ EndProcedure
 Procedure ListBeforeDeleteRow ( Item, Cancel )
 	
 	Cancel = true;
-	delete ( true );
+	if ( CheckFilling () ) then
+		delete ( true );
+	endif;
 	
 EndProcedure
 

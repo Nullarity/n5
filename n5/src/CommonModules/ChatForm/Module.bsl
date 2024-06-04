@@ -36,6 +36,7 @@ EndFunction
 Function GetParagraph ( Chat, Object, Row ) export
 	
 	id = ChatForm.ElementID ( Row.Element );
+	content = Row.Content;
 	if ( Row.Separator ) then
 		if ( Row.Me ) then
 			text = Object.Creator;
@@ -46,7 +47,7 @@ Function GetParagraph ( Chat, Object, Row ) export
 		endif;
 		return Output.FormatStr ( template, new Structure ( "ID, Name", id,
 			Conversion.PlainTextToHTML ( text ) ) );
-	elsif ( Row.File ) then
+	elsif ( content = PredefinedValue ( "Enum.ContentType.File" ) ) then
 		return Output.FormatStr ( Chat.FileTemplate, new Structure ( "ID, File", id,
 			Conversion.PlainTextToHTML ( Row.Text ) ) );
 	elsif ( Row.Error ) then
@@ -57,11 +58,28 @@ Function GetParagraph ( Chat, Object, Row ) export
 			text = Conversion.PlainTextToHTML ( Row.Text );
 			template = Chat.SenderMessageTemplate;
 		else
-			text = CoreLibrary.MarkdownToHTML ( Row.Text );
+			if ( content = PredefinedValue ( "Enum.ContentType.Image" ) ) then
+				text = "<img src=""" + ChatFormSrv.ImageURL ( Row.Text ) + """>";
+			else
+				text = CoreLibrary.MarkdownToHTML ( fixImages ( Object, Row.Text ) );
+			endif;
 			template = Chat.ReceiverMessageTemplate;
 		endif;
 		return Output.FormatStr ( template, new Structure ( "ID, Text", id, text ) );
 	endif;
+	
+EndFunction
+
+Function fixImages ( Object, HTML )
+	
+	text = HTML;
+	for each row in Object.Files do
+		if ( not row.Picture ) then
+			continue;
+		endif;
+		text = StrReplace ( text, row.Link, ChatFormSrv.ImageURL ( row.ID ) );
+	enddo;
+	return text;
 	
 EndFunction
 
@@ -89,7 +107,7 @@ async Procedure OnClick ( Files, Server, Session, Item, EventData ) export
 	
 EndProcedure
 
-&Client
+&AtClient
 Function fetchFile ( val File, val Server, val Session )
 	
 	p = AIServer.DownloadParams ();
