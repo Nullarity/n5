@@ -249,7 +249,7 @@ EndFunction
 Procedure showFormErrors ( Form, Errors )
 	
 	for each field in Errors do
-		Output.FieldIsEmpty ( , field, , "NewPackage" );
+		Output.FieldIsEmpty ( , field, , "" );
 	enddo; 
 	
 EndProcedure 
