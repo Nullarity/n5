@@ -80,10 +80,10 @@ Procedure readAppearance ()
 	|PaidWarning show Object.Paid;
 	|Base show filled ( Object.Base );
 	|Contract enable Object.Recipient <> Object.Company and not Object.Paid;
+	|Amount lock Object.Salary or Object.Paid;
+	|VAT VATRate IncomeTax IncomeTaxRate ExcludeTaxes Taxes ToCompany hide Object.Salary;
 	|VAT enable filled ( Object.VATRate ) and not Object.Paid;
 	|IncomeTax enable Object.IncomeTaxRate > 0 and not Object.Paid;
-	|Amount lock Object.Salary or Object.Paid;
-	|VATRate IncomeTaxRate ExcludeTaxes Taxes ToCompany hide Object.Salary;
 	|Account show Object.Taxes;
 	|Dim1 show DimLevel > 0 and Object.Taxes;
 	|Dim2 show DimLevel > 1 and Object.Taxes;
