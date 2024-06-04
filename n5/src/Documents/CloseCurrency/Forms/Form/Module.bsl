@@ -59,6 +59,7 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|Calculate ShowDeleted HideDeleted DrCr show filled ( Object.Ref );
 	|ShowDeleted press ShowDeleted;
 	|HideDeleted press not ShowDeleted;
 	|ShowHideDeleted title/Output.HideDeletedAdjustments ShowDeleted;
