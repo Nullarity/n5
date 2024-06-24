@@ -74,3 +74,13 @@ Function CheckItemsFields ( Object ) export
 	return not error;
 	
 EndFunction 
+
+Procedure CheckTables ( Object, CheckedAttributes ) export
+
+	if ( Object.Items.Count () > 0 ) then
+		CheckedAttributes.Add ( "Warehouse" );
+	elsif ( Object.InProgress.Count () = 0 ) then
+		CheckedAttributes.Add ( "Items" );
+	endif;
+
+EndProcedure

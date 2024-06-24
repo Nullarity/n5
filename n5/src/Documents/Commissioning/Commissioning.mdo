@@ -528,7 +528,6 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
-    <fillChecking>ShowError</fillChecking>
     <choiceParameterLinks>
       <name>Filter.Owner</name>
       <field>Document.Commissioning.Attribute.Company</field>
@@ -540,6 +539,11 @@
   </attributes>
   <forms uuid="58f6df4b-391f-4c3d-8036-68fced57605b">
     <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+  <forms uuid="fd2b4ffb-ac22-4312-9be3-fa0c32609d14">
+    <name>InProgressRow</name>
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
@@ -561,6 +565,480 @@
     <usePurposes>PersonalComputer</usePurposes>
     <usePurposes>MobileDevice</usePurposes>
   </forms>
+  <tabularSections uuid="1d2282e8-01cd-4a69-8bba-b85a3d0dc872">
+    <producedTypes>
+      <objectType typeId="60e4c4b5-90aa-4708-b002-651b7e87da18" valueTypeId="2855de3a-afa6-4678-b73e-e0e0f85bc4b2"/>
+      <rowType typeId="37096765-e0be-433c-9345-c454b802fbf5" valueTypeId="1537bd06-a9a4-480b-baba-a1c3f10a4f09"/>
+    </producedTypes>
+    <name>InProgress</name>
+    <synonym>
+      <key>en</key>
+      <value>InProgress</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Активы</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Active</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Commissioning items</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Таблица вводимых в эксплуатацию основных средств</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Tabel de punere în funcțiune a mijloacelor fixe</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <fullTextSearch>Use</fullTextSearch>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="b6e875aa-2eb8-4030-a128-054b3f6d81c7">
+      <name>Acceleration</name>
+      <synonym>
+        <key>en</key>
+        <value>Acceleration Rate</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Коэффициент ускорения</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Coeficientul de accelerare</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>10</precision>
+          <scale>3</scale>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Acceleration rate for the reducing balance method</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Коэффициент ускорения, используется при начислении амортизации методами: Уменьшающегося остатка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Coeficientul de accelerare este utilizat în calculul metodelor de amortizare: Amortizarea degresivă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="5d9f7566-460d-429f-8c6a-9c15dcf1a551">
+      <name>Account</name>
+      <synonym>
+        <key>en</key>
+        <value>Account</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Счет</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Contul</value>
+      </synonym>
+      <type>
+        <types>ChartOfAccountsRef.General</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Writing off item account</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Счет учета списываемого товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Contul de casarea a mărfurilor</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <choiceParameters>
+        <name>Filter.Class</name>
+        <value xsi:type="core:ReferenceValue">
+          <value>Enum.Accounts.EnumValue.FixedAssets</value>
+        </value>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.Folder</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <choiceParameters>
+        <name>Filter.Offline</name>
+        <value xsi:type="core:BooleanValue"/>
+      </choiceParameters>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="b0ababca-2b29-4ecf-b138-f84276e04167">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Suma</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="e5c1010a-1ecf-4577-9f64-b1b4fd06f832">
+      <name>Charge</name>
+      <synonym>
+        <key>en</key>
+        <value>Charge</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Амортизировать</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Amortizează</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>If the flag is enabled, the depreciation will be calculated</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Признак амортизации. Если флаг включен, значит амортизация будет начисляться</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Semn de amortizare. Dacă bifa este setată, se calculează amortizarea</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="fbe7244c-6cec-494a-97d7-c254a4f6c1d3">
+      <name>Expenses</name>
+      <synonym>
+        <key>en</key>
+        <value>Expenses</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Расходы</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cheltuieli</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.ExpenseMethods</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Depreciation expenses</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Способ отражения расходов по амортизации</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Metoda de reflectare a cheltuielilor privind amortizarea</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="d8ac4ecb-fbda-47cb-bb25-5fb902bdc72c">
+      <name>FixedAsset</name>
+      <synonym>
+        <key>en</key>
+        <value>Fixed Asset</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Основное средство</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Imobilizare corporală</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.FixedAssets</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Fixed asset</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Основное средство</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Imobilizare corporală</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="023d62c2-d258-4999-aa4b-4efdaedbf407">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Item</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Товар</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Marfă</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Товар</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Marfă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="02c691d3-9b7c-462c-9789-05724103c60a">
+      <name>LiquidationValue</name>
+      <synonym>
+        <key>en</key>
+        <value>Liquidation Value</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Ликвидационная стоимость</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Valoarea lichidării</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Charges will not be calculated if the balance amount reaches this value</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Остаточная стоимость основного средства, ниже которой начисление амортизации производиться не будет</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Valoarea reziduală a activului, sub care nu se calculează amortizarea</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="6442df26-8b01-44fb-9c06-72de0f997c2d">
+      <name>Method</name>
+      <synonym>
+        <key>en</key>
+        <value>Depreciation Method</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Метод амортизации</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Metoda de amortizare</value>
+      </synonym>
+      <type>
+        <types>EnumRef.Amortization</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Depreciation method</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Метод начисления амортизации</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Metoda de amortizare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="24367216-e894-4b4a-9065-e52fb62e9ea1">
+      <name>Schedule</name>
+      <synonym>
+        <key>en</key>
+        <value>Depreciation Schedule</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>График амортизации</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Schema de amortizare</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.DepreciationSchedules</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Depreciation schedule of fixed assets. Two calculation methods are available: Linear and Reducing balance</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>График амортизации, может использоваться совместно с методами начисления амортизации: Линейный, Уменьшающегося остатка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Schema de amortizare poate fi utilizată împreună cu metodele de depreciere: amortizarea liniara, metoda soldului degresiv </value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="236ecf0b-2a11-462e-85e1-7b0d8ab8b34a">
+      <name>Starting</name>
+      <synonym>
+        <key>en</key>
+        <value>Starting from</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Начиная с</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Începând de la</value>
+      </synonym>
+      <type>
+        <types>Date</types>
+        <dateQualifiers>
+          <dateFractions>Date</dateFractions>
+        </dateQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Depreciation starting month </value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Месяц начала начисления износа</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Luna de început a amortizării </value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+    <attributes uuid="186caa3c-8a64-4d23-aecb-960c3639322e">
+      <name>UsefulLife</name>
+      <synonym>
+        <key>en</key>
+        <value>Lifetime Months</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Месяцев полезного использования</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Luni de utilizare utilă</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>10</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Remaining useful life (months)</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Срок полезного использования, задается справочно, в месяцах</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Durata de viață utilă este stabilită prin referință, în luni</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
+  </tabularSections>
   <tabularSections uuid="cb4af9a9-5bfa-47d5-a031-8d4cce9f1de3">
     <producedTypes>
       <objectType typeId="37c4a248-e716-48d4-b7a4-84aba035066e" valueTypeId="e8707d0d-14fb-4ec8-9dcc-cc2e5ac86e13"/>
@@ -591,7 +1069,6 @@
       <key>ro</key>
       <value>Tabel de punere în funcțiune a mijloacelor fixe</value>
     </toolTip>
-    <fillChecking>ShowError</fillChecking>
     <standardAttributes>
       <dataHistory>Use</dataHistory>
       <name>LineNumber</name>

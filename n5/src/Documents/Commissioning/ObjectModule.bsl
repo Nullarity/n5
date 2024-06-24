@@ -12,6 +12,7 @@ Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 		Cancel = true;
 		return;
 	endif;
+	AssetsForm.CheckTables ( ThisObject, CheckedAttributes );
 	
 EndProcedure
 

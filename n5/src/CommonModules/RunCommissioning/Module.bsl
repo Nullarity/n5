@@ -6,6 +6,7 @@ Function Post ( Env ) export
 	if ( not Env.RestoreCost ) then
 		makeItems ( Env );
 		makeAssets ( Env );
+		commitInProgress ( Env );
 	endif;
 	ItemDetails.Init ( Env );
 	if ( Env.RestoreCost
@@ -36,10 +37,11 @@ Procedure getData ( Env )
 	sqlFields ( Env );
 	getFields ( Env );
 	sqlItems ( Env );
+	sqlInProgress ( Env );
 	if ( not Env.RestoreCost ) then
 		sqlSequence ( Env );
 		sqlQuantity ( Env );
-		sqAssets ( Env );
+		sqlAssets ( Env );
 	endif;
 	if ( Env.RestoreCost
 		or Env.CostOnline ) then
@@ -117,6 +119,39 @@ Procedure sqlItems ( Env )
 	
 EndProcedure
  
+Procedure sqlInProgress ( Env )
+	
+	tangible = Env.FixedAssets;
+	s = "
+	|select Items.Item as Item, Items.Amount as Amount,
+	|	Items.Account as Account
+	|";
+	if ( tangible ) then
+		s = s + ",
+		|	Items.FixedAsset as Asset, Items.FixedAsset.Account as AssetAccount,
+		|	Items.LiquidationValue as LiquidationValue, Items.Schedule as Schedule
+		|";
+	else
+		s = s + ",
+		|	Items.IntangibleAsset as Asset, Items.IntangibleAsset.Account as AssetAccount
+		|";
+	endif; 
+	s = s + ",
+	|	Items.Method as Method, Items.Acceleration as Acceleration, Items.Charge as Charge, Items.Expenses as Expenses,
+	|	Items.Starting as Starting, Items.UsefulLife as UsefulLife,
+	|	&Department as Department, &Employee as Employee
+	|into InProgress
+	|from Document." + Env.Document + ".InProgress as Items
+	|where Items.Ref = &Ref
+	|;
+	|// #InProgress
+	|select *
+	|from InProgress
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
 Procedure sqlSequence ( Env )
 	
 	s = "
@@ -193,20 +228,33 @@ Procedure sqlItemsAndKeys ( Env )
 	
 EndProcedure
 
-Procedure sqAssets ( Env )
+Procedure sqlAssets ( Env )
 	
+	tangible = Env.FixedAssets;
 	s = "
 	|// ^Assets
 	|select Items.Asset as Asset, Items.Department as Department, Items.Employee as Employee, 
 	|	Items.Acceleration as Acceleration, Items.Charge as Charge, Items.Expenses as Expenses,
 	|	Items.Method as Method, Items.Starting as Starting, Items.UsefulLife as UsefulLife
 	|";
-	if ( Env.FixedAssets ) then
+	if ( tangible ) then
 		s = s + ",
 		|Items.LiquidationValue as LiquidationValue, Items.Schedule as Schedule";
 	endif; 
 	s = s + "
 	|from Items as Items
+	|union all
+	|select Items.Asset, Items.Department, Items.Employee, 
+	|	Items.Acceleration, Items.Charge, Items.Expenses,
+	|	Items.Method, Items.Starting, Items.UsefulLife
+	|";
+	if ( tangible ) then
+		s = s + ",
+		|Items.LiquidationValue, Items.Schedule";
+	endif; 
+	s = s + "
+	|from InProgress as Items
+	|where Items.Asset not in ( select Asset from Items )
 	|";
 	Env.Selection.Add ( s );
 	
@@ -238,6 +286,28 @@ Procedure makeItems ( Env )
 		movement.Warehouse = row.Warehouse;
 		movement.Package = row.Package;
 		movement.Quantity = row.Quantity;
+	enddo; 
+	
+EndProcedure
+
+Procedure commitInProgress ( Env )
+	
+	fields = Env.Fields;
+	date = fields.Date;
+	company = fields.Company;
+	p = GeneralRecords.GetParams ();
+	p.Date = date;
+	p.Company = company;
+	p.Operation = Enums.Operations.ItemsRetirement;
+	p.Recordset = Env.Registers.General;
+	for each row in Env.InProgress do
+		p.Amount = row.Amount;
+		p.AccountCr = row.Account;
+		p.DimCr1 = row.Item;
+		p.AccountDr = row.AssetAccount;
+		p.DimDr1 = row.Asset;
+		p.QuantityDr = 1;
+		GeneralRecords.Add ( p );
 	enddo; 
 	
 EndProcedure

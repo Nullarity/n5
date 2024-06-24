@@ -959,9 +959,23 @@ Function ChoiceOperationsFixedAsset () export
 EndFunction 
 
 &AtClient
+Function ChoiceOperationsFixedAssetInProgress () export
+	
+	return "FixedAssetInProgress";
+	
+EndFunction 
+
+&AtClient
 Function ChoiceOperationsIntangibleAsset () export
 	
 	return "IntangibleAsset";
+	
+EndFunction 
+
+&AtClient
+Function ChoiceOperationsIntangibleAssetInProgress () export
+	
+	return "IntangibleAssetInProgress";
 	
 EndFunction 
 
@@ -1043,9 +1057,23 @@ Function ChoiceOperationsFixedAssetSaveAndNew () export
 EndFunction 
 
 &AtClient
+Function ChoiceOperationsFixedAssetInProgressSaveAndNew () export
+	
+	return "FixedAssetInProgressSaveAndNew";
+	
+EndFunction 
+
+&AtClient
 Function ChoiceOperationsIntangibleAssetSaveAndNew () export
 	
 	return "IntangibleAssetSaveAndNew";
+	
+EndFunction 
+
+&AtClient
+Function ChoiceOperationsIntangibleAssetInProgressSaveAndNew () export
+	
+	return "IntangibleAssetInProgressSaveAndNew";
 	
 EndFunction 
 

@@ -30,10 +30,15 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	
 	operation = SelectedValue.Operation;
 	if ( operation = Enum.ChoiceOperationsIntangibleAsset () ) then
-		CommissioningForm.LoadRow( ThisObject, SelectedValue );
-	elsif ( operation = Enum.ChoiceOperationsIntangibleAssetSaveAndNew() ) then
-		CommissioningForm.LoadRow( ThisObject, SelectedValue );
-		CommissioningForm.NewRow ( ThisObject, false );
+		CommissioningForm.LoadRow ( ThisObject, false, SelectedValue );
+	elsif ( operation = Enum.ChoiceOperationsIntangibleAssetSaveAndNew () ) then
+		CommissioningForm.LoadRow ( ThisObject, false, SelectedValue );
+		CommissioningForm.NewRow ( ThisObject, false, false );
+	elsif ( operation = Enum.ChoiceOperationsIntangibleAssetInProgress () ) then
+		CommissioningForm.LoadRow ( ThisObject, true, SelectedValue );
+	elsif ( operation = Enum.ChoiceOperationsIntangibleAssetInProgressSaveAndNew () ) then
+		CommissioningForm.LoadRow ( ThisObject, true, SelectedValue );
+		CommissioningForm.NewRow ( ThisObject, true, false );
 	endif;
 	
 EndProcedure
@@ -77,9 +82,9 @@ EndProcedure
 // *********** Table Items
 
 &AtClient
-Procedure Edit ( Command )
+Procedure EditItems ( Command )
 	
-	CommissioningForm.EditRow ( ThisObject );
+	CommissioningForm.EditRow ( ThisObject, false );
 	
 EndProcedure
 
@@ -94,7 +99,7 @@ EndProcedure
 Procedure ItemsSelection ( Item, SelectedRow, Field, StandardProcessing )
 	
 	StandardProcessing = false;
-	CommissioningForm.EditRow ( ThisObject );
+	CommissioningForm.EditRow ( ThisObject, false );
 
 EndProcedure
 
@@ -102,8 +107,41 @@ EndProcedure
 Procedure ItemsBeforeAddRow ( Item, Cancel, Clone, Parent, Folder, Parameter )
 	
 	Cancel = true;
-	CommissioningForm.NewRow ( ThisObject, Clone );
+	CommissioningForm.NewRow ( ThisObject, false, Clone );
 	
+EndProcedure
+
+// *****************************************
+// *********** Table InProgress
+
+&AtClient
+Procedure EditInProgress ( Command )
+
+	CommissioningForm.EditRow ( ThisObject, true );
+
+EndProcedure
+
+&AtClient
+Procedure InProgressBeforeRowChange ( Item, Cancel )
+
+	Cancel = true;
+
+EndProcedure
+
+&AtClient
+Procedure InProgressSelection ( Item, SelectedRow, Field, StandardProcessing )
+
+	StandardProcessing = false;
+	CommissioningForm.EditRow ( ThisObject, true );
+
+EndProcedure
+
+&AtClient
+Procedure InProgressBeforeAddRow ( Item, Cancel, Clone, Parent, Folder, Parameter )
+
+	Cancel = true;
+	CommissioningForm.NewRow ( ThisObject, true, Clone );
+
 EndProcedure
 
 // *****************************************

@@ -10,6 +10,7 @@ Procedure OnCreateAtServer ( Form ) export
 			fillAssets ( Form );
 		endif;
 	endif;
+	Forms.ActivatePage ( Form, "Items,InProgress" );
 	setLinksCommissioning ( Form );
 	Options.Company ( Form, object.Company );
 	StandardButtons.Arrange ( Form );
@@ -282,12 +283,12 @@ Procedure setURLPanelCommissioning ( Form )
 EndProcedure 
 
 &AtClient
-Procedure EditRow ( Form, NewRow = false ) export
+Procedure EditRow ( Form, InProgress, NewRow = false ) export
 	
 	if ( Form.ReadOnly ) then
 		return;
 	endif;
-	table = Form.Items.Items;
+	table = ? ( InProgress, Form.Items.InProgress, Form.Items.Items );
 	if ( table.CurrentData = undefined ) then
 		return;
 	endif; 
@@ -296,9 +297,17 @@ Procedure EditRow ( Form, NewRow = false ) export
 	p.Insert ( "Company", object.Company );
 	p.Insert ( "NewRow", NewRow );
 	if ( TypeOf ( object.Ref ) = Type ( "DocumentRef.Commissioning" ) ) then
-		name = "Document.Commissioning.Form.Row";
+		if ( InProgress ) then
+			name = "Document.Commissioning.Form.InProgressRow";
+		else
+			name = "Document.Commissioning.Form.Row";
+		endif;
 	else
-		name = "Document.IntangibleAssetsCommissioning.Form.Row";
+		if ( InProgress ) then
+			name = "Document.IntangibleAssetsCommissioning.Form.InProgressRow";
+		else
+			name = "Document.IntangibleAssetsCommissioning.Form.Row";
+		endif;
 	endif; 
 	OpenForm ( name, p, Form );
 	
@@ -338,13 +347,20 @@ Procedure resetFields ( Form, FixedAsset )
 EndProcedure 
 
 &AtClient
-Procedure LoadRow ( Form, Params ) export
+Procedure LoadRow ( Form, InProgress, Params ) export
 	
+	if ( InProgress ) then
+		control = Form.Items.InProgress;
+		table = Form.Object.InProgress;
+	else
+		control = Form.Items.Items;
+		table = Form.Object.Items;
+	endif;
 	value = Params.Value;
-	data = Form.Items.Items.CurrentData;
+	data = control.CurrentData;
 	if ( value = undefined ) then
 		if ( Params.NewRow ) then
-			Form.Object.Items.Delete ( data );
+			table.Delete ( data );
 		endif;
 	else
 		FillPropertyValues ( data, value );
@@ -353,10 +369,10 @@ Procedure LoadRow ( Form, Params ) export
 EndProcedure
 
 &AtClient
-Procedure NewRow ( Form, Clone ) export
+Procedure NewRow ( Form, InProgress, Clone ) export
 	
-	Forms.NewRow ( Form, Form.Items.Items, Clone );
-	CommissioningForm.EditRow ( Form, true );
+	Forms.NewRow ( Form, ? ( InProgress, Form.Items.InProgress, Form.Items.Items ), Clone );
+	CommissioningForm.EditRow ( Form, InProgress, true );
 	
 EndProcedure 
 
@@ -414,3 +430,25 @@ Procedure IntangibleAssetAppearance ( Form ) export
 	Appearance.Read ( Form, rules );
 	
 EndProcedure
+
+&AtClient
+Procedure SetAmount ( Form ) export
+	
+	tableRow = Form.TableRow;
+	account = tableRow.Account;
+	inventory = tableRow.Item;
+	if ( inventory.IsEmpty () or account.IsEmpty () ) then
+		amount = 0;
+	else
+		p = new Structure ();
+		object = Form.Object;
+		p.Insert ( "Date", object.Date );
+		p.Insert ( "Company", object.Company );
+		p.Insert ( "Item", inventory );
+		p.Insert ( "Account", account );
+		amount = CommissioningFormSrv.GetAmount ( p );
+	endif;
+	tableRow.Amount = amount;
+	Form.Inventory = inventory;
+	
+EndProcedure 
