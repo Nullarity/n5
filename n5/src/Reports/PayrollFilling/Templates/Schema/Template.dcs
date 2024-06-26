@@ -715,7 +715,7 @@ from LocationGaps as Previous
 	// Next
 	//
 	join LocationGaps as Next
-	on Next.DateStart &gt; Previous.DateEnd
+	on Next.DateStart &gt;= Previous.DateEnd
 	and Next.Employee = Previous.Employee
 	and Next.Department = Previous.Department
 	and Next.Position = Previous.Position

@@ -476,7 +476,8 @@ group by Location.Day, Location.Employee, Location.Department, Location.Position
 having datediff ( Location.Day, min ( NextPeriods.Day ), day ) &gt; 1
 ;
 // Location
-select Bottom.Day as DateStart, min ( isnull ( Gaps.DateStart, Bottom.LastWorkDay ) ) as DateEnd,
+select Bottom.Day as DateStart,
+	min ( endofperiod ( isnull ( Gaps.DateStart, Bottom.LastWorkDay ), day ) ) as DateEnd,
 	Bottom.Employee as Employee, Bottom.Department as Department, Bottom.Position as Position,
 	Bottom.Schedule as Schedule, Bottom.Expenses as Expenses
 into Location
@@ -487,7 +488,7 @@ from (
 	from LocationByDays as Location
 	where not Location.Absence
 	group by Location.Employee, Location.Department, Location.Position, Location.Schedule, Location.Expenses
-	) as Bottom
+) as Bottom
 	//
 	// Gaps
 	//
@@ -500,7 +501,7 @@ from (
 	and Gaps.Expenses = Bottom.Expenses
 group by Bottom.Day, Bottom.Employee, Bottom.Department, Bottom.Position, Bottom.Schedule, Bottom.Expenses
 union
-select Up.Day, max ( Location.Day ), Up.Employee, Up.Department, Up.Position, Up.Schedule, Up.Expenses
+select Up.Day, endofperiod ( max ( Location.Day ), day ), Up.Employee, Up.Department, Up.Position, Up.Schedule, Up.Expenses
 from (
 	select max ( Gaps.DateEnd ) as Day, Gaps.Employee as Employee, Gaps.Department as Department,
 		Gaps.Position as Position, Gaps.Schedule as Schedule, Gaps.Expenses as Expenses
@@ -520,19 +521,20 @@ from (
 	and not Location.Absence
 group by Up.Day, Up.Employee, Up.Department, Up.Position, Up.Schedule, Up.Expenses
 union
-select Previous.DateEnd, Next.DateStart,
+select Previous.DateEnd, endofperiod ( min ( Next.DateStart ), day ),
 	Previous.Employee, Previous.Department, Previous.Position, Previous.Schedule, Previous.Expenses
 from LocationGaps as Previous
 	//
 	// Next
 	//
 	join LocationGaps as Next
-	on Next.DateStart &gt; Previous.DateEnd
+	on Next.DateStart &gt;= Previous.DateEnd
 	and Next.Employee = Previous.Employee
 	and Next.Department = Previous.Department
 	and Next.Position = Previous.Position
 	and Next.Schedule = Previous.Schedule
 	and Next.Expenses = Previous.Expenses
+group by Previous.DateEnd, Previous.Employee, Previous.Department, Previous.Position, Previous.Schedule, Previous.Expenses
 index by Employee
 ;
 // Intervals
