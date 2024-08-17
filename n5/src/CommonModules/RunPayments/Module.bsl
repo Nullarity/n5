@@ -596,6 +596,7 @@ Function advanceTakenData ( Env, Row )
 	result = new Structure ( "Payment, VAT, VATAccount, AdvanceAccount, ReceivablesVATAccount", , 0 );
 	customerPayment = Type ( "DocumentRef.Payment" );
 	debts = Type ( "DocumentRef.Debts" );
+	adjustDebts = Type ( "DocumentRef.AdjustDebts" );
 	vendorRefund = Type ( "DocumentRef.VendorRefund" );
 	vendorPayment = Type ( "DocumentRef.VendorPayment" );
 	vendorDebts = Type ( "DocumentRef.VendorDebts" );
@@ -605,7 +606,8 @@ Function advanceTakenData ( Env, Row )
 	recorders.Add ( Env.Ref );
 	for each recorder in recorders do
 		type = TypeOf ( recorder );
-		if ( type = customerPayment ) then
+		if ( type = customerPayment
+			or type = adjustDebts ) then
 			set = "AdvanceAccount, ReceivablesVATAccount, VATAdvance.Rate as VAT, VATAccount";
 			break;
 		elsif ( type = debts ) then

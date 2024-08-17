@@ -285,6 +285,8 @@ Function vatAccounts ()
 	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).VATAccount
 	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).VATAccount
 	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).VATAccount
+	|		when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).VATAccount
+	|		when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).VATAccount
 	|		when Adjustments.Document refs Document.Debts then cast ( Adjustments.Document as Document.Debts ).VATAccount
 	|		when Adjustments.Detail refs Document.Debts then cast ( Adjustments.Detail as Document.Debts ).VATAccount
 	|	end as PrepaymentVATAccount,
@@ -293,6 +295,8 @@ Function vatAccounts ()
 	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).ReceivablesVATAccount
 	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).ReceivablesVATAccount
 	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).ReceivablesVATAccount
+	|		when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).ReceivablesVATAccount
+	|		when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).ReceivablesVATAccount
 	|		when Adjustments.Document refs Document.Debts then cast ( Adjustments.Document as Document.Debts ).ReceivablesVATAccount
 	|		when Adjustments.Detail refs Document.Debts then cast ( Adjustments.Detail as Document.Debts ).ReceivablesVATAccount
 	|	end as ReceivablesVATAccount,
@@ -301,6 +305,8 @@ Function vatAccounts ()
 	|		when Adjustments.Detail refs Document.Payment then cast ( Adjustments.Detail as Document.Payment ).VATAdvance.Rate
 	|		when Adjustments.Document refs Document.AdjustDebts then cast ( Adjustments.Document as Document.AdjustDebts ).VATAdvance.Rate
 	|		when Adjustments.Detail refs Document.AdjustDebts then cast ( Adjustments.Detail as Document.AdjustDebts ).VATAdvance.Rate
+	|		when Adjustments.Document refs Document.AdjustVendorDebts then cast ( Adjustments.Document as Document.AdjustVendorDebts ).VATAdvance.Rate
+	|		when Adjustments.Detail refs Document.AdjustVendorDebts then cast ( Adjustments.Detail as Document.AdjustVendorDebts ).VATAdvance.Rate
 	|		when Adjustments.Document refs Document.Debts then cast ( Adjustments.Document as Document.Debts ).VATAdvance.Rate
 	|		when Adjustments.Detail refs Document.Debts then cast ( Adjustments.Detail as Document.Debts ).VATAdvance.Rate
 	|	end as VATAdvanceRate
@@ -683,7 +689,7 @@ Procedure registerAdvance ( Env, Row, ForReceiver, Closing )
 	p.Recordset = Env.Buffer;
 	GeneralRecords.Add ( p );
 	if ( vatFromAdvances ( Env, ForReceiver ) ) then
-		registerAdvanceVAT ( Env, row, ForReceiver, Closing );
+		registerAdvanceVAT ( Env, Row, ForReceiver, Closing );
 	endif;
 	
 EndProcedure
