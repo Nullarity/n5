@@ -29,6 +29,7 @@ if (_ = undefined) then
 	contractDateEnd = undefined;
 	createCredit = false;
 	monthlyAdvances = false;
+	phone = undefined;
 else
 	company = _.Company;
 	government = _.Government;
@@ -52,11 +53,12 @@ else
 	creditLimit = _.CreditLimit;
 	contractDateEnd = _.ContractDateEnd;
 	monthlyAdvances = _.MonthlyAdvances;
+	phone = _.Phone;
 endif;
 //
 // Fill general
 //
-Set("Name", name);
+Set("#FullDescription", "#" + name);
 if (codeFiscal<> undefined) then
 	Set("#CodeFiscal", codeFiscal);
 endif;
@@ -67,6 +69,10 @@ endif;
 
 if ( government ) then
 	Click ( "#Government" );
+endif;
+
+if ( phone <> undefined ) then
+	Set ( "#Phone", phone );
 endif;
 
 Click("#FormWrite");
@@ -195,7 +201,7 @@ With(form);
 //
 // Fill address
 //
-Choose("Payment address");
+Choose("#PaymentAddress");
 addresses = With("Addresses");
 addressesCommands = addresses.GetCommandBar();
 Click("Create", addressesCommands);
