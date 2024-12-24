@@ -67,6 +67,7 @@ EndFunction
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	init ();
 	if ( Object.Ref.IsEmpty () ) then
 		Options.Organization ( ThisObject, Object.Ref );
 		OptionalProperties.Load ( ThisObject );
@@ -84,10 +85,18 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		updateWarning ( ThisObject );
 		setRegistrationDate ();
 	endif; 
+	lockDescription ();
 	OptionalProperties.Access ( ThisObject );
 	StandardButtons.Arrange ( ThisObject );
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
+	
+EndProcedure
+
+&AtServer
+Procedure init ()
+	
+	UseAI = Application.AI ();
 	
 EndProcedure
 
@@ -100,7 +109,10 @@ Procedure readAppearance ()
 	|VendorPage show Object.Vendor;
 	|CustomerPage show Object.Customer;
 	|Write Write1 show empty ( Object.Ref );
-	|Address Birthplace PaymentAddress PaymentContact ShippingAddress ShippingContact ContactPerson CustomerContract VendorContract VendorItems enable filled ( Object.Ref );
+	|CustomerContract VendorContract VendorItems enable filled ( Object.Ref );
+	|PaymentAddress ShippingAddress show filled ( Object.Ref );
+	|AddressInfo show empty ( Object.Ref );
+	|Address Birthplace show Object.Individual and filled ( Object.Ref );
 	|Wholesaler show Object.CustomerType = Enum.CustomerTypes.Branch;
 	|Chain show Object.CustomerType = Enum.CustomerTypes.ChainRetailer;
 	|FormDocumentSalesOrderNew FormDocumentInvoiceNew FormDocumentIOSheetNew show Object.Customer;
@@ -108,8 +120,9 @@ Procedure readAppearance ()
 	|Description lock PropertiesData.ChangeName;
 	|FullDescription lock PropertiesData.ChangeDescription;
 	|OpenObjectUsage enable inlist ( Object.ObjectUsage, Enum.PropertiesUsage.Inherit, Enum.PropertiesUsage.Special );
-	|EntityGroup ContactPerson PaymentContact ShippingContact Government hide Object.Individual;
-	|IndividualGroup1 IndividualGroup2 IndividualGroup3 Address Birthplace show Object.Individual;
+	|ContactPerson PaymentContact ShippingContact hide Object.Individual or empty ( Object.Ref );
+	|EntityGroup Government hide Object.Individual;
+	|IndividualGroup1 IndividualGroup2 IndividualGroup3 show Object.Individual;
 	|VATCode show Object.VATUse > 0;
 	|WrongCode show WrongCode;
 	|Fill hide Object.Individual;
@@ -122,9 +135,7 @@ EndProcedure
 &AtServer
 Procedure fillNew ()
 	
-	if ( Parameters.FillingText <> "" ) then
-		setFullDescription ( ThisObject );
-	else
+	if ( Parameters.FillingText = "" ) then
 		company = Parameters.Company;
 		if ( not company.IsEmpty () ) then
 			Object.Description = company.Description;
@@ -134,6 +145,8 @@ Procedure fillNew ()
 				Object.VATUse = 1;
 			endif;
 		endif;
+	else
+		Object.Description = "";
 	endif; 
 	if ( not Parameters.CopyingValue.IsEmpty () ) then
 		Object.Contact = undefined;
@@ -149,27 +162,18 @@ Procedure fillNew ()
 	
 EndProcedure 
 
-&AtClientAtServerNoContext
-Procedure setFullDescription ( Form )
-	
-	object = Form.Object;
-	object.FullDescription = object.Description;
-	
-EndProcedure 
-
 &AtServer
 Procedure fillByLead ()
 	
 	data = leadData ();
 	Object.Customer = true;
 	Object.Lead = Base;
-	Object.Description = data.OrganizationName;
-	setFullDescription ( ThisObject );
 	Object.Phone = data.BusinessPhone;
 	Object.Email = data.Email;
 	Object.Fax = data.Fax;
 	Object.Web = data.Web;
 	UploadLead = true;
+	fillName ( data.OrganizationName );
 	
 EndProcedure
 
@@ -189,6 +193,15 @@ Procedure setRegistrationDate ()
 EndProcedure
 
 &AtServer
+Procedure lockDescription ()
+	
+	if ( Application.AI () ) then
+		Items.Description.WarningOnEditRepresentation = WarningOnEditRepresentation.Show;
+	endif;
+	
+EndProcedure
+
+&AtServer
 Procedure FillCheckProcessingAtServer ( Cancel, CheckedAttributes )
 	
 	if ( not OptionalProperties.Check ( ThisObject ) ) then
@@ -202,10 +215,8 @@ Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
 	ref = getReference ( CurrentObject );
 	if ( Object.Ref.IsEmpty () ) then
-		createContract ( CurrentObject, ref );
-	endif;
-	if ( WriteParameters.Property ( "Fields" ) ) then
-		loadFields ( CurrentObject, ref, WriteParameters.Fields );
+		OrganizationsForm.CreateContract ( CurrentObject, ref );
+		saveAddress ( CurrentObject, ref );
 	endif;
 	
 EndProcedure
@@ -223,111 +234,18 @@ Function getReference ( CurrentObject )
 EndFunction
 
 &AtServer
-Procedure createContract ( CurrentObject, Ref )
+Procedure saveAddress ( CurrentObject, Ref )
 	
-	SetPrivilegedMode ( true );
-	customer = CurrentObject.Customer;
-	vendor = CurrentObject.Vendor;
-	settings = Logins.Settings ( "Company" );
-	obj = Catalogs.Contracts.CreateItem ();
-	Metafields.Constructor ( obj );
-	obj.DataExchange.Load = true;
-	obj.Owner = ref;
-	obj.Creator = SessionParameters.User;
-	obj.Description = Output.General ();
-	obj.Company = settings.Company;
-	obj.Currency = Application.Currency ();
-	obj.Customer = customer;
-	obj.Vendor = vendor;
-	data = Catalogs.Contracts.GetDefaults ( Ref, customer );
-	monthlyAdvances = data.AdvancesMonthly;
-	closeAdvances = not monthlyAdvances;
-	if ( customer ) then
-		obj.CustomerTerms = Constants.Terms.Get ();
-		obj.CustomerPayment = Constants.PaymentMethod.Get ();
-		obj.CustomerVATAdvance = data.VATAdvance;
-		obj.CustomerAdvancesMonthly = monthlyAdvances;
-		obj.CustomerAdvances = closeAdvances;
-	endif;
-	if ( vendor ) then
-		obj.VendorTerms = Constants.VendorTerms.Get ();
-		obj.VendorPayment = Constants.VendorPaymentMethod.Get ();
-		obj.VendorAdvancesMonthly = monthlyAdvances;
-		obj.VendorAdvances = closeAdvances;
-	endif; 
-	obj.Write ();
-	if ( customer ) then
-		CurrentObject.CustomerContract = obj.Ref;
-	endif; 
-	if ( vendor ) then
-		CurrentObject.VendorContract = obj.Ref;
-	endif; 
-	
-EndProcedure 
-
-&AtServer
-Procedure loadFields ( CurrentObject, Ref, Data )
-
-	SetPrivilegedMode ( true );
-	CurrentObject.Description = Data.Description;
-	CurrentObject.FullDescription = Data.FullDescription;
-	code = Data.VATCode;
-	CurrentObject.VATCode = code;
-	CurrentObject.VATUse = ? ( code = "", 0, 1 );
-	createContact ( CurrentObject, Ref, Data );
-	createAddress ( CurrentObject, Ref, Data );
-		
-EndProcedure
-
-&AtServer
-Procedure createContact ( CurrentObject, Ref, Data )
-	
-	lastName = Data.LastName;
-	if ( lastName = undefined ) then
+	if ( IsBlankString ( AddressInfo.Description ) ) then
 		return;
 	endif;
-	if ( CurrentObject.Contact.IsEmpty () ) then
-		obj = Catalogs.Contacts.CreateItem ();
-	else
-		obj = CurrentObject.Contact.GetObject ();
-	endif;
-	obj.Owner = Ref;
-	obj.Gender = Enums.Sex.Male;
-	obj.LastName = lastName;
-	obj.FirstName = Data.FirstName;
-	obj.Patronymic = Data.Patronymic;
-	obj.Description = ContactsForm.FullName ( obj );
-	obj.ContactType = Catalogs.ContactTypes.Director;
-	obj.DataExchange.Load = true;
-	obj.Write ();
-	contact = obj.Ref;
-	CurrentObject.Contact = contact;
-	CurrentObject.PaymentContact = contact;
-	CurrentObject.ShippingContact = contact;	
-	
-EndProcedure
-
-&AtServer
-Procedure createAddress ( CurrentObject, Ref, Data )
-	
-	address = Data.Address;
-	if ( address = undefined ) then
-		return;
-	endif;
-	if ( CurrentObject.PaymentAddress.IsEmpty () ) then
-		obj = Catalogs.Addresses.CreateItem ();
-	else
-		obj = CurrentObject.PaymentAddress.GetObject ();
-	endif;
-	obj.Owner = Ref;
-	obj.Manual = true;
-	obj.Address = address;
-	obj.Description = address;
-	obj.DataExchange.Load = true;
-	obj.Write ();
-	address = obj.Ref;
-	CurrentObject.PaymentAddress = address;
-	CurrentObject.ShippingAddress = address;	
+	address = FormAttributeToValue ( "AddressInfo" );
+	address.Owner = Ref;
+	address.DataExchange.Load = true;
+	address.Write ();
+	addressRef = address.Ref;
+	CurrentObject.PaymentAddress = addressRef;
+	CurrentObject.ShippingAddress = addressRef;	
 	
 EndProcedure
 
@@ -412,6 +330,198 @@ EndProcedure
 // *********** Group Form
 
 &AtClient
+Procedure CodeFiscalStartChoice ( Item, ChoiceData, ChoiceByAdding, StandardProcessing )
+	
+	StandardProcessing = false;
+	OpenForm ( "Catalog.OrganizationsClassifier.ChoiceForm", , Item );
+	
+EndProcedure
+
+&AtClient
+Procedure CodeFiscalAutoComplete ( Item, Text, ChoiceData, DataGetParameters, Wait, StandardProcessing )
+	
+	if ( Object.Individual or StrLen ( Text ) < 3 ) then
+		return;
+	endif;
+	StandardProcessing = false;
+	ChoiceData = findOrganizations ( Text );
+	
+EndProcedure
+
+&AtServerNoContext
+Function findOrganizations ( val Text )
+	
+	return Catalogs.OrganizationsClassifier.GetChoiceData (
+		new Structure ( "SearchString", Text )
+	);
+	
+EndFunction
+
+&AtClient
+Procedure CodeFiscalChoiceProcessing ( Item, SelectedValue, AdditionalData, ChoiceByAdding, StandardProcessing )
+
+	StandardProcessing = false;
+	WaitForm.Open ( "startFillingByClassifier", SelectedValue, ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure startFillingByClassifier ( Params, SelectedValue ) export
+
+	fillByClassifier ( SelectedValue );
+	WaitForm.Close ();	
+
+EndProcedure
+
+&AtServer
+Procedure fillByClassifier ( val Classifier )
+	
+	applyClassifier ( Classifier );
+	updateWarning ( ThisObject );
+	Modified = true;
+	
+EndProcedure
+
+&AtServer
+Procedure applyClassifier ( Classifier )
+
+	if ( Object.Individual ) then
+		Object.Individual = false;
+		applyIndividual ();
+	endif;
+	fields = DF.Values ( Classifier, "Code, Description, Address" );
+	Object.CodeFiscal = fields.Code;
+	if ( Object.Ref.IsEmpty () ) then
+		fillAddress ( fields.Address );
+	endif;
+	fillName ( fields.Description );
+
+EndProcedure
+
+&AtServer
+Procedure fillAddress ( String )
+	
+	if ( IsBlankString ( String ) ) then
+		return;
+	endif;
+	disableAI = Left ( String, 1 ) = "#";
+	if ( not disableAI and Application.AI () ) then
+		FillPropertyValues ( AddressInfo, DataProcessors.AddressInfo.Get ( String ) );
+	else
+		AddressInfo.Description = ? ( disableAI, TrimAll ( Mid ( String, 2 ) ), String );
+		AddressInfo.Manual = true;
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure fillName ( val String )
+	
+	if ( Left ( String, 1 ) = "#" ) then
+		Object.FullDescription = TrimAll ( Mid ( String, 2 ) );
+		if ( Object.Description = "" ) then
+			Object.Description = Object.FullDescription;
+		endif;
+		return;
+	endif;
+	if ( Application.AI () ) then
+		String = CoreLibrary.CyrillicToRomanian ( String );
+		result = buildName ( String );
+		Object.Description = Collections.Value ( result, "short_name" );
+		Object.FullDescription = Collections.Value ( result, "full_name" );
+	else
+		Object.Description = String;
+		Object.FullDescription = String;
+	endif;
+	Object.Description =
+		CoreLibrary.RomanianToLatin ( TrimAll ( Object.Description ) );
+	Object.FullDescription =
+		CoreLibrary.RomanianToLatin ( TrimAll ( Object.FullDescription ) );
+
+EndProcedure
+
+&AtServer
+Function buildName ( FullName )
+	
+	result = AI.BuildOrganizationName ( FullName );
+	if ( result = undefined ) then
+		return undefined;
+	endif;
+	name = Collections.Value ( result, "short_name", "" );
+	if ( name = "" ) then
+		return undefined;
+	endif;
+	if ( duplicate ( name ) ) then
+		result.short_name = buildUnique ( name, FullName );
+	endif;
+	return result;
+	
+EndFunction
+
+&AtServer
+Function duplicate ( Name )
+	
+	found = Catalogs.Organizations.FindByDescription ( Name, true );
+	return not found.IsEmpty () and found <> Object.Ref;
+
+EndFunction
+
+&AtServer
+Function buildUnique ( ShortName, FullName )
+	
+	if ( Object.Individual ) then
+		newName = ShortName + Output.IndividualSuffix ();
+		if ( not duplicate ( newName ) ) then
+			return newName;
+		endif;
+	endif;
+	address = ? ( Object.Ref.IsEmpty (), AddressInfo, Object.PaymentAddress );
+	parts = new Array ();
+	parts.Add ( address.Country );
+	parts.Add ( address.State );
+	parts.Add ( address.City );
+	parts.Add ( address.Street );
+	parts.Add ( address.Number );
+	name = new Array ();
+	name.Add ( ShortName );
+	for each part in parts do
+		s = String ( part );
+		if ( IsBlankString ( s ) ) then
+			continue;
+		endif;
+		name.Add ( s );
+		candidate = StrConcat ( name, ", " );
+		if ( not duplicate ( candidate ) ) then
+			return candidate;
+		endif;
+	enddo;
+	result = AI.BuildOrganizationName ( FullName, true );
+	newName = Collections.Value ( result, "short_name", "" );
+	return ? ( newName = "", ShortName, newName );
+
+EndFunction
+
+&AtClient
+Procedure CodeFiscalOpening ( Item, StandardProcessing )
+	
+	StandardProcessing = false;
+	OpenForm ( "Catalog.OrganizationsClassifier.ListForm",
+		new Structure ( "CurrentRow", findOrganization ( Object.CodeFiscal ) ), ThisForm );
+	
+EndProcedure
+
+&AtServerNoContext
+Function findOrganization ( val Code )
+	
+	ref = Catalogs.OrganizationsClassifier.FindByCode ( Code );
+	if ( ref.IsEmpty () ) then
+		raise Output.OrganizationIsNotFound ();
+	endif;
+	return ref;
+	
+EndFunction
+
+&AtClient
 Procedure CodeFiscalOnChange ( Item )
 	
 	updateWarning ( ThisObject );
@@ -419,76 +529,20 @@ Procedure CodeFiscalOnChange ( Item )
 EndProcedure
 
 &AtClient
-Procedure Fill ( Command )	
+Procedure AddressInfoOnChange ( Item )
 	
-	if ( not Forms.Check ( ThisObject, "CodeFiscal" ) ) then
-		return;	
+	address = AddressInfo.Description;
+	if ( not IsBlankString ( address ) ) then
+		fillAddress ( address );
 	endif;
-	if ( not Object.Ref.IsEmpty () ) then
-		Output.UpdateByCodeFiscal ( ThisObject );
-		return;
-	endif;
-	if ( WrongCode ) then
-		Output.UpdateByWrongCodeFiscal ( ThisObject );
-		return;		
-	endif;
-	fillByCodeFiscal ();
-		
-EndProcedure
-
-&AtClient
-Procedure UpdateByCodeFiscal ( Answer, Params ) export
-	
-	if ( Answer = DialogReturnCode.No ) then
-		return;
-	endif;
-	fillByCodeFiscal ()
 	
 EndProcedure
 
 &AtClient
-Procedure fillByCodeFiscal ()
+Procedure FullDescriptionOnChange ( Item )
 	
-	LoadKey = UUID;
-	runFilling ();
-	Progress.Open ( LoadKey, ThisObject, new NotifyDescription ( "LoadingComplete", ThisObject ), true );
+	fillName ( Object.FullDescription );
 	
-EndProcedure
-
-&AtServer
-Procedure runFilling ()
-	
-	p = DataProcessors.LoadOrganization.GetParams();
-	p.CodeFiscal = Object.CodeFiscal;
-	AddressLoad = PutToTempStorage ( undefined, UUID );
-	p.Address = AddressLoad;
-	args = new Array ();
-	args.Add ( "LoadOrganization" );
-	args.Add ( p );
-	Jobs.Run ( "Jobs.ExecProcessor", args, LoadKey, , TesterCache.Testing () );
-	
-EndProcedure
-
-&AtClient
-Procedure LoadingComplete ( Result, Params ) export
-
-	if ( Result = undefined ) then
-		return;
-	endif;
-	applyFilling ();	
-	
-EndProcedure
-
-&AtServer
-Procedure applyFilling ()
-	
-	result = GetFromTempStorage ( AddressLoad );
-	if ( result = undefined ) then
-		Output.OrganizationNotFound ();
-	else
-		Write ( new Structure ( "Fields", result ) );	
-	endif;
-		
 EndProcedure
 
 &AtClient
@@ -504,13 +558,6 @@ Procedure applyParent ()
 	OptionalProperties.Load ( ThisObject );
 	
 EndProcedure 
-
-&AtClient
-Procedure DescriptionOnChange ( Item )
-	
-	setFullDescription ( ThisObject );
-	
-EndProcedure
 
 &AtClient
 Procedure PaymentAddressOnChange ( Item )
@@ -609,7 +656,10 @@ EndProcedure
 &AtServer
 Procedure applyIndividual ()
 	
-	if ( not Object.Individual ) then
+	if ( Object.Individual ) then
+		Object.Description = "";
+		Object.FullDescription = "";
+	else
 		Object.FirstName = "";
 		Object.LastName = "";
 		Object.Patronymic = "";
@@ -682,6 +732,9 @@ EndProcedure
 &AtClientAtServerNoContext
 Procedure setName ( Object )
 	
+	Object.FirstName = Title ( Object.FirstName );
+	Object.LastName = Title ( Object.LastName );
+	Object.Patronymic = Title ( Object.Patronymic );
 	name = ContactsForm.FullName ( Object );
 	Object.Description = name;
 	Object.FullDescription = name;

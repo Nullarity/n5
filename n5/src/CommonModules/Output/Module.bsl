@@ -1,6 +1,5 @@
 //@skip-check redundant-export-method
 
-
 // Please do not use NStr () function in complex expressions!
 //
 // The following variant is incorrect:
@@ -1788,7 +1787,6 @@ Procedure PropertyDeletionError ( Module = undefined, CallbackParams = undefined
 
 EndProcedure
 
-&AtClient
 Function Building () export
 
 	text = NStr ( "en='cl.'; ro='cl.'; ru='cl.'" );
@@ -1796,7 +1794,6 @@ Function Building () export
 
 EndFunction
 
-&AtClient
 Function Entrance () export
 
 	text = NStr ( "en='sc.'; ro='sc.'; ru='sc.'" );
@@ -1804,7 +1801,6 @@ Function Entrance () export
 
 EndFunction
 
-&AtClient
 Function Floor () export
 
 	text = NStr ( "en='et.'; ro='et.'; ru='et.'" );
@@ -1812,7 +1808,6 @@ Function Floor () export
 
 EndFunction
 
-&AtClient
 Function Apartment () export
 
 	text = NStr ( "en='ap.'; ro='ap.'; ru='ap.'" );
@@ -1820,7 +1815,6 @@ Function Apartment () export
 
 EndFunction
 
-&AtClient
 Function Municipality () export
 
 	text = NStr ( "en='mun.'; ro='mun.'; ru='mun.'" );
@@ -5616,15 +5610,7 @@ Function OpeningBalancesError () export
 
 EndFunction
 
-&AtClient
-Procedure ActionNotSupported ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "ActionNotSupported" ) export
-
-	text = NStr ( "en='The selected action is not supported in the current window state'; ro='Comanda nu este disponibilă în modul curent de deschidere a ferestrei '; ru='Команда недоступна в текущем режиме открытия окна'" );
-	title = NStr ( "en=''; ro=''; ru=''" );
-	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
-
-EndProcedure
-
+ 
 &AtServer
 Procedure LimitReached ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
@@ -6480,7 +6466,6 @@ Function AuthorizationError ( Params ) export
 
 EndFunction
 
-&AtClient
 Function Street () export
 
 	text = NStr ( "en='str.'; ro='str.'; ru='str.'" );
@@ -7796,32 +7781,6 @@ Procedure PaymentsNotSelected ( Params = undefined, Field = "", DataKey = undefi
 
 EndProcedure
 
-&AtClient
-Procedure UpdateByCodeFiscal ( Module, CallbackParams = undefined, Params = undefined, ProcName = "UpdateByCodeFiscal" ) export
-
-	text = NStr ("en = 'Organization data will be updated. Would you like to continue?'; ro = 'Datele terțului vor fi actualizate, doriți să continuați?'; ru = 'Данные контрагента будут обновлены, продолжить?'" );
-	title = NStr ( "en = ''; ro= ''; ru= ''" );
-	Output.OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
-
-EndProcedure
-
-&AtClient
-Procedure UpdateByWrongCodeFiscal ( Module, CallbackParams = undefined, Params = undefined, ProcName = "UpdateByCodeFiscal" ) export
-
-	text = NStr ("en = 'An organization with the specified fiscal code already exists in the system. Would you like to continue?'; ro = 'O organizație cu codul fiscal specificat există deja în sistem. Doriți să сontinuați?'; ru = 'В системе уже существет организация с указанным фискальным кодом. Продолжить?'" );
-	title = NStr ( "en = ''; ro= ''; ru= ''" );
-	Output.OpenQueryBox ( text, Params, ProcName, Module, CallbackParams, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
-
-EndProcedure
-
-&AtServer
-Procedure OrganizationNotFound ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
-
-	text = NStr ("en = 'There is no data for this fiscal code in the national registry'; ro = 'Nu există date pentru acest cod fiscal în registrul național'; ru = 'По этому фискальному коду в национальном реестре данных нет'" );
-	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
-
-EndProcedure
-
 &AtServer
 Procedure WeakInvoice ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
@@ -8691,7 +8650,7 @@ EndProcedure
 &AtServer
 Function AssistantInitializationMessage ( Params = undefined ) export
 	
-	text = NStr ("ru = 'Привет, моё имя %Name.'; en = 'Hello, my name is %Name.'; ro = 'Bună ziua, numele meu este %Name.'" );
+	text = NStr ("en = 'Hello, my name is %Name, and my email is %Email. Current date and time is %Today'; ro = 'Bună ziua, numele meu este %Name, iar adresa mea de e-mail este %Email. Data și ora curentă este %Today'; ru = 'Привет, моё имя %Name, моя электронная почта %Email. Текущая дата и время: %Today'" );
 	return FormatStr ( text, Params );
 	
 EndFunction
@@ -8711,7 +8670,7 @@ Function JobFailed () export
 
 EndFunction
 
-&AtServer
+&AtClient
 Function SelectPhrase () export
 
 	text = NStr ( "en='Select Phrase'; ro='Selectați fraza'; ru='Выбрать фразу'" );
@@ -8825,6 +8784,73 @@ EndProcedure
 Procedure MaibEmptyEmployeeID ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
 
 	text = NStr ("en = 'The primary document identifying the identity is not specified for the employee %Employee';ro = 'Documentul primar care identifică identitatea nu este specificat pentru angajatul %Employee';ru = 'Для сотрудника %Employee не задан основной документ, идентифицирующий личность'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtServer
+Procedure BarcodeNothingToPrint ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ("en = 'Please select at least one item to print';ro = 'Vă rugăm să selectați cel puțin un element pentru imprimare';ru = 'Пожалуйста, выберите хотя бы один товар для печати'" );
+	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
+
+EndProcedure
+
+&AtClient
+Procedure ActionNotSupported ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "ActionNotSupported" ) export
+
+	text = NStr ( "en='The selected action is not supported in the current window state'; ro='Comanda nu este disponibilă în modul curent de deschidere a ferestrei '; ru='Команда недоступна в текущем режиме открытия окна'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtClient
+Procedure AIFilesNotSupported ( Module = undefined, CallbackParams = undefined, Params = undefined, ProcName = "AIFilesNotSupported" ) export
+
+	text = NStr ( "en = 'Working with files is not supported by the selected provider: %Provider'; ro = 'Lucrul cu fișiere nu este acceptat de furnizorul selectat: %Provider'; ru = 'Работа с файлами не поддерживается выбранным провайдером: %Provider'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	Output.OpenMessageBox ( text, Params, ProcName, Module, CallbackParams, 0, title );
+
+EndProcedure
+
+&AtServer
+Function OrganizationIsNotFound () export
+
+	text = NStr ( "en = 'There is no company in the classifier with this fiscal code'; ro = 'Nu există nicio companie în clasificator cu acest cod fiscal'; ru = 'В классификаторе нет компании с таким фискальным кодом'" );
+	return FormatStr ( text, undefined );
+
+EndFunction
+
+&AtServer
+Function IndividualSuffix () export
+
+	text = NStr ( "en=', (p/f)'; ro=', (p/f)'; ru=', (p/f)'" );
+	return text;
+
+EndFunction
+
+&AtServer
+Function VillagePrefix () export
+
+	text = NStr ( "en='s. '; ro='s. '; ru='s. '" );
+	return text;
+
+EndFunction
+
+&AtClient
+async Function ReplaceValuesConfirmation () export
+
+	text = NStr ( "en = 'Are you sure you want to replace values in the selected objects?';ro = 'Sigur doriți să înlocuiți valorile în obiectele selectate?';ru = 'Заменить значения в выбранных объектах?'" );
+	title = NStr ( "en=''; ro=''; ru=''" );
+	return await openQueryBoxAsync ( text, undefined, QuestionDialogMode.YesNo, 0, DialogReturnCode.Yes, title );
+
+EndFunction
+
+&AtServer
+Procedure WrongReplaceValue ( Params = undefined, Field = "", DataKey = undefined, DataPath = "Object" ) export
+
+	text = NStr ("en = 'The original and replacement values must be different'; ro = 'Valorile originale și cele de înlocuire trebuie să fie diferite'; ru = 'Исходное и заменяемое значения должны отличаться'" );
 	Output.PutMessage ( text, Params, Field, DataKey, DataPath );
 
 EndProcedure

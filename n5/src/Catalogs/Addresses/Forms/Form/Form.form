@@ -7,6 +7,73 @@
       <name>Group2</name>
       <id>70</id>
       <items xsi:type="form:FormField">
+        <name>Description</name>
+        <id>99</id>
+        <title>
+          <key>en</key>
+          <value>Address String</value>
+        </title>
+        <title>
+          <key>ro</key>
+          <value>Sir de adrese</value>
+        </title>
+        <title>
+          <key>ru</key>
+          <value>Строка с адресом</value>
+        </title>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>Object.Description</segments>
+        </dataPath>
+        <handlers>
+          <event>OnChange</event>
+          <name>DescriptionOnChange</name>
+        </handlers>
+        <extendedTooltip>
+          <name>DescriptionExtendedTooltip</name>
+          <id>101</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>DescriptionContextMenu</name>
+          <id>100</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>InputField</type>
+        <editMode>Enter</editMode>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:InputFieldExtInfo">
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <wrap>true</wrap>
+          <extendedEditMultipleValues>true</extendedEditMultipleValues>
+          <chooseType>true</chooseType>
+          <typeDomainEnabled>true</typeDomainEnabled>
+          <textEdit>true</textEdit>
+        </extInfo>
+      </items>
+      <items xsi:type="form:FormField">
         <name>Country</name>
         <id>19</id>
         <visible>true</visible>
@@ -1278,6 +1345,19 @@
     <valueType>
       <types>String</types>
       <stringQualifiers/>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>UseAI</name>
+    <id>4</id>
+    <valueType>
+      <types>Boolean</types>
     </valueType>
     <view>
       <common>true</common>

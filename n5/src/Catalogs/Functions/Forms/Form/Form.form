@@ -113,10 +113,6 @@
     <dataPath xsi:type="form:DataPath">
       <segments>Object.Description</segments>
     </dataPath>
-    <handlers>
-      <event>OnChange</event>
-      <name>DescriptionOnChange</name>
-    </handlers>
     <extendedTooltip>
       <name>DescriptionExtendedTooltip</name>
       <id>6</id>
@@ -820,8 +816,8 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormGroup">
-      <name>ArgumentsGroup3</name>
-      <id>69</id>
+      <name>ArgumentsGroup5</name>
+      <id>76</id>
       <items xsi:type="form:FormField">
         <name>ArgumentsMandatory</name>
         <id>38</id>
@@ -866,6 +862,78 @@
         <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
       </items>
       <items xsi:type="form:FormField">
+        <name>ArgumentsAllowEmpty</name>
+        <id>78</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>Object.Arguments.AllowEmpty</segments>
+        </dataPath>
+        <extendedTooltip>
+          <name>ArgumentsAllowEmptyExtendedTooltip</name>
+          <id>80</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>ArgumentsAllowEmptyContextMenu</name>
+          <id>79</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>CheckBoxField</type>
+        <editMode>EnterOnInput</editMode>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+      </items>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <extendedTooltip>
+        <name>ArgumentsGroup5ExtendedTooltip</name>
+        <id>77</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <type>ColumnGroup</type>
+      <extInfo xsi:type="form:ColumnGroupExtInfo">
+        <group>Vertical</group>
+        <showTitle>true</showTitle>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormGroup">
+      <name>ArgumentsGroup3</name>
+      <id>69</id>
+      <items xsi:type="form:FormField">
         <name>ArgumentsConstant</name>
         <id>56</id>
         <visible>true</visible>
@@ -894,6 +962,49 @@
         <contextMenu>
           <name>ArgumentsConstantContextMenu</name>
           <id>57</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <autoFill>true</autoFill>
+        </contextMenu>
+        <type>CheckBoxField</type>
+        <editMode>EnterOnInput</editMode>
+        <showInHeader>true</showInHeader>
+        <headerHorizontalAlign>Left</headerHorizontalAlign>
+        <showInFooter>true</showInFooter>
+        <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
+      </items>
+      <items xsi:type="form:FormField">
+        <name>ArgumentsInclude</name>
+        <id>73</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <dataPath xsi:type="form:DataPath">
+          <segments>Object.Arguments.Include</segments>
+        </dataPath>
+        <extendedTooltip>
+          <name>ArgumentsIncludeExtendedTooltip</name>
+          <id>75</id>
+          <visible>true</visible>
+          <enabled>true</enabled>
+          <userVisible>
+            <common>true</common>
+          </userVisible>
+          <type>Label</type>
+          <autoMaxWidth>true</autoMaxWidth>
+          <autoMaxHeight>true</autoMaxHeight>
+          <extInfo xsi:type="form:LabelDecorationExtInfo">
+            <horizontalAlign>Left</horizontalAlign>
+          </extInfo>
+        </extendedTooltip>
+        <contextMenu>
+          <name>ArgumentsIncludeContextMenu</name>
+          <id>74</id>
           <visible>true</visible>
           <enabled>true</enabled>
           <userVisible>
@@ -978,7 +1089,7 @@
         </userVisible>
         <autoFill>true</autoFill>
       </contextMenu>
-      <source>ArgumentsSearchString</source>
+      <source>Arguments</source>
       <extInfo xsi:type="form:SearchStringAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>
@@ -1017,7 +1128,7 @@
         <autoFill>true</autoFill>
       </contextMenu>
       <type>ViewStatusAddition</type>
-      <source>ArgumentsViewStatus</source>
+      <source>Arguments</source>
       <extInfo xsi:type="form:ViewStatusAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>
@@ -1056,7 +1167,7 @@
         <autoFill>true</autoFill>
       </contextMenu>
       <type>SearchControlAddition</type>
-      <source>ArgumentsSearchControl</source>
+      <source>Arguments</source>
       <extInfo xsi:type="form:SearchControlAdditionExtInfo">
         <autoMaxWidth>true</autoMaxWidth>
       </extInfo>

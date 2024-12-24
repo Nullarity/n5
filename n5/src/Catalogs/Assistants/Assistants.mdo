@@ -282,11 +282,54 @@
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
+    <choiceParameterLinks>
+      <name>Filter.Provider</name>
+      <field>Catalog.Assistants.Attribute.Provider</field>
+    </choiceParameterLinks>
     <choiceParameters>
       <name>Filter.Inactive</name>
       <value xsi:type="core:BooleanValue"/>
     </choiceParameters>
+    <fillFromFillingValue>true</fillFromFillingValue>
     <fillValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="14fcb1c7-7fbf-48c2-9e42-dfd99856dc24">
+    <name>Provider</name>
+    <synonym>
+      <key>en</key>
+      <value>Provider</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Furnizor</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поставщик</value>
+    </synonym>
+    <type>
+      <types>EnumRef.AIProviders</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Provider</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Furnizor</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Поставщик</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+    <fillFromFillingValue>true</fillFromFillingValue>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.AIProviders.EmptyRef</value>
+    </fillValue>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="be340c70-6501-4c6f-be1a-4f808e1cfba6">
@@ -431,6 +474,48 @@
     <maxValue xsi:type="core:UndefinedValue"/>
     <fillChecking>ShowError</fillChecking>
     <fillValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="34456574-985e-488d-b375-242cb5adae5b">
+    <name>Temperature</name>
+    <synonym>
+      <key>en</key>
+      <value>Temperature</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Creativitate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Креативность</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>3</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>What sampling temperature to use, between 0 and 2 for OpenAI and between 0 and 1 for Anthropic. Higher values make the output more creative, while lower values will make it more focused and deterministic.</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Ce temperatură de eșantionare se utilizează, între 0 și 2 pentru OpenAI și între 0 și 1 pentru Anthropic. Valorile mai mari fac ca rezultatul să fie mai creativ, în timp ce valorile mai mici îl vor face mai concentrat și determinist</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Какая температура выборки будет использоваться: от 0 до 2 для OpenAI и от 0 до 1 для Anthropic. Более высокие значения делают вывод более творческим, в то время как более низкие значения делают его более сфокусированным и детерминированным</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>2</value>
+    </maxValue>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
   </attributes>
   <attributes uuid="d25e025b-d873-4eed-927e-4fa4fb037d7a">
@@ -636,6 +721,39 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <fillChecking>ShowError</fillChecking>
+      <dataHistory>Use</dataHistory>
+    </attributes>
+    <attributes uuid="aab9b290-23c9-4077-bca1-a8a7162cf1bb">
+      <name>System</name>
+      <synonym>
+        <key>en</key>
+        <value>System</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sistem</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Системная</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Include instructions into the system prompt</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Includeți instrucțiuni în promptul sistemului</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Включение описаний функций в системные инструкции</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
     </attributes>
   </tabularSections>

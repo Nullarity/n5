@@ -17,3 +17,18 @@ Procedure Click ( Item, SelectedRow, Field, StandardProcessing ) export
 	endif;
 	
 EndProcedure
+
+&AtClient
+Procedure ApplyAction ( Source, Action ) export
+
+	if ( TypeOf ( Source ) = Type ( "TaskRef.UserTask" ) ) then
+		PerformerTasksSrv.ApplyAction ( Source, Action );
+	else
+		object = Source.Object;
+		object.Action = Action;
+		params = new Structure ( "ВыполнитьЗадачу", true );
+		Source.Write ( params );
+		Source.Close ();
+	endif;
+
+EndProcedure

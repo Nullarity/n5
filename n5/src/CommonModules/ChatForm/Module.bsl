@@ -27,6 +27,9 @@ Function getBody ( Chat, Object )
 	
 	parts = new Array ();
 	for each row in Object.Data do
+		if ( row.System ) then
+			continue;
+		endif;
 		parts.Add ( ChatForm.GetParagraph ( Chat, Object, row ) );
 	enddo;
 	return StrConcat ( parts );
@@ -61,12 +64,22 @@ Function GetParagraph ( Chat, Object, Row ) export
 			if ( content = PredefinedValue ( "Enum.ContentType.Image" ) ) then
 				text = "<img src=""" + ChatFormSrv.ImageURL ( Row.Text ) + """>";
 			else
-				text = CoreLibrary.MarkdownToHTML ( fixImages ( Object, Row.Text ) );
+				text = prepareText ( Object, Row );
 			endif;
 			template = Chat.ReceiverMessageTemplate;
 		endif;
 		return Output.FormatStr ( template, new Structure ( "ID, Text", id, text ) );
 	endif;
+	
+EndFunction
+
+Function prepareText ( Object, Row )
+	
+	text = Row.Text;
+	if ( Object.Provider = PredefinedValue ( "Enum.AIProviders.Anthropic" ) ) then
+		text = CoreLibrary.CleanAnthropicAnswer ( text );
+	endif;
+	return CoreLibrary.MarkdownToHTML ( fixImages ( Object, text ) )
 	
 EndFunction
 

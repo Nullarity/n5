@@ -318,103 +318,25 @@
     <showInFooter>true</showInFooter>
     <extInfo xsi:type="form:CheckBoxFieldExtInfo"/>
   </items>
-  <items xsi:type="form:FormGroup">
-    <name>CodeFiscalGroup</name>
-    <id>350</id>
-    <items xsi:type="form:FormField">
-      <name>CodeFiscal</name>
-      <id>265</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <dataPath xsi:type="form:DataPath">
-        <segments>Object.CodeFiscal</segments>
-      </dataPath>
-      <handlers>
-        <event>OnChange</event>
-        <name>CodeFiscalOnChange</name>
-      </handlers>
-      <extendedTooltip>
-        <name>CodeFiscalExtendedTooltip</name>
-        <id>267</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <type>Label</type>
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-        <extInfo xsi:type="form:LabelDecorationExtInfo">
-          <horizontalAlign>Left</horizontalAlign>
-        </extInfo>
-      </extendedTooltip>
-      <contextMenu>
-        <name>CodeFiscalContextMenu</name>
-        <id>266</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <autoFill>true</autoFill>
-      </contextMenu>
-      <type>InputField</type>
-      <editMode>Enter</editMode>
-      <showInHeader>true</showInHeader>
-      <headerHorizontalAlign>Left</headerHorizontalAlign>
-      <showInFooter>true</showInFooter>
-      <extInfo xsi:type="form:InputFieldExtInfo">
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-        <wrap>true</wrap>
-        <chooseType>true</chooseType>
-        <typeDomainEnabled>true</typeDomainEnabled>
-        <textEdit>true</textEdit>
-      </extInfo>
-    </items>
-    <items xsi:type="form:Button">
-      <name>Fill</name>
-      <id>352</id>
-      <visible>true</visible>
-      <enabled>true</enabled>
-      <userVisible>
-        <common>true</common>
-      </userVisible>
-      <extendedTooltip>
-        <name>FillExtendedTooltip</name>
-        <id>353</id>
-        <visible>true</visible>
-        <enabled>true</enabled>
-        <userVisible>
-          <common>true</common>
-        </userVisible>
-        <type>Label</type>
-        <autoMaxWidth>true</autoMaxWidth>
-        <autoMaxHeight>true</autoMaxHeight>
-        <extInfo xsi:type="form:LabelDecorationExtInfo">
-          <horizontalAlign>Left</horizontalAlign>
-        </extInfo>
-      </extendedTooltip>
-      <type>UsualButton</type>
-      <commandName>Form.Command.Fill</commandName>
-      <representation>Auto</representation>
-      <autoMaxWidth>true</autoMaxWidth>
-      <autoMaxHeight>true</autoMaxHeight>
-      <placementArea>UserCmds</placementArea>
-      <representationInContextMenu>Auto</representationInContextMenu>
-    </items>
+  <items xsi:type="form:FormField">
+    <name>CodeFiscal</name>
+    <id>265</id>
     <visible>true</visible>
     <enabled>true</enabled>
     <userVisible>
       <common>true</common>
     </userVisible>
-    <enableContentChange>true</enableContentChange>
+    <dataPath xsi:type="form:DataPath">
+      <segments>Object.CodeFiscal</segments>
+    </dataPath>
+    <defaultItem>true</defaultItem>
+    <handlers>
+      <event>OnChange</event>
+      <name>CodeFiscalOnChange</name>
+    </handlers>
     <extendedTooltip>
-      <name>CodeFiscalGroupExtendedTooltip</name>
-      <id>351</id>
+      <name>CodeFiscalExtendedTooltip</name>
+      <id>267</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
@@ -427,13 +349,58 @@
         <horizontalAlign>Left</horizontalAlign>
       </extInfo>
     </extendedTooltip>
-    <type>UsualGroup</type>
-    <extInfo xsi:type="form:UsualGroupExtInfo">
-      <group>HorizontalIfPossible</group>
-      <showLeftMargin>true</showLeftMargin>
-      <united>true</united>
-      <throughAlign>Auto</throughAlign>
-      <currentRowUse>Auto</currentRowUse>
+    <contextMenu>
+      <name>CodeFiscalContextMenu</name>
+      <id>266</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <handlers>
+        <event>AutoComplete</event>
+        <name>CodeFiscalAutoComplete</name>
+      </handlers>
+      <handlers>
+        <event>StartChoice</event>
+        <name>CodeFiscalStartChoice</name>
+      </handlers>
+      <handlers>
+        <event>Opening</event>
+        <name>CodeFiscalOpening</name>
+      </handlers>
+      <handlers>
+        <event>ChoiceProcessing</event>
+        <name>CodeFiscalChoiceProcessing</name>
+      </handlers>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <choiceButton>true</choiceButton>
+      <openButton>true</openButton>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+      <inputHint>
+        <key>en</key>
+        <value>Fiscal code or part of the name</value>
+      </inputHint>
+      <inputHint>
+        <key>ro</key>
+        <value>Codul fiscal sau o parte a denumirii</value>
+      </inputHint>
+      <inputHint>
+        <key>ru</key>
+        <value>Фискальный код или часть названия</value>
+      </inputHint>
     </extInfo>
   </items>
   <items xsi:type="form:FormGroup">
@@ -563,27 +530,95 @@
       <currentRowUse>Auto</currentRowUse>
     </extInfo>
   </items>
+  <items xsi:type="form:FormField">
+    <name>AddressInfo</name>
+    <id>371</id>
+    <title>
+      <key>en</key>
+      <value>Payment Address</value>
+    </title>
+    <title>
+      <key>ro</key>
+      <value>Adresa juridică</value>
+    </title>
+    <title>
+      <key>ru</key>
+      <value>Юридический адрес</value>
+    </title>
+    <visible>true</visible>
+    <enabled>true</enabled>
+    <userVisible>
+      <common>true</common>
+    </userVisible>
+    <dataPath xsi:type="form:DataPath">
+      <segments>AddressInfo.Description</segments>
+    </dataPath>
+    <handlers>
+      <event>OnChange</event>
+      <name>AddressInfoOnChange</name>
+    </handlers>
+    <extendedTooltip>
+      <name>AddressInfoExtendedTooltip</name>
+      <id>373</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <type>Label</type>
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <extInfo xsi:type="form:LabelDecorationExtInfo">
+        <horizontalAlign>Left</horizontalAlign>
+      </extInfo>
+    </extendedTooltip>
+    <contextMenu>
+      <name>AddressInfoContextMenu</name>
+      <id>372</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <autoFill>true</autoFill>
+    </contextMenu>
+    <type>InputField</type>
+    <editMode>Enter</editMode>
+    <showInHeader>true</showInHeader>
+    <headerHorizontalAlign>Left</headerHorizontalAlign>
+    <showInFooter>true</showInFooter>
+    <extInfo xsi:type="form:InputFieldExtInfo">
+      <autoMaxWidth>true</autoMaxWidth>
+      <autoMaxHeight>true</autoMaxHeight>
+      <wrap>true</wrap>
+      <extendedEditMultipleValues>true</extendedEditMultipleValues>
+      <chooseType>true</chooseType>
+      <typeDomainEnabled>true</typeDomainEnabled>
+      <textEdit>true</textEdit>
+    </extInfo>
+  </items>
   <items xsi:type="form:FormGroup">
     <name>EntityGroup</name>
     <id>268</id>
     <items xsi:type="form:FormField">
-      <name>Description</name>
-      <id>4</id>
+      <name>FullDescription</name>
+      <id>34</id>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>Object.Description</segments>
+        <segments>Object.FullDescription</segments>
       </dataPath>
+      <titleLocation>Left</titleLocation>
       <handlers>
         <event>OnChange</event>
-        <name>DescriptionOnChange</name>
+        <name>FullDescriptionOnChange</name>
       </handlers>
       <extendedTooltip>
-        <name>DescriptionExtendedTooltip</name>
-        <id>6</id>
+        <name>FullDescriptionExtendedTooltip</name>
+        <id>36</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -597,8 +632,8 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>DescriptionContextMenu</name>
-        <id>5</id>
+        <name>FullDescriptionContextMenu</name>
+        <id>35</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -622,20 +657,31 @@
       </extInfo>
     </items>
     <items xsi:type="form:FormField">
-      <name>FullDescription</name>
-      <id>34</id>
+      <name>Description</name>
+      <id>4</id>
+      <title>
+        <key>en</key>
+        <value>Short</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Scurt</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Короткое</value>
+      </title>
       <visible>true</visible>
       <enabled>true</enabled>
       <userVisible>
         <common>true</common>
       </userVisible>
       <dataPath xsi:type="form:DataPath">
-        <segments>Object.FullDescription</segments>
+        <segments>Object.Description</segments>
       </dataPath>
-      <titleLocation>Left</titleLocation>
       <extendedTooltip>
-        <name>FullDescriptionExtendedTooltip</name>
-        <id>36</id>
+        <name>DescriptionExtendedTooltip</name>
+        <id>6</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -649,8 +695,8 @@
         </extInfo>
       </extendedTooltip>
       <contextMenu>
-        <name>FullDescriptionContextMenu</name>
-        <id>35</id>
+        <name>DescriptionContextMenu</name>
+        <id>5</id>
         <visible>true</visible>
         <enabled>true</enabled>
         <userVisible>
@@ -862,6 +908,81 @@
         <autoFill>true</autoFill>
       </contextMenu>
       <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <chooseType>true</chooseType>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>DescriptionIndividual</name>
+      <id>374</id>
+      <title>
+        <key>en</key>
+        <value>Presentation</value>
+      </title>
+      <title>
+        <key>ro</key>
+        <value>Prezentare</value>
+      </title>
+      <title>
+        <key>ru</key>
+        <value>Представление</value>
+      </title>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>Object.Description</segments>
+      </dataPath>
+      <toolTip>
+        <key>en</key>
+        <value>Short presentation in the infobase</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Scurtă prezentare în infobase</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Краткое представление в инфобазе</value>
+      </toolTip>
+      <extendedTooltip>
+        <name>DescriptionIndividualExtendedTooltip</name>
+        <id>376</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>DescriptionIndividualContextMenu</name>
+        <id>375</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <warningOnEditRepresentation>Show</warningOnEditRepresentation>
       <editMode>Enter</editMode>
       <showInHeader>true</showInHeader>
       <headerHorizontalAlign>Left</headerHorizontalAlign>
@@ -2980,7 +3101,7 @@
           </userVisible>
           <autoFill>true</autoFill>
         </contextMenu>
-        <source>VendorItemsSearchString</source>
+        <source>VendorItems</source>
         <extInfo xsi:type="form:SearchStringAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -3019,7 +3140,7 @@
           <autoFill>true</autoFill>
         </contextMenu>
         <type>ViewStatusAddition</type>
-        <source>VendorItemsViewStatus</source>
+        <source>VendorItems</source>
         <extInfo xsi:type="form:ViewStatusAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -3058,7 +3179,7 @@
           <autoFill>true</autoFill>
         </contextMenu>
         <type>SearchControlAddition</type>
-        <source>VendorItemsSearchControl</source>
+        <source>VendorItems</source>
         <extInfo xsi:type="form:SearchControlAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -3392,7 +3513,7 @@ Prioritatea egală poate fi stabilită pentru mai mulți utilizatori. Aceștia p
           </userVisible>
           <autoFill>true</autoFill>
         </contextMenu>
-        <source>ApprovalListSearchString</source>
+        <source>ApprovalList</source>
         <extInfo xsi:type="form:SearchStringAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -3431,7 +3552,7 @@ Prioritatea egală poate fi stabilită pentru mai mulți utilizatori. Aceștia p
           <autoFill>true</autoFill>
         </contextMenu>
         <type>ViewStatusAddition</type>
-        <source>ApprovalListViewStatus</source>
+        <source>ApprovalList</source>
         <extInfo xsi:type="form:ViewStatusAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -3470,7 +3591,7 @@ Prioritatea egală poate fi stabilită pentru mai mulți utilizatori. Aceștia p
           <autoFill>true</autoFill>
         </contextMenu>
         <type>SearchControlAddition</type>
-        <source>ApprovalListSearchControl</source>
+        <source>ApprovalList</source>
         <extInfo xsi:type="form:SearchControlAdditionExtInfo">
           <autoMaxWidth>true</autoMaxWidth>
         </extInfo>
@@ -4258,47 +4379,23 @@ Prioritatea egală poate fi stabilită pentru mai mulți utilizatori. Aceștia p
     </edit>
   </attributes>
   <attributes>
-    <name>LoadKey</name>
-    <title>
-      <key>ru</key>
-      <value>Load key</value>
-    </title>
-    <id>7</id>
-    <valueType>
-      <types>String</types>
-      <stringQualifiers/>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
-  </attributes>
-  <attributes>
-    <name>AddressLoad</name>
-    <title>
-      <key>ru</key>
-      <value>Address load</value>
-    </title>
-    <id>8</id>
-    <valueType>
-      <types>String</types>
-      <stringQualifiers/>
-    </valueType>
-    <view>
-      <common>true</common>
-    </view>
-    <edit>
-      <common>true</common>
-    </edit>
-  </attributes>
-  <attributes>
-    <name>AddressRead</name>
+    <name>AddressInfo</name>
     <id>9</id>
     <valueType>
-      <types>String</types>
-      <stringQualifiers/>
+      <types>CatalogObject.Addresses</types>
+    </valueType>
+    <view>
+      <common>true</common>
+    </view>
+    <edit>
+      <common>true</common>
+    </edit>
+  </attributes>
+  <attributes>
+    <name>UseAI</name>
+    <id>10</id>
+    <valueType>
+      <types>Boolean</types>
     </valueType>
     <view>
       <common>true</common>
@@ -4343,43 +4440,6 @@ Prioritatea egală poate fi stabilită pentru mai mulți utilizatori. Aceștia p
       </handler>
     </action>
     <currentRowUse>DontUse</currentRowUse>
-  </formCommands>
-  <formCommands>
-    <name>Fill</name>
-    <title>
-      <key>en</key>
-      <value>Fill</value>
-    </title>
-    <title>
-      <key>ru</key>
-      <value>Заполнить</value>
-    </title>
-    <title>
-      <key>ro</key>
-      <value>Completați</value>
-    </title>
-    <id>2</id>
-    <toolTip>
-      <key>en</key>
-      <value>Fill out the fields according to the national registry</value>
-    </toolTip>
-    <toolTip>
-      <key>ru</key>
-      <value>Заполнить поля согласно данным национального реестра</value>
-    </toolTip>
-    <toolTip>
-      <key>ro</key>
-      <value>Completează câmpurile conform registrului național</value>
-    </toolTip>
-    <use>
-      <common>true</common>
-    </use>
-    <action xsi:type="form:FormCommandHandlerContainer">
-      <handler>
-        <name>Fill</name>
-      </handler>
-    </action>
-    <currentRowUse>Auto</currentRowUse>
   </formCommands>
   <parameters>
     <name>Company</name>

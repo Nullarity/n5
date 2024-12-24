@@ -375,6 +375,13 @@ Function MessageChangesPermissionIsSaved () export
 	
 EndFunction 
 
+&AtClient
+Function MessageCloseWaitWindow () export
+	
+	return "300";
+	
+EndFunction 
+
 #endregion
 
 #region DocumentCommands

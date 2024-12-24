@@ -27,7 +27,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	updateChangesPermission ();
 	Constraints.ShowSales ( ThisObject );
-	updateBalanceDue ();
+	InvoiceForm.UpdateBalanceDue ( ThisObject );
 	InvoiceRecords.Read ( ThisObject );
 	initCurrency ();
 	setSocial ();
@@ -39,15 +39,6 @@ EndProcedure
 Procedure updateChangesPermission ()
 
 	Constraints.ShowAccess ( ThisObject );
-
-EndProcedure
-
-&AtServer
-Procedure updateBalanceDue ()
-
-	InvoiceForm.SetPaymentsApplied ( ThisObject );
-	InvoiceForm.CalcBalanceDue ( ThisObject );
-	Appearance.Apply ( ThisObject, "BalanceDue" );
 
 EndProcedure
 
@@ -103,7 +94,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 				fillByShipmentStockman ();
 			endif; 
 		endif;
-		updateBalanceDue ();
+		InvoiceForm.UpdateBalanceDue ( ThisObject );
 		updateChangesPermission ();
 	endif; 
 	setAccuracy ();
@@ -191,73 +182,9 @@ Procedure fillByCustomer ()
 	and not Copy 
 	and not Object.Customer.IsEmpty ();
 	if ( apply ) then
-		applyCustomer ();
+		InvoiceForm.ApplyCustomer ( Object );
 	endif;
 
-EndProcedure 
-
-&AtServer
-Procedure applyCustomer ()
-	
-	customer = Object.Customer;
-	company = Object.Company;
-	data = AccountsMap.Organization ( customer, company, "CustomerAccount" );
-	Object.CustomerAccount = data.CustomerAccount;
-	data = DF.Values ( customer, "CustomerContract, CustomerContract.Company as Company, VATUse" );
-	if ( data.Company = company ) then
-		Object.Contract = data.CustomerContract;
-	endif; 
-	Object.VATUse = data.VATUse;
-	applyContract ();
-	applyVATUse ();
-	
-EndProcedure
-
-&AtServer
-Procedure applyContract ()
-	
-	data = DF.Values ( Object.Contract,
-		"CustomerPrices, Currency, CustomerAdvances, CustomerRateType, CustomerRate, CustomerFactor" );
-	ContractCurrency = data.Currency;
-	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
-		and data.CustomerRate <> 0 ) then
-		currency = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
-	else
-		currency = CurrenciesSrv.Get ( data.Currency, Object.Date );
-	endif;
-	Object.CloseAdvances = data.CustomerAdvances;
-	Object.Rate = currency.Rate;
-	Object.Factor = currency.Factor;
-	Object.Currency = ContractCurrency;
-	Object.Prices = data.CustomerPrices;
-	InvoiceForm.SetCurrencyList ( ThisObject );
-	updateContent ();
-	updateTotals ( ThisObject );
-	updateBalanceDue ();
-	Constraints.ShowSales ( ThisObject );
-	Appearance.Apply ( ThisObject, "Object.Currency" );
-
-EndProcedure
-
-&AtServer
-Procedure updateContent ()
-	
-	if ( Object.Shipment = undefined ) then
-		reloadTables ();
-		DiscountsTable.Load ( Object );
-	endif;
-	InvoiceForm.SetPayment ( Object );
-	
-EndProcedure 
-
-&AtServer
-Procedure reloadTables ()
-	
-	table = FillerSrv.GetData ( fillingParams () );
-	if ( table.Count () > 0 ) then
-		loadSalesOrders ( table, true );
-	endif; 
-	
 EndProcedure 
 
 #region Filling
@@ -269,10 +196,10 @@ Procedure fillBySaleOrder ()
 	sqlSalesOrder ();
 	SQL.Perform ( Env );
 	headerBySalesOrder ();
-	table = FillerSrv.GetData ( fillingParams () );
-	loadSalesOrders ( table, true );
+	table = FillerSrv.GetData ( InvoiceForm.FillingParams ( Object ) );
+	InvoiceForm.LoadSalesOrders ( Object, table, true );
 	DiscountsTable.Load ( Object );
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	Constraints.ShowSales ( ThisObject );
 	
@@ -325,95 +252,6 @@ Procedure headerBySalesOrder ()
 EndProcedure 
 
 &AtServer
-Function fillingParams ()
-	
-	p = Filler.GetParams ();
-	p.Report = "SalesOrderItems";
-	p.Filters = getFilters ();
-	p.ProposeClearing = Object.SalesOrder.IsEmpty ();
-	return p;
-	
-EndFunction
-
-&AtServer
-Function getFilters ()
-	
-	filters = new Array ();
-	if ( Object.SalesOrder.IsEmpty () ) then
-		filters.Add ( DC.CreateFilter ( "SalesOrder.Customer", Object.Customer ) );
-		filters.Add ( DC.CreateFilter ( "SalesOrder.Contract", Object.Contract ) );
-	else
-		filters.Add ( DC.CreateFilter ( "SalesOrder", Object.SalesOrder ) );
-	endif; 
-	item = DC.CreateParameter ( "Asof" );
-	item.Value = Periods.GetBalanceDate ( Object );
-	item.Use = ( item.Value <> undefined );
-	filters.Add ( item );
-	return filters;
-	
-EndFunction
-
-&AtServer
-Procedure loadSalesOrders ( Table, Clean )
-	
-	company = Object.Company;
-	oneWarehouse = not Options.WarehousesInTable ( company );
-	oneOrder = not Options.SalesOrdersInTable ( company );
-	warehouse = Object.Warehouse;
-	salesOrder = Object.SalesOrder;
-	vatUse = Object.VATUse;
-	tableItems = Object.Items;
-	services = Object.Services;
-	if ( Clean ) then
-		tableItems.Clear ();
-		services.Clear ();
-	endif;
-	for each row in Table do
-		if ( row.ItemService ) then
-			docRow = services.Add ();
-			FillPropertyValues ( docRow, row );
-			item = row.Item;
-			accounts = AccountsMap.Item ( item, company, warehouse, "Income, VAT" );
-			docRow.Income = accounts.Income;
-			docRow.VATAccount = accounts.VAT;
-		else
-			docRow = tableItems.Add ();
-			FillPropertyValues ( docRow, row );
-			if ( oneWarehouse
-				or docRow.Warehouse = warehouse ) then
-				docRow.Warehouse = undefined;
-			endif; 
-			accounts = AccountsMap.Item ( docRow.Item, company, warehouse, "Account, SalesCost, Income, VAT" );
-			docRow.Account = accounts.Account;
-			docRow.SalesCost = accounts.SalesCost;
-			docRow.Income = accounts.Income;
-			docRow.VATAccount = accounts.VAT;
-		endif;
-		Computations.Discount ( docRow );
-		Computations.Amount ( docRow );
-		Computations.Total ( docRow, vatUse );
-		if ( oneOrder
-			or docRow.SalesOrder = salesOrder ) then
-			docRow.SalesOrder = undefined;
-		endif; 
-	enddo; 
-	
-EndProcedure 
-
-&AtClientAtServerNoContext
-Procedure updateTotals ( Form, Row = undefined, CalcVAT = true )
-
-	object = Form.Object;
-	if ( Row <> undefined ) then
-		Computations.Total ( Row, object.VATUse, CalcVAT );
-	endif;
-	InvoiceForm.CalcTotals ( Form );
-	InvoiceForm.CalcBalanceDue ( Form );
-	Appearance.Apply ( Form, "BalanceDue" );
-
-EndProcedure 
-
-&AtServer
 Procedure fillByQuote ()
 	
 	setEnv ();
@@ -422,7 +260,7 @@ Procedure fillByQuote ()
 	InvoiceForm.CheckQuote ( Env.Fields );
 	headerByQuote ();
 	loadQuoteTables ();
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	InvoiceForm.SetCurrencyList ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	Constraints.ShowSales ( ThisObject );
@@ -538,7 +376,7 @@ Procedure fillByTimeEntry ()
 	SetPrivilegedMode ( true );
 	table = FillerSrv.GetData ( timeEntryFillingParams () );
 	loadTimeEntries ( table, true );
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 
@@ -626,7 +464,7 @@ Procedure loadTimeEntries ( Table, Clean )
 			newRow.Income = accounts.Income;
 			newRow.VATAccount = accounts.VAT;
 			package = newRow.Package;
-			rowWarehouse = getWarehouse ( newRow, Object );
+			rowWarehouse = InvoiceForm.GetWarehouse ( newRow, Object );
 		else
 			newRow = Object.Services.Add ();
 			newRow.Description = row.TaskDescription;
@@ -663,7 +501,7 @@ Procedure headerByTimeEntry ()
 	Object.Warehouse = fields.Warehouse;
 	Object.Department = fields.Department;
 	Object.Customer = fields.Customer;
-	applyCustomer (); 
+	InvoiceForm.ApplyCustomer (); 
 	
 EndProcedure
 
@@ -715,7 +553,7 @@ Procedure headerByShipmentStockman ()
 	FillPropertyValues ( Object, fields );
 	Object.Shipment = Base;
 	Object.Customer = fields.Organization;
-	applyCustomer ();
+	InvoiceForm.ApplyCustomer ();
 	
 EndProcedure 
 
@@ -909,7 +747,7 @@ Procedure ChoiceProcessing ( SelectedValue, ChoiceSource )
 	if ( SelectedValue.Operation = Enum.ChoiceOperationsPickItems () ) then
 		addSelectedItems ( SelectedValue );
 		addSelectedServices ( SelectedValue );
-		updateTotals ( ThisObject );
+		InvoiceForm.UpdateTotals ( ThisObject );
 		applySocial ();
 	endif; 
 	
@@ -985,7 +823,7 @@ EndProcedure
 Procedure updateLinks ()
 	
 	setLinks ();
-	updateBalanceDue ();
+	InvoiceForm.UpdateBalanceDue ( ThisObject );
 
 EndProcedure
 
@@ -1054,7 +892,7 @@ Procedure addItem ( Fields )
 		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif; 
 	Computations.Amount ( row );
-	updateTotals ( ThisObject, row );
+	InvoiceForm.UpdateTotals ( ThisObject, row );
 	
 EndProcedure 
 
@@ -1077,7 +915,7 @@ EndProcedure
 &AtServer
 Procedure BeforeWriteAtServer ( Cancel, CurrentObject, WriteParameters )
 	
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 
 EndProcedure
 
@@ -1114,7 +952,7 @@ EndProcedure
 &AtServer
 Procedure AfterWriteAtServer ( CurrentObject, WriteParameters )
 	
-	updateBalanceDue ();	
+	InvoiceForm.UpdateBalanceDue ( ThisObject );	
 	if ( not DocumentForm.Closing ( WriteParameters ) ) then
 		updateSalesPermission ();
 	endif;
@@ -1145,6 +983,25 @@ Procedure CustomerOnChange ( Item )
 
 EndProcedure
 
+&AtServer
+Procedure applyCustomer ()
+	
+	InvoiceForm.ApplyCustomer ( Object, ThisObject );
+	
+EndProcedure
+
+&AtClient
+Procedure CustomerStartChoice ( Item, ChoiceData, ChoiceByAdding, StandardProcessing )
+	
+	//Attribute1 = Item.EditText;
+	//if ( Item.EditText <> "" ) then
+	//	StandardProcessing = false;
+	//	filter = new Structure ( "SearchCriteria", Item.EditText );
+	//	OpenForm ( "Catalog.Organizations.ChoiceForm", new Structure ( "Filter", filter ), Item );
+	//endif;
+	
+EndProcedure
+
 &AtClient
 Procedure ContractOnChange ( Item )
 	
@@ -1152,11 +1009,18 @@ Procedure ContractOnChange ( Item )
 	
 EndProcedure
 
+&AtServer
+Procedure applyContract ()
+	
+	InvoiceForm.ApplyContract ( Object, ThisObject );
+
+EndProcedure
+
 &AtClient
 Procedure PricesOnChange ( Item )
 	
 	applyPrices ();
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 
 EndProcedure
 
@@ -1172,7 +1036,7 @@ Procedure applyPrices ()
 	currency = Object.Currency;
 	for each row in Object.Items do
 		row.Prices = undefined;
-		warehouse = getWarehouse ( row, Object );
+		warehouse = InvoiceForm.GetWarehouse ( row, Object );
 		row.Price = Goods.Price ( cache, date, prices, row.Item, row.Package, row.Feature, customer, contract, , warehouse, currency );
 		Computations.Discount ( row );
 		Computations.Amount ( row );
@@ -1190,18 +1054,11 @@ Procedure applyPrices ()
 	
 EndProcedure 
 
-&AtClientAtServerNoContext
-Function getWarehouse ( TableRow, Object )
-	
-	return ? ( TableRow.Warehouse.IsEmpty (), Object.Warehouse, TableRow.Warehouse );
-	
-EndFunction 
-
 &AtClient
 Procedure CurrencyOnChange ( Item )
 	
 	applyCurrency ();
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 
@@ -1223,7 +1080,7 @@ EndProcedure
 &AtServer
 Procedure applyDate ()
 	
-	updateContent ();
+	InvoiceForm.UpdateContent ( Object );
 	updateChangesPermission ();
 
 EndProcedure
@@ -1232,25 +1089,14 @@ EndProcedure
 Procedure VATUseOnChange ( Item )
 	
 	applyVATUse ();
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 
 &AtServer
 Procedure applyVATUse ()
-	
-	vatUse = Object.VATUse;
-	for each row in Object.Items do
-		Computations.Amount ( row );
-		Computations.Total ( row, vatUse );
-		Computations.ExtraCharge ( row );
-	enddo; 
-	for each row in Object.Services do
-		Computations.Amount ( row );
-		Computations.Total ( row, vatUse );
-	enddo; 
-	DiscountsTable.RecalcVAT ( ThisObject );
-	Appearance.Apply ( ThisObject, "Object.VATUse" );
+
+	InvoiceForm.ApplyVATUse ( Object, ThisObject );
 	
 EndProcedure
 
@@ -1281,7 +1127,7 @@ EndProcedure
 &AtClient
 Procedure ApplySalesOrders ( Command )
 	
-	Filler.Open ( fillingParams (), ThisObject );
+	Filler.Open ( InvoiceForm.FillingParams ( Object ), ThisObject );
 	
 EndProcedure
 
@@ -1304,10 +1150,10 @@ Function fillTables ( val Result, val Source )
 	if ( Source = "TimeEntriesInvoicing" ) then
 		loadTimeEntries ( table, Result.ClearTable );
 	else
-		loadSalesOrders ( table, Result.ClearTable );
+		InvoiceForm.LoadSalesOrders ( Object, table, Result.ClearTable );
 	endif;
 	DiscountsTable.Load ( Object );
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	InvoiceForm.SetPayment ( Object );
 	return true;
 	
@@ -1339,74 +1185,18 @@ EndProcedure
 Procedure ItemsAfterDeleteRow ( Item )
 	
 	applySocial ();
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ItemsItemOnChange ( Item )
 	
-	applyItem ();
+	InvoiceForm.ApplyItem ( ItemsRow, ThisObject );
 	applySocial ();
 	enableSocial ();
 	
 EndProcedure
-
-&AtClient
-Procedure applyItem ()
-	
-	p = new Structure ();
-	p.Insert ( "Date", Object.Date );
-	p.Insert ( "Company", Object.Company );
-	p.Insert ( "Organization", Object.Customer );
-	p.Insert ( "Contract", Object.Contract );
-	p.Insert ( "Warehouse", getWarehouse ( ItemsRow, Object ) );
-	p.Insert ( "Currency", Object.Currency );
-	p.Insert ( "Item", ItemsRow.Item );
-	p.Insert ( "Prices", Object.Prices );
-	data = getItemData ( p );
-	ItemsRow.Package = data.Package;
-	ItemsRow.Capacity = data.Capacity;
-	ItemsRow.Price = data.Price;
-	ItemsRow.VATCode = data.VAT;
-	ItemsRow.VATRate = data.Rate;
-	ItemsRow.VATAccount = data.VATAccount;
-	ItemsRow.Account = data.Account;
-	ItemsRow.SalesCost = data.SalesCost;
-	ItemsRow.Income = data.Income;
-	ItemsRow.ProducerPrice = data.ProducerPrice;
-	ItemsRow.Social = data.Social;
-	Computations.Units ( ItemsRow );
-	Computations.Discount ( ItemsRow );
-	Computations.Amount ( ItemsRow );
-	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow )
-	
-EndProcedure
-
-&AtServerNoContext
-Function getItemData ( val Params )
-	
-	item = Params.Item;
-	data = DF.Values ( item, "Package, Package.Capacity as Capacity, VAT, VAT.Rate as Rate, Social" );
-	warehouse = Params.Warehouse;
-	package = data.Package;
-	date = Params.Date;
-	price = Goods.Price ( , Params.Date, Params.Prices, item, package, , Params.Organization, Params.Contract, , warehouse, Params.Currency );
-	accounts = AccountsMap.Item ( item, Params.Company, warehouse, "Account, SalesCost, Income, VAT" );
-	data.Insert ( "Price", price );
-	data.Insert ( "Account", accounts.Account );
-	data.Insert ( "SalesCost", accounts.SalesCost );
-	data.Insert ( "Income", accounts.Income );
-	data.Insert ( "VATAccount", accounts.VAT );
-	if ( data.Capacity = 0 ) then
-		data.Capacity = 1;
-	endif;
-	p = itemParams ( item, package );
-	data.Insert ( "ProducerPrice", ? ( data.Social, Goods.ProducerPrice ( p, date ), 0 ) );
-	return data;
-	
-EndFunction
 
 &AtClient
 Procedure ItemsFeatureOnChange ( Item )
@@ -1416,7 +1206,7 @@ Procedure ItemsFeatureOnChange ( Item )
 	Computations.Amount ( ItemsRow );
 	setProducerPrice ();
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 	
 EndProcedure
@@ -1425,7 +1215,7 @@ EndProcedure
 Procedure priceItem ()
 	
 	prices = ? ( ItemsRow.Prices.IsEmpty (), Object.Prices, ItemsRow.Prices );
-	warehouse = getWarehouse ( ItemsRow, Object );
+	warehouse = InvoiceForm.GetWarehouse ( ItemsRow, Object );
 	ItemsRow.Price = Goods.Price ( , Object.Date, prices, ItemsRow.Item, ItemsRow.Package, ItemsRow.Feature, Object.Customer, Object.Contract, , warehouse, Object.Currency );
 	
 EndProcedure 
@@ -1436,21 +1226,10 @@ Procedure setProducerPrice ()
 	if ( not ItemsRow.Social ) then
 		return;
 	endif;
-	p = itemParams ( ItemsRow.Item, ItemsRow.Package, ItemsRow.Feature );
+	p = InvoiceForm.ItemParams ( ItemsRow.Item, ItemsRow.Package, ItemsRow.Feature );
 	ItemsRow.ProducerPrice = Goods.ProducerPrice ( p, Object.Date );
 
 EndProcedure
-
-&AtClientAtServerNoContext
-Function itemParams ( val Item, val Package, val Feature = undefined ) 
-
-	p = new Structure ();
-	p.Insert ( "Item", Item );
-	p.Insert ( "Package", Package );
-	p.Insert ( "Feature", Feature );
-	return p;
-
-EndFunction
 
 &AtClient
 Procedure ItemsPackageOnChange ( Item )
@@ -1466,7 +1245,7 @@ Procedure applyPackage ()
 	p.Insert ( "Date", Object.Date );
 	p.Insert ( "Organization", Object.Customer );
 	p.Insert ( "Contract", Object.Contract );
-	p.Insert ( "Warehouse", getWarehouse ( ItemsRow, Object ) );
+	p.Insert ( "Warehouse", InvoiceForm.GetWarehouse ( ItemsRow, Object ) );
 	p.Insert ( "Currency", Object.Currency );
 	p.Insert ( "Item", ItemsRow.Item );
 	p.Insert ( "Feature", ItemsRow.Feature );
@@ -1482,7 +1261,7 @@ Procedure applyPackage ()
 	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure 
 
@@ -1504,11 +1283,7 @@ EndFunction
 &AtClient
 Procedure ItemsQuantityPkgOnChange ( Item )
 	
-	Computations.Units ( ItemsRow );
-	Computations.Discount ( ItemsRow );
-	Computations.Amount ( ItemsRow );
-	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.ApplyItemsQuantityPkg ( ItemsRow, ThisObject );
 	
 EndProcedure
 
@@ -1519,7 +1294,7 @@ Procedure ItemsQuantityOnChange ( Item )
 	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1529,7 +1304,7 @@ Procedure ItemsPriceOnChange ( Item )
 	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 
 EndProcedure
 
@@ -1539,7 +1314,7 @@ Procedure ItemsAmountOnChange ( Item )
 	Computations.Price ( ItemsRow );
 	Computations.Discount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1550,7 +1325,7 @@ Procedure ItemsPricesOnChange ( Item )
 	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1560,7 +1335,7 @@ Procedure ItemsDiscountRateOnChange ( Item )
 	Computations.Discount ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1570,7 +1345,7 @@ Procedure ItemsDiscountOnChange ( Item )
 	Computations.DiscountRate ( ItemsRow );
 	Computations.Amount ( ItemsRow );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1579,7 +1354,7 @@ Procedure ItemsVATCodeOnChange ( Item )
 	
 	ItemsRow.VATRate = DF.Pick ( ItemsRow.VATCode, "Rate" );
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow );
 	
 EndProcedure
 
@@ -1587,7 +1362,7 @@ EndProcedure
 Procedure ItemsVATOnChange ( Item )
 	
 	Computations.ExtraCharge ( ItemsRow );
-	updateTotals ( ThisObject, ItemsRow, false );
+	InvoiceForm.UpdateTotals ( ThisObject, ItemsRow, false );
 	
 EndProcedure
 
@@ -1612,56 +1387,16 @@ EndProcedure
 &AtClient
 Procedure ServicesAfterDeleteRow ( Item )
 	
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesItemOnChange ( Item )
 	
-	applyService ();
+	InvoiceForm.ApplyService ( ServicesRow, ThisObject );
 	
 EndProcedure
-
-&AtClient
-Procedure applyService ()
-	
-	p = new Structure ();
-	p.Insert ( "Date", Object.Date );
-	p.Insert ( "Company", Object.Company );
-	p.Insert ( "Organization", Object.Customer );
-	p.Insert ( "Contract", Object.Contract );
-	p.Insert ( "Warehouse", Object.Warehouse );
-	p.Insert ( "Currency", Object.Currency );
-	p.Insert ( "Item", ServicesRow.Item );
-	p.Insert ( "Prices", Object.Prices );
-	data = getServiceData ( p );
-	ServicesRow.Price = data.Price;
-	ServicesRow.Description = data.FullDescription;
-	ServicesRow.VATCode = data.VAT;
-	ServicesRow.VATRate = data.Rate;
-	ServicesRow.VATAccount = data.VATAccount;
-	ServicesRow.Income = data.Income;
-	Computations.Discount ( ServicesRow );
-	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
-	
-EndProcedure 
-
-&AtServerNoContext
-Function getServiceData ( val Params )
-	
-	item = Params.Item;
-	data = DF.Values ( item, "FullDescription, VAT, VAT.Rate as Rate" );
-	warehouse = Params.Warehouse;
-	price = Goods.Price ( , Params.Date, Params.Prices, item, , , Params.Organization, Params.Contract, , warehouse, Params.Currency );
-	accounts = AccountsMap.Item ( item, Params.Company, warehouse, "Income, VAT" );
-	data.Insert ( "Price", price );
-	data.Insert ( "Income", accounts.Income );
-	data.Insert ( "VATAccount", accounts.VAT );
-	return data;
-	
-EndFunction 
 
 &AtClient
 Procedure ServicesFeatureOnChange ( Item )
@@ -1669,7 +1404,7 @@ Procedure ServicesFeatureOnChange ( Item )
 	priceService ();
 	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 	
 EndProcedure
 
@@ -1684,9 +1419,7 @@ EndProcedure
 &AtClient
 Procedure ServicesQuantityOnChange ( Item )
 	
-	Computations.Discount ( ServicesRow );
-	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.ApplyServicesQuantity ( ServicesRow, ThisObject );
 	
 EndProcedure
 
@@ -1695,7 +1428,7 @@ Procedure ServicesPriceOnChange ( Item )
 
 	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 
 EndProcedure
 
@@ -1704,7 +1437,7 @@ Procedure ServicesAmountOnChange ( Item )
 	
 	Computations.Price ( ServicesRow );
 	Computations.Discount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 	
 EndProcedure
 
@@ -1714,7 +1447,7 @@ Procedure ServicesPricesOnChange ( Item )
 	priceService ();
 	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 	
 EndProcedure
 
@@ -1723,7 +1456,7 @@ Procedure ServicesDiscountRateOnChange ( Item )
 	
 	Computations.Discount ( ServicesRow );
 	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 	
 EndProcedure
 
@@ -1732,7 +1465,7 @@ Procedure ServicesDiscountOnChange ( Item )
 	
 	Computations.DiscountRate ( ServicesRow );
 	Computations.Amount ( ServicesRow );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 
 EndProcedure
 
@@ -1740,14 +1473,14 @@ EndProcedure
 Procedure ServicesVATCodeOnChange ( Item )
 	
 	ServicesRow.VATRate = DF.Pick ( ServicesRow.VATCode, "Rate" );
-	updateTotals ( ThisObject, ServicesRow );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow );
 	
 EndProcedure
 
 &AtClient
 Procedure ServicesVATOnChange ( Item )
 	
-	updateTotals ( ThisObject, ServicesRow, false );
+	InvoiceForm.UpdateTotals ( ThisObject, ServicesRow, false );
 	
 EndProcedure
 
@@ -1773,7 +1506,7 @@ EndProcedure
 Procedure applyPaymentDiscount ()
 	
 	InvoiceForm.SetPaymentsApplied ( ThisObject );
-	updateTotals ( ThisObject );
+	InvoiceForm.UpdateTotals ( ThisObject );
 	
 EndProcedure
 

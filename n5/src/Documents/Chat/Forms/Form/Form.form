@@ -231,7 +231,7 @@
           </userVisible>
           <autoFill>true</autoFill>
         </contextMenu>
-        <source>MessagesSearchString</source>
+        <source>Messages</source>
         <extInfo xsi:type="form:SearchStringAdditionExtInfo">
           <horizontalStretch>true</horizontalStretch>
         </extInfo>
@@ -347,7 +347,7 @@
             </userVisible>
             <autoFill>true</autoFill>
           </contextMenu>
-          <source>MessagesSearchString</source>
+          <source>Messages</source>
           <extInfo xsi:type="form:SearchStringAdditionExtInfo"/>
         </searchStringAddition>
         <viewStatusAddition>
@@ -384,7 +384,7 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>ViewStatusAddition</type>
-          <source>MessagesViewStatus</source>
+          <source>Messages</source>
           <extInfo xsi:type="form:ViewStatusAdditionExtInfo">
             <autoMaxWidth>true</autoMaxWidth>
           </extInfo>
@@ -423,7 +423,7 @@
             <autoFill>true</autoFill>
           </contextMenu>
           <type>SearchControlAddition</type>
-          <source>MessagesSearchControl</source>
+          <source>Messages</source>
           <extInfo xsi:type="form:SearchControlAdditionExtInfo">
             <autoMaxWidth>true</autoMaxWidth>
           </extInfo>
@@ -1511,6 +1511,7 @@
       <headerHorizontalAlign>Left</headerHorizontalAlign>
       <showInFooter>true</showInFooter>
       <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>5</width>
         <autoMaxWidth>true</autoMaxWidth>
         <autoMaxHeight>true</autoMaxHeight>
         <wrap>true</wrap>
@@ -1519,6 +1520,60 @@
         <quickChoice>true</quickChoice>
         <chooseType>true</chooseType>
         <incompleteChoiceMode>OnActivate</incompleteChoiceMode>
+        <typeDomainEnabled>true</typeDomainEnabled>
+        <textEdit>true</textEdit>
+      </extInfo>
+    </items>
+    <items xsi:type="form:FormField">
+      <name>Temperature</name>
+      <id>151</id>
+      <visible>true</visible>
+      <enabled>true</enabled>
+      <userVisible>
+        <common>true</common>
+      </userVisible>
+      <dataPath xsi:type="form:DataPath">
+        <segments>Object.Temperature</segments>
+      </dataPath>
+      <extendedTooltip>
+        <name>TemperatureExtendedTooltip</name>
+        <id>153</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <type>Label</type>
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <extInfo xsi:type="form:LabelDecorationExtInfo">
+          <horizontalAlign>Left</horizontalAlign>
+        </extInfo>
+      </extendedTooltip>
+      <contextMenu>
+        <name>TemperatureContextMenu</name>
+        <id>152</id>
+        <visible>true</visible>
+        <enabled>true</enabled>
+        <userVisible>
+          <common>true</common>
+        </userVisible>
+        <autoFill>true</autoFill>
+      </contextMenu>
+      <type>InputField</type>
+      <editMode>Enter</editMode>
+      <showInHeader>true</showInHeader>
+      <headerHorizontalAlign>Left</headerHorizontalAlign>
+      <showInFooter>true</showInFooter>
+      <extInfo xsi:type="form:InputFieldExtInfo">
+        <autoMaxWidth>true</autoMaxWidth>
+        <autoMaxHeight>true</autoMaxHeight>
+        <wrap>true</wrap>
+        <extendedEditMultipleValues>true</extendedEditMultipleValues>
+        <choiceButton>false</choiceButton>
+        <clearButton>true</clearButton>
+        <spinButton>true</spinButton>
+        <chooseType>true</chooseType>
         <typeDomainEnabled>true</typeDomainEnabled>
         <textEdit>true</textEdit>
       </extInfo>
@@ -1565,6 +1620,7 @@
       <headerHorizontalAlign>Left</headerHorizontalAlign>
       <showInFooter>true</showInFooter>
       <extInfo xsi:type="form:InputFieldExtInfo">
+        <width>10</width>
         <autoMaxHeight>true</autoMaxHeight>
         <horizontalStretch>true</horizontalStretch>
         <wrap>true</wrap>
@@ -2259,7 +2315,7 @@
     </edit>
   </attributes>
   <attributes>
-    <name>FunctionsMenu</name>
+    <name>FilesMenu</name>
     <id>8</id>
     <valueType>
       <types>ValueList</types>

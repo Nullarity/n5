@@ -1,5 +1,7 @@
 #if ( Server or ThickClientOrdinaryApplication or ExternalConnection ) then
 
+var DescriptionChanged;
+	
 Procedure FillCheckProcessing ( Cancel, CheckedAttributes )
 	
 	if ( IsFolder ) then
@@ -66,6 +68,7 @@ Procedure BeforeWrite ( Cancel )
 		return;
 	endif; 
 	defaultName ();
+	DescriptionChanged = Description <> DF.Pick ( Ref, "Description", "" );
 
 EndProcedure
 
@@ -96,7 +99,11 @@ Procedure OnWrite ( Cancel )
 	endif; 
 	if ( not checkApprovingUsers () ) then
 		Cancel = true;
-	endif; 
+		return;
+	endif;
+	if ( DescriptionChanged ) then
+		EmbeddingGetter.Enroll ( Ref );
+	endif;
 	
 EndProcedure
 

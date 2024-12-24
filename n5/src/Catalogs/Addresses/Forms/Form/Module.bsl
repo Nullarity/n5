@@ -11,6 +11,7 @@ EndProcedure
 &AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
+	init ();
 	if ( Object.Ref.IsEmpty () ) then
 		fillNew ();
 		Forms.ActivateEmpty ( ThisObject, "Country, State, Municipality, City, Street" );
@@ -22,12 +23,20 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 EndProcedure
 
 &AtServer
+Procedure init ()
+	
+	UseAI = Application.AI ();
+	
+EndProcedure
+
+&AtServer
 Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
 	|Owner lock filled ( Object.Owner );
-	|Address lock not Object.Manual
+	|Address lock not Object.Manual;
+	|Description show UseAI;
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -61,6 +70,40 @@ EndProcedure
 
 // *****************************************
 // *********** Group Form
+
+&AtClient
+Procedure DescriptionOnChange ( Item )
+
+	if ( UseAI and not IsBlankString ( Object.Description ) ) then
+		WaitForm.Open ( "startFilling", , ThisObject );
+	endif;
+
+EndProcedure
+
+&AtClient
+Procedure startFilling ( Params, Value ) export
+	
+	fill ();
+	WaitForm.Close ();
+	
+EndProcedure
+
+&AtServer
+Procedure fill ()
+	
+	owner = Object.Owner;
+	type = TypeOf ( owner );
+	if ( type = Type ( "CatalogRef.Organizations" ) ) then
+		alient = DF.Pick ( owner, "Alien" );
+	elsif ( type = Type ( "CatalogRef.Contacts" ) ) then
+		alient = DF.Pick ( owner, "Owner.Alien" );
+	else
+		alient = false;
+	endif;
+	address = DataProcessors.AddressInfo.Get ( Object.Description, alient );
+	FillPropertyValues ( Object, address, , "Owner, Code" );
+
+EndProcedure
 
 &AtClient
 Procedure RefreshMap ( Command )

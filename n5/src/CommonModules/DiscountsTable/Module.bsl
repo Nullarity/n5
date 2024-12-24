@@ -153,11 +153,10 @@ Procedure SetRate ( Form ) export
 	
 EndProcedure
 
-Procedure RecalcVAT ( Form ) export
+Procedure RecalcVAT ( Object ) export
 	
-	object = Form.Object;
-	useVAT = object.VATuse > 0;
-	for each row in object.Discounts do
+	useVAT = Object.VATuse > 0;
+	for each row in Object.Discounts do
 		if ( useVAT ) then
 			calcRowVAT ( row );
 		else

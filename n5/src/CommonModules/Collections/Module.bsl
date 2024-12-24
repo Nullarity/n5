@@ -4,7 +4,7 @@ Procedure Distribute ( DistributedAmount, Table, KeyColumn, ResultColumn, Overwr
 	#if ( Server ) then
 		if ( TypeOf ( Table ) = Type ( "ValueTable" ) ) then
 			if ( Table.Columns.Find ( ResultColumn ) = undefined ) then
-				Table.Columns.Add ( ResultColumn, new TypeDescription ( "Number" ) );
+				Table.Columns.Add ( ResultColumn, Table.Columns [ KeyColumn ].ValueType );
 			endif; 
 		endif; 
 	#endif
@@ -183,3 +183,25 @@ Function GetDoubles ( Table, Columns ) export
 	return doubles;
 	
 EndFunction 
+
+&AtServer
+Function Value ( Object, Name, Default = undefined, Type = undefined ) export
+	
+	value = undefined;
+	if ( TypeOf ( Object ) <> Type ( "Structure" )
+		or not Object.Property ( Name, value ) ) then
+		return Default;
+	endif;
+	valueType = TypeOf ( value );
+	stringType = Type ( "String" );
+	if ( Type <> undefined
+		and Type <> valueType
+		and valueType = stringType ) then
+		value = XMLValue ( Type, value );
+	endif;
+	if ( ValueIsFilled ( value ) ) then
+		return ? ( TypeOf ( value ) = stringType, TrimAll ( value ), value );
+	endif;
+	return Default;
+	
+EndFunction

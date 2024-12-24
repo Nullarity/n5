@@ -649,7 +649,7 @@ Procedure applyVATUse ()
 		Computations.Amount ( row );
 		Computations.Total ( row, vatUse );
 	enddo; 
-	DiscountsTable.RecalcVAT ( ThisObject );
+	DiscountsTable.RecalcVAT ( Object );
 	calcTotals ( Object );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	

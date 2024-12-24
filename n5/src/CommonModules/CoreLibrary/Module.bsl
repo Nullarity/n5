@@ -139,9 +139,42 @@ Function MarkdownToHTML ( String ) export
 	
 EndFunction
 
+Function CleanAnthropicAnswer ( String ) export
+	
+	return module ().GetLibrary ( "Root" ).CleanAnthropicAnswer ( String );
+	
+EndFunction
+
 Function GetArea ( Text, Area ) export
 	
 	lib = module ().GetLibrary ( "Root" );
 	return lib.GetArea ( Text, Area );
 	
 EndFunction
+
+Function RomanianToLatin ( String ) export
+	
+	return module ().GetLibrary ( "Root" ).RomanianToLatin ( String );
+	
+EndFunction
+
+Function CyrillicToRomanian ( String ) export
+	
+	return module ().GetLibrary ( "Root" ).CyrillicToRomanian ( String );
+	
+EndFunction
+
+Function HasCyrillic ( String ) export
+	
+	return module ().GetLibrary ( "Root" ).HasCyrillic ( String );
+	
+EndFunction
+
+Function FuzzyMatch ( List, MatchColumn, WithText ) export
+	
+	json = module ().GetLibrary ( "Root" ).FuzzyMatch (
+		Conversion.ToJSON ( List ), MatchColumn, WithText );
+	return Conversion.FromJSON ( json );
+	
+EndFunction
+

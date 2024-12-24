@@ -1,10 +1,256 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mdclass:DataProcessor xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="47bd7558-f47f-4d73-8ee7-296ab7932d7f">
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="47bd7558-f47f-4d73-8ee7-296ab7932d7f">
   <producedTypes>
     <objectType typeId="e6a3e84f-b1e7-4e15-91df-e39f2e0c4a7d" valueTypeId="7d23d358-62f0-4a25-8732-fcb3e511e320"/>
     <managerType typeId="8a3963ac-b8ed-4acc-9170-892ce7f156e7" valueTypeId="8d65fdf1-5319-4780-96ed-0d7013a805aa"/>
   </producedTypes>
   <name>PrintBarcodes</name>
+  <defaultForm>DataProcessor.PrintBarcodes.Form.Form</defaultForm>
+  <tabularSections uuid="3327e3c0-6701-41e2-90d0-818c23e812d6">
+    <producedTypes>
+      <objectType typeId="2503f752-2112-4486-a8fa-f62955547e08" valueTypeId="9a4c4260-a4e6-449f-9652-56c14ba16a30"/>
+      <rowType typeId="b7ea6745-5cff-482d-b92d-f6422a132d5c" valueTypeId="15040758-d7e6-4724-ade3-0c250c11b10a"/>
+    </producedTypes>
+    <name>Items</name>
+    <synonym>
+      <key>en</key>
+      <value>Items</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Товары</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Marfă</value>
+    </synonym>
+    <toolTip>
+      <key>en</key>
+      <value>Items</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Товары</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Marfă</value>
+    </toolTip>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="e6a999f0-207f-4fb1-9ffc-a40a0c54854b">
+      <name>Feature</name>
+      <synonym>
+        <key>en</key>
+        <value>Feature</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Характеристика</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Caracteristică</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Features</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item feature</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Характеристика товара</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Caracteristica mărfii</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="73256eef-bff2-4ec4-a39e-e1ce61ffdc16">
+      <name>Item</name>
+      <synonym>
+        <key>en</key>
+        <value>Item</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Товар</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Marfă</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Items</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Item</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Товар</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Marfă</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="55077423-824e-4ceb-b9fa-ae4c75caf48d">
+      <name>Package</name>
+      <synonym>
+        <key>en</key>
+        <value>Pkg</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Уп.</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cut.</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Packages</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Package</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Упаковка</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cutie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="8642918e-426c-4272-8f1c-bd05e504247f">
+      <name>Print</name>
+      <synonym>
+        <key>en</key>
+        <value>Print</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Печатать</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Imprimare</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="2575fe86-acb2-44f8-80a9-5309ec5eadf6">
+      <name>Quantity</name>
+      <synonym>
+        <key>en</key>
+        <value>Quantity</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Количество</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cantitate</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>3</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Number of labels to print</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Количество этикеток для печати</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul de etichete de imprimat</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="fc3e412c-b73f-4fbe-aea1-bd9b601a30b4">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serii</value>
+      </synonym>
+      <type>
+        <types>CatalogRef.Series</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Series</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Serie</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+  </tabularSections>
+  <forms uuid="f7e0de2e-d05c-41a5-a721-c91c6830c3b2">
+    <name>Form</name>
+    <synonym>
+      <key>en</key>
+      <value>Print Barcodes</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Печать штрих-кодов</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Imprimarea codurilor de bare</value>
+    </synonym>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
   <templates uuid="8c35f8e7-e655-4622-a284-e428275b2921">
     <name>Box</name>
   </templates>
@@ -37,11 +283,13 @@
       <key>ro</key>
       <value>Coduri de bare</value>
     </synonym>
-    <group>FormCommandBarImportant</group>
+    <group>CommandGroup.Print</group>
     <commandParameterType>
       <types>CatalogRef.Series</types>
       <types>DocumentRef.ReceiptStockman</types>
+      <types>DocumentRef.Transfer</types>
       <types>CatalogRef.Items</types>
+      <types>DocumentRef.VendorInvoice</types>
       <types>DocumentRef.InventoryStockman</types>
       <types>DocumentRef.ShipmentStockman</types>
     </commandParameterType>

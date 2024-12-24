@@ -68,7 +68,6 @@
     <dataHistory>Use</dataHistory>
     <name>Number</name>
     <fillValue xsi:type="core:UndefinedValue"/>
-    <fullTextSearch>Use</fullTextSearch>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
   </standardAttributes>
@@ -82,7 +81,6 @@
     </pages>
   </help>
   <dataLockControlMode>Managed</dataLockControlMode>
-  <fullTextSearch>Use</fullTextSearch>
   <explanation>
     <key>en</key>
     <value>Chat with AI assistant</value>
@@ -280,6 +278,42 @@
     <fillValue xsi:type="core:UndefinedValue"/>
     <dataHistory>Use</dataHistory>
   </attributes>
+  <attributes uuid="78e596eb-ac42-4e02-b8a5-4b0a9a12b7fb">
+    <name>Provider</name>
+    <synonym>
+      <key>en</key>
+      <value>Provider</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Furnizor</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Поставщик</value>
+    </synonym>
+    <type>
+      <types>EnumRef.AIProviders</types>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Provider</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Furnizor</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Поставщик</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:ReferenceValue">
+      <value>Enum.AIProviders.EmptyRef</value>
+    </fillValue>
+    <dataHistory>Use</dataHistory>
+  </attributes>
   <attributes uuid="bb66646c-6672-4754-bead-9c7f22e13800">
     <name>Subject</name>
     <synonym>
@@ -314,6 +348,47 @@
     </toolTip>
     <minValue xsi:type="core:UndefinedValue"/>
     <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:UndefinedValue"/>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+  <attributes uuid="265feacb-3592-44f5-9a27-f78b4b57ec46">
+    <name>Temperature</name>
+    <synonym>
+      <key>en</key>
+      <value>Temperature</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Creativitate</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Креативность</value>
+    </synonym>
+    <type>
+      <types>Number</types>
+      <numberQualifiers>
+        <precision>3</precision>
+        <scale>2</scale>
+        <nonNegative>true</nonNegative>
+      </numberQualifiers>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>What sampling temperature to use, between 0 and 2 for OpenAI and between 0 and 1 for Anthropic. Higher values make the output more creative, while lower values will make it more focused and deterministic.</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Ce temperatură de eșantionare se utilizează, între 0 și 2 pentru OpenAI și între 0 și 1 pentru Anthropic. Valorile mai mari fac ca rezultatul să fie mai creativ, în timp ce valorile mai mici îl vor face mai concentrat și determinist</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Какая температура выборки будет использоваться: от 0 до 2 для OpenAI и от 0 до 1 для Anthropic. Более высокие значения делают вывод более творческим, в то время как более низкие значения делают его более сфокусированным и детерминированным</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:StringValue">
+      <value>2</value>
+    </maxValue>
     <fillValue xsi:type="core:UndefinedValue"/>
     <fullTextSearch>Use</fullTextSearch>
     <dataHistory>Use</dataHistory>
@@ -427,7 +502,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="bb91ed20-56a4-4e52-884a-b5820e38619a">
       <name>Element</name>
@@ -671,6 +745,40 @@
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
     </attributes>
+    <attributes uuid="cfab0fec-764f-404d-9474-771ce12c739d">
+      <name>System</name>
+      <synonym>
+        <key>en</key>
+        <value>System</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sistemul</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Системное</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>System message</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Mesaj de sistem</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Системное сообщение</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <dataHistory>Use</dataHistory>
+      <fullTextSearch>Use</fullTextSearch>
+    </attributes>
     <attributes uuid="0c06122e-1fdd-497c-a376-12ca2048b911">
       <name>Text</name>
       <synonym>
@@ -704,7 +812,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
   </tabularSections>
   <tabularSections uuid="e0f403f0-e0dc-4ed3-b575-865f1146cca3">
@@ -769,7 +876,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="ed922c9d-7758-4ead-9792-964a29b50e91">
       <name>Error</name>
@@ -1090,7 +1196,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
     <attributes uuid="95afa128-8d30-467f-bfd6-252f0de3b2f5">
       <name>Picture</name>
@@ -1124,7 +1229,6 @@
       <minValue xsi:type="core:UndefinedValue"/>
       <maxValue xsi:type="core:UndefinedValue"/>
       <dataHistory>Use</dataHistory>
-      <fullTextSearch>Use</fullTextSearch>
     </attributes>
   </tabularSections>
 </mdclass:Document>

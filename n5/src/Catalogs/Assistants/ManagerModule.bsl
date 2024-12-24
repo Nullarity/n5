@@ -12,4 +12,13 @@ Procedure Unsync ( Ref ) export
 	
 EndProcedure
 
+Function FindByID ( ID ) export
+	
+	q = new Query ( "select Assistant from InformationRegister.Assistants where ID = &ID" );
+	q.SetParameter ( "ID", ID );
+	table = q.Execute ().Unload ();
+	return ? ( table.Count () = 0, undefined, table [ 0 ].Assistant );
+	
+EndFunction
+
 #endif

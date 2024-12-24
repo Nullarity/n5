@@ -634,3 +634,31 @@ Procedure WriteSuccessfull ( Email ) export
 	r.Write ();
 	
 EndProcedure 
+
+Procedure Dispatch ( From, To_, Subject, Body ) export
+	
+	args = new Array ();
+	args.Add ( From );
+	args.Add ( To_ );
+	args.Add ( Subject );
+	args.Add ( Body );
+	Jobs.Run ( "MailboxesSrv.SendEmail", args, , , TesterCache.Testing () );
+	
+EndProcedure
+
+Procedure SendEmail ( From, To_, Subject, Body ) export
+	
+	profile = MailboxesSrv.SystemProfile ();
+	message = new InternetMailMessage ();
+	message.From = From;
+	message.To.Add ( To_ );
+	message.Subject = Subject;
+	message.Texts.Add ( Body );
+	try
+		MailboxesSrv.Post ( profile, message );
+	except
+		WriteLogEvent ( "MailboxesSrv.Post", EventLogLevel.Error, , ,
+			ErrorProcessing.DetailErrorDescription ( ErrorInfo () ) );
+	endtry;
+	
+EndProcedure

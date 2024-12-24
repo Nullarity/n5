@@ -386,8 +386,10 @@ Procedure completeTable ( Table, Rows, Keys )
 			tableRow.Quantity = tableRow.Quantity + row.Quantity;
 			if ( not SelectedRow.Service ) then
 				tableRow.QuantityPkg = tableRow.QuantityPkg + row.QuantityPkg;
-			endif; 
-			tableRow.Discount = tableRow.Discount + row.Discount;
+			endif;
+			if ( Discounts ) then
+				tableRow.Discount = tableRow.Discount + row.Discount;
+			endif;
 			tableRow.Amount = tableRow.Amount + row.Amount;
 			tableRow.Total = tableRow.Total + row.Total;
 			tableRow.VAT = tableRow.VAT + row.VAT;

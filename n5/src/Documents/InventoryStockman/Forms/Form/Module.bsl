@@ -218,24 +218,17 @@ Procedure addItem ( Fields )
 		row.Quantity = Fields.Quantity;
 		row.QuantityPkg = Fields.QuantityPkg;
 		row.Capacity = Fields.Capacity;
-		row.Print = 1;
 		row.Balance = getBalance ( item, Object.Warehouse, package, feature, series );
 	else
 		row = rows [ 0 ];
 		row.Quantity = row.Quantity + Fields.Quantity;
 		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif;
-	if ( not Fields.BarcodeFound
-		and not row.Series.IsEmpty () ) then
-		row.Print = 1;
-	else
-		row.Print = 0;
-	endif;
 	
 EndProcedure 
 
 &AtServerNoContext
-Function getBalance ( val Item, val Warehouse, val Package, val Feature, val Series = undefined )
+Function getBalance ( val Item, val Warehouse, val Package, val Feature, val Series )
 	
 	s = "
 	|select Balances.QuantityBalance as Balance
@@ -326,10 +319,26 @@ Function itemData ( val Item, val Warehouse )
 	data = new Structure ( "Package, Capacity, Balance" );
 	fields = DF.Values ( Item, "Package, Package.Capacity as Capacity" );
 	FillPropertyValues ( data, fields );
-	data.Balance = getBalance ( item, Warehouse, fields.Package, undefined );
+	data.Balance = getBalance ( item, Warehouse, fields.Package,
+		Catalogs.Features.EmptyRef (), Catalogs.Series.EmptyRef () );
 	return data;
 
 EndFunction
+
+&AtClient
+Procedure ItemsSeriesOnChange ( Item )
+
+	applySeries ();
+	
+EndProcedure
+
+&AtClient
+Procedure applySeries ()
+	
+	ItemsRow.Balance = getBalance ( ItemsRow.Item, Object.Warehouse,
+		ItemsRow.Package, ItemsRow.Feature, ItemsRow.Series );
+	
+EndProcedure
 
 &AtClient
 Procedure ItemsQuantityOnChange ( Item )

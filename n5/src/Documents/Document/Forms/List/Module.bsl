@@ -949,6 +949,13 @@ Procedure CurrentBookOnChange ( Item )
 EndProcedure
 
 &AtClient
+Procedure CurrentBookClearing(Item, StandardProcessing)
+	
+	saveCurrentBook ( undefined, PurposeKey );
+	
+EndProcedure
+
+&AtClient
 Procedure DocumentsListDragStart ( Item, DragParameters, Perform )
 	
 	DragParameters.AllowedActions = DragAllowedActions.Move;

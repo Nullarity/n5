@@ -13,6 +13,8 @@ var WaybillManualWriteOff;
 &AtClient
 var GitIntegration;
 &AtClient
+var UseAI;
+&AtClient
 var AccountingRow;
 &AtClient
 var StayOpen;
@@ -45,6 +47,7 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	fillTimeZones ();
 	setCurrentTimeZone ();
 	setLastStep ();
+	defineAIServer ();
 	applySetupDate ();
 	readAppearance ();
 	Appearance.Apply ( ThisObject );
@@ -78,6 +81,8 @@ Procedure readAppearance ()
 
 	rules = new Array ();
 	rules.Add ( "
+	|AI enable AIServerDefined;
+	|AIServerWarning hide AIServerDefined;
 	|FormPreviuosStep enable CurrentStep > 0;
 	|FormNextStep enable CurrentStep < LastStep;" );
 	if ( Logins.Sysadmin () ) then
@@ -112,6 +117,14 @@ Procedure setLastStep ()
 	LastStep = Items.Pages.ChildItems.Count () - 1;
 	
 EndProcedure 
+
+&AtServer
+Procedure defineAIServer ()
+	
+	SetPrivilegedMode ( true );
+	AIServerDefined = not Constants.AIServer.Get ().IsEmpty ();
+	
+EndProcedure
 
 &AtServer
 Procedure applySetupDate ()
@@ -172,6 +185,7 @@ Procedure readOptions ()
 	Series = Object.Series;
 	WaybillManualWriteOff = Object.WaybillManualWriteOff;
 	GitIntegration = Object.GitIntegration;
+	UseAI = Object.AI;
 	
 EndProcedure 
 
@@ -291,7 +305,8 @@ Function optionsChanged ()
 		or Production <> Object.Production
 		or Series <> Object.Series
 		or WaybillManualWriteOff <> Object.WaybillManualWriteOff
-		or GitIntegration <> Object.GitIntegration;
+		or GitIntegration <> Object.GitIntegration
+		or UseAI <> Object.AI;
 	
 EndFunction 
 

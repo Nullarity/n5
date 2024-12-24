@@ -568,3 +568,284 @@ Procedure CheckQuote ( Fields ) export
 	endif; 
 	
 EndProcedure 
+
+&AtServer
+Procedure ApplyCustomer ( Object, Form = undefined ) export
+	
+	customer = Object.Customer;
+	company = Object.Company;
+	data = AccountsMap.Organization ( customer, company, "CustomerAccount" );
+	Object.CustomerAccount = data.CustomerAccount;
+	data = DF.Values ( customer, "CustomerContract, CustomerContract.Company as Company, VATUse" );
+	if ( data.Company = company ) then
+		Object.Contract = data.CustomerContract;
+	endif; 
+	Object.VATUse = data.VATUse;
+	InvoiceForm.ApplyContract ( Object, Form );
+	InvoiceForm.ApplyVATUse ( Object, Form );
+	
+EndProcedure
+
+&AtServer
+Procedure ApplyContract ( Object, Form ) export
+	
+	data = DF.Values ( Object.Contract,
+		"CustomerPrices, Currency, CustomerAdvances, CustomerRateType, CustomerRate, CustomerFactor" );
+	Object.CloseAdvances = data.CustomerAdvances;
+	Object.Currency = data.Currency;
+	if ( data.CustomerRateType = Enums.CurrencyRates.Fixed
+		and data.CustomerRate <> 0 ) then
+		rates = new Structure ( "Rate, Factor", data.CustomerRate, data.CustomerFactor );
+	else
+		rates = CurrenciesSrv.Get ( data.Currency, Object.Date );
+	endif;
+	Object.Rate = rates.Rate;
+	Object.Factor = rates.Factor;
+	Object.Prices = data.CustomerPrices;
+	updateContent ( Object );
+	if ( Form = undefined ) then
+		InvoiceForm.UpdateTotals ( Object );
+	else
+		Form.ContractCurrency = Object.Currency;
+		InvoiceForm.SetCurrencyList ( Form );
+		InvoiceForm.UpdateTotals ( Form );
+		InvoiceForm.UpdateBalanceDue ( Form );
+		Constraints.ShowSales ( Form );
+		Appearance.Apply ( Form, "Object.Currency" );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure updateContent ( Object ) export
+	
+	if ( Object.Shipment = undefined ) then
+		reloadTables ( Object );
+		DiscountsTable.Load ( Object );
+	endif;
+	InvoiceForm.SetPayment ( Object );
+	
+EndProcedure 
+
+&AtServer
+Procedure reloadTables ( Object )
+	
+	table = FillerSrv.GetData ( InvoiceForm.FillingParams ( Object ) );
+	if ( table.Count () > 0 ) then
+		loadSalesOrders ( Object, table, true );
+	endif; 
+	
+EndProcedure 
+
+&AtServer
+Function FillingParams ( Object ) export
+	
+	p = Filler.GetParams ();
+	p.Report = "SalesOrderItems";
+	p.Filters = getFilters ( Object );
+	p.ProposeClearing = Object.SalesOrder.IsEmpty ();
+	return p;
+	
+EndFunction
+
+&AtServer
+Function getFilters ( Object )
+	
+	filters = new Array ();
+	if ( Object.SalesOrder.IsEmpty () ) then
+		filters.Add ( DC.CreateFilter ( "SalesOrder.Customer", Object.Customer ) );
+		filters.Add ( DC.CreateFilter ( "SalesOrder.Contract", Object.Contract ) );
+	else
+		filters.Add ( DC.CreateFilter ( "SalesOrder", Object.SalesOrder ) );
+	endif; 
+	item = DC.CreateParameter ( "Asof" );
+	item.Value = Periods.GetBalanceDate ( Object );
+	item.Use = ( item.Value <> undefined );
+	filters.Add ( item );
+	return filters;
+	
+EndFunction
+
+&AtServer
+Procedure LoadSalesOrders ( Object, Table, Clean ) export
+	
+	company = Object.Company;
+	oneWarehouse = not Options.WarehousesInTable ( company );
+	oneOrder = not Options.SalesOrdersInTable ( company );
+	warehouse = Object.Warehouse;
+	salesOrder = Object.SalesOrder;
+	vatUse = Object.VATUse;
+	tableItems = Object.Items;
+	services = Object.Services;
+	if ( Clean ) then
+		tableItems.Clear ();
+		services.Clear ();
+	endif;
+	for each row in Table do
+		if ( row.ItemService ) then
+			docRow = services.Add ();
+			FillPropertyValues ( docRow, row );
+			item = row.Item;
+			accounts = AccountsMap.Item ( item, company, warehouse, "Income, VAT" );
+			docRow.Income = accounts.Income;
+			docRow.VATAccount = accounts.VAT;
+		else
+			docRow = tableItems.Add ();
+			FillPropertyValues ( docRow, row );
+			if ( oneWarehouse
+				or docRow.Warehouse = warehouse ) then
+				docRow.Warehouse = undefined;
+			endif; 
+			accounts = AccountsMap.Item ( docRow.Item, company, warehouse, "Account, SalesCost, Income, VAT" );
+			docRow.Account = accounts.Account;
+			docRow.SalesCost = accounts.SalesCost;
+			docRow.Income = accounts.Income;
+			docRow.VATAccount = accounts.VAT;
+		endif;
+		Computations.Discount ( docRow );
+		Computations.Amount ( docRow );
+		Computations.Total ( docRow, vatUse );
+		if ( oneOrder
+			or docRow.SalesOrder = salesOrder ) then
+			docRow.SalesOrder = undefined;
+		endif; 
+	enddo; 
+	
+EndProcedure 
+
+Procedure UpdateTotals ( Source, Row = undefined, CalcVAT = true ) export
+
+	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
+	object = ? ( clientForm, Source.Object, Source );
+	if ( Row <> undefined ) then
+		Computations.Total ( Row, object.VATUse, CalcVAT );
+	endif;
+	InvoiceForm.CalcTotals ( Source );
+	if ( clientForm ) then
+		InvoiceForm.CalcBalanceDue ( Source );
+		Appearance.Apply ( Source, "BalanceDue" );
+	endif;
+
+EndProcedure 
+
+&AtServer
+Procedure ApplyVATUse ( Object, Form ) export
+
+	vatUse = Object.VATUse;
+	for each row in Object.Items do
+		Computations.Amount ( row );
+		Computations.Total ( row, vatUse );
+		Computations.ExtraCharge ( row );
+	enddo; 
+	for each row in Object.Services do
+		Computations.Amount ( row );
+		Computations.Total ( row, vatUse );
+	enddo; 
+	DiscountsTable.RecalcVAT ( Object );
+	if ( Form <> undefined ) then
+		Appearance.Apply ( Form, "Object.VATUse" );
+	endif;
+
+EndProcedure
+
+&AtServer
+Procedure UpdateBalanceDue ( Form ) export
+
+	InvoiceForm.SetPaymentsApplied ( Form );
+	InvoiceForm.CalcBalanceDue ( Form );
+	Appearance.Apply ( Form, "BalanceDue" );
+
+EndProcedure
+
+Procedure ApplyItem ( Row, Source ) export
+	
+	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
+	object = ? ( clientForm, Source.Object, Source );
+	p = new Structure ();
+	p.Insert ( "Date", object.Date );
+	p.Insert ( "Company", object.Company );
+	p.Insert ( "Organization", object.Customer );
+	p.Insert ( "Contract", object.Contract );
+	p.Insert ( "Warehouse", InvoiceForm.GetWarehouse ( Row, object ) );
+	p.Insert ( "Currency", object.Currency );
+	p.Insert ( "Item", Row.Item );
+	p.Insert ( "Prices", object.Prices );
+	data = InvoiceFormSrv.GetItemData ( p );
+	Row.Package = data.Package;
+	Row.Capacity = data.Capacity;
+	Row.Price = data.Price;
+	Row.VATCode = data.VAT;
+	Row.VATRate = data.Rate;
+	Row.VATAccount = data.VATAccount;
+	Row.Account = data.Account;
+	Row.SalesCost = data.SalesCost;
+	Row.Income = data.Income;
+	Row.ProducerPrice = data.ProducerPrice;
+	Row.Social = data.Social;
+	Computations.Units ( Row );
+	Computations.Discount ( Row );
+	Computations.Amount ( Row );
+	Computations.ExtraCharge ( Row );
+	InvoiceForm.UpdateTotals ( Source, Row );
+	
+EndProcedure
+
+Function GetWarehouse ( Row, Object ) export
+	
+	return ? ( Row.Warehouse.IsEmpty (), Object.Warehouse, Row.Warehouse );
+	
+EndFunction 
+
+Function ItemParams ( val Item, val Package, val Feature = undefined ) export
+
+	p = new Structure ();
+	p.Insert ( "Item", Item );
+	p.Insert ( "Package", Package );
+	p.Insert ( "Feature", Feature );
+	return p;
+
+EndFunction
+
+Procedure ApplyItemsQuantityPkg ( Row, Source ) export
+	
+	Computations.Units ( Row );
+	Computations.Discount ( Row );
+	Computations.Amount ( Row );
+	Computations.ExtraCharge ( Row );
+	InvoiceForm.UpdateTotals ( Source, Row );
+
+EndProcedure
+
+Procedure ApplyService ( Row, Source ) export
+	
+	clientForm = TypeOf ( Source ) = Type ( "ClientApplicationForm" );
+	object = ? ( clientForm, Source.Object, Source );
+	p = new Structure ();
+	p.Insert ( "Date", object.Date );
+	p.Insert ( "Company", object.Company );
+	p.Insert ( "Organization", object.Customer );
+	p.Insert ( "Contract", object.Contract );
+	p.Insert ( "Warehouse", object.Warehouse );
+	p.Insert ( "Currency", object.Currency );
+	p.Insert ( "Item", Row.Item );
+	p.Insert ( "Prices", object.Prices );
+	data = InvoiceFormSrv.GetServiceData ( p );
+	Row.Price = data.Price;
+	Row.Description = data.FullDescription;
+	Row.VATCode = data.VAT;
+	Row.VATRate = data.Rate;
+	Row.VATAccount = data.VATAccount;
+	Row.Income = data.Income;
+	Computations.Discount ( Row );
+	Computations.Amount ( Row );
+	InvoiceForm.UpdateTotals ( Source, Row );
+	
+EndProcedure 
+
+Procedure ApplyServicesQuantity ( Row, Source ) export
+	
+	Computations.Discount ( Row );
+	Computations.Amount ( Row );
+	InvoiceForm.UpdateTotals ( Source, Row );
+	
+EndProcedure

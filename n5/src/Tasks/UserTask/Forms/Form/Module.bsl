@@ -212,7 +212,7 @@ Procedure TaskNotes ( Result, Action ) export
 	endif; 
 	completeMemo ( Result.Notes );
 	Object.Status = Result.Status;
-	run ( Action );
+	UserTasks.ApplyAction ( ThisObject, Action );
 
 EndProcedure
 
@@ -253,17 +253,8 @@ Procedure CompleteTask ( Answer, Params ) export
 	if ( Answer = DialogReturnCode.No ) then
 		return;
 	endif; 
-	run ( PredefinedValue ( "Enum.Actions.Complete" ) );
+	UserTasks.ApplyAction ( ThisObject, PredefinedValue ( "Enum.Actions.Complete" ) );
 
-EndProcedure
-
-&AtClient
-Procedure run ( Action )
-	
-	Object.Action = Action;
-	Write ( new Structure ( "ВыполнитьЗадачу", true ) );
-	Close ();
-	
 EndProcedure
 
 &AtClient
@@ -295,7 +286,7 @@ Procedure DelegationData ( Data, Action ) export
 	endif; 
 	completeMemo ( Data.Notes );
 	Object.Delegated = Data.Performer;
-	run ( Action );
+	UserTasks.ApplyAction ( ThisObject, Action );
 
 EndProcedure
 
@@ -312,7 +303,7 @@ Procedure TerminateProcess ( Answer, Params ) export
 	if ( Answer = DialogReturnCode.No ) then
 		return;
 	endif; 
-	run ( PredefinedValue ( "Enum.Actions.Reject" ) );
+	UserTasks.ApplyAction ( ThisObject, PredefinedValue ( "Enum.Actions.Reject" ) );
 
 EndProcedure
 

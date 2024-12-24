@@ -13,8 +13,14 @@ Function proceed ( Request )
 		response.Headers.Insert ( "content-type", "text/html" );
 		result = get ( parameters );
 		response.SetBodyFromString ( result );
+			WriteLogEvent ( "Assist.FunctionCall",
+				EventLogLevel.Information, , ,
+				"Request: " + parameters
+				+ Chars.LF +"Response: "
+				+ result
+			);
 	except
-		WriteLogEvent ( "OpenAI.FunctionCall",
+		WriteLogEvent ( "Assist.FunctionCall",
 			EventLogLevel.Error, , ,
 			ErrorProcessing.DetailErrorDescription ( ErrorInfo () )
 			+ ", request: "
@@ -31,11 +37,23 @@ Function get ( Parameters )
 	
 	p = Conversion.FromJSON ( Parameters );
 	SetPrivilegedMode ( true );
-	folder = Application.AssistantPlugin (); 
-	processor = ExternalDataProcessors.Create ( folder + "/" + p.function + ".epf", false );
+	slash = GetPathSeparator ();
+	folder = Application.AssistantPlugin () + slash;
+	file = p.function + ".epf";
+	path = folder + Metadata.Name + slash + file;
+	if ( not FileSystem.Exists ( path ) ) then
+		path = folder + file;
+	endif;
+	processor = ExternalDataProcessors.Create ( path, false );
 	SetPrivilegedMode ( false );
 	processor.Parameters = p;
-	return processor.Get ();
+	result = processor.Get ();
+	try
+		success = Boolean ( processor.Success );
+	except
+		success = true;
+	endtry;
+	return Conversion.ToJSON ( new Structure ( "content, success", result, success ) );
 	
 EndFunction
 

@@ -19,20 +19,3 @@ Procedure fillNew ()
 	endif;
 	
 EndProcedure
-
-// *****************************************
-// *********** Group Form
-
-&AtClient
-Procedure DescriptionOnChange ( Item )
-
-	applyDescription ();
-
-EndProcedure
-
-&AtClient
-Procedure applyDescription ()
-	
-	Object.FullDescription = Object.Description;
-	
-EndProcedure

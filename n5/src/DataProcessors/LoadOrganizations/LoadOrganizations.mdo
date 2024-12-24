@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:DataProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="29ddb47f-ca2c-4586-98d3-324e11324a2b">
+  <producedTypes>
+    <objectType typeId="745a7fa7-2fe7-4639-b159-ac131fedb682" valueTypeId="359232ce-1ddc-487d-8793-318358fb4d3e"/>
+    <managerType typeId="dd418861-b6e8-4da9-84d7-d18bb78e5b15" valueTypeId="1dbbb019-99b7-4099-9aeb-1ddfcaec4c2c"/>
+  </producedTypes>
+  <name>LoadOrganizations</name>
+  <defaultForm>DataProcessor.LoadOrganizations.Form.Form</defaultForm>
+  <help>
+    <pages>
+      <lang>en</lang>
+    </pages>
+    <pages>
+      <lang>ru</lang>
+    </pages>
+  </help>
+  <attributes uuid="4715b68b-b4a1-4c87-8812-43147fe986a6">
+    <name>Path</name>
+    <synonym>
+      <key>en</key>
+      <value>File</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Файл</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Fişier</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers/>
+    </type>
+    <toolTip>
+      <key>en</key>
+      <value>Loading file path</value>
+    </toolTip>
+    <toolTip>
+      <key>ru</key>
+      <value>Полный путь к файлу для загрузки</value>
+    </toolTip>
+    <toolTip>
+      <key>ro</key>
+      <value>Calea completă către fișierul de încărcare</value>
+    </toolTip>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillChecking>ShowError</fillChecking>
+  </attributes>
+  <tabularSections uuid="295dc789-1d93-4345-9e87-de0c28f9d3ea">
+    <producedTypes>
+      <objectType typeId="493c247d-d4d7-4db2-8553-b9fb2c6be1ee" valueTypeId="0ca33e05-165a-4337-a057-4b1627cacca5"/>
+      <rowType typeId="fa62ab28-3d81-4d8f-9009-a31325779839" valueTypeId="49762b5b-4de6-4fbc-a9d1-b227831403f6"/>
+    </producedTypes>
+    <name>Invoices</name>
+    <synonym>
+      <key>en</key>
+      <value>Invoices</value>
+    </synonym>
+    <synonym>
+      <key>ru</key>
+      <value>Накладные</value>
+    </synonym>
+    <synonym>
+      <key>ro</key>
+      <value>Facturile</value>
+    </synonym>
+    <fillChecking>ShowError</fillChecking>
+    <standardAttributes>
+      <dataHistory>Use</dataHistory>
+      <name>LineNumber</name>
+      <fillValue xsi:type="core:UndefinedValue"/>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+    </standardAttributes>
+    <attributes uuid="5e3790ce-9b8f-4a0e-94da-8c2890a8214c">
+      <name>Amount</name>
+      <synonym>
+        <key>en</key>
+        <value>Amount</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Сумма</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Sumă</value>
+      </synonym>
+      <type>
+        <types>DefinedType.Amount</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Amount including VAT</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Сумма включая НДС</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Suma inclusiv TVA</value>
+      </toolTip>
+      <markNegatives>true</markNegatives>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="73ee0104-91fa-4e0a-ae78-fcfb44aa8885">
+      <name>Customer</name>
+      <synonym>
+        <key>en</key>
+        <value>Customer</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Покупатель</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Cumpãrãtor</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Customer/Receiver</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Покупатель/получатель</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Cumpãrãtor/beneficiar</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="e055d985-9cd9-4807-a679-c9bd2263a238">
+      <name>FormNumber</name>
+      <synonym>
+        <key>en</key>
+        <value>Invoice #</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Номер</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Număr</value>
+      </synonym>
+      <type>
+        <types>Number</types>
+        <numberQualifiers>
+          <precision>10</precision>
+          <nonNegative>true</nonNegative>
+        </numberQualifiers>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Invoice number</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Номер НН</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Numărul FF</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="d4024224-e26a-491b-bb3f-63cb80dde965">
+      <name>Invoice</name>
+      <synonym>
+        <key>en</key>
+        <value>Invoice</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Накладная</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Factura</value>
+      </synonym>
+      <type>
+        <types>DocumentRef.InvoiceRecord</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Invoice</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Накладная</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Factura</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="c600f5e4-b0f4-4e2a-b7de-4a8b042e9798">
+      <name>Load</name>
+      <synonym>
+        <key>en</key>
+        <value>Load</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Загрузить</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Import</value>
+      </synonym>
+      <type>
+        <types>Boolean</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Load</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Загрузить</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Import</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="49a9fba6-807c-4988-a18b-38f06ca81668">
+      <name>LoadingPoint</name>
+      <synonym>
+        <key>en</key>
+        <value>Loading Point</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Пункт погрузки</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Punct de încărcare</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Loading point</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Пункт погрузки</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Punct de încărcare</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillFromFillingValue>true</fillFromFillingValue>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+    <attributes uuid="e40e2605-cad9-461e-95c0-248430229d3f">
+      <name>Memo</name>
+      <synonym>
+        <key>en</key>
+        <value>Memo</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Комментарий</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Comentariu</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers/>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Any information</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Произвольные заметки</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Note explicative</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:StringValue">
+        <value></value>
+      </fillValue>
+    </attributes>
+    <attributes uuid="359fd8d2-e385-4d61-91c9-d63f62d464cf">
+      <name>Number</name>
+      <synonym>
+        <key>en</key>
+        <value>#</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Номер</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Număr</value>
+      </synonym>
+      <type>
+        <types>String</types>
+        <stringQualifiers>
+          <length>10</length>
+        </stringQualifiers>
+      </type>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:StringValue">
+        <value></value>
+      </fillValue>
+    </attributes>
+    <attributes uuid="2a97b3d7-e9a1-425b-be3c-a21089379409">
+      <name>Series</name>
+      <synonym>
+        <key>en</key>
+        <value>Series</value>
+      </synonym>
+      <synonym>
+        <key>ru</key>
+        <value>Серия</value>
+      </synonym>
+      <synonym>
+        <key>ro</key>
+        <value>Serie</value>
+      </synonym>
+      <type>
+        <types>DefinedType.ReferenceSeries</types>
+      </type>
+      <toolTip>
+        <key>en</key>
+        <value>Invoice record series</value>
+      </toolTip>
+      <toolTip>
+        <key>ru</key>
+        <value>Серия НН</value>
+      </toolTip>
+      <toolTip>
+        <key>ro</key>
+        <value>Seria FF</value>
+      </toolTip>
+      <minValue xsi:type="core:UndefinedValue"/>
+      <maxValue xsi:type="core:UndefinedValue"/>
+      <fillValue xsi:type="core:UndefinedValue"/>
+    </attributes>
+  </tabularSections>
+  <forms uuid="f41823a2-3fb9-4993-b0d8-cd484df9501c">
+    <name>Form</name>
+    <usePurposes>PersonalComputer</usePurposes>
+    <usePurposes>MobileDevice</usePurposes>
+  </forms>
+</mdclass:DataProcessor>

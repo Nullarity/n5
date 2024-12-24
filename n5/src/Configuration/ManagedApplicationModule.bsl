@@ -115,7 +115,7 @@ Procedure runMainScenario () export
 		try
 			connector = Eval ( "new TestedApplication ( ""localhost"", " + port + " )" );
 			connector.Connect ();
-			button = connector.FindObject ( Type ( "TestedFormButton" ), , "FormCatalogScenariosRun", 3 );
+			button = connector.FindObject ( Type ( "TestedFormButton" ), , "RunExternally", 3 );
 			button.Click ();
 			connector.Disconnect ();
 		except

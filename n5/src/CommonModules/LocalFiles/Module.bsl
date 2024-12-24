@@ -127,3 +127,22 @@ async Procedure ChooseFolder ( Result, Item ) export
 	Item.SelectedText = folders [ 0 ];
 	
 EndProcedure
+
+Procedure SelectFile ( Item ) export
+	
+	callback = new NotifyDescription ( "ChooseFolder", ThisObject, Item );
+	LocalFiles.Prepare ( callback );
+	
+EndProcedure
+
+async Procedure ChooseFile ( Result, Item ) export
+	
+	dialog = new FileDialog ( FileDialogMode.Open );
+	files = await dialog.ChooseAsync ();
+	if ( files = undefined ) then
+		return;
+	endif;
+	Item.SetTextSelectionBounds ( 1, 1 + StrLen ( Item.EditText ) );
+	Item.SelectedText = files [ 0 ];
+	
+EndProcedure

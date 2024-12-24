@@ -145,8 +145,6 @@ EndFunction
 &AtServer
 Procedure loadPurchaseOrders ( Table )
 	
-	orders = Options.PurchaseOrdersInTable ( Object.Company );
-	purchaseOrder = Object.PurchaseOrder;
 	itemsTable = Object.Items;
 	for each row in Table do
 		if ( row.ItemService ) then
@@ -154,10 +152,6 @@ Procedure loadPurchaseOrders ( Table )
 		endif; 
 		docRow = itemsTable.Add ();
 		FillPropertyValues ( docRow, row );
-		if ( orders
-			and docRow.PurchaseOrder = purchaseOrder ) then
-			docRow.PurchaseOrder = undefined;
-		endif; 
 	enddo; 
 	
 EndProcedure 
@@ -340,18 +334,11 @@ Procedure addItem ( Fields )
 		row.Quantity = Fields.Quantity;
 		row.QuantityPkg = Fields.QuantityPkg;
 		row.Capacity = Fields.Capacity;
-		row.Print = 1;
 	else
 		row = rows [ 0 ];
 		row.Quantity = row.Quantity + Fields.Quantity;
 		row.QuantityPkg = row.QuantityPkg + Fields.QuantityPkg;
 	endif; 
-	if ( not Fields.BarcodeFound
-		and not row.Series.IsEmpty () ) then
-		row.Print = 1;
-	else
-		row.Print = 0;
-	endif;
 	
 EndProcedure 
 
@@ -411,23 +398,6 @@ Procedure ItemsSeriesStartChoice ( Item, ChoiceData, StandardProcessing )
 	
 	SeriesForm.ShowList ( Item, itemsRow.Item, StandardProcessing );
 	                   
-EndProcedure
-
-&AtClient
-Procedure ItemsOnStartEdit ( Item, NewRow, Clone )
-	
-	if ( NewRow
-		and not Clone ) then
-		initRow ();
-	endif;
-	
-EndProcedure
-
-&AtClient
-Procedure initRow ()
-	
-	Items.Items.CurrentData.Print = 1;
-	
 EndProcedure
 
 &AtClient

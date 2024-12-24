@@ -7,9 +7,9 @@ EndFunction
 Function GetThread ( Server ) export
 	
 	connection = prepareConnection ( Server );
-	request = new HTTPRequest ( "/assist/newThread", connection.header );
+	request = new HTTPRequest ( "/assist/newThread", connection.Header );
 	try
-		response = connection.http.Get ( request );
+		response = connection.Http.Get ( request );
 	except
 		raise ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
 	endtry;
@@ -31,6 +31,7 @@ Function ChatParams () export
 	p.Insert ( "Message", "" );
 	p.Insert ( "Files" );
 	p.Insert ( "Resend", false );
+	p.Insert ( "Temperature", 0 );
 	return p;
 	
 EndFunction 
@@ -38,11 +39,12 @@ EndFunction
 Procedure Chat ( Parameters ) export
 	
 	assistant = Parameters.Assistant;
-	server = DF.Pick ( assistant, "Server" );
+	data = DF.Values ( assistant, "Server, Model.Tokens as Tokens" );
+	server = data.Server;
 	connection = prepareConnection ( server );
 	setSession ( connection, Parameters.Session );
-	request = new HTTPRequest ( "/assist/chat", connection.header );
-	p = new Structure ( "assistant, text, files, thread, user, password, resend" );
+	request = new HTTPRequest ( "/assist/chat", connection.Header );
+	p = new Structure ( "assistant, text, files, thread, user, password, resend, temperature, tokens" );
 	p.assistant = InformationRegisters.Assistants.Get ( new Structure ( "Assistant", assistant ) ).ID;
 	p.text = Parameters.Message;   
 	p.files = Parameters.Files;
@@ -50,10 +52,12 @@ Procedure Chat ( Parameters ) export
 	p.user = UserName ();
 	p.password = userPassword ();
 	p.resend = Parameters.Resend;
+	p.tokens = data.Tokens;
+	p.temperature = Parameters.Temperature;
 	request.SetBodyFromString ( Conversion.ToJSON ( p ) );
 	caller = Parameters.Result;
 	try
-		response = connection.http.Post ( request );
+		response = connection.Http.Post ( request );
 	except
 		saveResult ( caller, true, "",
 			ErrorProcessing.BriefErrorDescription ( ErrorInfo () ) );
@@ -67,52 +71,22 @@ Procedure Chat ( Parameters ) export
 		
 EndProcedure
 
-Function prepareConnection ( Server )
+Function prepareConnection ( Source = undefined )
 	
-	data = connectionData ( Server );
-	connection = new HTTPConnection ( hostname ( data.Server ), data.Port );
-	header = new Map ();
-	header [ "Authorization" ] = "Bearer " + data.Token;
-	header [ "Content-Type" ] = "application/json";
-	return new Structure ( "http, header, session", connection, header, "" );
-
+	SetPrivilegedMode ( true );
+	return AICache.PrepareConnection ( Source );
+	
 EndFunction
 
 Procedure setSession ( Connection, Session )
 
 	if ( Session <> "" ) then
 		Connection.session = Session;
-		Connection.header [ "Cookie" ] = "session=" + Session;
+		Connection.Header [ "Cookie" ] = "session=" + Session;
 	endif;
 
 EndProcedure
 	
-Function connectionData ( Server )
-
-	q = new Query ( "
-	|select Access.Ref.Address as Server, Access.Ref.Port, Access.Token as Token
-	|from Catalog.Servers.Access as Access
-	|where Access.Tenant = &Tenant
-	|and Access.Ref = &Ref
-	|" );
-	q.SetParameter ( "Ref", Server );
-	q.SetParameter ( "Tenant", SessionParameters.Tenant );
-	return Conversion.RowToStructure ( q.Execute ().Unload () );
-
-EndFunction
-
-Function hostname ( Address )
-	
-	splitter = "://";
-	i = StrFind ( Address, splitter );
-	if ( i = 0 ) then
-		return Address;
-	else
-		return Mid ( Address, i + StrLen ( splitter ) );
-	endif;
-	
-EndFunction
-
 Function getSession ( Response )
 	
 	cookies = Conversion.StringToMap ( Response.Headers [ "Set-Cookie" ], "=", ";" );
@@ -170,9 +144,9 @@ Procedure destroyAssistant ( Assistant, Parameters )
 	endif;
 	server = DF.Pick ( Parameters.Assistant, "Server" );
 	connection = prepareConnection ( server );
-	request = new HTTPRequest ( "/assist/destroy", connection.header );
+	request = new HTTPRequest ( "/assist/destroy", connection.Header );
 	request.SetBodyFromString ( id );
-	response = connection.http.Post ( request );
+	response = connection.Http.Post ( request );
 	if ( response.StatusCode <> Enum.HTTPStatusOK () ) then
 		raise response.GetBodyAsString ();
 	endif;
@@ -255,7 +229,7 @@ EndFunction
 
 Procedure rewokeFile ( File, Connection )
 
-	request = new HTTPRequest ( "/assist/delete", connection.header );
+	request = new HTTPRequest ( "/assist/delete", connection.Header );
 	request.SetBodyFromString ( File.ID );
 	try
 		response = Connection.http.Post ( request );
@@ -301,7 +275,9 @@ Function getAssistantData ( Parameters )
 	|select Assistants.Description as Name, Assistants.Model.Description as Model,
 	|	Assistants.FullDescription as Description, Assistants.CodeInterpreter as CodeInterpreter,
 	|	Assistants.Retrieval as Retrieval, Assistants.Language as Language,
-	|	Assistants.Purpose as Purpose, Assistants.Search as Search, isnull ( Info.ID, """" ) as ID
+	|	Assistants.Purpose as Purpose, Assistants.Search as Search, isnull ( Info.ID, """" ) as ID,
+	|	Assistants.Provider as Provider, Assistants.Temperature as Temperature,
+	|	Assistants.Model.Tokens as Tokens
 	|from Catalog.Assistants as Assistants
 	|	//
 	|	// Assistants
@@ -317,27 +293,32 @@ Function getAssistantData ( Parameters )
 	|order by Files.LineNumber
 	|;
 	|// #Instructions
-	|select Instructions.Instruction as Instruction, Instructions.Instruction.FullDescription as Text
+	|select Instructions.Instruction as Instruction, Instructions.Instruction.FullDescription as Text,
+	|	Instructions.System as System
 	|from Catalog.Assistants.Instructions as Instructions
 	|where Instructions.Ref = &Assistant
+	|and not Instructions.Ref.DeletionMark
 	|order by Instructions.Ref, Instructions.LineNumber
 	|;
 	|// #Functions
 	|select Functions.Ref as Instruction, Functions.Function as Function,
 	|	Functions.Function.Authentication as Authentication, Functions.Function.Endpoint as Endpoint,
 	|	Functions.Function.FullDescription as Title, Functions.Function.Name as Name,
-	|	Functions.Function.Description as Description, Functions.Internal as Internal
+	|	Functions.Function.Description as Description
 	|from Catalog.Instructions.Functions as Functions
 	|where Functions.Ref in ( select Instruction from Catalog.Assistants.Instructions where Ref = &Assistant )
+	|and not Functions.Function.DeletionMark
 	|order by Instruction, Functions.LineNumber
 	|;
 	|// #Arguments
 	|select Arguments.Ref as Function, Arguments.Description as Description, Arguments.Mandatory as Mandatory,
 	|	Arguments.Name as Name, Arguments.Type as Type, Arguments.Default as Default, Arguments.Examples as Examples,
-	|	Arguments.Values as Values, Arguments.Constant as Constant
+	|	Arguments.Values as Values, Arguments.Constant as Constant, Arguments.Include as Include,
+	|	Arguments.AllowEmpty as AllowEmpty
 	|from Catalog.Functions.Arguments as Arguments
 	|where Arguments.Ref in ( select Function from Catalog.Instructions.Functions where Ref in (
 	|	select Instruction from Catalog.Assistants.Instructions where Ref = &Assistant ) )
+	|and not Arguments.Ref.DeletionMark
 	|order by Function, Arguments.LineNumber
 	|"
 	);
@@ -360,6 +341,7 @@ Function getAssistant ( Data )
 	
 	entry = Data.Assistant;
 	entry.Search = Conversion.EnumItemToName ( entry.Search );
+	entry.Provider = Conversion.EnumItemToName ( entry.Provider );
 	return entry;
 	
 EndFunction
@@ -374,18 +356,19 @@ Function getAssistantInstructions ( Data )
 			params = new Array ();
 			arguments = Data.Arguments.FindRows ( new Structure ( "Function", call.Function ) );
 			for each agrument in arguments do
-				entry = new Structure ( "Description, Mandatory, Name, Type, Default, Examples, Values, Constant" );
+				entry = new Structure ( "Description, Mandatory, Name, Type, Default, Examples, Values, Constant, Include, AllowEmpty" );
 				FillPropertyValues ( entry, agrument, , "Type" );
 				entry.Type = Conversion.EnumItemToName ( agrument.Type );
 				params.Add ( entry );
 			enddo;
-			entry = new Structure ( "Name, Title, Description, Endpoint, Authentication, Internal, Arguments" );
+			entry = new Structure ( "Name, Title, Description, Endpoint, Authentication, Arguments" );
 			FillPropertyValues ( entry, call );
 			entry.Authentication = Conversion.EnumItemToName ( call.Authentication );
 			entry.Arguments = params;
 			methods.Add ( entry );
 		enddo;
-		instructions.Add ( new Structure ( "Text, Functions", instruction.Text, methods ) );
+		instructions.Add ( new Structure ( "Text, System, Functions",
+			instruction.Text, instruction.System, methods ) );
 	enddo;
 	return instructions;
 	
@@ -401,9 +384,9 @@ Function updateAssistant ( Parameters, Content )
 
 	server = DF.Pick ( Parameters.Assistant, "Server" );
 	connection = prepareConnection ( server );
-	request = new HTTPRequest ( "/assist/deploy", connection.header );
+	request = new HTTPRequest ( "/assist/deploy", connection.Header );
 	request.SetBodyFromString ( Conversion.ToJSON ( Content ) );
-	response = connection.http.Post ( request );
+	response = connection.Http.Post ( request );
 	result = response.GetBodyAsString ();
 	if ( response.StatusCode = Enum.HTTPStatusOK () ) then
 		return result;
@@ -500,7 +483,7 @@ EndFunction
 Function sendFile ( Connection, File, Data, Error )
 
 	Data.Write ( File );
-	request = new HTTPRequest ( "/assist/upload", Connection.header );
+	request = new HTTPRequest ( "/assist/upload", Connection.Header );
 	request.SetBodyFromString ( File );
 	try
 		response = Connection.http.Post ( request );
@@ -550,11 +533,11 @@ Function StopRunning ( val Server, val Thread, val Session ) export
 
 	connection = prepareConnection ( Server );
 	setSession ( connection, Session );
-	request = new HTTPRequest ( "/assist/stopRunning", connection.header );
+	request = new HTTPRequest ( "/assist/stopRunning", connection.Header );
 	p = new Structure ( "thread", Thread );
 	request.SetBodyFromString ( Conversion.ToJSON ( p ) );
 	try
-		connection.http.Post ( request );
+		connection.Http.Post ( request );
 		return true;
 	except
 		return false;
@@ -585,10 +568,10 @@ Function fetchFile ( Parameters )
 	
 	connection = prepareConnection ( Parameters.Server );
 	setSession ( connection, Parameters.Session );
-	request = new HTTPRequest ( "/assist/download", connection.header );
+	request = new HTTPRequest ( "/assist/download", connection.Header );
 	request.SetBodyFromString ( Parameters.File );
 	try
-		response = connection.http.Post ( request );
+		response = connection.Http.Post ( request );
 		answer = response.GetBodyAsString ();
 		status = response.StatusCode;
 		if ( status = Enum.HTTPStatusOK () ) then
@@ -600,11 +583,139 @@ Function fetchFile ( Parameters )
 	except
 		raise ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
 	endtry;
+	
+EndFunction
+
+Function Post ( Connection, Request ) export
+	
 	try
-		info = ReadJSONValue ( answer );
-		raise info.error.message;
+		response = Connection.Http.Post ( Request );
+		answer = response.GetBodyAsString ();
+		status = response.StatusCode;
+		if ( status = Enum.HTTPStatusOK () ) then
+			try
+				return Conversion.FromJSON ( answer );
+			except
+				return answer;
+			endtry;
+		else
+			raise Output.ServerReturnedError ( new Structure ( "Code", status ) );
+		endif;
 	except
-		raise answer;
+		raise ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+	endtry;
+
+EndFunction
+
+Function Ask ( Params, ReturnJSON = true ) export
+	
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/ask", connection.header );
+	provider = provider ( Params.Model );
+	p = new Structure (
+		"provider, returnJSON, model, temperature, tokens, user, system",
+		Conversion.EnumItemToName ( provider ), ReturnJSON );
+	FillPropertyValues ( p, Params );
+	request.SetBodyFromString ( Conversion.ToJSON ( p ) );
+	try
+		result = AIServer.Post ( connection, request );
+		if ( provider = Enums.AIProviders.Anthropic ) then
+			content = result.content [ 0 ].text;
+		else
+			content = result.choices [ 0 ].message.content;
+		endif;
+		return ? ( ReturnJSON, ReadJSONValue ( content ), content );
+	except
+		WriteLogEvent ( "AIServer.Ask",
+			EventLogLevel.Error, , ,
+			ErrorProcessing.DetailErrorDescription ( ErrorInfo () )
+		);
 	endtry;
 	
 EndFunction
+
+Function provider ( Model )
+	
+	if ( StrStartsWith ( Model, "claude" ) ) then
+		return Enums.AIProviders.Anthropic;
+	else
+		return Enums.AIProviders.OpenAI;
+	endif;
+	
+EndFunction
+
+Function QuestionParams ( User, System = "", Tokens = 400 ) export
+	
+	p = new Structure ();
+	p.Insert ( "Model", "claude-3-5-sonnet-latest" );
+	p.Insert ( "Temperature", 0 );
+	p.Insert ( "Tokens", Tokens );
+	p.Insert ( "System", System );
+	p.Insert ( "User", User );
+	return p;
+	
+EndFunction
+
+Procedure CreateTable ( Name, WithTenant ) export
+
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/table/create", connection.header );
+	params = new Structure ( "name, size, withTenant",
+		Name, 1536, WithTenant );
+	request.SetBodyFromString ( Conversion.ToJSON ( params ) );
+	AIServer.Post ( connection, request );
+
+EndProcedure
+
+Procedure DropTable ( Name ) export
+
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/table/drop", connection.header );
+	params = new Structure ( "name", name );
+	request.SetBodyFromString ( Conversion.ToJSON ( params ) );
+	AIServer.Post ( connection, request );
+
+EndProcedure
+
+Function GetVectors ( Text, TextRu = "", Table = "", Cache = false ) export
+	
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/embedding/get", connection.header );
+	params = new Structure ( "text, textRu, table, cache",
+		Text, TextRu, Table, cache );
+	request.SetBodyFromString ( Conversion.ToJSON ( params ) );
+	return AIServer.Post ( connection, request );
+	
+EndFunction
+
+Function GetCachedVector ( Text ) export
+	
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/embedding/getCached", connection.header );
+	request.SetBodyFromString ( Text );
+	return AIServer.Post ( connection, request );
+	
+EndFunction
+
+Function FindRows ( Table, Vector, Column, Limit = 10 ) export
+	
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/table/find", connection.header );
+	params = new Structure ( "tenant, table, name, value, limit",
+		AICache.TenantID (), Table, Column, Vector, Limit );
+	request.SetBodyFromString ( Conversion.ToJSON ( params ) );
+	return AIServer.Post ( connection, request ).data;
+	
+EndFunction
+
+Procedure AddToSearch ( Table, ID, Embeddings ) export
+
+	connection = prepareConnection ();
+	request = new HTTPRequest ( "/assist/table/add", connection.header );
+	params = new Structure ( "table, rows", Table, new Array () );
+	params.rows.Add ( new Structure ( "tenant, id, vector, vectorRu",
+		AICache.TenantID (), ID, Embeddings.vector, Embeddings.vectorRu ) );
+	request.SetBodyFromString ( Conversion.ToJSON ( params ) );
+	AIServer.Post ( connection, request );
+
+EndProcedure

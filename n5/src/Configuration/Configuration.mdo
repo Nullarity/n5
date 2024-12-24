@@ -20,11 +20,12 @@
   <containedObjects classId="51f2d5d8-ea4d-4064-8892-82951750031e" objectId="83489ede-7093-4b94-8b07-0e91c18d69ee"/>
   <containedObjects classId="e68182ea-4237-4383-967f-90c1e3370bc7" objectId="082c332c-5195-4e85-88aa-c4ba7fcee276"/>
   <containedObjects classId="fb282519-d103-4dd3-bc12-cb271d631dfc" objectId="5d014a37-0a0e-47bd-bdf0-35d36544c46a"/>
+  <configurationExtensionCompatibilityMode>8.3.24</configurationExtensionCompatibilityMode>
   <defaultRunMode>ManagedApplication</defaultRunMode>
   <usePurposes>PersonalComputer</usePurposes>
   <defaultRoles>Role.User</defaultRoles>
   <vendor>Nullarity</vendor>
-  <version>5.0.35.1</version>
+  <version>5.0.36.1</version>
   <includeHelpInContents>true</includeHelpInContents>
   <help>
     <pages>
@@ -104,7 +105,7 @@
   <objectAutonumerationMode>NotAutoFree</objectAutonumerationMode>
   <modalityUseMode>DontUse</modalityUseMode>
   <synchronousPlatformExtensionAndAddInCallUseMode>DontUse</synchronousPlatformExtensionAndAddInCallUseMode>
-  <compatibilityMode>8.3.24</compatibilityMode>
+  <compatibilityMode>8.3.23</compatibilityMode>
   <languages uuid="8c02de54-915d-4aeb-897a-7ebe4da34f61">
     <name>English</name>
     <synonym>
@@ -299,6 +300,7 @@
   <sessionParameters>SessionParameter.Login</sessionParameters>
   <sessionParameters>SessionParameter.OrganizationAccess</sessionParameters>
   <sessionParameters>SessionParameter.Session</sessionParameters>
+  <sessionParameters>SessionParameter.SystemCall</sessionParameters>
   <sessionParameters>SessionParameter.Tenant</sessionParameters>
   <sessionParameters>SessionParameter.TenantUse</sessionParameters>
   <sessionParameters>SessionParameter.User</sessionParameters>
@@ -434,6 +436,7 @@
   <roles>Role.ExpensesEdit</roles>
   <roles>Role.ExpensesView</roles>
   <roles>Role.ExternalObjects</roles>
+  <roles>Role.FindAndReplace</roles>
   <roles>Role.FuelReport</roles>
   <roles>Role.GeneralAccountingRegister</roles>
   <roles>Role.HiringEdit</roles>
@@ -481,6 +484,7 @@
   <roles>Role.LeadStatusesEdit</roles>
   <roles>Role.LeadsView</roles>
   <roles>Role.LoadInvoices</roles>
+  <roles>Role.LoadOrganizations</roles>
   <roles>Role.LVIInventoryEdit</roles>
   <roles>Role.LVIInventoryView</roles>
   <roles>Role.LVITransferEdit</roles>
@@ -642,6 +646,8 @@
   <filterCriteria>FilterCriterion.Range</filterCriteria>
   <commonModules>CommonModule.AccountsMap</commonModules>
   <commonModules>CommonModule.AdjustDebtsForm</commonModules>
+  <commonModules>CommonModule.AI</commonModules>
+  <commonModules>CommonModule.AICache</commonModules>
   <commonModules>CommonModule.AIServer</commonModules>
   <commonModules>CommonModule.Appearance</commonModules>
   <commonModules>CommonModule.Application</commonModules>
@@ -650,6 +656,7 @@
   <commonModules>CommonModule.AssetsForm</commonModules>
   <commonModules>CommonModule.AssetsTransferForm</commonModules>
   <commonModules>CommonModule.AssetsWriteOffForm</commonModules>
+  <commonModules>CommonModule.AssistantsForm</commonModules>
   <commonModules>CommonModule.Attachments</commonModules>
   <commonModules>CommonModule.AttachmentsSrv</commonModules>
   <commonModules>CommonModule.BalancesForm</commonModules>
@@ -709,6 +716,7 @@
   <commonModules>CommonModule.EmailsSrv</commonModules>
   <commonModules>CommonModule.EmailsTip</commonModules>
   <commonModules>CommonModule.EmailsTipSrv</commonModules>
+  <commonModules>CommonModule.EmbeddingGetter</commonModules>
   <commonModules>CommonModule.EntryForm</commonModules>
   <commonModules>CommonModule.EntryFormSrv</commonModules>
   <commonModules>CommonModule.Enum</commonModules>
@@ -765,6 +773,7 @@
   <commonModules>CommonModule.OrderFormSrv</commonModules>
   <commonModules>CommonModule.OrderRows</commonModules>
   <commonModules>CommonModule.OrganizationFields</commonModules>
+  <commonModules>CommonModule.OrganizationsForm</commonModules>
   <commonModules>CommonModule.Output</commonModules>
   <commonModules>CommonModule.PaymentDetails</commonModules>
   <commonModules>CommonModule.PaymentForm</commonModules>
@@ -774,6 +783,7 @@
   <commonModules>CommonModule.PayrollForm</commonModules>
   <commonModules>CommonModule.PayrollItemForm</commonModules>
   <commonModules>CommonModule.PayrollTaxForm</commonModules>
+  <commonModules>CommonModule.PerformerTasksSrv</commonModules>
   <commonModules>CommonModule.Periods</commonModules>
   <commonModules>CommonModule.PeriodsSrv</commonModules>
   <commonModules>CommonModule.PermissionForm</commonModules>
@@ -848,6 +858,7 @@
   <commonModules>CommonModule.UserTasks</commonModules>
   <commonModules>CommonModule.VendorOrderRows</commonModules>
   <commonModules>CommonModule.Versioning</commonModules>
+  <commonModules>CommonModule.WaitForm</commonModules>
   <commonAttributes>CommonAttribute.Tenant</commonAttributes>
   <exchangePlans>ExchangePlan.Classifiers</exchangePlans>
   <exchangePlans>ExchangePlan.Full</exchangePlans>
@@ -874,6 +885,7 @@
   <scheduledJobs>ScheduledJob.Exchange</scheduledJobs>
   <scheduledJobs>ScheduledJob.FlushHistory</scheduledJobs>
   <scheduledJobs>ScheduledJob.GeneratingReports</scheduledJobs>
+  <scheduledJobs>ScheduledJob.GetEmbedding</scheduledJobs>
   <scheduledJobs>ScheduledJob.PaymentNotifications</scheduledJobs>
   <scheduledJobs>ScheduledJob.SearchMerge</scheduledJobs>
   <scheduledJobs>ScheduledJob.SearchUpdate</scheduledJobs>
@@ -883,6 +895,7 @@
   <scheduledJobs>ScheduledJob.TasksReminder</scheduledJobs>
   <scheduledJobs>ScheduledJob.TimeReminder</scheduledJobs>
   <functionalOptions>FunctionalOption.AdvancedExpenseReport</functionalOptions>
+  <functionalOptions>FunctionalOption.AI</functionalOptions>
   <functionalOptions>FunctionalOption.BalanceControl</functionalOptions>
   <functionalOptions>FunctionalOption.Barcodes</functionalOptions>
   <functionalOptions>FunctionalOption.Cloud</functionalOptions>
@@ -993,9 +1006,12 @@
   <constants>Constant.AdvancedExpenseReport</constants>
   <constants>Constant.AdvancesMonthly</constants>
   <constants>Constant.Agent</constants>
+  <constants>Constant.AI</constants>
+  <constants>Constant.AIServer</constants>
+  <constants>Constant.AIServerToken</constants>
   <constants>Constant.ApplicationURL</constants>
-  <constants>Constant.Backup</constants>
   <constants>Constant.AssistantPlugins</constants>
+  <constants>Constant.Backup</constants>
   <constants>Constant.Barcodes</constants>
   <constants>Constant.BarcodesLibrary</constants>
   <constants>Constant.CheckUpdates</constants>
@@ -1053,6 +1069,7 @@
   <constants>Constant.MobileRules</constants>
   <constants>Constant.NationalBankHost</constants>
   <constants>Constant.NewItems</constants>
+  <constants>Constant.NewOrganizations</constants>
   <constants>Constant.NewUpdates</constants>
   <constants>Constant.NoPackages</constants>
   <constants>Constant.Noreply</constants>
@@ -1125,6 +1142,7 @@
   <commonForms>CommonForm.SyntaxPassed</commonForms>
   <commonForms>CommonForm.System</commonForms>
   <commonForms>CommonForm.Time</commonForms>
+  <commonForms>CommonForm.Wait</commonForms>
   <catalogs>Catalog.AddressBook</catalogs>
   <catalogs>Catalog.Addresses</catalogs>
   <catalogs>Catalog.Agents</catalogs>
@@ -1204,6 +1222,7 @@
   <catalogs>Catalog.Numeration</catalogs>
   <catalogs>Catalog.Operations</catalogs>
   <catalogs>Catalog.Organizations</catalogs>
+  <catalogs>Catalog.OrganizationsClassifier</catalogs>
   <catalogs>Catalog.Packages</catalogs>
   <catalogs>Catalog.PaymentKeys</catalogs>
   <catalogs>Catalog.PaymentLocations</catalogs>
@@ -1376,6 +1395,7 @@
   <enums>Enum.Accounts</enums>
   <enums>Enum.Actions</enums>
   <enums>Enum.AdjustmentOptions</enums>
+  <enums>Enum.AIProviders</enums>
   <enums>Enum.AllowDeny</enums>
   <enums>Enum.Amortization</enums>
   <enums>Enum.AssignRoles</enums>
@@ -1560,6 +1580,7 @@
   <reports>Report.VendorInvoices</reports>
   <reports>Report.WorkLog</reports>
   <reports>Report.YearCloseFilling</reports>
+  <dataProcessors>DataProcessor.AddressInfo</dataProcessors>
   <dataProcessors>DataProcessor.AN1</dataProcessors>
   <dataProcessors>DataProcessor.ApproveTimesheet</dataProcessors>
   <dataProcessors>DataProcessor.AssetsWriteOff</dataProcessors>
@@ -1576,6 +1597,7 @@
   <dataProcessors>DataProcessor.Exchange</dataProcessors>
   <dataProcessors>DataProcessor.ExchangeData</dataProcessors>
   <dataProcessors>DataProcessor.ExpenseReport</dataProcessors>
+  <dataProcessors>DataProcessor.FindAndReplace</dataProcessors>
   <dataProcessors>DataProcessor.IMAP</dataProcessors>
   <dataProcessors>DataProcessor.Inventory</dataProcessors>
   <dataProcessors>DataProcessor.InventoryAssets</dataProcessors>
@@ -1584,7 +1606,7 @@
   <dataProcessors>DataProcessor.Licensing</dataProcessors>
   <dataProcessors>DataProcessor.LoadInvoices</dataProcessors>
   <dataProcessors>DataProcessor.LoadIssues</dataProcessors>
-  <dataProcessors>DataProcessor.LoadOrganization</dataProcessors>
+  <dataProcessors>DataProcessor.LoadOrganizations</dataProcessors>
   <dataProcessors>DataProcessor.LoadPayments1</dataProcessors>
   <dataProcessors>DataProcessor.LoadPayments2</dataProcessors>
   <dataProcessors>DataProcessor.MF1</dataProcessors>
@@ -1638,6 +1660,7 @@
   <informationRegisters>InformationRegister.EffectiveRights</informationRegisters>
   <informationRegisters>InformationRegister.EmailsAndTasks</informationRegisters>
   <informationRegisters>InformationRegister.EmailStatuses</informationRegisters>
+  <informationRegisters>InformationRegister.EmbeddingPool</informationRegisters>
   <informationRegisters>InformationRegister.EmployeeRates</informationRegisters>
   <informationRegisters>InformationRegister.Employees</informationRegisters>
   <informationRegisters>InformationRegister.Employment</informationRegisters>

@@ -1070,7 +1070,15 @@ Procedure makeCost ( Env )
 			movement.Lot = lot;
 		endif; 
 		movement.Quantity = row.Quantity;
-		movement.Amount = row.Amount + row.Shipping;
+		movement.Amount = row.Amount;
+		shippingAmount = row.Shipping;
+		if ( shippingAmount <> 0 ) then
+			shipping = recordset.AddReceipt ();
+			FillPropertyValues ( shipping, movement, , "Amount" );
+			shipping.Amount = shippingAmount;
+			shipping.Quantity = 0;
+			shipping.Shipping = true;
+		endif;
 		commitCost ( Env, p, row );
 	enddo; 
 	

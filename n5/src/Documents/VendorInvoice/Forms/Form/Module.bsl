@@ -430,7 +430,7 @@ Procedure applyVATUse ()
 	for each row in Object.Accounts do
 		Computations.Total ( row, vatUse );
 	enddo;
-	DiscountsTable.RecalcVAT ( ThisObject );
+	DiscountsTable.RecalcVAT ( Object );
 	Appearance.Apply ( ThisObject, "Object.VATUse" );
 	
 EndProcedure
@@ -693,6 +693,7 @@ Procedure fillByReceiptStockman ()
 	SQL.Perform ( Env );
 	headerByReceiptStockman ();
 	loadReceiptStockman ();
+	updateTotals ( ThisObject );
 	
 EndProcedure
 

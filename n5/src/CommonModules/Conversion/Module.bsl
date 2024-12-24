@@ -231,6 +231,22 @@ Function RowToStructure ( Table ) export
 EndFunction 
 
 &AtServer
+Function TableToArray ( Table ) export
+	
+	result = new Array ();
+	columns = Table.Columns;
+	for each row in Table do
+		record = new Structure ();
+		for each column in columns do
+			record.Insert ( column.Name, row [ column.Name ] );
+		enddo; 
+		result.Add ( record );
+	enddo; 
+	return result;
+	
+EndFunction 
+
+&AtServer
 Function StringToHash ( Str ) export
 	
 	hash = new DataHashing ( HashFunction.SHA256 );

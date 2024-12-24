@@ -20,51 +20,39 @@ EndProcedure
 
 Procedure getPrintData ( Params, Env )
 	
-	sqlPrintData ( Env, Params );
-	q = Env.Q;
-	q.SetParameter ( "Ref", Params.Reference );
-	q.SetParameter ( "User", SessionParameters.User );
+	sqlProfile ( Env, Params );
+	sqlBarcodes ( Env, Params );
+	Env.Q.SetParameter ( "User", SessionParameters.User );
 	SQL.Perform ( Env );
 	
 EndProcedure
 
-Procedure sqlPrintData ( Env, Params )
+Procedure sqlProfile ( Env, Params )
 	
-	type = TypeOf ( Params.Reference );
 	s = "
 	|// @Profile
 	|select Users.BarcodeProfile.Template as Template, Users.BarcodeProfile.Angle as Angle,
 	|	Users.BarcodeProfile.FontSize as FontSize
 	|from Catalog.UserSettings as Users
 	|where Users.Owner = &User
-	|;";
-	if ( type = Type ( "CatalogRef.Items" )
-		or type = Type ( "CatalogRef.Series" )
-		or type = Type ( "Number" ) ) then
-		if ( type = Type ( "CatalogRef.Items" ) ) then
-			name = "Item";
-		elsif ( type = Type ( "CatalogRef.Series" ) ) then
-			name = "Series";
-		else
-			name = "Barcode";
-		endif;
-		s = s + "
+	|";
+	Env.Selection.Add ( s );
+	
+EndProcedure
+
+Procedure sqlBarcodes ( Env, Params )
+	
+	type = TypeOf ( Params.Reference );
+	if ( type = Type ( "FormDataCollection" ) ) then
+		s = "
+		|select * into Items from &Source as Items
+		|;
 		|// #Barcodes
 		|select Items.Item.FullDescription as Item, Items.Series.Description as Series,
-		|	Items.Feature.Description as Feature, 1 as Quantity, Items.Barcode as Barcode,
-		|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Package
-		|from InformationRegister.Barcodes as Items
-		|where Items." + name + " = &Ref
-		|order by Items.Item.Description
-		|";
-	else
-		name = Metadata.FindByType ( TypeOf ( Params.Reference ) ).Name;
-		s = s + "
-		|// #Barcodes
-		|select Items.Item.FullDescription as Item, Items.Series.Description as Series, Items.Print as Quantity,
-		|	Barcodes.Barcode as Barcode, Barcodes.Feature.Description as Feature,
-		|	isnull ( Barcodes.Package.Description, Barcodes.Item.Unit.Code ) as Package
-		|from Document." + name + ".Items as Items
+		|	Items.Quantity as Quantity, Items.Feature.Description as Feature,
+		|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Package,
+		|	Barcodes.Barcode as Barcode
+		|from Items as Items
 		|	//
 		|	// Barcodes
 		|	//
@@ -73,10 +61,26 @@ Procedure sqlPrintData ( Env, Params )
 		|	and Barcodes.Series = Items.Series
 		|	and Barcodes.Package = Items.Package
 		|	and Barcodes.Feature = Items.Feature
-		|where Items.Ref = &Ref
-		|and Items.Print > 0
 		|order by Items.LineNumber
 		|";
+		Env.Q.SetParameter ( "Source",
+			Params.Reference.Unload ( new Structure ( "Print", true ) ) );
+	else
+		if ( type = Type ( "CatalogRef.Items" ) ) then
+			name = "Item";
+		elsif ( type = Type ( "CatalogRef.Series" ) ) then
+			name = "Series";
+		endif;
+		s = "
+		|// #Barcodes
+		|select Items.Item.FullDescription as Item, Items.Series.Description as Series,
+		|	Items.Feature.Description as Feature, 1 as Quantity, Items.Barcode as Barcode,
+		|	isnull ( Items.Package.Description, Items.Item.Unit.Code ) as Package
+		|from InformationRegister.Barcodes as Items
+		|where Items." + name + " = &Source
+		|order by Items.Item.Description
+		|";
+		Env.Q.SetParameter ( "Source", Params.Reference );
 	endif;
 	Env.Selection.Add ( s );
 	

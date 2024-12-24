@@ -3,15 +3,13 @@
 Function GetParams () export
 	
 	p = new Structure ();
-	p.Insert ( "CodeFiscal" );
-	p.Insert ( "Address" );
+	p.Insert ( "File" );
 	return p;
 	
 EndFunction 
 
 Procedure Exec ( Params, JobKey ) export
 	
-	SetPrivilegedMode ( true );
 	obj = Create ();
 	obj.Parameters = Params;
 	obj.JobKey = JobKey;

@@ -54,6 +54,7 @@ Procedure init ()
 	Presentation = schema.SettingVariants [ Variant ].Presentation;
 	ResultAddress = PutToTempStorage ( new ValueTable (), Parameters.Caller );
 	Reporter.ApplyFilters ( Composer, Parameters.Filling );
+	Items.UserSettings.ViewMode = DataCompositionSettingsViewMode.QuickAccess;
 
 EndProcedure 
 
@@ -212,8 +213,19 @@ EndProcedure
 &AtClient
 Procedure OpenSettings ( Command )
 	
-	Items.UserSettingsCmdOpenSettings.Check = not Items.UserSettingsCmdOpenSettings.Check;
-	//@skip-warning
-	Items.UserSettings.ViewMode = ? ( Items.UserSettingsCmdOpenSettings.Check, DataCompositionSettingsViewMode.All, DataCompositionSettingsViewMode.QuickAccess );
+	switchSettings ();
+	
+EndProcedure
+
+&AtServer
+Procedure switchSettings ()
+	
+	if ( Items.UserSettings.ViewMode = DataCompositionSettingsViewMode.QuickAccess ) then
+		Items.OpenSettings.Check = true;
+		Items.UserSettings.ViewMode = DataCompositionSettingsViewMode.All;
+	else
+		Items.OpenSettings.Check = false;
+		Items.UserSettings.ViewMode = DataCompositionSettingsViewMode.QuickAccess;
+	endif;
 	
 EndProcedure

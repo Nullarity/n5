@@ -27,6 +27,8 @@ Procedure SessionParametersSetting ( Params )
 			setSession ();
 		elsif ( parameter = "License" ) then
 			setLicense ();
+		elsif ( parameter = "SystemCall" ) then
+			SessionParameters.SystemCall = true;
 		endif;
 	enddo; 
 	

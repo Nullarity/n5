@@ -207,6 +207,8 @@ Procedure sqlItems ()
 	|		join InformationRegister.ItemDetails as Details
 	|		on Details.ItemKey = Cost.ItemKey
 	|	where Cost.Recorder = &Base
+	|	and not Cost.Shipping
+	|	and Cost.Dependency = undefined
 	|	) as Items
 	|group by Items.CustomsGroup, Items.Invoice, Items.Item
 	|;

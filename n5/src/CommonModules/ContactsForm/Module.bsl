@@ -27,10 +27,34 @@ Function FullName ( Object ) export
 	
 EndFunction 
 
-&AtClient
 Procedure SetAddress ( Object ) export
 	
 	parts = new Array ();
+	country = Object.Country;
+	if ( country <> Application.Country () ) then
+		value = "" + country; 
+		if ( not IsBlankString ( value ) ) then
+			parts.Add ( value );
+		endif; 
+	endif;
+	value = Object.Zip;
+	if ( not IsBlankString ( value ) ) then
+		parts.Add ( value );
+	endif; 
+	city = "" + Object.City;
+	value = "" + Object.State;
+	if ( not IsBlankString ( value )
+		and Lower ( value ) <> Lower ( city ) ) then
+		parts.Add ( value );
+	endif;
+	value = Title ( Object.Municipality );
+	if ( not IsBlankString ( value ) ) then
+		Object.Municipality = value;
+		parts.Add ( Output.Municipality () + value );
+	endif; 
+	if ( not IsBlankString ( city ) ) then
+		parts.Add ( city );
+	endif; 
 	value = Title ( Object.Street );
 	if ( not IsBlankString ( value ) ) then
 		Object.Street = value;
@@ -56,30 +80,6 @@ Procedure SetAddress ( Object ) export
 			parts.Add ( Output.Apartment () + value );
 		endif; 
 	endif;
-	value = "" + Object.City;
-	if ( not IsBlankString ( value ) ) then
-		parts.Add ( value );
-	endif; 
-	value = Title ( Object.Municipality );
-	if ( not IsBlankString ( value ) ) then
-		Object.Municipality = value;
-		parts.Add ( Output.Municipality () + value );
-	endif; 
-	value = "" + Object.State;
-	if ( not IsBlankString ( value ) ) then
-		parts.Add ( value );
-	endif;
-	country = Object.Country;
-	if ( country <> Application.Country () ) then
-		value = "" + country; 
-		if ( not IsBlankString ( value ) ) then
-			parts.Add ( value );
-		endif; 
-	endif;
-	value = Object.Zip;
-	if ( not IsBlankString ( value ) ) then
-		parts.Add ( value );
-	endif; 
 	Object.Address = StrConcat ( parts, ", " );
 	
 EndProcedure

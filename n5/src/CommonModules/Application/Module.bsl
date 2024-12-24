@@ -70,6 +70,12 @@ Function NewItems () export
 	
 EndFunction 
 
+Function NewOrganizations () export
+	
+	return Constants.NewOrganizations.Get ();
+	
+EndFunction 
+
 Function ReceipsFolder () export
 	
 	return Logins.Settings ( "ReceiptsFolder" ).ReceiptsFolder;
@@ -87,3 +93,10 @@ Function AssistantPlugin () export
 	return Constants.AssistantPlugins.Get ();
 	
 EndFunction
+
+Function AI () export
+	
+	return Constants.AI.Get ();
+	
+EndFunction
+

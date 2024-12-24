@@ -8,6 +8,10 @@ var SeparatorText;
 var Finisher;
 &AtClient
 var StoppingTimeout;
+&AtClient
+var WaitingIndicator;
+&AtClient
+var TextElements;
 
 // *****************************************
 // *********** Form events
@@ -17,6 +21,7 @@ Procedure OnReadAtServer ( CurrentObject )
 	
 	initChat ();
 	initIDs ();
+	restrictAssistants ();
 	Appearance.Apply ( ThisObject );
 
 EndProcedure
@@ -39,6 +44,19 @@ Procedure initIDs ()
 EndProcedure
 
 &AtServer
+Procedure restrictAssistants ()
+	
+	if ( Object.Data.Count () = 0
+		or Items.Assistant.ChoiceParameterLinks.Count () > 0 ) then
+		return;
+	endif;
+	array = new Array ();
+	array.Add ( new ChoiceParameterLink ( "Filter.Provider", "Object.Provider" ) );
+	Items.Assistant.ChoiceParameterLinks = new FixedArray ( array );
+	
+EndProcedure
+
+&AtServer
 Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 	
 	init ();
@@ -50,7 +68,6 @@ Procedure OnCreateAtServer ( Cancel, StandardProcessing )
 		initIDs ();
 		initChat ();
 	endif; 
-	prepareMenu ();
 	readAppearance ();
 	invalidateHomepage ( ThisObject );
 	Appearance.Apply ( ThisObject );
@@ -63,34 +80,11 @@ Procedure init ()
 	StageComplete = 0;
 	StageSending = 1;
 	StageStopping = 2;
-	
-EndProcedure
-
-&AtServer
-Procedure readSettings ()
-
-	Plaintext = CommonSettingsStorage.Load ( Enum.SettingsChatInPlaintext () );
-
-EndProcedure
-
-&AtServer
-Procedure restoreAssistant ()
-	
-	setAssistant ( ThisObject, CommonSettingsStorage.Load ( Enum.SettingsChatAssistant () ) );
-	
-EndProcedure
-
-&AtServer
-Procedure prepareMenu ()
-
-	FunctionsMenu.Add ( menuSelectPhrase (), Output.SelectPhrase (), , PictureLib.Catalog );
-	assistantsList ();
-	if ( Logins.Admin ()
-		or IsInRole ( Metadata.Roles.AIFiles ) ) then
-		FunctionsMenu.Add ( menuUploadFile (), Commands.Upload.Title, , Commands.Upload.Picture );
-		FunctionsMenu.Add ( menuAttachFile (), Commands.Attach.Title, , Commands.Attach.Picture );
-		FunctionsMenu.Add ( menuAttachDocument (), Commands.AttachDocument.Title, , Commands.AttachDocument.Picture );
-		FunctionsMenu.Add ( menuDeleteFile (), Commands.DeleteFile.Title, , Commands.DeleteFile.Picture );
+	if ( Logins.Admin () or IsInRole ( Metadata.Roles.AIFiles ) ) then
+		FilesMenu.Add ( menuUploadFile (), Commands.Upload.Title, , Commands.Upload.Picture );
+		FilesMenu.Add ( menuAttachFile (), Commands.Attach.Title, , Commands.Attach.Picture );
+		FilesMenu.Add ( menuAttachDocument (), Commands.AttachDocument.Title, , Commands.AttachDocument.Picture );
+		FilesMenu.Add ( menuDeleteFile (), Commands.DeleteFile.Title, , Commands.DeleteFile.Picture );
 	endif;
 	
 EndProcedure
@@ -131,27 +125,16 @@ Function menuDeleteFile ()
 EndFunction
 
 &AtServer
-Procedure assistantsList ()
+Procedure readSettings ()
+
+	Plaintext = CommonSettingsStorage.Load ( Enum.SettingsChatInPlaintext () );
+
+EndProcedure
+
+&AtServer
+Procedure restoreAssistant ()
 	
-	s = "
-	|select allowed Assistants.Ref as Ref, Assistants.Description as Name,
-	|	Assistants.Purpose as Purpose
-	|from Catalog.Assistants as Assistants
-	|where not Assistants.DeletionMark
-	|order by Name
-	|";
-	q = new Query ( s );
-	table = q.Execute ().Unload ();
-	parts = new Array ();
-	for each row in table do
-		parts.Add ( row.Name );
-		purpose = row.Purpose;
-		if ( purpose <> "" ) then
-			parts.Add ( purpose );
-		endif;
-		FunctionsMenu.Add ( row.Ref, StrConcat ( parts, ". " ), , PictureLib.User );
-		parts.Clear ();
-	enddo;
+	setAssistant ( ThisObject, CommonSettingsStorage.Load ( Enum.SettingsChatAssistant () ) );
 	
 EndProcedure
 
@@ -214,10 +197,14 @@ Procedure setAssistant ( Form, Assistant )
 		return;
 	endif;
 	memorizeAssistant ( Assistant );
-	Form.Object.Assistant = Assistant;
-	data = DF.Values ( Assistant, "Server, Retrieval" );
+	object = Form.Object;
+	object.Assistant = Assistant;
+	data = DF.Values ( Assistant, "Server, Retrieval, Provider, Temperature" );
 	Form.Server = data.Server;
 	Form.RetrievalCapability = data.Retrieval;
+	object.Provider = data.Provider;
+	object.Temperature = data.Temperature;
+	AssistantsForm.AdjustTemperature ( Form, false );
 	Appearance.Apply ( Form, "RetrievalCapability" );
 	
 EndProcedure
@@ -252,8 +239,35 @@ EndFunction
 &AtClient
 Procedure OnOpen ( Cancel )
 	
+	initTextElements ();
+	initIndicator ();
 	invalidateHomepage ( ThisObject );
 	scrollMessages ();
+	
+EndProcedure
+
+&AtClient
+Procedure initTextElements ()
+	
+	TextElements = new Map ();
+	
+EndProcedure
+
+&AtClient
+Procedure initIndicator ()
+	
+	WaitingIndicator = new Array ();
+	WaitingIndicator.Add ( Char ( 10251 ) );
+	WaitingIndicator.Add ( Char ( 10265 ) );
+	WaitingIndicator.Add ( Char ( 10297 ) );
+	WaitingIndicator.Add ( Char ( 10296 ) );
+	WaitingIndicator.Add ( Char ( 10300 ) );
+	WaitingIndicator.Add ( Char ( 10292 ) );
+	WaitingIndicator.Add ( Char ( 10278 ) );
+	WaitingIndicator.Add ( Char ( 10279 ) );
+	WaitingIndicator.Add ( Char ( 10247 ) );
+	WaitingIndicator.Add ( Char ( 10255 ) );
+	WaitingIndicator.Add ( WaitingIndicator [ 0 ] );
 	
 EndProcedure
 
@@ -389,7 +403,7 @@ EndProcedure
 &AtServer
 Function setSubject ( CurrentObject )
 	
-	row = findRow ( CurrentObject.Data, "_.Me and not _.Separator", , false );
+	row = findRow ( CurrentObject.Data, "_.Me and not _.Separator and not _.System", , false );
 	if ( row = undefined ) then
 		Output.SubjectIsEmpty ( , "Subject" );
 		return false;
@@ -503,12 +517,30 @@ EndProcedure
 &AtClient
 Procedure addQuestion ()
 	
-	addRow ( ThisObject, Object.Message, false, true, "",
-		PredefinedValue ( "Enum.ContentType.Text" ), false );
+	textType = PredefinedValue ( "Enum.ContentType.Text" );
+	if ( Object.Provider = PredefinedValue ( "Enum.AIProviders.Anthropic" ) ) then
+		firstMessage = ( undefined = findRow ( Object.Data, "_.Me and not _.Separator
+		| and not _.Error and _.Content = PredefinedValue ( ""Enum.ContentType.Text"" )" ) );
+		if ( firstMessage ) then
+			addRow ( ThisObject, introduction ( Object.Creator ),
+				false, true, "", textType, false, true );
+		endif;
+	endif;
+	addRow ( ThisObject, Object.Message, false, true, "", textType, false, false );
 	Object.Message = "";
 	Items.Message.UpdateEditText ();
 	
 EndProcedure
+
+&AtServerNoContext
+Function introduction ( val Creator )
+	
+	introduction = Output.AssistantInitializationMessage (
+		new Structure ( "Name, Email, Today",
+		Creator, DF.Pick ( Creator, "Email" ), CurrentSessionDate () ) );
+	return introduction;
+	
+EndFunction
 
 &AtClientAtServerNoContext
 Procedure addSeparator ( Form, Me )
@@ -518,7 +550,8 @@ Procedure addSeparator ( Form, Me )
 	row = findRow ( table, "_.Separator" );
 	if ( row = undefined or row.Me <> Me ) then
 		text = ? ( Me, object.Creator, object.Assistant );
-		addRow ( Form, text, false, Me, "", PredefinedValue ( "Enum.ContentType.Text" ), true );
+		addRow ( Form, text, false, Me, "",
+			PredefinedValue ( "Enum.ContentType.Text" ), true, false );
 	endif;
 	
 EndProcedure
@@ -534,27 +567,31 @@ EndProcedure
 &AtServer
 Function run ( val NewMessage )
 	
-	if ( Object.Thread = "" ) then
-		try
-			Object.Thread = AIServer.GetThread ( Server );
-		except
-			return ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
-		endtry;
-	endif;
+	restrictAssistants ();
 	p = AIServer.ChatParams ();
 	ResultAddress = PutToTempStorage ( undefined, UUID );
 	p.Result = ResultAddress;
 	p.Assistant = Object.Assistant;
-	p.Thread = Object.Thread;
+	p.Temperature = Object.Temperature;
 	p.Session = Session;
 	data = getMyLastMessage ( ThisObject );
 	messageData = getMessage ( data );
-	alreadySent = ( messageData.ID <> "" );
-	p.Resend = alreadySent;
+	alreadySent = messageData.AlreadySent;
+	if ( Object.Provider = Enums.AIProviders.OpenAI ) then
+		if ( Object.Thread = "" ) then
+			try
+				Object.Thread = AIServer.GetThread ( Server );
+			except
+ 				return ErrorProcessing.BriefErrorDescription ( ErrorInfo () );
+			endtry;
+		endif;
+		p.Thread = Object.Thread;
+		p.Resend = alreadySent;
+		p.Files = attachedFiles ( data );
+	endif;
 	if ( NewMessage or not alreadySent ) then
 		p.Message = messageData.Text;
 	endif;
-	p.Files = getFiles ( data );
 	args = new Array ();
 	args.Add ( p );
 	Jobs.Run ( "AIServer.Chat", args, JobKey, , TesterCache.Testing () );
@@ -564,27 +601,40 @@ EndFunction
 &AtServer
 Function getMessage ( Data )
 	
-	parts = new Array ();
-	weMet = undefined <> findRow ( Object.Data, "_.Me and _.Content = Enums.ContentType.Text and _.ID <> """"" );
-	if ( not weMet ) then
-		parts.Add ( Output.AssistantInitializationMessage (
-			new Structure ( "Name, Email", Object.Creator, DF.Pick ( Object.Creator, "Email" ) ) ) ); 
-	endif;
-	id = "";
-	for each row in Data.Data do
-		if ( row.Content <> Enums.ContentType.File ) then
-			id = row.ID;
-			parts.Add ( row.Text );
-			break;
+	message = new Structure ( "Text, AlreadySent" );
+	if ( Object.Provider = Enums.AIProviders.Anthropic ) then
+		messages = new Array ();
+		rows = findRows ( Object.Data, "not ( _.Separator or _.Error ) and _.Content = Enums.ContentType.Text" );
+		text = rows [ 0 ].Text + Chars.LF + rows [ 1 ].Text;
+		messages.Add ( new Structure ( "Me, Text, System", true, text, false ) );
+		for i = 2 to rows.UBound () do
+			row = rows [ i ];
+			messages.Add ( new Structure ( "Me, Text, System", row.Me, row.Text, row.System ) );
+		enddo;
+		message.AlreadySent = false;
+		message.Text = messages;
+	else
+		parts = new Array ();
+		firstMessage = ( undefined
+			= findRow ( Object.Data, "_.Me and _.Content = Enums.ContentType.Text and _.ID <> """"" ) );
+		if ( firstMessage ) then
+			parts.Add ( introduction ( Object.Creator ) );
 		endif;
-	enddo;
-	text = StrConcat ( parts, Chars.LF );
-	return new Structure ( "Text, ID", text, id );
+		for each row in Data.Data do
+			if ( row.Content <> Enums.ContentType.File ) then
+				message.AlreadySent = ( row.ID <> "" );
+				parts.Add ( row.Text );
+				break;
+			endif;
+		enddo;
+		message.Text = StrConcat ( parts, Chars.LF );
+	endif;
+	return message;
 	
 EndFunction
 
 &AtServer
-Function getFiles ( Data )
+Function attachedFiles ( Data )
 	
 	files = new Array ();
 	table = Data.Data;
@@ -603,7 +653,14 @@ Procedure startWaiting ( Callback )
 	Finisher = Callback;
 	initSeparator ();
 	initStoppingTimeout ();
-	AttachIdleHandler ( "checkCompletion", 1 );
+	waiting ();
+	
+EndProcedure
+
+&AtClient
+Procedure waiting ()
+	
+	AttachIdleHandler ( "checkCompletion", 0.1, true );
 	
 EndProcedure
 
@@ -630,13 +687,14 @@ Procedure checkCompletion () export
 	if ( jobIsActive ( JobKey, error ) ) then
 		reactivateStopping ();
 		indicateProcess ();
+		waiting ();
 	else
-		DetachIdleHandler ( "checkCompletion" );
+		stopWaiting ();
 		restoreSeparator ();
 		RunCallback ( Finisher, error );
 	endif;
 	
-EndProcedure 
+EndProcedure
 
 &AtServerNoContext
 Function jobIsActive ( val JobKey, Error )
@@ -681,7 +739,9 @@ EndProcedure
 &AtClient
 Procedure indicateProcess ()
 	
-	text = Separator.Text + ".";
+	runner = Right ( Separator.Text, 1 );
+	i = WaitingIndicator.Find ( runner );
+	text = SeparatorText + " " + WaitingIndicator [ ? ( i = undefined, 0, i + 1 ) ];
 	Separator.Text = text;
 	if ( not Plaintext ) then
 		setElementText ( SeparatorID, text );
@@ -692,10 +752,29 @@ EndProcedure
 &AtClient
 Procedure setElementText ( ID, Text )
 	
-	element = Items.HTML.Document.getElementById ( ID );
-	if ( element <> undefined ) then
-		element.textContent = Text;
+	TextElements [ ID ] = Text;
+	changeTextElements ();
+	
+EndProcedure
+
+&AtClient
+Procedure changeTextElements () export
+	
+	if ( TextElements.Count () = 0 ) then
+		return;
 	endif;
+	document = Items.HTML.Document;
+	if ( document = undefined or document.body = undefined ) then
+		AttachIdleHandler ( "changeTextElements", 0.03, true  );
+		return;
+	endif;
+	for each item in TextElements do
+		element = document.getElementById ( item.Key );
+		if ( element <> undefined ) then
+			element.textContent = item.Value;
+		endif;
+	enddo;
+	TextElements.Clear ();
 	
 EndProcedure
 
@@ -709,6 +788,13 @@ Procedure restoreSeparator ()
 	if ( not Plaintext ) then
 		setElementText ( SeparatorID, SeparatorText );
 	endif;
+	
+EndProcedure
+
+&AtClient
+Procedure stopWaiting ()
+	
+	DetachIdleHandler ( "checkCompletion" );
 	
 EndProcedure
 
@@ -733,15 +819,15 @@ Procedure applyAnswer ( val Exception )
 	Object.Error = result.Error;
 	setMyMessageID ( result.MessageID );
 	if ( result.Error ) then
-		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ), true, false, "", Enums.ContentType.Text, false );
+		addRow ( ThisObject, StrConcat ( result.Messages, Chars.LF ),
+			true, false, "", Enums.ContentType.Text, false, false );
 		Appearance.Apply ( ThisObject, "Object.Error" );
 	else
-		Session = result.Session;
-		Object.Thread = result.Thread;
-		increateLinkID ();
-		processFiles ( result );
-		processAnswer ( result );
-		increateLinkID ();
+		if ( Object.Provider = Enums.AIProviders.OpenAI ) then
+			answerFromOpenAI ( result );
+		else
+			answerFromAnthropic ( result );
+		endif;
 	endif;
 	Write ();
 	
@@ -774,12 +860,17 @@ Function fetchResult ( Exception )
 				result.Messages.Add ( message );
 			endtry;
 		else
-			result.Session = response.Session;
-			data = ReadJSONValue ( message );
-			result.Messages = data.Messages.data;
-			result.Files = data.Files;
-			result.Thread = data.Thread;
-			result.MessageID = data.MessageID;
+			if ( Object.Provider = Enums.AIProviders.OpenAI ) then
+				result.Session = response.Session;
+				data = ReadJSONValue ( message );
+				result.Messages = data.Messages.data;
+				result.Files = data.Files;
+				result.Thread = data.Thread;
+				result.MessageID = data.MessageID;
+			else
+				result.Session = response.Session;
+				result.Messages = ReadJSONValue ( message );
+			endif;
 		endif;
 	else
 		result.Error = true;
@@ -788,6 +879,18 @@ Function fetchResult ( Exception )
 	return result;
 	
 EndFunction
+
+&AtServer
+Procedure answerFromOpenAI ( Answer )
+
+	Session = Answer.Session;
+	Object.Thread = Answer.Thread;
+	increateLinkID ();
+	processFiles ( Answer );
+	processOpenAIAnswer ( Answer );
+	increateLinkID ();
+
+EndProcedure
 
 &AtServer
 Procedure setMyMessageID ( ID )
@@ -861,7 +964,7 @@ Function findRows ( Table, Lambda )
 EndFunction
 
 &AtClientAtServerNoContext
-Procedure addRow ( Form, Text, Error, Me, ID, Content, Separator )
+Procedure addRow ( Form, Text, Error, Me, ID, Content, Separator, System )
 	
 	object = Form.Object;
 	data = object.Data.Add ();
@@ -873,9 +976,18 @@ Procedure addRow ( Form, Text, Error, Me, ID, Content, Separator )
 	data.Text = Text;
 	data.Error = Error;
 	data.Separator = Separator;
+	data.System = System;
+	if ( System ) then
+		return;
+	endif;
 	assignElement ( Form, data );
 	Form.ChangesQueue.Add ( data.LineNumber - 1 );
-	#if ( Client ) then
+	#if ( ThickClientManagedApplication ) then
+		try
+			Form.flushChanges ();
+		except
+		endtry;
+	#elsif ( Client ) then
 		Form.flushChanges ();
 	#endif
 	table = object.Messages;
@@ -971,7 +1083,7 @@ Procedure processFiles ( Answer )
 EndProcedure
 
 &AtServer
-Procedure processAnswer ( Answer )
+Procedure processOpenAIAnswer ( Answer )
 	
 	messages = Answer.Messages;
 	i = messages.UBound ();
@@ -979,14 +1091,15 @@ Procedure processAnswer ( Answer )
 		return;
 	endif;
 	last = messages [ 0 ];
-	files = Object.Files;
 	for each row in last.content do
 		id = last.id;
 		contentType = row.type;
 		if ( contentType = "text" ) then
-			addRow ( ThisObject, row.text.value, false, false, id, Enums.ContentType.Text, false );
+			addRow ( ThisObject, row.text.value, false, false,
+				id, Enums.ContentType.Text, false, false );
 		elsif ( contentType = "image_file" ) then
-			addRow ( ThisObject, row.image_file.file_id, false, false, id, Enums.ContentType.Image, false );
+			addRow ( ThisObject, row.image_file.file_id, false, false,
+				id, Enums.ContentType.Image, false, false );
 		endif;
 	enddo;
 	
@@ -1007,16 +1120,75 @@ Procedure flushChanges () export
 	
 EndProcedure
 
+&AtServer
+Procedure answerFromAnthropic ( Answer )
+
+	Session = Answer.Session;
+	increateLinkID ();
+	processAnthropicAnswer ( Answer );
+	increateLinkID ();
+
+EndProcedure
+
+&AtServer
+Procedure processAnthropicAnswer ( Answer )
+	
+	messages = Answer.Messages;
+	counter = messages.UBound ();
+	if ( counter = -1 ) then
+		return;
+	endif;
+	justSent = findRows ( Object.Data, "_.ID = """" and _.Me and not _.Separator and not _.Error and _.Content = Enums.ContentType.Text" );
+	for each row in justSent do
+		row.ID = new UUID ();
+	enddo;
+	for each item in messages do
+		serviceMessage = ( counter > 0 );
+		if ( serviceMessage ) then
+			addRow ( ThisObject, Conversion.ToJSON ( item.content ), false,
+				item.role = "user", new UUID (), Enums.ContentType.Text, false, true );
+		else
+			for each row in item.content do
+				if ( row.type = "text" ) then
+					addRow ( ThisObject, row.text, false, false, new UUID (),
+						Enums.ContentType.Text, false, false );
+				endif;
+			enddo;
+		endif;
+		counter = counter - 1;
+	enddo;
+	
+EndProcedure
+
 &AtClient
 Procedure Attach ( Command )
 	
-	if ( not CheckFilling () ) then
+	if ( not CheckFilling ()
+		or not fileSubsystem () ) then
 		return;
 	endif;
 	commitMessage ();
 	pickFiles ();
 	
 EndProcedure
+
+&AtClient
+Function fileSubsystem ()
+	
+	supported = filesSupported ();
+	if ( not supported ) then
+		Output.AIFilesNotSupported ( , , new Structure ( "Provider", Object.Provider ) );
+	endif;
+	return supported;
+	
+EndFunction
+
+&AtClient
+Function filesSupported ()
+	
+	return Object.Provider = PredefinedValue ( "Enum.AIProviders.OpenAI" );
+	
+EndFunction
 
 &AtClient
 Procedure pickFiles ()
@@ -1032,7 +1204,8 @@ EndProcedure
 &AtClient
 async Procedure Upload ( Command )
 	
-	if ( not CheckFilling () ) then
+	if ( not CheckFilling ()
+		or not fileSubsystem () ) then
 		return;
 	endif;
 	commitMessage ();
@@ -1145,7 +1318,12 @@ Procedure deleteRow ( Form, Row )
 	data = findRow ( table, StrConcat ( filter, " and " ) );
 	if ( data <> undefined ) then
 		Form.DeletionQueue.Add ( data.Element );
-		#if ( Client ) then
+		#if ( ThickClientManagedApplication ) then
+			try
+				Form.flushChanges ();
+			except
+			endtry;
+		#elsif ( Client ) then
 			Form.flushChanges ();
 		#endif
 		table.Delete ( data );
@@ -1189,7 +1367,7 @@ Procedure CompleteUploading ( Exception, Params ) export
 		flushChanges ();
 	else
 		addRow ( ThisObject, Exception, true, true, "",
-			PredefinedValue ( "Enum.ContentType.File" ), false );
+			PredefinedValue ( "Enum.ContentType.File" ), false, false );
 	endif;
 	scrollMessages ();
 	activateMessage ();
@@ -1211,7 +1389,7 @@ Procedure applyUploading ( val Exception )
 			addFile ( file.File.Name, file.ID );
 		else
 			addRow ( ThisObject, file.File.Name + ": " + error, true, true, "",
-				Enums.ContentType.File, false );
+				Enums.ContentType.File, false, false );
 		endif;
 	enddo;
 
@@ -1220,14 +1398,15 @@ EndProcedure
 &AtServer
 Procedure addFile ( Name, ID )
 
-	addRow ( ThisObject, Name, false, true, ID, Enums.ContentType.File, false );
+	addRow ( ThisObject, Name, false, true, ID, Enums.ContentType.File, false, false );
 	
 EndProcedure
 
 &AtClient
 Procedure AttachDocument ( Command )
 
-	if ( not CheckFilling () ) then
+	if ( not CheckFilling ()
+		or not fileSubsystem () ) then
 		return;
 	endif;
 	commitMessage ();
@@ -1248,9 +1427,11 @@ EndProcedure
 &AtClient
 Procedure DeleteFile ( Command )
 	
-	if ( deletionAllowed () ) then
-		deleteRow ( ThisObject, Items.Messages.CurrentData );
+	if ( not fileSubsystem ()
+		or not deletionAllowed () ) then
+		return;
 	endif;
+	deleteRow ( ThisObject, Items.Messages.CurrentData );
 	
 EndProcedure
 
@@ -1304,12 +1485,26 @@ EndProcedure
 &AtClient
 Procedure Stop ( Command )
 
-	if ( stopRunning ( Server, Object.Thread, Session ) ) then
+	if ( Object.Provider = PredefinedValue ( "Enum.AIProviders.Anthropic" ) ) then
+		cancelJob ( JobKey );
+	elsif ( stopRunning ( Server, Object.Thread, Session ) ) then
 		activateStage ( ThisObject, StageStopping );
 	else
 		raise Output.RequestToStopFailed ();
 	endif;
 
+EndProcedure
+
+&AtServerNoContext
+Procedure cancelJob ( val JobKey )
+	
+	job = Jobs.GetBackground ( JobKey, false );
+	if ( job = undefined ) then
+		return;
+	elsif ( job.State = BackgroundJobState.Active ) then
+		job.Cancel ();
+	endif;
+	
 EndProcedure
 
 &AtServerNoContext
@@ -1324,7 +1519,8 @@ Procedure MessageStartChoice ( Item, ChoiceData, ChoiceByAdding, StandardProcess
 	
 	StandardProcessing = false;
 	commitMessage ();
-	OpenForm ( "CommonForm.Menu", new Structure ( "Menu", FunctionsMenu ), Items.Message );
+	OpenForm ( "CommonForm.Menu", new Structure ( "Menu",
+		prepareMenu ( Object.Provider ) ), Items.Message );
 	
 EndProcedure
 
@@ -1334,6 +1530,53 @@ Procedure commitMessage ()
 	#if ( WebClient ) then
 		Object.Message = Items.Message.EditText;
 	#endif
+	
+EndProcedure
+
+&AtClient
+Function prepareMenu ( val Provider )
+
+	menu = new ValueList ();
+	menu.Add ( menuSelectPhrase (), Output.SelectPhrase (), , PictureLib.Catalog );
+	filterProvider = Object.Data.Count () > 0;
+	menuOfAssistants ( menu, ? ( filterProvider, Object.Provider, undefined ) );
+	if ( filesSupported () ) then
+		for each item in FilesMenu do
+			FillPropertyValues ( menu.Add (), item );
+		enddo;
+	endif;
+	return menu;
+	
+EndFunction
+
+&AtServerNoContext
+Procedure menuOfAssistants ( Menu, val Provider )
+	
+	s = "
+	|select allowed Assistants.Ref as Ref, Assistants.Description as Name,
+	|	Assistants.Purpose as Purpose
+	|from Catalog.Assistants as Assistants
+	|where not Assistants.DeletionMark
+	|";
+	if ( Provider <> undefined ) then
+		s = s + " and Assistants.Provider = &Provider";
+	endif;
+	s = s + "
+	|order by Name
+	|";
+	q = new Query ( s );
+	q.SetParameter ( "Provider", Provider );
+	table = q.Execute ().Unload ();
+	parts = new Array ();
+	for each row in table do
+		parts.Add ( row.Name );
+		purpose = row.Purpose;
+		if ( purpose <> "" ) then
+			parts.Add ( purpose );
+		endif;
+		Menu.Add ( row.Ref, StrConcat ( parts, ". " ), , PictureLib.User );
+		parts.Clear ();
+	enddo;
 	
 EndProcedure
 

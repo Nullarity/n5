@@ -101,6 +101,7 @@ EndProcedure
 
 Function newTenant ( PromoCode )
 	
+	lockTenants ();
 	tenantCode = getNewTenantCode ();
 	obj = Catalogs.Tenants.CreateItem ();
 	obj.Code = tenantCode;
@@ -115,6 +116,15 @@ Function newTenant ( PromoCode )
 	return obj;
 	
 EndFunction 
+
+Procedure lockTenants ()
+
+	lock = new DataLock ();
+	item = lock.Add ( "Catalog.Tenants" );
+	item.Mode = DataLockMode.Exclusive;
+	lock.Lock ();
+	
+EndProcedure
 
 Function getNewTenantCode ()
 	
@@ -390,6 +400,7 @@ Function newOrganization ()
 		Error = BriefErrorDescription ( ErrorInfo () );
 		return undefined;
 	endtry;
+	lockTenants ();
 	obj = Catalogs.Tenants.CreateItem ();
 	obj.Code = tenantCode;
 	obj.Description = Parameters.Company;

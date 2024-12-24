@@ -26,8 +26,7 @@ Procedure readAppearance ()
 	rules = new Array ();
 	rules.Add ( "
 	|RoundMethod RoundToNextPart enable Object.Pricing <> Enum.Pricing.Base;
-	|BasePrices Detail enable not inlist ( Object.Pricing,
-	|	Enum.Pricing.Base, Enum.Pricing.Cost, Enum.Pricing.Purchase );
+	|BasePrices Detail enable not inlist ( Object.Pricing, Enum.Pricing.Cost, Enum.Pricing.Purchase );
 	|Percent enable Object.Pricing = Enum.Pricing.Percent;
 	|Currency enable Object.Pricing <> Enum.Pricing.Cost;
 	|" );

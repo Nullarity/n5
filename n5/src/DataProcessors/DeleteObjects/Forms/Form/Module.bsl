@@ -325,8 +325,10 @@ Procedure processRelations ( SelectedObject, Counter = 0 )
 		endif; 
 		if ( AnyRef = undefined ) then
 			continue;
-		endif; 
-		processRelations ( AnyRef, Counter );
+		endif;
+		if ( referential ( AnyRef ) ) then
+			processRelations ( AnyRef, Counter );
+		endif;
 	enddo; 
 	
 EndProcedure 
@@ -339,7 +341,11 @@ Procedure addDataToRelations ( SelectedObject, Row )
 		picture = 1;
 	else
 		presentation = "" + SelectedObject + ", " + Row.Metadata.Presentation ();
-		deletionMark = DF.Pick ( SelectedObject, "DeletionMark" );
+		if ( referential ( SelectedObject ) ) then
+			deletionMark = DF.Pick ( SelectedObject, "DeletionMark" );
+		else
+			deletionMark = false;
+		endif;
 		picture = ? ( deletionMark, 0, 1 );
 	endif; 
 	relationRow = Relations.Add ();
@@ -347,7 +353,15 @@ Procedure addDataToRelations ( SelectedObject, Row )
 	relationRow.ObjectPresentation = presentation;
 	relationRow.Picture = picture;
 	
-EndProcedure 
+EndProcedure
+
+&AtServer
+Function referential ( Value )
+
+	meta = Metadata.FindByType ( TypeOf ( Value ) );
+	return not Metadata.InformationRegisters.Contains ( meta )
+	
+EndFunction 
 
 &AtServer
 Procedure markDeletion ( SelectedObject, Row )

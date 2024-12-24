@@ -80,9 +80,13 @@ Procedure readAppearance ()
 	rules.Add ( "
 	|FormReDeploy show filled ( Object.Ref );
 	|DeployWarning show not ( Assistant.Synced or Object.DeletionMark ) and filled ( Assistant.ID );
-	|RemovedWarning show not Assistant.Synced and Object.DeletionMark and filled ( Assistant.ID );
+	|RemovedWarning show not Assistant.Synced and Object.DeletionMark and filled ( Assistant.ID )
+	|	and Object.Provider = Enum.AIProviders.OpenAI;
 	|AssistantID show filled ( Assistant.ID );
 	|Tenant lock filled ( Assistant.ID ) or not Sysadmin;
+	|CodeInterpreter Retrieval Attach AttachDocument Delete Upload Files
+	|	show Object.Provider = Enum.AIProviders.OpenAI;
+	|Provider lock filled ( Object.Ref );
 	|" );
 	Appearance.Read ( ThisObject, rules );
 
@@ -123,7 +127,10 @@ Procedure deploy ()
 	if ( Modified ) then
 		Write ();
 	endif;
-	JobKey = "Assistant Deployment " + UUID;
+	if ( Object.DeletionMark and
+		Object.Provider = PredefinedValue ( "Enum.AIProviders.Anthropic" ) ) then
+		return;
+	endif;
 	run ( Object.Ref, Object.DeletionMark, JobKey );
 	Progress.Open ( JobKey, ThisObject, new CallbackDescription ( "DeploymentComplete", ThisObject ), true );
 	
@@ -202,6 +209,26 @@ Procedure ReDeploy ( Command )
 	dirty ( ThisObject );
 	Write ();
 
+EndProcedure
+
+&AtClient
+Procedure ProviderOnChange ( Item )
+	
+	applyProvider ();
+	
+EndProcedure
+
+&AtClient
+Procedure applyProvider ()
+	
+	if ( Object.Provider = PredefinedValue ( "Enum.AIProviders.Anthropic" ) ) then
+		Object.CodeInterpreter = false;
+		Object.Retrieval = false;
+	endif;
+	AssistantsForm.AdjustTemperature ( ThisObject, true );
+	dirty ( ThisObject );
+	Appearance.Apply ( ThisObject, "Object.Provider" );
+	
 EndProcedure
 
 // *****************************************
